@@ -1,0 +1,48 @@
+spring:
+  cloud:
+    inetutils:
+      preferredNetworks:
+        - 192.168.1
+    config:
+      uri: http://config.zlw.net:8010/
+  session:
+    store-type: ${session.store-type}
+  redis:
+    host: ${session.redis.host}
+    port: ${session.redis.port}
+    password: ${session.redis.password}
+    jedis:
+      pool:
+        timeout: ${session.redis.timeout}
+        max-active: ${session.redis.pool.max-active}
+        max-wait: ${session.redis.pool.max-wait}
+        max-idle: ${session.redis.pool.max-idle}
+        min-idle: ${session.redis.pool.min-idle}
+  datasource:
+    platform: ${datasource.platform}
+    url: jdbc:mysql://192.168.1.191:3306/sscp_cost?useUnicode=true&characterEncoding=utf-8
+    username: admin
+    password: admin
+    driver-class-name: ${driver-class-name}
+    initialize: true
+    continue-on-error: true
+  zipkin:
+    base-url: ${app.zipkin}
+  sleuth:
+    sampler:
+      percentage: ${app.sleuth.sp}
+  # rabbitmq:
+  #   host: localhost
+  #   port: 5672
+  #   username: guest
+  #   password: guest
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${eureka-url}
+  instance:
+    prefer-ip-address: true
+    metadata-map:
+      version: 1.0.0
+    
