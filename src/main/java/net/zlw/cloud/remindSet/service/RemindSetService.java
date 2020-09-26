@@ -10,8 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.List;
 
-/**  提醒设置列表
- *   事物层
+/**  提醒设置列表事物层
  * Created by xulei on 2020/9/20.
  */
 @Service
