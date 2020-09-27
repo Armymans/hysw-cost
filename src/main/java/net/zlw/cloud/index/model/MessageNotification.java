@@ -31,5 +31,6 @@ public class MessageNotification implements Serializable {
     private String details;
     @Column(name = "accept_id")
     private String acceptId;
-
+    @Column(name = "inform_type")
+    private String informType;
 }
