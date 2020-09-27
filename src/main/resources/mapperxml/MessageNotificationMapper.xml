@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.zlw.cloud.messageNotification.mapper.MessageNotificationMapper">
+  <resultMap id="BaseResultMap" type="net.zlw.cloud.messageNotification.model.MessageNotification">
+    <!--@mbg.generated generated on Sun Sep 27 09:29:16 CST 2020.-->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="submit_time" jdbcType="VARCHAR" property="submitTime" />
+    <result column="inform" jdbcType="VARCHAR" property="inform" />
+    <result column="inform_status" jdbcType="VARCHAR" property="informStatus" />
+    <result column="sender" jdbcType="VARCHAR" property="sender" />
+    <result column="founder_id" jdbcType="VARCHAR" property="founderId" />
+    <result column="company_id" jdbcType="VARCHAR" property="companyId" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="details" jdbcType="VARCHAR" property="details" />
+    <result column="accept_id" jdbcType="VARCHAR" property="acceptId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Sun Sep 27 09:29:16 CST 2020.-->
+    id, submit_time, inform, inform_status, sender, founder_id, company_id, `status`, 
+    create_time, update_time, title, details, accept_id
+  </sql>
+</mapper>

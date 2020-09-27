@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.zlw.cloud.maintenanceProjectInformation.mapper.MaintenanceProjectInformationMapper">
+  <resultMap id="BaseResultMap" type="net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation">
+    <!--@mbg.generated generated on Sun Sep 27 10:52:47 CST 2020.-->
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="maintenance_item_id" jdbcType="VARCHAR" property="maintenanceItemId" />
+    <result column="maintenance_item_name" jdbcType="VARCHAR" property="maintenanceItemName" />
+    <result column="maintenance_item_type" jdbcType="VARCHAR" property="maintenanceItemType" />
+    <result column="submitted_ department" jdbcType="VARCHAR" property="submittedDepartment" />
+    <result column="submit_time" jdbcType="VARCHAR" property="submitTime" />
+    <result column="prepare_people" jdbcType="VARCHAR" property="preparePeople" />
+    <result column="project_address" jdbcType="VARCHAR" property="projectAddress" />
+    <result column="construction_unit_id" jdbcType="VARCHAR" property="constructionUnitId" />
+    <result column="review_amount" jdbcType="DECIMAL" property="reviewAmount" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="remarkes" jdbcType="VARCHAR" property="remarkes" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+    <result column="founder_id" jdbcType="VARCHAR" property="founderId" />
+    <result column="founder_company_id" jdbcType="VARCHAR" property="founderCompanyId" />
+    <result column="del_flag" jdbcType="VARCHAR" property="delFlag" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Sun Sep 27 10:52:47 CST 2020.-->
+    id, maintenance_item_id, maintenance_item_name, maintenance_item_type, `submitted_ department`, 
+    submit_time, prepare_people, project_address, construction_unit_id, review_amount, 
+    customer_name, remarkes, create_time, update_time, founder_id, founder_company_id, 
+    del_flag, `type`
+  </sql>
+</mapper>
