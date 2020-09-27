@@ -11,6 +11,7 @@ import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.budgeting.model.vo.BudgetingVo;
+import net.zlw.cloud.budgeting.model.vo.PageBVo;
 import net.zlw.cloud.budgeting.service.BudgetingService;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
@@ -79,7 +80,7 @@ public class BudgetingServiceImpl implements BudgetingService {
             auditInfo.setBaseProjectId(budgeting.getId());
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
-            auditInfo.setAuditorId(loginUser.getId());
+            auditInfo.setAuditorId(budgetingVo.getAuditorId());
             auditInfoDao.insertSelective(auditInfo);
         }else{
             baseProject.setBudgetStatus("2");
@@ -216,6 +217,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
             if (budgetingVo.getAuditNumber().equals("1")){
                 baseProject.setBudgetStatus("1");
+                baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
                 projectDao.updateByPrimaryKeySelective(baseProject);
                 budgetingDao.insertSelective(budgeting);
                 AuditInfo auditInfo = new AuditInfo();
@@ -226,6 +228,8 @@ public class BudgetingServiceImpl implements BudgetingService {
                 auditInfo.setAuditorId(budgetingVo.getAuditorId());
                 auditInfoDao.insertSelective(auditInfo);
             }else if (budgetingVo.getAuditNumber().equals("2")){
+                baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
+                projectDao.updateByPrimaryKeySelective(baseProject);
                 Example example1 = new Example(AuditInfo.class);
                 example1.createCriteria().andEqualTo("baseProjectId",budgeting.getId());
                 List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
@@ -327,5 +331,21 @@ public class BudgetingServiceImpl implements BudgetingService {
                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
             }
         }
+    }
+
+    @Override
+    public void intoAccount(String ids) {
+        String[] split = ids.split(",");
+        for (String s : split) {
+            Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+            budgeting.setWhetherAccount("0");
+            budgetingDao.updateByPrimaryKeySelective(budgeting);
+        }
+    }
+
+    @Override
+    public List<BudgetingVo> findAllBudgeting(PageBVo pageBVo) {
+        return  budgetingDao.findAllBudgeting(pageBVo);
+
     }
 }

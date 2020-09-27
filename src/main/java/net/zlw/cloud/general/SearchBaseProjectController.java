@@ -1,17 +1,17 @@
 package net.zlw.cloud.general;
 
+import net.tec.cloud.common.util.RestUtil;
+import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/baseProject")
+
 public class SearchBaseProjectController {
     @Resource
     private BaseProjectService baseProjectService;
@@ -23,14 +23,18 @@ public class SearchBaseProjectController {
       return list;
     }
     //查询所有工程项目
-    @GetMapping
-    public List<BaseProject> findAllBaseProject(){
-      return  baseProjectService.findAllBaseProject();
+    @RequestMapping(value = "/baseProject/findAll",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+//    @GetMapping("/findAll")
+    public Map<String,Object> findAllBaseProject(){
+        List<BaseProject> allBaseProject = baseProjectService.findAllBaseProject();
+        return RestUtil.success(allBaseProject);
     }
 
-    @GetMapping("findById/{id}")
-    public BaseProject findById(@PathVariable(name = "id") String id){
-       return baseProjectService.findById(id);
+    @RequestMapping(value = "/baseProject/findById",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+//    @GetMapping("/findById/{id}")
+    public Map<String,Object> findById(@RequestParam(name = "projectNum") String id){
+        BaseProject byId = baseProjectService.findById(id);
+        return RestUtil.success(byId);
     }
 
 }

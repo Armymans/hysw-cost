@@ -40,6 +40,8 @@ public class Budgeting implements Serializable {
     @Column(name = "survey_information_id")
     private String surveyInformationId;
     private String remarkes;
+    @Column(name = "whether_account")
+    private String whetherAccount;
     @Column(name = "create_time")
     private String createTime;
     @Column(name = "update_time")
