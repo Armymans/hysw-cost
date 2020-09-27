@@ -56,6 +56,7 @@ public class ProjectController extends BaseController {
         String[] split = projectVo2.getIdlist().split(",");
         for (String id : split) {
             projectService.batchAudit(id,projectVo2.getAuditInfo(),getLoginUser());
+
         }
     }
 

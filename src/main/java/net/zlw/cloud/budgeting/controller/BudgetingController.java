@@ -24,8 +24,10 @@ public class BudgetingController extends BaseController {
 
     //添加预算信息
 //    @PostMapping("/addBudgeting")
-    public void addBudgeting(@RequestBody BudgetingVo budgetingVo){
+    @RequestMapping(value = "/budgeting/addBudgeting",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> addBudgeting(BudgetingVo budgetingVo){
         budgetingService.addBudgeting(budgetingVo,getLoginUser());
+        return RestUtil.success("添加成功");
     }
     //根据ID查询预算信息
 //    @GetMapping("/selectBudgetingById/{id}")
@@ -37,7 +39,7 @@ public class BudgetingController extends BaseController {
     //编辑预算信息
 //    @PutMapping("/updateBudgeting")
     @RequestMapping(value = "/budgeting/updateBudgeting ",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> updateBudgeting(@RequestBody BudgetingVo budgetingVo){
+    public Map<String,Object> updateBudgeting(@RequestParam BudgetingVo budgetingVo){
         budgetingService.updateBudgeting(budgetingVo);
         return RestUtil.success("修改成功");
     }

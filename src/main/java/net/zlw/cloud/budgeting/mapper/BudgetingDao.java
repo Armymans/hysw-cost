@@ -11,6 +11,7 @@ import java.util.List;
 @org.apache.ibatis.annotations.Mapper
 public interface BudgetingDao extends Mapper<Budgeting> {
 
-    @Select("select id id,amount_cost amountCost from budgeting")
+    @Select("select b.id id,b.amount_cost amountCost,bp.project_num projectNum from budgeting b \n" +
+            "LEFT JOIN base_project bp on b.base_project_id = bp.id")
     List<BudgetingVo> findAllBudgeting(PageBVo pageBVo);
 }

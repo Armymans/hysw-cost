@@ -1,10 +1,13 @@
 package net.zlw.cloud.general;
 
+import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.util.RestUtil;
+import net.tec.cloud.common.vo.LoginUser;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import org.springframework.web.bind.annotation.*;
+import sun.security.action.GetLongAction;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -26,6 +29,7 @@ public class SearchBaseProjectController {
     @RequestMapping(value = "/baseProject/findAll",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
 //    @GetMapping("/findAll")
     public Map<String,Object> findAllBaseProject(){
+
         List<BaseProject> allBaseProject = baseProjectService.findAllBaseProject();
         return RestUtil.success(allBaseProject);
     }
