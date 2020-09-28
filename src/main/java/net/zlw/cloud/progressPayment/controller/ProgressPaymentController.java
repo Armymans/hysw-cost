@@ -1,5 +1,6 @@
 package net.zlw.cloud.progressPayment.controller;
 
+import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +14,9 @@ public class ProgressPaymentController {
     private BaseProjectService baseProjectService;
 
     //进度款新增
-    @PostMapping("/addProgress")
-    public String addProgress(@RequestBody BaseProjectVo baseProject){
+//    @PostMapping("/addProgress")
+    @RequestMapping(value = "/progress/addProgress",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public String addProgress( BaseProjectVo baseProject){
         try {
             baseProjectService.addProgress(baseProject);
         } catch (Exception e) {
@@ -23,6 +25,7 @@ public class ProgressPaymentController {
         }
         return "添加成功";
     }
+    //根据id查询进度款
     @GetMapping("/seachProgressById/{id}")
     public BaseProjectVo seachProgressById(@PathVariable(name = "id") String id){
         try {
@@ -34,6 +37,7 @@ public class ProgressPaymentController {
             return null;
         }
     }
+    //编辑
     @PostMapping("/updateProgress")
     public String updateProgress(@RequestBody BaseProjectVo baseProjectVo, @RequestParam(name = "page") String page){
         try {
@@ -43,7 +47,5 @@ public class ProgressPaymentController {
             e.printStackTrace();
             return "编辑失败";
         }
-
-
     }
 }

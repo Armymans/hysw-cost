@@ -200,7 +200,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("projectNum",budgetingVo.getProjectNum());
         BaseProject baseProject = projectDao.selectOneByExample(example);
-
+        System.err.println(budgetingVo);
         //预算编制
         Budgeting budgeting = budgetingDao.selectByPrimaryKey(budgetingVo.getId());
         budgeting.setAmountCost(budgetingVo.getAmountCost());
@@ -218,9 +218,8 @@ public class BudgetingServiceImpl implements BudgetingService {
         if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
             if (budgetingVo.getAuditNumber().equals("1")){
                 baseProject.setBudgetStatus("1");
-                baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
                 projectDao.updateByPrimaryKeySelective(baseProject);
-                budgetingDao.insertSelective(budgeting);
+                budgetingDao.updateByPrimaryKeySelective(budgeting);
                 AuditInfo auditInfo = new AuditInfo();
                 auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
                 auditInfo.setBaseProjectId(budgeting.getId());
@@ -229,8 +228,6 @@ public class BudgetingServiceImpl implements BudgetingService {
                 auditInfo.setAuditorId(budgetingVo.getAuditorId());
                 auditInfoDao.insertSelective(auditInfo);
             }else if (budgetingVo.getAuditNumber().equals("2")){
-                baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
-                projectDao.updateByPrimaryKeySelective(baseProject);
                 Example example1 = new Example(AuditInfo.class);
                 example1.createCriteria().andEqualTo("baseProjectId",budgeting.getId());
                 List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
@@ -315,7 +312,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("1");
                     Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("member_role_id","3");
+                    example1.createCriteria().andEqualTo("memberRoleId","3");
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                     auditInfo1.setAuditorId(memberManage.getId());
                     auditInfoDao.insertSelective(auditInfo1);

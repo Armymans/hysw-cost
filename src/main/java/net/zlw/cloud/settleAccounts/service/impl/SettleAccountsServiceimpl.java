@@ -1,6 +1,7 @@
 package net.zlw.cloud.settleAccounts.service.impl;
 
 
+import net.tec.cloud.common.util.RestUtil;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
@@ -168,7 +169,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example2);
 
         BaseAccountsVo baseAccountsVo = new BaseAccountsVo();
-
         baseAccountsVo.setId(baseProject.getId());
         baseAccountsVo.setProjectNum(baseProject.getProjectNum());
         baseAccountsVo.setProjectName(baseProject.getProjectName());
