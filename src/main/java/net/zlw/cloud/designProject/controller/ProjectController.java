@@ -1,9 +1,12 @@
 package net.zlw.cloud.designProject.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
-import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
+import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
@@ -409,8 +412,9 @@ public class ProjectController extends BaseController {
     }
 
     @RequestMapping(value = "/api/disproject/censusList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @ResponseBody
     public Map<String,Object> censusList(@RequestParam(name = "district") String district,@RequestParam(name = "startTime") String startTime,@RequestParam(name = "endTime") String endTime){
-        //getLoginUser().getId()
+        //todo getLoginUser().getId()
         List<OneCensus> oneCensuses = projectService.OneCensusList(district, startTime, endTime,"user282");
         String censusList = "[{\"companyName\":\"市政管道\"," +
                                 "\"imageAmmount\": [";
@@ -419,8 +423,9 @@ public class ProjectController extends BaseController {
                     "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
                             "\"truckAmmount\": \"" + oneCensus.getMunicipalPipeline()+"\"},";
         }
+        censusList = censusList.substring(0,censusList.length() -1);
         censusList +=
-        "\"]" +
+        "]" +
                 "}, {" +
                 "\"companyName\":\"管网改造\"," +
                 "\"imageAmmount\": [" ;
@@ -428,8 +433,9 @@ public class ProjectController extends BaseController {
             censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
                     "\"truckAmmount\": \"" + oneCensus.getNetworkReconstruction()+"\"},";
         }
+        censusList = censusList.substring(0,censusList.length() -1);
         censusList +=
-        "\"]" +
+        "]" +
                 "}, {" +
                 "\"companyName\":\"新建小区\"," +
                 "\"imageAmmount\": [" ;
@@ -438,8 +444,9 @@ public class ProjectController extends BaseController {
             "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
                     "\"truckAmmount\": \"" + oneCensus.getNewCommunity()+"\"},";
         }
+        censusList = censusList.substring(0,censusList.length() -1);
         censusList +=
-        "\"]" +
+        "]" +
                 "}, {" +
                 "\"companyName\":\"二次供水改造项目\"," +
                 "\"imageAmmount\": [" ;
@@ -448,8 +455,9 @@ public class ProjectController extends BaseController {
                     "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
                     "\"truckAmmount\": \"" + oneCensus.getSecondaryWater()+"\"},";
         }
+        censusList = censusList.substring(0,censusList.length() -1);
         censusList +=
-                "\"]" +
+                "]" +
                 "}, {" +
                 "\"companyName\":\"工商户\"," +
                 "\"imageAmmount\": [" ;
@@ -457,8 +465,9 @@ public class ProjectController extends BaseController {
             censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
                     "\"truckAmmount\": \"" + oneCensus.getCommercialHouseholds()+"\"},";
         }
+        censusList = censusList.substring(0,censusList.length() -1);
         censusList +=
-                "\"]" +
+                "]" +
                 "}, {" +
                 "\"companyName\":\"居民装接水\"," +
                 "\"imageAmmount\": [" ;
@@ -466,8 +475,9 @@ public class ProjectController extends BaseController {
             censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
                     "\"truckAmmount\": \"" + oneCensus.getWaterResidents()+"\"},";
         }
+        censusList = censusList.substring(0,censusList.length() -1);
         censusList +=
-                "\"]" +
+                "]" +
                 "}, {" +
                 "\"companyName\": \"行政事业\"," +
                 "\"imageAmmount\": [";
@@ -475,8 +485,10 @@ public class ProjectController extends BaseController {
             censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
                     "\"truckAmmount\": \"" + oneCensus.getAdministration()+"\"},";
         }
-        censusList +=  "\"}]}]";
-        return RestUtil.success(censusList);
+        censusList = censusList.substring(0,censusList.length() -1);
+        censusList +=  "]}]";
+        JSONArray json = JSON.parseArray(censusList);
+        return RestUtil.showJsonSuccess(json);
     }
 
     @RequestMapping(value = "/api/disproject/individualList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
