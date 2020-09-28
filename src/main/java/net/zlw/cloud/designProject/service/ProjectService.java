@@ -3,16 +3,26 @@ package net.zlw.cloud.designProject.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.VisaApplyChangeInformation.mapper.VisaApplyChangeInformationMapper;
 import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
 import net.zlw.cloud.budgeting.mapper.VeryEstablishmentDao;
 import net.zlw.cloud.budgeting.model.CostPreparation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.designProject.mapper.*;
 import net.zlw.cloud.designProject.model.*;
+import net.zlw.cloud.designProject.model.SettlementAuditInformation;
+import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
+import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
+import net.zlw.cloud.index.mapper.MessageNotificationDao;
+import net.zlw.cloud.index.model.MessageNotification;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
+import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
+import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -62,6 +72,24 @@ public class ProjectService {
 
     @Resource
     private VeryEstablishmentDao veryEstablishmentDao;
+
+    @Resource
+    private MessageNotificationDao messageNotificationDao;
+
+    @Resource
+    private TrackAuditInfoDao trackAuditInfoDao;
+
+    @Resource
+    private SettlementAuditInformationDao settlementAuditInformationDao;
+
+    @Resource
+    private LastSettlementReviewDao  lastSettlementReviewDao;
+
+    @Resource
+    private ProgressPaymentInformationDao progressPaymentInformationDao;
+
+    @Resource
+    private VisaApplyChangeInformationMapper visaApplyChangeInformationMapper;
 
 
     /**
@@ -1223,5 +1251,83 @@ public class ProjectService {
             }
         }
         return costTotalAmount;
+    }
+
+    public List<MessageNotification> messageList(UserInfo userInfo) {
+        Example example = new Example(MessageNotification.class);
+        Example.Criteria c = example.createCriteria();
+//        userInfo.getId() 1212
+        c.andEqualTo("acceptId",userInfo.getId());
+        List<MessageNotification> messageNotifications = messageNotificationDao.selectByExample(example);
+        return messageNotifications;
+    }
+
+    public List<OneCensus> OneCensusList(String district,String startTime,String endTime,String id){
+        List<OneCensus> oneCensuses = projectMapper.censusList(district, startTime, endTime,id);
+        return oneCensuses;
+    }
+    public PageInfo<BaseProject> individualList(IndividualVo individualVo){
+        PageHelper.startPage(individualVo.getPageNum(),individualVo.getPageSize());
+        List<BaseProject> baseProjects = projectMapper.individualList(individualVo);
+        PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
+        return baseProjectPageInfo;
+    }
+
+    public Budgeting budgetingByid(String id){
+        Example example = new Example(Budgeting.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",id);
+        Budgeting budgeting = budgetingMapper.selectOneByExample(example);
+        return budgeting;
+    }
+
+    public TrackAuditInfo trackAuditInfoByid(String id){
+        Example example = new Example(TrackAuditInfo.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",id);
+        TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectOneByExample(example);
+        return trackAuditInfo;
+    }
+
+    public net.zlw.cloud.settleAccounts.model.SettlementAuditInformation SettlementAuditInformationByid(String id){
+        Example example = new Example(SettlementAuditInformation.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",id);
+        net.zlw.cloud.settleAccounts.model.SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(id);
+        return settlementAuditInformation;
+    }
+
+    public net.zlw.cloud.settleAccounts.model.LastSettlementReview lastSettlementReviewbyid(String id){
+        Example example = new Example(LastSettlementReview.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",id);
+        net.zlw.cloud.settleAccounts.model.LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example);
+        return lastSettlementReview;
+    }
+
+    public ProjectVo3 progressPaymentInformationSum(String id){
+        List<String> strings = progressPaymentInformationDao.NewcurrentPaymentInformation(id);
+        List<String> strings1 = progressPaymentInformationDao.SumcurrentPaymentInformation(id);
+        String s2 = progressPaymentInformationDao.cumulativePaymentTimes(id);
+        String s3 = progressPaymentInformationDao.currentPaymentRatio(id);
+        String s = strings.get(0);
+        String s1 = strings1.get(0);
+        ProjectVo3 projectVo3 = new ProjectVo3();
+        projectVo3.setNewcurrentPaymentInformation(s);
+        projectVo3.setSumcurrentPaymentInformation(s1);
+        projectVo3.setCumulativePaymentTimes(s2);
+        projectVo3.setCurrentPaymentRatio(s3);
+        return projectVo3;
+    }
+
+    public ProjectVo3 visaApplyChangeInformationSum(String id){
+        String s = visaApplyChangeInformationMapper.amountVisaChangeSum(id);
+        String s1 = visaApplyChangeInformationMapper.changeCount(id);
+        String s2 = visaApplyChangeInformationMapper.contractAmount(id);
+        ProjectVo3 projectVo3 = new ProjectVo3();
+        projectVo3.setAmountVisaChangeSum(s);
+        projectVo3.setChangeCount(s1);
+        projectVo3.setContractAmount(s2);
+        return projectVo3;
     }
 }

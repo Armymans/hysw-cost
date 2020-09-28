@@ -7,8 +7,8 @@ import java.util.List;
 
 @Data
 public class ProjectVo {
-    private BaseProject baseProject;
-    private DesignInfo designInfo;
+    private BaseProject baseProject; //基本信息
+    private DesignInfo designInfo;  //设计信息
     private ProjectExploration projectExploration;
     private PackageCame packageCame;
     //设计审核信息
