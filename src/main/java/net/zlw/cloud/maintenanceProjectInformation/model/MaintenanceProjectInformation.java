@@ -117,8 +117,8 @@ public class MaintenanceProjectInformation implements Serializable {
     @Column(name = "`type`")
     private String type;
 
-    @Transient
-    private ConstructionUnitManagement constructionUnitManagement;
+//    @Transient
+//    private ConstructionUnitManagement constructionUnitManagement;
 
     @Transient
     private String constructionUnitName;

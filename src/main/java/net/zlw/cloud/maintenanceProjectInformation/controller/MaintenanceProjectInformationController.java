@@ -67,26 +67,27 @@ public class MaintenanceProjectInformationController extends BaseController {
 
     /**
      * 新增--提交
+     * 提交：把数据保存到数据库，得到一个审核人 id
      * @param maintenanceProjectInformationVo
      */
     @RequestMapping(value = "/maintenanceProjectInformation/addMaintenanceProjectInformation",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public void addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,String id){
+    public void addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,@RequestParam(name = "id") String id){
         UserInfo loginUser = getLoginUser();
         System.out.println("user:"+loginUser);
-        maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser());
+        maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser(),id);
 
     }
 
 
     /**
-     * 回显
+     * 根据id 回显数据
      * @param id
      * @return
      */
     @RequestMapping(value = "/maintenanceProjectInformation/selectMaintenanceProjectInformationById",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectMaintenanceProjectInformationById(@RequestParam(name = "id") String id){
-        MaintenanceProjectInformation oneMaintenanceProjectInformation = maintenanceProjectInformationService.selectMaintenanceProjectInformationById(id);
-        return RestUtil.success(oneMaintenanceProjectInformation);
+        MaintenanceProjectInformationVo maintenanceProjectInformationVo = maintenanceProjectInformationService.selectMaintenanceProjectInformationById(id);
+        return RestUtil.success(maintenanceProjectInformationVo);
 
     }
 
@@ -94,18 +95,29 @@ public class MaintenanceProjectInformationController extends BaseController {
     /**
      * 保存
      * @param maintenanceProjectInformationVo
-     * @param session
      * @return
      */
     @RequestMapping(value = "/maintenanceProjectInformation/saveMaintenanceProjectInformation",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> saveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo, HttpSession session){
-        maintenanceProjectInformationService.saveMaintenanceProjectInformation(maintenanceProjectInformationVo,session);
-
-//        Object sessionAttribute = session.getAttribute("saveId");
-//
-//        System.out.println("存储的信息："+sessionAttribute);
+    public Map<String,Object> saveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo){
+        UserInfo loginUser = getLoginUser();
+        maintenanceProjectInformationService.saveMaintenanceProjectInformation(maintenanceProjectInformationVo,loginUser);
 
         return RestUtil.success("保存成功");
     }
+
+    /**
+     * 编辑--提交
+     * 提交：把数据保存到数据库，得到一个审核人 id
+     * @param maintenanceProjectInformationVo
+     */
+    @RequestMapping(value = "/maintenanceProjectInformation/updateMaintenanceProjectInformation",method = {RequestMethod.PUT},produces = MediaTypes.JSON_UTF_8)
+    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,@RequestParam(name = "id") String id){
+        UserInfo loginUser = getLoginUser();
+        System.out.println("user:"+loginUser);
+        maintenanceProjectInformationService.updateMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser(),id);
+
+    }
+
+
 
 }

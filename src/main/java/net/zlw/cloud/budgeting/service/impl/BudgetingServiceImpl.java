@@ -13,6 +13,7 @@ import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.budgeting.model.vo.BudgetingVo;
 import net.zlw.cloud.budgeting.model.vo.PageBVo;
 import net.zlw.cloud.budgeting.service.BudgetingService;
+import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -347,5 +348,21 @@ public class BudgetingServiceImpl implements BudgetingService {
     public List<BudgetingVo> findAllBudgeting(PageBVo pageBVo) {
         return  budgetingDao.findAllBudgeting(pageBVo);
 
+    }
+
+
+    /**
+     * 清标--新建--项目名称--项目信息下拉列表
+     * @param founderId
+     * @return
+     */
+    public List<net.zlw.cloud.clearProject.model.Budgeting> findAllByFounderId(String founderId){
+        List<net.zlw.cloud.clearProject.model.Budgeting> budgetingList = budgetingDao.findBudgetingByFounderId(founderId);
+        return budgetingList;
+    }
+
+    public List<net.zlw.cloud.clearProject.model.Budgeting> findBudgetingByBudgetStatus(String founderId){
+        List<net.zlw.cloud.clearProject.model.Budgeting> budgetingByBudgetStatus = budgetingDao.findBudgetingByBudgetStatus(founderId);
+        return budgetingByBudgetStatus;
     }
 }

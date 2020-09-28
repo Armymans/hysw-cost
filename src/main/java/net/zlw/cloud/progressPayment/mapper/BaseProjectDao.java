@@ -4,6 +4,7 @@ package net.zlw.cloud.progressPayment.mapper;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
 
@@ -33,4 +34,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "b.customer_name like concat ('%',#{keyword},'%') or  " +
             "bb.name_of_cost_unit like concat  ('%',#{keyword},'%'))")
     List<AccountsVo> findAllAccounts(PageVo PageVo);
+
+
+    @Select("select * from base_project where id = #{id}")
+    net.zlw.cloud.clearProject.model.BaseProject fingById(@Param("id")String id);
 }

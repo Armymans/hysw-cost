@@ -17,7 +17,7 @@ public class PageRequest {
     private String address;
     // 维修类型
     private String maintenanceType;
-    //状态
+    //状态:待审核，处理中，未通过，待确认
     private String pageStaus;
     //开始时间
     private String startTime;

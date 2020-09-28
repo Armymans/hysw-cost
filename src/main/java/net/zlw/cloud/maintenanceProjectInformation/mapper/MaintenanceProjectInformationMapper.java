@@ -31,4 +31,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
     @Select("select * from maintenance_project_information where id = #{id}")
     MaintenanceProjectInformation selectById(@Param("id") String id);
 
+    @Select("select * from maintenance_project_information where maintenance_item_id = #{maintenanceItemId}")
+    MaintenanceProjectInformation selectBymaintenanceItemId(@Param("maintenanceItemId") String maintenanceItemId);
+
 }

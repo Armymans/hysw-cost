@@ -274,4 +274,28 @@ public class MaintenanceProjectInformationVo {
     public void setMemberName(String memberName) {
         this.memberName = memberName;
     }
+
+    public SurveyInformation getSurveyInformation() {
+        return surveyInformation;
+    }
+
+    public void setSurveyInformation(SurveyInformation surveyInformation) {
+        this.surveyInformation = surveyInformation;
+    }
+
+    public SettlementAuditInformation getSettlementAuditInformation() {
+        return settlementAuditInformation;
+    }
+
+    public void setSettlementAuditInformation(SettlementAuditInformation settlementAuditInformation) {
+        this.settlementAuditInformation = settlementAuditInformation;
+    }
+
+    public AuditInfo getAuditInfo() {
+        return auditInfo;
+    }
+
+    public void setAuditInfo(AuditInfo auditInfo) {
+        this.auditInfo = auditInfo;
+    }
 }
