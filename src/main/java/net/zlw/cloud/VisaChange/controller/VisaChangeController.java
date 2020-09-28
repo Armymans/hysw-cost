@@ -1,6 +1,7 @@
 package net.zlw.cloud.VisaChange.controller;
 
 
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.RestUtil;
@@ -11,6 +12,7 @@ import net.zlw.cloud.VisaChange.model.vo.VisaChangeVO;
 import net.zlw.cloud.VisaChange.service.VisaChangeService;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +26,7 @@ public class VisaChangeController extends BaseController {
 
     @RequestMapping(value = "/visaChange/findPage",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findPage(VisaChangeVO visaChangeVO){
-        List<VisaChangeVO> allPage = vcisService.findAllPage(visaChangeVO,getLoginUser());
-
+        PageInfo<VisaChangeVO> allPage = vcisService.findAllPage(visaChangeVO, getLoginUser());
         return RestUtil.success(allPage);
     }
 

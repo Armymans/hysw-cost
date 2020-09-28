@@ -3,6 +3,7 @@ package net.zlw.cloud.VisaChange.service.impl;
 
 import com.github.pagehelper.PageHelper;
 
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
 import net.zlw.cloud.VisaChange.model.VisaChange;
@@ -13,7 +14,6 @@ import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
-import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +50,7 @@ public class VisaChangeImpl implements VisaChangeService {
      * 分页查询所有
      */
     @Override
-    public List<VisaChangeVO> findAllPage(VisaChangeVO visaChangeVO, UserInfo loginUser) {
+    public PageInfo<VisaChangeVO> findAllPage(VisaChangeVO visaChangeVO, UserInfo loginUser) {
         PageHelper.startPage(visaChangeVO.getPageNum(), visaChangeVO.getPageSize());
         visaChangeVO.setLoginUserId("123");
         List<VisaChangeVO> all = vcMapper.findAll(visaChangeVO);
@@ -70,13 +70,8 @@ public class VisaChangeImpl implements VisaChangeService {
             thisAll.setContractAmountShang(shang.toString());
             thisAll.setContractAmountXia(xia.toString());
         }
-
-
-
-
-
-
-        return all;
+        PageInfo<VisaChangeVO> info = new PageInfo<>(all);
+        return info;
     }
 
     @Override
