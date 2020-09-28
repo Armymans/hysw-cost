@@ -512,12 +512,14 @@ public class ProjectController extends BaseController {
      * @return
      */
     public ProjectVo3 projectSelect(String id){
+        //工程页面查询
         BaseProject baseProject = projectService.BaseProjectByid(id);
         DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
         Budgeting budgeting = projectService.budgetingByid(baseProject.getId());
         TrackAuditInfo trackAuditInfo = projectService.trackAuditInfoByid(baseProject.getId());
         SettlementAuditInformation settlementAuditInformation = projectService.SettlementAuditInformationByid(baseProject.getId());
         LastSettlementReview lastSettlementReview = projectService.lastSettlementReviewbyid(baseProject.getId());
+        //根据baseproject返回值
         ProjectVo3 projectVo3 = new ProjectVo3();
         projectVo3.setBaseProject(baseProject);
         projectVo3.setDesignInfo(designInfo);
@@ -526,13 +528,14 @@ public class ProjectController extends BaseController {
         projectVo3.setLastSettlementReview(lastSettlementReview);
         projectVo3.setSettlementAuditInformation(settlementAuditInformation);
 
+        //计算累计值
         ProjectVo3 projectVo31 = projectService.progressPaymentInformationSum(baseProject.getId());
-
         projectVo3.setNewcurrentPaymentInformation(projectVo31.getNewcurrentPaymentInformation());
         projectVo3.setSumcurrentPaymentInformation(projectVo31.getSumcurrentPaymentInformation());
         projectVo3.setCumulativePaymentTimes(projectVo31.getCumulativePaymentTimes());
         projectVo3.setCurrentPaymentRatio(projectVo31.getCurrentPaymentRatio());
 
+        //计算签证累计值
         ProjectVo3 projectVo32 = projectService.visaApplyChangeInformationSum(baseProject.getId());
         projectVo3.setAmountVisaChangeSum(projectVo32.getAmountVisaChangeSum());
         projectVo3.setChangeCount(projectVo32.getChangeCount());
