@@ -19,6 +19,8 @@ public class VisaChange implements Serializable {
   private String createTime;
   @Column(name = "update_time")
   private String updateTime;
+  @Column(name = "contract_amount")
+  private String contractAmount;
   @Column(name = "creator_id")
   private String creatorId;
   @Column(name = "creator_company_id")
@@ -51,6 +53,11 @@ public class VisaChange implements Serializable {
   private String upAndDownMark;
   @Column(name = "status")
   private String status;
+  @Column(name = "proportion_contract")
+  private String proportionContract;
+
+
+
 
 
 

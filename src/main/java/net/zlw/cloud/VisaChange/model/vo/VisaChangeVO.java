@@ -9,6 +9,7 @@ public class VisaChangeVO {
     private String id;
     private String ceaNum;
     private String projectNum;
+    private String proportionContract;
     private String district;
     private String constructionUnit;
     private String projectNature;
@@ -28,7 +29,13 @@ public class VisaChangeVO {
     private String keyword;
     private int pageNum;
     private int pageSize;
-    private double amount_cost;
+    private String amountCost;
+    private String contractAmount;
+    private String contractAmountShang;
+    private String contractAmountXia;
+    private String baseProjectId;
+    private String loginUserId;
+    private String amountVisaChange;
 
 
 
