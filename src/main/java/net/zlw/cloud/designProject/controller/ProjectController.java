@@ -14,6 +14,7 @@ import net.zlw.cloud.index.model.MessageNotification;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -413,9 +414,9 @@ public class ProjectController extends BaseController {
 
     @RequestMapping(value = "/api/disproject/censusList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     @ResponseBody
-    public Map<String,Object> censusList(@RequestParam(name = "district") String district,@RequestParam(name = "startTime") String startTime,@RequestParam(name = "endTime") String endTime){
+    public Map<String,Object> censusList(CostVo2 costVo2){
         //todo getLoginUser().getId()
-        List<OneCensus> oneCensuses = projectService.OneCensusList(district, startTime, endTime,"user282");
+        List<OneCensus> oneCensuses = projectService.OneCensusList(costVo2);
         String censusList = "[{\"companyName\":\"市政管道\"," +
                                 "\"imageAmmount\": [";
         for (OneCensus oneCensus : oneCensuses) {
@@ -503,17 +504,36 @@ public class ProjectController extends BaseController {
                 AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
                 if(anhuiMoneyinfo!=null){
                     project.setDesMoney(anhuiMoneyinfo.getOfficialReceipts());
+                    //应计提金额
+                    BigDecimal bigDecimal = projectService.accruedAmount(anhuiMoneyinfo.getOfficialReceipts());
+                    project.setAccrualMoney(bigDecimal.doubleValue());
+                    //建议金额
+                    BigDecimal bigDecimal1 = projectService.proposedAmount(bigDecimal);
+                    project.setAdviseMoney(bigDecimal1.doubleValue());
+                    // 余额
+                    BigDecimal surplus = projectService.surplus(bigDecimal, bigDecimal1);
+                    project.setSurplus(surplus.doubleValue());
                 }
             }else{
                 //设计费（吴江）
                 WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
                 if(wujiangMoneyInfo!=null){
                     project.setDesMoney(wujiangMoneyInfo.getOfficialReceipts());
+                    //应计提金额
+                    BigDecimal bigDecimal = projectService.accruedAmount(wujiangMoneyInfo.getOfficialReceipts());
+                    project.setAccrualMoney(bigDecimal.doubleValue());
+                    //建议金额
+                    BigDecimal bigDecimal1 = projectService.proposedAmount(bigDecimal);
+                    project.setAdviseMoney(bigDecimal1.doubleValue());
+                    // 余额
+                    BigDecimal surplus = projectService.surplus(bigDecimal, bigDecimal1);
+                    project.setSurplus(surplus.doubleValue());
                 }
             }
             //造价费用
             Budgeting budgeting = projectService.budgetingByid(project.getId());
             project.setAmountCost(budgeting.getAmountCost());
+            //应技提金额
         }
         return RestUtil.success(projects);
     }
@@ -553,5 +573,112 @@ public class ProjectController extends BaseController {
         projectVo3.setChangeCount(projectVo32.getChangeCount());
         projectVo3.setContractAmount(projectVo32.getContractAmount());
         return projectVo3;
+    }
+
+    @RequestMapping(value = "/api/costproject/costSelectByid",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> costSelectByid(@RequestParam(name = "district") String district){
+//        getLoginUser().getId();
+        String budgetingCount = projectService.budgetingCount("user282",district);
+        String settleAccountsCount = projectService.settleAccountsCount("user282",district);
+        String progressPaymentInformationCount = projectService.progressPaymentInformationCount("user282",district);
+        String visaApplyChangeInformationCount = projectService.visaApplyChangeInformationCount("user282",district);
+        String trackAuditInfoCount = projectService.trackAuditInfoCount("user282",district);
+        CostVo costVo = new CostVo();
+        costVo.setBudgetingCount(budgetingCount);
+        costVo.setSettleAccountsCount(settleAccountsCount);
+        costVo.setProgressPaymentInformation(progressPaymentInformationCount);
+        costVo.setVisaApplyChangeInformationCount(visaApplyChangeInformationCount);
+        costVo.setTrackAuditInfoCount(trackAuditInfoCount);
+        return RestUtil.success(costVo);
+    }
+
+    @RequestMapping(value = "/api/costproject/costCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> costCensus(CostVo2 costVo2){
+        OneCensus2 oneCensus2 = projectService.costCensus(costVo2);
+        String josn =
+                "[" +
+                        "{\"value1\":"+oneCensus2.getBudget()+",\"name1\":\"预算编制\"}," +
+                        "{\"value1\":"+oneCensus2.getSettleaccounts()+",name1:\"结算编制\"}," +
+                        "{\"value1\":"+oneCensus2.getProgresspayment()+",name1:\"进度款支付\"}," +
+                        "{\"value1\":"+oneCensus2.getVisa()+",name1:\"签证/变更\"}," +
+                        "{\"value1\":"+oneCensus2.getTrack()+",name1:\"跟踪审计\"}" +
+                        "]";
+        JSONArray objects = JSON.parseArray(josn);
+        return RestUtil.success(objects);
+    }
+
+
+    @RequestMapping(value = "/api/costproject/costCensusList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> costCensusList(CostVo2 costVo2){
+        List<OneCensus2> oneCensus2s = projectService.costCensusList(costVo2);
+        String json =
+                "[{" +
+                        "\"companyName\": \"造价任务\"," +
+                        "\"imageAmmount\": [";
+        for (OneCensus2 oneCensus2 : oneCensus2s) {
+            json +=
+                    "{\"time\": \""+oneCensus2.getYeartime()+"-"+oneCensus2.getMonthTime()+"\"," +
+                            "\"truckAmmount\": \""+oneCensus2.getTotal()+"\"" +
+                            "},";
+        }
+        json = json.substring(0,json.length()-1);
+        json += "]}]";
+        JSONArray objects = JSON.parseArray(json);
+        return RestUtil.success(objects);
+    }
+
+    /**
+     * 造价页面月任务总数
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/costproject/mounthTaskCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Integer mounthTaskCount(CostVo2 costVo2){
+        String sysYear = projectService.getSysYear();
+        String sysMouth = projectService.getSysMouth()+"";
+        costVo2.setYear(sysYear);
+        costVo2.setMonth(sysMouth);
+        List<OneCensus2> oneCensus2s = projectService.costCensusList(costVo2);
+        OneCensus2 census2 = oneCensus2s.get(0);
+        return census2.getTotal();
+    }
+
+    /**
+     * 造价页面年度任务数
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/costproject/yearTaskCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Integer yearTaskCount(CostVo2 costVo2){
+        String sysYear = projectService.getSysYear();
+        costVo2.setYear(sysYear);
+        Integer integer = projectService.yearTaskCount(costVo2);
+        return integer;
+    }
+    /**
+     * 造价页面月任务数
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/costproject/yearDesCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Integer yearDesCount(CostVo2 costVo2){
+        String sysYear = projectService.getSysYear();
+        costVo2.setYear(sysYear);
+        Integer integer = projectService.yearDesCount(costVo2);
+        return integer;
+    }
+    /**
+     * 造价页面年任务数
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/costproject/mounthDesCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Integer mounthDesCount(CostVo2 costVo2){
+        String sysYear = projectService.getSysYear();
+        int sysMouth = projectService.getSysMouth();
+        costVo2.setYear(sysYear);
+        costVo2.setMonth(sysMouth+"");
+        Integer integer = projectService.mouthDesCount(costVo2);
+        return integer;
     }
 }

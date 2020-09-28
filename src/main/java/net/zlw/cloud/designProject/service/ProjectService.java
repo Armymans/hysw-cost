@@ -1262,8 +1262,8 @@ public class ProjectService {
         return messageNotifications;
     }
 
-    public List<OneCensus> OneCensusList(String district,String startTime,String endTime,String id){
-        List<OneCensus> oneCensuses = projectMapper.censusList(district, startTime, endTime,id);
+    public List<OneCensus> OneCensusList(CostVo2 costVo2){
+        List<OneCensus> oneCensuses = projectMapper.censusList(costVo2);
         return oneCensuses;
     }
     public PageInfo<BaseProject> individualList(IndividualVo individualVo){
@@ -1329,5 +1329,166 @@ public class ProjectService {
         projectVo3.setChangeCount(s1);
         projectVo3.setContractAmount(s2);
         return projectVo3;
+    }
+
+    /**
+     * 应技提金额
+     * @return
+     */
+    public BigDecimal accruedAmount(BigDecimal desMoney){
+        BigDecimal multiply = desMoney.multiply(new BigDecimal(0.05));
+        BigDecimal divide = multiply.divide(new BigDecimal(1.06),2, BigDecimal.ROUND_HALF_UP);
+        return divide;
+    }
+    /**
+     * 建议计提金额
+     */
+    public BigDecimal proposedAmount(BigDecimal accruedAmount){
+        BigDecimal multiply = accruedAmount.multiply(new BigDecimal(0.8));
+        return multiply;
+    }
+
+    /**
+     * 余额
+     * @param accruedAmount
+     * @param proposedAmount
+     * @return
+     */
+    public BigDecimal surplus(BigDecimal accruedAmount,BigDecimal proposedAmount){
+        BigDecimal subtract = accruedAmount.subtract(proposedAmount);
+        return subtract;
+    }
+    /**
+     * 当前用户代办预算编制预算编制个数
+     */
+    public String budgetingCount(String id,String district){
+        String budgetingCount = projectMapper.budgetingCount(id,district);
+        return budgetingCount;
+    }
+
+    /**
+     * 当前用户代办进度款支付个数
+     * @param id
+     * @return
+     */
+    public String progressPaymentInformationCount(String id,String district){
+        return projectMapper.progressPaymentInformationCount(id,district);
+    }
+
+    /**
+     * 当前用户代办签证变更个数
+     * @param id
+     * @return
+     */
+    public String visaApplyChangeInformationCount(String id,String district){
+        return projectMapper.visaApplyChangeInformationCount(id,district);
+    }
+
+    /**
+     * 当前用户代办跟踪审计个数
+     * @param id
+     * @return
+     */
+    public String trackAuditInfoCount(String id,String district){
+        return projectMapper.trackAuditInfoCount(id,district);
+    }
+
+    /**
+     * 当前用户代办结算编制个数
+     * @param id
+     * @return
+     */
+    public String settleAccountsCount(String id,String district){
+        return projectMapper.settleAccountsCount(id,district);
+    }
+
+    /**
+     * 获取当前年份
+     */
+    public String getSysYear(){
+        Calendar date = Calendar.getInstance();
+        String year = String.valueOf(date.get(Calendar.YEAR));
+        return year;
+    }
+
+    /**
+     * 获取当前月份
+     */
+    public int getSysMouth(){
+        Calendar date = Calendar.getInstance();
+        int month = date.get(Calendar.MONTH) + 1;
+        return month;
+    }
+
+    /**
+     * 造价年表
+     * @param costVo2
+     * @return
+     */
+    public OneCensus2 costCensus(CostVo2 costVo2){
+        String sysYear = this.getSysYear();
+        //注入当前时间
+        costVo2.setYear(sysYear);
+        OneCensus2 oneCensus2 = projectMapper.costCensus(costVo2);
+        return oneCensus2;
+    }
+
+    /**
+     * 造价月表
+     * @param costVo2
+     * @return
+     */
+    public List<OneCensus2> costCensusList(CostVo2 costVo2){
+        List<OneCensus2> oneCensus2s = projectMapper.costCensusList(costVo2);
+        for (OneCensus2 oneCensus2 : oneCensus2s) {
+            Integer budget = oneCensus2.getBudget();
+            Integer track = oneCensus2.getTrack();
+            Integer visa = oneCensus2.getVisa();
+            Integer progresspayment = oneCensus2.getProgresspayment();
+            Integer settleaccounts = oneCensus2.getSettleaccounts();
+            Integer total =budget + track + visa + progresspayment + settleaccounts;
+            oneCensus2.setTotal(total);
+        }
+        return oneCensus2s;
+    }
+
+    public Integer yearTaskCount(CostVo2 costVo2) {
+        OneCensus2 oneCensus2 = projectMapper.costCensus(costVo2);
+        Integer budget = oneCensus2.getBudget();
+        Integer track = oneCensus2.getTrack();
+        Integer visa = oneCensus2.getVisa();
+        Integer progresspayment = oneCensus2.getProgresspayment();
+        Integer settleaccounts = oneCensus2.getSettleaccounts();
+        Integer total =budget + track + visa + progresspayment + settleaccounts;
+        return total;
+    }
+
+    public Integer mouthDesCount(CostVo2 costVo2) {
+        List<OneCensus> oneCensuses = projectMapper.censusList(costVo2);
+        OneCensus oneCensus = oneCensuses.get(0);
+        Integer municipalPipeline = oneCensus.getMunicipalPipeline();
+        Integer networkReconstruction = oneCensus.getNetworkReconstruction();
+        Integer newCommunity = oneCensus.getNewCommunity();
+        Integer secondaryWater = oneCensus.getSecondaryWater();
+        Integer commercialHouseholds = oneCensus.getCommercialHouseholds();
+        Integer waterResidents = oneCensus.getWaterResidents();
+        Integer administration = oneCensus.getAdministration();
+        Integer total = municipalPipeline + networkReconstruction + newCommunity + secondaryWater + commercialHouseholds + waterResidents + administration;
+        return total;
+    }
+
+    public Integer yearDesCount(CostVo2 costVo2) {
+        Integer total = 0;
+        List<OneCensus> oneCensuses = projectMapper.censusList(costVo2);
+        for (OneCensus oneCensus : oneCensuses) {
+            total +=oneCensus.getMunicipalPipeline();
+            total += oneCensus.getNetworkReconstruction();
+            total += oneCensus.getNewCommunity();
+            total += oneCensus.getSecondaryWater();
+            total += oneCensus.getCommercialHouseholds();
+            total += oneCensus.getWaterResidents();
+            total += oneCensus.getAdministration();
+        }
+        return total;
     }
 }

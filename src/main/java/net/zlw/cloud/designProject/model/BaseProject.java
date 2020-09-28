@@ -176,11 +176,11 @@ public class BaseProject{
     @Transient
     private BigDecimal desMoney; //设计费
     @Transient
-    private BigDecimal accrualMoney; //应计提金额
+    private Double accrualMoney; //应计提金额
     @Transient
-    private BigDecimal adviseMoney;//建议计提金额
+    private Double adviseMoney;//建议计提金额
     @Transient
-    private BigDecimal surplus;//余额
+    private Double surplus;//余额
 //    @Transient
 //    private String designer; //设计人
 //
