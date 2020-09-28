@@ -2,9 +2,15 @@ package net.zlw.cloud.designProject.controller;
 
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
+import net.tec.cloud.common.util.RestUtil;
+import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
+import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
+import net.zlw.cloud.index.model.MessageNotification;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
+import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -12,9 +18,9 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/disproject")
 public class ProjectController extends BaseController {
 
     @Resource
@@ -379,8 +385,9 @@ public class ProjectController extends BaseController {
         return projectService.desMoneySum(id);
     }
 
-    @GetMapping("/BuildSum/{id}")
-    public SumVo BuildSum(@PathVariable("id") String id){
+//    @GetMapping("/BuildSum/{id}")
+    @RequestMapping(value = "/api/disproject/BuildSum",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> BuildSum(@RequestParam(name = "id") String id){
         BigDecimal desMoneySum = projectService.desMoneySum(id);
         BigDecimal biddingPriceControlSum = projectService.biddingPriceControlSum(id);
         BigDecimal costTotalAmountSum = projectService.costTotalAmountSum(id);
@@ -392,6 +399,144 @@ public class ProjectController extends BaseController {
         sumVo.setCostTotalAmountSum(costTotalAmountSum);
         sumVo.setAmountCostAmountSum(amountCostAmountSum);
         sumVo.setOutsourceMoneySum(outsourceMoneySum);
-        return sumVo;
+        return RestUtil.success(sumVo);
+    }
+
+    @RequestMapping(value = "/api/disproject/messageList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> messageList(){
+        List<MessageNotification> messageNotifications = projectService.messageList(getLoginUser());
+        return RestUtil.success(messageNotifications);
+    }
+
+    @RequestMapping(value = "/api/disproject/censusList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> censusList(@RequestParam(name = "district") String district,@RequestParam(name = "startTime") String startTime,@RequestParam(name = "endTime") String endTime){
+        //getLoginUser().getId()
+        List<OneCensus> oneCensuses = projectService.OneCensusList(district, startTime, endTime,"user282");
+        String censusList = "[{\"companyName\":\"市政管道\"," +
+                                "\"imageAmmount\": [";
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList +=
+                    "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                            "\"truckAmmount\": \"" + oneCensus.getMunicipalPipeline()+"\"},";
+        }
+        censusList +=
+        "\"]" +
+                "}, {" +
+                "\"companyName\":\"管网改造\"," +
+                "\"imageAmmount\": [" ;
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus.getNetworkReconstruction()+"\"},";
+        }
+        censusList +=
+        "\"]" +
+                "}, {" +
+                "\"companyName\":\"新建小区\"," +
+                "\"imageAmmount\": [" ;
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList +=
+            "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus.getNewCommunity()+"\"},";
+        }
+        censusList +=
+        "\"]" +
+                "}, {" +
+                "\"companyName\":\"二次供水改造项目\"," +
+                "\"imageAmmount\": [" ;
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList +=
+                    "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus.getSecondaryWater()+"\"},";
+        }
+        censusList +=
+                "\"]" +
+                "}, {" +
+                "\"companyName\":\"工商户\"," +
+                "\"imageAmmount\": [" ;
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus.getCommercialHouseholds()+"\"},";
+        }
+        censusList +=
+                "\"]" +
+                "}, {" +
+                "\"companyName\":\"居民装接水\"," +
+                "\"imageAmmount\": [" ;
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus.getWaterResidents()+"\"},";
+        }
+        censusList +=
+                "\"]" +
+                "}, {" +
+                "\"companyName\": \"行政事业\"," +
+                "\"imageAmmount\": [";
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus.getAdministration()+"\"},";
+        }
+        censusList +=  "\"}]}]";
+        return RestUtil.success(censusList);
+    }
+
+    @RequestMapping(value = "/api/disproject/individualList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> individualList(IndividualVo individualVo){
+        individualVo.setId("user282");
+        PageInfo<BaseProject> projects = projectService.individualList(individualVo);
+        for (BaseProject project : projects.getList()) {
+            DesignInfo designInfo = projectService.designInfoByid(project.getId());
+            //设计费用展示
+            if(project.getDistrict()!="4"){
+                //设计费（安徽）
+                AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
+                if(anhuiMoneyinfo!=null){
+                    project.setDesMoney(anhuiMoneyinfo.getOfficialReceipts());
+                }
+            }else{
+                //设计费（吴江）
+                WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
+                if(wujiangMoneyInfo!=null){
+                    project.setDesMoney(wujiangMoneyInfo.getOfficialReceipts());
+                }
+            }
+            //造价费用
+            Budgeting budgeting = projectService.budgetingByid(project.getId());
+            project.setAmountCost(budgeting.getAmountCost());
+        }
+        return RestUtil.success(projects);
+    }
+
+
+    /**
+     * 工程项目查看
+     * @return
+     */
+    public ProjectVo3 projectSelect(String id){
+        BaseProject baseProject = projectService.BaseProjectByid(id);
+        DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
+        Budgeting budgeting = projectService.budgetingByid(baseProject.getId());
+        TrackAuditInfo trackAuditInfo = projectService.trackAuditInfoByid(baseProject.getId());
+        SettlementAuditInformation settlementAuditInformation = projectService.SettlementAuditInformationByid(baseProject.getId());
+        LastSettlementReview lastSettlementReview = projectService.lastSettlementReviewbyid(baseProject.getId());
+        ProjectVo3 projectVo3 = new ProjectVo3();
+        projectVo3.setBaseProject(baseProject);
+        projectVo3.setDesignInfo(designInfo);
+        projectVo3.setBudgeting(budgeting);
+        projectVo3.setTrackAuditInfo(trackAuditInfo);
+        projectVo3.setLastSettlementReview(lastSettlementReview);
+        projectVo3.setSettlementAuditInformation(settlementAuditInformation);
+
+        ProjectVo3 projectVo31 = projectService.progressPaymentInformationSum(baseProject.getId());
+
+        projectVo3.setNewcurrentPaymentInformation(projectVo31.getNewcurrentPaymentInformation());
+        projectVo3.setSumcurrentPaymentInformation(projectVo31.getSumcurrentPaymentInformation());
+        projectVo3.setCumulativePaymentTimes(projectVo31.getCumulativePaymentTimes());
+        projectVo3.setCurrentPaymentRatio(projectVo31.getCurrentPaymentRatio());
+
+        ProjectVo3 projectVo32 = projectService.visaApplyChangeInformationSum(baseProject.getId());
+        projectVo3.setAmountVisaChangeSum(projectVo32.getAmountVisaChangeSum());
+        projectVo3.setChangeCount(projectVo32.getChangeCount());
+        projectVo3.setContractAmount(projectVo32.getContractAmount());
+        return projectVo3;
     }
 }
