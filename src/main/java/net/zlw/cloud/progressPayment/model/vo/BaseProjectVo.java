@@ -59,6 +59,7 @@ public class BaseProjectVo {
     private String shouldBe;
     private String whetherAccount;
     private String auditNumber;
+
     private String remarkes;
     private String baseProjectId;
     private BigDecimal currentPaymentInformation;

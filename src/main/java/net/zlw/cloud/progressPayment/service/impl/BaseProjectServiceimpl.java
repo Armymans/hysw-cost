@@ -1,9 +1,12 @@
 package net.zlw.cloud.progressPayment.service.impl;
 
+import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.progressPayment.mapper.*;
 import net.zlw.cloud.progressPayment.model.*;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
+import net.zlw.cloud.progressPayment.model.vo.PageVo;
+import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
@@ -36,9 +39,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
      * 添加进度款信息
      *
      * @param baseProject 用户填写信息表
+     * @param loginUser
      */
     @Override
-    public void addProgress(BaseProjectVo baseProject) {
+    public void addProgress(BaseProjectVo baseProject, UserInfo loginUser) {
 
         //项目基本信息
         BaseProject project = findById(baseProject.getProjectNum());
@@ -70,6 +74,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         paymentInformation.setRemarkes(baseProject.getRemarkes());
         paymentInformation.setBaseProjectId(project.getId());
         paymentInformation.setId(UUID.randomUUID().toString().replace("-",""));
+        paymentInformation.setFounderId(loginUser.getId());
         progressPaymentInformationDao.insert(paymentInformation);
 
         if (baseProject != null && !baseProject.equals("")) {
@@ -133,11 +138,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
 
         Example example = new Example(ApplicationInformation.class);
-        Example.Criteria criteria = example.createCriteria().andEqualTo("baseProjectId", id);
+        Example.Criteria criteria = example.createCriteria().andEqualTo("progressPaymentId", id);
         ApplicationInformation applicationInformation = applicationInformationDao.selectOneByExample(example);
 
         Example example1 = new Example(ProgressPaymentTotalPayment.class);
-        example1.createCriteria().andEqualTo("baseProjectId", id);
+        example1.createCriteria().andEqualTo("progressPaymentId", id);
         ProgressPaymentTotalPayment totalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example1);
 
 
@@ -483,4 +488,35 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         return numberVo;
     }
+
+    @Override
+    public List<ProgressListVo> searchAllProgress(PageVo pageVo) {
+       return progressPaymentInformationDao.searchAllProgress(pageVo);
+    }
+
+    @Override
+    public void deleteProgress(String id) {
+        ProgressPaymentInformation progressPaymentInformation = new ProgressPaymentInformation();
+        progressPaymentInformation.setDelFlag("1");
+        progressPaymentInformation.setId(id);
+        progressPaymentInformationDao.updateByPrimaryKeySelective(progressPaymentInformation);
+
+        Example example = new Example(ProgressPaymentTotalPayment.class);
+        example.createCriteria().andEqualTo("progressPaymentId",id);
+        ProgressPaymentTotalPayment progressPaymentTotalPayment = new ProgressPaymentTotalPayment();
+        progressPaymentTotalPayment.setDelFlag("1");
+        progressPaymentTotalPaymentDao.updateByExampleSelective(progressPaymentTotalPayment,example);
+
+        Example example1 = new Example(ApplicationInformation.class);
+        example1.createCriteria().andEqualTo("progressPaymentId",id);
+        ApplicationInformation applicationInformation = new ApplicationInformation();
+        applicationInformation.setDelFlag("1");
+        applicationInformationDao.updateByExampleSelective(applicationInformation,example1);
+
+        Example example2 = new Example(AuditInfo.class);
+        example2.createCriteria().andEqualTo("baseProjectId",id);
+        auditInfoDao.deleteByExample(example2);
+    }
+
+
 }
