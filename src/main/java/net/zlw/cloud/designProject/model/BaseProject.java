@@ -145,9 +145,6 @@ public class BaseProject{
     @Column(name = "should_be")
     private String shouldBe; //营商0紧急 1不紧急
 
-    @Column(name = "whether_account")
-    private String whetherAccount; //是否到账 0是 1否
-
     @Column(name = "audit_number")
     private String auditNumber; //审核状态 1一审 2二审'
 
@@ -170,7 +167,6 @@ public class BaseProject{
     private String reviewerId;
     @Transient
     private String orsubmit;
-
     @Transient
     private BigDecimal amountCost; //造价金额
     @Transient
@@ -181,6 +177,7 @@ public class BaseProject{
     private Double adviseMoney;//建议计提金额
     @Transient
     private Double surplus;//余额
+
 //    @Transient
 //    private String designer; //设计人
 //

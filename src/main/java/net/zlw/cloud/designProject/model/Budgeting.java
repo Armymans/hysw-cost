@@ -1,12 +1,16 @@
 package net.zlw.cloud.designProject.model;
 
 
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 
 @Table(name = "budgeting")
+@Data
 public class Budgeting{
     @Id
     @Column(name = "id", unique = true, nullable = false, length = 60)
@@ -54,123 +58,22 @@ public class Budgeting{
     @Column(name = "del_flag")
     private String delFlag;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public BigDecimal getAmountCost() {
-        return amountCost;
-    }
-
-    public void setAmountCost(BigDecimal amountCost) {
-        this.amountCost = amountCost;
-    }
-
-    public String getBudgeting_people() {
-        return budgeting_people;
-    }
-
-    public void setBudgeting_people(String budgeting_people) {
-        this.budgeting_people = budgeting_people;
-    }
-
-    public String getAddedTaxAmount() {
-        return addedTaxAmount;
-    }
-
-    public void setAddedTaxAmount(String addedTaxAmount) {
-        this.addedTaxAmount = addedTaxAmount;
-    }
-
-    public String getBudgetingTime() {
-        return budgetingTime;
-    }
-
-    public void setBudgetingTime(String budgetingTime) {
-        this.budgetingTime = budgetingTime;
-    }
-
-    public String getAmountOutsourcing() {
-        return amountOutsourcing;
-    }
-
-    public void setAmountOutsourcing(String amountOutsourcing) {
-        this.amountOutsourcing = amountOutsourcing;
-    }
-
-    public String getReceiptTime() {
-        return receiptTime;
-    }
-
-    public void setReceiptTime(String receiptTime) {
-        this.receiptTime = receiptTime;
-    }
-
-    public String getBaseProjectId() {
-        return baseProjectId;
-    }
-
-    public void setBaseProjectId(String baseProjectId) {
-        this.baseProjectId = baseProjectId;
-    }
-
-    public String getRemarkes() {
-        return remarkes;
-    }
-
-    public void setRemarkes(String remarkes) {
-        this.remarkes = remarkes;
-    }
-
-    public String getContactPhone() {
-        return contactPhone;
-    }
-
-    public void setContactPhone(String contactPhone) {
-        this.contactPhone = contactPhone;
-    }
-
-    public String getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(String updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public String getFounderId() {
-        return founderId;
-    }
-
-    public void setFounderId(String founderId) {
-        this.founderId = founderId;
-    }
-
-    public String getFounderCompanyId() {
-        return founderCompanyId;
-    }
-
-    public void setFounderCompanyId(String founderCompanyId) {
-        this.founderCompanyId = founderCompanyId;
-    }
-
-    public String getDelFlag() {
-        return delFlag;
-    }
-
-    public void setDelFlag(String delFlag) {
-        this.delFlag = delFlag;
-    }
+    @Transient
+    private String monthTime;
+    @Transient
+    private String projectName; //项目名称
+    @Transient
+    private String aB;//A/B  1A 2B'
+    @Transient
+    private BigDecimal biddingPriceControl; //招标控制价
+    @Transient
+    private Double budgetingCost; //预算编制造价咨询金额
+    @Transient
+    private Double budgetingStandard; //预算编制标底咨询金额
+    @Transient
+    private Double budgetingBase; //预算编制咨询费计算基数
+    @Transient
+    private Double budgetingCommission; //预算编制技提
+    @Transient
+    private String district; //地区
 }

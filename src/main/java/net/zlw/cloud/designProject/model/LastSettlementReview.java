@@ -1,11 +1,15 @@
 package net.zlw.cloud.designProject.model;
 
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 
 @Table(name = "last_settlement_review")
+@Data
 public class LastSettlementReview {
     @Id
     @Column(name = "id", unique = true, nullable = false, length = 60)
@@ -70,4 +74,21 @@ public class LastSettlementReview {
 
     @Column(name = "base_project_id")
     private String baseProjectId;
+
+    @Column(name = "whether_account")
+    private String whetherAccount;
+
+    @Column(name = "account_id")
+    private String accountId;
+
+    @Transient
+    private String monthTime;  //月份
+    @Transient
+    private String district;  //地区
+    @Transient
+    private String projectName; //项目名
+    @Transient
+    private Double reviewNumberCost; //咨询费
+    @Transient
+    private Double Commission; //计提
 }
