@@ -93,7 +93,10 @@ public class ClearProject implements Serializable {
     @Column(name = "project_address")
     private String projectAddress;
 
-
+    @Transient
+    private String founderName;
+    @Transient
+    private String founderTime;
 
     private static final long serialVersionUID = 1L;
 }

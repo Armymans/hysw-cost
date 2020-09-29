@@ -1,45 +1,54 @@
 package net.zlw.cloud.progressPayment.controller;
 
+import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
+import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
+import net.zlw.cloud.progressPayment.model.vo.PageVo;
+import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.sql.ResultSet;
+import java.util.List;
+import java.util.Map;
 
-@RequestMapping("/progress")
+//@RequestMapping("/progress")
 @RestController
-public class ProgressPaymentController {
+public class ProgressPaymentController  extends BaseController {
     @Resource
     private BaseProjectService baseProjectService;
 
     //进度款新增
 //    @PostMapping("/addProgress")
     @RequestMapping(value = "/progress/addProgress",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public String addProgress( BaseProjectVo baseProject){
+    public Map<String,Object> addProgress(BaseProjectVo baseProject){
         try {
-            baseProjectService.addProgress(baseProject);
+            baseProjectService.addProgress(baseProject,getLoginUser());
         } catch (Exception e) {
             e.printStackTrace();
-            return "添加失败";
+            return RestUtil.error("失败");
         }
-        return "添加成功";
+        return RestUtil.success("成功");
     }
     //根据id查询进度款
-    @GetMapping("/seachProgressById/{id}")
-    public BaseProjectVo seachProgressById(@PathVariable(name = "id") String id){
+//    @GetMapping("/seachProgressById/{id}")
+    @RequestMapping(value = "/progress/seachProgressById",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> seachProgressById(@RequestParam(name = "id") String id){
         try {
             BaseProjectVo baseProjectVo = baseProjectService.seachProgressById(id);
-            System.out.println(baseProjectVo);
-            return baseProjectVo;
+            return RestUtil.success(baseProjectVo);
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return RestUtil.error();
         }
     }
     //编辑
-    @PostMapping("/updateProgress")
-    public String updateProgress(@RequestBody BaseProjectVo baseProjectVo, @RequestParam(name = "page") String page){
+//    @PostMapping("/updateProgress")
+    @RequestMapping(value = "/progress/updateProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public String updateProgress(BaseProjectVo baseProjectVo, @RequestParam(name = "page") String page){
         try {
             baseProjectService.updateProgress(baseProjectVo);
             return "编辑成功";
@@ -47,5 +56,24 @@ public class ProgressPaymentController {
             e.printStackTrace();
             return "编辑失败";
         }
+    }
+    //查询进度款列表
+    @RequestMapping(value = "/progress/searchAllProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> searchAllProgress(PageVo pageVo){
+        System.out.println(pageVo);
+       List<ProgressListVo> list =  baseProjectService.searchAllProgress(pageVo);
+       return RestUtil.success(list);
+    }
+    //删除进度款
+    @RequestMapping(value = "/progress/deleteProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> deleteProgress(@RequestParam(name = "id") String id){
+        baseProjectService.deleteProgress(id);
+        return RestUtil.success("删除成功");
+    }
+    //进度款批量审核
+    @RequestMapping(value = "/progress/batchReview",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> batchReview(BatchReviewVo batchReviewVo){
+        baseProjectService.batchReview(batchReviewVo);
+        return RestUtil.success("审核完毕");
     }
 }

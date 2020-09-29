@@ -119,8 +119,18 @@ public class ClearProjectService{
             }
 
 
+            if(clearProject.getBudgetingId() != null){
+                Budgeting budgeting = budgetingMapper.findById(clearProject.getBudgetingId());
+
+                BaseProject baseProject = baseProjectMapper.fingById(budgeting.getBaseProjectId());
+
+                clearProject.setProjectAddress(baseProject.getDistrict());
+            }
+
             // 清标人
 //            String userId = userInfo.getId();
+
+//            clearProject.setFounderName(userInfo.getUsername());
 
         }
 
