@@ -25,15 +25,15 @@ public class DepManageService {
 
     public List<DepManage> findAll() {
         List<DepManage>  sql2 = depManageMapper.selectAllByStatus();
-        if (sql2.size() > 0){
-            for (DepManage depManage : sql2) {
-                Example example = new Example(DepManage.class);
-                example.createCriteria().andEqualTo("depId");
-                List<MemberManage> depId = manageMapper.selectByExample(example);
-                depManage.setMemberManages(depId);
-            }
-
-        }
+//        if (sql2.size() > 0){
+//            for (DepManage depManage : sql2) {
+//                Example example = new Example(DepManage.class);
+//                example.createCriteria().andEqualTo("depId");
+//                List<MemberManage> depId = manageMapper.selectByExample(example);
+//                depManage.setMemberManages(depId);
+//            }
+//
+//        }
         return sql2;
     }
 }
