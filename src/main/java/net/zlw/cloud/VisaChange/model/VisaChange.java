@@ -8,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+
+//上下家签证/变更信息
 @Data
 @Table(name = "visa_change_information")
 public class VisaChange implements Serializable {
@@ -55,6 +57,8 @@ public class VisaChange implements Serializable {
   private String status;
   @Column(name = "proportion_contract")
   private String proportionContract;
+  @Column(name = "change_num")
+  private String changeNum;
 
 
 

@@ -8,10 +8,10 @@ import javax.persistence.Table;
 
 /**
  *
- * 上下家签证/变更申请表
+ * 上下家签证/变更信息表
  * Created by xulei on 2020/9/22.
  */
-@Table(name = "visa_change_information")
+@Table(name = "visa_apply_change_information")
 @Data
 public class VisaChangeInformation {
 
@@ -30,8 +30,8 @@ public class VisaChangeInformation {
     private String createTime;
     @Column(name = "update_time")
     private String updateTime;
-    @Column(name = "fouder_name")
-    private String fouderName;
+    @Column(name = "fouder_id")
+    private String fouderId;
     @Column(name = "fouder_company")
     private String fouderCompany;
     @Column(name = "state")
