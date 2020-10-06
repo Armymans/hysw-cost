@@ -1,6 +1,10 @@
 package net.zlw.cloud.designProject.service;
 
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import io.swagger.models.auth.In;
 import net.zlw.cloud.VisaApplyChangeInformation.mapper.VisaApplyChangeInformationMapper;
 import net.zlw.cloud.VisaApplyChangeInformation.model.VisaApplyChangeInformation;
 import net.zlw.cloud.VisaApplyChangeInformation.model.VisaChangeInformation;
@@ -75,6 +79,8 @@ public class ProjectSumService {
     private AnhuiMoneyinfoMapper anhuiMoneyinfoMapper;
     @Resource
     private DesignInfoMapper designInfoMapper;
+    @Resource
+    private DesignChangeInfoMapper designChangeInfoMapper;
     @Resource
     private ProgressPaymentInformationDao progressPaymentInformationDao;
     @Resource
@@ -773,5 +779,220 @@ public class ProjectSumService {
 
     public Integer prjectCensusRast(Integer A,Integer B){
         return (B-A)/B*100;
+    }
+
+    /**
+     * 总收入构成
+     * @param costVo2
+     * @return
+     */
+    public OneCensus projectIncomeCensus(CostVo2 costVo2){
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            OneCensus oneCensus = projectMapper.projectIncomeCensus(costVo2);
+            return oneCensus;
+        }else{
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            costVo2.setYear(year+"");
+            OneCensus oneCensus = projectMapper.projectIncomeCensus(costVo2);
+            return oneCensus;
+        }
+    }
+
+    /**
+     * 总支出构成
+     * @param costVo2
+     * @return
+     */
+    public OneCensus projectExpenditureCensus(CostVo2 costVo2) {
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            OneCensus oneCensus = projectMapper.projectExpenditureCensus(costVo2);
+            return oneCensus;
+        }else{
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            costVo2.setStartTime(year + "-01-01");
+            costVo2.setEndTime(year + "-12-31");
+            OneCensus oneCensus = projectMapper.projectExpenditureCensus(costVo2);
+            return oneCensus;
+        }
+    }
+
+    /**
+     * 支出分析计算
+     * @param costVo2
+     * @return
+     */
+    public List<OneCensus3> expenditureAnalysis(CostVo2 costVo2){
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            List<OneCensus3> oneCensus3s = projectMapper.expenditureAnalysis(costVo2);
+            return oneCensus3s;
+        }else{
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            costVo2.setStartTime(year + "-01-01");
+            costVo2.setEndTime(year + "-12-31");
+            List<OneCensus3> oneCensus3s = projectMapper.expenditureAnalysis(costVo2);
+            return oneCensus3s;
+        }
+    }
+
+    public List<BaseProject> BaseProjectExpenditureList(CostVo2 costVo2) {
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            List<BaseProject> baseProjects = projectMapper.BaseProjectExpenditureList(costVo2);
+            return baseProjects;
+        }else{
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            costVo2.setStartTime(year + "-01-01");
+            costVo2.setEndTime(year + "-12-31");
+            List<BaseProject> baseProjects = projectMapper.BaseProjectExpenditureList(costVo2);
+            return baseProjects;
+        }
+    }
+
+    public PageInfo<BaseProject> BaseProjectInfoCensus(CostVo2 costVo2) {
+        PageHelper.startPage(costVo2.getPageNum(),costVo2.getPageSize());
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            List<BaseProject> baseProjects = projectMapper.BaseProjectInfoCensus(costVo2);
+            Double total = 0.00;
+            for (BaseProject baseProject : baseProjects) {
+                List<VisaChange> visaChanges = this.visaChangesById(baseProject.getId());
+                for (VisaChange visaChange : visaChanges) {
+                    total += visaChange.getAmountVisaChange();
+                }
+                baseProject.setVisaMoney(new BigDecimal(total));
+            }
+            PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
+            return baseProjectPageInfo;
+        }else{
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            costVo2.setStartTime(year + "-01-01");
+            costVo2.setEndTime(year + "-12-31");
+            List<BaseProject> baseProjects = projectMapper.BaseProjectInfoCensus(costVo2);
+            Double total = 0.00;
+            for (BaseProject baseProject : baseProjects) {
+                List<VisaChange> visaChanges = this.visaChangesById(baseProject.getId());
+                for (VisaChange visaChange : visaChanges) {
+                    total += visaChange.getAmountVisaChange();
+                }
+                baseProject.setVisaMoney(new BigDecimal(total));
+            }
+            PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
+            return baseProjectPageInfo;
+        }
+    }
+
+    public List<VisaChange> visaChangesById(String id){
+        Example example = new Example(VisaChange.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseProjectId",id);
+        List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
+        return visaChanges;
+    }
+
+    /**
+     * 计算设计项目总数
+     * @param costVo2
+     * @return
+     */
+    public Integer designInfoCount(CostVo2 costVo2){
+        return designInfoMapper.designInfoCount(costVo2);
+    }
+
+    /**
+     * 计算设计变更总数
+     * @param costVo2
+     * @return
+     */
+    public Integer designChangeInfoCount(CostVo2 costVo2){
+        return designChangeInfoMapper.designChangeInfoCount(costVo2);
+    }
+
+    /**
+     * 设计变更统计
+     * @param costVo2
+     * @return
+     */
+    public PageInfo<BaseProject> projectDesignChangeList(CostVo2 costVo2){
+        PageHelper.startPage(costVo2.getPageNum(),costVo2.getPageSize());
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            List<BaseProject> baseProjects = projectMapper.BaseProjectDesignList(costVo2);
+            PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
+            return baseProjectPageInfo;
+        }else{
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            costVo2.setStartTime(year + "-01-01");
+            costVo2.setEndTime(year + "-12-31");
+            List<BaseProject> baseProjects = projectMapper.BaseProjectDesignList(costVo2);
+            PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
+            return baseProjectPageInfo;
+        }
+    }
+
+    /**
+     * 进度款支付列表
+     * @param costVo2
+     * @return
+     */
+    public PageInfo<BaseProject> progressPaymentList(CostVo2 costVo2){
+        PageHelper.startPage(costVo2.getPageNum(),costVo2.getPageSize());
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            List<BaseProject> baseProjects = projectMapper.progressPaymentList(costVo2);
+            for (BaseProject baseProject : baseProjects) {
+                Double accumulativePaymentProportion = baseProject.getAccumulativePaymentProportion();
+                Double surplus = 100 - accumulativePaymentProportion;
+                if(surplus<0){
+                    baseProject.setSurplusPaymentProportion(0.00);
+                }else{
+                    baseProject.setSurplusPaymentProportion(surplus);
+                }
+            }
+            PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
+            return baseProjectPageInfo;
+        }else{
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            costVo2.setStartTime(year + "-01-01");
+            costVo2.setEndTime(year + "-12-31");
+            List<BaseProject> baseProjects = projectMapper.progressPaymentList(costVo2);
+            for (BaseProject baseProject : baseProjects) {
+                Double accumulativePaymentProportion = baseProject.getAccumulativePaymentProportion();
+                Double surplus = 100 - accumulativePaymentProportion;
+                if(surplus<0){
+                    baseProject.setSurplusPaymentProportion(0.00);
+                }else{
+                    baseProject.setSurplusPaymentProportion(surplus);
+                }
+            }
+            PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
+            return baseProjectPageInfo;
+        }
+    }
+    public PageInfo<BaseProject> projectVisaChangeList(CostVo2 costVo2){
+        PageHelper.startPage(costVo2.getPageNum(),costVo2.getPageSize());
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            List<BaseProject> baseProjects = projectMapper.projectVisaChangeList(costVo2);
+            PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
+            return baseProjectPageInfo;
+        }else{
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            costVo2.setStartTime(year + "-01-01");
+            costVo2.setEndTime(year + "-12-31");
+            List<BaseProject> baseProjects = projectMapper.projectVisaChangeList(costVo2);
+            PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
+            return baseProjectPageInfo;
+        }
+    }
+
+    public Double VisaChangeCount(CostVo2 costVo2){
+        return projectMapper.VisaChangeCount(costVo2);
+    }
+
+    public Double VisaChangeMoney(CostVo2 costVo2){
+        return projectMapper.VisaChangeMoney(costVo2);
     }
 }

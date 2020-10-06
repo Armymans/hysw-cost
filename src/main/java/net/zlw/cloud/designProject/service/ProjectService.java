@@ -780,6 +780,8 @@ public class ProjectService {
         }
     }
 
+    @Resource
+    private ProjectSumService projectSumService;
     /**
      * 添加安徽信息
      * @param anhuiMoneyinfo
@@ -788,6 +790,13 @@ public class ProjectService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Example example = new Example(AnhuiMoneyinfo.class);
         Example.Criteria c = example.createCriteria();
+        IncomeInfo incomeInfo = new IncomeInfo();
+
+        anhuiMoneyinfo.setFounderId(loginUser.getId());
+        anhuiMoneyinfo.setCompanyId(loginUser.getCompanyId());
+        anhuiMoneyinfo.setStatus("0");
+        anhuiMoneyinfo.setCreateTime(simpleDateFormat.format(new Date()));
+
         //根据设计表id 查询数据取出代收金额
         c.andEqualTo("baseProjectId",anhuiMoneyinfo.getBaseProjectId());
         if(anhuiMoneyinfo.getPayTerm() == "1"){
@@ -812,15 +821,22 @@ public class ProjectService {
                 }
             }else{
                 anhuiMoneyinfo.setCollectionMoney(collectionMoney+",");
+                //保存收入表信息
+                incomeInfo.setBaseProjectId(anhuiMoneyinfo.getBaseProjectId());
+                incomeInfo.setDesignMoney(new BigDecimal(collectionMoney));
+                projectSumService.addIncomeInfo(incomeInfo);
             }
             anhuiMoneyinfoMapper.updateByPrimaryKeySelective(anhuiMoneyinfo);
+        }else{
+            //如果是实收 则直接添加到表中
+            anhuiMoneyinfoMapper.insert(anhuiMoneyinfo);
+            designInfoMapper.updateFinalAccount(anhuiMoneyinfo.getBaseProjectId());
+
+            //同时将设计费添加到总收入表中
+            incomeInfo.setBaseProjectId(anhuiMoneyinfo.getBaseProjectId());
+            incomeInfo.setDesignMoney(anhuiMoneyinfo.getOfficialReceipts());
+            projectSumService.addIncomeInfo(incomeInfo);
         }
-        anhuiMoneyinfo.setFounderId(loginUser.getId());
-        anhuiMoneyinfo.setCompanyId(loginUser.getCompanyId());
-        anhuiMoneyinfo.setStatus("0");
-        anhuiMoneyinfo.setCreateTime(simpleDateFormat.format(new Date()));
-        anhuiMoneyinfoMapper.insert(anhuiMoneyinfo);
-        designInfoMapper.updateFinalAccount(anhuiMoneyinfo.getBaseProjectId());
     }
 
     /**
@@ -834,6 +850,13 @@ public class ProjectService {
         Example.Criteria c = example.createCriteria();
         //根据设计表id 查询数据取出代收金额
         c.andEqualTo("baseProjectId",wujiangMoneyInfo.getBaseProjectId());
+
+        IncomeInfo incomeInfo = new IncomeInfo();
+
+        wujiangMoneyInfo.setFounderId(loginUser.getId());
+        wujiangMoneyInfo.setCompanyId(loginUser.getCompanyId());
+        wujiangMoneyInfo.setStatus("0");
+        wujiangMoneyInfo.setCreateTime(simpleDateFormat.format(new Date()));
 
         if(wujiangMoneyInfo.getPayTerm() == "1"){
             //获取应收金额
@@ -857,16 +880,22 @@ public class ProjectService {
                 }
             }else{
                 wujiangMoneyInfo.setCollectionMoney(collectionMoney+",");
+
+                //保存收入表信息
+                incomeInfo.setBaseProjectId(wujiangMoneyInfo.getBaseProjectId());
+                incomeInfo.setDesignMoney(new BigDecimal(collectionMoney));
+                projectSumService.addIncomeInfo(incomeInfo);
             }
             wujiangMoneyInfoMapper.updateByPrimaryKeySelective(wujiangMoneyInfo);
-        }
+        }else{
+            wujiangMoneyInfoMapper.insert(wujiangMoneyInfo);
+            designInfoMapper.updateFinalAccount(wujiangMoneyInfo.getBaseProjectId());
 
-        wujiangMoneyInfo.setFounderId(loginUser.getId());
-        wujiangMoneyInfo.setCompanyId(loginUser.getCompanyId());
-        wujiangMoneyInfo.setStatus("0");
-        wujiangMoneyInfo.setCreateTime(simpleDateFormat.format(new Date()));
-        wujiangMoneyInfoMapper.insert(wujiangMoneyInfo);
-        designInfoMapper.updateFinalAccount(wujiangMoneyInfo.getBaseProjectId());
+            //同时将设计费添加到总收入表中
+            incomeInfo.setBaseProjectId(wujiangMoneyInfo.getBaseProjectId());
+            incomeInfo.setDesignMoney(wujiangMoneyInfo.getOfficialReceipts());
+            projectSumService.addIncomeInfo(incomeInfo);
+        }
     }
 
     /**

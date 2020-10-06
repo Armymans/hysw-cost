@@ -486,7 +486,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and\n" +
                     "(\n" +
                     "project_num like CONCAT('%',#{keyword},'%') or\n" +
-                    "project_name like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "project_name like  CONCAT('%',#{keyword},'%')" +
                     ")"
     )
     List<BaseProject> projectFlow(CostVo2 costVo2);
@@ -505,11 +505,11 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "\tfrom\n" +
                     "\tbase_project s1\n" +
                     "\twhere\n" +
-                    "\t(district = '' or '' = '')\n" +
+                    "\t(district = #{district} or #{district} = '')\n" +
                     "\tand\n" +
-                    "\tcreate_time >= ''\n" +
+                    "\tcreate_time >= #{startTime}\n" +
                     "\tand\n" +
-                    "\t(create_time <= '' or '' = '')\n" +
+                    "\t(create_time <= #{endTime} or #{endTime} = '')\n" +
                     "\tGROUP BY\n" +
                     "\tyear(s1.create_time),\n" +
                     "\tMONTH(s1.create_time)\n" +
@@ -519,4 +519,310 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "\t(monthTime = #{month} or #{month}= '')"
     )
     List<CostVo3> prjectCensus(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "YEAR(s2.create_time) yeartime,\n" +
+                    "sum(design_category = 1) municipalPipeline,\n" +
+                    "sum(design_category = 2) networkReconstruction,\n" +
+                    "sum(design_category = 3) newCommunity,\n" +
+                    "sum(design_category = 4) secondaryWater,\n" +
+                    "sum(design_category = 5) commercialHouseholds,\n" +
+                    "sum(design_category = 6) waterResidents,\n" +
+                    "sum(design_category = 7) administration\n" +
+                    "FROM \n" +
+                    "income_info s1,\n" +
+                    "base_project s2\n" +
+                    "where\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "and\n" +
+                    "(s2.district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s2.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s2.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "s2.del_flag = '0'\n" +
+                    "GROUP BY\n" +
+                    "YEAR(s2.create_time)\n" +
+                    "HAVING\n" +
+                    "(yeartime = #{year} or #{year} = '')"
+    )
+    OneCensus projectIncomeCensus(CostVo2 costVo2);
+    @Select(
+            "SELECT\n" +
+                    "sum(design_category = 1) municipalPipeline,\n" +
+                    "sum(design_category = 2) networkReconstruction,\n" +
+                    "sum(design_category = 3) newCommunity,\n" +
+                    "sum(design_category = 4) secondaryWater,\n" +
+                    "sum(design_category = 5) commercialHouseholds,\n" +
+                    "sum(design_category = 6) waterResidents,\n" +
+                    "sum(design_category = 7) administration\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN design_info s2 ON s1.id = s2.base_project_id\n" +
+                    "LEFT JOIN budgeting s3 on s1.id = s3.base_project_id\n" +
+                    "LEFT JOIN progress_payment_information s4 ON s1.id = s4.base_project_id\n" +
+                    "LEFT JOIN visa_change_information s5 ON s1.id = s5.base_project_id\n" +
+                    "LEFT JOIN last_settlement_review s6 ON s1.id = s6.base_project_id\n" +
+                    "LEFT JOIN settlement_audit_information s7 ON s1.id = s7.base_project_id\n" +
+                    "LEFT JOIN track_audit_info s8 ON s1.id = s8.base_project_id\n" +
+                    "LEFT JOIN achievements_info s9 ON s1.id = s9.base_project_id\n" +
+                    "where\n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "(s1.district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time <= #{endTime} or #{endTime} = '')"
+    )
+    OneCensus projectExpenditureCensus(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "YEAR(s1.create_time) yearTime,\n" +
+                    "MONTH(s1.create_time) monthTime,\n" +
+                    "sum(\n" +
+                    "IFNULL(s2.outsource_money,0)+\n" +
+                    "IFNULL(s3.amount_outsourcing,0)+\n" +
+                    "IFNULL(s4.amount_outsourcing,0)+\n" +
+                    "IFNULL(s5.outsourcing_amount,0)+\n" +
+                    "IFNULL(s6.amount_outsourcing,0)+\n" +
+                    "IFNULL(s7.amount_outsourcing,0)+\n" +
+                    "IFNULL(s8.outsource_money,0)\n" +
+                    ") outMoney,\n" +
+                    "sum(\n" +
+                    "IFNULL(s9.desgin_achievements,0)+\n" +
+                    "IFNULL(s9.budget_achievements,0)+\n" +
+                    "IFNULL(s9.upsubmit_achievements,0)+\n" +
+                    "IFNULL(s9.downsubmit_achievements,0)+\n" +
+                    "IFNULL(s9.truck_achievements,0)\n" +
+                    ") advMoney\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN design_info s2 ON s1.id = s2.base_project_id\n" +
+                    "LEFT JOIN budgeting s3 on s1.id = s3.base_project_id\n" +
+                    "LEFT JOIN progress_payment_information s4 ON s1.id = s4.base_project_id\n" +
+                    "LEFT JOIN visa_change_information s5 ON s1.id = s5.base_project_id\n" +
+                    "LEFT JOIN last_settlement_review s6 ON s1.id = s6.base_project_id\n" +
+                    "LEFT JOIN settlement_audit_information s7 ON s1.id = s7.base_project_id\n" +
+                    "LEFT JOIN track_audit_info s8 ON s1.id = s8.base_project_id\n" +
+                    "LEFT JOIN achievements_info s9 ON s1.id = s9.base_project_id\n" +
+                    "where\n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "(s1.district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "GROUP BY\n" +
+                    "YEAR(s1.create_time),\n" +
+                    "MONTH(s1.create_time)"
+    )
+    List<OneCensus3> expenditureAnalysis(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "s1.id,\n" +
+                    "s1.cea_num,\n" +
+                    "s1.project_name,\n" +
+                    "s1.district,\n" +
+                    "s1.design_category,\n" +
+                    "s6.review_number,\n" +
+                    "s7.authorized_number,\n" +
+                    "sum(\n" +
+                    "IFNULL(s2.outsource_money,0)+\n" +
+                    "IFNULL(s3.amount_outsourcing,0)+\n" +
+                    "IFNULL(s4.amount_outsourcing,0)+\n" +
+                    "IFNULL(s5.outsourcing_amount,0)+\n" +
+                    "IFNULL(s6.amount_outsourcing,0)+\n" +
+                    "IFNULL(s7.amount_outsourcing,0)+\n" +
+                    "IFNULL(s8.outsource_money,0)\n" +
+                    ") outMoney,\n" +
+                    "sum(\n" +
+                    "IFNULL(s9.desgin_achievements,0)+\n" +
+                    "IFNULL(s9.budget_achievements,0)+\n" +
+                    "IFNULL(s9.upsubmit_achievements,0)+\n" +
+                    "IFNULL(s9.downsubmit_achievements,0)+\n" +
+                    "IFNULL(s9.truck_achievements,0)\n" +
+                    ") advMoney\n" +
+                    "from\n" +
+                    "base_project s1 LEFT JOIN design_info s2 ON s1.id = s2.base_project_id\n" +
+                    "LEFT JOIN budgeting s3 on s1.id = s3.base_project_id\n" +
+                    "LEFT JOIN progress_payment_information s4 ON s1.id = s4.base_project_id\n" +
+                    "LEFT JOIN visa_change_information s5 ON s1.id = s5.base_project_id\n" +
+                    "LEFT JOIN last_settlement_review s6 ON s1.id = s6.base_project_id\n" +
+                    "LEFT JOIN settlement_audit_information s7 ON s1.id = s7.base_project_id\n" +
+                    "LEFT JOIN track_audit_info s8 ON s1.id = s8.base_project_id\n" +
+                    "LEFT JOIN achievements_info s9 ON s1.id = s9.base_project_id\n" +
+                    "where\n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "(s1.district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "GROUP BY\n" +
+                    "s1.id\n"
+    )
+    List<BaseProject> BaseProjectExpenditureList(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "s1.id,\n" +
+                    "s1.cea_num,\n" +
+                    "s1.project_name,\n" +
+                    "s1.district,\n" +
+                    "s2.amount_cost amountCost,\n" +
+                    "s3.cost_total_amount costTotalAmount,\n" +
+                    "s4.bidding_price_control biddingPriceControl,\n" +
+                    "s5.total_payment_amount totalPaymentAmount,\n" +
+                    "s6.review_number reviewNumber,\n" +
+                    "s7.authorized_number authorizedNumber\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN budgeting s2 ON s1.id = s2.base_project_id\n" +
+                    "LEFT JOIN cost_preparation s3 ON s1.id = s3.base_project_id\n" +
+                    "LEFT JOIN very_establishment s4 ON s1.id = s4.base_project_id\n" +
+                    "LEFT JOIN progress_payment_total_payment s5 ON s1.id = s5.base_project_id\n" +
+                    "LEFT JOIN last_settlement_review s6 ON s1.id = s6.base_project_id\n" +
+                    "LEFT JOIN settlement_audit_information s7 ON s1.id = s7.base_project_id\n" +
+                    "where\n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "(s1.district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time <= #{endTime} or #{endTime} = '')" +
+                    "and\n" +
+                    "(\n" +
+                    "cea_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "project_name  like  CONCAT('%',#{keyword},'%')  \n" +
+                    ")"
+    )
+    List<BaseProject> BaseProjectInfoCensus(CostVo2 costVo2);
+
+    @Select(
+            "select \n" +
+                    "s2.id,\n" +
+                    "s2.cea_num,\n" +
+                    "s2.project_num,\n" +
+                    "s2.project_name,\n" +
+                    "s2.design_category,\n" +
+                    "s2.district,\n" +
+                    "s3.designer,\n" +
+                    "s3.design_change_time designChangeTime\n" +
+                    "from\n" +
+                    "design_info s1,\n" +
+                    "base_project s2,\n" +
+                    "design_change_info s3\n" +
+                    "where\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "and\n" +
+                    "s1.id = s3.design_info_id\n" +
+                    "and\n" +
+                    "(district = #{district} or #{district} =  '')\n" +
+                    "and\n" +
+                    "s3.design_change_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s3.design_change_time <= #{endTime} or #{endTime} = '')\t\n" +
+                    "and\n" +
+                    "(\n" +
+                    "s2.cea_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "s2.project_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "s2.project_name like  CONCAT('%',#{keyword},'%') or\n" +
+                    "s3.designer like  CONCAT('%',#{keyword},'%') \n" +
+                    ")"
+    )
+    List<BaseProject> BaseProjectDesignList(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "s1.id,\n" +
+                    "s1.project_num,\n" +
+                    "s1.project_name,\n" +
+                    "s1.design_category,\n" +
+                    "s1.district,\n" +
+                    "IFNULL(s2.total_payment_amount,0) totalPaymentAmount,\n" +
+                    "IFNULL(s2.accumulative_payment_proportion,0) accumulativePaymentProportion\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN progress_payment_total_payment s2 ON s1.id = s2.base_project_id\n" +
+                    "WHERE\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "(\n" +
+                    "project_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "project_name  like  CONCAT('%',#{keyword},'%') \n" +
+                    ")"
+    )
+    List<BaseProject> progressPaymentList(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "s1.id,\n" +
+                    "s1.project_num,\n" +
+                    "s1.project_name,\n" +
+                    "s1.design_category,\n" +
+                    "s1.district,\n" +
+                    "s2.amount_visa_change,\n" +
+                    "s2.contract_amount,\n" +
+                    "s2.compile_time\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN visa_change_information s2 ON s1.id = s2.base_project_id\n" +
+                    "WHERE\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s2.compile_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s2.compile_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "(\n" +
+                    "project_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "project_name  like  CONCAT('%',#{keyword},'%') \n" +
+                    ")"
+    )
+    List<BaseProject> projectVisaChangeList(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "COUNT(*)\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN visa_change_information s2 ON s1.id = s2.base_project_id\n" +
+                    "WHERE\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s2.compile_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s2.compile_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "(\n" +
+                    "project_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "project_name  like  CONCAT('%',#{keyword},'%') \n" +
+                    ")"
+    )
+    Double VisaChangeCount(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "SUM(s2.amount_visa_change)\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN visa_change_information s2 ON s1.id = s2.base_project_id\n" +
+                    "WHERE\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s2.compile_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s2.compile_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "(\n" +
+                    "project_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "project_name  like  CONCAT('%',#{keyword},'%') \n" +
+                    ")"
+    )
+    Double VisaChangeMoney(CostVo2 costVo2);
 }

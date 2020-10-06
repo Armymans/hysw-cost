@@ -11,4 +11,6 @@ public class CostVo2 {
     private String keyword;
     private String year;
     private String month;
+    private Integer pageNum;
+    private Integer pageSize;
 }

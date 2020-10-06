@@ -1,5 +1,6 @@
 package net.zlw.cloud.designProject.mapper;
 
+import net.zlw.cloud.designProject.model.CostVo2;
 import net.zlw.cloud.designProject.model.DesignChangeInfo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -52,4 +53,21 @@ public interface DesignChangeInfoMapper extends Mapper<DesignChangeInfo> {
                     "design_info_id = #{id}"
     )
     List<DesignChangeInfo> designChangeInfoByid(@Param("id") String id);
+
+
+    @Select(
+            "select \n" +
+                    "count(*)\n" +
+                    "from\n" +
+                    "design_info s1,\n" +
+                    "base_project s2,\n" +
+                    "design_change_info s3\n" +
+                    "where\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "and\n" +
+                    "s1.id = s3.design_info_id\n" +
+                    "and\n" +
+                    "(district = #{district} or #{district} =  '')"
+    )
+    Integer designChangeInfoCount(CostVo2 costVo2);
 }

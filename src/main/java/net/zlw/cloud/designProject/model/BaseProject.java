@@ -178,6 +178,36 @@ public class BaseProject{
     @Transient
     private Double surplus;//余额
 
+    @Transient
+    private BigDecimal reviewNumber;  //送审数
+    @Transient
+    private BigDecimal authorizedNumber; //审定数
+    @Transient
+    private BigDecimal outMoney; //委外支出
+    @Transient
+    private BigDecimal advMoney; //绩效
+    @Transient
+    private BigDecimal costTotalAmount;  //成本总金额
+    @Transient
+    private BigDecimal biddingPriceControl;  //招标控制价
+    @Transient
+    private BigDecimal totalPaymentAmount; //进度款累计
+    @Transient
+    private BigDecimal visaMoney; //签证变更情况
+    @Transient
+    private String designChangeTime; //设计时间
+    @Transient
+    private String designer; //设计时间
+    @Transient
+    private Double accumulativePaymentProportion; //实付进度款比例
+    @Transient
+    private Double surplusPaymentProportion;//剩余进度款比例
+    @Transient
+    private Double amountVisaChange; //变更金额
+    @Transient
+    private Double contractAmount; //合同金额
+    @Transient
+    private String compileTime;
 //    @Transient
 //    private String designer; //设计人
 //

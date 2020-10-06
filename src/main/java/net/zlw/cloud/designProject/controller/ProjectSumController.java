@@ -2,6 +2,7 @@ package net.zlw.cloud.designProject.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
@@ -374,5 +375,156 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(map);
     }
 
-    
+    /**
+     * 总收入构成
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/projectIncomeCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object>projectIncomeCensus(CostVo2 costVo2){
+        OneCensus oneCensus = projectSumService.projectIncomeCensus(costVo2);
+        String josn = "";
+        if(oneCensus!=null){
+            josn =
+                    "[" +
+                            "{\"value1\":"+oneCensus.getMunicipalPipeline()+",\"name1\":\"市政管道\"}," +
+                            "{\"value1\":"+oneCensus.getNetworkReconstruction()+",name1:\"管网改造\"}," +
+                            "{\"value1\":"+oneCensus.getNewCommunity()+",name1:\"新建小区\"}," +
+                            "{\"value1\":"+oneCensus.getSecondaryWater()+",name1:\"二次供水类型\"}," +
+                            "{\"value1\":"+oneCensus.getCommercialHouseholds()+",name1:\"工商户\"}," +
+                            "{\"value1\":"+oneCensus.getWaterResidents()+",name1:\"居民装接水\"}," +
+                            "{\"value1\":"+oneCensus.getAdministration()+",name1:\"行政事业\"}" +
+                            "]";
+        }
+        JSONArray objects = JSON.parseArray(josn);
+        return RestUtil.success(objects);
+    }
+
+    /**
+     * 总支出构成
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/projectExpenditureCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object>projectExpenditureCensus(CostVo2 costVo2){
+        OneCensus oneCensus = projectSumService.projectExpenditureCensus(costVo2);
+        String josn = "";
+        if(oneCensus!=null){
+            josn =
+                    "[" +
+                            "{\"value1\":"+oneCensus.getMunicipalPipeline()+",\"name1\":\"市政管道\"}," +
+                            "{\"value1\":"+oneCensus.getNetworkReconstruction()+",name1:\"管网改造\"}," +
+                            "{\"value1\":"+oneCensus.getNewCommunity()+",name1:\"新建小区\"}," +
+                            "{\"value1\":"+oneCensus.getSecondaryWater()+",name1:\"二次供水类型\"}," +
+                            "{\"value1\":"+oneCensus.getCommercialHouseholds()+",name1:\"工商户\"}," +
+                            "{\"value1\":"+oneCensus.getWaterResidents()+",name1:\"居民装接水\"}," +
+                            "{\"value1\":"+oneCensus.getAdministration()+",name1:\"行政事业\"}" +
+                            "]";
+        }
+        JSONArray objects = JSON.parseArray(josn);
+        return RestUtil.success(objects);
+    }
+
+    /**
+     * 支出条形统计表
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/expenditureAnalysis",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object>expenditureAnalysis(CostVo2 costVo2){
+        List<OneCensus3> oneCensus3s = projectSumService.expenditureAnalysis(costVo2);
+        String json =
+                "[{" +
+                        "\"companyName\": \"员工绩效\"," +
+                        "\"imageAmmount\": [";
+        for (OneCensus3 oneCensus3 : oneCensus3s) {
+            json +=
+                    "{\"time\": \""+oneCensus3.getYearTime()+"-"+oneCensus3.getMonthTime()+"\"," +
+                            "\"truckAmmount\": \""+oneCensus3.getAdvMoney()+"\"" +
+                            "},";
+        }
+        json = json.substring(0,json.length()-1);
+
+        json +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\":\"委外支出\"," +
+                        "\"imageAmmount\": [" ;
+        for (OneCensus3 oneCensus3 : oneCensus3s) {
+            json += "{\"time\": \""+oneCensus3.getYearTime()+"-"+oneCensus3.getMonthTime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus3.getOutMoney()+"\"},";
+        }
+        json = json.substring(0,json.length() -1);
+        json += "]}]";
+        JSONArray objects = JSON.parseArray(json);
+        return RestUtil.success(objects);
+    }
+
+    /**
+     * 支出列表
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/BaseProjectExpenditureList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> BaseProjectExpenditureList(CostVo2 costVo2){
+        List<BaseProject> baseProjects = projectSumService.BaseProjectExpenditureList(costVo2);
+        return RestUtil.success(baseProjects);
+    }
+
+    @RequestMapping(value = "/api/projectCount/BaseProjectInfoCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> BaseProjectInfoCensus(CostVo2 costVo2){
+        PageInfo<BaseProject> baseProjectPageInfo = projectSumService.BaseProjectInfoCensus(costVo2);
+        return RestUtil.success(baseProjectPageInfo.getList());
+    }
+
+    @RequestMapping(value = "/api/projectCount/designCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> designCount(CostVo2 costVo2){
+        Integer designInfoCount = projectSumService.designInfoCount(costVo2);
+        Integer designChangeInfoCount = projectSumService.designChangeInfoCount(costVo2);
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        map.put("designInfoCount",designInfoCount);
+        map.put("designChangeInfoCount",designChangeInfoCount);
+        return RestUtil.success(map);
+    }
+
+    @RequestMapping(value = "/api/projectCount/designCountCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> designCountCensus(CostVo2 costVo2){
+        Integer designInfoCount = projectSumService.designInfoCount(costVo2);
+        Integer designChangeInfoCount = projectSumService.designChangeInfoCount(costVo2);
+        String josn =
+                "[" +
+                        "{\"value1\":"+designInfoCount+",\"name1\":\"未变更项目\"}," +
+                        "{\"value1\":"+designChangeInfoCount+",name1:\"变更项目'\"}," +
+                        "]";
+        JSONArray objects = JSON.parseArray(josn);
+        return RestUtil.success(objects);
+    }
+
+    @RequestMapping(value = "/api/projectCount/projectDesignChangeList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> projectDesignChangeList(CostVo2 costVo2){
+        PageInfo<BaseProject> baseProjectPageInfo = projectSumService.projectDesignChangeList(costVo2);
+        return RestUtil.success(baseProjectPageInfo.getList());
+    }
+
+    @RequestMapping(value = "/api/projectCount/progressPaymentList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> progressPaymentList(CostVo2 costVo2){
+        PageInfo<BaseProject> baseProjectPageInfo = projectSumService.progressPaymentList(costVo2);
+        return RestUtil.success(baseProjectPageInfo.getList());
+    }
+
+    @RequestMapping(value = "/api/projectCount/projectVisaChangeList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> projectVisaChangeList(CostVo2 costVo2){
+        PageInfo<BaseProject> baseProjectPageInfo = projectSumService.projectVisaChangeList(costVo2);
+        return RestUtil.success(baseProjectPageInfo.getList());
+    }
+
+    @RequestMapping(value = "/api/projectCount/VisaChangeMoneyAndCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> VisaChangeMoneyAndCount(CostVo2 costVo2){
+        Double VisaChangeCount = projectSumService.VisaChangeCount(costVo2);
+        Double VisaChangeMoney = projectSumService.VisaChangeMoney(costVo2);
+        ConcurrentHashMap<String, Double> map = new ConcurrentHashMap<>();
+        map.put("VisaChangeCount",VisaChangeCount);
+        map.put("VisaChangeMoney",VisaChangeMoney);
+        return RestUtil.success(map);
+    }
 }

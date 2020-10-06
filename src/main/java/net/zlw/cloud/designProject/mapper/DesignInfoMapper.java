@@ -247,4 +247,17 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "(s1.create_time<=#{endTime} or  #{endTime} = '')"
     )
     List<DesignInfo> totalexpenditure(CostVo2 costVo2);
+
+    @Select(
+            "select \n" +
+                    "count(*)\n" +
+                    "from\n" +
+                    "design_info s1,\n" +
+                    "base_project s2\n" +
+                    "where\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "and\n" +
+                    "(district = #{district} or #{district} =  '')"
+    )
+    Integer designInfoCount(CostVo2 costVo2);
 }

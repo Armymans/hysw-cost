@@ -185,6 +185,20 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
     List<VisaChange> findByInfoTwo();
 
 
-    @Select("select * from visa_change_information")
+    @Select(
+            "SELECT \n" +
+                    "outsourcing_amount\n" +
+                    "FROM \n" +
+                    "visa_change_information s1,\n" +
+                    "base_project s2\n" +
+                    "where\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "and\n" +
+                    "(s2.district=#{district} or  #{district}  = '')\n" +
+                    "and\n" +
+                    "s1.create_time>=#{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time<=#{endTime} or  #{endTime} = '')"
+    )
     List<VisaChange> totalexpenditure(CostVo2 costVo2);
 }
