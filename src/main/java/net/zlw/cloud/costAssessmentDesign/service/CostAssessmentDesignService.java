@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by xulei on 2020/9/18.
@@ -55,6 +56,14 @@ public class CostAssessmentDesignService {
         one.setRemarkes(assessmentDesign.getRemarkes());
         costAssessmentDesingMapper.updateByExample(one,AssessmentDesign.class);
     }
+
+
+
+    public List<CostAssessmentDesing> findAll(){
+        List<CostAssessmentDesing> all = costAssessmentDesingMapper.findAll();
+        return all;
+    }
+
 }
 
 
