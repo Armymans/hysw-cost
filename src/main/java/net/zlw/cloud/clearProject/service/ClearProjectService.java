@@ -115,6 +115,7 @@ public class ClearProjectService{
             if(clearProject.getConstructionUnitId()!= null){
                 ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(clearProject.getConstructionUnitId());
 
+                // 建设单位
                 clearProject.setConstructionUnitName(constructionUnitManagement.getConstructionUnitName());
             }
 
@@ -128,9 +129,9 @@ public class ClearProjectService{
             }
 
             // 清标人
-//            String userId = userInfo.getId();
+            String userId = userInfo.getId();
 
-//            clearProject.setFounderName(userInfo.getUsername());
+            clearProject.setFounderName(userInfo.getUsername());
 
         }
 

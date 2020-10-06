@@ -314,19 +314,20 @@ public class MaintenanceProjectInformationService{
 
 
                             maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
+                            //                            一审通过在审核表插入一条数据
                             AuditInfo auditInfo1 = new AuditInfo();
-                            auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+                            auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
                             auditInfo1.setBaseProjectId(s);
                             auditInfo1.setAuditResult("0");
                             auditInfo1.setAuditType("1");
                             Example example1 = new Example(MemberManage.class);
-                            example1.createCriteria().andEqualTo("member_role_id","3");
+                            example1.createCriteria().andEqualTo("status", "0").andEqualTo("depId", "2").andEqualTo("depAdmin", "1");
                             MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                             auditInfo1.setAuditorId(memberManage.getId());
                             auditInfoDao.insertSelective(auditInfo1);
                         }else if(auditInfo.getAuditType().equals("1")){//二审
                             auditInfo.setAuditResult("1");
-                            maintenanceProjectInformation.setType("1");
+                            maintenanceProjectInformation.setType("5");
                             Date date = new Date();
                             String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
                             auditInfo.setAuditTime(format);
@@ -336,6 +337,7 @@ public class MaintenanceProjectInformationService{
                     }else if(batchReviewVo.getAuditResult().equals("2")){
                         auditInfo.setAuditResult("2");
                         maintenanceProjectInformation.setType("3");
+                        auditInfo.setAuditTime(sdf.format(date));
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                         maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
                     }

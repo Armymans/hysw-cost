@@ -37,8 +37,7 @@ public class MaintenanceProjectInformationController extends BaseController {
     @RequestMapping(value = "/maintenanceProjectInformation/findAllMaintenanceProjectInformation",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllMaintenanceProjectInformation(PageRequest pageRequest){
         System.out.println("PageRequest:"+pageRequest);
-        UserInfo loginUser = getLoginUser();
-        List<MaintenanceProjectInformation> allMaintenanceProjectInformation = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, loginUser);
+        List<MaintenanceProjectInformation> allMaintenanceProjectInformation = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, getLoginUser());
         return RestUtil.success(allMaintenanceProjectInformation);
     }
 
@@ -72,8 +71,8 @@ public class MaintenanceProjectInformationController extends BaseController {
      */
     @RequestMapping(value = "/maintenanceProjectInformation/addMaintenanceProjectInformation",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public void addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,@RequestParam(name = "id") String id){
-        UserInfo loginUser = getLoginUser();
-        System.out.println("user:"+loginUser);
+//        UserInfo loginUser = getLoginUser();
+//        System.out.println("user:"+loginUser);
         maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser(),id);
 
     }
@@ -99,8 +98,8 @@ public class MaintenanceProjectInformationController extends BaseController {
      */
     @RequestMapping(value = "/maintenanceProjectInformation/saveMaintenanceProjectInformation",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> saveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo){
-        UserInfo loginUser = getLoginUser();
-        maintenanceProjectInformationService.saveMaintenanceProjectInformation(maintenanceProjectInformationVo,loginUser);
+//        UserInfo loginUser = getLoginUser();
+        maintenanceProjectInformationService.saveMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser());
 
         return RestUtil.success("保存成功");
     }

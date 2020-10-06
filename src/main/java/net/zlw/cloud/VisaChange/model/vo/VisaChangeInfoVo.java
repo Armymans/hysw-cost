@@ -2,23 +2,47 @@ package net.zlw.cloud.VisaChange.model.vo;
 
 
 import lombok.Data;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 
 import java.util.List;
 
 @Data
 public class VisaChangeInfoVo {
-//上家签证变更申请
-    private String applicantNameShang;
-    private String remarkShang;
+
+    //项目基本信息
+    private BaseProject baseProject;
+
+    //上家签证/变更申请
+    private String applyInfoUpId;
+    private String applicantNameUp;
+    private String remarkUp;
 
 
-//    下家签证变更申请
-    private String submitMoneyXia;
-    private String applicantNameXia;
-    private String remarkXia;
+    //下家签证变更申请
+    private String applyInfoDownId;
+    private String submitMoneyDown;
+    private String applicantNameDown;
+    private String remarkDown;
 
-//   上家签证信息
+
+
+    private List<VisaChangeStatisticVo>  changeStatisticVos;
+
+    //变更次数
+    private String changeNum;
+    //上家累计签证/变更金额
+    private String totalAmountVisaChangeUp;
+    //下家累计签证/变更金额
+    private String totalAmountVisaChangeDown;
+    //累计占上家合同比例
+    private String totalProportionContractUp;
+    //累计占下家合同比例
+    private String totalProportionContractDown;
+    
+
+    //上家签证信息
+    private String changeUpId;
     private String amountVisaChange;
     private String contractAmount;
     private String compileTime;
@@ -31,37 +55,36 @@ public class VisaChangeInfoVo {
     private String outsourcingAmount;
     private String visaChangeReason;
 
-//   下家签证信息
-    private String amountVisaChangeXia;
-    private String contractAmountXia;
-    private String compileTimeXia;
-    private String completionTimeXia;
-    private String proportionContractXia;
-    private String outsourcingXia;
-    private String nameOfCostUnitXia;
-    private String contactXia;
-    private String contactNumberXia;
-    private String outsourcingAmountXia;
-    private String visaChangeReasonXia;
+    //下家签证信息
+    private String changeDownId;
+    private String amountVisaChangeDown;
+    private String contractAmountDown;
+    private String compileTimeDown;
+    private String completionTimeDown;
+    private String proportionContractDown;
+    private String outsourcingDown;
+    private String nameOfCostUnitDown;
+    private String contactDown;
+    private String contactNumberDown;
+    private String outsourcingAmountDown;
+    private String visaChangeReasonDown;
 
-//    baseProjectId外键
+
+    //baseProjectId外键
     private String baseProjectId;
-
     private String upAndDownMark;
 
 
-//    审核id
-    private String auditId;
-//   审核意见
-    private String auditOpinion;
-
     private String loginUserId;
 
-    private BaseProject baseProject;
 
-    private VisaChangeStatisticVo visaChangeStatisticVo;
+    private List<AuditInfo> auditInfos;
 
 
+    private String pId;
+    private String auditId;
+    private String auditOpinion;
+    private String auditResult;
 
 
 

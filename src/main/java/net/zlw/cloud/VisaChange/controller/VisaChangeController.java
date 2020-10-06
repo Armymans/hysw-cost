@@ -9,6 +9,7 @@ import net.zlw.cloud.VisaChange.model.vo.VisaChangeInfoVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.VisaChange.service.VisaChangeService;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,14 @@ public class VisaChangeController extends BaseController {
         VisaChangeInfoVo visaChangeInfoVo = vcisService.selectById(id);
         return RestUtil.success(visaChangeInfoVo);
     }
+    @RequestMapping(value = "/visChange/submitOrSave",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> submitOrSave(VisaChangeInfoVo visaChangeInfoVo){
+        vcisService.submitOrSave(visaChangeInfoVo);
+        return RestUtil.success("操作成功");
+    }
+
+
+
 
     @RequestMapping(value = "/visChange/approvalProcess",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo) {
@@ -45,7 +54,7 @@ public class VisaChangeController extends BaseController {
     }
 
 //    提交
-    @RequestMapping(value = "/visChange/submit",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/visChange/add",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addBudgeting(VisaChangeInfoVo visaChangeInfoVo){
         vcisService.addVisChangeVo(visaChangeInfoVo,getLoginUser());
         return RestUtil.success("添加成功");

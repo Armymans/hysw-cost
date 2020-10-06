@@ -2,7 +2,6 @@ package net.zlw.cloud.VisaChange.mapper;
 
 
 import net.zlw.cloud.VisaChange.model.VisaChange;
-import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.designProject.model.CostVo2;
 import org.apache.ibatis.annotations.Param;
@@ -201,4 +200,14 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
                     "(s1.create_time<=#{endTime} or  #{endTime} = '')"
     )
     List<VisaChange> totalexpenditure(CostVo2 costVo2);
+
+
+    @Select("SELECT s1.change_num\n" +
+            "FROM visa_change_information s1\n" +
+            "         LEFT JOIN\n" +
+            "     base_project s2\n" +
+            "     ON s1.base_project_id = s2.id\n" +
+            "order by s1.create_time desc\n" +
+            "limit 1")
+    VisaChange selectByChangNum();
 }

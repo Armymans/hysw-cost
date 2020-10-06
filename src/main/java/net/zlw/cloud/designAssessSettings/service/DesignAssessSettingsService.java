@@ -60,6 +60,6 @@ public class DesignAssessSettingsService {
             one.setCalculationFormula(parame1 + "," + parame2 + "," + parame3);
         }
         one.setRemarkes(assessmentDesign.getRemarkes());
-        designAssessSettingsMapper.updateByExample(one,AssessmentDesign.class);
+        designAssessSettingsMapper.updateByPrimaryKeySelective(one);
     }
 }
