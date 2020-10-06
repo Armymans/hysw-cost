@@ -44,9 +44,6 @@ public class VisaChangeController extends BaseController {
         return RestUtil.success("操作成功");
     }
 
-
-
-
     @RequestMapping(value = "/visChange/approvalProcess",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo) {
         vcisService.approvalProcess(batchReviewVo);
