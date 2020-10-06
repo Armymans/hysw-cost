@@ -16,13 +16,13 @@ public interface VisaChangeService {
 
      public void delete(String id);
 
-     VisaChangeInfoVo selectById(String id);
+     VisaChangeInfoVo selectByEditId(String id);
 
      public void approvalProcess(BatchReviewVo batchReviewVo);
 
      void addVisChangeVo(VisaChangeInfoVo visaChangeInfoVo,UserInfo loginUser);
 
 
-
-
+     void submitOrSave(VisaChangeInfoVo visaChangeInfoVo);
+     VisaChangeInfoVo selectById(String id);
 }
