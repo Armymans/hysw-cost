@@ -8,6 +8,7 @@ public class CostVo2 {
     private String district;
     private String startTime;
     private String endTime;
+    private String keyword;
     private String year;
     private String month;
 }

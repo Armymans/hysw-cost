@@ -39,5 +39,4 @@ public class TrackAuditInfo implements Serializable {
     private String updateTime;
     @Column(name = "base_project_id")
     private String baseProjectId;
-
 }

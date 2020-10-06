@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 /**
  * Created by xulei on 2020/9/22.
@@ -40,7 +41,7 @@ public class VisaApplyChangeInformation {
     @Column(name = "contact_number")
     private String contactNumber;
     @Column(name = "outsourcing_amount")
-    private String outsourcingAmount;
+    private BigDecimal outsourcingAmount;
     @Column(name = "visa_change_reason")
     private String visaChangeReason;
     @Column(name = "base_project_id")

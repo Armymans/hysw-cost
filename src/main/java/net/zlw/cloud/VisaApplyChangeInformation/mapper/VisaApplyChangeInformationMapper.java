@@ -1,9 +1,12 @@
 package net.zlw.cloud.VisaApplyChangeInformation.mapper;
 
 import net.zlw.cloud.VisaApplyChangeInformation.model.VisaApplyChangeInformation;
+import net.zlw.cloud.designProject.model.CostVo2;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
+
+import java.util.List;
 
 /**
  * Created by xulei on 2020/9/22.
@@ -38,4 +41,6 @@ public interface VisaApplyChangeInformationMapper extends Mapper<VisaApplyChange
                     "base_project_id = #{id}"
     )
     String changeCount(@Param("id") String id);
+
+
 }

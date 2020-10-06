@@ -1,5 +1,6 @@
 package net.zlw.cloud.progressPayment.mapper;
 
+import net.zlw.cloud.designProject.model.CostVo2;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.PageVo;
@@ -107,4 +108,22 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             ") and \n" +
             "(b.progress_payment_status = #{progressStatus} or #{progressStatus} = '')")
     List<ProgressListVo> searchAllProgress(PageVo pageVo);
+
+
+    @Select(
+            "SELECT \n" +
+                    "amount_outsourcing\n" +
+                    "FROM \n" +
+                    "progress_payment_information s1,\n" +
+                    "base_project s2\n" +
+                    "where\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "and\n" +
+                    "(s2.district=#{district} or  #{district}  = '')\n" +
+                    "and\n" +
+                    "s1.create_time>=#{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time<=#{endTime} or  #{endTime} = '')"
+    )
+    List<ProgressPaymentInformation> totalexpenditure(CostVo2 costVo2);
 }

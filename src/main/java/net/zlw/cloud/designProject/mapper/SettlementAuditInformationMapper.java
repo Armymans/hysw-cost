@@ -32,11 +32,28 @@ public interface SettlementAuditInformationMapper extends Mapper<SettlementAudit
                     "\tand\n" +
                     "\ts1.founder_id =#{id}\n" +
                     "\tand\n" +
-                    " budgeting_time>=#{startTime}\n" +
+                    " compile_time>=#{startTime}\n" +
                     "\tand\n" +
-                    " (budgeting_time<=#{endTime} or  #{endTime} = '')\n" +
+                    " (compile_time<=#{endTime} or  #{endTime} = '')\n" +
                     " and\n" +
                     " (district=#{district} or  #{district} = '')"
     )
     List<SettlementAuditInformation> settlementAuditInformationList(CostVo2 costVo2);
+
+    @Select(
+            "SELECT \n" +
+                    "amount_outsourcing\n" +
+                    "FROM \n" +
+                    "settlement_audit_information s1,\n" +
+                    "base_project s2\n" +
+                    "where\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "and\n" +
+                    "(s2.district=#{district} or  #{district}  = '')\n" +
+                    "and\n" +
+                    "s1.create_time>=#{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time<=#{endTime} or  #{endTime} = '')"
+    )
+    List<SettlementAuditInformation> totalexpenditure(CostVo2 costVo2);
 }

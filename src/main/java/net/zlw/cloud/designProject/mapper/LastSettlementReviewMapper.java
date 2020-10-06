@@ -34,4 +34,22 @@ public interface LastSettlementReviewMapper extends Mapper<LastSettlementReview>
                     " (district=#{district} or  #{district} = '')"
     )
     List<LastSettlementReview> lastSettlementReviewList(CostVo2 costVo2);
+
+
+    @Select(
+            "SELECT \n" +
+                    "amount_outsourcing\n" +
+                    "FROM \n" +
+                    "last_settlement_review s1,\n" +
+                    "base_project s2\n" +
+                    "where\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "and\n" +
+                    "(s2.district=#{district} or  #{district}  = '')\n" +
+                    "and\n" +
+                    "s1.create_time>=#{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time<=#{endTime} or  #{endTime} = '')"
+    )
+    List<LastSettlementReview> totalexpenditure(CostVo2 costVo2);
 }

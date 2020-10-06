@@ -1,5 +1,6 @@
 package net.zlw.cloud.followAuditing.mapper;
 
+import net.zlw.cloud.designProject.model.CostVo2;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
@@ -58,4 +59,21 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
             "tm.`status` = \"0\" and \n" +
             "ai.`status` = \"0\"\n")
     List<ReturnTrackVo> selectTrackList(PageVo pageVo);
+
+    @Select(
+            "SELECT \n" +
+                    "outsource_money\n" +
+                    "FROM \n" +
+                    "track_audit_info s1,\n" +
+                    "base_project s2\n" +
+                    "where\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "and\n" +
+                    "(s2.district=#{district} or  #{district}  = '')\n" +
+                    "and\n" +
+                    "s1.create_time>=#{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time<=#{endTime} or  #{endTime} = '')"
+    )
+    List<TrackAuditInfo> totalexpenditure(CostVo2 costVo2);
 }

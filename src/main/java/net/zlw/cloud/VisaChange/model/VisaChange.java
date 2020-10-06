@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 
 //上下家签证/变更信息
@@ -44,7 +45,7 @@ public class VisaChange implements Serializable {
   @Column(name = "contact_number")
   private String contactNumber;
   @Column(name = "outsourcing_amount")
-  private double outsourcingAmount;
+  private BigDecimal outsourcingAmount;
   @Column(name = "visa_change_reason")
   private String visaChangeReason;
   @Column(name = "base_project_id")

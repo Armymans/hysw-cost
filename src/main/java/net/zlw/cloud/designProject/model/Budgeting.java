@@ -29,7 +29,7 @@ public class Budgeting{
     private String budgetingTime;
 
     @Column(name = "amount_outsourcing")
-    private String amountOutsourcing;
+    private BigDecimal amountOutsourcing;
 
     @Column(name = "receipt_time")
     private String receiptTime;
@@ -76,4 +76,14 @@ public class Budgeting{
     private Double budgetingCommission; //预算编制技提
     @Transient
     private String district; //地区
+    @Transient
+    private String projectType;//工程类别  固定安装
+    @Transient
+    private Double fiveHundredCost;//500
+    @Transient
+    private Double aThousandCost;//1000
+    @Transient
+    private Double twoThousandCost;//2000
+    @Transient
+    private Double subtotal;//跟踪审计小计
 }

@@ -466,4 +466,57 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "base_project"
     )
     CostVo3 completeCount();
+
+
+    @Select(
+            "SELECT\n" +
+                    "id,\n" +
+                    "project_name,\n" +
+                    "project_flow\n" +
+                    "FROM \n" +
+                    "base_project\n" +
+                    "where\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "del_flag = '0'\n" +
+                    "and\n" +
+                    "(\n" +
+                    "project_num like CONCAT('%',#{keyword},'%') or\n" +
+                    "project_name like  CONCAT('%',#{keyword},'%')  or\n" +
+                    ")"
+    )
+    List<BaseProject> projectFlow(CostVo2 costVo2);
+
+
+    @Select(
+            "\tselect\n" +
+                    "\tyear(create_time) yearTime,\n" +
+                    "\tMONTH(create_time) monthTime,\n" +
+                    "\tcount(desgin_status ) desginStatus,\n" +
+                    "\tcount(budget_status) budgetingCount,\n" +
+                    "\tcount(track_status) trackAuditInfoCount,\n" +
+                    "\tcount(visa_status) visaApplyChangeInformationCount,\n" +
+                    "\tcount(progress_payment_status) progressPaymentInformation,\n" +
+                    "\tcount(settle_accounts_status) settleAccountsCount\n" +
+                    "\tfrom\n" +
+                    "\tbase_project s1\n" +
+                    "\twhere\n" +
+                    "\t(district = '' or '' = '')\n" +
+                    "\tand\n" +
+                    "\tcreate_time >= ''\n" +
+                    "\tand\n" +
+                    "\t(create_time <= '' or '' = '')\n" +
+                    "\tGROUP BY\n" +
+                    "\tyear(s1.create_time),\n" +
+                    "\tMONTH(s1.create_time)\n" +
+                    "\thaving\n" +
+                    "\t(yearTime = #{year} or #{year} = '')\n" +
+                    "\tand\n" +
+                    "\t(monthTime = #{month} or #{month}= '')"
+    )
+    List<CostVo3> prjectCensus(CostVo2 costVo2);
 }

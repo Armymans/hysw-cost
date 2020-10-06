@@ -1,5 +1,6 @@
 package net.zlw.cloud.designProject.mapper;
 
+import net.zlw.cloud.designProject.model.CostVo2;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.designProject.model.DesignPageVo;
 import org.apache.ibatis.annotations.Param;
@@ -228,4 +229,22 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "id = #{id};"
     )
     void updateFinalAccount(@Param("id") String id);
+
+
+    @Select(
+            "SELECT \n" +
+                    "outsource_money\n" +
+                    "FROM \n" +
+                    "design_info s1,\n" +
+                    "base_project s2\n" +
+                    "where\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "and\n" +
+                    "(s2.district=#{district} or  #{district}  = '')\n" +
+                    "and\n" +
+                    "s1.create_time>=#{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time<=#{endTime} or  #{endTime} = '')"
+    )
+    List<DesignInfo> totalexpenditure(CostVo2 costVo2);
 }
