@@ -356,7 +356,7 @@ public class VisaChangeImpl implements VisaChangeService {
             visaChange1.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnit());
             visaChange1.setContact(visaChangeInfoVo.getContact());
             visaChange1.setContactNumber(visaChangeInfoVo.getContactNumber());
-            visaChange1.setOutsourcingAmount(Double.parseDouble(visaChangeInfoVo.getOutsourcingAmount()));
+            visaChange1.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
             visaChange1.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReason());
 
 
@@ -378,7 +378,7 @@ public class VisaChangeImpl implements VisaChangeService {
             visaChange2.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnitXia());
             visaChange2.setContact(visaChangeInfoVo.getContactXia());
             visaChange2.setContactNumber(visaChangeInfoVo.getContactNumberXia());
-            visaChange2.setOutsourcingAmount(Double.parseDouble(visaChangeInfoVo.getOutsourcingAmountXia()));
+            visaChange2.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmountXia());
             visaChange2.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReasonXia());
 
             vcMapper.insertSelective(visaChange1);
@@ -407,7 +407,7 @@ public class VisaChangeImpl implements VisaChangeService {
             visaChange.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnit());
             visaChange.setContact(visaChangeInfoVo.getContact());
             visaChange.setContactNumber(visaChangeInfoVo.getContactNumber());
-            visaChange.setOutsourcingAmount(Double.parseDouble(visaChangeInfoVo.getOutsourcingAmount()));
+            visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
             visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReason());
 
             vcMapper.insertSelective(visaChange);
@@ -434,7 +434,7 @@ public class VisaChangeImpl implements VisaChangeService {
             visaChange.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnitXia());
             visaChange.setContact(visaChangeInfoVo.getContactXia());
             visaChange.setContactNumber(visaChangeInfoVo.getContactNumberXia());
-            visaChange.setOutsourcingAmount(Double.parseDouble(visaChangeInfoVo.getOutsourcingAmountXia()));
+            visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmountXia());
             visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReasonXia());
             vcMapper.insertSelective(visaChange);
         }

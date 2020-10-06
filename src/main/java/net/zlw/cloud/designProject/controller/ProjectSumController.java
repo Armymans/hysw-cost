@@ -355,7 +355,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/prjectCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/prjectCensusCountRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>prjectCensusCountRast(CostVo2 costVo2){
         ConcurrentHashMap<String,Integer> map = new ConcurrentHashMap<>();
         Integer yearCount = projectSumService.prjectCensusYear(costVo2);

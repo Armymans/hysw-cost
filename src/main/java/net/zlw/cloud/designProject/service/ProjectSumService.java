@@ -605,7 +605,7 @@ public class ProjectSumService {
         List<VisaChange> totalexpenditure3 = visaChangeMapper.totalexpenditure(costVo2);
         for (VisaChange visaChange : totalexpenditure3) {
             if(visaChange!=null){
-                total = total.add(visaChange.getOutsourcingAmount());
+                total = total.add(new BigDecimal(visaChange.getOutsourcingAmount()));
             }
         }
         List<LastSettlementReview> totalexpenditure4 = lastSettlementReviewMapper.totalexpenditure(costVo2);
