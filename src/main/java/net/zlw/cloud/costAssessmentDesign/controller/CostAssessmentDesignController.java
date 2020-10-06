@@ -44,8 +44,9 @@ public class CostAssessmentDesignController {
      * @Date 21:10 2020/9/18
      **/
     @PostMapping("/update")
-    public void update(@RequestBody AssessmentDesign assessmentDesign){
+    public Map<String,Object> update(AssessmentDesign assessmentDesign){
         costAssessmentDesignService.update(assessmentDesign);
+        return RestUtil.success("操作成功");
     }
 
     /**
