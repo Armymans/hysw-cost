@@ -52,13 +52,18 @@ public class ClearProjectService{
 
         Budgeting budgeting = budgetingMapper.findById(projectId);
 
-        BaseProject baseProject = baseProjectMapper.fingById(budgeting.getBaseProjectId());
+        String baseProjectId = budgeting.getBaseProjectId();
+
+        BaseProject baseProject = baseProjectMapper.fingById(baseProjectId);
+
 
         ClearProject clearProject = new ClearProject();
         String uuId = UUID.randomUUID().toString().replaceAll("-","");
         clearProject.setId(uuId);
-        clearProject.setProjectNum(clearProjectVo.getProjectNum());
+//        clearProject.setProjectNum(clearProjectVo.getProjectNum());
         clearProject.setProjectName(baseProject.getProjectName());
+
+
         //招标人
         clearProject.setTenderer(clearProjectVo.getTenderer());
         //招标代理机构
@@ -66,6 +71,12 @@ public class ClearProjectService{
         clearProject.setBidder(clearProjectVo.getBidder());
         clearProject.setBidPrice(clearProjectVo.getBidPrice());
         clearProject.setBudgetingId(projectId);
+        // TODO 待修改
+        clearProject.setProjectAddress("123");
+
+        clearProject.setFounderId("user282");
+
+        clearProject.setFounderCompanyId("com0");
         //创建人id
 //        clearProject.setFounderId(userInfo.getId());
 //        //创建人公司id
@@ -78,6 +89,8 @@ public class ClearProjectService{
         String createTime = simpleDateFormat.format(new Date());
 
         clearProject.setCreateTime(createTime);
+
+        clearProject.setFounderTime(createTime);
 
 
         //添加到数据库
@@ -92,8 +105,11 @@ public class ClearProjectService{
      * @return
      */
     public List<ClearProject> findAllClearProject(PageRequest pageRequest,UserInfo userInfo){
+//    public PageInfo<ClearProject> findAllClearProject(PageRequest pageRequest,UserInfo userInfo){
         //        设置分页助手
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
+
+
 
         Example example = new Example(ClearProject.class);
 
@@ -129,14 +145,17 @@ public class ClearProjectService{
             }
 
             // 清标人
-            String userId = userInfo.getId();
+//            String userId = userInfo.getId();
 
-            clearProject.setFounderName(userInfo.getUsername());
+//            clearProject.setFounderName(userInfo.getUsername());
+            //TODO 待修改
+            clearProject.setFounderName("123");
 
         }
 
         PageInfo<ClearProject> projectPageInfo = new PageInfo<>(clearProjects);
 
+//        return projectPageInfo;
         return projectPageInfo.getList();
 
     }

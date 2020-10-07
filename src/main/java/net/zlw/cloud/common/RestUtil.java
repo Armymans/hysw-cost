@@ -1,6 +1,9 @@
 package net.zlw.cloud.common;
 
 
+import com.github.pagehelper.PageInfo;
+import net.zlw.cloud.clearProject.model.ClearProject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,6 +78,28 @@ public class RestUtil {
 		Map map = new HashMap();
 		map.put("code", "E000000");
 		map.put("info", info);
+		return map;
+	}
+	/**
+	 * code: "M000000"
+	 * count: 15
+	 * data: [{id: "05cf9127c68842e38b33d9426428c818", designUnitName: "fgvgfg", status: "1", contact: "bdgfb",…},…]
+	 * info: "操作成功"
+	 * pageNum: "1"
+	 * pageSize: "15"
+	 * totalCount: 3
+	 * totalPageNum: 1
+	 */
+	public static Map<String,Object> page(PageInfo<?> obj){
+		Map map = new HashMap();
+		map.put("code", "M000000");
+		map.put("count", obj.getPageSize());
+		map.put("data", obj.getList());
+		map.put("info", "操作成功");
+		map.put("pageNum", obj.getPageNum());
+		map.put("pageSize", obj.getPageSize());
+		map.put("totalCount", obj.getTotal());
+		map.put("totalPageNum", obj.getPages());
 		return map;
 	}
 }
