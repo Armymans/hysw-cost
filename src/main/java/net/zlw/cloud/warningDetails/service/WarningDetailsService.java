@@ -115,10 +115,11 @@ public class WarningDetailsService {
                 }
                 MemberManage memberManage = manageDao.selectByPrimaryKey(auditInfo.getAuditorId());
                 auditInfo.setAuditorId(memberManage.getMemberName());
-                warningDetails.setAuditInfo(auditInfo);
+            }else{
+                auditInfo = new AuditInfo();
             }
-
         }
+        warningDetails.setAuditInfo(auditInfo);
         return warningDetails;
     }
 
