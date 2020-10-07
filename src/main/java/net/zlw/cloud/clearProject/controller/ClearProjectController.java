@@ -1,14 +1,15 @@
 package net.zlw.cloud.clearProject.controller;
 
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
-import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.service.impl.BudgetingServiceImpl;
 import net.zlw.cloud.clearProject.model.Budgeting;
 import net.zlw.cloud.clearProject.model.ClearProject;
 import net.zlw.cloud.clearProject.model.vo.ClearProjectVo;
 import net.zlw.cloud.clearProject.service.ClearProjectService;
+import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,6 +60,8 @@ public class ClearProjectController extends BaseController {
     public Map<String,Object> findAllClearProject(PageRequest pageRequest){
         System.out.println("PageRequest:"+pageRequest);
         List<ClearProject> allClearProject = clearProjectService.findAllClearProject(pageRequest, getLoginUser());
+//        PageInfo<ClearProject> allClearProject = clearProjectService.findAllClearProject(pageRequest, getLoginUser());
+//        return RestUtil.page(allClearProject);
         return RestUtil.success(allClearProject);
     }
 
@@ -68,8 +71,9 @@ public class ClearProjectController extends BaseController {
      */
     @RequestMapping(value = "/clearProject/findAllByFounderId",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllByFounderId(){
-        UserInfo loginUser = getLoginUser();
-        List<Budgeting> allByFounderId = budgetingService.findAllByFounderId(loginUser.getId());
+//        UserInfo loginUser = getLoginUser();
+//        List<Budgeting> allByFounderId = budgetingService.findAllByFounderId(loginUser.getId());
+        List<Budgeting> allByFounderId = budgetingService.findAllByFounderId("user282");
         return RestUtil.success(allByFounderId);
     }
 
@@ -80,8 +84,9 @@ public class ClearProjectController extends BaseController {
 
     @RequestMapping(value = "/clearProject/findBudgetingByBudgetStatus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findBudgetingByBudgetStatus(){
-        UserInfo loginUser = getLoginUser();
-        List<Budgeting> budgetingByBudgetStatus = budgetingService.findBudgetingByBudgetStatus(loginUser.getId());
+//        UserInfo loginUser = getLoginUser();
+//        List<Budgeting> budgetingByBudgetStatus = budgetingService.findBudgetingByBudgetStatus(loginUser.getId());
+        List<Budgeting> budgetingByBudgetStatus = budgetingService.findBudgetingByBudgetStatus("user282");
         return RestUtil.success(budgetingByBudgetStatus);
     }
 
@@ -90,7 +95,7 @@ public class ClearProjectController extends BaseController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/clearProject/deleteClearProject",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/clearProject/deleteClearProject",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteClearProject(@RequestParam(name = "id") String id){
         System.err.println(id);
         clearProjectService.deleteClearProject(id);

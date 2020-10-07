@@ -45,4 +45,10 @@ public class CostAssessmentDesing {
     private String parame1;
     @Transient
     private String parame2;
+    @Transient
+    private String parame3;
+    @Transient
+    private String parame4;
+    @Transient
+    private String parame5;
 }

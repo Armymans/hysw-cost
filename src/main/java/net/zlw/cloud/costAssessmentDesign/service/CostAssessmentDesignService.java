@@ -33,6 +33,15 @@ public class CostAssessmentDesignService {
                 one.setParame1(split[0]);
                 if (split.length > 1) {
                     one.setParame2(split[1]);
+                    if (split.length > 2) {
+                        one.setParame3(split[2]);
+                        if (split.length > 3) {
+                            one.setParame4(split[3]);
+                            if (split.length > 4) {
+                                one.setParame5(split[4]);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -50,11 +59,16 @@ public class CostAssessmentDesignService {
         String parame1 = assessmentDesign.getParame1();
         String parame2 = assessmentDesign.getParame2();
         String parame3 = assessmentDesign.getParame3();
-        if (parame1 != null && !"".equals(parame1) && parame2 != null && !"".equals(parame2) && parame3 != null && !"".equals(parame3)) {
-            one.setCalculationFormula(parame1 + "," + parame2 + "," + parame3);
+        String parame4 = assessmentDesign.getParame4();
+        String parame5 = assessmentDesign.getParame5();
+        if (parame1 != null && !"".equals(parame1) && parame2 != null && !"".equals(parame2)) {
+            one.setCalculationFormula(parame1 + "," + parame2);
+        }
+        if (parame1 != null && !"".equals(parame1) && parame2 != null && !"".equals(parame2) && parame3 != null && !"".equals(parame3) && parame4 != null && !"".equals(parame4) && parame5 != null && !"".equals(parame5)) {
+            one.setCalculationFormula(parame1 + "," + parame2 + "," + parame3 + "," + parame4 + "," + parame5);
         }
         one.setRemarkes(assessmentDesign.getRemarkes());
-        costAssessmentDesingMapper.updateByExample(one,AssessmentDesign.class);
+        costAssessmentDesingMapper.updateByPrimaryKeySelective(one);
     }
 
 
