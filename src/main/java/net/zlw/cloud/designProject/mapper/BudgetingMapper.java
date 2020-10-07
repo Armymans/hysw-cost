@@ -13,7 +13,7 @@ import java.util.List;
 @org.apache.ibatis.annotations.Mapper
 public interface BudgetingMapper extends Mapper<Budgeting> {
 
-    @Select("select * from budgeting where base_project_id = #{id}")
+    @Select("select * from budgeting where id = #{id}")
     Budgeting findById(@Param("id")String id);
 
     @Select(
