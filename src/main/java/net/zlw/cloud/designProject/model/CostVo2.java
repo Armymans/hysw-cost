@@ -6,9 +6,11 @@ import lombok.Data;
 public class CostVo2 {
     private String id;
     private String district;
+    private String designCategory;
     private String startTime;
     private String endTime;
     private String keyword;
+    private String designer;
     private String year;
     private String month;
     private Integer pageNum;

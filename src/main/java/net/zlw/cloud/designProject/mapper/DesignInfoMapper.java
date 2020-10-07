@@ -260,4 +260,81 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "(district = #{district} or #{district} =  '')"
     )
     Integer designInfoCount(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "s1.id,\n" +
+                    "s1.cea_num,\n" +
+                    "s1.project_num,\n" +
+                    "s1.project_name,\n" +
+                    "s1.construction_unit,\n" +
+                    "s1.district,\n" +
+                    "s2.blueprint_start_time,\n" +
+                    "s2.designer,\n" +
+                    "s2.outsource,\n" +
+                    "s2.design_unit\n" +
+                    "FROM\n" +
+                    "base_project s1,\n" +
+                    "design_info s2 \n" +
+                    "where\n" +
+                    " s1.id = s2.base_project_id\n" +
+                    "and\n" +
+                    "(s1.district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s2.blueprint_start_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s2.blueprint_start_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "(\n" +
+                    "s1.cea_num like CONCAT('%',#{keyword},'%') or\n" +
+                    "s1.project_num like CONCAT('%',#{keyword},'%') or\n" +
+                    "s1.project_name like CONCAT('%',#{keyword},'%') or\n" +
+                    "s1.district like CONCAT('%',#{keyword},'%') or\n" +
+                    "s2.designer like CONCAT('%',#{keyword},'%') \n" +
+                    ")"
+    )
+    List<DesignInfo> desginCensusList(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "s1.id,\n" +
+                    "s1.cea_num,\n" +
+                    "s1.project_num,\n" +
+                    "s1.project_name,\n" +
+                    "s1.design_category,\n" +
+                    "s1.construction_unit,\n" +
+                    "s1.district,\n" +
+                    "s2.blueprint_start_time,\n" +
+                    "s2.designer,\n" +
+                    "s2.outsource,\n" +
+                    "s2.design_unit\n" +
+                    "FROM\n" +
+                    "base_project s1,\n" +
+                    "design_info s2 \n" +
+                    "where\n" +
+                    " s1.id = s2.base_project_id\n" +
+                    "and\n" +
+                    "s2.designer = #{designer}\n" +
+                    "and\n" +
+                    "(s1.district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "(s1.design_category = #{designCategory} or #{designCategory} = '')\n" +
+                    "and\n" +
+                    "s2.blueprint_start_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s2.blueprint_start_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "(\n" +
+                    "s1.cea_num like CONCAT('%',#{keyword},'%') or\n" +
+                    "s1.project_num like CONCAT('%',#{keyword},'%') or\n" +
+                    "s1.project_name like CONCAT('%',#{keyword},'%') or\n" +
+                    "s1.district like CONCAT('%',#{keyword},'%') or\n" +
+                    "s1.designer like CONCAT('%',#{keyword},'%') \n" +
+                    ")"
+    )
+    List<DesignInfo> desginCensusListByDesigner(CostVo2 costVo2);
 }

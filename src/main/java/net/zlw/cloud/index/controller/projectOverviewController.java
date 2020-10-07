@@ -54,7 +54,6 @@ public class projectOverviewController extends BaseController {
        return projectOverviewService.moduleNumber(allBaseProject);
     }
     //造价部门和设计部门统计数据
-
     @GetMapping("/findStatisticalData")
     public StatisticalData findStatisticalData(PageVo pageVo) throws ParseException {
         if (!pageVo.getDistrict().equals("") && pageVo.getDistrict()!=null){
@@ -64,7 +63,7 @@ public class projectOverviewController extends BaseController {
                 return messageNotificationService.findStatisticalDataAnhui(pageVo);
             }
         }else{
-          return   messageNotificationService.findAllStatisticalData(pageVo);
+          return messageNotificationService.findAllStatisticalData(pageVo);
         }
     }
 

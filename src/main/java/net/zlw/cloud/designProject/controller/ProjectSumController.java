@@ -352,26 +352,58 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 本月项目数量 本年项目数量 增长比例
+     * 本年项目数量
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/prjectCensusCountRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object>prjectCensusCountRast(CostVo2 costVo2){
+    @RequestMapping(value = "/api/projectCount/prjectCensusYear",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object>prjectCensusYear(CostVo2 costVo2){
         ConcurrentHashMap<String,Integer> map = new ConcurrentHashMap<>();
         Integer yearCount = projectSumService.prjectCensusYear(costVo2);
-        Integer MonthCount = projectSumService.prjectCensusMonth(costVo2);
-        Integer lastyearCount = projectSumService.lastPrjectCensusMonth(costVo2);
-        Integer lastMonthCount = projectSumService.lastPrjectCensusMonth(costVo2);
-        Integer yearRast = projectSumService.prjectCensusRast(yearCount, lastyearCount);
-        Integer MonthRast = projectSumService.prjectCensusRast(MonthCount, lastMonthCount);
-
         map.put("yearCount",yearCount);
+        return RestUtil.success(map);
+    }
+
+    /**
+     * 本月项目数量
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/prjectCensusMonth",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object>prjectCensusMonth(CostVo2 costVo2){
+        ConcurrentHashMap<String,Integer> map = new ConcurrentHashMap<>();
+        Integer MonthCount = projectSumService.prjectCensusMonth(costVo2);
         map.put("MonthCount",MonthCount);
-        map.put("lastyearCount",lastyearCount);
-        map.put("lastMonthCount",lastMonthCount);
-        map.put("yearRast",yearRast);
+        return RestUtil.success(map);
+    }
+
+    /**
+     * 相比上月
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/prjectCensusMonthRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object>prjectCensusMonthRast(CostVo2 costVo2){
+        ConcurrentHashMap<String,Integer> map = new ConcurrentHashMap<>();
+        Integer MonthCount = projectSumService.prjectCensusMonth(costVo2);
+        Integer lastMonthCount = projectSumService.lastPrjectCensusMonth(costVo2);
+        Integer MonthRast = projectSumService.prjectCensusRast(MonthCount, lastMonthCount);
         map.put("MonthRast",MonthRast);
+        return RestUtil.success(map);
+    }
+
+    /**
+     * 相比上年
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/prjectCensusYearRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object>prjectCensusYearRast(CostVo2 costVo2){
+        ConcurrentHashMap<String,Integer> map = new ConcurrentHashMap<>();
+        Integer lastyearCount = projectSumService.lastPrjectCensusMonth(costVo2);
+        Integer yearCount = projectSumService.prjectCensusYear(costVo2);
+        Integer yearRast = projectSumService.prjectCensusRast(yearCount, lastyearCount);
+        map.put("yearRast",yearRast);
         return RestUtil.success(map);
     }
 
@@ -471,12 +503,22 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(baseProjects);
     }
 
+    /**
+     * 信息统计
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/BaseProjectInfoCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> BaseProjectInfoCensus(CostVo2 costVo2){
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.BaseProjectInfoCensus(costVo2);
         return RestUtil.success(baseProjectPageInfo.getList());
     }
 
+    /**
+     * 设计项目个数
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/designCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> designCount(CostVo2 costVo2){
         Integer designInfoCount = projectSumService.designInfoCount(costVo2);
@@ -487,6 +529,11 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(map);
     }
 
+    /**
+     *设计变更分析
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/designCountCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> designCountCensus(CostVo2 costVo2){
         Integer designInfoCount = projectSumService.designInfoCount(costVo2);
@@ -500,24 +547,44 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(objects);
     }
 
+    /**
+     *设计变更统计
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/projectDesignChangeList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> projectDesignChangeList(CostVo2 costVo2){
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.projectDesignChangeList(costVo2);
         return RestUtil.success(baseProjectPageInfo.getList());
     }
 
+    /**
+     * 进度款支付分析
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/progressPaymentList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> progressPaymentList(CostVo2 costVo2){
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.progressPaymentList(costVo2);
         return RestUtil.success(baseProjectPageInfo.getList());
     }
 
+    /**
+     * 签证变更统计
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/projectVisaChangeList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> projectVisaChangeList(CostVo2 costVo2){
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.projectVisaChangeList(costVo2);
         return RestUtil.success(baseProjectPageInfo.getList());
     }
 
+    /**
+     * 签证变更个数统计
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/VisaChangeMoneyAndCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> VisaChangeMoneyAndCount(CostVo2 costVo2){
         Double VisaChangeCount = projectSumService.VisaChangeCount(costVo2);
@@ -526,5 +593,269 @@ public class ProjectSumController extends BaseController {
         map.put("VisaChangeCount",VisaChangeCount);
         map.put("VisaChangeMoney",VisaChangeMoney);
         return RestUtil.success(map);
+    }
+
+    /**
+     * 项目结算分析
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/projectSettlementCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> projectSettlementCensus(CostVo2 costVo2){
+        List<OneCensus4> oneCensus4s = projectSumService.projectSettlementCensus(costVo2);
+        String json =
+                "[{" +
+                        "\"companyName\": \"上家结算送审\"," +
+                        "\"imageAmmount\": [";
+        for (OneCensus4 oneCensus4 : oneCensus4s) {
+            json +=
+                    "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
+                            "\"truckAmmount\": \""+oneCensus4.getReviewNumber()+"\"" +
+                            "},";
+        }
+        json = json.substring(0,json.length()-1);
+
+        json +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\":\"下家结算送审\"," +
+                        "\"imageAmmount\": [" ;
+        for (OneCensus4 oneCensus4 : oneCensus4s){
+            json +=
+                    "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
+                            "\"truckAmmount\": \""+oneCensus4.getSumbitMoney()+"\"" +
+                            "},";
+        }
+        json = json.substring(0,json.length()-1);
+
+        json +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\":\"下家结算审核\"," +
+                        "\"imageAmmount\": [" ;
+        for (OneCensus4 oneCensus4 : oneCensus4s){
+            json +=
+                    "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
+                            "\"truckAmmount\": \""+oneCensus4.getAuthorizedNumber()+"\"" +
+                            "},";
+        }
+        json = json.substring(0,json.length()-1);
+
+        json +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\":\"下家结算核减\"," +
+                        "\"imageAmmount\": [" ;
+        for (OneCensus4 oneCensus4 : oneCensus4s){
+            json +=
+                    "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
+                            "\"truckAmmount\": \""+oneCensus4.getSubtractTheNumber()+"\"" +
+                            "},";
+        }
+        json = json.substring(0,json.length()-1);
+        json += "]}]";
+        JSONArray objects = JSON.parseArray(json);
+        return RestUtil.success(objects);
+    }
+
+    /**
+     * 设计部门任务进度统计
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/projectSettlementSum",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> projectSettlementSum(CostVo2 costVo2){
+        OneCensus4 oneCensus4 = projectSumService.projectSettlementSum(costVo2);
+        return RestUtil.success(oneCensus4);
+    }
+
+    /**
+     * 设计部门统计 全局版
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/projectDesginCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> projectDesginCount(CostVo2 costVo2){
+        OneCensus3 oneCensus3 = projectSumService.projectDesginCount(costVo2);
+        return RestUtil.success(oneCensus3);
+    }
+
+    @RequestMapping(value = "/api/projectCount/projectDesginStatus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> projectDesginStatus(CostVo2 costVo2){
+        List<OneCensus3> oneCensus3s = projectSumService.projectDesginStatus(costVo2);
+        return RestUtil.success(oneCensus3s);
+    }
+    @RequestMapping(value = "/api/projectCount/censusList2",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> censusList2(CostVo2 costVo2){
+        //todo getLoginUser().getId()
+        List<OneCensus> oneCensuses = projectSumService.censusList2(costVo2);
+        String censusList = "[{\"companyName\":\"市政管道\"," +
+                "\"imageAmmount\": [";
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList +=
+                    "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                            "\"truckAmmount\": \"" + oneCensus.getMunicipalPipeline()+"\"},";
+        }
+        censusList = censusList.substring(0,censusList.length() -1);
+        censusList +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\":\"管网改造\"," +
+                        "\"imageAmmount\": [" ;
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus.getNetworkReconstruction()+"\"},";
+        }
+        censusList = censusList.substring(0,censusList.length() -1);
+        censusList +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\":\"新建小区\"," +
+                        "\"imageAmmount\": [" ;
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList +=
+                    "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                            "\"truckAmmount\": \"" + oneCensus.getNewCommunity()+"\"},";
+        }
+        censusList = censusList.substring(0,censusList.length() -1);
+        censusList +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\":\"二次供水改造项目\"," +
+                        "\"imageAmmount\": [" ;
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList +=
+                    "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                            "\"truckAmmount\": \"" + oneCensus.getSecondaryWater()+"\"},";
+        }
+        censusList = censusList.substring(0,censusList.length() -1);
+        censusList +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\":\"工商户\"," +
+                        "\"imageAmmount\": [" ;
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus.getCommercialHouseholds()+"\"},";
+        }
+        censusList = censusList.substring(0,censusList.length() -1);
+        censusList +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\":\"居民装接水\"," +
+                        "\"imageAmmount\": [" ;
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus.getWaterResidents()+"\"},";
+        }
+        censusList = censusList.substring(0,censusList.length() -1);
+        censusList +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\": \"行政事业\"," +
+                        "\"imageAmmount\": [";
+        for (OneCensus oneCensus : oneCensuses) {
+            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                    "\"truckAmmount\": \"" + oneCensus.getAdministration()+"\"},";
+        }
+        censusList = censusList.substring(0,censusList.length() -1);
+        censusList +=  "]}]";
+        JSONArray json = JSON.parseArray(censusList);
+        return RestUtil.showJsonSuccess(json);
+    }
+
+    /**
+     * 本月任务数量
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/censusList2MonthCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> censusList2MonthCount(CostVo2 costVo2){
+        Integer month = projectSumService.censusList2MonthCount(costVo2);
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        map.put("month",month);
+        return RestUtil.success(map);
+    }
+
+    /**
+     * 本年任务数量
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/censusList2YearCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> censusList2YearCount(CostVo2 costVo2){
+        Integer year = projectSumService.censusList2YearCount(costVo2);
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        map.put("year",year);
+        return RestUtil.success(map);
+    }
+
+    /**
+     * 同比上年
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/censusList2YearRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> censusList2YearRast(CostVo2 costVo2){
+        Integer year = projectSumService.censusList2YearCount(costVo2);
+        Integer lastYear = projectSumService.censusList2LastYearCount(costVo2);
+        Integer yearRast = projectSumService.prjectCensusRast(year, lastYear);
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        map.put("yearRast",yearRast);
+        return RestUtil.success(map);
+    }
+
+    /**
+     * 同比上月
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/censusList2MonthRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> censusList2MonthRast(CostVo2 costVo2){
+        Integer month = projectSumService.censusList2MonthCount(costVo2);
+        Integer lastmonth = projectSumService.censusList2lastMonthCount(costVo2);
+        Integer monthRast = projectSumService.prjectCensusRast(month, lastmonth);
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        map.put("monthRast",monthRast);
+        return RestUtil.success(map);
+    }
+
+    @RequestMapping(value = "/api/projectCount/desiginMoneyCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> desiginMoneyCensus(CostVo2 costVo2){
+        OneCensus5 oneCensus5 = projectSumService.desiginMoneyCensus(costVo2);
+        Integer amount = oneCensus5.getAnhuiAnount()+oneCensus5.getWujiangAmount();
+        Integer notamount = oneCensus5.getNotAmount() - amount;
+        String josn =
+                "[" +
+                        "{\"value1\":"+amount+",\"name1\":\"已到账金额\"}," +
+                        "{\"value1\":"+notamount+",name1:\"未到账金额'\"}," +
+                        "]";
+        JSONArray objects = JSON.parseArray(josn);
+        return RestUtil.success(objects);
+    }
+    @RequestMapping(value = "/api/projectCount/desiginoutsource",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> desiginoutsource(CostVo2 costVo2){
+        OneCensus5 oneCensus5 = projectSumService.desiginoutsource(costVo2);
+        Integer outsourceno = oneCensus5.getOutsourceNo();
+        Integer outsourceyes = oneCensus5.getOutsourceYes();
+        String josn =
+                "[" +
+                        "{\"value1\":"+outsourceno+",\"name1\":\"内部设计\"}," +
+                        "{\"value1\":"+outsourceyes+",name1:\"委外设计'\"}," +
+                        "]";
+        JSONArray objects = JSON.parseArray(josn);
+        return RestUtil.success(objects);
+    }
+
+    @RequestMapping(value = "/api/projectCount/desginCensusList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> desginCensusList(CostVo2 costVo2){
+        PageInfo<DesignInfo> designInfoPageInfo = projectSumService.desginCensusList(costVo2);
+        return RestUtil.success(designInfoPageInfo.getList());
+    }
+
+    @RequestMapping(value = "/api/projectCount/desginCensusListByDesigner",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> desginCensusListByDesigner(CostVo2 costVo2){
+        PageInfo<DesignInfo> designInfoPageInfo = projectSumService.desginCensusList(costVo2);
+        return RestUtil.success(designInfoPageInfo.getList());
     }
 }

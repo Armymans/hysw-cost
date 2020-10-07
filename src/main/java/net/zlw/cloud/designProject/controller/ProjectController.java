@@ -413,7 +413,6 @@ public class ProjectController extends BaseController {
     }
 
     @RequestMapping(value = "/api/disproject/censusList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    @ResponseBody
     public Map<String,Object> censusList(CostVo2 costVo2){
         //todo getLoginUser().getId()
         List<OneCensus> oneCensuses = projectService.OneCensusList(costVo2);

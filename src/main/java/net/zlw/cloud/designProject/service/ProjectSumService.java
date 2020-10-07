@@ -1,13 +1,8 @@
 package net.zlw.cloud.designProject.service;
 
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.swagger.models.auth.In;
-import net.zlw.cloud.VisaApplyChangeInformation.mapper.VisaApplyChangeInformationMapper;
-import net.zlw.cloud.VisaApplyChangeInformation.model.VisaApplyChangeInformation;
-import net.zlw.cloud.VisaApplyChangeInformation.model.VisaChangeInformation;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
 import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.designProject.mapper.*;
@@ -21,13 +16,13 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.Date;
-import java.util.List;
-import java.util.SimpleTimeZone;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
 
 @Service
 public class ProjectSumService {
@@ -685,11 +680,12 @@ public class ProjectSumService {
         LocalDateTime now = LocalDateTime.now();
         int year = now.getYear();
         int mouth = now.getMonth().getValue();
-        costVo2.setYear(year+"");
+        costVo2.setStartTime(year+"-01-01");
+        costVo2.setEndTime(year+"-12-31");
         List<CostVo3> costVo3s = projectMapper.prjectCensus(costVo2);
         Integer total = 0;
         for (CostVo3 costVo3 : costVo3s) {
-            total = costVo3.getBudgetingCount()+
+            total += costVo3.getBudgetingCount()+
                     costVo3.getDesginStatus()+
                     costVo3.getProgressPaymentInformation()+
                     costVo3.getSettleAccountsCount()+
@@ -704,17 +700,23 @@ public class ProjectSumService {
      * @param costVo2
      */
     public Integer prjectCensusMonth(CostVo2 costVo2){
-        //当前时间
-        LocalDateTime now = LocalDateTime.now();
-        int year = now.getYear();
-        int mouth = now.getMonth().getValue();
+        SimpleDateFormat sf=new SimpleDateFormat("dd");
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        //当前月
+        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //当前月最后一天
+        //设置日期为本月最大日期
+        now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
+        String day = sf.format(now.getTime());
         //当前一年时间
-        costVo2.setYear(year+"");
-        costVo2.setMonth(mouth+"");
+        costVo2.setStartTime(year+"-"+month+"-01");
+        costVo2.setEndTime(year+"-"+month+"-"+day);
         List<CostVo3> costVo3s = projectMapper.prjectCensus(costVo2);
         Integer total = 0;
         for (CostVo3 costVo3 : costVo3s) {
-            total = costVo3.getBudgetingCount()+
+            total += costVo3.getBudgetingCount()+
                     costVo3.getDesginStatus()+
                     costVo3.getProgressPaymentInformation()+
                     costVo3.getSettleAccountsCount()+
@@ -729,22 +731,29 @@ public class ProjectSumService {
      * @param costVo2
      */
     public Integer lastPrjectCensusMonth(CostVo2 costVo2){
-        //当前时间
-        LocalDateTime now = LocalDateTime.now();
-        int year = now.getYear();
-        int mouth = now.getMonth().getValue();
-        if(mouth == 1){
-            //如果当前月份为1 则去年12月
-            costVo2.setYear(year-1+"");
-            costVo2.setMonth("12");
-        }else{
-            costVo2.setYear(year+"");
-            costVo2.setMonth(mouth-1+"");
-        }
+        //获取上个月第一天
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar first=Calendar.getInstance();
+        first.add(Calendar.MONTH, -1);
+        first.set(Calendar.DAY_OF_MONTH, 1);
+        //上个月第一天
+        String fristDay = format.format(first.getTime());
+        //获取上个月的最后一天
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar last =Calendar.getInstance();
+        int month=last.get(Calendar.MONTH);
+        last.set(Calendar.MONTH, month-1);
+        last.set(Calendar.DAY_OF_MONTH, last.getActualMaximum(last.DAY_OF_MONTH));
+        //上个月最后一天
+        String lastDay = sf.format(last.getTime());
+        //开始时间结束时间
+        costVo2.setStartTime(fristDay);
+        costVo2.setEndTime(lastDay);
+
         List<CostVo3> costVo3s = projectMapper.prjectCensus(costVo2);
         Integer total = 0;
         for (CostVo3 costVo3 : costVo3s) {
-            total = costVo3.getBudgetingCount()+
+            total += costVo3.getBudgetingCount()+
                     costVo3.getDesginStatus()+
                     costVo3.getProgressPaymentInformation()+
                     costVo3.getSettleAccountsCount()+
@@ -763,11 +772,12 @@ public class ProjectSumService {
         LocalDateTime now = LocalDateTime.now();
         int year = now.getYear();
         int mouth = now.getMonth().getValue();
-        costVo2.setYear(year-1+"");
+        costVo2.setStartTime(year-1+"-01-01");
+        costVo2.setEndTime(year-1+"-12-31");
         List<CostVo3> costVo3s = projectMapper.prjectCensus(costVo2);
         Integer total = 0;
         for (CostVo3 costVo3 : costVo3s) {
-            total = costVo3.getBudgetingCount()+
+            total += costVo3.getBudgetingCount()+
                     costVo3.getDesginStatus()+
                     costVo3.getProgressPaymentInformation()+
                     costVo3.getSettleAccountsCount()+
@@ -778,7 +788,10 @@ public class ProjectSumService {
     }
 
     public Integer prjectCensusRast(Integer A,Integer B){
-        return (B-A)/B*100;
+        if(A == 0){
+            A = 1;
+        }
+        return (A-B)/A*100;
     }
 
     /**
@@ -994,5 +1007,245 @@ public class ProjectSumService {
 
     public Double VisaChangeMoney(CostVo2 costVo2){
         return projectMapper.VisaChangeMoney(costVo2);
+    }
+
+    public List<OneCensus4> projectSettlementCensus(CostVo2 costVo2){
+        List<OneCensus4> oneCensus4s = projectMapper.projectSettlementCensus(costVo2);
+        return oneCensus4s;
+    }
+    public OneCensus4 projectSettlementSum(CostVo2 costVo2){
+        return projectMapper.projectSettlementSum(costVo2);
+    }
+
+    public OneCensus3 projectDesginCount(CostVo2 costVo2){
+        return projectMapper.projectDesginCount(costVo2);
+    }
+
+    public List<OneCensus3> projectDesginStatus(CostVo2 costVo2){
+        return projectMapper.projectDesginStatus(costVo2);
+    }
+
+    public List<OneCensus> censusList2(CostVo2 costVo2){
+        return projectMapper.censusList2(costVo2);
+    }
+
+    /**
+     * 当前月份任务总数
+     * @param costVo2
+     * @return
+     */
+    public Integer censusList2MonthCount(CostVo2 costVo2) {
+        SimpleDateFormat sf=new SimpleDateFormat("dd");
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        //当前月
+        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //当前月最后一天
+        //设置日期为本月最大日期
+        now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
+        String day = sf.format(now.getTime());
+        //开始时间 结束时间
+        costVo2.setStartTime(year+"-"+month+"-"+"01");
+        costVo2.setEndTime(year+"-"+month+"-"+day);
+
+            List<OneCensus> oneCensuses = projectMapper.censusList2(costVo2);
+            Integer total = 0;
+            for (OneCensus oneCensus : oneCensuses) {
+                total += oneCensus.getAdministration()+
+                        oneCensus.getWaterResidents()+
+                        oneCensus.getCommercialHouseholds()+
+                        oneCensus.getSecondaryWater()+
+                        oneCensus.getNewCommunity()+
+                        oneCensus.getMunicipalPipeline()+
+                        oneCensus.getNetworkReconstruction();
+            }
+            return total;
+    }
+
+    /**
+     * 去年月份任务总数
+     * @param costVo2
+     * @return
+     */
+    public Integer censusList2lastMonthCount(CostVo2 costVo2) {
+        //获取上个月第一天
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar first=Calendar.getInstance();
+        first.add(Calendar.MONTH, -1);
+        first.set(Calendar.DAY_OF_MONTH, 1);
+        //上个月第一天
+        String fristDay = format.format(first.getTime());
+        //获取上个月的最后一天
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar last =Calendar.getInstance();
+        int month=last.get(Calendar.MONTH);
+        last.set(Calendar.MONTH, month-1);
+        last.set(Calendar.DAY_OF_MONTH, last.getActualMaximum(last.DAY_OF_MONTH));
+        //上个月最后一天
+        String lastDay = sf.format(last.getTime());
+        //开始时间结束时间
+        costVo2.setStartTime(fristDay);
+        costVo2.setEndTime(lastDay);
+        Integer total = 0;
+        List<OneCensus> oneCensuses = projectMapper.censusList2(costVo2);
+        for (OneCensus oneCensus : oneCensuses) {
+            total += oneCensus.getAdministration()+
+                    oneCensus.getWaterResidents()+
+                    oneCensus.getCommercialHouseholds()+
+                    oneCensus.getSecondaryWater()+
+                    oneCensus.getNewCommunity()+
+                    oneCensus.getMunicipalPipeline()+
+                    oneCensus.getNetworkReconstruction();
+        }
+        return total;
+    }
+
+    /**
+     * 获取当前年总数
+     * @param costVo2
+     * @return
+     */
+    public Integer censusList2YearCount(CostVo2 costVo2) {
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        costVo2.setYear(year+"");
+        costVo2.setStartTime(year+"-01-01");
+        costVo2.setEndTime(year+"-12-31");
+        Integer total = 0;
+        List<OneCensus> oneCensuses = projectMapper.censusList2(costVo2);
+        for (OneCensus oneCensus : oneCensuses) {
+            total += oneCensus.getAdministration()+
+                    oneCensus.getWaterResidents()+
+                    oneCensus.getCommercialHouseholds()+
+                    oneCensus.getSecondaryWater()+
+                    oneCensus.getNewCommunity()+
+                    oneCensus.getMunicipalPipeline()+
+                    oneCensus.getNetworkReconstruction();
+        }
+        return total;
+    }
+
+    /**
+     * 获取去前年总数
+     * @param costVo2
+     * @return
+     */
+    public Integer censusList2LastYearCount(CostVo2 costVo2) {
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        costVo2.setYear(year+"");
+        costVo2.setStartTime(year-1+"-01-01");
+        costVo2.setEndTime(year-1+"-12-31");
+        Integer total = 0;
+        List<OneCensus> oneCensuses = projectMapper.censusList2(costVo2);
+        for (OneCensus oneCensus : oneCensuses) {
+            total += oneCensus.getAdministration()+
+                    oneCensus.getWaterResidents()+
+                    oneCensus.getCommercialHouseholds()+
+                    oneCensus.getSecondaryWater()+
+                    oneCensus.getNewCommunity()+
+                    oneCensus.getMunicipalPipeline()+
+                    oneCensus.getNetworkReconstruction();
+        }
+        return total;
+    }
+
+    /**
+     * 获取设计统计
+     * @param costVo2
+     * @return
+     */
+    public OneCensus5 desiginMoneyCensus(CostVo2 costVo2){
+        return projectMapper.desiginMoneyCensus(costVo2);
+    }
+
+    /**
+     * 委外设计统计
+     * @param costVo2
+     * @return
+     */
+    public OneCensus5 desiginoutsource(CostVo2 costVo2){
+        return projectMapper.desiginoutsource(costVo2);
+    }
+
+    /**
+     * 设计任务分析
+     * @param costVo2
+     * @return
+     */
+    public PageInfo<DesignInfo> desginCensusList(CostVo2 costVo2){
+        PageHelper.startPage(costVo2.getPageNum(),costVo2.getPageSize());
+        List<DesignInfo> designInfos = designInfoMapper.desginCensusList(costVo2);
+        for (DesignInfo designInfo : designInfos) {
+            if(!designInfo.getDistrict().equals("4")){
+                Example anhui = new Example(AnhuiMoneyinfo.class);
+                Example.Criteria c2 = anhui.createCriteria();
+                c2.andEqualTo("baseProjectId",designInfo.getId());
+                AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
+                if(anhuiMoneyinfo!=null){
+                    designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                }
+                //如果为吴江
+            }else{
+                Example wujiang = new Example(WujiangMoneyInfo.class);
+                Example.Criteria c2 = wujiang.createCriteria();
+                c2.andEqualTo("baseProjectId",designInfo.getId());
+                WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
+                if(wujiangMoneyInfo!=null){designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());}
+            }
+            //获取预算表中的造价金额
+            Example example = new Example(Budgeting.class);
+            Example.Criteria c = example.createCriteria();
+            c.andEqualTo("baseProjectId",designInfo.getId());
+            Budgeting budgeting = budgetingMapper.selectOneByExample(example);
+            if(budgeting!=null){
+                designInfo.setAmountCost(budgeting.getAmountCost());
+            }else{
+                designInfo.setAmountCost(new BigDecimal(0));
+            }
+        }
+        PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
+        return designInfoPageInfo;
+    }
+
+    /**
+     * 根据设计人查询
+     * @param costVo2
+     * @return
+     */
+    public PageInfo<DesignInfo> desginCensusListByDesigner(CostVo2 costVo2){
+        PageHelper.startPage(costVo2.getPageNum(),costVo2.getPageSize());
+        List<DesignInfo> designInfos = designInfoMapper.desginCensusListByDesigner(costVo2);
+        for (DesignInfo designInfo : designInfos) {
+            if(!designInfo.getDistrict().equals("4")){
+                Example anhui = new Example(AnhuiMoneyinfo.class);
+                Example.Criteria c2 = anhui.createCriteria();
+                c2.andEqualTo("baseProjectId",designInfo.getId());
+                AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
+                if(anhuiMoneyinfo!=null){
+                    designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                }
+                //如果为吴江
+            }else{
+                Example wujiang = new Example(WujiangMoneyInfo.class);
+                Example.Criteria c2 = wujiang.createCriteria();
+                c2.andEqualTo("baseProjectId",designInfo.getId());
+                WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
+                if(wujiangMoneyInfo!=null){designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());}
+            }
+            //获取预算表中的造价金额
+            Example example = new Example(Budgeting.class);
+            Example.Criteria c = example.createCriteria();
+            c.andEqualTo("baseProjectId",designInfo.getId());
+            Budgeting budgeting = budgetingMapper.selectOneByExample(example);
+            if(budgeting!=null){
+                designInfo.setAmountCost(budgeting.getAmountCost());
+            }else{
+                designInfo.setAmountCost(new BigDecimal(0));
+            }
+        }
+        PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
+        return designInfoPageInfo;
     }
 }
