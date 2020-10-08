@@ -7,18 +7,20 @@ import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.index.model.MessageNotification;
 import net.zlw.cloud.index.model.vo.ModuleNumber;
+import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
 import net.zlw.cloud.index.model.vo.StatisticalData;
+import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.index.service.MessageNotificationService;
 import net.zlw.cloud.index.service.ProjectOverviewService;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -54,17 +56,17 @@ public class projectOverviewController extends BaseController {
        return projectOverviewService.moduleNumber(allBaseProject);
     }
     //造价部门和设计部门统计数据
-    @GetMapping("/findStatisticalData")
-    public StatisticalData findStatisticalData(PageVo pageVo) throws ParseException {
-        if (!pageVo.getDistrict().equals("") && pageVo.getDistrict()!=null){
-            if (pageVo.getDistrict().equals("4")){
-               return messageNotificationService.findStatisticalDataWujiang(pageVo);
-            }else{
-                return messageNotificationService.findStatisticalDataAnhui(pageVo);
-            }
-        }else{
-          return messageNotificationService.findAllStatisticalData(pageVo);
-        }
+//    @GetMapping("/findStatisticalData")/projectOverview/findStatisticalData
+    @RequestMapping(value = "/projectOverview/findStatisticalData",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public StatisticalData findStatisticalData(pageVo pageVo) {
+        StatisticalData statisticalData =  messageNotificationService.findStatisticalData(pageVo);
+       return statisticalData;
+    }
+    //绩效发放统计图
+    @RequestMapping(value = "/projectOverview/PerformanceDistributionChart/{id}",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public PerformanceDistributionChart findPerformanceDistributionChart(pageVo pageVo, @PathVariable(name = "id") String id){
+        PerformanceDistributionChart performanceDistributionChart = messageNotificationService.findPerformanceDistributionChart(pageVo, id);
+        return performanceDistributionChart;
     }
 
 

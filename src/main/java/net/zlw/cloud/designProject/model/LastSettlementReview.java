@@ -24,8 +24,8 @@ public class LastSettlementReview {
     @Column(name = "project_time")
     private String projectTime;
 
-    @Column(name = "projectPeople")
-    private String project_people;
+    @Column(name = "project_people")
+    private String projectPeople;
 
     @Column(name = "contract_amount")
     private BigDecimal contractAmount;
