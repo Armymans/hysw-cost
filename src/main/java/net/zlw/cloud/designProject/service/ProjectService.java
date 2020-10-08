@@ -1109,16 +1109,16 @@ public class ProjectService {
     public String desginStatusSensus(String id) {
         Integer integer = projectMapper.desginStatusSensus1(id);
         Integer integer1 = projectMapper.desginStatusSensus2(id);
-        String s3 =
-                "[{value1:"+integer+",name1:'进行中'},{value1:"+integer1+",name1:'已完成'},]";
-        return s3;
+            String s3 =
+                    "[{\"value1\":\""+integer+"\",\"name1\":\"进行中\"},{\"value1\":\""+integer1+"\",\"name1\":\"已完成\"}]";
+            return s3;
     }
 
     public String budgetStatusSensus(String id) {
         Integer integer = projectMapper.budgetStatusSensus1(id);
         Integer integer1 = projectMapper.budgetStatusSensus2(id);
         String s3 =
-                "[{value1:"+integer+",name1:'进行中'},{value1:"+integer1+",name1:'已完成'},]";
+                "[{\"value1\":\""+integer+"\",\"name1\":\"进行中\"},{\"value1\":\""+integer1+"\",\"name1\":\"已完成\"}]";
         return s3;
     }
 
@@ -1126,7 +1126,7 @@ public class ProjectService {
         Integer integer = projectMapper.trackStatusSensus1(id);
         Integer integer1 = projectMapper.trackStatusSensus2(id);
         String s3 =
-                "[{value1:"+integer+",name1:'进行中'},{value1:"+integer1+",name1:'已完成'},]";
+                "[{\"value1\":\""+integer+"\",\"name1\":\"进行中\"},{\"value1\":\""+integer1+"\",\"name1\":\"已完成\"}]";
         return s3;
     }
 
@@ -1134,7 +1134,7 @@ public class ProjectService {
         Integer integer = projectMapper.visaStatusSensus1(id);
         Integer integer1 = projectMapper.visaStatusSensus2(id);
         String s3 =
-                "[{value1:"+integer+",name1:'进行中'},{value1:"+integer1+",name1:'已完成'},]";
+                "[{\"value1\":\""+integer+"\",\"name1\":\"进行中\"},{\"value1\":\""+integer1+"\",\"name1\":\"已完成\"}]";
         return s3;
     }
 
@@ -1142,7 +1142,7 @@ public class ProjectService {
         Integer integer = projectMapper.progressPaymentStatusSensus1(id);
         Integer integer1 = projectMapper.progressPaymentStatusSensus2(id);
         String s3 =
-                "[{value1:"+integer+",name1:'进行中'},{value1:"+integer1+",name1:'已完成'},]";
+                "[{\"value1\":\""+integer+"\",\"name1\":\"进行中\"},{\"value1\":\""+integer1+"\",\"name1\":\"已完成\"}]";
         return s3;
     }
 
@@ -1150,7 +1150,7 @@ public class ProjectService {
         Integer integer = projectMapper.settleAccountsStatusSensus1(id);
         Integer integer1 = projectMapper.settleAccountsStatusSensus2(id);
         String s3 =
-                "[{value1:"+integer+",name1:'进行中'},{value1:"+integer1+",name1:'已完成'},]";
+                "[{\"value1\":\""+integer+"\",\"name1\":\"进行中\"},{\"value1\":\""+integer1+"\",\"name1\":\"已完成\"}]";
         return s3;
     }
 
@@ -1202,6 +1202,7 @@ public class ProjectService {
         List<BaseProject> baseProjects = projectMapper.selectByExample(example);
         for (BaseProject baseProject : baseProjects) {
             DesignInfo designInfo = this.designInfoByid(baseProject.getId());
+
             AnhuiMoneyinfo anhuiMoneyinfo = this.anhuiMoneyinfoByid(designInfo.getId());
             WujiangMoneyInfo wujiangMoneyInfo = this.wujiangMoneyInfoByid(designInfo.getId());
             if(wujiangMoneyInfo!=null){

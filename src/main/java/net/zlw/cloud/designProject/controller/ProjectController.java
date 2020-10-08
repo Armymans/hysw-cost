@@ -343,9 +343,14 @@ public class ProjectController extends BaseController {
         projectService.DesginAudandChangeAud(auditInfo,getLoginUser());
     }
 
-    @GetMapping("/desginStatusSensus/{id}")
-    public String desginStatusSensus(@PathVariable("id") String id){
-        return projectService.desginStatusSensus(id);
+//    @GetMapping("/desginStatusSensus")
+    @RequestMapping(value = "/desginStatusSensus",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> desginStatusSensus(@RequestParam(name = "id") String id){
+    public String desginStatusSensus(@RequestParam(name = "id") String id){
+        String s = projectService.desginStatusSensus(id);
+        JSONArray objects = JSON.parseArray(s);
+//        return RestUtil.success(objects);
+        return s;
     }
 
     @GetMapping("/budgetStatusSensus/{id}")
@@ -392,10 +397,15 @@ public class ProjectController extends BaseController {
 //    @GetMapping("/BuildSum/{id}")
     @RequestMapping(value = "/api/disproject/BuildSum",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> BuildSum(@RequestParam(name = "id") String id){
+        //设计费支出
         BigDecimal desMoneySum = projectService.desMoneySum(id);
+        //招标控制价
         BigDecimal biddingPriceControlSum = projectService.biddingPriceControlSum(id);
+        //成本总金额
         BigDecimal costTotalAmountSum = projectService.costTotalAmountSum(id);
+        //造价金额
         BigDecimal amountCostAmountSum = projectService.amountCostAmountSum(id);
+        //设计费委外支出
         BigDecimal outsourceMoneySum = projectService.outsourceMoneySum(id);
         SumVo sumVo = new SumVo();
         sumVo.setDesMoneySum(desMoneySum);
