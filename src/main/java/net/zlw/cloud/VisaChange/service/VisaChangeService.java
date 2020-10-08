@@ -18,7 +18,7 @@ public interface VisaChangeService {
 
      VisaChangeInfoVo selectByEditId(String id);
 
-     public void approvalProcess(BatchReviewVo batchReviewVo);
+     public void approvalProcess(BatchReviewVo batchReviewVo,UserInfo userInfo);
 
      void addVisChangeVo(VisaChangeInfoVo visaChangeInfoVo,UserInfo loginUser);
 

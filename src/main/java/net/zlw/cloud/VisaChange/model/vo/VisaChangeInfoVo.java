@@ -13,21 +13,18 @@ public class VisaChangeInfoVo {
     //项目基本信息
     private BaseProject baseProject;
 
-    //上家签证/变更申请
-    private String applyInfoUpId;
+    private String id;
+
     private String applicantNameUp;
     private String remarkUp;
 
 
-    //下家签证变更申请
-    private String applyInfoDownId;
     private String submitMoneyDown;
     private String applicantNameDown;
     private String remarkDown;
 
 
-
-    private List<VisaChangeStatisticVo>  changeStatisticVos;
+    private List<VisaChangeStatisticVo> changeStatisticVos;
 
     //变更次数
     private String changeNum;
@@ -39,10 +36,8 @@ public class VisaChangeInfoVo {
     private String totalProportionContractUp;
     //累计占下家合同比例
     private String totalProportionContractDown;
-    
 
-    //上家签证信息
-    private String changeUpId;
+
     private String amountVisaChange;
     private String contractAmount;
     private String compileTime;
@@ -85,7 +80,6 @@ public class VisaChangeInfoVo {
     private String auditId;
     private String auditOpinion;
     private String auditResult;
-
 
 
 }
