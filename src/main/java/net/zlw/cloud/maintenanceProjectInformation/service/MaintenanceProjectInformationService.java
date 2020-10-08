@@ -13,6 +13,7 @@ import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInfor
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageResult;
+import net.zlw.cloud.maintenanceProjectInformation.model.vo.StatisticalNumberVo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
@@ -81,7 +82,8 @@ public class MaintenanceProjectInformationService{
             criteria.andEqualTo("type",pageRequest.getPageStaus());
         }
 
-        // TODO
+        // TODO 登陆人
+//        criteria.andEqualTo("founderId",userInfo.getId());
         //     查询条件   检维修类型
         if(pageRequest.getMaintenanceType() != null && (!"".equals(pageRequest.getMaintenanceType()))){
             criteria.andEqualTo("maintenanceItemType",pageRequest.getMaintenanceType());
@@ -153,6 +155,101 @@ public class MaintenanceProjectInformationService{
         System.out.println("list:"+projectInformationPageInfo.getList().toString());
 
         return projectInformationPageInfo.getList();
+
+    }
+
+    /**
+     * 统计分析 列表
+     * @param userInfo
+     * @return
+     */
+    public PageInfo<MaintenanceProjectInformation> list(PageRequest pageRequest,UserInfo userInfo){
+        //        设置分页助手
+        PageHelper.startPage(pageRequest.getPageNum(), 5);
+
+        Example example = new Example(MaintenanceProjectInformation.class);
+
+        Example.Criteria criteria = example.createCriteria();
+
+        criteria.andEqualTo("delFlag","0");
+        // 查询条件  状态
+        if(pageRequest.getPageStaus() != null && (!"".equals(pageRequest.getPageStaus()))){
+            criteria.andEqualTo("type",pageRequest.getPageStaus());
+        }
+
+        // TODO 登陆人
+//        criteria.andEqualTo("founderId",userInfo.getId());
+        //  地区
+        if(pageRequest.getProjectAddress() != null && (!"".equals(pageRequest.getProjectAddress()))){
+            criteria.andEqualTo("projectAddress",pageRequest.getProjectAddress());
+        }
+
+
+        // 查询条件 开始时间
+        if(pageRequest.getStartTime() != null && (!"".equals(pageRequest.getStartTime()))){
+            String startTime = pageRequest.getStartTime();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = null;
+            try {
+                date = sdf.parse(startTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            criteria.andGreaterThanOrEqualTo("createTime",date);
+
+        }
+
+
+        // 查询条件 结束时间
+        if(pageRequest.getEndTime() != null && (!"".equals(pageRequest.getEndTime()))){
+            String endTime = pageRequest.getEndTime();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = null;
+            try {
+                date = sdf.parse(endTime);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            criteria.andLessThanOrEqualTo("updateTime",date);
+
+        }
+
+        // 查询条件 内容
+        if(pageRequest.getKeyWord() != null && (!"".equals(pageRequest.getKeyWord()))){
+           criteria.andLike("maintenanceItemName","%"+pageRequest.getKeyWord()+"%");
+        }
+
+        List<MaintenanceProjectInformation> maintenanceProjectInformations = maintenanceProjectInformationMapper.selectByExample(example);
+//        List<MaintenanceProjectInformation> maintenanceProjectInformations = maintenanceProjectInformationMapper.selectAllByDelFlag();
+
+        for (MaintenanceProjectInformation maintenanceProjectInformation : maintenanceProjectInformations) {
+
+            //滤空判断
+            if(maintenanceProjectInformation.getConstructionUnitId()!= null && (!"".equals(maintenanceProjectInformation.getConstructionUnitId()))){
+                ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(maintenanceProjectInformation.getConstructionUnitId());
+//                maintenanceProjectInformation.setConstructionUnitManagement(constructionUnitManagement);
+                //获取施工单位名字
+                maintenanceProjectInformation.setConstructionUnitName(constructionUnitManagement.getConstructionUnitName());
+            }
+
+
+            if(maintenanceProjectInformation.getPreparePeople() != null && (!"".equals(maintenanceProjectInformation.getPreparePeople()))){
+                MemberManage memberManage = memberManageDao.selectByIdAndStatus(maintenanceProjectInformation.getPreparePeople());
+
+                maintenanceProjectInformation.setMemberName(memberManage.getMemberName());
+            }
+
+//            maintenanceProjectInformation.setFounderId(userInfo.getId());
+//            maintenanceProjectInformation.setFounderCompanyId(userInfo.getCompanyId());
+        }
+
+        PageInfo<MaintenanceProjectInformation> projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformations);
+
+        System.out.println("list:"+projectInformationPageInfo.getList().toString());
+
+        return projectInformationPageInfo;
 
     }
 
@@ -610,6 +707,12 @@ public class MaintenanceProjectInformationService{
 
     }
 
-
-
+    /**
+     * @Author Armyman
+     * @Description //检维修任务统计数量
+     * @Date 11:26 2020/10/8
+     **/
+    public StatisticalNumberVo statisticalNumber(String projectAddress) {
+        return maintenanceProjectInformationMapper.statisticalNumber(projectAddress);
+    }
 }
