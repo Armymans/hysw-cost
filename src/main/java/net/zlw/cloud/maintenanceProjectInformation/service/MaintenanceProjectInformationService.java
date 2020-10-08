@@ -7,13 +7,11 @@ import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.SurveyInformationDao;
 import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.designProject.model.OneCensus;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
-import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationVo;
-import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
-import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageResult;
-import net.zlw.cloud.maintenanceProjectInformation.model.vo.StatisticalNumberVo;
+import net.zlw.cloud.maintenanceProjectInformation.model.vo.*;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
@@ -30,6 +28,7 @@ import tk.mybatis.mapper.util.StringUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -715,4 +714,65 @@ public class MaintenanceProjectInformationService{
     public StatisticalNumberVo statisticalNumber(String projectAddress) {
         return maintenanceProjectInformationMapper.statisticalNumber(projectAddress);
     }
+
+    public List<StatisticalFigureVo> statisticalFigure(String projectAddress, String startDate, String endDate, UserInfo loginUser) {
+        return maintenanceProjectInformationMapper.statisticalFigure(projectAddress,startDate,endDate);
+    }
+
+    /**
+     * @Author Armyman
+     * @Description //本月任务
+     * @Date 20:18 2020/10/8
+     **/
+    public Integer month() {
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        //当前月
+        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+
+         String day = year+"-"+month;
+        return maintenanceProjectInformationMapper.monthCount(day);
+    }
+
+    /**
+     * @Author Armyman
+     * @Description // 本年任务
+     * @Date 20:18 2020/10/8
+     **/
+    public Integer year() {
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        return maintenanceProjectInformationMapper.yearCount(year);
+    }
+
+    /**
+     * @Author Armyman
+     * @Description //上月任务
+     * @Date 20:18 2020/10/8
+     **/
+    public Integer month2() {
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        //当前月
+        String month = String.valueOf(now.get(Calendar.MONTH));
+
+         String day = year+"-"+month;
+        return maintenanceProjectInformationMapper.monthCount(day);
+    }
+
+    /**
+     * @Author Armyman
+     * @Description // 上年任务
+     * @Date 20:18 2020/10/8
+     **/
+    public Integer year2() {
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR) - 1);
+        return maintenanceProjectInformationMapper.yearCount(year);
+    }
+
 }
