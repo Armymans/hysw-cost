@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 
 @Data
 public class SumVo {
-
     private BigDecimal biddingPriceControlSum;
     private BigDecimal desMoneySum;
     private BigDecimal costTotalAmountSum;

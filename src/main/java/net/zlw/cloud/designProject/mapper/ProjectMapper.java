@@ -986,5 +986,144 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     )
     OneCensus5 desiginoutsource(CostVo2 costVo2);
 
+    @Select(
+            "\tSELECT\n" +
+                    "\tYEAR(s1.create_time) yearTime,\n" +
+                    "\tMONTH(s1.create_time) monthTime,\n" +
+                    "\tSUM(IFNULL(s2.desgin_achievements,0)) desginAchievements\n" +
+                    "\tFROM\n" +
+                    "\tbase_project s1 LEFT JOIN achievements_info s2 ON s1.id = s2.base_project_id\n" +
+                    "\twhere\n" +
+                    "\t(s1.district = #{district} or #{district} = '')\n" +
+                    "\tand\n" +
+                    "\ts1.create_time >= #{startTime}\n" +
+                    "\tand\n" +
+                    "\t(s1.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "\tand\n" +
+                    "\ts1.del_flag = '0'\n" +
+                    "\tGROUP BY\n" +
+                    "\tYEAR(s1.create_time),\n" +
+                    "\tMONTH(s1.create_time)"
+    )
+    List<OneCensus6> desiginAchievementsCensus(CostVo2 costVo2);
 
+    @Select(
+            "\tSELECT\n" +
+                    "\tYEAR(s1.create_time) yearTime,\n" +
+                    "\tMONTH(s1.create_time) monthTime,\n" +
+                    "\tSUM(IFNULL(s2.desgin_achievements,0)) desginAchievements\n" +
+                    "\tFROM\n" +
+                    "\tbase_project s1 LEFT JOIN achievements_info s2 ON s1.id = s2.base_project_id\n" +
+                    "\twhere\n" +
+                    "\ts2.member_id = #{id}\n" +
+                    "\tand\n" +
+                    "\t(s1.district = #{district} or #{district} = '')\n" +
+                    "\tand\n" +
+                    "\ts1.create_time >= #{startTime}\n" +
+                    "\tand\n" +
+                    "\t(s1.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "\tand\n" +
+                    "\ts1.del_flag = '0'\n" +
+                    "\tGROUP BY\n" +
+                    "\tYEAR(s1.create_time),\n" +
+                    "\tMONTH(s1.create_time)"
+    )
+    List<OneCensus6> desiginAchievementsOneCensus(CostVo2 costVo2);
+
+    @Select(
+            "\tSELECT\n" +
+                    "\tYEAR(s1.create_time) yearTime,\n" +
+                    "\tSUM(IFNULL(s2.desgin_achievements,0)) desginAchievements\n" +
+                    "\tFROM\n" +
+                    "\tbase_project s1 LEFT JOIN achievements_info s2 ON s1.id = s2.base_project_id\n" +
+                    "\twhere\n" +
+                    "\ts2.member_id = #{id}\n" +
+                    "\tand\n" +
+                    "\t(s1.district = #{district} or #{district} = '')\n" +
+                    "\tand\n" +
+                    "\ts1.create_time >= #{startTime}\n" +
+                    "\tand\n" +
+                    "\t(s1.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "\tand\n" +
+                    "\ts1.del_flag = '0'\n" +
+                    "\tGROUP BY\n" +
+                    "\tYEAR(s1.create_time)"
+    )
+    List<OneCensus6> desiginAchievementsOneCensus2(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "COUNT(budget_status) budgetStatus,\n" +
+                    "COUNT(progress_payment_status) progressPaymentStatus,\n" +
+                    "COUNT(visa_status) visaStatus,\n" +
+                    "COUNT(settle_accounts_status) settleAccountsStatus\t\n" +
+                    "FROM\n" +
+                    "base_project\n" +
+                    "where\n" +
+                    "(district = #{district} or #{district} = '')"
+    )
+    OneCensus6 costTaskTotal(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "sum(budget_status='1') budgetStatus,\n" +
+                    "sum(progress_payment_status='1') progressPaymentStatus,\n" +
+                    "sum(visa_status='1') visaStatus,\n" +
+                    "sum(settle_accounts_status='1') settleAccountsStatus\n" +
+                    "FROM\n" +
+                    "base_project\n" +
+                    "where\n" +
+                    "(district = #{district} or #{district} = '')"
+    )
+    OneCensus6 costTaskReviewed(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "sum(budget_status='2') budgetStatus,\n" +
+                    "sum(progress_payment_status='2') progressPaymentStatus,\n" +
+                    "sum(visa_status='2') visaStatus,\n" +
+                    "sum(settle_accounts_status='2') settleAccountsStatus\n" +
+                    "FROM\n" +
+                    "base_project\n" +
+                    "where\n" +
+                    "(district = #{district} or #{district} = '')"
+    )
+    OneCensus6 costTaskHandle(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "sum(budget_status='4') budgetStatus,\n" +
+                    "sum(progress_payment_status='6') progressPaymentStatus,\n" +
+                    "sum(visa_status='6') visaStatus,\n" +
+                    "sum(settle_accounts_status='5') settleAccountsStatus\n" +
+                    "FROM\n" +
+                    "base_project\n" +
+                    "where\n" +
+                    "(district = #{district} or #{district} = '')"
+    )
+    OneCensus6 costTaskComple(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "YEAR(create_time) yearTime,\n" +
+                    "MONTH(create_time) monthTime,\n" +
+                    "count(budget_status) budgetStatus,\n" +
+                    "count(progress_payment_status) progressPaymentStatus,\n" +
+                    "count(visa_status) visaStatus ,\n" +
+                    "count(settle_accounts_status) settleAccountsStatus\n" +
+                    "FROM\n" +
+                    "base_project\n" +
+                    "where\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "del_flag = '0'\n" +
+                    "GROUP BY\n" +
+                    "YEAR(create_time),\n" +
+                    "MONTH(create_time)"
+    )
+    List<OneCensus6> costTaskCensus(CostVo2 costVo2);
 }
