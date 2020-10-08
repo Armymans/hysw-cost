@@ -23,7 +23,7 @@ public class VisaChangeVo {
     private String nameOfCostUnit;
     private String status;
     private String createTime;
-    private String completionTime;
+    private String compileTime;
     private String projectName;
     private String createStartTime;
     private String createEndTime;

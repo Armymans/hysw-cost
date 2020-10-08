@@ -36,7 +36,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "                    s3.name_of_cost_unit,\n" +
             "                    s1.`status`,\n" +
             "                    s1.create_time,\n" +
-            "                    s1.completion_time,\n" +
+            "                    s1.compile_time,\n" +
             "                    s2.project_name \n" +
             "                    FROM\n" +
             "                    visa_change_information s1 LEFT JOIN base_project s2 on s1.base_project_id = s2.id\n" +
@@ -210,4 +210,10 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "order by s1.create_time desc\n" +
             "limit 1")
     VisaChange selectByChangNum();
+
+    @Select("SELECT s2.auditor_id from visa_change_information s1\n" +
+            "LEFT JOIN audit_info s2 ON s1.base_project_id = s2.id\n" +
+            "where\n" +
+            "s1.id = #{id}")
+    VisaChange selectBuAuditId(@Param("id") String id);
 }

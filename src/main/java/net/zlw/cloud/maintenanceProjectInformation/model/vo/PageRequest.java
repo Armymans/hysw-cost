@@ -1,10 +1,13 @@
 package net.zlw.cloud.maintenanceProjectInformation.model.vo;
 
+import lombok.Data;
+
 /**
  * @Author dell
  * @Date 2020/9/27 14:08
  * @Version 1.0
  */
+@Data
 public class PageRequest {
     //页码
     private Integer pageNum;
@@ -15,6 +18,8 @@ public class PageRequest {
 
     //所属地区
     private String address;
+    //所属地区
+    private String projectAddress;
     // 维修类型
     private String maintenanceType;
     //状态:待审核，处理中，未通过，待确认
@@ -32,67 +37,4 @@ public class PageRequest {
         this.pageSize = pageSize;
     }
 
-    public Integer getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(Integer pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public String getKeyWord() {
-        return keyWord;
-    }
-
-    public void setKeyWord(String keyWord) {
-        this.keyWord = keyWord;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getMaintenanceType() {
-        return maintenanceType;
-    }
-
-    public void setMaintenanceType(String maintenanceType) {
-        this.maintenanceType = maintenanceType;
-    }
-
-    public String getPageStaus() {
-        return pageStaus;
-    }
-
-    public void setPageStaus(String pageStaus) {
-        this.pageStaus = pageStaus;
-    }
-
-    public String getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
-    }
-
-    public String getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
 }
