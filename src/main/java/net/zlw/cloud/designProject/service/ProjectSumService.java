@@ -1064,7 +1064,7 @@ public class ProjectSumService {
     }
 
     /**
-     * 去年月份任务总数
+     * 上个月份任务总数
      * @param costVo2
      * @return
      */
@@ -1247,5 +1247,424 @@ public class ProjectSumService {
         }
         PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
         return designInfoPageInfo;
+    }
+
+    /**
+     * 设计绩效统计信息
+     * @param costVo2
+     * @return
+     */
+    public List<OneCensus6> desiginAchievementsCensus(CostVo2 costVo2){
+        return projectMapper.desiginAchievementsCensus(costVo2);
+    }
+
+    /**
+     * 当前月的设计绩效
+     * @param costVo2
+     * @return
+     */
+    public BigDecimal desiginMonthAchievements(CostVo2 costVo2){
+        SimpleDateFormat sf=new SimpleDateFormat("dd");
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        //当前月
+        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //当前月最后一天
+        //设置日期为本月最大日期
+        now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
+        String day = sf.format(now.getTime());
+        //开始时间 结束时间
+        costVo2.setStartTime(year+"-"+month+"-"+"01");
+        costVo2.setEndTime(year+"-"+month+"-"+day);
+
+        List<OneCensus6> oneCensus6s = projectMapper.desiginAchievementsCensus(costVo2);
+        BigDecimal total = new BigDecimal(0);
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total = total.add(oneCensus6.getDesginAchievements());
+        }
+        return total;
+    }
+
+    /**
+     * 当前年的设计绩效
+     * @param costVo2
+     * @return
+     */
+    public BigDecimal desiginYearAchievements(CostVo2 costVo2){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        costVo2.setYear(year+"");
+        costVo2.setStartTime(year+"-01-01");
+        costVo2.setEndTime(year+"-12-31");
+
+        List<OneCensus6> oneCensus6s = projectMapper.desiginAchievementsCensus(costVo2);
+        BigDecimal total = new BigDecimal(0);
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total = total.add(oneCensus6.getDesginAchievements());
+        }
+        return total;
+    }
+
+    /**
+     * 上个月的设计绩效
+     * @return
+     */
+    public BigDecimal desiginLastMonthAchievements(CostVo2 costVo2){
+
+        //获取上个月第一天
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar first=Calendar.getInstance();
+        first.add(Calendar.MONTH, -1);
+        first.set(Calendar.DAY_OF_MONTH, 1);
+        //上个月第一天
+        String fristDay = format.format(first.getTime());
+        //获取上个月的最后一天
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar last =Calendar.getInstance();
+        int month=last.get(Calendar.MONTH);
+        last.set(Calendar.MONTH, month-1);
+        last.set(Calendar.DAY_OF_MONTH, last.getActualMaximum(last.DAY_OF_MONTH));
+        //上个月最后一天
+        String lastDay = sf.format(last.getTime());
+        //开始时间结束时间
+        costVo2.setStartTime(fristDay);
+        costVo2.setEndTime(lastDay);
+        List<OneCensus6> oneCensus6s = projectMapper.desiginAchievementsCensus(costVo2);
+        BigDecimal total = new BigDecimal(0);
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total = total.add(oneCensus6.getDesginAchievements());
+        }
+        return total;
+    }
+
+    /**
+     * 上一年的设计绩效
+     * @param costVo2
+     * @return
+     */
+    public BigDecimal desiginLastYearAchievements(CostVo2 costVo2){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        costVo2.setYear(year+"");
+        costVo2.setStartTime(year-1+"-01-01");
+        costVo2.setEndTime(year-1+"-12-31");
+        List<OneCensus6> oneCensus6s = projectMapper.desiginAchievementsCensus(costVo2);
+        BigDecimal total = new BigDecimal(0);
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total = total.add(oneCensus6.getDesginAchievements());
+        }
+        return total;
+    }
+
+    /**
+     * 计算设计的同比上个月
+     * @param A
+     * @param B
+     * @return
+     */
+    public BigDecimal desiginCensusRast(BigDecimal A,BigDecimal B){
+        if(A.compareTo(new BigDecimal(0)) == 0){
+            A = new BigDecimal(1);
+        }
+        BigDecimal subtract = A.subtract(B);
+        BigDecimal divide = subtract.divide(A);
+        BigDecimal multiply = divide.multiply(new BigDecimal(100));
+        return multiply;
+    }
+
+    /**
+     * 个人月度绩效统计
+     * @param costVo2
+     * @return
+     */
+    public List<OneCensus6> desiginAchievementsOneCensus(CostVo2 costVo2){
+        return projectMapper.desiginAchievementsOneCensus(costVo2);
+    }
+    /**
+     * 本月发放的绩效
+     * @param costVo2
+     * @return
+     */
+    public BigDecimal desiginAchievementsOneCount(CostVo2 costVo2){
+        SimpleDateFormat sf=new SimpleDateFormat("dd");
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        //当前月
+        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //当前月最后一天
+        //设置日期为本月最大日期
+        now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
+        String day = sf.format(now.getTime());
+        //开始时间 结束时间
+        costVo2.setStartTime(year+"-"+month+"-"+"01");
+        costVo2.setEndTime(year+"-"+month+"-"+day);
+
+        List<OneCensus6> oneCensus6s = projectMapper.desiginAchievementsOneCensus(costVo2);
+        BigDecimal total = new BigDecimal(0);
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total = total.add(oneCensus6.getDesginAchievements());
+        }
+        return total;
+    }
+
+
+    /**
+     * 上个月的设计绩效
+     * @return
+     */
+    public BigDecimal desiginLastAchievementsOneCount(CostVo2 costVo2){
+        //获取上个月第一天
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar first=Calendar.getInstance();
+        first.add(Calendar.MONTH, -1);
+        first.set(Calendar.DAY_OF_MONTH, 1);
+        //上个月第一天
+        String fristDay = format.format(first.getTime());
+        //获取上个月的最后一天
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar last =Calendar.getInstance();
+        int month=last.get(Calendar.MONTH);
+        last.set(Calendar.MONTH, month-1);
+        last.set(Calendar.DAY_OF_MONTH, last.getActualMaximum(last.DAY_OF_MONTH));
+        //上个月最后一天
+        String lastDay = sf.format(last.getTime());
+        //开始时间结束时间
+        costVo2.setStartTime(fristDay);
+        costVo2.setEndTime(lastDay);
+        List<OneCensus6> oneCensus6s = projectMapper.desiginAchievementsOneCensus(costVo2);
+        BigDecimal total = new BigDecimal(0);
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total = total.add(oneCensus6.getDesginAchievements());
+        }
+        return total;
+    }
+
+    /**
+     * 个人年度绩效统计
+     * @param costVo2
+     * @return
+     */
+    public List<OneCensus6> desiginAchievementsOneCensus2(CostVo2 costVo2){
+        return projectMapper.desiginAchievementsOneCensus2(costVo2);
+    }
+
+    /**
+     * 本年发布的绩效
+     * @param costVo2
+     * @return
+     */
+    public BigDecimal desiginAchievementsOneCount2(CostVo2 costVo2){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        costVo2.setYear(year+"");
+        costVo2.setStartTime(year+"-01-01");
+        costVo2.setEndTime(year+"-12-31");
+        List<OneCensus6> oneCensus6s = projectMapper.desiginAchievementsOneCensus2(costVo2);
+        BigDecimal total = new BigDecimal(0);
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total = total.add(oneCensus6.getDesginAchievements());
+        }
+        return total;
+    }
+
+    /**
+     * 上一年发布的绩效
+     * @param costVo2
+     * @return
+     */
+    public BigDecimal desiginLastAchievementsOneCount2(CostVo2 costVo2){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        costVo2.setYear(year+"");
+        costVo2.setStartTime(year-1+"-01-01");
+        costVo2.setEndTime(year-1+"-12-31");
+        List<OneCensus6> oneCensus6s = projectMapper.desiginAchievementsOneCensus2(costVo2);
+        BigDecimal total = new BigDecimal(0);
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total = total.add(oneCensus6.getDesginAchievements());
+        }
+        return total;
+    }
+
+    /**
+     * 任务总数
+     * @param costVo2
+     * @return
+     */
+    public Integer costTaskTotal(CostVo2 costVo2){
+        OneCensus6 oneCensus6 = projectMapper.costTaskTotal(costVo2);
+        Integer total = oneCensus6.getBudgetStatus()
+                +oneCensus6.getProgressPaymentStatus()
+                +oneCensus6.getSettleAccountsStatus()
+                +oneCensus6.getVisaStatus();
+        return total;
+    }
+
+    /**
+     * 造价待审核的任务
+     * @param costVo2
+     * @return
+     */
+    public Integer costTaskReviewed(CostVo2 costVo2){
+        OneCensus6 oneCensus6 = projectMapper.costTaskReviewed(costVo2);
+        Integer total = oneCensus6.getBudgetStatus()
+                +oneCensus6.getProgressPaymentStatus()
+                +oneCensus6.getSettleAccountsStatus()
+                +oneCensus6.getVisaStatus();
+        return total;
+    }
+
+    /**
+     * 造价进行中的任务
+     * @param costVo2
+     * @return
+     */
+    public Integer costTaskHandle(CostVo2 costVo2){
+        OneCensus6 oneCensus6 = projectMapper.costTaskHandle(costVo2);
+        Integer total = oneCensus6.getBudgetStatus()
+                +oneCensus6.getProgressPaymentStatus()
+                +oneCensus6.getSettleAccountsStatus()
+                +oneCensus6.getVisaStatus();
+        return total;
+    }
+
+    /**
+     * 造价完成任务个数
+     * @param costVo2
+     * @return
+     */
+    public Integer costTaskComple(CostVo2 costVo2){
+        OneCensus6 oneCensus6 = projectMapper.costTaskComple(costVo2);
+        Integer total = oneCensus6.getBudgetStatus()
+                +oneCensus6.getProgressPaymentStatus()
+                +oneCensus6.getSettleAccountsStatus()
+                +oneCensus6.getVisaStatus();
+        return total;
+    }
+
+    /**
+     * 造价任务统计图
+     * @param costVo2
+     * @return
+     */
+    public List<OneCensus6> costTaskCensus(CostVo2 costVo2){
+        List<OneCensus6> oneCensus6s = projectMapper.costTaskCensus(costVo2);
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            oneCensus6.setTotal(oneCensus6.getBudgetStatus()+oneCensus6.getProgressPaymentStatus()+oneCensus6.getVisaStatus()+oneCensus6.getSettleAccountsStatus());
+        }
+        return oneCensus6s;
+    }
+
+    /**
+     * 本月造价任务数量
+     * @param costVo2
+     * @return
+     */
+    public Integer costTaskMonthTotal(CostVo2 costVo2){
+        SimpleDateFormat sf=new SimpleDateFormat("dd");
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        //当前月
+        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //当前月最后一天
+        //设置日期为本月最大日期
+        now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
+        String day = sf.format(now.getTime());
+        //开始时间 结束时间
+        costVo2.setStartTime(year+"-"+month+"-"+"01");
+        costVo2.setEndTime(year+"-"+month+"-"+day);
+        List<OneCensus6> oneCensus6s = projectMapper.costTaskCensus(costVo2);
+        Integer total = 0;
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total += oneCensus6.getBudgetStatus()+oneCensus6.getProgressPaymentStatus()+oneCensus6.getVisaStatus()+oneCensus6.getSettleAccountsStatus();
+        }
+        return total;
+    }
+
+    /**
+     * 本年造价任务数量
+     * @param costVo2
+     * @return
+     */
+    public Integer costTaskYearTotal(CostVo2 costVo2){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        costVo2.setYear(year+"");
+        costVo2.setStartTime(year+"-01-01");
+        costVo2.setEndTime(year+"-12-31");
+        List<OneCensus6> oneCensus6s = projectMapper.costTaskCensus(costVo2);
+        Integer total = 0;
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total += oneCensus6.getBudgetStatus()+oneCensus6.getProgressPaymentStatus()+oneCensus6.getVisaStatus()+oneCensus6.getSettleAccountsStatus();
+        }
+        return total;
+    }
+
+    /**
+     * 上个月造价任务数量
+     * @return
+     */
+    public Integer costTaskLastMonthTotal(CostVo2 costVo2){
+        CostVo2 costVo21 = this.lastMonth(costVo2);
+        List<OneCensus6> oneCensus6s = projectMapper.costTaskCensus(costVo2);
+        Integer total = 0;
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total += oneCensus6.getBudgetStatus()+oneCensus6.getProgressPaymentStatus()+oneCensus6.getVisaStatus()+oneCensus6.getSettleAccountsStatus();
+        }
+        return total;
+    }
+
+    public Integer costTaskLastYearTotal(CostVo2 costVo2){
+        CostVo2 costVo21 = this.lastYear(costVo2);
+        List<OneCensus6> oneCensus6s = projectMapper.costTaskCensus(costVo2);
+        Integer total = 0;
+        for (OneCensus6 oneCensus6 : oneCensus6s) {
+            total += oneCensus6.getBudgetStatus()+oneCensus6.getProgressPaymentStatus()+oneCensus6.getVisaStatus()+oneCensus6.getSettleAccountsStatus();
+        }
+        return total;
+    }
+
+    /**
+     * 获取上个月
+     * @param costVo2
+     * @return
+     */
+    public CostVo2 lastMonth(CostVo2 costVo2){
+        //获取上个月第一天
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar first=Calendar.getInstance();
+        first.add(Calendar.MONTH, -1);
+        first.set(Calendar.DAY_OF_MONTH, 1);
+        //上个月第一天
+        String fristDay = format.format(first.getTime());
+        //获取上个月的最后一天
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar last =Calendar.getInstance();
+        int month=last.get(Calendar.MONTH);
+        last.set(Calendar.MONTH, month-1);
+        last.set(Calendar.DAY_OF_MONTH, last.getActualMaximum(last.DAY_OF_MONTH));
+        //上个月最后一天
+        String lastDay = sf.format(last.getTime());
+        //开始时间结束时间
+        costVo2.setStartTime(fristDay);
+        costVo2.setEndTime(lastDay);
+        return costVo2;
+    }
+
+    /**
+     * 获取上一年
+     * @param costVo2
+     * @return
+     */
+    public CostVo2 lastYear(CostVo2 costVo2){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        costVo2.setYear(year+"");
+        costVo2.setStartTime(year-1+"-01-01");
+        costVo2.setEndTime(year-1+"-12-31");
+        return costVo2;
     }
 }
