@@ -233,75 +233,46 @@ public class MessageNotificationService {
         return statisticalData;
     }
 
-    public PerformanceDistributionChart findPerformanceDistributionChart(pageVo pageVo, String id) {
-        PerformanceDistributionChart performanceDistributionChart = new PerformanceDistributionChart();
-        List<PerformanceProvision> plist = performanceDistributionChart.getPlist();
-        Example example = new Example(BaseProject.class);
-        Example.Criteria c = example.createCriteria();
-        if (pageVo.getDistrict()!=null && !pageVo.getDistrict().equals("")){
-            c.andEqualTo("district",pageVo.getDistrict());
-        }
-        List<BaseProject> baseProjects = baseProjectDao.selectByExample(example);
+
+    public String findPerformanceDistributionChart(pageVo pageVo, String id) {
+        List<PerformanceDistributionChart> list1 = new ArrayList<PerformanceDistributionChart>();
         //全部
-        if (id.equals('0')){
-            //预算
-            Example example1 = new Example(Budgeting.class);
-            Example.Criteria c1 = example1.createCriteria();
-            //上家
-            Example example2 = new Example(LastSettlementReview.class);
-            Example.Criteria c2 = example2.createCriteria();
-            //下家
-            Example example3 = new Example(SettlementAuditInformation.class);
-            Example.Criteria c3 = example3.createCriteria();
-            //跟踪
-            Example example4 = new Example(TrackAuditInfo.class);
-            Example.Criteria c4 = example4.createCriteria();
-            //设计
-            Example example5 = new Example(DesignInfo.class);
-            Example.Criteria c5 = example5.createCriteria();
-            for (BaseProject baseProject : baseProjects) {
-                c1.andEqualTo("baseProjectId",baseProject.getId());
-                c2.andEqualTo("baseProjectId",baseProject.getId());
-                c3.andEqualTo("baseProjectId",baseProject.getId());
-                c4.andEqualTo("baseProjectId",baseProject.getId());
-                c5.andEqualTo("baseProjectId",baseProject.getId());
-                if (pageVo.getStatTime()!=null && !pageVo.getStatTime().equals("")){
-                    c1.andGreaterThanOrEqualTo("budgetingTime",pageVo.getStatTime());
-                    c2.andGreaterThanOrEqualTo("compileTime",pageVo.getStatTime());
-                    c3.andGreaterThanOrEqualTo("compileTime",pageVo.getStatTime());
-                    c4.andGreaterThanOrEqualTo("createTime",pageVo.getStatTime());
-                    c5.andGreaterThanOrEqualTo("blueprintStartTime",pageVo.getStatTime());
-                }
-                if (pageVo.getEndTime()!=null && !pageVo.getEndTime().equals("")){
-                    c1.andLessThanOrEqualTo("budgetingTime",pageVo.getStatTime());
-                    c2.andLessThanOrEqualTo("compileTime",pageVo.getStatTime());
-                    c3.andLessThanOrEqualTo("compileTime",pageVo.getStatTime());
-                    c4.andLessThanOrEqualTo("createTime",pageVo.getStatTime());
-                    c5.andLessThanOrEqualTo("blueprintStartTime",pageVo.getStatTime());
-                }
-                Budgeting budgeting = budgetingDao.selectOneByExample(example1);
-                LastSettlementReview lastSettlementReview = lastSettlementReviewMapper.selectOneByExample(example2);
-                SettlementAuditInformation settlementAuditInformation = settlementAuditInformationMapper.selectOneByExample(example3);
-                TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectOneByExample(example4);
-                DesignInfo designInfo = designInfoMapper.selectOneByExample(example5);
-                if (budgeting!=null){
-                    Example example6 = new Example(AchievementsInfo.class);
-                    Example.Criteria c6 = example6.createCriteria();
-                    c6.andEqualTo("baseProjectId",baseProject.getId());
-                    AchievementsInfo achievementsInfo = achievementsInfoMapper.selectOneByExample(example6);
-
-
-                }
-
-            }
+        if (id.equals("0")){
+           List<PerformanceDistributionChart> list =  achievementsInfoMapper.findAllPerformanceDistributionChart(pageVo);
+           list1 = list;
             //设计部门
         }else if(id.equals("1")){
-
+            List<PerformanceDistributionChart> list =  achievementsInfoMapper.findDesignPerformanceDistributionChart(pageVo);
+            list1 = list;
         //造价部门
         }else if(id.equals("2")){
-
+            List<PerformanceDistributionChart> list =  achievementsInfoMapper.findCostPerformanceDistributionChart(pageVo);
+            list1 = list;
         }
+        String a = "[{\n" +
+                "                \"companyName\": \"绩效计提\",\n" +
+                "                        \"imageAmmount\": [";
+        for (PerformanceDistributionChart performanceDistributionChart : list1) {
+            a += "{\n" +
+                    "\t\t\"time\": \""+performanceDistributionChart.getYearTime()+"-"+performanceDistributionChart.getMonthTime()+"\",\n" +
+                    "\t\t\"truckAmmount\": \""+performanceDistributionChart.getPerformanceProvision()+"\"\n" +
+                    "\t}, ";
+        }
+        a = a.substring(0,a.length() -1);
+        a+="]\n" +
+                "}, {\n" +
+                "\t\"companyName\": \"当月发放\",\n" +
+                "\t\"imageAmmount\": [";
+        for (PerformanceDistributionChart performanceDistributionChart : list1) {
+            a+="{\n" +
+                    "\t\t\"time\": \""+performanceDistributionChart.getYearTime()+"-"+performanceDistributionChart.getMonthTime()+"\",\n" +
+                    "\t\t\"truckAmmount\": \""+performanceDistributionChart.getIssuedDuringMmonth()+"\"\n" +
+                    "\t}, ";
+        }
+        a = a.substring(0,a.length() -1);
+        a+="]\n" +
+                "}]";
 
-        return null;
+        return a;
     }
 }
