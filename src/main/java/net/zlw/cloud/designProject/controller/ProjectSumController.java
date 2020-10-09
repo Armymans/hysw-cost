@@ -820,6 +820,11 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(map);
     }
 
+    /**
+     * 设计金额统计
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/desiginMoneyCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginMoneyCensus(CostVo2 costVo2){
         OneCensus5 oneCensus5 = projectSumService.desiginMoneyCensus(costVo2);
@@ -833,6 +838,12 @@ public class ProjectSumController extends BaseController {
         JSONArray objects = JSON.parseArray(josn);
         return RestUtil.success(objects);
     }
+
+    /**
+     * 设计项目是否委外统计
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/desiginoutsource",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginoutsource(CostVo2 costVo2){
         OneCensus5 oneCensus5 = projectSumService.desiginoutsource(costVo2);
@@ -847,18 +858,33 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(objects);
     }
 
+    /**
+     * 设计列表
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/desginCensusList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desginCensusList(CostVo2 costVo2){
         PageInfo<DesignInfo> designInfoPageInfo = projectSumService.desginCensusList(costVo2);
         return RestUtil.success(designInfoPageInfo.getList());
     }
 
+    /**
+     * 根据设计人查找列表
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/desginCensusListByDesigner",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desginCensusListByDesigner(CostVo2 costVo2){
         PageInfo<DesignInfo> designInfoPageInfo = projectSumService.desginCensusList(costVo2);
         return RestUtil.success(designInfoPageInfo.getList());
     }
 
+    /**
+     * 设计绩效统计图
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/desiginAchievementsCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginAchievementsCensus(CostVo2 costVo2){
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsCensus(costVo2);
@@ -1168,5 +1194,122 @@ public class ProjectSumController extends BaseController {
         Integer costTaskLastMonthTotal = projectSumService.costTaskLastMonthTotal(costVo2);
         Integer integer = projectSumService.prjectCensusRast(costTaskMonthTotal, costTaskLastMonthTotal);
         return RestUtil.success(integer);
+    }
+
+    /**
+     * 造价任务汇总统计图
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/costTaskSummary",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> costTaskSummary(CostVo2 costVo2){
+        OneCensus7 oneCensus7 = projectSumService.costTaskSummary(costVo2);
+        String josn =
+                "[" +
+                        "{\"value1\":"+oneCensus7.getBudgeting()+",\"name1\":\"预算编制\"}," +
+                        "{\"value1\":"+oneCensus7.getLastSettlementReview()+",name1:\"上家结算编制'\"}," +
+                        "{\"value1\":"+oneCensus7.getSettlementAuditInformation()+",name1:\"下家结算审核'\"}," +
+                        "{\"value1\":"+oneCensus7.getTrackAuditInfo()+",name1:\"跟踪审计'\"}," +
+                        "{\"value1\":"+oneCensus7.getVisaChangeInformation()+",name1:\"签证/变更''\"}," +
+                        "{\"value1\":"+oneCensus7.getProgressPaymentInformation()+",name1:\"进度款支付'\"}" +
+                        "]";
+        JSONArray objects = JSON.parseArray(josn);
+        return RestUtil.success(objects);
+    }
+
+    /**
+     * 造价任务汇总个数
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/costTaskSummaryCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> costTaskSummaryCount(CostVo2 costVo2){
+        OneCensus7 oneCensus7 = projectSumService.costTaskSummary(costVo2);
+        return RestUtil.success(oneCensus7);
+    }
+
+    /**
+     * 造价是否委外统计图
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/costTaskOutsourcingCountCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> costTaskOutsourcingCountCensus(CostVo2 costVo2){
+        Integer costTaskOutsourcingCount = projectSumService.costTaskOutsourcingCount(costVo2);
+        Integer costTaskNoOutsourcingCount = projectSumService.costTaskNoOutsourcingCount(costVo2);
+        String josn =
+                "[" +
+                        "{\"value1\":"+costTaskOutsourcingCount+",\"name1\":\"委外\"}," +
+                        "{\"value1\":"+costTaskNoOutsourcingCount+",name1:\"内部'\"}" +
+                        "]";
+        JSONArray objects = JSON.parseArray(josn);
+        return RestUtil.success(objects);
+    }
+
+    /**
+     * 造价委外数
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/costTaskOutsourcingCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> costTaskOutsourcingCount(CostVo2 costVo2){
+        Integer costTaskOutsourcingCount = projectSumService.costTaskOutsourcingCount(costVo2);
+        Integer costTaskNoOutsourcingCount = projectSumService.costTaskNoOutsourcingCount(costVo2);
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        map.put("costTaskOutsourcingCount",costTaskOutsourcingCount);
+        map.put("costTaskNoOutsourcingCount",costTaskNoOutsourcingCount);
+        return RestUtil.success(map);
+    }
+
+    @RequestMapping(value = "/api/projectCount/DesginAchievementsList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> DesginAchievementsList(CostVo2 costVo2){
+        List<OneCensus8> oneCensus8s = projectSumService.DesginAchievementsList(costVo2);
+        Double total1 = 0.0;
+        Double total2 = 0.0;
+        Double total3 = 0.0;
+        for (OneCensus8 oneCensus8 : oneCensus8s) {
+            total1 += oneCensus8.getDesginAchievements();
+            total2 += oneCensus8.getDesginAchievements2();
+            total3 += oneCensus8.getBalance();
+        }
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        map.put("DesginAchievementsList",oneCensus8s);
+        map.put("total1",total1);
+        map.put("total2",total2);
+        map.put("total3",total3);
+        return RestUtil.success(map);
+    }
+
+    /**
+     * 月度绩效计提统计列表
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/DesginMonthAchievementsList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> DesginMonthAchievementsList(CostVo2 costVo2){
+        if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
+
+        }else{
+            costVo2.setId("1");
+        }
+        PageInfo<OneCensus9> oneCensus9PageInfo = projectSumService.DesginMonthAchievementsList(costVo2);
+        return RestUtil.success(oneCensus9PageInfo);
+    }
+
+    @RequestMapping(value = "/api/projectCount/DesginYearAchievementsList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> DesginYearAchievementsList(CostVo2 costVo2){
+        if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
+
+        }else{
+            costVo2.setId("1");
+        }
+        PageInfo<OneCensus9> oneCensus9PageInfo = projectSumService.DesginYearAchievementsList(costVo2);
+        return RestUtil.success(oneCensus9PageInfo);
+    }
+
+    @RequestMapping(value = "/api/projectCount/costTaskCensusList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object>CostTaskCensusList(CostVo2 costVo2){
+        List<OneCensus10> oneCensus10s = projectSumService.costTaskCensusList(costVo2);
+        return RestUtil.success(oneCensus10s);
     }
 }
