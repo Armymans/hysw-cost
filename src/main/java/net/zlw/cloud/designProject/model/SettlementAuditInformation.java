@@ -69,8 +69,8 @@ public class SettlementAuditInformation {
     @Column(name = "del_flag")
     private String delFlag;
 
-    @Column(name = "takeTime")
-    private String take_time;
+    @Column(name = "take_time")
+    private String takeTime;
 
     @Column(name = "compile_time")
     private String compileTime;

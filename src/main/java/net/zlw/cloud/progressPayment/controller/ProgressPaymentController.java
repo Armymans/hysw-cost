@@ -48,7 +48,7 @@ public class ProgressPaymentController  extends BaseController {
     //编辑
 //    @PostMapping("/updateProgress")
     @RequestMapping(value = "/progress/updateProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public String updateProgress(BaseProjectVo baseProjectVo, @RequestParam(name = "page") String page){
+    public String updateProgress(BaseProjectVo baseProjectVo){
         try {
             baseProjectService.updateProgress(baseProjectVo);
             return "编辑成功";

@@ -91,6 +91,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             "LEFT JOIN budgeting bt on p.base_project_id = bt.base_project_id\n" +
             "LEFT JOIN progress_payment_total_payment pt on p.id = pt.progress_payment_id\n" +
             "where\n" +
+            "(p.del_flag = '0') and \n"+
             "(b.district = #{district} or #{district} = '') and \n" +
             "(b.project_nature = #{projectNature} or #{projectNature} = '') and \n" +
             "(p.project_type = #{projectType} or #{projectType} = '') and\n" +

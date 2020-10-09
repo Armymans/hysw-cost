@@ -104,8 +104,8 @@ public class ClearProjectService{
      * @param userInfo
      * @return
      */
-    public List<ClearProject> findAllClearProject(PageRequest pageRequest,UserInfo userInfo){
-//    public PageInfo<ClearProject> findAllClearProject(PageRequest pageRequest,UserInfo userInfo){
+//    public List<ClearProject> findAllClearProject(PageRequest pageRequest,UserInfo userInfo){
+    public PageInfo<ClearProject> findAllClearProject(PageRequest pageRequest,UserInfo userInfo){
         //        设置分页助手
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
 
@@ -155,8 +155,8 @@ public class ClearProjectService{
 
         PageInfo<ClearProject> projectPageInfo = new PageInfo<>(clearProjects);
 
-//        return projectPageInfo;
-        return projectPageInfo.getList();
+        return projectPageInfo;
+//        return projectPageInfo.getList();
 
     }
 

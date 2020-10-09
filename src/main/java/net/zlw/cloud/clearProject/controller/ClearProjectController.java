@@ -56,13 +56,13 @@ public class ClearProjectController extends BaseController {
      * @return
      */
 
-    @RequestMapping(value = "/clearProject/findAllClearProject",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/clearProject/findAllClearProject",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllClearProject(PageRequest pageRequest){
         System.out.println("PageRequest:"+pageRequest);
-        List<ClearProject> allClearProject = clearProjectService.findAllClearProject(pageRequest, getLoginUser());
-//        PageInfo<ClearProject> allClearProject = clearProjectService.findAllClearProject(pageRequest, getLoginUser());
-//        return RestUtil.page(allClearProject);
-        return RestUtil.success(allClearProject);
+//        List<ClearProject> allClearProject = clearProjectService.findAllClearProject(pageRequest, getLoginUser());
+        PageInfo<ClearProject> allClearProject = clearProjectService.findAllClearProject(pageRequest, getLoginUser());
+        return RestUtil.page(allClearProject);
+//        return RestUtil.success(allClearProject);
     }
 
     /**
