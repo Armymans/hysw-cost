@@ -61,7 +61,7 @@ public class MaintenanceProjectInformationSumController extends BaseController {
      * @Description //本月任务
      * @Date 20:18 2020/10/8
      **/
-    @RequestMapping(value = "/maintenanceProjectInformationSum/month",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/maintenanceProjectInformationSum/month",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> month(){
         Integer month = maintenanceProjectInformationService.month();
         Integer month2 = maintenanceProjectInformationService.month2();
