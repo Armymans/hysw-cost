@@ -1,8 +1,10 @@
 package net.zlw.cloud.progressPayment.model.vo;
 
 import lombok.Data;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class ProgressListVo {
@@ -31,4 +33,6 @@ public class ProgressListVo {
     private BigDecimal cumulativeNumberPayment;
     private String receivingTime;
     private String compileTime;
+
+    private List<AuditInfo> auditInfos;
 }
