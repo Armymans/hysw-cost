@@ -42,6 +42,8 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "                    visa_change_information s1 LEFT JOIN base_project s2 on s1.base_project_id = s2.id\n" +
             "                    left join budgeting s3 on s2.id = s3.base_project_id\n" +
             "                    where 1=1 and\n" +
+            "                    s1.state = 1\n" +
+            "                    and\n"+
             "                     (s2.district = #{district} or #{district} = '' )\n" +
             "                    and\n" +
             "                     (s2.project_nature = #{projectNature} or #{projectNature} = '')\n" +

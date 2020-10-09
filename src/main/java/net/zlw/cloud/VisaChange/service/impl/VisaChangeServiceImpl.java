@@ -891,7 +891,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
         //审核信息
         Example example2 = new Example(AuditInfo.class);
-        example2.createCriteria().andEqualTo("baseProjectId", baseProjectId);
+        example2.createCriteria().andEqualTo("id", baseProjectId);
         List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
         visaChangeInfoVo.setAuditInfos(auditInfos);
         return visaChangeInfoVo;

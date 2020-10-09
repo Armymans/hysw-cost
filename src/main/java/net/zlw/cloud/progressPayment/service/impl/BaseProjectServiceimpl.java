@@ -1,12 +1,15 @@
 package net.zlw.cloud.progressPayment.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.progressPayment.mapper.*;
 import net.zlw.cloud.progressPayment.model.*;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.PageVo;
 import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
+import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
@@ -516,6 +519,19 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         Example example2 = new Example(AuditInfo.class);
         example2.createCriteria().andEqualTo("baseProjectId",id);
         auditInfoDao.deleteByExample(example2);
+    }
+
+    /***
+     * 签证变更所选项目
+     * @param visaBaseProjectVo
+     * @return
+     */
+    @Override
+    public List<VisaBaseProjectVo> selectByBaseProjectId(VisaBaseProjectVo visaBaseProjectVo) {
+        PageHelper.startPage(visaBaseProjectVo.getPageNum(),visaBaseProjectVo.getPageSize());
+
+        return baseProjectDao.findByBaseProject(visaBaseProjectVo);
+
     }
 
 

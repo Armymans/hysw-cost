@@ -6,6 +6,7 @@ import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.PageVo;
 import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
+import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
 
 import java.util.List;
@@ -31,4 +32,6 @@ public interface BaseProjectService {
     List<ProgressListVo> searchAllProgress(PageVo pageVo);
 
     void deleteProgress(String id);
+
+    List<VisaBaseProjectVo> selectByBaseProjectId(VisaBaseProjectVo visaBaseProjectVo);
 }
