@@ -12,6 +12,7 @@ import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
+import net.zlw.cloud.statisticAnalysis.model.EmployeeVo;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -252,6 +253,13 @@ public class ProjectSumService {
         return budgetingMapper.BudgetingList(costVo2);
     }
 
+    /*
+    * 员工绩效统计预算编制列表
+    * */
+    public List<Budgeting> EmployeeBudgetingList(EmployeeVo employeeVo){
+        return budgetingMapper.EmployeeBudgetingList(employeeVo);
+    }
+
     /**
      * 上家结算编制列表
      * @param costVo2
@@ -259,6 +267,9 @@ public class ProjectSumService {
      */
     public List<LastSettlementReview> lastSettlementReviewChargeList(CostVo2 costVo2){
         return lastSettlementReviewMapper.lastSettlementReviewList(costVo2);
+    }
+    public List<LastSettlementReview> EmployeelastSettlementReviewChargeList(EmployeeVo employeeVo){
+        return lastSettlementReviewMapper.EmployeelastSettlementReviewChargeList(employeeVo);
     }
 
     /**
@@ -442,6 +453,9 @@ public class ProjectSumService {
     public List<SettlementAuditInformation> settlementAuditInformationList(CostVo2 costVo2) {
         return settlementAuditInformationMapper.settlementAuditInformationList(costVo2);
     }
+    public List<SettlementAuditInformation> EmployeesettlementAuditInformationList(EmployeeVo employeeVo){
+        return settlementAuditInformationMapper.EmployeesettlementAuditInformationList(employeeVo);
+    }
 
     /**
      * 安徽分档计算额
@@ -492,6 +506,9 @@ public class ProjectSumService {
 
     public List<Budgeting> trackList(CostVo2 costVo2){
         return budgetingMapper.trackList(costVo2);
+    }
+    public List<Budgeting> EmployeetrackList(EmployeeVo employeeVo){
+        return budgetingMapper.EmployeetrackList(employeeVo);
     }
 
     /**

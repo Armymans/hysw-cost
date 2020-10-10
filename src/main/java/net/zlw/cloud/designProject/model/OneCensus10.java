@@ -27,4 +27,14 @@ public class OneCensus10 {
 
     private Integer trackCount;
     private BigDecimal contractAmount;
+
+    //绩效字段
+    private BigDecimal performA;
+    private BigDecimal performB;
+    private BigDecimal ABTotal;
+    private BigDecimal lastPerform;
+    private BigDecimal settlePerform;
+    private BigDecimal truckPerform;
+    private BigDecimal PerformTotal;
+
 }
