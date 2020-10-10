@@ -1,6 +1,7 @@
 package net.zlw.cloud.designProject.service;
 
 
+import com.alibaba.druid.sql.visitor.functions.Now;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
@@ -1251,7 +1252,12 @@ public class ProjectSumService {
      * @return
      */
     public List<OneCensus6> desiginAchievementsCensus(CostVo2 costVo2){
-        return projectMapper.desiginAchievementsCensus(costVo2);
+        if(costVo2.getStartTime()!=null&!"".equals(costVo2.getStartTime())){
+            return projectMapper.desiginAchievementsCensus(costVo2);
+        }else{
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            return projectMapper.desiginAchievementsCensus(costVo21);
+        }
     }
 
     /**
@@ -1687,6 +1693,20 @@ public class ProjectSumService {
     }
 
     /**
+     * 获取本年
+     * @param costVo2
+     * @return
+     */
+    public CostVo2 NowYear(CostVo2 costVo2){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        costVo2.setYear(year+"");
+        costVo2.setStartTime(year+"-01-01");
+        costVo2.setEndTime(year+"-12-31");
+        return costVo2;
+    }
+
+    /**
      * 造价任务汇总统计
      * @param costVo2
      * @return
@@ -1923,5 +1943,66 @@ public class ProjectSumService {
             }
         }
         return oneCensus10s;
+    }
+
+    public List<OneCensus2> memberAchievementsCensus(CostVo2 costVo2){
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo2);
+            return oneCensus2s;
+        }else{
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo21);
+            return oneCensus2s;
+        }
+    }
+
+    public BigDecimal memberAchievementsYearCount(CostVo2 costVo2){
+        CostVo2 costVo21 = this.NowYear(costVo2);
+        List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo21);
+        Double total = 0.0;
+        for (OneCensus2 oneCensus2 : oneCensus2s) {
+            total += oneCensus2.getTotal();
+        }
+        return new BigDecimal(total);
+    }
+
+    public BigDecimal memberAchievementsMonthCount(CostVo2 costVo2){
+        CostVo2 costVo21 = this.NowMonth(costVo2);
+        List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo21);
+        Double total = 0.0;
+        for (OneCensus2 oneCensus2 : oneCensus2s) {
+            total += oneCensus2.getTotal();
+        }
+        return new BigDecimal(total);
+    }
+
+    public BigDecimal memberAchievementsLastYearCount(CostVo2 costVo2){
+        CostVo2 costVo21 = this.lastYear(costVo2);
+        List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo21);
+        Double total = 0.0;
+        for (OneCensus2 oneCensus2 : oneCensus2s) {
+            total += oneCensus2.getTotal();
+        }
+        return new BigDecimal(total);
+    }
+
+    public BigDecimal memberAchievementsLastMonthCount(CostVo2 costVo2){
+        CostVo2 costVo21 = this.lastMonth(costVo2);
+        List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo21);
+        Double total = 0.0;
+        for (OneCensus2 oneCensus2 : oneCensus2s) {
+            total += oneCensus2.getTotal();
+        }
+        return new BigDecimal(total);
+    }
+
+    public List<OneCensus4> MemberAchievementsCensus2(CostVo2 costVo2){
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            List<OneCensus4> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus2(costVo2);
+            return oneCensus2s;
+        }else{
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            return achievementsInfoMapper.MemberAchievementsCensus2(costVo21);
+        }
     }
 }

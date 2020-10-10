@@ -2,6 +2,8 @@ package net.zlw.cloud.designProject.mapper;
 
 import net.zlw.cloud.designProject.model.AchievementsInfo;
 import net.zlw.cloud.designProject.model.CostVo2;
+import net.zlw.cloud.designProject.model.OneCensus2;
+import net.zlw.cloud.designProject.model.OneCensus4;
 import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.statisticAnalysis.model.PerformanPeople;
@@ -122,4 +124,54 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "group by \n" +
             "a.member_id")
     List<PerformanPeople> performanceAccrualAndSummaryList(pageVo pageVo);
+
+    @Select(
+            "SELECT\n" +
+                    "YEAR(s1.create_time) yeartime,\n" +
+                    "MONTH(s1.create_time) monthTime,\n" +
+                    "SUM(IFNULL(desgin_achievements,0)+IFNULL(budget_achievements,0)+IFNULL(upsubmit_achievements,0)+IFNULL(downsubmit_achievements,0)+IFNULL(truck_achievements,0)) total\n" +
+                    "FROM\t\n" +
+                    "base_project s1 LEFT JOIN achievements_info s2 ON s1.id = s2.base_project_id\t\n" +
+                    "where\n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "(s1.district = #{district} or #{district} = '')\n" +
+                    "and\t\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time <= #{endTime} or  #{endTime} = '')\n" +
+                    "GROUP BY\n" +
+                    "YEAR(s1.create_time),\n" +
+                    "MONTH(s1.create_time)"
+    )
+    List<OneCensus2> MemberAchievementsCensus(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "s3.member_name memberName, \n" +
+                    "SUM(IFNULL(desgin_achievements,0)\n" +
+                    "+IFNULL(budget_achievements,0)\n" +
+                    "+IFNULL(upsubmit_achievements,0)\n" +
+                    "+IFNULL(downsubmit_achievements,0)\n" +
+                    "+IFNULL(truck_achievements,0)\n" +
+                    ") total\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN achievements_info s2 ON s1.id = s2.base_project_id\n" +
+                    "LEFT JOIN member_manage s3 ON s2.member_id = s3.id\n" +
+                    "where\n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "(dep_id = #{id} or #{id} ='')\n" +
+                    "and\n" +
+                    "(s1.district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time <= #{endTime} or  #{endTime} = '')\n" +
+                    "GROUP BY\n" +
+                    "member_id\n" +
+                    "ORDER BY \n" +
+                    "member_id desc"
+    )
+    List<OneCensus4> MemberAchievementsCensus2(CostVo2 costVo2);
 }

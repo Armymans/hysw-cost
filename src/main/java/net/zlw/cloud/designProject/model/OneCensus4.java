@@ -12,4 +12,7 @@ public class OneCensus4 {
     private BigDecimal sumbitMoney;
     private BigDecimal authorizedNumber;
     private BigDecimal subtractTheNumber;
+
+    private String memberName;
+    private BigDecimal total;
 }
