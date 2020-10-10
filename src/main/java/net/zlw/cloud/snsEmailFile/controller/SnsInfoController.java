@@ -22,7 +22,7 @@ public class SnsInfoController extends BaseController {
      * @Description //发送短信
      * @Date 22:46 2020/10/9
      **/
-    public String sendCode(String phone ,String content,String business){
+    public String sendCode(String phone ,String content){
         try {
             SnsThread sns = new SnsThread(phone, content);
             Thread t = new Thread(sns);
