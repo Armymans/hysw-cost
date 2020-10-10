@@ -289,7 +289,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Override
     public void batchReview(BatchReviewVo batchReviewVo) {
-        batchReviewVo.getBatchAll()
+        batchReviewVo.getBatchAll();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             Example example = new Example(ProgressPaymentInformation.class);
