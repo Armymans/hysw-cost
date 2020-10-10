@@ -107,7 +107,9 @@ public class ProjectService {
         //如果设计状态为'未审核' 则展示当前用户需要审核的信息
         if("1".equals(pageVo.getDesginStatus())){
             //则根据登录用户id展示于其身份对应的数据
-            pageVo.setUserId(loginUser.getId());
+            // TODO: 2020/10/10
+            //loginUser.getId()
+            pageVo.setUserId("ceshi01");
             designInfos = designInfoMapper.designProjectSelect(pageVo);
             if(designInfos.size()>0){
                 for (DesignInfo designInfo : designInfos) {
@@ -1237,15 +1239,28 @@ public class ProjectService {
         BigDecimal costTotalAmount = new BigDecimal(0);
         List<BaseProject> baseProjects = projectMapper.selectByExample(example);
         for (BaseProject baseProject : baseProjects) {
-            Example example1 = new Example(CostPreparation.class);
-            Example.Criteria c1 = example1.createCriteria();
-            c1.andEqualTo("baseProjectId",baseProject.getId());
-            CostPreparation costPreparation = costPreparationDao.selectOneByExample(example1);
+            CostPreparation costPreparation = this.costPreparationById(baseProject.getId());
             if(costPreparation!=null){
                 costTotalAmount.add(costPreparation.getCostTotalAmount().add(costTotalAmount));
             }
         }
         return costTotalAmount;
+    }
+
+    public CostPreparation costPreparationById(String id){
+        Example example1 = new Example(CostPreparation.class);
+        Example.Criteria c1 = example1.createCriteria();
+        c1.andEqualTo("budgetingId",id);
+        CostPreparation costPreparation = costPreparationDao.selectOneByExample(example1);
+        return costPreparation;
+    }
+
+    public CostPreparation costPreparationById2(String id){
+        Example example1 = new Example(CostPreparation.class);
+        Example.Criteria c1 = example1.createCriteria();
+        c1.andEqualTo("baseProjectId",id);
+        CostPreparation costPreparation = costPreparationDao.selectOneByExample(example1);
+        return costPreparation;
     }
 
     public BigDecimal amountCostAmountSum(String id){
@@ -1272,15 +1287,28 @@ public class ProjectService {
         BigDecimal costTotalAmount = new BigDecimal(0);
         List<BaseProject> baseProjects = projectMapper.selectByExample(example);
         for (BaseProject baseProject : baseProjects) {
-            Example example1 = new Example(VeryEstablishment.class);
-            Example.Criteria c1 = example1.createCriteria();
-            c1.andEqualTo("baseProjectId",baseProject.getId());
-            VeryEstablishment veryEstablishment = veryEstablishmentDao.selectOneByExample(example1);
+            VeryEstablishment veryEstablishment = this.veryEstablishmentById(baseProject.getId());
             if(veryEstablishment!=null){
                 costTotalAmount.add(veryEstablishment.getBiddingPriceControl().add(costTotalAmount));
             }
         }
         return costTotalAmount;
+    }
+
+    public VeryEstablishment veryEstablishmentById(String id){
+        Example example1 = new Example(VeryEstablishment.class);
+        Example.Criteria c1 = example1.createCriteria();
+        c1.andEqualTo("baseProjectId",id);
+        VeryEstablishment veryEstablishment = veryEstablishmentDao.selectOneByExample(example1);
+        return veryEstablishment;
+    }
+
+    public VeryEstablishment veryEstablishmentById2(String id){
+        Example example1 = new Example(VeryEstablishment.class);
+        Example.Criteria c1 = example1.createCriteria();
+        c1.andEqualTo("budgetingId",id);
+        VeryEstablishment veryEstablishment = veryEstablishmentDao.selectOneByExample(example1);
+        return veryEstablishment;
     }
 
     public List<MessageNotification> messageList(UserInfo userInfo) {
@@ -1323,7 +1351,7 @@ public class ProjectService {
         Example example = new Example(SettlementAuditInformation.class);
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("baseProjectId",id);
-        net.zlw.cloud.settleAccounts.model.SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(id);
+        net.zlw.cloud.settleAccounts.model.SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example);
         return settlementAuditInformation;
     }
 

@@ -4,8 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import javafx.geometry.Pos;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
+import net.zlw.cloud.budgeting.model.CostPreparation;
+import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
@@ -15,7 +18,9 @@ import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -36,10 +41,10 @@ public class ProjectController extends BaseController {
      * @param designPageVo
      * @return
      */
-    @PostMapping("/disProjectSelect")
-    public Map<String,Object> disProjectSelect(@RequestBody DesignPageVo designPageVo) {
+    @RequestMapping(value = "/api/disproject/disProjectSelect", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> disProjectSelect(DesignPageVo designPageVo) {
         PageInfo<DesignInfo> designInfoPageInfo = projectService.designProjectSelect(designPageVo, getLoginUser());
-        return RestUtil.success(designInfoPageInfo);
+        return RestUtil.page(designInfoPageInfo);
     }
 
     /**
@@ -575,22 +580,81 @@ public class ProjectController extends BaseController {
      *
      * @return
      */
-    public ProjectVo3 projectSelect(String id) {
-        //工程页面查询
-        BaseProject baseProject = projectService.BaseProjectByid(id);
-        DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
-        Budgeting budgeting = projectService.budgetingByid(baseProject.getId());
-        TrackAuditInfo trackAuditInfo = projectService.trackAuditInfoByid(baseProject.getId());
-        SettlementAuditInformation settlementAuditInformation = projectService.SettlementAuditInformationByid(baseProject.getId());
-        LastSettlementReview lastSettlementReview = projectService.lastSettlementReviewbyid(baseProject.getId());
-        //根据baseproject返回值
+    @RequestMapping(value = "/api/costproject/selectByBaseprojectId", method = {RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> projectSelect(String id) {
+        //基本数据信息
         ProjectVo3 projectVo3 = new ProjectVo3();
+        BaseProject baseProject = projectService.BaseProjectByid(id);
         projectVo3.setBaseProject(baseProject);
+        //设计信息
+        DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
         projectVo3.setDesignInfo(designInfo);
+        //根据地区判断相应的设计费 应付金额 实付金额
+        //如果为安徽
+        if(!baseProject.getDistrict().equals("4")){
+            AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyinfoByid(baseProject.getId());
+            if(anhuiMoneyinfo!=null){
+                designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+            }
+        }else{
+            //如果为吴江
+            WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfoByid(baseProject.getId());
+            if(wujiangMoneyInfo!=null){
+                designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
+                designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
+            }
+        }
+        //项目探勘
+        ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
+        if(projectExploration==null){
+            projectVo3.setProjectExploration(new ProjectExploration());
+        }else{
+            projectVo3.setProjectExploration(projectExploration);
+        }
+        //方案会审
+        PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
+        if(packageCame==null){
+            projectVo3.setPackageCame(new PackageCame());
+        }else{
+            projectVo3.setPackageCame(packageCame);
+        }
+        //设计变更
+        DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
+        if(designChangeInfo == null){
+            projectVo3.setDesignChangeInfo(new DesignChangeInfo());
+        }else{
+            projectVo3.setDesignChangeInfo(designChangeInfo);
+        }
+
+        //预算编制
+        Budgeting budgeting = projectService.budgetingByid(baseProject.getId());
         projectVo3.setBudgeting(budgeting);
-        projectVo3.setTrackAuditInfo(trackAuditInfo);
-        projectVo3.setLastSettlementReview(lastSettlementReview);
-        projectVo3.setSettlementAuditInformation(settlementAuditInformation);
+        //成本编制
+        CostPreparation costPreparation = projectService.costPreparationById(budgeting.getId());
+        if(costPreparation==null){
+            projectVo3.setCostPreparation(new CostPreparation());
+        }else{
+            projectVo3.setCostPreparation(costPreparation);
+        }
+        //控价编制
+        VeryEstablishment veryEstablishment = projectService.veryEstablishmentById2(budgeting.getId());
+        if(veryEstablishment == null){
+            projectVo3.setVeryEstablishment(new VeryEstablishment());
+        }else{
+            projectVo3.setVeryEstablishment(veryEstablishment);
+        }
+        //跟踪审计信息
+        TrackAuditInfo trackAuditInfo = projectService.trackAuditInfoByid(baseProject.getId());
+        if(trackAuditInfo==null){
+            projectVo3.setTrackAuditInfo(new TrackAuditInfo());
+        }else{
+            projectVo3.setTrackAuditInfo(trackAuditInfo);
+        }
 
         //计算累计值
         ProjectVo3 projectVo31 = projectService.progressPaymentInformationSum(baseProject.getId());
@@ -604,7 +668,23 @@ public class ProjectController extends BaseController {
         projectVo3.setAmountVisaChangeSum(projectVo32.getAmountVisaChangeSum());
         projectVo3.setChangeCount(projectVo32.getChangeCount());
         projectVo3.setContractAmount(projectVo32.getContractAmount());
-        return projectVo3;
+
+
+        //上家结算送审
+        SettlementAuditInformation settlementAuditInformation = projectService.SettlementAuditInformationByid(baseProject.getId());
+        if(settlementAuditInformation==null){
+            projectVo3.setSettlementAuditInformation(new SettlementAuditInformation());
+        }else{
+            projectVo3.setSettlementAuditInformation(settlementAuditInformation);
+        }
+        //下家结算送审
+        LastSettlementReview lastSettlementReview = projectService.lastSettlementReviewbyid(baseProject.getId());
+        if(lastSettlementReview==null){
+            projectVo3.setLastSettlementReview(new LastSettlementReview());
+        }else{
+            projectVo3.setLastSettlementReview(lastSettlementReview);
+        }
+        return RestUtil.success(projectVo3);
     }
 
     @RequestMapping(value = "/api/costproject/costSelectByid", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)

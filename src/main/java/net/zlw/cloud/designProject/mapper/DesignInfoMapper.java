@@ -43,7 +43,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "LEFT JOIN base_project s1 ON s2.base_project_id = s1.id\n" +
                     "LEFT JOIN audit_info s4 ON s4.base_project_id = s2.id\n" +
                     "where\n" +
-                    "s1.desgin_status =#{desginStatus}\n" +
+                    "(s1.desgin_status =#{desginStatus} or #{desginStatus} = '')\n" +
                     "and\n" +
                     "(s1.district = #{district} or #{district} ='')\n" +
                     "and\n" +

@@ -1938,6 +1938,9 @@ public class ProjectSumService {
                     if(oneCensus10.getMonthTime().equals(census10.getMonthTime())){
                         oneCensus10.setBudCountB(census10.getBudCountB());
                         oneCensus10.setCostTotalAmountB(census10.getCostTotalAmountB());
+                    }else{
+                        OneCensus10 oneCensus101 = new OneCensus10();
+
                     }
                 }
             }

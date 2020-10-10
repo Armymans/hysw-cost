@@ -27,9 +27,9 @@ public interface LastSettlementReviewMapper extends Mapper<LastSettlementReview>
                     "\tand\n" +
                     "\ts1.founder_id =#{id}\n" +
                     "\tand\n" +
-                    " review_number>=#{startTime}\n" +
+                    " compile_time>=#{startTime}\n" +
                     "\tand\n" +
-                    " (review_number<=#{endTime} or  #{endTime} = '')\n" +
+                    " (compile_time<=#{endTime} or  #{endTime} = '')\n" +
                     " and\n" +
                     " (district=#{district} or  #{district} = '')"
     )

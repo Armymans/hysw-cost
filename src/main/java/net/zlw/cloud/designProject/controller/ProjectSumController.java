@@ -45,6 +45,11 @@ public class ProjectSumController extends BaseController {
         return  projectSumService.completeCount();
     }
 
+    /**
+     * 个人绩效分析 = 预算编制列表
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/budgetingList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> budgetingList(CostVo2 costVo2){
 //        getLoginUser().getId();
@@ -106,6 +111,11 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(budgetings);
     }
 
+    /***
+     * 个人绩效分析 = 上家结算编制
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/LastSettlementReviewChargeList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> LastSettlementReviewChargeList(CostVo2 costVo2){
         List<LastSettlementReview> lastSettlementReviews = projectSumService.lastSettlementReviewChargeList(costVo2);
@@ -152,6 +162,11 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(lastSettlementReviews);
     }
 
+    /**
+     * 下家结算编制
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/settlementAuditInformationList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> settlementAuditInformationList(CostVo2 costVo2){
         List<SettlementAuditInformation> settlementAuditInformations = projectSumService.settlementAuditInformationList(costVo2);
@@ -231,6 +246,11 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(settlementAuditInformations);
     }
 
+    /**
+     * 跟踪审计
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/trackList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> trackList(CostVo2 costVo2){
         List<Budgeting> budgetings = projectSumService.trackList(costVo2);
