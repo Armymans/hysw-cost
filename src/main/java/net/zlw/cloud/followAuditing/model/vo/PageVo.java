@@ -4,6 +4,10 @@ import lombok.Data;
 
 @Data
 public class PageVo {
+    //页码
+    private Integer pageNum;
+    //每页条数
+    private Integer pageSize;
     private String district;
     private String projectNature;
     private String waterSupplyType;
@@ -12,6 +16,9 @@ public class PageVo {
     private String designCategory;
     private String constructionOrganization;
     private String keyword;
+
+    // 跟踪审计的状态
+    private String trackStatus;
 
 
 }

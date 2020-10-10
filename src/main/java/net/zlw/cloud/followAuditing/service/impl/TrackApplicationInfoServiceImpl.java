@@ -1,5 +1,7 @@
 package net.zlw.cloud.followAuditing.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.followAuditing.mapper.TrackApplicationInfoDao;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
@@ -45,8 +47,14 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
 
     @Override
-    public List<ReturnTrackVo> selectTrackList(PageVo pageVo) {
-       return trackAuditInfoDao.selectTrackList(pageVo);
+    public PageInfo<ReturnTrackVo> selectTrackList(PageVo pageVo) {
+        // 设置分页助手
+        PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
+        List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
+
+        PageInfo<ReturnTrackVo> pageInfo = new PageInfo<>(returnTrackVos);
+
+        return pageInfo;
 
     }
 

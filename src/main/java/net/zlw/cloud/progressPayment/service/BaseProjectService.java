@@ -1,5 +1,6 @@
 package net.zlw.cloud.progressPayment.service;
 
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
@@ -29,7 +30,7 @@ public interface BaseProjectService {
 
     NumberVo NumberItems();
 
-    List<ProgressListVo> searchAllProgress(PageVo pageVo);
+    PageInfo<ProgressListVo> searchAllProgress(PageVo pageVo);
 
     void deleteProgress(String id);
 
