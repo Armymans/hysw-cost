@@ -162,6 +162,17 @@ public class FileInfoController extends BaseController {
 
     /**
      * @Author Armyman
+     * @Description //查询文件
+     * @Date 14:00 2020/10/10
+     **/
+    @RequestMapping(value = "/findById", method = RequestMethod.POST)
+    public Map<String, Object> findById(String id) {
+        FileInfo fileInfoList = fileInfoService.getByKey(id);
+        return RestUtil.success(fileInfoList);
+    }
+
+    /**
+     * @Author Armyman
      * @Description //下载文件
      * @Date 14:11 2020/10/10
      **/
