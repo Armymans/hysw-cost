@@ -16,12 +16,8 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 @Service
@@ -1666,5 +1662,266 @@ public class ProjectSumService {
         costVo2.setStartTime(year-1+"-01-01");
         costVo2.setEndTime(year-1+"-12-31");
         return costVo2;
+    }
+
+    /**
+     * 获取本月
+     * @param costVo2
+     * @return
+     */
+    public CostVo2 NowMonth(CostVo2 costVo2){
+        SimpleDateFormat sf=new SimpleDateFormat("dd");
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        //当前月
+        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //当前月最后一天
+        //设置日期为本月最大日期
+        now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
+        String day = sf.format(now.getTime());
+        //开始时间 结束时间
+        costVo2.setStartTime(year+"-"+month+"-"+"01");
+        costVo2.setEndTime(year+"-"+month+"-"+day);
+        return costVo2;
+    }
+
+    /**
+     * 造价任务汇总统计
+     * @param costVo2
+     * @return
+     */
+    public OneCensus7 costTaskSummary(CostVo2 costVo2){
+        if(costVo2.getStartTime()!=null
+                &&"".equals(costVo2.getStartTime())
+                &&costVo2.getEndTime()!=null
+                &&"".equals(costVo2.getEndTime())){
+            OneCensus7 oneCensus7 = projectMapper.costTaskSummary(costVo2);
+            return oneCensus7;
+        }else{
+            CostVo2 costVo21 = this.NowMonth(costVo2);
+            OneCensus7 oneCensus7 = projectMapper.costTaskSummary(costVo21);
+            return oneCensus7;
+        }
+    }
+
+    /**
+     * 委外
+     * @param costVo2
+     * @return
+     */
+    public Integer costTaskOutsourcingCount(CostVo2 costVo2){
+        OneCensus7 oneCensus7 = projectMapper.costTaskOutsourcingCount(costVo2);
+        Integer total = oneCensus7.getBudgeting() + oneCensus7.getLastSettlementReview() + oneCensus7.getSettlementAuditInformation()
+                +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation();
+        return total;
+    }
+
+    /**
+     * 内部
+     * @param costVo2
+     * @return
+     */
+    public Integer costTaskNoOutsourcingCount(CostVo2 costVo2){
+        OneCensus7 oneCensus7 = projectMapper.costTaskNoOutsourcingCount(costVo2);
+        Integer total = oneCensus7.getBudgeting() + oneCensus7.getLastSettlementReview() + oneCensus7.getSettlementAuditInformation()
+                +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation();
+        return total;
+    }
+
+    /**
+     * 设计绩效统计列表
+     * @param costVo2
+     * @return
+     */
+    public List<OneCensus8> DesginAchievementsList(CostVo2 costVo2){
+            if(costVo2.getStartTime()!=null&&"".equals(costVo2.getStartTime())&&costVo2.getEndTime()!=null
+                    &&"".equals(costVo2.getEndTime())){
+                List<OneCensus8> oneCensus8s = projectMapper.DesginAchievementsList(costVo2);
+                return oneCensus8s;
+            }else{
+                CostVo2 costVo21 = NowMonth(costVo2);
+                List<OneCensus8> oneCensus8s = projectMapper.DesginAchievementsList(costVo21);
+                return oneCensus8s;
+            }
+    }
+
+    /**
+     * 月度绩效计提统计列表
+     * @param costVo2
+     * @return
+     */
+    public PageInfo<OneCensus9> DesginMonthAchievementsList(CostVo2 costVo2){
+        PageHelper.startPage(costVo2.getPageNum(),costVo2.getPageSize());
+        List<OneCensus9> oneCensus9s = projectMapper.DesginMonthAchievementsList(costVo2);
+        for (OneCensus9 oneCensus9 : oneCensus9s) {
+            //设计费填入
+            if(!oneCensus9.getDistrict().equals("4")){
+                Example anhui = new Example(AnhuiMoneyinfo.class);
+                Example.Criteria c2 = anhui.createCriteria();
+                c2.andEqualTo("baseProjectId",oneCensus9.getId());
+                AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
+                if(anhuiMoneyinfo!=null){
+                    oneCensus9.setDesginMoney(anhuiMoneyinfo.getRevenue());
+                    if(anhuiMoneyinfo.getOfficialReceipts()!=null&&!"".equals(anhuiMoneyinfo.getOfficialReceipts())){
+                        //如果实收金额不为空 则到账
+                        oneCensus9.setIsAmount("1");
+                        oneCensus9.setIsConfirm("1");
+                    }
+                    //递延项目判断
+                    String BlueprintStartTime = "";
+                    if(oneCensus9.getBlueprintStartTime()!=null){
+                        BlueprintStartTime = oneCensus9.getBlueprintStartTime().substring(0, 7);
+                    }
+                    String CreateTime = "";
+                    if(anhuiMoneyinfo.getCreateTime()!=null){
+                        CreateTime = anhuiMoneyinfo.getCreateTime().substring(0, 7);
+                    }
+                    if(BlueprintStartTime.equals(CreateTime)){
+                        oneCensus9.setProjectDeferral("2");
+                    }else{
+                        oneCensus9.setProjectDeferral("1");
+                    }
+                }else{
+                    //如果无法找到对应支付信息 则未到账
+                    oneCensus9.setIsAmount("2");
+                    oneCensus9.setIsConfirm("2");
+                }
+                //如果为吴江
+            }else{
+                Example wujiang = new Example(WujiangMoneyInfo.class);
+                Example.Criteria c2 = wujiang.createCriteria();
+                c2.andEqualTo("baseProjectId",oneCensus9.getId());
+                WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
+                if(wujiangMoneyInfo!=null){
+                    oneCensus9.setDesginMoney(wujiangMoneyInfo.getRevenue());
+                    if(wujiangMoneyInfo.getOfficialReceipts()!=null&&!"".equals(wujiangMoneyInfo.getOfficialReceipts())){
+                        //如果实收金额不为空 则到账
+                        oneCensus9.setIsAmount("1");
+                        oneCensus9.setIsConfirm("1");
+                    }
+                    //递延项目判断
+                    String BlueprintStartTime = "";
+                    if(oneCensus9.getBlueprintStartTime()!=null){
+                        BlueprintStartTime = oneCensus9.getBlueprintStartTime().substring(0, 7);
+                    }
+                    String CreateTime = "";
+                    if(wujiangMoneyInfo.getCreateTime()!=null){
+                        CreateTime = wujiangMoneyInfo.getCreateTime().substring(0, 7);
+                    }
+                    if(BlueprintStartTime.equals(CreateTime)){
+                        oneCensus9.setProjectDeferral("2");
+                    }else{
+                        oneCensus9.setProjectDeferral("1");
+                    }
+                }else{
+                    //如果无法找到对应支付信息 则未到账
+                    oneCensus9.setIsAmount("2");
+                    oneCensus9.setIsConfirm("2");
+                }
+            }
+        }
+        PageInfo<OneCensus9> oneCensus9PageInfo = new PageInfo<>(oneCensus9s);
+        return oneCensus9PageInfo;
+    }
+
+    /**
+     * 年度绩效计提统计列表
+     * @param costVo2
+     * @return
+     */
+    public PageInfo<OneCensus9> DesginYearAchievementsList(CostVo2 costVo2){
+        PageHelper.startPage(costVo2.getPageNum(),costVo2.getPageSize());
+        List<OneCensus9> oneCensus9s = projectMapper.DesginMonthAchievementsList(costVo2);
+        for (OneCensus9 oneCensus9 : oneCensus9s) {
+            //设计费填入
+            if(!oneCensus9.getDistrict().equals("4")){
+                Example anhui = new Example(AnhuiMoneyinfo.class);
+                Example.Criteria c2 = anhui.createCriteria();
+                c2.andEqualTo("baseProjectId",oneCensus9.getId());
+                AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
+                if(anhuiMoneyinfo!=null){
+                    oneCensus9.setDesginMoney(anhuiMoneyinfo.getRevenue());
+                    if(anhuiMoneyinfo.getOfficialReceipts()!=null&&!"".equals(anhuiMoneyinfo.getOfficialReceipts())){
+                        //如果实收金额不为空 则到账
+                        oneCensus9.setIsAmount("1");
+                        oneCensus9.setIsConfirm("1");
+                    }
+                    //递延项目判断
+                    String BlueprintStartTime = "";
+                    if(oneCensus9.getBlueprintStartTime()!=null){
+                        BlueprintStartTime = oneCensus9.getBlueprintStartTime().substring(0, 7);
+                    }
+                    String CreateTime = "";
+                    if(anhuiMoneyinfo.getCreateTime()!=null){
+                        CreateTime = anhuiMoneyinfo.getCreateTime().substring(0, 7);
+                        oneCensus9.setAccountTime(anhuiMoneyinfo.getCreateTime());
+                    }
+                    if(BlueprintStartTime.equals(CreateTime)){
+                        oneCensus9.setProjectDeferral("2");
+                    }else{
+                        oneCensus9.setProjectDeferral("1");
+                    }
+                }else{
+                    //如果无法找到对应支付信息 则未到账
+                    oneCensus9.setIsAmount("2");
+                    oneCensus9.setIsConfirm("2");
+                }
+                //如果为吴江
+            }else{
+                Example wujiang = new Example(WujiangMoneyInfo.class);
+                Example.Criteria c2 = wujiang.createCriteria();
+                c2.andEqualTo("baseProjectId",oneCensus9.getId());
+                WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
+                if(wujiangMoneyInfo!=null){
+                    oneCensus9.setDesginMoney(wujiangMoneyInfo.getRevenue());
+                    if(wujiangMoneyInfo.getOfficialReceipts()!=null&&!"".equals(wujiangMoneyInfo.getOfficialReceipts())){
+                        //如果实收金额不为空 则到账
+                        oneCensus9.setIsAmount("1");
+                        oneCensus9.setIsConfirm("1");
+                    }
+                    //递延项目判断
+                    String BlueprintStartTime = "";
+                    if(oneCensus9.getBlueprintStartTime()!=null){
+                        BlueprintStartTime = oneCensus9.getBlueprintStartTime().substring(0, 7);
+                    }
+                    String CreateTime = "";
+                    if(wujiangMoneyInfo.getCreateTime()!=null){
+                        CreateTime = wujiangMoneyInfo.getCreateTime().substring(0, 7);
+                        oneCensus9.setAccountTime(wujiangMoneyInfo.getCreateTime());
+                    }
+                    if(BlueprintStartTime.equals(CreateTime)){
+                        oneCensus9.setProjectDeferral("2");
+                    }else{
+                        oneCensus9.setProjectDeferral("1");
+                    }
+                }else{
+                    //如果无法找到对应支付信息 则未到账
+                    oneCensus9.setIsAmount("2");
+                    oneCensus9.setIsConfirm("2");
+                }
+            }
+            Double balance = oneCensus9.getDesginAchievements()-oneCensus9.getDesginAchievements2();
+            balance= (double)Math.round(balance*100)/100;
+            oneCensus9.setBalance(balance);
+        }
+        PageInfo<OneCensus9> oneCensus9PageInfo = new PageInfo<>(oneCensus9s);
+        return oneCensus9PageInfo;
+    }
+
+    public List<OneCensus10> costTaskCensusList(CostVo2 costVo2){
+        List<OneCensus10> oneCensus10s = projectMapper.costTaskCensusList(costVo2);
+        List<OneCensus10> oneCensus10s1 = projectMapper.costTaskCensusList2(costVo2);
+        for (OneCensus10 oneCensus10 : oneCensus10s) {
+            for (OneCensus10 census10 : oneCensus10s1) {
+                if(oneCensus10.getYearTime().equals(census10.getYearTime())){
+                    if(oneCensus10.getMonthTime().equals(census10.getMonthTime())){
+                        oneCensus10.setBudCountB(census10.getBudCountB());
+                        oneCensus10.setCostTotalAmountB(census10.getCostTotalAmountB());
+                    }
+                }
+            }
+        }
+        return oneCensus10s;
     }
 }

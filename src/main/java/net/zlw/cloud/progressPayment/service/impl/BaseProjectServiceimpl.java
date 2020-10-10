@@ -292,6 +292,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Override
     public void batchReview(BatchReviewVo batchReviewVo) {
+        batchReviewVo.getBatchAll();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             Example example = new Example(ProgressPaymentInformation.class);
@@ -494,7 +495,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Override
     public List<ProgressListVo> searchAllProgress(PageVo pageVo) {
-       return progressPaymentInformationDao.searchAllProgress(pageVo);
+        List<ProgressListVo> progressListVos = progressPaymentInformationDao.searchAllProgress(pageVo);
+        return progressPaymentInformationDao.searchAllProgress(pageVo);
     }
 
     @Override

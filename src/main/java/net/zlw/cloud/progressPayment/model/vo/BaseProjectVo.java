@@ -3,8 +3,10 @@ package net.zlw.cloud.progressPayment.model.vo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -81,4 +83,6 @@ public class BaseProjectVo {
     private BigDecimal cumulativeNumberPayment;
     private String accumulativePaymentProportion;
     private String auditorId;
+
+    private List<AuditInfo> auditInfos;
 }
