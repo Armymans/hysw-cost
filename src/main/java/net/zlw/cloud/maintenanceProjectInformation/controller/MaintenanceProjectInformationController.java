@@ -1,5 +1,6 @@
 package net.zlw.cloud.maintenanceProjectInformation.controller;
 
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.RestUtil;
@@ -34,11 +35,12 @@ public class MaintenanceProjectInformationController extends BaseController {
      * @return
      */
 //    @PostMapping("/findAllMaintenanceProjectInformation")
+//
     @RequestMapping(value = "/maintenanceProjectInformation/findAllMaintenanceProjectInformation",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllMaintenanceProjectInformation(PageRequest pageRequest){
         System.out.println("PageRequest:"+pageRequest);
-        List<MaintenanceProjectInformation> allMaintenanceProjectInformation = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, getLoginUser());
-        return RestUtil.success(allMaintenanceProjectInformation);
+        PageInfo<MaintenanceProjectInformation> allMaintenanceProjectInformation = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, getLoginUser());
+        return net.zlw.cloud.common.RestUtil.page(allMaintenanceProjectInformation);
     }
 
 

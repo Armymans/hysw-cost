@@ -39,7 +39,7 @@ public class VisaChangeController extends BaseController {
     @RequestMapping(value = "/visaChange/findPage",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findPage(VisaChangeVo visaChangeVO){
         PageInfo<VisaChangeVo> allPage = vcisService.findAllPage(visaChangeVO, getLoginUser());
-        return RestUtil.success(allPage.getList());
+        return net.zlw.cloud.common.RestUtil.page(allPage);
     }
 
     /***
@@ -76,7 +76,7 @@ public class VisaChangeController extends BaseController {
     }
 
 
-//     /hysw/cost/api/visChange/deleteById
+//     /hysw/cost/api/visChange/selectById
     /***
      * 批量审核
      * @param batchReviewVo

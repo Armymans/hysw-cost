@@ -34,7 +34,7 @@ public class ProjectVo3 {
     private ProgressPaymentInformation progressPaymentInformation; //进度款支付信息
 
     private String NewcurrentPaymentInformation; //最新支付金额
-    private String SumcurrentPaymentInformation; //累计支付次数
+    private String SumcurrentPaymentInformation; //累计支付金额
     private String currentPaymentRatio; //本期支付比例
     private String cumulativePaymentTimes; //累计支付次数
 

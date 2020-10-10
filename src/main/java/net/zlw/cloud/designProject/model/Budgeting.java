@@ -20,7 +20,7 @@ public class Budgeting{
     private BigDecimal amountCost; //造价金额
 
     @Column(name = "budgeting_people")
-    private String budgeting_people;
+    private String budgetingPeople;
 
     @Column(name = "added_tax_amount")
     private String addedTaxAmount;

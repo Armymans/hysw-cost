@@ -13,6 +13,7 @@ import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagem
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.*;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
+import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
@@ -55,6 +56,8 @@ public class MaintenanceProjectInformationService{
     @Resource
     private MemberManageDao memberManageDao;
 
+
+
     @Resource
     private SurveyInformationDao surveyInformationDao;
 
@@ -67,7 +70,7 @@ public class MaintenanceProjectInformationService{
      * @param userInfo
      * @return
      */
-    public List<MaintenanceProjectInformation> findAllMaintenanceProjectInformation(PageRequest pageRequest,UserInfo userInfo){
+    public PageInfo<MaintenanceProjectInformation> findAllMaintenanceProjectInformation(PageRequest pageRequest,UserInfo userInfo){
         //        设置分页助手
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
 
@@ -153,7 +156,7 @@ public class MaintenanceProjectInformationService{
 
         System.out.println("list:"+projectInformationPageInfo.getList().toString());
 
-        return projectInformationPageInfo.getList();
+        return projectInformationPageInfo;
 
     }
 

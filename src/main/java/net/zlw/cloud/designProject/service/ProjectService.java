@@ -10,7 +10,6 @@ import net.zlw.cloud.budgeting.model.CostPreparation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.designProject.mapper.*;
 import net.zlw.cloud.designProject.model.*;
-import net.zlw.cloud.designProject.model.SettlementAuditInformation;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.mapper.MessageNotificationDao;
@@ -480,6 +479,7 @@ public class ProjectService {
      * @param mergeNum
      * @param id
      */
+
     public void mergeProject(String mergeName,String mergeNum,String id){
             DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
             if(designInfo != null){
@@ -1348,7 +1348,8 @@ public class ProjectService {
     }
 
     public net.zlw.cloud.settleAccounts.model.SettlementAuditInformation SettlementAuditInformationByid(String id){
-        Example example = new Example(SettlementAuditInformation.class);
+        Example example = new Example(
+                net.zlw.cloud.settleAccounts.model.SettlementAuditInformation.class);
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("baseProjectId",id);
         net.zlw.cloud.settleAccounts.model.SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example);
@@ -1368,11 +1369,21 @@ public class ProjectService {
         List<String> strings1 = progressPaymentInformationDao.SumcurrentPaymentInformation(id);
         String s2 = progressPaymentInformationDao.cumulativePaymentTimes(id);
         String s3 = progressPaymentInformationDao.currentPaymentRatio(id);
-        String s = strings.get(0);
-        String s1 = strings1.get(0);
         ProjectVo3 projectVo3 = new ProjectVo3();
-        projectVo3.setNewcurrentPaymentInformation(s);
-        projectVo3.setSumcurrentPaymentInformation(s1);
+        if(strings.size() > 0){
+            String s = strings.get(0);
+            projectVo3.setNewcurrentPaymentInformation(s);
+
+        }else{
+            projectVo3.setNewcurrentPaymentInformation("-");
+        }
+        if(strings1.size() > 0){
+            String s1 = strings1.get(0);
+            projectVo3.setSumcurrentPaymentInformation(s1);
+        }else{
+            projectVo3.setSumcurrentPaymentInformation("-");
+        }
+
         projectVo3.setCumulativePaymentTimes(s2);
         projectVo3.setCurrentPaymentRatio(s3);
         return projectVo3;
