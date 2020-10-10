@@ -72,6 +72,8 @@ public class projectOverviewController extends BaseController {
         JSONArray objects = JSON.parseArray(performanceDistributionChart);
         return RestUtil.success(objects);
     }
+//    @RequestMapping(value = "/projectOverview/findStatisticalData",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+
 
 
 

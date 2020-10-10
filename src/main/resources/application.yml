@@ -37,3 +37,6 @@ logging:
     org.hibernate.type.descriptor.sql.BasicExtractor: TRACE
     org.springframework.cloud.sleuth: DEBUG
     # org.springframework.web.servlet.DispatcherServlet: DEBUG
+app:
+  attachPath: /app/data/temp
+  testPath: D://upload

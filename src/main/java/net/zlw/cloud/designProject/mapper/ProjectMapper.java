@@ -1,6 +1,7 @@
 package net.zlw.cloud.designProject.mapper;
 
 import net.zlw.cloud.designProject.model.*;
+import net.zlw.cloud.statisticAnalysis.model.EmployeeVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -1320,4 +1321,70 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "MONTH(s1.create_time)"
     )
     List<OneCensus10> costTaskCensusList2(CostVo2 costVo2);
+
+    @Select("select\n" +
+            "\t\t\tYEAR(s1.create_time) yearTime,\n" +
+            "\t\t\tMONTH(s1.create_time) monthTime,\n" +
+            "\t\t\tCOUNT(s2.id) budCountB,\n" +
+            "\t\t\tSUM(IFNULL(s6.cost_total_amount,0)) costTotalAmountB,\n" +
+            "\t\t\ts7.budget_achievements performB\n" +
+            "\t\t\tFROM\n" +
+            "\t\t\tbase_project s1 LEFT JOIN budgeting s2 ON s1.id = s2.base_project_id\n" +
+            "\t\t\tLEFT JOIN cost_preparation s6 ON s1.id = s6.base_project_id\n" +
+            "\t\t\tLEFT JOIN achievements_info s7 ON s1.id = s7.base_project_id\n" +
+            "\t\t\tWHERE\n" +
+            "\t\t\ts1.del_flag = '0'\n" +
+            "\t\t\tand\n" +
+            "\t\t\ts1.a_b = '2'\n" +
+            "\t\t\tand\n" +
+            "\t\t\t(s1.district = #{district} or #{district} = '')\n" +
+            "\t\t\tand\n" +
+            "\t\t\ts1.create_time >= #{statTime}\n" +
+            "\t\t\tand\n" +
+            "\t\t\t(s1.create_time <= #{endTime} or  #{endTime} = '')\n" +
+            "\t\t\tGROUP BY\n" +
+            "\t\t\tYEAR(s1.create_time),\n" +
+            "\t\t\tMONTH(s1.create_time)")
+    List<OneCensus10> EmployeecostTaskCensusList2(EmployeeVo employeeVo);
+
+    @Select("select\n" +
+            "\tYEAR(s1.create_time) yearTime,\n" +
+            "\tMONTH(s1.create_time) monthTime,\n" +
+            "\tCOUNT(s2.id) budCountA,\n" +
+            "\tSUM(IFNULL(s2.amount_cost,0)) amountCost,\n" +
+            "\tSUM(IFNULL(s6.cost_total_amount,0)) costTotalAmountA,\n" +
+            "\tCOUNT(s3.id) lastCount,\n" +
+            "\tSUM(IFNULL(s3.review_number,0)) reviewNumber,\n" +
+            "\tCOUNT(s4.id) settCount,\n" +
+            "\tSUM(IFNULL(s7.sumbit_money,0)) sumbitMoney,\n" +
+            "\tSUM(IFNULL(s4.authorized_number,0)) authorizedNumber,\n" +
+            "\tSUM(IFNULL(s4.subtract_the_number,0)) subtractTheNumber,\n" +
+            "\tCOUNT(s5.id) trackCount,\n" +
+            "\tSUM(IFNULL(s5.contract_amount,0)) contractAmount,\n" +
+            "\ts8.budget_achievements performA,\n" +
+            "\ts8.upsubmit_achievements lastPerform,\n" +
+            "\ts8.downsubmit_achievements settlePerform,\n" +
+            "\ts8.truck_achievements truckPerform\n" +
+            "\tFROM\n" +
+            "\tbase_project s1 LEFT JOIN budgeting s2 ON s1.id = s2.base_project_id\n" +
+            "\tLEFT JOIN last_settlement_review s3 ON s1.id = s2.base_project_id\n" +
+            "\tLEFT JOIN settlement_audit_information s4 ON s1.id = s4.base_project_id\n" +
+            "\tLEFT JOIN track_audit_info s5 ON s1.id = s5.base_project_id\n" +
+            "\tLEFT JOIN cost_preparation s6 ON s1.id = s6.base_project_id\n" +
+            "\tLEFT JOIN settlement_info s7 ON s1.id = s7.base_project_Id\n" +
+            "\tLEFT JOIN achievements_info s8 ON s1.id = s8.base_project_id\n" +
+            "\tWHERE\n" +
+            "\ts1.del_flag = '0'\n" +
+            "\tand\n" +
+            "\ts1.a_b = '1'\n" +
+            "\tand\n" +
+            "\t(s1.district = #{district} or #{district} = '')\n" +
+            "\tand\n" +
+            "\ts1.create_time >= #{statTime}\n" +
+            "\tand\n" +
+            "\t(s1.create_time <= #{endTime} or  #{endTime} = '')\n" +
+            "\tGROUP BY\n" +
+            "\tYEAR(s1.create_time),\n" +
+            "\tMONTH(s1.create_time)")
+    List<OneCensus10> EmployeecostTaskCensusList(EmployeeVo employeeVo);
 }

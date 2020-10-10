@@ -34,6 +34,9 @@ public class FileInfo {
     @Column(name = "file_type")
     private String fileType;
 
+    @Column(name = "type")
+    private String type;
+
     @Column(name = "user_id")
     private String userId;
 
@@ -49,11 +52,7 @@ public class FileInfo {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "remakes")
-    private String remakes;
-
-    @Column(name = "remakes2")
-    private String remakes2;
-
+    @Column(name = "remark")
+    private String remark;
 
 }

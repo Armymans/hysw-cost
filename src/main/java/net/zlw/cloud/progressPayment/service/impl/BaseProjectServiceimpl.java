@@ -1,6 +1,7 @@
 package net.zlw.cloud.progressPayment.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
@@ -140,8 +141,16 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
 
+        // 查询审核信息的集合
+        Example auditExample = new Example(AuditInfo.class);
+        Example.Criteria criteria = auditExample.createCriteria();
+        criteria.andEqualTo("baseProjectId",baseProject.getId());
+
+        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(auditExample);
+
+
         Example example = new Example(ApplicationInformation.class);
-        Example.Criteria criteria = example.createCriteria().andEqualTo("progressPaymentId", id);
+        example.createCriteria().andEqualTo("progressPaymentId", id);
         ApplicationInformation applicationInformation = applicationInformationDao.selectOneByExample(example);
 
         Example example1 = new Example(ProgressPaymentTotalPayment.class);
@@ -207,6 +216,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         baseProjectVo.setAmountOutsourcing(paymentInformation.getAmountOutsourcing());
         baseProjectVo.setSituation(paymentInformation.getSituation());
         baseProjectVo.setRemarkes(paymentInformation.getRemarkes());
+        // TODO  审核信息
+        baseProjectVo.setAuditInfos(auditInfos);
         return baseProjectVo;
     }
 
@@ -494,9 +505,13 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
-    public List<ProgressListVo> searchAllProgress(PageVo pageVo) {
+    public PageInfo<ProgressListVo> searchAllProgress(PageVo pageVo) {
+        // 设置分页助手
+        PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
         List<ProgressListVo> progressListVos = progressPaymentInformationDao.searchAllProgress(pageVo);
-        return progressPaymentInformationDao.searchAllProgress(pageVo);
+
+        PageInfo<ProgressListVo> progressListVoPageInfo = new PageInfo<>(progressListVos);
+        return progressListVoPageInfo;
     }
 
     @Override

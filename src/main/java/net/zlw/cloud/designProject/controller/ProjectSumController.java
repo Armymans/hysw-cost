@@ -67,6 +67,7 @@ public class ProjectSumController extends BaseController {
                 budgeting.setBudgetingCost(money);
                 //预算编制标底咨询金额
                 Double money1 = projectSumService.anhuiBudgetingMoney(budgeting.getBiddingPriceControl());
+                System.err.println(money1);
                 money1 = (double)Math.round(money1*100)/100;
                 budgeting.setBudgetingStandard(money1);
                 //预算编制咨询费计算基数
