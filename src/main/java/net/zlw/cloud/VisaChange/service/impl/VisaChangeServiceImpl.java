@@ -821,39 +821,37 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         System.out.println(totalDown);
 
 
-        Example visaChangeExample = new Example(VisaChange.class);
-        visaChangeExample.createCriteria().andEqualTo("baseProjectId", baseProject);
-        List<VisaChange> visaChanges = vcMapper.selectByExample(visaChangeExample);
+
 
 
         List<VisaChangeStatisticVo> changeStatisticVos = new ArrayList<>();
-        for (VisaChange change : visaChanges) {
+
             //上家
             if ("0".equals(visaChange.getUpAndDownMark())) {
                 // BeanUtils.copyProperties();
-                visaChangeInfoVo.setId(change.getId());
-                visaChangeInfoVo.setAmountVisaChange(change.getAmountVisaChange() + "");
-                visaChangeInfoVo.setContractAmount(change.getContractAmount());
-                visaChangeInfoVo.setCompileTime(change.getCompileTime());
-                visaChangeInfoVo.setCompletionTime(change.getCompletionTime());
-                visaChangeInfoVo.setProportionContract(change.getProportionContract());
-                visaChangeInfoVo.setOutsourcing(change.getOutsourcing());
-                visaChangeInfoVo.setNameOfCostUnit(change.getNameOfCostUnit());
-                visaChangeInfoVo.setContact(change.getContact());
-                visaChangeInfoVo.setContactNumber(change.getContactNumber());
-                visaChangeInfoVo.setOutsourcingAmount(change.getOutsourcingAmount() + "");
-                visaChangeInfoVo.setVisaChangeReason(change.getVisaChangeReason());
+                visaChangeInfoVo.setId(visaChange.getId());
+                visaChangeInfoVo.setAmountVisaChange(visaChange.getAmountVisaChange() + "");
+                visaChangeInfoVo.setContractAmount(visaChange.getContractAmount());
+                visaChangeInfoVo.setCompileTime(visaChange.getCompileTime());
+                visaChangeInfoVo.setCompletionTime(visaChange.getCompletionTime());
+                visaChangeInfoVo.setProportionContract(visaChange.getProportionContract());
+                visaChangeInfoVo.setOutsourcing(visaChange.getOutsourcing());
+                visaChangeInfoVo.setNameOfCostUnit(visaChange.getNameOfCostUnit());
+                visaChangeInfoVo.setContact(visaChange.getContact());
+                visaChangeInfoVo.setContactNumber(visaChange.getContactNumber());
+                visaChangeInfoVo.setOutsourcingAmount(visaChange.getOutsourcingAmount() + "");
+                visaChangeInfoVo.setVisaChangeReason(visaChange.getVisaChangeReason());
 
                 //封装
                 VisaChangeStatisticVo statisticVo = new VisaChangeStatisticVo();
                 statisticVo.setId(byChangNum.getChangeNum());
-                statisticVo.setAmountVisaChangeUp(change.getAmountVisaChange() + "");
+                statisticVo.setAmountVisaChangeUp(visaChange.getAmountVisaChange() + "");
                 statisticVo.setAmountVisaChangeDown("-");
-                statisticVo.setCompileTime(change.getCompileTime());
-                statisticVo.setCreateTime(change.getCreateTime());
+                statisticVo.setCompileTime(visaChange.getCompileTime());
+                statisticVo.setCreateTime(visaChange.getCreateTime());
 
-                statisticVo.setContact(change.getCreatorId());
-                statisticVo.setProportionContractUp(change.getProportionContract());
+                statisticVo.setContact(visaChange.getCreatorId());
+                statisticVo.setProportionContractUp(visaChange.getProportionContract());
                 statisticVo.setProportionContractDown("-");
                 changeStatisticVos.add(statisticVo);
 
@@ -861,33 +859,37 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
             if ("1".equals(visaChange.getUpAndDownMark())) {
 
-                visaChangeInfoVo.setChangeDownId(change.getId());
-                visaChangeInfoVo.setAmountVisaChangeDown(change.getAmountVisaChange() + "");
-                visaChangeInfoVo.setContractAmountDown(change.getContractAmount());
-                visaChangeInfoVo.setCompileTimeDown(change.getCompileTime());
-                visaChangeInfoVo.setCompletionTimeDown(change.getCompletionTime());
-                visaChangeInfoVo.setProportionContractDown(change.getProportionContract());
-                visaChangeInfoVo.setOutsourcingDown(change.getOutsourcing());
-                visaChangeInfoVo.setNameOfCostUnitDown(change.getNameOfCostUnit());
-                visaChangeInfoVo.setContactDown(change.getContact());
-                visaChangeInfoVo.setContactNumberDown(change.getContactNumber());
-                visaChangeInfoVo.setOutsourcingAmountDown(change.getOutsourcingAmount() + "");
-                visaChangeInfoVo.setVisaChangeReasonDown(change.getVisaChangeReason());
+                visaChangeInfoVo.setChangeDownId(visaChange.getId());
+                visaChangeInfoVo.setAmountVisaChangeDown(visaChange.getAmountVisaChange() + "");
+                visaChangeInfoVo.setContractAmountDown(visaChange.getContractAmount());
+                visaChangeInfoVo.setCompileTimeDown(visaChange.getCompileTime());
+                visaChangeInfoVo.setCompletionTimeDown(visaChange.getCompletionTime());
+                visaChangeInfoVo.setProportionContractDown(visaChange.getProportionContract());
+                visaChangeInfoVo.setOutsourcingDown(visaChange.getOutsourcing());
+                visaChangeInfoVo.setNameOfCostUnitDown(visaChange.getNameOfCostUnit());
+                visaChangeInfoVo.setContactDown(visaChange.getContact());
+                visaChangeInfoVo.setContactNumberDown(visaChange.getContactNumber());
+                visaChangeInfoVo.setOutsourcingAmountDown(visaChange.getOutsourcingAmount() + "");
+                visaChangeInfoVo.setVisaChangeReasonDown(visaChange.getVisaChangeReason());
 
                 //封装
                 VisaChangeStatisticVo statisticVo = new VisaChangeStatisticVo();
-                statisticVo.setId(byChangNum.getChangeNum());
-                statisticVo.setAmountVisaChangeUp("-");
-                statisticVo.setAmountVisaChangeDown(change.getAmountVisaChange() + "");
-                statisticVo.setCompileTime(change.getCompileTime());
-                statisticVo.setCreateTime(change.getCreateTime());
-                statisticVo.setContact(change.getCreatorId());
-                statisticVo.setProportionContractUp("-");
-                statisticVo.setProportionContractDown(change.getProportionContract());
+                if (statisticVo != null) {
 
-                changeStatisticVos.add(statisticVo);
+
+                    statisticVo.setId(byChangNum.getChangeNum());
+                    statisticVo.setAmountVisaChangeUp("-");
+                    statisticVo.setAmountVisaChangeDown(visaChange.getAmountVisaChange() + "");
+                    statisticVo.setCompileTime(visaChange.getCompileTime());
+                    statisticVo.setCreateTime(visaChange.getCreateTime());
+                    statisticVo.setContact(visaChange.getCreatorId());
+                    statisticVo.setProportionContractUp("-");
+                    statisticVo.setProportionContractDown(visaChange.getProportionContract());
+
+                    changeStatisticVos.add(statisticVo);
+                }
             }
-        }
+
 
         //审核信息
         Example example2 = new Example(AuditInfo.class);

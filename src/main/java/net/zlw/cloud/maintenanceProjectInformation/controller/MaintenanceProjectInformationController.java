@@ -50,7 +50,7 @@ public class MaintenanceProjectInformationController extends BaseController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/maintenanceProjectInformation/deleteMaintenanceProjectInformation",method = {RequestMethod.DELETE},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/maintenanceProjectInformation/deleteMaintenanceProjectInformation",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteMaintenanceProjectInformationController(@RequestParam(name = "id") String id){
         maintenanceProjectInformationService.deleteMaintenanceProjectInformation(id);
         return RestUtil.success("删除成功");

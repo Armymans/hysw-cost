@@ -580,7 +580,7 @@ public class ProjectController extends BaseController {
      *
      * @return
      */
-    @RequestMapping(value = "/api/costproject/selectByBaseprojectId", method = {RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/costproject/selectByBaseprojectId", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> projectSelect(String id) {
         //基本数据信息
         ProjectVo3 projectVo3 = new ProjectVo3();
@@ -588,7 +588,11 @@ public class ProjectController extends BaseController {
         projectVo3.setBaseProject(baseProject);
         //设计信息
         DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
-        projectVo3.setDesignInfo(designInfo);
+        if(designInfo == null){
+            projectVo3.setDesignChangeInfo(new DesignChangeInfo());
+        }else{
+            projectVo3.setDesignInfo(designInfo);
+        }
         //根据地区判断相应的设计费 应付金额 实付金额
         //如果为安徽
         if(!baseProject.getDistrict().equals("4")){

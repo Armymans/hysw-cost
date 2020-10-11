@@ -101,7 +101,7 @@ public class VisaChangeController extends BaseController {
     }
 
 //    /hysw/cost/api/visaChange/findPage
-    @RequestMapping(value = "/visChange/selectByBaseProjectFindAll",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/visChange/selectByBaseProjectFindAll",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addBudgeting(VisaBaseProjectVo visaBaseProjectVo){
         List<VisaBaseProjectVo> voList = baseProjectService.selectByBaseProjectId(visaBaseProjectVo);
 
