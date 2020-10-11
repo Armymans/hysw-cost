@@ -85,4 +85,12 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "s1.project_name LIKE CONCAT('%',#{keyWord},'%') \n" +
             ")")
     List<VisaBaseProjectVo> findByBaseProject(VisaBaseProjectVo visaBaseProjectVo);
+
+    @Select("SELECT " +
+            "* " +
+            "FROM " +
+            "base_project b " +
+            "WHERE " +
+            "b.building_project_id = #{id}")
+    List<BaseProject> findByBuildingProject(@Param("id") String id);
 }

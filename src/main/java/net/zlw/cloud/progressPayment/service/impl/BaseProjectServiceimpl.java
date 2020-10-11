@@ -551,5 +551,15 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     }
 
+    @Override
+    public void updateProject(BaseProject baseProject) {
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+    }
+
+    @Override
+    public List<BaseProject> findByBuildingProject(String id) {
+        return baseProjectDao.findByBuildingProject(id);
+    }
+
 
 }

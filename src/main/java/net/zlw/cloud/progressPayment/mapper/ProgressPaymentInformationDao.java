@@ -66,13 +66,31 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             "b.project_num projectNum,\n" +
             "b.project_name projectName,\n" +
             "b.progress_payment_status progressPaymentStatus,\n" +
-            "b.district district,\n" +
+            "( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,\n" +
             "b.water_address waterAddress,\n" +
             "b.construction_unit constructionUnit,\n" +
             "b.project_category projectCategory,\n" +
-            "b.project_nature projectNature,\n" +
-            "b.design_category designCategory,\n" +
-            "b.water_supply_type waterSupplyType,\n" +
+            "( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,\n" +
+            "(\n" +
+            "\tCASE\n" +
+            "\t\t\tb.design_category \n" +
+            "\t\t\tWHEN '1' THEN\n" +
+            "\t\t\t'市政管道' \n" +
+            "\t\t\tWHEN '2' THEN\n" +
+            "\t\t\t'管网改造' \n" +
+            "\t\t\tWHEN '3' THEN\n" +
+            "\t\t\t'新建小区' \n" +
+            "\t\t\tWHEN '4' THEN\n" +
+            "\t\t\t'二次供水项目' \n" +
+            "\t\t\tWHEN '5' THEN\n" +
+            "\t\t\t'工商户' \n" +
+            "\t\t\tWHEN '6' THEN\n" +
+            "\t\t\t'居民装接水' \n" +
+            "\t\t\tWHEN '7' THEN\n" +
+            "\t\t\t'行政事业' \n" +
+            "\t\tEND \n" +
+            "\t\t) AS designCategory,\n" +
+            "( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType,\n" +
             "b.customer_name customerName,\n" +
             "(select member_name username from member_manage where id = p.founder_id) username,\n" +
             "bt.outsourcing outsourcing,\n" +

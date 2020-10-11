@@ -8,6 +8,7 @@ import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.budgeting.model.vo.PageBVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
+import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationReturnVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.maintenanceProjectInformation.service.MaintenanceProjectInformationService;
@@ -39,7 +40,7 @@ public class MaintenanceProjectInformationController extends BaseController {
     @RequestMapping(value = "/maintenanceProjectInformation/findAllMaintenanceProjectInformation",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllMaintenanceProjectInformation(PageRequest pageRequest){
         System.out.println("PageRequest:"+pageRequest);
-        PageInfo<MaintenanceProjectInformation> allMaintenanceProjectInformation = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, getLoginUser());
+        PageInfo<MaintenanceProjectInformationReturnVo> allMaintenanceProjectInformation = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, getLoginUser());
         return net.zlw.cloud.common.RestUtil.page(allMaintenanceProjectInformation);
     }
 
@@ -49,7 +50,7 @@ public class MaintenanceProjectInformationController extends BaseController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/maintenanceProjectInformation/deleteMaintenanceProjectInformation",method = {RequestMethod.DELETE},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/maintenanceProjectInformation/deleteMaintenanceProjectInformation",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteMaintenanceProjectInformationController(@RequestParam(name = "id") String id){
         maintenanceProjectInformationService.deleteMaintenanceProjectInformation(id);
         return RestUtil.success("删除成功");

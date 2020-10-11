@@ -2,7 +2,9 @@ package net.zlw.cloud.maintenanceProjectInformation.model.vo;
 
 import lombok.Data;
 import net.zlw.cloud.budgeting.model.SurveyInformation;
+import net.zlw.cloud.clearProject.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 
 import javax.persistence.Column;
@@ -25,7 +27,6 @@ public class MaintenanceProjectInformationVo {
     private String maintenanceItemType;
     // 报送部门
     private String submittedDepartment;
-
     /**
      * 报送时间
      */
@@ -111,6 +112,10 @@ public class MaintenanceProjectInformationVo {
 
     //审核信息
     private AuditInfo auditInfo;
+
+    private BaseProject baseProject;
+
+    private InvestigationOfTheAmount investigationOfTheAmount;
 
 
 }
