@@ -77,4 +77,9 @@ public class ProgressPaymentController  extends BaseController {
         baseProjectService.batchReview(batchReviewVo);
         return RestUtil.success("审核完毕");
     }
+//    @RequestMapping(value = "/progress/oneBatchReview",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> oneBatchReview(@RequestParam(name = "progressId") String id){
+//        baseProjectService.oneBatchReview(id);
+//        return RestUtil.success();
+//    }
 }

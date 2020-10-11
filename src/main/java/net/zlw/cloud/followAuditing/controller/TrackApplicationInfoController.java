@@ -74,5 +74,6 @@ public class TrackApplicationInfoController {
         trackApplicationInfoService.updateTrack(trackVo);
         return "修改成功";
     }
+    //查询
 
 }

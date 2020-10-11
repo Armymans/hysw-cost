@@ -1,6 +1,8 @@
 package net.zlw.cloud.warningDetails.model;
 
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -13,7 +15,7 @@ import java.util.Set;
  * @Param
  * @return
  **/
-@Entity
+@Data
 @Table(name = "member_manage")
 public class MemberManage {
 

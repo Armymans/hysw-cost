@@ -2,9 +2,7 @@ package net.zlw.cloud.budgeting.service;
 
 
 import net.tec.cloud.common.bean.UserInfo;
-import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
-import net.zlw.cloud.budgeting.model.vo.BudgetingVo;
-import net.zlw.cloud.budgeting.model.vo.PageBVo;
+import net.zlw.cloud.budgeting.model.vo.*;
 
 import java.util.List;
 
@@ -20,4 +18,8 @@ public interface BudgetingService {
     void intoAccount(String ids);
 
     List<BudgetingVo> findAllBudgeting(PageBVo pageBVo);
+
+    UnionQueryVo unionQuery(String id);
+
+    void singleAudit(SingleAuditVo singleAuditVo);
 }

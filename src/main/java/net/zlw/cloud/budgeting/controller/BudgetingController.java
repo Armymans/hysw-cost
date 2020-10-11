@@ -4,10 +4,7 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.Budgeting;
-import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
-import net.zlw.cloud.budgeting.model.vo.BudgetingListVo;
-import net.zlw.cloud.budgeting.model.vo.BudgetingVo;
-import net.zlw.cloud.budgeting.model.vo.PageBVo;
+import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,6 +60,19 @@ public class BudgetingController extends BaseController {
        List<BudgetingVo> list = budgetingService.findAllBudgeting(pageBVo);
         return RestUtil.success(list);
     }
+    //预算合并查询
+    @RequestMapping(value = "/budgeting/unionQuery",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> unionQuery(@RequestParam(name = "baseId") String id){
+       UnionQueryVo unionQueryVo =  budgetingService.unionQuery(id);
+       return RestUtil.success(unionQueryVo);
+    }
+    //预算编制单条审核
+    @RequestMapping(value = "/budgeting/singleAudit",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> singleAudit(SingleAuditVo singleAuditVo){
+        budgetingService.singleAudit(singleAuditVo);
+        return RestUtil.success();
+    }
+
 
 
 

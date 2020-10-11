@@ -1,5 +1,6 @@
 package net.zlw.cloud.settleAccounts.controller;
 
+import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
@@ -20,8 +21,9 @@ public class SettleAccountsController {
       return  settleAccountsService.findAllAccounts(pageVo);
     }
     //结算项目删除
-    @DeleteMapping("/deleteAcmcounts/{id}")
-    public String deleteAcmcounts(@PathVariable(name = "id") String id){
+//    @DeleteMapping("/deleteAcmcounts")
+    @RequestMapping(value = "/accounts/deleteAcmcounts",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public String deleteAcmcounts(@RequestParam(name = "id") String id){
         try {
             settleAccountsService.deleteAcmcounts(id);
         } catch (Exception e) {

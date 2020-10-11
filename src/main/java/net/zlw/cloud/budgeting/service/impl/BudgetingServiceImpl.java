@@ -9,9 +9,7 @@ import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.CostPreparation;
 import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
-import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
-import net.zlw.cloud.budgeting.model.vo.BudgetingVo;
-import net.zlw.cloud.budgeting.model.vo.PageBVo;
+import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
@@ -47,6 +45,8 @@ public class BudgetingServiceImpl implements BudgetingService {
     private AuditInfoDao auditInfoDao;
     @Resource
     private MemberManageDao memberManageDao;
+    @Resource
+    private BaseProjectDao baseProjectDao;
 
     @Override
     public void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser) {
@@ -345,6 +345,76 @@ public class BudgetingServiceImpl implements BudgetingService {
     public List<BudgetingVo> findAllBudgeting(PageBVo pageBVo) {
         return  budgetingDao.findAllBudgeting(pageBVo);
 
+    }
+
+    @Override
+    public UnionQueryVo unionQuery(String id) {
+        UnionQueryVo unionQueryVo = new UnionQueryVo();
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
+        unionQueryVo.setBaseProject(baseProject);
+        Example example = new Example(BaseProject.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("virtualCode",baseProject.getVirtualCode());
+        List<BaseProject> baseProjects = baseProjectDao.selectByExample(example);
+        String idi = "";
+        for (BaseProject project : baseProjects) {
+            List<String> codeAll = unionQueryVo.getCodeAll();
+            codeAll.add(project.getProjectNum());
+            if (project.getMergeFlag().equals("0")){
+                idi = project.getId();
+            }
+        }
+        Example example1 = new Example(Budgeting.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("baseProjectId",idi);
+        Budgeting budgeting1 = budgetingDao.selectOneByExample(example1);
+        BudgetingVo budgeting = selectBudgetingById(budgeting1.getId());
+        unionQueryVo.setBudgeting(budgeting);
+
+        return unionQueryVo;
+    }
+
+    @Override
+    public void singleAudit(SingleAuditVo singleAuditVo) {
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseProjectId",singleAuditVo.getId());
+        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+        if (auditInfos!=null){
+            for (AuditInfo auditInfo : auditInfos) {
+                if (auditInfo.getAuditType().equals("0")){
+                    if (auditInfo.getAuditResult().equals("0")){
+                        auditInfo.setAuditResult(singleAuditVo.getAuditResult());
+                        auditInfo.setAuditOpinion(singleAuditVo.getAuditOpnion());
+                        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        auditInfo.setAuditTime(sim.format(new Date()));
+                        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                        if (singleAuditVo.getAuditResult().equals("1")){
+                            AuditInfo auditInfo1 = new AuditInfo();
+                            auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+                            auditInfo1.setBaseProjectId(singleAuditVo.getId());
+                            auditInfo1.setAuditResult("0");
+                            auditInfo1.setAuditType("1");
+                            Example example1 = new Example(MemberManage.class);
+                            Example.Criteria criteria1 = example1.createCriteria();
+                            criteria1.andEqualTo("depId","2");
+                            criteria1.andEqualTo("depAdmin","1");
+                            auditInfo1.setAuditorId(memberManageDao.selectOneByExample(example1).getId());
+                            auditInfoDao.insertSelective(auditInfo1);
+                        }
+                    }
+                } else if(auditInfo.getAuditType().equals("1")){
+                    if (auditInfo.getAuditResult().equals("0")){
+                        auditInfo.setAuditResult(singleAuditVo.getAuditResult());
+                        auditInfo.setAuditOpinion(singleAuditVo.getAuditOpnion());
+                        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        auditInfo.setAuditTime(sim.format(new Date()));
+                        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                    }
+
+                }
+            }
+        }
     }
 
 
