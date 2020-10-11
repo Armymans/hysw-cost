@@ -22,6 +22,7 @@ import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -106,8 +107,7 @@ public class ProjectService {
         //如果设计状态为'未审核' 则展示当前用户需要审核的信息
         if("1".equals(pageVo.getDesginStatus())){
             //则根据登录用户id展示于其身份对应的数据
-            // TODO: 2020/10/10
-            //loginUser.getId()
+            //todo getLoginUser().getId()
             pageVo.setUserId("ceshi01");
             designInfos = designInfoMapper.designProjectSelect(pageVo);
             if(designInfos.size()>0){
@@ -123,22 +123,25 @@ public class ProjectService {
                         Example.Criteria c2 = anhui.createCriteria();
                         c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
                         AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
-                        designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
-                        designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
-                        designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
-                        designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+                        if(anhuiMoneyinfo!=null){
+                            designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                            designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                            designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                            designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+                        }
                         //如果为吴江
                     }else{
                         Example wujiang = new Example(WujiangMoneyInfo.class);
                         Example.Criteria c2 = wujiang.createCriteria();
                         c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
                         WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
-                        designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
-                        designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
-                        designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
-                        designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
+                        if(wujiangMoneyInfo!=null){
+                            designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                            designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                            designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
+                            designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
+                        }
                     }
-
                     //获取预算表中的造价金额
                     Example example = new Example(Budgeting.class);
                     Example.Criteria c = example.createCriteria();
@@ -157,8 +160,72 @@ public class ProjectService {
 
         //如果状态为出图中
         if("2".equals(pageVo.getDesginStatus())){
-            pageVo.setUserId(loginUser.getId());
-            designInfos = designInfoMapper.designProjectSelect(pageVo);
+            //todo loginUser.getId()
+            pageVo.setUserId("ceshi01");
+            designInfos = designInfoMapper.designProjectSelect2(pageVo);
+            if(designInfos!=null){
+                if(designInfos.size()>0){
+                    for (DesignInfo designInfo : designInfos) {
+                        //展示设计变更时间 如果为空展示 /
+                        if(designInfo.getDesignChangeTime()==null || designInfo.getDesignChangeTime().equals("")){
+                            designInfo.setDesignChangeTime("/");
+                        }
+                        //根据地区判断相应的设计费 应付金额 实付金额
+                        //如果为安徽
+                        if(!designInfo.getDistrict().equals("4")){
+                            Example anhui = new Example(AnhuiMoneyinfo.class);
+                            Example.Criteria c2 = anhui.createCriteria();
+                            c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                            AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
+                            if(anhuiMoneyinfo!=null){
+                                designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                                designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                                designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+                            }
+                            //如果为吴江
+                        }else{
+                            Example wujiang = new Example(WujiangMoneyInfo.class);
+                            Example.Criteria c2 = wujiang.createCriteria();
+                            c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                            WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
+                            if(wujiangMoneyInfo!=null){
+                                designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                                designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
+                                designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());}
+                        }
+
+                        //获取预算表中的造价金额
+                        Example example = new Example(Budgeting.class);
+                        Example.Criteria c = example.createCriteria();
+                        c.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                        Budgeting budgeting = budgetingMapper.selectOneByExample(example);
+                        if(budgeting!=null){
+                            designInfo.setAmountCost(budgeting.getAmountCost());
+                        }else{
+                            designInfo.setAmountCost(new BigDecimal(0));
+                        }
+                    }
+                }
+            }
+            PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
+            return designInfoPageInfo;
+        }
+
+        if("3".equals(pageVo.getDesginStatus())||"4".equals(pageVo.getDesginStatus())){
+            //如果状态为未通过 或者 已完成
+            //获取当前设计部门负责人
+            Example admin = new Example(MemberManage.class);
+            Example.Criteria adminc = admin.createCriteria();
+            adminc.andEqualTo("depAdmin","1");
+            adminc.andEqualTo("depId","1");
+            MemberManage memberManage = memberManageDao.selectOneByExample(admin);
+            //将部门负责人传入
+            pageVo.setAdminId(memberManage.getId());
+            //todo loginUser.getId()
+            pageVo.setUserId("1");
+            designInfos = designInfoMapper.designProjectSelect3(pageVo);
             if(designInfos.size()>0){
                 for (DesignInfo designInfo : designInfos) {
                     //展示设计变更时间 如果为空展示 /
@@ -172,22 +239,25 @@ public class ProjectService {
                         Example.Criteria c2 = anhui.createCriteria();
                         c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
                         AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
-                        designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
-                        designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
-                        designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
-                        designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+                        if(anhuiMoneyinfo!=null){
+                            designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                            designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                            designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                            designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+                        }
                         //如果为吴江
                     }else{
                         Example wujiang = new Example(WujiangMoneyInfo.class);
                         Example.Criteria c2 = wujiang.createCriteria();
                         c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
                         WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
-                        designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
-                        designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
-                        designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
-                        designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
+                        if(wujiangMoneyInfo!=null){
+                            designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                            designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                            designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
+                            designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
+                        }
                     }
-
                     //获取预算表中的造价金额
                     Example example = new Example(Budgeting.class);
                     Example.Criteria c = example.createCriteria();
@@ -200,20 +270,18 @@ public class ProjectService {
                     }
                 }
             }
-            PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
-            return designInfoPageInfo;
-        }
-
-        //如果状态为出图中 或者 已通过
-        Example admin = new Example(MemberManage.class);
-        Example.Criteria adminc = admin.createCriteria();
-        adminc.andEqualTo("depAdmin","1");
-        adminc.andEqualTo("depId","1");
-        MemberManage memberManage = memberManageDao.selectOneByExample(admin);
-        pageVo.setAdminId(memberManage.getId());
-        pageVo.setUserId(loginUser.getId());
-        designInfos = designInfoMapper.designProjectSelect3(pageVo);
-        if(designInfos.size()>0){
+        }else{
+            //若果为空 说明查询所有
+            Example admin = new Example(MemberManage.class);
+            Example.Criteria adminc = admin.createCriteria();
+            adminc.andEqualTo("depAdmin","1");
+            adminc.andEqualTo("depId","1");
+            MemberManage memberManage = memberManageDao.selectOneByExample(admin);
+            //将部门负责人传入
+            pageVo.setAdminId(memberManage.getId());
+            //todo loginUser.getId()
+            pageVo.setUserId("1");
+            designInfos = designInfoMapper.designProjectSelect3(pageVo);
             for (DesignInfo designInfo : designInfos) {
                 //展示设计变更时间 如果为空展示 /
                 if(designInfo.getDesignChangeTime()==null || designInfo.getDesignChangeTime().equals("")){
@@ -226,22 +294,25 @@ public class ProjectService {
                     Example.Criteria c2 = anhui.createCriteria();
                     c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
                     AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
-                    designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
-                    designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
-                    designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
-                    designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+                    if(anhuiMoneyinfo!=null){
+                        designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                        designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                        designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                        designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+                    }
                     //如果为吴江
                 }else{
                     Example wujiang = new Example(WujiangMoneyInfo.class);
                     Example.Criteria c2 = wujiang.createCriteria();
                     c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
                     WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
-                    designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
-                    designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
-                    designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
-                    designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
+                    if(wujiangMoneyInfo!=null){
+                        designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                        designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                        designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
+                        designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
+                    }
                 }
-
                 //获取预算表中的造价金额
                 Example example = new Example(Budgeting.class);
                 Example.Criteria c = example.createCriteria();

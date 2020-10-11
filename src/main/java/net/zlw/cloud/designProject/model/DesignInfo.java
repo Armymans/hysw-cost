@@ -118,7 +118,7 @@ public class DesignInfo{
     @Transient
     private String designCategory; //设计类别1市政管道2管网改造3新建小区4二次供水项目5工商户6居民装接水7行政事业
     @Transient
-    private String subject;//项目类别 1居民住户2开发商 3政府事业 4工商户 5芜湖华衍',
+    private String subject;//主体 1居民住户2开发商 3政府事业 4工商户 5芜湖华衍',
     @Transient
     private String projectCategory; //项目类别
     @Transient

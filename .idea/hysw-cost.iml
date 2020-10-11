@@ -264,7 +264,16 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../javax.xml.rpc-api-1.1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../正量/华衍造价系统/javax.xml.rpc-api-1.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../正量/华衍造价系统/ews-java-api-2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
