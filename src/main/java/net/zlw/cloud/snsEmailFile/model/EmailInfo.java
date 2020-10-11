@@ -41,6 +41,6 @@ public class EmailInfo {
     private String createTime;
 
     @Column(name = "send_status")
-    private String send_status;
+    private String sendStatus;
 
 }

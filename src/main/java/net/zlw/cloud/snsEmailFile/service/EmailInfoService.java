@@ -1,6 +1,7 @@
 package net.zlw.cloud.snsEmailFile.service;
 
 import net.zlw.cloud.snsEmailFile.mapper.EmailInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.EmailInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,5 +23,7 @@ public class EmailInfoService {
     private EmailInfoMapper emailInfoMapper;
 
 
-
+    public void save(EmailInfo emailInfo) {
+        emailInfoMapper.insertSelective(emailInfo);
+    }
 }
