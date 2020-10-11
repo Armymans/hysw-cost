@@ -15,7 +15,6 @@ import javax.persistence.Table;
 @Table(name = "building_project")
 public class BuildingProject {
 
-
     @Id
     @Column(name = "id")
     private String id;
@@ -35,29 +34,67 @@ public class BuildingProject {
     @Column(name = "design_units")
     private String designUnits;
 
-    /**
-     *   `design_units` varchar(120) DEFAULT NULL COMMENT '设计单位',
-     *   `project_type` varchar(120) DEFAULT NULL COMMENT '项目类别',
-     *   `project_nature` varchar(120) DEFAULT NULL COMMENT '项目性质',
-     *   `client_name` varchar(120) DEFAULT NULL COMMENT '客户名称',
-     *   `cost_amount` decimal(60,2) DEFAULT NULL COMMENT '造价金额',
-     *   `water_type` varchar(120) DEFAULT NULL COMMENT '供水类型',
-     *   `client_nature` varchar(120) DEFAULT NULL COMMENT '客户属性',
-     *   `water_factory` varchar(120) DEFAULT NULL COMMENT '供水所',
-     *   `project_site` varchar(120) DEFAULT NULL COMMENT '项目地址',
-     *   `declare` varchar(255) DEFAULT NULL COMMENT '申报内容',
-     *   `contract_start_time` varchar(20) DEFAULT NULL COMMENT '合同开工时间',
-     *   `contract_end_time` varchar(20) DEFAULT NULL COMMENT '合同竣工时间',
-     *   `actual_start_time` varchar(20) DEFAULT NULL COMMENT '实际开工时间',
-     *   `actual_end_time` varchar(20) DEFAULT NULL COMMENT '实际竣工时间',
-     *   `compile date` varchar(20) DEFAULT NULL COMMENT '编制日期',
-     *   `founder_id` varchar(60) DEFAULT NULL COMMENT '创建人Id',
-     *   `company_id` varchar(60) DEFAULT NULL COMMENT '创建人公司Id',
-     *   `status` varchar(1) DEFAULT NULL COMMENT '数据状态',
-     *   `create_time` varchar(20) DEFAULT NULL COMMENT '创建时间',
-     *   `update_time` varchar(20) DEFAULT NULL COMMENT '修改时间',
-     *   `or_submit` varchar(1) DEFAULT NULL COMMENT '是否保存提交 0保存 1提交',
-     **/
+    @Column(name = "project_type")
+    private String projectType;
 
+    @Column(name = "project_nature")
+    private String projectNature;
+
+    @Column(name = "client_name")
+    private String clientName;
+
+    @Column(name = "cost_amount")
+    private String costAmount;
+
+    @Column(name = "water_type")
+    private String waterType;
+
+    @Column(name = "client_nature")
+    private String clientNature;
+
+    @Column(name = "water_factory")
+    private String waterFactory;
+
+    @Column(name = "project_site")
+    private String projectSite;
+
+    @Column(name = "declare")
+    private String declare;
+
+    @Column(name = "contract_start_time")
+    private String contractStartTime;
+
+    @Column(name = "contract_end_time")
+    private String contractEndTime;
+
+    @Column(name = "actual_start_time")
+    private String actualStartTime;
+
+    @Column(name = "actual_end_time")
+    private String actualEndTime;
+
+    @Column(name = "compile_date")
+    private String compileDate;
+
+    @Column(name = "founder_id")
+    private String founderId;
+
+    @Column(name = "company_id")
+    private String companyId;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "create_time")
+    private String createTime;
+
+    @Column(name = "update_time")
+    private String updateTime;
+
+    @Column(name = "or_submit")
+    private String orSubmit;
+
+    @Column(name = "merge_flag")
+    private String mergeFlag;
 
 }

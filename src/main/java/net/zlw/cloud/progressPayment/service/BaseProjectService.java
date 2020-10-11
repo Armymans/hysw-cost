@@ -35,4 +35,8 @@ public interface BaseProjectService {
     void deleteProgress(String id);
 
     List<VisaBaseProjectVo> selectByBaseProjectId(VisaBaseProjectVo visaBaseProjectVo);
+
+    void updateProject(BaseProject baseProject);
+
+    List<BaseProject> findByBuildingProject(String id);
 }
