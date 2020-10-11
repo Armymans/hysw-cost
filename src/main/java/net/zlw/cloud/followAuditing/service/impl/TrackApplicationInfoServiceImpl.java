@@ -201,6 +201,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         trackVo.setMonthlyList(trackMonthlies);
         return trackVo;
     }
+    // TODO 回显页面，月报
+    public List<TrackMonthly> findAllByTrackId(String id){
+        Example example1 = new Example(TrackMonthly.class);
+        example1.createCriteria().andEqualTo("trackId",id);
+        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+        return trackMonthlies;
+    }
 
     @Override
     public void updateMonthly(TrackMonthly trackMonthly) {

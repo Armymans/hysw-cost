@@ -29,6 +29,13 @@ public class TrackApplicationInfoController {
         return RestUtil.page(pageInfo);
     }
 
+    // 查看，编辑页面回显列表
+    @RequestMapping(value = "/track/findAllByTrackId",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findAllByTrackId(@RequestParam(name = "id") String id){
+        List<TrackMonthly> allByTrackId = trackApplicationInfoService.findAllByTrackId(id);
+        return RestUtil.success(allByTrackId);
+    }
+
     //删除跟踪审计
 //    @DeleteMapping("/track/deleteById/{id}")
     @RequestMapping(value = "/track/deleteById",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)

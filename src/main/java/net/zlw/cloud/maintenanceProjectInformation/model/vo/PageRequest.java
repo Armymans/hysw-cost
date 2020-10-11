@@ -17,13 +17,11 @@ public class PageRequest {
     private String keyWord;
 
     //所属地区
-    private String address;
-    //所属地区
-    private String projectAddress;
+    private String district;
     // 维修类型
-    private String maintenanceType;
+    private String maintenanceItemType;
     //状态:待审核，处理中，未通过，待确认
-    private String pageStaus;
+    private String type;
     //开始时间
     private String startTime;
     //结束时间
