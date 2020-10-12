@@ -10,6 +10,8 @@ import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import javax.persistence.Column;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author dell
@@ -27,9 +29,7 @@ public class MaintenanceProjectInformationVo {
     private String maintenanceItemType;
     // 报送部门
     private String submittedDepartment;
-    /**
-     * 报送时间
-     */
+    //报送时间
     private String submitTime;
 
     /**
@@ -62,60 +62,42 @@ public class MaintenanceProjectInformationVo {
      */
 
     private String remarkes;
-
-    /**
-     * 创建时间
-     */
-
-    private String createTime;
-
-    /**
-     * 修改时间
-     */
-
-    private String updateTime;
-
-    /**
-     * 创建人id
-     */
-
-    private String founderId;
-
-    /**
-     * 创建人公司id
-     */
-
-    private String founderCompanyId;
-
-    /**
-     *  状态 0,正常 1,删除
-     */
-
-    private String delFlag;
-
-    /**
-     * 变更状态1待审核2处理中3未通过4待确认5已完成
-     */
-    private String type;
-
-
-    private String constructionUnitName;
-
-
-    private String memberName;
-
-    // 勘察信息
-    private SurveyInformation surveyInformation;
+    // 勘察日期
+    private String surveyDate;
+    //勘察人员
+    private String investigationPersonnel;
+    //勘察简述
+    private String surveyBriefly;
 
     // 结算审核信息
-    private SettlementAuditInformation settlementAuditInformation;
+//    private SettlementAuditInformation settlementAuditInformation;
+    private BigDecimal authorizedNumber;
+    private BigDecimal subtractTheNumber;
+    private BigDecimal nuclearNumber;
+    // 核减率
+    private BigDecimal subtractRate;
+    private BigDecimal contractAmount;
+    private String contractRemarkes;
+    private String preparePeople2;
+    private String outsourcing;
+    private String nameOfTheCost;
+    private String contact;
+    private String contactPhone;
+    private BigDecimal amountOutsourcing;
+    private String compileTime;
+    private String remark;
 
+    // 勘探金额
+    private BigDecimal unbalancedQuotationAdjustment;
+    private BigDecimal punishAmount;
+    private BigDecimal outboundAmount;
+    private BigDecimal materialDifferenceAmount;
     //审核信息
-    private AuditInfo auditInfo;
+//    private AuditInfo auditInfo;
+    private String auditResult;
+    private String auditOpinion;
+    private String auditType;
 
-    private BaseProject baseProject;
-
-    private InvestigationOfTheAmount investigationOfTheAmount;
-
+    private List<AuditInfo> auditInfos;
 
 }

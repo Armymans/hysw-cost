@@ -52,6 +52,9 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
     List<MaintenanceProjectInformationReturnVo> selectAllByDelFlag(PageRequest pageRequest);
 
 
+
+
+
     /**
      * 检维修-删除
      * @param id

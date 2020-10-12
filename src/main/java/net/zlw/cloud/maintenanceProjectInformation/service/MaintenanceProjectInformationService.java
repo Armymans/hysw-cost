@@ -16,7 +16,9 @@ import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
+import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.stereotype.Service;
@@ -63,6 +65,9 @@ public class MaintenanceProjectInformationService{
 
     @Resource
     private SettlementAuditInformationDao settlementAuditInformationDao;
+
+    @Resource
+    private InvestigationOfTheAmountDao investigationOfTheAmountDao;
 
 
     /**
@@ -194,14 +199,14 @@ public class MaintenanceProjectInformationService{
      * @param userInfo
      */
     public void addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation,UserInfo userInfo,String id){
-        String uuId = UUID.randomUUID().toString().replaceAll("-","");
+        String uuid = UUID.randomUUID().toString().replaceAll("-","");
         //创建时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = simpleDateFormat.format(new Date());
 
         //检维修对象
         MaintenanceProjectInformation information = new MaintenanceProjectInformation();
-        information.setId(uuId);
+        information.setId(uuid);
         information.setCreateTime(createTime);
         information.setDelFlag("0");
         information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
@@ -209,60 +214,86 @@ public class MaintenanceProjectInformationService{
         information.setMaintenanceItemType(maintenanceProjectInformation.getMaintenanceItemType());
         information.setSubmittedDepartment(maintenanceProjectInformation.getSubmittedDepartment());
         information.setSubmitTime(maintenanceProjectInformation.getSubmitTime());
-        // 编制人
-//        information.setPreparePeople(maintenanceProjectInformation.getSettlementAuditInformation().getPreparePeople());
+        information.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
         information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
         information.setRemarkes(maintenanceProjectInformation.getRemarkes());
-        information.setCustomerName(maintenanceProjectInformation.getCustomerName());
-        //        information.setFounderId(userInfo.getId());
+        information.setFounderId(userInfo.getId());
 
-//        information.setFounderCompanyId(userInfo.getCompanyId());
+        information.setFounderCompanyId(userInfo.getCompanyId());
+
         //勘探信息
-//        SurveyInformation surveyInformation = new SurveyInformation();
-//        surveyInformation.setId(UUID.randomUUID().toString().replace("-",""));
-//        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyInformation().getSurveyDate());
-//        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getSurveyInformation().getInvestigationPersonnel());
-//        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyInformation().getSurveyBriefly());
-//
-//        surveyInformationDao.insertSelective(surveyInformation);
+        SurveyInformation surveyInformation = new SurveyInformation();
+        String sid = UUID.randomUUID().toString().replace("-","");
+        surveyInformation.setId(sid);
+        surveyInformation.setCreateTime(simpleDateFormat.format(new Date()));
+        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
+        //勘察人员
+        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getInvestigationPersonnel());
+        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyBriefly());
+        // todo 项目基本信息的id
+        surveyInformation.setBaseProjectId(information.getMaintenanceItemId());
+        surveyInformation.setFounderId(userInfo.getId());
+        surveyInformation.setFounderCompanyId(userInfo.getCompanyId());
+        surveyInformationDao.insertSelective(surveyInformation);
 
-        if(maintenanceProjectInformation.getSurveyInformation() != null){
-            SurveyInformation surveyInformation = maintenanceProjectInformation.getSurveyInformation();
-            String sid = UUID.randomUUID().toString().replace("-","");
-            surveyInformation.setId(sid);
-            //创建时间
-            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String surveyInformationCreateTime = simpleDateFormat1.format(new Date());
-
-            surveyInformation.setCreateTime(surveyInformationCreateTime);
-            // todo 项目基本信息的id
-            surveyInformation.setBaseProjectId(information.getId());
-
-            surveyInformationDao.insertSelective(surveyInformation);
-        }
 
 
 
         //结算审核信息
-//        SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
+        SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
 
-//        if(maintenanceProjectInformation.getSettlementAuditInformation() != null){
-//            SettlementAuditInformation settlementAuditInformation = maintenanceProjectInformation.getSettlementAuditInformation();
-//            String sid = UUID.randomUUID().toString().replace("-","");
-//            settlementAuditInformation.setId(sid);
-//            // 创建时间
-//            SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//            String settlementAuditInformationCreateTime = simpleDateFormat2.format(new Date());
-//
-//            settlementAuditInformation.setCreateTime(settlementAuditInformationCreateTime);
-//
-//            // todo 检维修项目信息id
-//            settlementAuditInformation.setMaintenanceProjectInformation(information.getId());
-//            settlementAuditInformationDao.insertSelective(settlementAuditInformation);
-//        }
+        String saiId = UUID.randomUUID().toString().replace("-","");
+        settlementAuditInformation.setId(saiId);
+        settlementAuditInformation.setCreateTime(simpleDateFormat.format(new Date()));
 
+        // todo 检维修项目信息id
+        settlementAuditInformation.setMaintenanceProjectInformation(information.getId());
+
+        settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
+        settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
+        settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
+
+        settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
+        settlementAuditInformation.setContractRemarkes(maintenanceProjectInformation.getContractRemarkes());
+        settlementAuditInformation.setPreparePeople(maintenanceProjectInformation.getPreparePeople2());
+        settlementAuditInformation.setOutsourcing(maintenanceProjectInformation.getOutsourcing());
+        settlementAuditInformation.setNameOfTheCost(maintenanceProjectInformation.getNameOfTheCost());
+        settlementAuditInformation.setContact(maintenanceProjectInformation.getContact());
+        settlementAuditInformation.setContactPhone(maintenanceProjectInformation.getContactPhone());
+        settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
+        settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
+        settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
+
+        settlementAuditInformation.setFounderId(userInfo.getId());
+        settlementAuditInformation.setFounderCompanyId(userInfo.getCompanyId());
+        settlementAuditInformationDao.insertSelective(settlementAuditInformation);
+
+
+        // 勘探金额
+
+        InvestigationOfTheAmount investigationOfTheAmount = new InvestigationOfTheAmount();
+
+        String ioaId = UUID.randomUUID().toString().replace("-","");
+        investigationOfTheAmount.setId(ioaId);
+        investigationOfTheAmount.setCreateTime(simpleDateFormat.format(new Date()));
+        investigationOfTheAmount.setDelFlag("0");
+
+        investigationOfTheAmount.setFounderId(userInfo.getId());
+        investigationOfTheAmount.setFounderCompanyId(userInfo.getCompanyId());
+        investigationOfTheAmount.setMaintenanceProjectInformation(maintenanceProjectInformation.getId());
+        investigationOfTheAmount.setBaseProjectId(maintenanceProjectInformation.getMaintenanceItemId());
+
+        investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
+        investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
+        investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
+        investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
+
+        investigationOfTheAmountDao.insert(investigationOfTheAmount);
+
+
+        maintenanceProjectInformationMapper.insertSelective(information);
         // 审核信息
 
         AuditInfo auditInfo = new AuditInfo();
@@ -280,9 +311,6 @@ public class MaintenanceProjectInformationService{
         // 审核人id
         auditInfo.setAuditorId(id);
 
-//        Date date = new Date();
-//        String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
-//        auditInfo.setAuditTime(format);//现在没有审核时间
         String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
 
         auditInfo.setCreateTime(createDate);
@@ -370,199 +398,162 @@ public class MaintenanceProjectInformationService{
 
     }
 
-    /**
-     * 编辑
-     * @param maintenanceProjectInformationVo
-     * @param userInfo
-     * @param id 审核人id
-     */
-    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,UserInfo userInfo,String id){
-
-
-        //修改时间
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String updateTime = simpleDateFormat.format(new Date());
-
-        // 根据检维修项目id  查询到的 检维修对象
-        MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectBymaintenanceItemId(maintenanceProjectInformationVo.getMaintenanceItemId());
-        // 检维修对象
-        MaintenanceProjectInformation information = new MaintenanceProjectInformation();
-        information.setId(maintenanceProjectInformation.getId());
-        // 修改时间
-        information.setUpdateTime(updateTime);
-        information.setDelFlag("0");
-        information.setMaintenanceItemId(maintenanceProjectInformationVo.getMaintenanceItemId());
-        information.setMaintenanceItemName(maintenanceProjectInformationVo.getMaintenanceItemName());
-        information.setMaintenanceItemType(maintenanceProjectInformationVo.getMaintenanceItemType());
-        information.setSubmittedDepartment(maintenanceProjectInformationVo.getSubmittedDepartment());
-        information.setSubmitTime(maintenanceProjectInformationVo.getSubmitTime());
-//        编制人
-        information.setPreparePeople(maintenanceProjectInformationVo.getPreparePeople());
-        information.setProjectAddress(maintenanceProjectInformationVo.getProjectAddress());
-        information.setConstructionUnitId(maintenanceProjectInformationVo.getConstructionUnitId());
-        information.setReviewAmount(maintenanceProjectInformationVo.getReviewAmount());
-        information.setRemarkes(maintenanceProjectInformationVo.getRemarkes());
-        information.setCustomerName(maintenanceProjectInformationVo.getCustomerName());
-        //        information.setFounderId(userInfo.getId());
-
-//        information.setFounderCompanyId(userInfo.getCompanyId());
-        //勘探信息
-//        SurveyInformation surveyInformation = new SurveyInformation();
-//        surveyInformation.setId(UUID.randomUUID().toString().replace("-",""));
-//        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyInformation().getSurveyDate());
-//        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getSurveyInformation().getInvestigationPersonnel());
-//        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyInformation().getSurveyBriefly());
+//    /**
+//     * 编辑
+//     * @param maintenanceProjectInformationVo
+//     * @param userInfo
+//     * @param id 审核人id
+//     */
+//    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,UserInfo userInfo,String id){
 //
-//        surveyInformationDao.insertSelective(surveyInformation);
-
-        if(maintenanceProjectInformationVo.getSurveyInformation() != null){
-            Example example = new Example(SurveyInformation.class);
-            Example.Criteria criteria = example.createCriteria();
-
-            criteria.andEqualTo("baseProjectId",id);
-
-            SurveyInformation selectSurveyInformation = surveyInformationDao.selectOneByExample(example);
-
-            SurveyInformation surveyInformation = maintenanceProjectInformationVo.getSurveyInformation();
-
-            //修改时间
-            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String surveyInformationUpdateTime = simpleDateFormat1.format(new Date());
-
-            surveyInformation.setUpdateTime(surveyInformationUpdateTime);
-            surveyInformation.setId(selectSurveyInformation.getId());
-
-            surveyInformationDao.updateByPrimaryKeySelective(surveyInformation);
-        }
-
-
-
-        //结算审核信息
-//        SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
-
-        if(maintenanceProjectInformationVo.getSettlementAuditInformation() != null){
-            //查询对应的结算审核信息对象
-            Example example1 = new Example(SettlementAuditInformation.class);
-            Example.Criteria example1Criteria = example1.createCriteria();
-
-            example1Criteria.andEqualTo("maintenanceProjectInformation",maintenanceProjectInformation.getId());
-
-            SettlementAuditInformation selectSettlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
-
-            SettlementAuditInformation settlementAuditInformation = maintenanceProjectInformationVo.getSettlementAuditInformation();
-
-            // 修改时间
-            SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String settlementAuditInformationUpdateTime = simpleDateFormat2.format(new Date());
-
-            settlementAuditInformation.setUpdateTime(settlementAuditInformationUpdateTime);
-            settlementAuditInformation.setId(selectSettlementAuditInformation.getId());
-
-            settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
-        }
-
-        // 审核信息
-
-        AuditInfo auditInfo = new AuditInfo();
-
-        String s = UUID.randomUUID().toString().replaceAll("-", "");
-        auditInfo.setId(s);
-        auditInfo.setBaseProjectId(information.getMaintenanceItemId());
-
-        auditInfo.setAuditResult("0");
-
-        auditInfo.setAuditType("0");
-
-        auditInfo.setStatus("0");
-
-        // 审核人id
-        auditInfo.setAuditorId(id);
-
-        String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
-
-        auditInfo.setCreateTime(createDate);
-
-        auditInfoDao.insertSelective(auditInfo);
-
-
-//        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
-
-        maintenanceProjectInformationMapper.updateByPrimaryKeySelective(information);
-
-
-    }
+//
+//        //修改时间
+//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        String updateTime = simpleDateFormat.format(new Date());
+//
+//        // 根据检维修项目id  查询到的 检维修对象
+//        MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectBymaintenanceItemId(maintenanceProjectInformationVo.getMaintenanceItemId());
+//        // 检维修对象
+//        MaintenanceProjectInformation information = new MaintenanceProjectInformation();
+//        information.setId(maintenanceProjectInformation.getId());
+//        // 修改时间
+//        information.setUpdateTime(updateTime);
+//        information.setDelFlag("0");
+//        information.setMaintenanceItemId(maintenanceProjectInformationVo.getMaintenanceItemId());
+//        information.setMaintenanceItemName(maintenanceProjectInformationVo.getMaintenanceItemName());
+//        information.setMaintenanceItemType(maintenanceProjectInformationVo.getMaintenanceItemType());
+//        information.setSubmittedDepartment(maintenanceProjectInformationVo.getSubmittedDepartment());
+//        information.setSubmitTime(maintenanceProjectInformationVo.getSubmitTime());
+////        编制人
+//        information.setPreparePeople(maintenanceProjectInformationVo.getPreparePeople());
+//        information.setProjectAddress(maintenanceProjectInformationVo.getProjectAddress());
+//        information.setConstructionUnitId(maintenanceProjectInformationVo.getConstructionUnitId());
+//        information.setReviewAmount(maintenanceProjectInformationVo.getReviewAmount());
+//        information.setRemarkes(maintenanceProjectInformationVo.getRemarkes());
+//        information.setCustomerName(maintenanceProjectInformationVo.getCustomerName());
+//        //        information.setFounderId(userInfo.getId());
+//
+////        information.setFounderCompanyId(userInfo.getCompanyId());
+//        //勘探信息
+////        SurveyInformation surveyInformation = new SurveyInformation();
+////        surveyInformation.setId(UUID.randomUUID().toString().replace("-",""));
+////        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyInformation().getSurveyDate());
+////        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getSurveyInformation().getInvestigationPersonnel());
+////        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyInformation().getSurveyBriefly());
+////
+////        surveyInformationDao.insertSelective(surveyInformation);
+//
+//        if(maintenanceProjectInformationVo.getSurveyInformation() != null){
+//            Example example = new Example(SurveyInformation.class);
+//            Example.Criteria criteria = example.createCriteria();
+//
+//            criteria.andEqualTo("baseProjectId",id);
+//
+//            SurveyInformation selectSurveyInformation = surveyInformationDao.selectOneByExample(example);
+//
+//            SurveyInformation surveyInformation = maintenanceProjectInformationVo.getSurveyInformation();
+//
+//            //修改时间
+//            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String surveyInformationUpdateTime = simpleDateFormat1.format(new Date());
+//
+//            surveyInformation.setUpdateTime(surveyInformationUpdateTime);
+//            surveyInformation.setId(selectSurveyInformation.getId());
+//
+//            surveyInformationDao.updateByPrimaryKeySelective(surveyInformation);
+//        }
+//
+//
+//
+//        //结算审核信息
+////        SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
+//
+//        if(maintenanceProjectInformationVo.getSettlementAuditInformation() != null){
+//            //查询对应的结算审核信息对象
+//            Example example1 = new Example(SettlementAuditInformation.class);
+//            Example.Criteria example1Criteria = example1.createCriteria();
+//
+//            example1Criteria.andEqualTo("maintenanceProjectInformation",maintenanceProjectInformation.getId());
+//
+//            SettlementAuditInformation selectSettlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
+//
+//            SettlementAuditInformation settlementAuditInformation = maintenanceProjectInformationVo.getSettlementAuditInformation();
+//
+//            // 修改时间
+//            SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            String settlementAuditInformationUpdateTime = simpleDateFormat2.format(new Date());
+//
+//            settlementAuditInformation.setUpdateTime(settlementAuditInformationUpdateTime);
+//            settlementAuditInformation.setId(selectSettlementAuditInformation.getId());
+//
+//            settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+//        }
+//
+//        // 审核信息
+//
+//        AuditInfo auditInfo = new AuditInfo();
+//
+//        String s = UUID.randomUUID().toString().replaceAll("-", "");
+//        auditInfo.setId(s);
+//        auditInfo.setBaseProjectId(information.getMaintenanceItemId());
+//
+//        auditInfo.setAuditResult("0");
+//
+//        auditInfo.setAuditType("0");
+//
+//        auditInfo.setStatus("0");
+//
+//        // 审核人id
+//        auditInfo.setAuditorId(id);
+//
+//        String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+//
+//        auditInfo.setCreateTime(createDate);
+//
+//        auditInfoDao.insertSelective(auditInfo);
+//
+//
+////        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
+//
+//        maintenanceProjectInformationMapper.updateByPrimaryKeySelective(information);
+//
+//
+//    }
 
     /**
      * 根据id,查找回显数据
      * @param id
      * @return
      */
-    public MaintenanceProjectInformationVo selectMaintenanceProjectInformationById(String id){
-//        根据id 找到检维修对象
-        MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectById(id);
+    public MaintenanceVo selectMaintenanceProjectInformationById(String id){
 
-//        返回到页面显示的vo对象
-        MaintenanceProjectInformationVo maintenanceProjectInformationVo = new MaintenanceProjectInformationVo();
+        MaintenanceVo maintenanceVo = new MaintenanceVo();
 
-        maintenanceProjectInformationVo.setId(maintenanceProjectInformation.getId());
-        maintenanceProjectInformationVo.setCreateTime(maintenanceProjectInformation.getCreateTime());
-        maintenanceProjectInformationVo.setDelFlag(maintenanceProjectInformation.getDelFlag());
-        maintenanceProjectInformationVo.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
-        maintenanceProjectInformationVo.setMaintenanceItemName(maintenanceProjectInformation.getMaintenanceItemName());
-        maintenanceProjectInformationVo.setMaintenanceItemType(maintenanceProjectInformation.getMaintenanceItemType());
-        maintenanceProjectInformationVo.setSubmittedDepartment(maintenanceProjectInformation.getSubmittedDepartment());
-        maintenanceProjectInformationVo.setSubmitTime(maintenanceProjectInformation.getSubmitTime());
-        maintenanceProjectInformationVo.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
-        maintenanceProjectInformationVo.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
-        maintenanceProjectInformationVo.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
-        maintenanceProjectInformationVo.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
-        maintenanceProjectInformationVo.setRemarkes(maintenanceProjectInformation.getRemarkes());
-        //        information.setFounderId(userInfo.getId());
+        MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectByPrimaryKey(id);
 
-//        information.setFounderCompanyId(userInfo.getCompanyId());
-        // 查询对应的勘探信息对象
+//        private SurveyInformation surveyInformation;
+//        private SettlementAuditInformation settlementAuditInformation;
+//        private InvestigationOfTheAmount investigationOfTheAmount;
         Example example = new Example(SurveyInformation.class);
-        Example.Criteria criteria = example.createCriteria();
-
-        criteria.andEqualTo("baseProjectId",id);
-
+        example.createCriteria().andEqualTo("baseProjectId",information.getMaintenanceItemId());
         SurveyInformation surveyInformation = surveyInformationDao.selectOneByExample(example);
 
-        if(surveyInformation != null){
-            maintenanceProjectInformationVo.setSurveyInformation(surveyInformation);
-        }
-
-        //查询对应的结算审核信息对象
         Example example1 = new Example(SettlementAuditInformation.class);
-        Example.Criteria example1Criteria = example1.createCriteria();
-
-        example1Criteria.andEqualTo("maintenanceProjectInformation",id);
-
+        example1.createCriteria().andEqualTo("maintenanceProjectInformation",information.getId());
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
 
-        if(settlementAuditInformation != null){
-            maintenanceProjectInformationVo.setSettlementAuditInformation(settlementAuditInformation);
-        }
+        Example example2 = new Example(InvestigationOfTheAmount.class);
+        example2.createCriteria().andEqualTo("",information.getMaintenanceItemId());
+        InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example2);
 
-        //查询对应的审核信息对象
-
-        Example auditExample = new Example(AuditInfo.class);
-
-        Example.Criteria auditExampleCriteria = auditExample.createCriteria();
-
-        auditExampleCriteria.andEqualTo("baseProjectId",maintenanceProjectInformation.getId());
-
-        AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditExample);
-        if(auditInfo != null){
-            maintenanceProjectInformationVo.setAuditInfo(auditInfo);
-        }
-        return maintenanceProjectInformationVo;
+        return maintenanceVo;
     }
 
     /**
      * 新增--保存
      */
     public void saveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation,UserInfo userInfo){
+
         String id = UUID.randomUUID().toString().replaceAll("-","");
         //创建时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -583,52 +574,175 @@ public class MaintenanceProjectInformationService{
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
         information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
         information.setRemarkes(maintenanceProjectInformation.getRemarkes());
-        //        information.setFounderId(userInfo.getId());
+        information.setFounderId(userInfo.getId());
 
-//        information.setFounderCompanyId(userInfo.getCompanyId());
+        information.setFounderCompanyId(userInfo.getCompanyId());
+
         //勘探信息
-//        SurveyInformation surveyInformation = new SurveyInformation();
-//        surveyInformation.setId(UUID.randomUUID().toString().replace("-",""));
-//        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyInformation().getSurveyDate());
-//        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getSurveyInformation().getInvestigationPersonnel());
-//        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyInformation().getSurveyBriefly());
-        if(maintenanceProjectInformation.getSurveyInformation() != null){
-            SurveyInformation surveyInformation = maintenanceProjectInformation.getSurveyInformation();
-            String sid = UUID.randomUUID().toString().replace("-","");
-            surveyInformation.setId(sid);
-            //创建时间
-            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String surveyInformationCreateTime = simpleDateFormat1.format(new Date());
+        SurveyInformation surveyInformation = new SurveyInformation();
+        String sid = UUID.randomUUID().toString().replace("-","");
+        surveyInformation.setId(sid);
+        surveyInformation.setCreateTime(simpleDateFormat.format(new Date()));
+        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
+        //勘察人员
+        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getInvestigationPersonnel());
+        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyBriefly());
+        // todo 项目基本信息的id
+        surveyInformation.setBaseProjectId(information.getId());
+        surveyInformation.setFounderId(userInfo.getId());
+        surveyInformation.setFounderCompanyId(userInfo.getCompanyId());
+        surveyInformationDao.insertSelective(surveyInformation);
 
-            surveyInformation.setCreateTime(surveyInformationCreateTime);
-            // todo 项目基本信息的id
-            surveyInformation.setBaseProjectId(information.getId());
-
-            surveyInformationDao.insertSelective(surveyInformation);
-        }
 
 
 
         //结算审核信息
-//        SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
+        SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
 
-        if(maintenanceProjectInformation.getSettlementAuditInformation() != null){
-            SettlementAuditInformation settlementAuditInformation = maintenanceProjectInformation.getSettlementAuditInformation();
-            String sid = UUID.randomUUID().toString().replace("-","");
-            settlementAuditInformation.setId(sid);
-            // 创建时间
-            SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String settlementAuditInformationCreateTime = simpleDateFormat2.format(new Date());
+        String saiId = UUID.randomUUID().toString().replace("-","");
+        settlementAuditInformation.setId(saiId);
+        settlementAuditInformation.setCreateTime(simpleDateFormat.format(new Date()));
 
-            settlementAuditInformation.setCreateTime(settlementAuditInformationCreateTime);
+        // todo 检维修项目信息id
+        settlementAuditInformation.setMaintenanceProjectInformation(information.getId());
 
-            // todo 检维修项目信息id
-            settlementAuditInformation.setMaintenanceProjectInformation(information.getId());
-            settlementAuditInformationDao.insertSelective(settlementAuditInformation);
-        }
+        settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
+        settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
+        settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
+
+        settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
+        settlementAuditInformation.setContractRemarkes(maintenanceProjectInformation.getContractRemarkes());
+        settlementAuditInformation.setPreparePeople(maintenanceProjectInformation.getPreparePeople2());
+        settlementAuditInformation.setOutsourcing(maintenanceProjectInformation.getOutsourcing());
+        settlementAuditInformation.setNameOfTheCost(maintenanceProjectInformation.getNameOfTheCost());
+        settlementAuditInformation.setContact(maintenanceProjectInformation.getContact());
+        settlementAuditInformation.setContactPhone(maintenanceProjectInformation.getContactPhone());
+        settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
+        settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
+        settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
+
+        settlementAuditInformation.setFounderId(userInfo.getId());
+        settlementAuditInformation.setFounderCompanyId(userInfo.getCompanyId());
+        settlementAuditInformationDao.insertSelective(settlementAuditInformation);
+
+
+        // 勘探金额
+
+        InvestigationOfTheAmount investigationOfTheAmount = new InvestigationOfTheAmount();
+
+        String ioaId = UUID.randomUUID().toString().replace("-","");
+        investigationOfTheAmount.setId(ioaId);
+        investigationOfTheAmount.setCreateTime(simpleDateFormat.format(new Date()));
+        investigationOfTheAmount.setDelFlag("0");
+
+        investigationOfTheAmount.setFounderId(userInfo.getId());
+        investigationOfTheAmount.setFounderCompanyId(userInfo.getCompanyId());
+        investigationOfTheAmount.setMaintenanceProjectInformation(maintenanceProjectInformation.getId());
+        // todo 待修改
+        investigationOfTheAmount.setBaseProjectId(maintenanceProjectInformation.getId());
+
+        investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
+        investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
+        investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
+        investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
+
+        investigationOfTheAmountDao.insert(investigationOfTheAmount);
 
 
         maintenanceProjectInformationMapper.insertSelective(information);
+
+    }
+
+    /**
+     * 编辑--保存
+     */
+    public void updateSaveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation,UserInfo userInfo){
+
+        //修改时间
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String updateTime = simpleDateFormat.format(new Date());
+
+        //检维修对象
+        MaintenanceProjectInformation information = new MaintenanceProjectInformation();
+        information.setId(maintenanceProjectInformation.getId());
+        information.setUpdateTime(updateTime);
+        information.setDelFlag("0");
+        information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
+        information.setMaintenanceItemName(maintenanceProjectInformation.getMaintenanceItemName());
+        information.setMaintenanceItemType(maintenanceProjectInformation.getMaintenanceItemType());
+        information.setSubmittedDepartment(maintenanceProjectInformation.getSubmittedDepartment());
+        information.setSubmitTime(maintenanceProjectInformation.getSubmitTime());
+        information.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
+        information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
+        information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
+        information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
+        information.setRemarkes(maintenanceProjectInformation.getRemarkes());
+        information.setFounderId(userInfo.getId());
+
+        information.setFounderCompanyId(userInfo.getCompanyId());
+
+        //勘探信息
+
+        Example example = new Example(SurveyInformation.class);
+        example.createCriteria().andEqualTo("baseProjectId",maintenanceProjectInformation.getId());
+        SurveyInformation surveyInformation = surveyInformationDao.selectOneByExample(example);
+
+        surveyInformation.setUpdateTime(simpleDateFormat.format(new Date()));
+        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
+        //勘察人员
+        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getInvestigationPersonnel());
+        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyBriefly());
+
+        surveyInformationDao.updateByPrimaryKeySelective(surveyInformation);
+
+
+        //结算审核信息
+
+        Example example1 = new Example(SettlementAuditInformation.class);
+        example1.createCriteria().andEqualTo("maintenanceProjectInformation",maintenanceProjectInformation.getId());
+        SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
+
+        settlementAuditInformation.setUpdateTime(simpleDateFormat.format(new Date()));
+
+
+        settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
+        settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
+        settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
+
+        settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
+        settlementAuditInformation.setContractRemarkes(maintenanceProjectInformation.getContractRemarkes());
+        settlementAuditInformation.setPreparePeople(maintenanceProjectInformation.getPreparePeople2());
+        settlementAuditInformation.setOutsourcing(maintenanceProjectInformation.getOutsourcing());
+        settlementAuditInformation.setNameOfTheCost(maintenanceProjectInformation.getNameOfTheCost());
+        settlementAuditInformation.setContact(maintenanceProjectInformation.getContact());
+        settlementAuditInformation.setContactPhone(maintenanceProjectInformation.getContactPhone());
+        settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
+        settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
+        settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
+
+        settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+
+
+        // 勘探金额
+
+        Example example2 = new Example(InvestigationOfTheAmount.class);
+        example2.createCriteria().andEqualTo("maintenanceProjectInformation",maintenanceProjectInformation.getId());
+
+        InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example2);
+
+
+        investigationOfTheAmount.setUpdateTime(simpleDateFormat.format(new Date()));
+
+
+        investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
+        investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
+        investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
+        investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
+
+        investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
+
+
+        maintenanceProjectInformationMapper.updateByPrimaryKeySelective(information);
 
     }
 

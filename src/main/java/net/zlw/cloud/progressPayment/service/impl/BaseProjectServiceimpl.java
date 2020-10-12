@@ -306,9 +306,13 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         batchReviewVo.getBatchAll();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
-            Example example = new Example(ProgressPaymentInformation.class);
+            Example example = new Example(AuditInfo.class);
             example.createCriteria().andEqualTo("baseProjectId",s).andEqualTo("auditResult","0");
             AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
+
+
             if (batchReviewVo.getAuditResult().equals("1")){
                 if (auditInfo.getAuditType().equals("0")){
                     auditInfo.setAuditResult("1");
@@ -322,10 +326,16 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo1.setBaseProjectId(s);
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("1");
-                    Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("member_role_id","3");
-                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+
+                    baseProject.setProgressPaymentStatus("4");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+                    Example example3 = new Example(MemberManage.class);
+                    example3.createCriteria().andEqualTo("status", "0").andEqualTo("depId", "2").andEqualTo("depAdmin", "1");
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example3);
+
                     auditInfo1.setAuditorId(memberManage.getId());
+
                     auditInfoDao.insertSelective(auditInfo1);
                 }else if(auditInfo.getAuditType().equals("1")){
                     auditInfo.setAuditResult("1");
@@ -333,10 +343,22 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
                     auditInfo.setAuditTime(format);
                     auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+
+                    baseProject.setProgressPaymentStatus("5");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                 }
             }else if(batchReviewVo.getAuditResult().equals("2")){
                 auditInfo.setAuditResult("2");
+                auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                Date date = new Date();
+                String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
+                auditInfo.setAuditTime(format);
+
+                baseProject.setProgressPaymentStatus("3");
+
+                baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
             }
         }

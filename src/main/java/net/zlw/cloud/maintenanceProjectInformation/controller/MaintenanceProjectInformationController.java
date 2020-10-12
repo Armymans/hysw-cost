@@ -10,6 +10,7 @@ import net.zlw.cloud.budgeting.model.vo.PageBVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationReturnVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationVo;
+import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.maintenanceProjectInformation.service.MaintenanceProjectInformationService;
 import org.springframework.web.bind.annotation.*;
@@ -73,11 +74,11 @@ public class MaintenanceProjectInformationController extends BaseController {
      * @param maintenanceProjectInformationVo
      */
     @RequestMapping(value = "/maintenanceProjectInformation/addMaintenanceProjectInformation",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public void addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,@RequestParam(name = "id") String id){
+    public Map<String,Object> addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,@RequestParam(name = "id") String id){
 //        UserInfo loginUser = getLoginUser();
 //        System.out.println("user:"+loginUser);
         maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser(),id);
-
+        return RestUtil.success("新增提交成功");
     }
 
 
@@ -88,14 +89,13 @@ public class MaintenanceProjectInformationController extends BaseController {
      */
     @RequestMapping(value = "/maintenanceProjectInformation/selectMaintenanceProjectInformationById",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectMaintenanceProjectInformationById(@RequestParam(name = "id") String id){
-        MaintenanceProjectInformationVo maintenanceProjectInformationVo = maintenanceProjectInformationService.selectMaintenanceProjectInformationById(id);
-        return RestUtil.success(maintenanceProjectInformationVo);
-
+        MaintenanceVo maintenanceVo = maintenanceProjectInformationService.selectMaintenanceProjectInformationById(id);
+        return RestUtil.success(maintenanceVo);
     }
 
 
     /**
-     * 保存
+     * 新增-保存
      * @param maintenanceProjectInformationVo
      * @return
      */
@@ -107,18 +107,20 @@ public class MaintenanceProjectInformationController extends BaseController {
         return RestUtil.success("保存成功");
     }
 
-    /**
-     * 编辑--提交
-     * 提交：把数据保存到数据库，得到一个审核人 id
-     * @param maintenanceProjectInformationVo
-     */
-    @RequestMapping(value = "/maintenanceProjectInformation/updateMaintenanceProjectInformation",method = {RequestMethod.PUT},produces = MediaTypes.JSON_UTF_8)
-    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,@RequestParam(name = "id") String id){
-        UserInfo loginUser = getLoginUser();
-        System.out.println("user:"+loginUser);
-        maintenanceProjectInformationService.updateMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser(),id);
+//    /**
+//     * 编辑--提交
+//     * 提交：把数据保存到数据库，得到一个审核人 id
+//     * @param maintenanceProjectInformationVo
+//     */
+//    @RequestMapping(value = "/maintenanceProjectInformation/updateMaintenanceProjectInformation",method = {RequestMethod.PUT},produces = MediaTypes.JSON_UTF_8)
+//    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,@RequestParam(name = "id") String id){
+//        UserInfo loginUser = getLoginUser();
+//        System.out.println("user:"+loginUser);
+//        maintenanceProjectInformationService.updateMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser(),id);
+//
+//    }
 
-    }
+
 
 
 

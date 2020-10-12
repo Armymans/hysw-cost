@@ -412,8 +412,18 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     )
     List<OneCensus2> costCensusList(CostVo2 costVo2);
 
-
-    String projectCount(String id);
+    @Select(
+            "SELECT\n" +
+                    "COUNT(s2.id)\n" +
+                    "FROM\n" +
+                    "building_project s1,\n" +
+                    "base_project s2\n" +
+                    "WHERE\n" +
+                    "s1.id = s2.building_project_id\n" +
+                    "and\n" +
+                    "s1.id = #{id}"
+    )
+    String projectCount(@Param("id") String id);
 
 
     @Select(

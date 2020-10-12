@@ -379,41 +379,63 @@ public class ProjectController extends BaseController {
         return RestUtil.success(objects);
     }
 
-    @GetMapping("/trackStatusSensus/{id}")
-    public Map<String, Object> trackStatusSensus(@PathVariable("id") String id) {
+//    @GetMapping("/trackStatusSensus/{id}")
+    @RequestMapping(value = "/trackStatusSensus", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> trackStatusSensus(@RequestParam("id") String id) {
         String s = projectService.trackStatusSensus(id);
         JSONArray objects = JSON.parseArray(s);
         return RestUtil.success(objects);
     }
 
-    @GetMapping("/visaStatusSensus/{id}")
-    public String visaStatusSensus(@PathVariable("id") String id) {
-        return projectService.visaStatusSensus(id);
+//    @GetMapping("/visaStatusSensus/{id}")
+    @RequestMapping(value = "/visaStatusSensus", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> visaStatusSensus(@RequestParam("id") String id) {
+        String s = projectService.visaStatusSensus(id);
+        JSONArray objects = JSON.parseArray(s);
+        return RestUtil.success(objects);
     }
 
-    @GetMapping("/progressPaymentStatusSensus/{id}")
-    public String progressPaymentStatusSensus(@PathVariable("id") String id) {
-        return projectService.progressPaymentStatusSensus(id);
+//    @GetMapping("/progressPaymentStatusSensus/{id}")
+    @RequestMapping(value = "/progressPaymentStatusSensus", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> progressPaymentStatusSensus(@RequestParam("id") String id) {
+        String s = projectService.progressPaymentStatusSensus(id);
+        JSONArray objects = JSON.parseArray(s);
+        return RestUtil.success(objects);
     }
 
-    @GetMapping("/settleAccountsStatusSensus/{id}")
-    public String settleAccountsStatusSensus(@PathVariable("id") String id) {
-        return projectService.settleAccountsStatusSensus(id);
+//    @GetMapping("/settleAccountsStatusSensus/{id}")
+    @RequestMapping(value = "/settleAccountsStatusSensus", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> settleAccountsStatusSensus(@RequestParam("id") String id) {
+        String s = projectService.settleAccountsStatusSensus(id);
+        JSONArray objects = JSON.parseArray(s);
+        return RestUtil.success(objects);
     }
 
-    @GetMapping("/buildDay/{id}")
-    public long buildDay(@PathVariable("id") String id) throws ParseException {
-        return projectService.buildDay(id);
+//    @GetMapping("/buildDay/{id}")
+    @RequestMapping(value = "/projectOverviewVo", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> buildDay(@RequestParam("id") String id) throws ParseException {
+        Long aLong = projectService.buildDay(id);
+        String s = projectService.projectCount(id);
+        int i = projectService.missionCount(id);
+
+        ProjectOverviewVo projectOverviewVo = new ProjectOverviewVo(aLong,"3",i);
+
+
+        return RestUtil.success(projectOverviewVo);
     }
 
-    @GetMapping("/projectCount/{id}")
-    public String projectCount(@PathVariable("id") String id) {
-        return projectService.projectCount(id);
+//    @GetMapping("/projectCount/{id}")
+    @RequestMapping(value = "/projectCount", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> projectCount(@RequestParam("id") String id) {
+        String s = projectService.projectCount(id);
+        return RestUtil.success(s);
     }
 
-    @GetMapping("/missionCount/{id}")
-    public int missionCount(@PathVariable("id") String id) {
-        return projectService.missionCount(id);
+//    @GetMapping("/missionCount/{id}")
+    @RequestMapping(value = "/missionCount", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> missionCount(@RequestParam("id") String id) {
+        int i = projectService.missionCount(id);
+        return RestUtil.success(i+"");
     }
 
     @GetMapping("/desMoneySum/{id}")
