@@ -14,4 +14,10 @@ public interface MemberManageDao extends Mapper<MemberManage> {
 
     @Select("select * from member_manage where dep_id = '2' and dep_admin = '1'")
     MemberManage selectAdmin();
+
+    @Select(
+            "SELECT id,member_name,password,member_sex,member_account,member_role_id,email,phone,founder_id,company_id,status,dep_id,dep_admin,account_auth,create_date,update_date,salt FROM member_manage WHERE ( dep_admin = '1' and dep_id ='1' )"
+    )
+    MemberManage memberManageById();
+
 }

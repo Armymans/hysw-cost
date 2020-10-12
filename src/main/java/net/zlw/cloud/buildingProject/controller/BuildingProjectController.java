@@ -43,6 +43,7 @@ public class BuildingProjectController extends BaseController {
      * @Description // 工程项目合并
      * @Date 11:56 2020/10/11
      **/
+//    hysw/cost/api/buildingProject/findBuildingProject
     @RequestMapping(value = "/buildingProjectMerge",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> buildingProjectMerge(String ids,String id,String code){
        buildingProjectService.buildingProjectMerge(ids,id,code);

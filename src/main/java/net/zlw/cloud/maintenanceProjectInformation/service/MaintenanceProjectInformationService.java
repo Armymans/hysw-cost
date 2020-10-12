@@ -229,6 +229,7 @@ public class MaintenanceProjectInformationService{
         surveyInformation.setId(sid);
         surveyInformation.setCreateTime(simpleDateFormat.format(new Date()));
         surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
+
         //勘察人员
         surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getInvestigationPersonnel());
         surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyBriefly());
@@ -289,7 +290,7 @@ public class MaintenanceProjectInformationService{
         investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
         investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
         investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
-
+        investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.getAmountRemarks());
         investigationOfTheAmountDao.insert(investigationOfTheAmount);
 
 
@@ -543,7 +544,7 @@ public class MaintenanceProjectInformationService{
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
 
         Example example2 = new Example(InvestigationOfTheAmount.class);
-        example2.createCriteria().andEqualTo("",information.getMaintenanceItemId());
+        example2.createCriteria().andEqualTo("maintenanceProjectInformation",information.getMaintenanceItemId());
         InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example2);
 
         return maintenanceVo;
@@ -641,6 +642,7 @@ public class MaintenanceProjectInformationService{
         // todo 待修改
         investigationOfTheAmount.setBaseProjectId(maintenanceProjectInformation.getId());
 
+//        investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.get);
         investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
         investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
         investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());

@@ -164,7 +164,7 @@ public class BaseProject{
     private String delFlag; //删除标识 0,正常1,删除
 
     @Transient
-    private String reviewerId;
+    private String reviewerId; //互相审核人
     @Transient
     private String orsubmit;
     @Transient

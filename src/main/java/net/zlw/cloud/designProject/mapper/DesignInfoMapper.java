@@ -14,6 +14,7 @@ import java.util.List;
 public interface DesignInfoMapper extends Mapper<DesignInfo> {
     @Select(
                 "SELECT\n" +
+                        "s2.id,\n" +
                         "s2.base_project_id,\n" +
                         "s1.should_be should_be,\n" +
                         "s1.cea_num,\n" +
@@ -84,6 +85,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
 
     @Select(
             "SELECT\n" +
+                    "s2.id,\n" +
                     "s2.base_project_id,\n" +
                     "s1.should_be should_be,\n" +
                     "s1.cea_num,\n" +
@@ -147,8 +149,49 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
     )
     List<DesignInfo> designProjectSelect2(DesignPageVo pageVo);
 
-
-
+    @Select(
+            "SELECT\n" +
+                    "s2.id,\n" +
+                    "s2.base_project_id,\n" +
+                    "s1.should_be should_be,\n" +
+                    "s1.cea_num,\n" +
+                    "s1.merge_flag,\n" +
+                    "s1.project_num,\n" +
+                    "s1.project_name,\n" +
+                    "s1.desgin_status,\n" +
+                    "s1.district,\n" +
+                    "s1.water_address,\n" +
+                    "s1.construction_unit,\n" +
+                    "s2.contacts,\n" +
+                    "s2.phone,\n" +
+                    "s2.outsource,\n" +
+                    "s2.designer,\n" +
+                    "s1.project_nature,\n" +
+                    "s1.design_category,\n" +
+                    "s1.project_category,\n" +
+                    "s1.a_b,\n" +
+                    "s2.design_unit,\n" +
+                    "s2.isaccount,\n" +
+                    "s2.isdeschange,\n" +
+                    "s2.outsource_money,\n" +
+                    "s2.take_time,\n" +
+                    "s2.blueprint_start_time,\n" +
+                    "s3.design_change_time ,\n" +
+                    "s2.isfinalaccount ,\n" +
+                    "( CASE WHEN s3.design_change_time IS NULL THEN '否' ELSE '是' END ) AS ischange\n" +
+                    "FROM\n" +
+                    "design_info s2 LEFT JOIN design_change_info s3 ON s2.id = s3.design_info_id \n" +
+                    "LEFT JOIN base_project s1 ON s2.base_project_id = s1.id\n" +
+                    "where\n" +
+                    "s1.desgin_status = '2'\n" +
+                    "and\n" +
+                    "s2.status= '0'\n" +
+                    "and \n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "s2.id = #{id}"
+    )
+    DesignInfo designProjectSelectOne(@Param("id") String id);
 
     @Update(
             "update  design_info \n" +
@@ -163,6 +206,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
 
     @Select(
             "SELECT\n" +
+                    "s2.id,\n" +
                     "s2.base_project_id,\n" +
                     "s1.should_be should_be,\n" +
                     "s1.cea_num,\n" +

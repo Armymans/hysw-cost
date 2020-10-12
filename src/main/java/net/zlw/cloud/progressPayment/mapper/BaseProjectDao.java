@@ -67,6 +67,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
 
 
     @Select("SELECT \n" +
+            "s1.id, \n"+
             "s1.should_be shouldBe,\n" +
             "s1.cea_num ceaNum,\n" +
             "s1.project_num projectNum,\n" +
