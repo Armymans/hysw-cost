@@ -22,6 +22,7 @@ import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.ibatis.annotations.Param;
+import org.aspectj.weaver.ast.And;
 import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -272,11 +273,11 @@ public class ProjectService {
             }
         }else{
             //若果为空 说明查询所有
-            Example admin = new Example(MemberManage.class);
-            Example.Criteria adminc = admin.createCriteria();
-            adminc.andEqualTo("depAdmin","1");
-            adminc.andEqualTo("depId","1");
-            MemberManage memberManage = memberManageDao.selectOneByExample(admin);
+//            Example admin = new Example(MemberManage.class);
+//            Example.Criteria adminc = admin.createCriteria();
+//            adminc.andEqualTo("depAdmin","1");
+//            adminc.andEqualTo("depId","1");
+            MemberManage memberManage = memberManageDao.memberManageById();
             //将部门负责人传入
             pageVo.setAdminId(memberManage.getId());
             //todo loginUser.getId()
@@ -568,6 +569,30 @@ public class ProjectService {
             }
     }
 
+    /**
+     * 合并列表展示
+     * @return
+     */
+    public DesignInfo mergeProjectList(String id){
+        //根据id查找 合并信息
+        DesignInfo designInfo = designInfoMapper.designProjectSelectOne(id);
+        return designInfo;
+    }
+
+    /**
+     * 更新成非主表
+     */
+    public void updateMergeProject0(String id){
+        projectMapper.updateMergeProject0(id);
+    }
+
+    /**
+     * 跟新为主表
+     * @param id
+     */
+    public void updateMergeProject1(String id){
+        projectMapper.updateMergeProject1(id);
+    }
 
     /**
      * 批量审核
@@ -645,7 +670,8 @@ public class ProjectService {
 
         projectVo.getBaseProject().setId(projectuuid);
         projectVo.getBaseProject().setCreateTime(createTime);
-        projectVo.getBaseProject().setFounderId(loginUser.getId());
+        //todo loginUser.getId()
+        projectVo.getBaseProject().setFounderId("ceshi01");
         projectVo.getBaseProject().setFounderCompanyId(loginUser.getCompanyId());
         projectVo.getBaseProject().setProjectFlow("1");
         projectVo.getBaseProject().setDelFlag("0");
@@ -662,7 +688,8 @@ public class ProjectService {
             auditInfo.setAuditResult("0");
             auditInfo.setAuditorId(projectVo.getBaseProject().getReviewerId());
             auditInfo.setCreateTime(createTime);
-            auditInfo.setFounderId(loginUser.getId());
+            //todo   loginUser.getId()
+            auditInfo.setFounderId("ceshi01");
             auditInfo.setCompanyId(loginUser.getCompanyId());
             auditInfo.setStatus("0");
             auditInfoDao.insert(auditInfo);
@@ -674,7 +701,8 @@ public class ProjectService {
         //设计表添加
         projectVo.getDesignInfo().setId(DesignInfouuid);
         projectVo.getDesignInfo().setBaseProjectId(projectuuid);
-        projectVo.getDesignInfo().setFounderId(loginUser.getId());
+        //todo   loginUser.getId()
+        projectVo.getDesignInfo().setFounderId("ceshi01");
         projectVo.getDesignInfo().setCompanyId(loginUser.getCompanyId());
         projectVo.getDesignInfo().setStatus("0");
         projectVo.getDesignInfo().setCreateTime(createTime);
@@ -682,10 +710,11 @@ public class ProjectService {
 
 
         //方案会审
-        if(projectVo.getPackageCame()!=null){
+        if(projectVo.getPackageCame().getParticipant()!=null&&!"".equals(projectVo.getPackageCame().getParticipant())){
             projectVo.getPackageCame().setId(packageCameuuId);
             projectVo.getPackageCame().setBassProjectId(DesignInfouuid);
-            projectVo.getPackageCame().setFounderId(loginUser.getId());
+            //todo   loginUser.getId()
+            projectVo.getPackageCame().setFounderId("ceshi01");
             projectVo.getPackageCame().setCompanyId(loginUser.getCompanyId());
             projectVo.getPackageCame().setStatus("0");
             projectVo.getPackageCame().setCreateTime(createTime);
@@ -694,10 +723,11 @@ public class ProjectService {
 
 
         //项目踏勘
-        if(projectVo.getProjectExploration()!=null){
+        if(projectVo.getProjectExploration().getScout()!=null&&!"".equals(projectVo.getPackageCame().getParticipant())){
             projectVo.getProjectExploration().setId(projectExplorationuuid);
             projectVo.getProjectExploration().setBaseProjectId(DesignInfouuid);
-            projectVo.getProjectExploration().setFounderId(loginUser.getId());
+            //todo   loginUser.getId()
+            projectVo.getProjectExploration().setFounderId("ceshi01");
             projectVo.getProjectExploration().setCompany_id(loginUser.getCompanyId());
             projectVo.getProjectExploration().setStatus("0");
             projectVo.getProjectExploration().setCreateTime(createTime);

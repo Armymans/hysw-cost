@@ -1397,4 +1397,24 @@ public interface ProjectMapper extends Mapper<BaseProject> {
             "\tYEAR(s1.create_time),\n" +
             "\tMONTH(s1.create_time)")
     List<OneCensus10> EmployeecostTaskCensusList(EmployeeVo employeeVo);
+
+    @Select(
+            "UPDATE \n" +
+                    "base_project\n" +
+                    "SET \n" +
+                    "merge_flag = '0' \n" +
+                    "WHERE\n" +
+                    "id = #{id}"
+    )
+    void updateMergeProject0(@Param("id") String id);
+
+    @Select(
+            "UPDATE \n" +
+                    "base_project\n" +
+                    "SET \n" +
+                    "merge_flag = '1' \n" +
+                    "WHERE\n" +
+                    "id = #{id}"
+    )
+    void updateMergeProject1(@Param("id") String id);
 }

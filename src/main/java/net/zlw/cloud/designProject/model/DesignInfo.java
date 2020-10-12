@@ -131,4 +131,6 @@ public class DesignInfo{
     private BigDecimal DisMoney; //设计金额
     @Transient
     private String payTerm;
+    @Transient
+    private String mergeFlag;
 }

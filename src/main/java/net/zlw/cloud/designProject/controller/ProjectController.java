@@ -19,6 +19,7 @@ import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
@@ -28,6 +29,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 public class ProjectController extends BaseController {
@@ -61,6 +63,52 @@ public class ProjectController extends BaseController {
             projectService.mergeProject(mergeName, mergeNum, id);
         }
     }
+
+    /**
+     * 根据id查询合并项目列表
+     * @param idlist
+     */
+    @RequestMapping(value = "/api/disproject/mergeProjectList", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> mergeProjectList(String idlist) {
+        ArrayList<DesignInfo> designInfos = new ArrayList<>();
+        String[] split = idlist.split(",");
+        for (String id : split) {
+            DesignInfo designInfo = projectService.mergeProjectList(id);
+            designInfos.add(designInfo);
+        }
+        return RestUtil.success(designInfos);
+    }
+
+    /**
+     * 合并项目列表判断是否未主项目
+     * @param idlist
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/mergeProjectListById", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> mergeProjectListById(String idlist,String id){
+        ArrayList<DesignInfo> designInfos = new ArrayList<>();
+        String projectName = "";
+        String projectNum = "";
+        String[] split = idlist.split(",");
+        for (String s : split) {
+            DesignInfo designInfo = projectService.mergeProjectList(s);
+            if(designInfo.getId().equals(id)){
+                projectName = designInfo.getProjectName();
+                projectNum = designInfo.getProjectNum();
+                projectService.updateMergeProject0(designInfo.getBaseProjectId());
+                designInfos.add(designInfo);
+            }else{
+                projectService.updateMergeProject1(designInfo.getBaseProjectId());
+            }
+        }
+        ConcurrentHashMap concurrentHashMap = new ConcurrentHashMap();
+        concurrentHashMap.put("projectName",projectName);
+        concurrentHashMap.put("projectNum",projectNum);
+        concurrentHashMap.put("designInfos",designInfos);
+        return RestUtil.success(concurrentHashMap);
+    }
+
 
     /**
      * 批量审核接口
@@ -101,15 +149,14 @@ public class ProjectController extends BaseController {
      *
      * @param projectVo
      */
-    @PostMapping("/disProjectadd")
-    public void disProjectadd
-    (@RequestBody ProjectVo projectVo) {
+    @RequestMapping(value = "/api/disproject/disProjectadd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> disProjectadd(ProjectVo projectVo) {
         //@RequestBody BaseProject baseProject,
         //             @RequestBody DesignInfo designInfo,
         //             @RequestBody ProjectExploration projectExploration,
         //             @RequestBody PackageCame packageCame
-
         projectService.disProjectSubmit(projectVo, getLoginUser());
+        return RestUtil.success();
     }
 
     /**

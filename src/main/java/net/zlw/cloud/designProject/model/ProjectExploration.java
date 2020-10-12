@@ -27,7 +27,7 @@ public class ProjectExploration {
     private String explorationIdeal;
 
     @Column(name = "remark")
-    private String remark;
+        private String remark;
 
     @Column(name = "base_project_id")
     private String baseProjectId;
