@@ -39,4 +39,6 @@ public interface BaseProjectService {
     void updateProject(BaseProject baseProject);
 
     List<BaseProject> findByBuildingProject(String id);
+
+    BaseProject findByBaseProjectId(VisaBaseProjectVo visaBaseProjectVo);
 }

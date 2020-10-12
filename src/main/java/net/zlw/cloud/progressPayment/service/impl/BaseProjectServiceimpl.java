@@ -98,7 +98,6 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 baseProjectDao.updateByPrimaryKeySelective(project);
             }
 
-
             information.setRemarkes(baseProject.getRemarkes());
             information.setBaseProjectId(project.getId());
             information.setId(UUID.randomUUID().toString());
@@ -581,6 +580,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public List<BaseProject> findByBuildingProject(String id) {
         return baseProjectDao.findByBuildingProject(id);
+    }
+
+    @Override
+    public BaseProject findByBaseProjectId(VisaBaseProjectVo visaBaseProjectVo) {
+        return baseProjectDao.selectByPrimaryKey(visaBaseProjectVo.getId());
+
     }
 
 

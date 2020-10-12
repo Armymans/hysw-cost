@@ -12,9 +12,7 @@ public class VisaChangeInfoVo {
 
     //项目基本信息
     private BaseProject baseProject;
-
     private String id;
-
     private String applicantNameUp;
     private String remarkUp;
 
@@ -22,7 +20,6 @@ public class VisaChangeInfoVo {
     private String submitMoneyDown;
     private String applicantNameDown;
     private String remarkDown;
-
 
     private List<VisaChangeStatisticVo> changeStatisticVos;
 

@@ -9,6 +9,7 @@ import lombok.Data;
 public class VisaBaseProjectVo {
     private int pageNum;
     private int pageSize;
+    private String id;
     private String shouldBe;
     private String ceaNum;
     private String projectNum;

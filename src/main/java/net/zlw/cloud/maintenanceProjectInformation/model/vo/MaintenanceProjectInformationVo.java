@@ -68,6 +68,9 @@ public class MaintenanceProjectInformationVo {
     private String investigationPersonnel;
     //勘察简述
     private String surveyBriefly;
+    //勘察备注
+    private String amountRemarks;
+
 
     // 结算审核信息
 //    private SettlementAuditInformation settlementAuditInformation;

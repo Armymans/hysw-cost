@@ -2,7 +2,6 @@ package net.zlw.cloud.VisaChange.controller;
 
 
 import com.github.pagehelper.PageInfo;
-import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
@@ -10,7 +9,7 @@ import net.zlw.cloud.VisaChange.model.vo.VisaChangeInfoVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.VisaChange.service.VisaChangeService;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
-
+import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,8 +86,7 @@ public class VisaChangeController extends BaseController {
         vcisService.approvalProcess(batchReviewVo,getLoginUser());
         return RestUtil.success("审核成功");
     }
-//   /hysw/cost/api/visaChange/add
-//   /hysw/cost/api/visaChange/findPage
+
     /***
      * 添加提交保存
      * @param visaChangeInfoVo
@@ -99,12 +97,24 @@ public class VisaChangeController extends BaseController {
         vcisService.addVisChangeVo(visaChangeInfoVo,getLoginUser());
         return RestUtil.success("添加成功");
     }
-
 //    /hysw/cost/api/visaChange/findPage
+    /***
+     * 签证变更所选项目接口
+     * @param visaBaseProjectVo
+     * @return
+     */
     @RequestMapping(value = "/visChange/selectByBaseProjectFindAll",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> addBudgeting(VisaBaseProjectVo visaBaseProjectVo){
+    public Map<String,Object> selectBaseProjectAll(VisaBaseProjectVo visaBaseProjectVo){
         List<VisaBaseProjectVo> voList = baseProjectService.selectByBaseProjectId(visaBaseProjectVo);
-
         return RestUtil.success(voList);
     }
+
+
+    @RequestMapping(value = "/visChange/selectByBaseProjectId",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectBybaseProjectId(VisaBaseProjectVo visaBaseProjectVo){
+        BaseProject baseProject = baseProjectService.findByBaseProjectId(visaBaseProjectVo);
+        return RestUtil.success(baseProject);
+    }
+
+
 }
