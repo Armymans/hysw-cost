@@ -1,7 +1,9 @@
 package net.zlw.cloud.budgeting.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
-import net.tec.cloud.common.util.RestUtil;
+import net.zlw.cloud.common.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.*;
@@ -55,10 +57,20 @@ public class BudgetingController extends BaseController {
         return RestUtil.success("成功");
     }
     //查询所有
-    @RequestMapping(value = "/budgeting/findAllBudgeting",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/budgeting/findAllBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllBudgeting(PageBVo pageBVo){
-       List<BudgetingVo> list = budgetingService.findAllBudgeting(pageBVo);
-        return RestUtil.success(list);
+        PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
+       List<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo);
+        PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);
+        return RestUtil.page(budgetingListVoPageInfo);
+    }
+    //选择项目查看所有预算
+    @RequestMapping(value = "/budgeting/findBudgetingAll",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findBudgetingAll(PageBVo pageBVo){
+        PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
+        List<BudgetingListVo> list = budgetingService.findBudgetingAll(pageBVo);
+        PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);
+        return net.zlw.cloud.common.RestUtil.page(budgetingListVoPageInfo);
     }
     //预算合并查询
     @RequestMapping(value = "/budgeting/unionQuery",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)

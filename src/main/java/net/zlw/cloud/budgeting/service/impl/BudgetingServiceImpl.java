@@ -342,9 +342,13 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
-    public List<BudgetingVo> findAllBudgeting(PageBVo pageBVo) {
+    public List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo) {
         return  budgetingDao.findAllBudgeting(pageBVo);
 
+    }
+    @Override
+    public List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo) {
+        return budgetingDao.findBudgetingAll(pageBVo);
     }
 
     @Override
@@ -416,6 +420,8 @@ public class BudgetingServiceImpl implements BudgetingService {
             }
         }
     }
+
+
 
 
     /**

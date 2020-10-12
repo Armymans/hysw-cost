@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 @Data
 public class BudgetingListVo {
     private String id;
+    private String baseId;
     private String shouldBe;
     private String ceaNum;
     private String projectNum;
@@ -23,7 +24,7 @@ public class BudgetingListVo {
     private String costTogether;
     private String pricingTogether;
     private String outsourcing;
-    private String nameOfCostUnint;
+    private String nameOfCostUnit;
     private BigDecimal amountCost;
     private BigDecimal costTotalAmount;
     private BigDecimal biddingPriceControl;

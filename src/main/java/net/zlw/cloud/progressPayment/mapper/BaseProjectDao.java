@@ -1,11 +1,11 @@
 package net.zlw.cloud.progressPayment.mapper;
 
 
-import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
+import net.zlw.cloud.settleAccounts.model.vo.PageVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
@@ -15,27 +15,51 @@ import java.util.List;
 @org.apache.ibatis.annotations.Mapper
 public interface BaseProjectDao extends Mapper<BaseProject> {
 
-    @Select("select * from base_project b  " +
-            "LEFT JOIN budgeting bb on  b.id = bb.base_project_id " +
-            "LEFT JOIN settlement_audit_information sai on b.id = sai.base_project_id " +
-            "LEFT JOIN last_settlement_review l on b.id = l.base_project_id " +
-            "LEFT JOIN audit_info au on b.id = au.base_project_id  " +
-            "where  " +
-            "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
-            "(b.district = #{district} or #{district} = '' ) and  " +
-            "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
-            "(b.sa_whether_account = #{saWhetherAccount} or #{saWhetherAccount} = '') and  " +
-            "(IFNULL(l.take_time,sai.take_time) > #{startTime} or #{startTime} = '') and  " +
-            "(IFNULL(l.take_time,sai.take_time) < #{endTime} or #{endTime} = '') and  " +
-            "(IFNULL(l.compile_time,sai.compile_time) > #{startTime} or #{startTime} = '') and  " +
-            "(IFNULL(l.compile_time,sai.compile_time) < #{endTime} or #{endTime} = '') and  " +
-            "(b.cea_num like concat('%',#{keyword},'%') or  " +
-            "b.project_num like concat('%',#{keyword},'%')  or " +
-            "b.project_name like concat ('%',#{keyword},'%') or  " +
-            "b.construction_unit like concat ('%',#{keyword},'%') or  " +
-            "b.customer_name like concat ('%',#{keyword},'%') or  " +
-            "bb.name_of_cost_unit like concat  ('%',#{keyword},'%'))")
-    List<AccountsVo> findAllAccounts(PageVo PageVo);
+    @Select("select\n" +
+            "b.id id,\n" +
+            "b.cea_num ceaNum,\n" +
+            "b.project_num projectNum,\n" +
+            "b.project_name projectName,\n" +
+            "b.settle_accounts_status settleAccountsStatus,\n" +
+            "b.district district,\n" +
+            "b.water_address waterAddress,\n" +
+            "b.construction_unit constructionUnit,\n" +
+            "b.project_category projectCategory,\n" +
+            "b.project_nature projectNature,\n" +
+            "b.design_category designCategory,\n" +
+            "b.water_supply_type waterSupplyType,\n" +
+            "b.customer_name customerName,\n" +
+            "IFNULL(s.prepare_people,l.prepare_people) preparePeople,\n" +
+            "bt.outsourcing outsourcing,\n" +
+            "bt.name_of_cost_unit nameOfCostUnit,\n" +
+            "l.review_number lReviewNumber,\n" +
+            "si.sumbit_money sumbitMoney,\n" +
+            "s.authorized_number authorizedNumber,\n" +
+            "IFNULL(s.take_time,l.take_time) takeTime,\n" +
+            "IFNULL(s.compile_time,l.compile_time) compileTime\n" +
+            "from\n" +
+            "budgeting bt \n" +
+            "LEFT JOIN base_project b on bt.base_project_id = b.id \n" +
+            "LEFT JOIN last_settlement_review l on l.base_project_id = bt.base_project_id\n" +
+            "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id\n" +
+            "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id\n" +
+            "LEFT JOIN audit_info a on a.base_project_id = IFNULL(s.id,l.id)" +
+            "where \n" +
+            "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and \n" +
+            "(b.district = #{district} or #{district} = '' ) and \n" +
+            "(b.project_nature = #{projectNature} or #{projectNature} = '') and \n" +
+            "(b.sa_whether_account = #{saWhetherAccount} or #{saWhetherAccount} = '') and \n" +
+            "(IFNULL(l.take_time,s.take_time) > #{startTime} or #{startTime} = '') and  \n" +
+            "(IFNULL(l.take_time,s.take_time) < #{endTime} or #{endTime} = '') and \n" +
+            "(IFNULL(l.compile_time,s.compile_time) > #{startTime} or #{startTime} = '') and \n" +
+            "(IFNULL(l.compile_time,s.compile_time) < #{endTime} or #{endTime} = '') and  \n" +
+            "(b.cea_num like concat('%',#{keyword},'%') or  \n" +
+            "b.project_num like concat('%',#{keyword},'%')  or \n" +
+            "b.project_name like concat ('%',#{keyword},'%') or  \n" +
+            "b.construction_unit like concat ('%',#{keyword},'%') or  \n" +
+            "b.customer_name like concat ('%',#{keyword},'%') or  \n" +
+            "bt.name_of_cost_unit like concat  ('%',#{keyword},'%'))")
+    List<AccountsVo> findAllAccounts(PageVo pageVo);
 
 
     @Select("select * from base_project where id = #{id}")

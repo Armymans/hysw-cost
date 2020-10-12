@@ -157,6 +157,8 @@ public class BaseProject implements Serializable {
     private String shouldBe;
     @Column(name = "whether_account")
     private String whetherAccount;
+    @Column(name = "sa_whether_account")
+    private String saWhetherAccount;
     @Column(name = "audit_number")
     private String auditNumber;
     @Column(name = "create_time")

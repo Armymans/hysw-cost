@@ -51,4 +51,10 @@ public class LastSettlementReview implements Serializable {
     private String compileTime;
     @Column(name = "base_project_id")
     private String baseProjectId;
+    @Column(name = "account_id")
+    private String accountId;
+    @Column(name = "whether_account")
+    private String whetherAccount;
+    @Column(name = "remark")
+    private String remark;
 }

@@ -3,6 +3,7 @@ package net.zlw.cloud.settleAccounts.model.vo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.zlw.cloud.settleAccounts.model.SettlementInfo;
 
 import java.math.BigDecimal;
 
@@ -79,6 +80,9 @@ public class BaseAccountsVo {
     private String settleAccountsStatus;
     private String auditOpinion;
     private String auditorId;
+    private SettlementInfo lastSettleinfo;
+    private SettlementInfo settleSettleInfo;
+
 
 
 

@@ -3,7 +3,6 @@ package net.zlw.cloud.settleAccounts.service.impl;
 
 import net.tec.cloud.common.util.RestUtil;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
-import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -17,6 +16,7 @@ import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
+import net.zlw.cloud.settleAccounts.model.vo.PageVo;
 import net.zlw.cloud.settleAccounts.service.SettleAccountsService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.stereotype.Service;
@@ -53,10 +53,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void deleteAcmcounts(String id) {
-        BaseProject baseProject = new BaseProject();
-        baseProject.setId(id);
-        baseProject.setDelFlag("1");
-        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
         Example example = new Example(InvestigationOfTheAmount.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("baseProjectId",id);
@@ -64,14 +61,50 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         investigationOfTheAmount.setDelFlag("1");
         investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
 
+        Example example1 = new Example(LastSettlementReview.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("baseProjectId",id);
+        LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example1);
+        if (lastSettlementReview!=null){
+            lastSettlementReview.setDelFlag("1");
+            lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
+        }
+        Example example2 = new Example(SettlementAuditInformation.class);
+        Example.Criteria criteria2 = example2.createCriteria();
+        criteria2.andEqualTo("baseProjectId",id);
+        SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example2);
+        if (settlementAuditInformation!=null){
+            settlementAuditInformation.setDelFlag("1");
+            settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+        }
     }
 
     @Override
     public void updateAccount(String s) {
         BaseProject baseProject = new BaseProject();
         baseProject.setId(s);
-        baseProject.setWhetherAccount("0");
+        baseProject.setSaWhetherAccount("0");
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+        //上家到账
+        Example example = new Example(LastSettlementReview.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",s);
+        LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example);
+        if (lastSettlementReview!=null){
+            lastSettlementReview.setWhetherAccount("0");
+            lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
+        }
+
+        //下家到账
+        Example example1 = new Example(SettlementAuditInformation.class);
+        Example.Criteria c2 = example1.createCriteria();
+        c2.andEqualTo("baseProjectId",s);
+        SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
+        if (settlementAuditInformation!=null){
+            settlementAuditInformation.setWhetherAccount("0");
+            settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+        }
     }
 
     @Override
@@ -98,6 +131,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             lastSettlementReview.setAmountOutsourcing(baseAccountsVo.getAmountOutsourcing());
             lastSettlementReview.setMaintenanceProjectInformation(baseAccountsVo.getMaintenanceProjectInformation());
             lastSettlementReview.setBaseProjectId(project.getId());
+            lastSettlementReview.setRemark(baseAccountsVo.getLastSettleinfo().getRemark());
+
             lastSettlementReviewDao.insert(lastSettlementReview);
         }
 
@@ -135,7 +170,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 auditInfoDao.insert(auditInfo);
             }
         }else{
-            project.setSettleAccountsStatus("0");
+            project.setSettleAccountsStatus("2");
             baseProjectDao.updateByPrimaryKeySelective(project);
         }
         investigationOfTheAmount.setId(UUID.randomUUID().toString().replace("-",""));
@@ -330,8 +365,24 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     public void batchReview(BatchReviewVo batchReviewVo) {
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
+            String audit = "";
+            //查找上家
+            Example example2 = new Example(LastSettlementReview.class);
+            Example.Criteria criteria = example2.createCriteria();
+            criteria.andEqualTo("baseProjectId",s);
+            LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example2);
+            Example example3 = new Example(SettlementAuditInformation.class);
+            Example.Criteria criteria1 = example3.createCriteria();
+            criteria1.andEqualTo("baseProjectId",s);
+            SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example3);
+            if (settlementAuditInformation!=null){
+                audit = settlementAuditInformation.getId();
+            }else if(lastSettlementReview!=null){
+                audit = lastSettlementReview.getId();
+            }
+
             Example example = new Example(AuditInfo.class);
-            example.createCriteria().andEqualTo("baseProjectId",s).andEqualTo("auditResult","0");
+            example.createCriteria().andEqualTo("baseProjectId",audit).andEqualTo("auditResult","0");
             AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
             if (batchReviewVo.getAuditResult().equals("1")){
                 if (auditInfo.getAuditType().equals("0")){
@@ -343,11 +394,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                     AuditInfo auditInfo1 = new AuditInfo();
                     auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
-                    auditInfo1.setBaseProjectId(s);
+                    auditInfo1.setBaseProjectId(audit);
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("1");
                     Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("member_role_id","3");
+                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
+
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                     auditInfo1.setAuditorId(memberManage.getId());
                     auditInfoDao.insertSelective(auditInfo1);
@@ -361,6 +413,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 }
             }else if(batchReviewVo.getAuditResult().equals("2")){
                 auditInfo.setAuditResult("2");
+                auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+                auditInfo.setAuditTime(sim.format(new Date()));
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
             }
         }

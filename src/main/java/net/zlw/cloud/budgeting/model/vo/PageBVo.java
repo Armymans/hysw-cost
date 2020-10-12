@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class PageBVo {
+    private int pageNum;
+    private int pageSize;
     private String district;
     private String waterSupplyType;
     private String projectNature;
@@ -13,5 +15,6 @@ public class PageBVo {
     private String endTime;
     private String keyword;
     private String budgetingStatus;
+    private String designCategory;
 
 }
