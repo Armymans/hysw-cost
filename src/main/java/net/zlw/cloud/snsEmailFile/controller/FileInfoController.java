@@ -4,6 +4,7 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.DateUtil;
 import net.tec.cloud.common.util.FileUtil;
 import net.tec.cloud.common.util.IdUtil;
+import net.tec.cloud.common.vo.LoginUser;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
@@ -89,6 +90,7 @@ public class FileInfoController extends BaseController {
             attachInfo.setFileName(fileName);
             attachInfo.setFilePath(filePath);
             attachInfo.setFileType(fileType);
+            attachInfo.setUserId(getLoginUser().getId());
             attachInfo.setType(type);
             attachInfo.setCreateTime(DateUtil.getDateTime());
             attachInfo.setStatus("1");
@@ -176,8 +178,8 @@ public class FileInfoController extends BaseController {
      * @Description //下载文件
      * @Date 14:11 2020/10/10
      **/
-    @RequestMapping(value = "/downloadFile", method = RequestMethod.POST)
-    public void downloadFile(String id) {
+    @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
+    public void downloadFile(@RequestParam(value = "id", required = false) String id) {
         try {
             FileInfo docInfo = fileInfoService.getByKey(id);
             if (docInfo != null) {

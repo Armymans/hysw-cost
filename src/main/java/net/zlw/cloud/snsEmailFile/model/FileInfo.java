@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 /**
  * @Author Armyman
@@ -54,5 +55,8 @@ public class FileInfo {
 
     @Column(name = "remark")
     private String remark;
+
+    @Transient
+    private String userName;
 
 }

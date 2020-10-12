@@ -31,6 +31,5 @@ nbdist/
 src/main/resources/application-prod.properties
 .gitignore
 src/main/resources/mapper/
-src/main/resources/static/
 src/main/resources/templates/
 src/test/

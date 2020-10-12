@@ -14,6 +14,14 @@ import java.util.List;
  **/
 public interface FileInfoMapper extends Mapper<FileInfo> {
 
-    @Select("SELECT * FROM file_info where status = '0' and =#{type} and plat_code = #{key}")
+    @Select("SELECT " +
+            " fi.* , " +
+            " mm.member_name userName " +
+            "FROM " +
+            " file_info fi " +
+            " left join member_manage mm on mm.id = fi.user_id " +
+            "WHERE " +
+            " fi.STATUS = '0'  " +
+            " AND fi.type = #{type} and fi.plat_code = #{key}")
     List<FileInfo> findByFreignAndType(@Param("type") String type, @Param("key") String key);
 }
