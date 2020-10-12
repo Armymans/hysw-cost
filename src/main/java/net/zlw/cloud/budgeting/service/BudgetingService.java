@@ -1,6 +1,7 @@
 package net.zlw.cloud.budgeting.service;
 
 
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.*;
 
@@ -17,7 +18,7 @@ public interface BudgetingService {
 
     void intoAccount(String ids);
 
-    List<BudgetingVo> findAllBudgeting(PageBVo pageBVo);
+    PageInfo<BudgetingVo> findAllBudgeting(PageBVo pageBVo);
 
     UnionQueryVo unionQuery(String id);
 

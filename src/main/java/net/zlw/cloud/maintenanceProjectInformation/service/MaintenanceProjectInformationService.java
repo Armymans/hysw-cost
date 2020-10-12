@@ -642,6 +642,7 @@ public class MaintenanceProjectInformationService{
         // todo 待修改
         investigationOfTheAmount.setBaseProjectId(maintenanceProjectInformation.getId());
 
+//        investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.get);
         investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
         investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
         investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());

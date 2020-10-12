@@ -48,6 +48,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public void addProgress(BaseProjectVo baseProject, UserInfo loginUser) {
 
+
         //项目基本信息
         BaseProject project = findById(baseProject.getProjectNum());
         //申请信息
@@ -78,7 +79,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         paymentInformation.setRemarkes(baseProject.getRemarkes());
         paymentInformation.setBaseProjectId(project.getId());
         paymentInformation.setId(UUID.randomUUID().toString().replace("-",""));
-        paymentInformation.setFounderId(loginUser.getId());
+        paymentInformation.setFounderId("user304");
+        paymentInformation.setDelFlag("0");
         progressPaymentInformationDao.insert(paymentInformation);
 
         if (baseProject != null && !baseProject.equals("")) {
@@ -102,6 +104,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             information.setBaseProjectId(project.getId());
             information.setId(UUID.randomUUID().toString());
             information.setProgressPaymentId(paymentInformation.getId());
+            information.setDelFlag("0");
+
             applicationInformationDao.insert(information);
 
 

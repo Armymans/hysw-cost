@@ -12,8 +12,31 @@ import java.util.List;
 @org.apache.ibatis.annotations.Mapper
 public interface BudgetingDao extends Mapper<Budgeting> {
 
-    @Select("select b.id id,b.amount_cost amountCost,bp.project_num projectNum from budgeting b \n" +
-            "LEFT JOIN base_project bp on b.base_project_id = bp.id")
+    @Select("SELECT\n" +
+            "\tb.id id,\n" +
+            "\tb.amount_cost amountCost,\n" +
+            "\tbp.project_num projectNum,\n" +
+            "\tbp.should_be shouldBe,\n" +
+            "\tbp.cea_num ceaNum,\n" +
+            "\tbp.project_num projectNum,\n" +
+            "\tbp.project_name projectName,\n" +
+            "\tbp.district district,\n" +
+            "\tbp.water_address waterAddress,\n" +
+            "\tbp.construction_unit constructionUnit,\n" +
+            "\tbp.design_category designCategory,\n" +
+            "\tbp.water_supply_type waterSupplyType,\n" +
+            "\tbp.customer_name customerName,\n" +
+            "\tb.budgeting_people budgetingPeople,\n" +
+            "\tcp.cost_together costTogether,\n" +
+            "\tve.pricing_together pricingTogether,\n" +
+            "\tb.amount_cost amountCost,\n" +
+            "\tcp.cost_total_amount costTotalAmount,\n" +
+            "\tve.bidding_price_control biddingPriceControl \n" +
+            "FROM\n" +
+            "\tbudgeting b\n" +
+            "\tLEFT JOIN base_project bp ON b.base_project_id = bp.id\n" +
+            "\tLEFT JOIN cost_preparation cp ON b.cost_preparation_id = cp.id\n" +
+            "\tLEFT JOIN very_establishment ve ON b.very_establishment_id = ve.id")
     List<BudgetingVo> findAllBudgeting(PageBVo pageBVo);
 
     /**

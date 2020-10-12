@@ -1,5 +1,6 @@
 package net.zlw.cloud.budgeting.controller;
 
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
@@ -57,8 +58,8 @@ public class BudgetingController extends BaseController {
     //查询所有
     @RequestMapping(value = "/budgeting/findAllBudgeting",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllBudgeting(PageBVo pageBVo){
-       List<BudgetingVo> list = budgetingService.findAllBudgeting(pageBVo);
-        return RestUtil.success(list);
+        PageInfo<BudgetingVo> allBudgeting = budgetingService.findAllBudgeting(pageBVo);
+        return net.zlw.cloud.common.RestUtil.page(allBudgeting);
     }
     //预算合并查询
     @RequestMapping(value = "/budgeting/unionQuery",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)

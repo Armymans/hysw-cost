@@ -1,5 +1,7 @@
 package net.zlw.cloud.budgeting.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
@@ -342,9 +344,15 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
-    public List<BudgetingVo> findAllBudgeting(PageBVo pageBVo) {
-        return  budgetingDao.findAllBudgeting(pageBVo);
+    public PageInfo<BudgetingVo> findAllBudgeting(PageBVo pageBVo) {
 
+        PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
+
+        List<BudgetingVo> allBudgeting = budgetingDao.findAllBudgeting(pageBVo);
+
+        PageInfo<BudgetingVo> pageInfo = new PageInfo<>(allBudgeting);
+
+        return pageInfo;
     }
 
     @Override
