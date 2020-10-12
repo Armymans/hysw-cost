@@ -37,7 +37,7 @@ public class SnsInfoController extends BaseController {
      * @Date 22:46 2020/10/9
      **/
     @RequestMapping(value = "/sendCode", method = RequestMethod.POST)
-    public String sendCode(String phone ,String content){
+    public String sendCode(String phone ,String content,String business){
         try {
             boolean flag = SnsUtil.checkMobieNumber(phone);
             log.info("判断是手机号码校验手机格式是否正确："+flag);

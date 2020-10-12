@@ -22,12 +22,14 @@ public abstract class SnsUtilAbstract {
         String sendFlag = ConfigHelper.getProperty("send_phone");
         if(StrUtil.isNotEmpty(sendFlag) && sendFlag.equals("0")){
         	log.info("SnsUtilAbstract关闭短信功能-不发送短信");
-        	return true;
+        	return false;
         }
         log.info("SnsUtilAbstract开始发送短信"+phoneNum);
 		String sender = SmsUtils.sender(phoneNum, content);
-		log.info("短信发送完毕，获取短信发送结果sender="+sender
-				);
+		log.info("短信发送完毕，获取短信发送结果sender="+sender);
+		if("error".equals(sender)){
+			return false;
+		}
 		return true;
 	}
 

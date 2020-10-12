@@ -55,6 +55,6 @@ public class SmsUtils {
     
     public static void main(String[] args) {
 		String content="（华衍水务电子招标平台）尊敬，马鞍山华衍水务有限公司邀请您参与2019-MXJ093-仓库水表保温套请购的询价，请登录招采平台，在业务通知处查看详情。";
-		sender("", content);
+		sender("18255747151", content);
 	}
 }
