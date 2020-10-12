@@ -47,7 +47,7 @@ public class SnsInfoController extends BaseController {
 //                WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
 //                SnsInfoService snsInfoService = context.getBean(SnsInfoService.class);
                 SnsInfo snsInfo = new SnsInfo();
-                snsInfo.setId(UUID.randomUUID().toString());
+                snsInfo.setId("Sms"+UUID.randomUUID().toString().replace("-","").substring(0,15));
                 snsInfo.setPhone(phone);
                 snsInfo.setContent(content);
                 snsInfo.setType("1");
