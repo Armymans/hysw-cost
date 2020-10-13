@@ -84,8 +84,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         paymentInformation.setRemarkes(baseProject.getRemarkes());
         paymentInformation.setBaseProjectId(project.getId());
         paymentInformation.setId(UUID.randomUUID().toString().replace("-",""));
-        paymentInformation.setFounderId("user304");
+        paymentInformation.setFounderId(baseProject.getAuditorId());
         paymentInformation.setDelFlag("0");
+
+        String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+        paymentInformation.setCreateTime(format);
         progressPaymentInformationDao.insert(paymentInformation);
 
         if (baseProject != null && !baseProject.equals("")) {
@@ -318,7 +321,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             example.createCriteria().andEqualTo("baseProjectId",s).andEqualTo("auditResult","0");
             AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
 
-            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
+            ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectByPrimaryKey(s);
+            String baseProjectId = progressPaymentInformation.getBaseProjectId();
+
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
 
 
             if (batchReviewVo.getAuditResult().equals("1")){
@@ -396,7 +402,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public BaseProject findById(String projectNum) {
         Example example = new Example(BaseProject.class);
         example.createCriteria().andEqualTo("id",projectNum);
+
+        baseProjectDao.selectByPrimaryKey(projectNum);
+
         BaseProject baseProject = baseProjectDao.selectOneByExample(example);
+
         if(baseProject != null){
             ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(baseProject.getConstructionUnit());
             if (constructionUnitManagement!=null){

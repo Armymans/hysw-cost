@@ -49,13 +49,13 @@ public class ProgressPaymentController  extends BaseController {
     //编辑
 //    @PostMapping("/updateProgress")
     @RequestMapping(value = "/progress/updateProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public String updateProgress(BaseProjectVo baseProjectVo){
+    public Map<String,Object> updateProgress(BaseProjectVo baseProjectVo){
         try {
             baseProjectService.updateProgress(baseProjectVo);
-            return "编辑成功";
+            return RestUtil.success("修改成功");
         } catch (Exception e) {
             e.printStackTrace();
-            return "编辑失败";
+            return RestUtil.success("编辑失败");
         }
     }
     //查询进度款列表
