@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 @Data
 public class BudgetingVo {
     private String id;
+    private String baseId;
     private String projectNum;
     private BigDecimal amountCost;
     private String budgetingPeople;
