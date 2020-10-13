@@ -32,6 +32,7 @@ public class MaintenanceProjectInformationVo {
     //报送时间
     private String submitTime;
 
+    private String baseProjectId;
     /**
      * 编制人
      */
@@ -97,10 +98,15 @@ public class MaintenanceProjectInformationVo {
     private BigDecimal materialDifferenceAmount;
     //审核信息
 //    private AuditInfo auditInfo;
+    //审核人id
+    private String auditorId;
     private String auditResult;
     private String auditOpinion;
     private String auditType;
 
     private List<AuditInfo> auditInfos;
+
+    //登录人id
+    private String loginUserId;
 
 }

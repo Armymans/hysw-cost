@@ -80,7 +80,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         } else if ("3".equals(visaChangeVO.getStatus())) {
             all = vcMapper.findByNotPass(visaChangeVO);
 
-
 //            已完成
         } else {
             all = vcMapper.findAll(visaChangeVO);
