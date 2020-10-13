@@ -399,7 +399,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         BaseProject baseProject = baseProjectDao.selectOneByExample(example);
         if(baseProject != null){
             ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(baseProject.getConstructionUnit());
-            baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+            if(constructionUnitManagement != null){
+                baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+            }
         }
         return baseProject;
     }

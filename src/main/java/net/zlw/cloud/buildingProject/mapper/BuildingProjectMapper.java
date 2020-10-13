@@ -2,6 +2,7 @@ package net.zlw.cloud.buildingProject.mapper;
 
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -24,4 +25,6 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
             " where bp.status = 0 and bp.or_submit = 1 and b.building_project_id != bp.id")
     List<BuildingProject> findBuildingProject();
 
+    @Select("select * from building_project where id = #{id}")
+    BuildingProject selectById(@Param("id") String id);
 }
