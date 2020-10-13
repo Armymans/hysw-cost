@@ -26,6 +26,7 @@ import java.util.Map;
 public class BudgetingController extends BaseController {
     @Resource
     private BudgetingService budgetingService;
+    private static String founderId;
 
     //添加预算信息
 //    @PostMapping("/addBudgeting")
@@ -65,6 +66,13 @@ public class BudgetingController extends BaseController {
     //查询所有
     @RequestMapping(value = "/budgeting/findAllBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllBudgeting(PageBVo pageBVo){
+        UserInfo id1 = getLoginUser();
+        if (id1!=null){
+            founderId = id1.getId();
+        }
+        if (founderId!=null){
+            pageBVo.setFounderId(founderId);
+        }
         PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
         List<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo);
         //待审核

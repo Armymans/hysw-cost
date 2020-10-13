@@ -16,5 +16,6 @@ public class PageBVo {
     private String keyword;
     private String budgetingStatus;
     private String designCategory;
+    private String founderId;
 
 }

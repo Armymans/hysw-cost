@@ -34,7 +34,7 @@ public class SearchBaseProjectController {
         return RestUtil.success(allBaseProject);
     }
 
-    @RequestMapping(value = "/baseProject/findById",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/baseProject/findById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
 //    @GetMapping("/findById/{id}")
     public Map<String,Object> findById(@RequestParam(name = "projectNum") String id){
         BaseProject byId = baseProjectService.findById(id);

@@ -11,7 +11,6 @@ import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
-import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
@@ -55,7 +54,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         //获取基本信息
         Example example = new Example(BaseProject.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("projectNum",budgetingVo.getProjectNum());
+        criteria.andEqualTo("id",budgetingVo.getBaseId());
         BaseProject baseProject = projectDao.selectOneByExample(example);
 
         //预算编制
@@ -73,6 +72,8 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgeting.setBudgetingTime(budgetingVo.getBudgetingTime());
         budgeting.setRemarkes(budgetingVo.getBremarkes());
         budgeting.setBaseProjectId(baseProject.getId());
+        budgeting.setFounderId(loginUser.getId());
+        budgeting.setDelFlag("0");
         //提交
         if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
             //修改预算状态为待审核
@@ -85,6 +86,7 @@ public class BudgetingServiceImpl implements BudgetingService {
             auditInfo.setBaseProjectId(budgeting.getId());
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
+            auditInfo.setStatus("0");
             auditInfo.setAuditorId(budgetingVo.getAuditorId());
             auditInfoDao.insertSelective(auditInfo);
             //保存
@@ -106,6 +108,8 @@ public class BudgetingServiceImpl implements BudgetingService {
         surveyInformation.setPriceInformationName(budgetingVo.getPriceInformationName());
         surveyInformation.setPriceInformationNper(budgetingVo.getPriceInformationNper());
         surveyInformation.setBudgetingId(budgeting.getId());
+        surveyInformation.setDelFlag("0");
+        surveyInformation.setBaseProjectId(baseProject.getId());
         surveyInformationDao.insertSelective(surveyInformation);
 
         //成本编制
@@ -123,6 +127,8 @@ public class BudgetingServiceImpl implements BudgetingService {
         costPreparation.setCostPreparationTime(budgetingVo.getCostPreparationTime());
         costPreparation.setRemarkes(budgetingVo.getCRemarkes());
         costPreparation.setBudgetingId(budgeting.getId());
+        costPreparation.setDelFlag("0");
+        costPreparation.setBaseProjectId(baseProject.getId());
         costPreparationDao.insertSelective(costPreparation);
 
         //控价编制
@@ -135,6 +141,8 @@ public class BudgetingServiceImpl implements BudgetingService {
         veryEstablishment.setEstablishmentTime(budgetingVo.getEstablishmentTime());
         veryEstablishment.setRemarkes(budgetingVo.getVRemarkes());
         veryEstablishment.setBudgetingId(budgeting.getId());
+        veryEstablishment.setDelFlag("0");
+        veryEstablishment.setBaseProjectId(baseProject.getId());
         veryEstablishmentDao.insertSelective(veryEstablishment);
 
 
@@ -412,6 +420,7 @@ public class BudgetingServiceImpl implements BudgetingService {
 
     @Override
     public List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo) {
+
         return  budgetingDao.findAllBudgeting(pageBVo);
 
     }

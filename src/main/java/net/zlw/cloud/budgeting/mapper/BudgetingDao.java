@@ -111,7 +111,8 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')\n" +
             ") and " +
             "b.del_flag = '0' and " +
-            "bt.del_flag = '0' " +
+            "bt.del_flag = '0' and " +
+            "bt.founder_id = #{founderId}" +
             "order by " +
             "b.should_be asc")
     List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo);
@@ -182,6 +183,6 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             ") and " +
             "b.del_flag = '0' and " +
             "bt.del_flag = '0'  " +
-            "order by b.shouldBe asc")
+            "order by b.should_be asc")
     List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo);
 }
