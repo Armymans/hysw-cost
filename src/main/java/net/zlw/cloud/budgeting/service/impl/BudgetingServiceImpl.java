@@ -12,6 +12,7 @@ import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
+import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -425,6 +426,11 @@ public class BudgetingServiceImpl implements BudgetingService {
         baseProject.setDesignCategory(designCategory);
         baseProject.setDistrict(district);
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
+    }
+
+    @Override
+    public List<DesignInfo> findDesignAll(PageBVo pageBVo) {
+       return baseProjectDao.findDesignAll(pageBVo);
     }
 
     @Override

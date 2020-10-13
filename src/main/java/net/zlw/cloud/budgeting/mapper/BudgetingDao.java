@@ -181,6 +181,7 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')\n" +
             ") and " +
             "b.del_flag = '0' and " +
-            "bt.del_flag = '0' ")
+            "bt.del_flag = '0'  " +
+            "order by b.shouldBe asc")
     List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo);
 }

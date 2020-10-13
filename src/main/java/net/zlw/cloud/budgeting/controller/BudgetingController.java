@@ -11,6 +11,8 @@ import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
+import net.zlw.cloud.designProject.model.DesignInfo;
+import org.bouncycastle.asn1.x509.DigestInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -151,11 +153,21 @@ public class BudgetingController extends BaseController {
         budgetingService.singleAudit(singleAuditVo);
         return RestUtil.success();
     }
+    //归属
     @RequestMapping(value = "/budgeting/addAttribution",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addAttribution(@RequestParam(name = "baseId") String id,@RequestParam(name = "designCategory") String designCategory,@RequestParam(name = "district") String district){
         budgetingService.addAttribution(id,designCategory,district);
         return RestUtil.success();
     }
+    //选择项目查看设计
+    @RequestMapping(value = "/budgeting/findDesignAll",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findDesignAll(PageBVo pageBVo){
+        PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
+       List<DesignInfo> list = budgetingService.findDesignAll(pageBVo);
+        PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(list);
+        return RestUtil.page(designInfoPageInfo);
+    }
+
 
 
 

@@ -1,6 +1,7 @@
 package net.zlw.cloud.designProject.model;
 
 import lombok.Data;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -133,4 +134,8 @@ public class DesignInfo{
     private String payTerm;
     @Transient
     private String mergeFlag;
+    @Transient
+    private String waterSupplyType;
+    @Transient
+    private String customerName;
 }

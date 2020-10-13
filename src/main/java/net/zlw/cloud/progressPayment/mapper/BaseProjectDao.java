@@ -1,6 +1,8 @@
 package net.zlw.cloud.progressPayment.mapper;
 
 
+import net.zlw.cloud.budgeting.model.vo.PageBVo;
+import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
@@ -118,4 +120,58 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "WHERE " +
             "b.building_project_id = #{id}")
     List<BaseProject> findByBuildingProject(@Param("id") String id);
+
+    @Select("select\n" +
+            "b.id id , " +
+            "(case b.should_be\n" +
+            "\twhen '0' then '是'\n" +
+            "\twhen '1' then '否'\n" +
+            "\tend\n" +
+            ") shouldBe ,\n" +
+            "b.cea_num ceaNum,\n" +
+            "b.project_num projectNum,\n" +
+            "b.project_name projectName,\n" +
+            "(case district \n" +
+            "\twhen '1' then '芜湖'\n" +
+            "\twhen '2' then '马鞍山'\n" +
+            "\twhen '3' then '江北'\n" +
+            "\twhen '4' then '吴江'\n" +
+            "\tend\n" +
+            ") district,\n" +
+            "b.water_address waterAddress,\n" +
+            "b.construction_unit constructionUnit,\n" +
+            "(case b.design_category\n" +
+            "\twhen '1' then '市政管道'\n" +
+            "\twhen '2' then '管网改造'\n" +
+            "\twhen '3' then '新建小区'\n" +
+            "\twhen '4' then '二次供水项目'\n" +
+            "\twhen '5' then '工商户'\n" +
+            "\twhen '6' then '居民装接水'\n" +
+            "\twhen '7' then '行政事业'\n" +
+            "\tend\n" +
+            ") designCategory,\n" +
+            "(case b.water_supply_type \n" +
+            "\twhen '1' then '直供水'\n" +
+            "\twhen '2' then '二次供水'\n" +
+            "\tend\n" +
+            ") waterSupplyType,\n" +
+            "b.customer_name customerName,\n" +
+            "d.designer designer,\n" +
+            "d.take_time takeTime,\n" +
+            "d.blueprint_start_time blueprintStartTime\n" +
+            "from design_info d \n" +
+            "LEFT JOIN base_project b on d.base_project_id = b.id\n" +
+            "where \n" +
+            "(select id from budgeting bt where bt.base_project_id = b.id) is null and\n" +
+            "(b.district = #{district} or #{district} = '') and \n" +
+            "(b.design_category = #{designCategory} or #{designCategory} = '') and \n" +
+            "(b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '') and \n" +
+            "(\n" +
+            "b.cea_num like concat('%',#{keyword},'%') or\n" +
+            "b.project_num like concat('%',#{keyword},'%') or\n" +
+            "b.project_name like concat('%',#{keyword},'%') or \n" +
+            "b.construction_unit like concat('%',#{keyword},'%') or\n" +
+            "b.customer_name like concat ('%',#{keyword},'%')  \n" +
+            ")")
+    List<DesignInfo> findDesignAll(PageBVo pageBVo);
 }
