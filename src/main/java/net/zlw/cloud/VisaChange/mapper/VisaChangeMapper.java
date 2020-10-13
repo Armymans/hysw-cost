@@ -36,7 +36,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "    ) as district," +
             "    s1.amount_visa_change amountVisaChange," +
             "    s1.proportion_contract proportionContract," +
-            "    s5.construction_unit_name constructionUnit," +
+            "    s2.construction_unit, " +
             "    (" +
             "    CASE" +
             "    s2.project_nature " +
@@ -170,7 +170,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "    ) as district," +
             "                    s1.amount_visa_change amountVisaChange," +
             "                    s1.proportion_contract proportionContract," +
-            "    s6.construction_unit_name constructionUnit," +
+            "    s2.construction_unit, " +
             "    (" +
             "    CASE" +
             "    s2.project_nature " +
@@ -292,7 +292,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "    ) as district," +
             "                    s1.amount_visa_change amountVisaChange," +
             "                    s1.proportion_contract proportionContract," +
-            "    s6.construction_unit_name constructionUnit," +
+            "    s2.construction_unit, " +
             "    (" +
             "    CASE" +
             "    s2.project_nature " +
