@@ -44,7 +44,7 @@ public class BuildingProjectService {
      **/
     public void buildingProjectMerge(String ids, String id, String code) {
         //建设项目id
-        BuildingProject buildingProject = buildingProjectMapper.selectByPrimaryKey(id);
+        BuildingProject buildingProject = buildingProjectMapper.selectById(id);
         if (buildingProject != null) {
             buildingProject.setBuildingProjectCode(code);
             buildingProject.setMergeFlag("1");
@@ -54,11 +54,13 @@ public class BuildingProjectService {
         String[] split = ids.split(",");
         for (String s : split) {
             BaseProject baseProject = baseProjectService.findById(s);
-            if (baseProject != null) {
+            if (baseProject != null && "1".equals(baseProject.getMergeFlag())) {
                 baseProject.setBuildingProjectId(id);
                 baseProject.setMergeFlag("0");
                 baseProject.setUpdateTime(sdf.format(new Date()));
                 baseProjectService.updateProject(baseProject);
+            }else{
+                new Exception("项目信息错误，请确认后合并");
             }
         }
     }
