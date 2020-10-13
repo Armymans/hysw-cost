@@ -165,22 +165,36 @@ public class ProjectController extends BaseController {
      * @param id
      * @return
      */
-    @GetMapping("/disProjectByid/{id}")
-    public ProjectVo disProjectByid(@PathVariable("id") String id) {
-        BaseProject baseProject = projectService.BaseProjectByid(id);
-        DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
-        System.out.println(designInfo.getId());
-        ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
-        PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
-        List<AuditInfo> auditInfos = projectService.auditInfoList(designInfo.getId());
+    @RequestMapping(value = "/api/disproject/disProjectByid", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> disProjectByid(String id) {
         ProjectVo projectVo = new ProjectVo();
-        projectVo.setDesginStatus(baseProject.getDesginStatus());
+
+        BaseProject baseProject = projectService.BaseProjectByid(id);
         projectVo.setBaseProject(baseProject);
+
+
+        DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
         projectVo.setDesignInfo(designInfo);
-        projectVo.setPackageCame(packageCame);
-        projectVo.setProjectExploration(projectExploration);
+        projectVo.setDesginStatus(baseProject.getDesginStatus());
+        System.out.println(designInfo.getId());
+
+        ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
+        if(projectExploration==null){
+            projectVo.setProjectExploration(new ProjectExploration());
+        }else{
+            projectVo.setProjectExploration(projectExploration);
+        }
+        PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
+        if(packageCame == null){
+            projectVo.setPackageCame(new PackageCame());
+        }else{
+            projectVo.setPackageCame(packageCame);
+        }
+
+        List<AuditInfo> auditInfos = projectService.auditInfoList(designInfo.getId());
         projectVo.setAuditInfos(auditInfos);
-        return projectVo;
+
+        return RestUtil.success(projectVo);
     }
 
     /**

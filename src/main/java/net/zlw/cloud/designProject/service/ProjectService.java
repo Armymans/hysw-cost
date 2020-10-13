@@ -99,12 +99,12 @@ public class ProjectService {
      * @return
      */
     public PageInfo<DesignInfo> designProjectSelect(DesignPageVo pageVo, UserInfo loginUser){
+        MemberManage memberManage = memberManageDao.memberManageById();
         //分页插件
         PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
         //展示集合
         List<DesignInfo> designInfos = new ArrayList<>();
         //前台获取的登录信息
-
         //如果设计状态为'未审核' 则展示当前用户需要审核的信息
         if("1".equals(pageVo.getDesginStatus())){
             //则根据登录用户id展示于其身份对应的数据
@@ -217,11 +217,11 @@ public class ProjectService {
         if("3".equals(pageVo.getDesginStatus())||"4".equals(pageVo.getDesginStatus())){
             //如果状态为未通过 或者 已完成
             //获取当前设计部门负责人
-            Example admin = new Example(MemberManage.class);
-            Example.Criteria adminc = admin.createCriteria();
-            adminc.andEqualTo("depAdmin","1");
-            adminc.andEqualTo("depId","1");
-            MemberManage memberManage = memberManageDao.selectOneByExample(admin);
+//            Example admin = new Example(MemberManage.class);
+//            Example.Criteria adminc = admin.createCriteria();
+//            adminc.andEqualTo("depAdmin","1");
+//            adminc.andEqualTo("depId","1");
+//            MemberManage memberManage = memberManageDao.selectOneByExample(admin);
             //将部门负责人传入
             pageVo.setAdminId(memberManage.getId());
             //todo loginUser.getId()
@@ -277,7 +277,6 @@ public class ProjectService {
 //            Example.Criteria adminc = admin.createCriteria();
 //            adminc.andEqualTo("depAdmin","1");
 //            adminc.andEqualTo("depId","1");
-            MemberManage memberManage = memberManageDao.memberManageById();
             //将部门负责人传入
             pageVo.setAdminId(memberManage.getId());
             //todo loginUser.getId()

@@ -15,47 +15,51 @@ import java.util.List;
 public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInformation> {
 
     @Select(
-            "SELECT\n" +
+            "SELECT \n" +
                     "current_payment_Information\n" +
-                    "FROM\n" +
-                    "`progress_payment_information`\n" +
-                    "where\n" +
+                    "FROM \n" +
+                    "progress_payment_information\n" +
+                    "WHERE\n" +
                     "base_project_id = #{id}\n" +
+                    "GROUP BY\n" +
+                    "base_project_id\n" +
                     "ORDER BY\n" +
-                    "current_payment_Information desc"
+                    "create_time desc"
     )
     List<String> NewcurrentPaymentInformation(@Param("id") String id);
 
     @Select(
             "SELECT\n" +
-                    "sum(current_payment_Information)\n" +
+                    "SUM(current_payment_Information)\n" +
                     "FROM\n" +
-                    "`progress_payment_information`\n" +
-                    "where\n" +
-                    "base_project_id = #{id}\n" +
-                    "ORDER BY\n" +
-                    "current_payment_Information desc"
+                    "progress_payment_information\n" +
+                    "GROUP BY\n" +
+                    "base_project_id\n" +
+                    "HAVING\n" +
+                    "base_project_id = #{id}"
     )
     List<String> SumcurrentPaymentInformation(@Param("id") String id);
 
     @Select(
             "SELECT\n" +
-                    "current_payment_ratio\n" +
+                    "SUM(current_payment_ratio)\n" +
                     "FROM\n" +
-                    "`progress_payment_information`\n" +
-                    "where\n" +
-                    "base_project_id = #{id}\n" +
-                    "ORDER BY\n" +
-                    "current_payment_ratio desc"
+                    "progress_payment_information\n" +
+                    "GROUP BY\n" +
+                    "base_project_id\n" +
+                    "HAVING\n" +
+                    "base_project_id = #{id}"
     )
     String currentPaymentRatio(@Param("id") String id);
 
     @Select(
             "SELECT\n" +
-                    "sum(cumulative_payment_times)\n" +
+                    "SUM(cumulative_payment_times)\n" +
                     "FROM\n" +
-                    "`progress_payment_information`\n" +
-                    "where\n" +
+                    "progress_payment_information\n" +
+                    "GROUP BY\n" +
+                    "base_project_id\n" +
+                    "HAVING\n" +
                     "base_project_id = #{id}"
     )
     String cumulativePaymentTimes(@Param("id") String id);

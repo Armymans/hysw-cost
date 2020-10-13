@@ -12,7 +12,7 @@ public interface MemberManageDao extends Mapper<MemberManage> {
     @Select("SELECT  member_name from  member_manage  WHERE  status = '0' and id = #{id}  ")
     MemberManage selectByIdAndStatus(@Param("id") String id);
 
-    @Select("select * from member_manage where dep_id = '2' and dep_admin = '1'")
+    @Select("select * from member_manage where dep_id = '1' and dep_admin = '1'")
     MemberManage selectAdmin();
 
     @Select(
