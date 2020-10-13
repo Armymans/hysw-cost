@@ -244,9 +244,10 @@ public class ProjectController extends BaseController {
      *
      * @param projectVo
      */
-    @PostMapping("UpdateProjectSubmit1")
-    public void updateProjectSubmit1(@RequestBody ProjectVo projectVo) {
+    @RequestMapping(value = "/api/disproject/UpdateProjectSubmit1", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> updateProjectSubmit1(ProjectVo projectVo) {
         projectService.projectEdit(projectVo, getLoginUser());
+        return RestUtil.success();
     }
 
     /**
