@@ -46,7 +46,7 @@ public class VisaChangeController extends BaseController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/visChange/deleteById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/visaChange/deleteById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteById(@RequestParam("id") String id){
         vcisService.delete(id);
         return RestUtil.success("删除成功");
@@ -57,7 +57,7 @@ public class VisaChangeController extends BaseController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/visChange/selectById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/visaChange/selectById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectByid(@RequestParam("id") String id){
         VisaChangeInfoVo visaChangeInfoVo = vcisService.selectById(id);
         return RestUtil.success(visaChangeInfoVo);
@@ -68,7 +68,7 @@ public class VisaChangeController extends BaseController {
      * @param visaChangeInfoVo
      * @return
      */
-    @RequestMapping(value = "/visChange/submitOrSave",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/visaChange/submitOrSave",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> submitOrSave(VisaChangeInfoVo visaChangeInfoVo){
         vcisService.submitOrSave(visaChangeInfoVo);
         return RestUtil.success("操作成功");
@@ -81,7 +81,7 @@ public class VisaChangeController extends BaseController {
      * @param batchReviewVo
      * @return
      */
-    @RequestMapping(value = "/visChange/approvalProcess",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/visaChange/approvalProcess",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo) {
         vcisService.approvalProcess(batchReviewVo,getLoginUser());
         return RestUtil.success("审核成功");
@@ -92,7 +92,7 @@ public class VisaChangeController extends BaseController {
      * @param visaChangeInfoVo
      * @return
      */
-    @RequestMapping(value = "/visChange/add",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/visaChange/add",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addBudgeting(VisaChangeInfoVo visaChangeInfoVo){
         vcisService.addVisChangeVo(visaChangeInfoVo,getLoginUser());
         return RestUtil.success("添加成功");
@@ -103,14 +103,14 @@ public class VisaChangeController extends BaseController {
      * @param visaBaseProjectVo
      * @return
      */
-    @RequestMapping(value = "/visChange/selectByBaseProjectFindAll",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/visaChange/selectByBaseProjectFindAll",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectBaseProjectAll(VisaBaseProjectVo visaBaseProjectVo){
         List<VisaBaseProjectVo> voList = baseProjectService.selectByBaseProjectId(visaBaseProjectVo);
         return RestUtil.success(voList);
     }
 
 
-    @RequestMapping(value = "/visChange/selectByBaseProjectId",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/visaChange/selectByBaseProjectId",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectBybaseProjectId(VisaBaseProjectVo visaBaseProjectVo){
         BaseProject baseProject = baseProjectService.findByBaseProjectId(visaBaseProjectVo);
         return RestUtil.success(baseProject);

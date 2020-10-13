@@ -17,6 +17,7 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
     @Select("SELECT " +
             " distinct bp.id, " +
             " building_project_name buildingProjectName" +
+            " building_project_code" +
             " FROM " +
             " building_project bp " +
             " left join base_project b on b.building_project_id != bp.id " +

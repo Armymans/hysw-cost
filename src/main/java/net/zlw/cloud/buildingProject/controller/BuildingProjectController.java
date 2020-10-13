@@ -32,7 +32,7 @@ public class BuildingProjectController extends BaseController {
      * @Description //查询可被选为合并项目的建设项目
      * @Date 11:56 2020/10/11
      **/
-    @RequestMapping(value = "/findBuildingProject",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/findBuildingProject",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findBuildingProject(){
         List<BuildingProject> buildingProject = buildingProjectService.findBuildingProject();
         return RestUtil.success(buildingProject);

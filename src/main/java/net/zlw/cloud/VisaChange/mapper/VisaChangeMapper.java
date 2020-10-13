@@ -16,49 +16,71 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
 
 
     @Select("SELECT\n" +
-            "                   s1.id,\n" +
-            "                    s3.amount_cost,\n" +
-            "                    s1.contract_amount contractAmount,\n" +
-            "                    s2.cea_num,\n" +
-            "                    s2.project_num,\n" +
-            "                    s2.district,\n" +
-            "                    s1.amount_visa_change amountVisaChange,\n"+
-            "                    s1.proportion_contract proportionContract,\n"+
-            "                    s2.construction_unit,\n" +
-            "                    s2.project_nature,\n" +
-            "                    s2.design_category,\n" +
-            "                    s2.water_supply_type,\n" +
-            "                    s2.customer_name,\n" +
-            "                    s2.water_address,\n" +
-            "                    s1.base_project_id baseProjectId,\n" +
-            "                    s2.proposer,\n" +
-            "                    s1.outsourcing,\n" +
-            "                    s3.name_of_cost_unit,\n" +
-            "                    s1.`status`,\n" +
-            "                    s1.create_time,\n" +
-            "                    s1.compile_time,\n" +
-            "                    s2.project_name \n" +
-            "                    FROM\n" +
-            "                    visa_change_information s1 LEFT JOIN base_project s2 on s1.base_project_id = s2.id\n" +
-            "                    left join budgeting s3 on s2.id = s3.base_project_id\n" +
-            "                    where 1=1 and\n" +
-            "                    s1.state = 1\n" +
-            "                    and\n"+
-            "                     (s2.district = #{district} or #{district} = '' )\n" +
-            "                    and\n" +
-            "                     (s2.project_nature = #{projectNature} or #{projectNature} = '')\n" +
-            "                    and\n" +
-            "                     (s1.`status` =#{status} or #{status} = '')\n" +
-            "                  \n" +
-            "                   and\n" +
-            "                    s1.create_time>= #{createStartTime}\n" +
-            "                    and \n" +
-            "                    (s1.create_time<=#{createEndTime} or #{createEndTime}  ='')\n" +
-            "                    and s1.creator_id = #{loginUserId} and (" +
-            "                    s2.cea_num like CONCAT('%',#{keyword},'%') or\n" +
-            "                    s2.project_num like CONCAT('%',#{keyword},'%') or\n" +
-            "                    s2.project_name like  CONCAT('%',#{keyword},'%') \n" +
-            "            ) ")
+            "    s1.id,\n" +
+            "    s3.amount_cost,\n" +
+            "    s1.contract_amount contractAmount,\n" +
+            "    s2.cea_num,\n" +
+            "    s2.project_num,\n" +
+            "    s2.district,\n" +
+            "    s1.amount_visa_change amountVisaChange,\n" +
+            "    s1.proportion_contract proportionContract,\n" +
+            "    s2.construction_unit,\n" +
+            "    s2.project_nature,\n" +
+            "    s2.design_category,\n" +
+            "    s2.water_supply_type,\n" +
+            "    s2.customer_name,\n" +
+            "    s2.water_address,\n" +
+            "    s1.base_project_id baseProjectId,\n" +
+            "    s2.proposer,\n" +
+            "    s1.outsourcing,\n" +
+            "    s3.name_of_cost_unit,\n" +
+            "    (\n" +
+            "    CASE\n" +
+            "    s1.status \n" +
+            "    WHEN '1' THEN\n" +
+            "    '待审核' \n" +
+            "    WHEN '2' THEN\n" +
+            "    '处理中' \n" +
+            "    WHEN '3' THEN\n" +
+            "    '未通过' \n" +
+            "    WHEN '4' THEN\n" +
+            "    '确认中' \n" +
+            "    WHEN '5' THEN\n" +
+            "    '进行中' \n" +
+            "    WHEN '6' THEN\n" +
+            "    '已完成' \n" +
+            "    END \n" +
+            "    ) as status,\n" +
+            "    s1.create_time,\n" +
+            "    s1.compile_time,\n" +
+            "    s2.project_name \n" +
+            "    FROM\n" +
+            "    \tvisa_change_information s1\n" +
+            "    \tLEFT JOIN base_project s2 ON s1.base_project_id = s2.id\n" +
+            "    \tLEFT JOIN budgeting s3 ON s2.id = s3.base_project_id \n" +
+            "    WHERE\n" +
+            "    \t1 = 1 \n" +
+            "    \tAND s1.state = 1 \n" +
+            "    \tAND (\n" +
+            "    s2.district = #{district} or #{district} = '' )\n" +
+            "    \n" +
+            "    AND (\n" +
+            "    \ts2.project_nature = #{projectNature} or #{projectNature} = '')\n" +
+            "    \t\n" +
+            "    \tAND (\n" +
+            "    s1.status = #{status} or #{status} = '')\n" +
+            "    \n" +
+            "    AND s1.create_time >= #{createStartTime}\n" +
+            "    \n" +
+            "    AND (\n" +
+            "    \ts1.create_time <= #{createEndTime} or #{createEndTime}  ='')\n" +
+            "    \tAND"+
+            "    \ts2.cea_num LIKE CONCAT(\n" +
+            "    \t\t'%',#{keyword},'%') or\n" +
+            "    \t\ts2.project_num LIKE CONCAT(\n" +
+            "    \t\t\t'%',#{keyword},'%') or\n" +
+            "    \t\t\t\ts2.project_name LIKE CONCAT( '%', #{keyword},'%')\n" +
+            "    )")
     List<VisaChangeVo> findAll(VisaChangeVo visaChangeVO);
 
     /***
@@ -81,8 +103,8 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "                    s2.cea_num,\n" +
             "                    s2.project_name,\n" +
             "                    s2.district,\n" +
-            "                    s1.amount_visa_change amountVisaChange,\n"+
-            "                    s1.proportion_contract proportionContract,\n"+
+            "                    s1.amount_visa_change amountVisaChange,\n" +
+            "                    s1.proportion_contract proportionContract,\n" +
             "                    s2.construction_unit,\n" +
             "                    s2.project_nature,\n" +
             "                    s2.design_category,\n" +
@@ -129,8 +151,8 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "                    s2.cea_num,\n" +
             "                    s2.project_name,\n" +
             "                    s2.district,\n" +
-            "                    s1.amount_visa_change amountVisaChange,\n"+
-            "                    s1.proportion_contract proportionContract,\n"+
+            "                    s1.amount_visa_change amountVisaChange,\n" +
+            "                    s1.proportion_contract proportionContract,\n" +
             "                    s2.construction_unit,\n" +
             "                    s2.project_nature,\n" +
             "                    s2.design_category,\n" +
