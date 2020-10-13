@@ -68,7 +68,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     public PageInfo<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser) {
         PageHelper.startPage(visaChangeVO.getPageNum(), visaChangeVO.getPageSize());
         //TODO 需要改
-        visaChangeVO.setLoginUserId("123");
+        visaChangeVO.setLoginUserId("user305");
         List<VisaChangeVo> all = null;
         //未审核
         if ("1".equals(visaChangeVO.getStatus())) {

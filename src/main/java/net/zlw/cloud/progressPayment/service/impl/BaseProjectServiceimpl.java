@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
+import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.*;
 import net.zlw.cloud.progressPayment.model.*;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
@@ -39,6 +41,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     private ProgressPaymentTotalPaymentDao progressPaymentTotalPaymentDao;
     @Resource
     private MemberManageDao memberManageDao;
+
+    @Resource
+    private ConstructionUnitManagementMapper constructionUnitManagementMapper;
     /**
      * 添加进度款信息
      *
@@ -390,8 +395,13 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public BaseProject findById(String projectNum) {
         Example example = new Example(BaseProject.class);
-        example.createCriteria().andEqualTo("projectNum",projectNum);
-        return baseProjectDao.selectOneByExample(example);
+        example.createCriteria().andEqualTo("id",projectNum);
+        BaseProject baseProject = baseProjectDao.selectOneByExample(example);
+        if(baseProject != null){
+            ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(baseProject.getConstructionUnit());
+            baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+        }
+        return baseProject;
     }
 
     @Override

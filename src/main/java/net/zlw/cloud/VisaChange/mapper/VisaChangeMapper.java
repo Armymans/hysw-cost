@@ -15,71 +15,123 @@ import java.util.List;
 public interface VisaChangeMapper extends Mapper<VisaChange> {
 
 
-    @Select("SELECT\n" +
-            "    s1.id,\n" +
-            "    s3.amount_cost,\n" +
-            "    s1.contract_amount contractAmount,\n" +
-            "    s2.cea_num,\n" +
-            "    s2.project_num,\n" +
-            "    s2.district,\n" +
-            "    s1.amount_visa_change amountVisaChange,\n" +
-            "    s1.proportion_contract proportionContract,\n" +
-            "    s2.construction_unit,\n" +
-            "    s2.project_nature,\n" +
-            "    s2.design_category,\n" +
-            "    s2.water_supply_type,\n" +
-            "    s2.customer_name,\n" +
-            "    s2.water_address,\n" +
-            "    s1.base_project_id baseProjectId,\n" +
-            "    s2.proposer,\n" +
-            "    s1.outsourcing,\n" +
-            "    s3.name_of_cost_unit,\n" +
-            "    (\n" +
-            "    CASE\n" +
-            "    s1.status \n" +
-            "    WHEN '1' THEN\n" +
-            "    '待审核' \n" +
-            "    WHEN '2' THEN\n" +
-            "    '处理中' \n" +
-            "    WHEN '3' THEN\n" +
-            "    '未通过' \n" +
-            "    WHEN '4' THEN\n" +
-            "    '确认中' \n" +
-            "    WHEN '5' THEN\n" +
-            "    '进行中' \n" +
-            "    WHEN '6' THEN\n" +
-            "    '已完成' \n" +
-            "    END \n" +
-            "    ) as status,\n" +
-            "    s1.create_time,\n" +
-            "    s1.compile_time,\n" +
-            "    s2.project_name \n" +
-            "    FROM\n" +
-            "    \tvisa_change_information s1\n" +
-            "    \tLEFT JOIN base_project s2 ON s1.base_project_id = s2.id\n" +
-            "    \tLEFT JOIN budgeting s3 ON s2.id = s3.base_project_id \n" +
-            "    WHERE\n" +
-            "    \t1 = 1 \n" +
-            "    \tAND s1.state = 1 \n" +
-            "    \tAND (\n" +
-            "    s2.district = #{district} or #{district} = '' )\n" +
-            "    \n" +
-            "    AND (\n" +
-            "    \ts2.project_nature = #{projectNature} or #{projectNature} = '')\n" +
-            "    \t\n" +
-            "    \tAND (\n" +
-            "    s1.status = #{status} or #{status} = '')\n" +
-            "    \n" +
-            "    AND s1.create_time >= #{createStartTime}\n" +
-            "    \n" +
-            "    AND (\n" +
-            "    \ts1.create_time <= #{createEndTime} or #{createEndTime}  ='')\n" +
-            "    \tAND"+
-            "    \ts2.cea_num LIKE CONCAT(\n" +
-            "    \t\t'%',#{keyword},'%') or\n" +
-            "    \t\ts2.project_num LIKE CONCAT(\n" +
-            "    \t\t\t'%',#{keyword},'%') or\n" +
-            "    \t\t\t\ts2.project_name LIKE CONCAT( '%', #{keyword},'%')\n" +
+    @Select("SELECT" +
+            "    s1.id," +
+            "    s3.amount_cost," +
+            "    s1.contract_amount contractAmount," +
+            "    s2.cea_num," +
+            "    s2.project_num," +
+            "    (" +
+            "    CASE" +
+            "    s2.district " +
+            "    WHEN '1' THEN" +
+            "    '芜湖' " +
+            "    WHEN '2' THEN" +
+            "    '马鞍山' " +
+            "    WHEN '3' THEN" +
+            "    '江北' " +
+            "    WHEN '4' THEN" +
+            "    '吴江' " +
+            "    END " +
+            "    ) as district," +
+            "    s1.amount_visa_change amountVisaChange," +
+            "    s1.proportion_contract proportionContract," +
+            "    s5.construction_unit_name constructionUnit," +
+            "    (" +
+            "    CASE" +
+            "    s2.project_nature " +
+            "    WHEN '1' THEN" +
+            "    '新建' " +
+            "    WHEN '2' THEN" +
+            "    '改造' " +
+            "    END " +
+            "    ) as projectNature," +
+            "    (" +
+            "    CASE" +
+            "    s2.design_category " +
+            "    WHEN '1' THEN" +
+            "    '市政管道' " +
+            "    WHEN '2' THEN" +
+            "    '管网改造' " +
+            "    WHEN '3' THEN" +
+            "    '新建小区' " +
+            "    WHEN '4' THEN" +
+            "    '二次供水项目' " +
+            "    WHEN '5' THEN" +
+            "    '工商户' " +
+            "    WHEN '6' THEN" +
+            "    '居民装接水' " +
+            "    WHEN '7' THEN" +
+            "    '行政事业' " +
+            "    END " +
+            "    ) as designCategory," +
+            "    (" +
+            "    CASE" +
+            "    s2.water_supply_type " +
+            "    WHEN '1' THEN" +
+            "    '直供水' " +
+            "    WHEN '2' THEN" +
+            "    '二次供水' " +
+            "    END " +
+            "    ) as waterSupplyType," +
+            "    s2.customer_name," +
+            "    s2.water_address," +
+            "    s1.base_project_id baseProjectId," +
+            "    s2.proposer," +
+            "    (" +
+            "    CASE" +
+            "    s1.outsourcing " +
+            "    WHEN '1' THEN" +
+            "    '是' " +
+            "    WHEN '2' THEN" +
+            "    '否' " +
+            "    END " +
+            "    ) as outsourcing," +
+            "    s4.cost_unit_name as nameOfCostUnit," +
+            "    (" +
+            "    CASE" +
+            "    s1.status " +
+            "    WHEN '1' THEN" +
+            "    '待审核' " +
+            "    WHEN '2' THEN" +
+            "    '处理中' " +
+            "    WHEN '3' THEN" +
+            "    '未通过' " +
+            "    WHEN '4' THEN" +
+            "    '待确认' " +
+            "    WHEN '5' THEN" +
+            "    '进行中' " +
+            "    WHEN '6' THEN" +
+            "    '已完成' " +
+            "    END " +
+            "    ) as status," +
+            "    s1.create_time," +
+            "    s1.compile_time," +
+            "    s2.project_name " +
+            "    FROM" +
+            "    visa_change_information s1" +
+            "    LEFT JOIN base_project s2 ON s1.base_project_id = s2.id" +
+            "    LEFT JOIN budgeting s3 ON s2.id = s3.base_project_id " +
+            "    LEFT JOIN cost_unit_management s4 ON s4.id = s3.name_of_cost_unit " +
+            "    LEFT JOIN construction_unit_management s5 ON s5.id = s2.construction_unit " +
+            "    WHERE" +
+            "    1 = 1 " +
+            "    AND s1.state = 1 " +
+            "    AND (" +
+            "    s2.district = #{district} or #{district} = '' )" +
+            "    AND (" +
+            "    s2.project_nature = #{projectNature} or #{projectNature} = '')" +
+            "    AND (" +
+            "    s1.status = #{status} or #{status} = '')" +
+            "    AND s1.create_time >= #{createStartTime}" +
+            "    AND (" +
+            "    s1.create_time <= #{createEndTime} or #{createEndTime}  ='')" +
+            "    AND ("+
+            "    s2.cea_num LIKE CONCAT(" +
+            "    '%',#{keyword},'%') or" +
+            "    s2.project_num LIKE CONCAT(" +
+            "    '%',#{keyword},'%') or" +
+            "    s2.project_name LIKE CONCAT( '%', #{keyword},'%')" +
             "    )")
     List<VisaChangeVo> findAll(VisaChangeVo visaChangeVO);
 
@@ -96,148 +148,295 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
     @Select("SELECT * FROM visa_change_information where base_project_id =#{id} ")
     List<VisaChange> findByBaseProjectId(@Param("id") String id);
 
-    @Select("SELECT\n" +
-            "                   s1.id,\n" +
-            "                    s3.amount_cost,\n" +
-            "                    s1.contract_amount contractAmount,\n" +
-            "                    s2.cea_num,\n" +
-            "                    s2.project_name,\n" +
-            "                    s2.district,\n" +
-            "                    s1.amount_visa_change amountVisaChange,\n" +
-            "                    s1.proportion_contract proportionContract,\n" +
-            "                    s2.construction_unit,\n" +
-            "                    s2.project_nature,\n" +
-            "                    s2.design_category,\n" +
-            "                    s2.water_supply_type,\n" +
-            "                    s2.customer_name,\n" +
-            "                    s2.water_address,\n" +
-            "                    s1.base_project_id baseProjectId,\n" +
-            "                    s2.proposer,\n" +
-            "                    s1.outsourcing,\n" +
-            "                    s3.name_of_cost_unit,\n" +
-            "                    s1.`status`,\n" +
-            "                    s1.create_time,\n" +
-            "                    s1.completion_time,\n" +
-            "                    s2.project_name \n" +
-            "                    FROM\n" +
+    @Select("SELECT" +
+            "                   s1.id," +
+            "                    s3.amount_cost," +
+            "                    s1.contract_amount contractAmount," +
+            "                    s2.cea_num," +
+            "    s2.project_num," +
+            "                    s2.project_name," +
+            "    (" +
+            "    CASE" +
+            "    s2.district " +
+            "    WHEN '1' THEN" +
+            "    '芜湖' " +
+            "    WHEN '2' THEN" +
+            "    '马鞍山' " +
+            "    WHEN '3' THEN" +
+            "    '江北' " +
+            "    WHEN '4' THEN" +
+            "    '吴江' " +
+            "    END " +
+            "    ) as district," +
+            "                    s1.amount_visa_change amountVisaChange," +
+            "                    s1.proportion_contract proportionContract," +
+            "    s6.construction_unit_name constructionUnit," +
+            "    (" +
+            "    CASE" +
+            "    s2.project_nature " +
+            "    WHEN '1' THEN" +
+            "    '新建' " +
+            "    WHEN '2' THEN" +
+            "    '改造' " +
+            "    END " +
+            "    ) as projectNature," +
+            "    (" +
+            "    CASE" +
+            "    s2.design_category " +
+            "    WHEN '1' THEN" +
+            "    '市政管道' " +
+            "    WHEN '2' THEN" +
+            "    '管网改造' " +
+            "    WHEN '3' THEN" +
+            "    '新建小区' " +
+            "    WHEN '4' THEN" +
+            "    '二次供水项目' " +
+            "    WHEN '5' THEN" +
+            "    '工商户' " +
+            "    WHEN '6' THEN" +
+            "    '居民装接水' " +
+            "    WHEN '7' THEN" +
+            "    '行政事业' " +
+            "    END " +
+            "    ) as designCategory," +
+            "    (" +
+            "    CASE" +
+            "    s2.water_supply_type " +
+            "    WHEN '1' THEN" +
+            "    '直供水' " +
+            "    WHEN '2' THEN" +
+            "    '二次供水' " +
+            "    END " +
+            "    ) as waterSupplyType," +
+            "                    s2.customer_name," +
+            "                    s2.water_address," +
+            "                    s1.base_project_id baseProjectId," +
+            "                    s2.proposer," +
+            "    (" +
+            "    CASE" +
+            "    s1.outsourcing " +
+            "    WHEN '1' THEN" +
+            "    '是' " +
+            "    WHEN '2' THEN" +
+            "    '否' " +
+            "    END " +
+            "    ) as outsourcing," +
+            "    s5.cost_unit_name as nameOfCostUnit," +
+            "    (" +
+            "    CASE" +
+            "    s1.status " +
+            "    WHEN '1' THEN" +
+            "    '待审核' " +
+            "    WHEN '2' THEN" +
+            "    '处理中' " +
+            "    WHEN '3' THEN" +
+            "    '未通过' " +
+            "    WHEN '4' THEN" +
+            "    '待确认' " +
+            "    WHEN '5' THEN" +
+            "    '进行中' " +
+            "    WHEN '6' THEN" +
+            "    '已完成' " +
+            "    END " +
+            "    ) as status," +
+            "                    s1.create_time," +
+            "                    s1.completion_time," +
+            "                    s2.project_name " +
+            "                    FROM" +
             "                    visa_change_information s1 " +
-            "                    LEFT JOIN base_project s2 on s1.base_project_id = s2.id\n" +
-            "                    left join budgeting s3 on s2.id = s3.base_project_id\n" +
+            "                    LEFT JOIN base_project s2 on s1.base_project_id = s2.id" +
+            "                    left join budgeting s3 on s2.id = s3.base_project_id" +
             "                    left join audit_info as s4 on s1.id = s4.base_project_id " +
+            "    LEFT JOIN cost_unit_management s5 ON s5.id = s3.name_of_cost_unit " +
+            "    LEFT JOIN construction_unit_management s6 ON s6.id = s2.construction_unit " +
             "                    where 1=1  and " +
             "                    s4.audit_result = 0 and" +
+            "                    s4.auditor_id = #{loginUserId} and "+
             "                    s4.status = 0 and" +
-            "                     (s2.district = #{district} or #{district} = '' )\n" +
+            "                     (s2.district = #{district} or #{district} = '' )" +
             "                    and " +
-            "                     (s2.project_nature = #{projectNature} or #{projectNature} = '')\n" +
-            "                    and\n " +
-            "                     (s1.`status` =#{status} or #{status} = '')\n" +
+            "                     (s2.project_nature = #{projectNature} or #{projectNature} = '')" +
+            "                    and " +
+            "                     (s1.`status` =#{status} or #{status} = '')" +
             "                   and" +
-            "                    s1.create_time>= #{createStartTime}\n" +
+            "                    s1.create_time>= #{createStartTime}" +
             "                    and " +
-            "                    (s1.create_time<=#{createEndTime} or #{createEndTime}  ='')\n" +
+            "                    (s1.create_time<=#{createEndTime} or #{createEndTime}  ='')" +
             "                    and (" +
-            "                    s2.cea_num like CONCAT('%',#{keyword},'%') or\n" +
-            "                    s2.project_num like CONCAT('%',#{keyword},'%') or\n" +
-            "                    s2.project_name like  CONCAT('%',#{keyword},'%') \n" +
+            "                    s2.cea_num like CONCAT('%',#{keyword},'%') or" +
+            "                    s2.project_num like CONCAT('%',#{keyword},'%') or" +
+            "                    s2.project_name like  CONCAT('%',#{keyword},'%') " +
             "            ) ")
     List<VisaChangeVo> findByNoExamine(VisaChangeVo visaChangeVO);
 
 
-    @Select("SELECT\n" +
-            "                   s1.id,\n" +
-            "                    s3.amount_cost,\n" +
-            "                    s1.contract_amount contractAmount,\n" +
-            "                    s2.cea_num,\n" +
-            "                    s2.project_name,\n" +
-            "                    s2.district,\n" +
-            "                    s1.amount_visa_change amountVisaChange,\n" +
-            "                    s1.proportion_contract proportionContract,\n" +
-            "                    s2.construction_unit,\n" +
-            "                    s2.project_nature,\n" +
-            "                    s2.design_category,\n" +
-            "                    s2.water_supply_type,\n" +
-            "                    s2.customer_name,\n" +
-            "                    s2.water_address,\n" +
-            "                    s1.base_project_id baseProjectId,\n" +
-            "                    s2.proposer,\n" +
-            "                    s1.outsourcing,\n" +
-            "                    s3.name_of_cost_unit,\n" +
-            "                    s1.`status`,\n" +
-            "                    s1.create_time,\n" +
-            "                    s1.completion_time,\n" +
-            "                    s2.project_name \n" +
-            "                    FROM\n" +
+    @Select("SELECT" +
+            "                   s1.id," +
+            "                    s3.amount_cost," +
+            "                    s1.contract_amount contractAmount," +
+            "                    s2.cea_num," +
+            "    s2.project_num," +
+            "                    s2.project_name," +
+            "    (" +
+            "    CASE" +
+            "    s2.district " +
+            "    WHEN '1' THEN" +
+            "    '芜湖' " +
+            "    WHEN '2' THEN" +
+            "    '马鞍山' " +
+            "    WHEN '3' THEN" +
+            "    '江北' " +
+            "    WHEN '4' THEN" +
+            "    '吴江' " +
+            "    END " +
+            "    ) as district," +
+            "                    s1.amount_visa_change amountVisaChange," +
+            "                    s1.proportion_contract proportionContract," +
+            "    s6.construction_unit_name constructionUnit," +
+            "    (" +
+            "    CASE" +
+            "    s2.project_nature " +
+            "    WHEN '1' THEN" +
+            "    '新建' " +
+            "    WHEN '2' THEN" +
+            "    '改造' " +
+            "    END " +
+            "    ) as projectNature," +
+            "    (" +
+            "    CASE" +
+            "    s2.design_category " +
+            "    WHEN '1' THEN" +
+            "    '市政管道' " +
+            "    WHEN '2' THEN" +
+            "    '管网改造' " +
+            "    WHEN '3' THEN" +
+            "    '新建小区' " +
+            "    WHEN '4' THEN" +
+            "    '二次供水项目' " +
+            "    WHEN '5' THEN" +
+            "    '工商户' " +
+            "    WHEN '6' THEN" +
+            "    '居民装接水' " +
+            "    WHEN '7' THEN" +
+            "    '行政事业' " +
+            "    END " +
+            "    ) as designCategory," +
+            "    (" +
+            "    CASE" +
+            "    s2.water_supply_type " +
+            "    WHEN '1' THEN" +
+            "    '直供水' " +
+            "    WHEN '2' THEN" +
+            "    '二次供水' " +
+            "    END " +
+            "    ) as waterSupplyType," +
+            "                    s2.customer_name," +
+            "                    s2.water_address," +
+            "                    s1.base_project_id baseProjectId," +
+            "                    s2.proposer," +
+            "    (" +
+            "    CASE" +
+            "    s1.outsourcing " +
+            "    WHEN '1' THEN" +
+            "    '是' " +
+            "    WHEN '2' THEN" +
+            "    '否' " +
+            "    END " +
+            "    ) as outsourcing," +
+            "    s5.cost_unit_name as nameOfCostUnit," +
+            "    (" +
+            "    CASE" +
+            "    s1.status " +
+            "    WHEN '1' THEN" +
+            "    '待审核' " +
+            "    WHEN '2' THEN" +
+            "    '处理中' " +
+            "    WHEN '3' THEN" +
+            "    '未通过' " +
+            "    WHEN '4' THEN" +
+            "    '待确认' " +
+            "    WHEN '5' THEN" +
+            "    '进行中' " +
+            "    WHEN '6' THEN" +
+            "    '已完成' " +
+            "    END " +
+            "    ) as status," +
+            "                    s1.create_time," +
+            "                    s1.completion_time," +
+            "                    s2.project_name " +
+            "                    FROM" +
             "                    visa_change_information s1 " +
-            "                    LEFT JOIN base_project s2 on s1.base_project_id = s2.id\n" +
-            "                    left join budgeting s3 on s2.id = s3.base_project_id\n" +
+            "                    LEFT JOIN base_project s2 on s1.base_project_id = s2.id" +
+            "                    left join budgeting s3 on s2.id = s3.base_project_id" +
             "                    left join audit_info as s4 on s1.id = s4.base_project_id " +
+            "    LEFT JOIN cost_unit_management s5 ON s5.id = s3.name_of_cost_unit " +
+            "    LEFT JOIN construction_unit_management s6 ON s6.id = s2.construction_unit " +
             "                    where 1=1  and " +
             "                    s4.audit_result = 2 and" +
             "                    s4.status = 0 and" +
             "                    s4.founder_id = #{loginUserId} and" +
-            "                     (s2.district = #{district} or #{district} = '' )\n" +
+            "                     (s2.district = #{district} or #{district} = '' )" +
             "                    and " +
-            "                     (s2.project_nature = #{projectNature} or #{projectNature} = '')\n" +
-            "                    and\n " +
-            "                     (s1.`status` =#{status} or #{status} = '')\n" +
+            "                     (s2.project_nature = #{projectNature} or #{projectNature} = '')" +
+            "                    and " +
+            "                     (s1.`status` =#{status} or #{status} = '')" +
             "                   and" +
-            "                    s1.create_time>= #{createStartTime}\n" +
+            "                    s1.create_time>= #{createStartTime}" +
             "                    and " +
-            "                    (s1.create_time<=#{createEndTime} or #{createEndTime}  ='')\n" +
+            "                    (s1.create_time<=#{createEndTime} or #{createEndTime}  ='')" +
             "                    and (" +
-            "                    s2.cea_num like CONCAT('%',#{keyword},'%') or\n" +
-            "                    s2.project_num like CONCAT('%',#{keyword},'%') or\n" +
-            "                    s2.project_name like  CONCAT('%',#{keyword},'%') \n" +
+            "                    s2.cea_num like CONCAT('%',#{keyword},'%') or" +
+            "                    s2.project_num like CONCAT('%',#{keyword},'%') or" +
+            "                    s2.project_name like  CONCAT('%',#{keyword},'%') " +
             "            ) ")
     List<VisaChangeVo> findByNotPass(VisaChangeVo visaChangeVO);
 
 
-    @Select("select * from visa_change_information s1\n" +
-            "left join base_project s2 on s1.base_project_id = s2.id\n" +
-            "left join visa_apply_change_information s3 on s1.apply_change_info_id = s3.id")
+    @Select(" select * from visa_change_information s1" +
+            " left join base_project s2 on s1.base_project_id = s2.id" +
+            " left join visa_apply_change_information s3 on s1.apply_change_info_id = s3.id")
     List<VisaChange> findByInfoOne();
 
 
-    @Select("select * from visa_change_information s1\n" +
-            "left join base_project s2 on s1.base_project_id = s2.id\n" +
-            "left join visa_apply_change_information s3 on s1.apply_change_info_id = s3.id\n" +
-            "where\n" +
-            "s1.base_project_id = #{baseProjectId}\n" +
-            "and change_num =#{changNum}")
+    @Select(" select * from visa_change_information s1" +
+            " left join base_project s2 on s1.base_project_id = s2.id" +
+            " left join visa_apply_change_information s3 on s1.apply_change_info_id = s3.id" +
+            " where" +
+            " s1.base_project_id = #{baseProjectId}" +
+            " and change_num =#{changNum}")
     List<VisaChange> findByInfoTwo();
 
 
     @Select(
-            "SELECT \n" +
-                    "outsourcing_amount\n" +
-                    "FROM \n" +
-                    "visa_change_information s1,\n" +
-                    "base_project s2\n" +
-                    "where\n" +
-                    "s1.base_project_id = s2.id\n" +
-                    "and\n" +
-                    "(s2.district=#{district} or  #{district}  = '')\n" +
-                    "and\n" +
-                    "s1.create_time>=#{startTime}\n" +
-                    "and\n" +
-                    "(s1.create_time<=#{endTime} or  #{endTime} = '')"
+            "SELECT " +
+                    " outsourcing_amount" +
+                    "  FROM " +
+                    " visa_change_information s1," +
+                    " base_project s2" +
+                    " where" +
+                    " s1.base_project_id = s2.id" +
+                    " and" +
+                    " (s2.district=#{district} or  #{district}  = '')" +
+                    " and" +
+                    " s1.create_time>=#{startTime}" +
+                    " and" +
+                    " (s1.create_time<=#{endTime} or  #{endTime} = '')"
     )
     List<VisaChange> totalexpenditure(CostVo2 costVo2);
 
 
-    @Select("SELECT s1.change_num\n" +
-            "FROM visa_change_information s1\n" +
-            "         LEFT JOIN\n" +
-            "     base_project s2\n" +
-            "     ON s1.base_project_id = s2.id\n" +
-            "order by s1.create_time desc\n" +
-            "limit 1")
+    @Select("SELECT s1.change_num " +
+            "FROM visa_change_information s1" +
+            "         LEFT JOIN" +
+            "     base_project s2" +
+            "     ON s1.base_project_id = s2.id " +
+            "order by s1.create_time desc" +
+            " limit 1")
     VisaChange selectByChangNum();
 
-    @Select("SELECT s2.auditor_id from visa_change_information s1\n" +
-            "LEFT JOIN audit_info s2 ON s1.base_project_id = s2.id\n" +
-            "where\n" +
-            "s1.id = #{id}")
+    @Select(" SELECT s2.auditor_id from visa_change_information s1" +
+            " LEFT JOIN audit_info s2 ON s1.base_project_id = s2.id" +
+            " where" +
+            " s1.id = #{id}")
     VisaChange selectBuAuditId(@Param("id") String id);
 }
