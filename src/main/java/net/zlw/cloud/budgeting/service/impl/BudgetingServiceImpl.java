@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +72,9 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgeting.setBudgetingTime(budgetingVo.getBudgetingTime());
         budgeting.setRemarkes(budgetingVo.getBremarkes());
         budgeting.setBaseProjectId(baseProject.getId());
+        //提交
         if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
+            //修改预算状态为待审核
             baseProject.setBudgetStatus("1");
             baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
             projectDao.updateByPrimaryKeySelective(baseProject);
@@ -83,7 +86,9 @@ public class BudgetingServiceImpl implements BudgetingService {
             auditInfo.setAuditType("0");
             auditInfo.setAuditorId(budgetingVo.getAuditorId());
             auditInfoDao.insertSelective(auditInfo);
+            //保存
         }else{
+            //修改预算状态为处理中
             baseProject.setBudgetStatus("2");
             baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
             projectDao.updateByPrimaryKeySelective(baseProject);
@@ -296,37 +301,100 @@ public class BudgetingServiceImpl implements BudgetingService {
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             Example example = new Example(AuditInfo.class);
-            example.createCriteria().andEqualTo("baseProjectId",s).andEqualTo("auditResult","0");
-            AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-            if (batchReviewVo.getAuditResult().equals("1")){
-                if (auditInfo.getAuditType().equals("0")){
-                    auditInfo.setAuditResult("1");
-                    Date date = new Date();
-                    String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
-                    auditInfo.setAuditTime(format);
-                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                    AuditInfo auditInfo1 = new AuditInfo();
-                    auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
-                    auditInfo1.setBaseProjectId(s);
-                    auditInfo1.setAuditResult("0");
-                    auditInfo1.setAuditType("1");
-                    Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("memberRoleId","3");
-                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    auditInfo1.setAuditorId(memberManage.getId());
-                    auditInfoDao.insertSelective(auditInfo1);
-                }else if(auditInfo.getAuditType().equals("1")){
-                    auditInfo.setAuditResult("1");
-                    Date date = new Date();
-                    String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
-                    auditInfo.setAuditTime(format);
-                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("baseProjectId",s);
+            //所有审核信息
+            List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+            for (AuditInfo auditInfo : auditInfos) {
+                //通过
+                if (batchReviewVo.getAuditResult().equals("1")){
+                    //一审通过
+                    if (auditInfo.getAuditResult().equals("0") && auditInfo.getAuditType().equals("0")){
+                        auditInfo.setAuditResult("1");
+                        auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        auditInfo.setAuditTime(sim.format(new Date()));
+                        auditInfo.setUpdateTime(sim.format(new Date()));
+                        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                        //进入二审
+                        AuditInfo twoBatch = new AuditInfo();
+                        twoBatch.setId(UUID.randomUUID().toString().replace("-",""));
+                        twoBatch.setBaseProjectId(s);
+                        twoBatch.setAuditResult("0");
+                        twoBatch.setAuditType("1");
+                        //上级领导
+                        Example example1 = new Example(MemberManage.class);
+                        Example.Criteria c = example1.createCriteria();
+                        c.andEqualTo("depId","2");
+                        c.andEqualTo("depAdmin","1");
+                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        twoBatch.setAuditorId(memberManage.getId());
+                        twoBatch.setStatus("0");
+                        twoBatch.setCreateTime(sim.format(new Date()));
+                        //二审添加
+                        auditInfoDao.insertSelective(twoBatch);
+                        break;
+                        //二审通过
+                    }else if(auditInfo.getAuditResult().equals("0") && auditInfo.getAuditType().equals("1")){
+                        auditInfo.setAuditResult("1");
+                        auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        auditInfo.setAuditTime(sim.format(new Date()));
+                        auditInfo.setUpdateTime(sim.format(new Date()));
+                        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                        //判断是否需要三审
+                        Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+                        if (budgeting.getAmountCost().compareTo(new BigDecimal("8000000.00"))>=0){
+                            AuditInfo auditInfo1 = new AuditInfo();
+                            auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+                            auditInfo1.setBaseProjectId(s);
+                            auditInfo1.setAuditResult("0");
+                            auditInfo1.setAuditType("4");
+                            Example example1 = new Example(MemberManage.class);
+                            Example.Criteria c = example1.createCriteria();
+                            c.andEqualTo("memberRoleId","2");
+                            MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                            auditInfo1.setAuditorId(memberManage.getId());
+                            auditInfo1.setStatus("0");
+                            auditInfo1.setCreateTime(sim.format(new Date()));
+                            auditInfoDao.insertSelective(auditInfo1);
+                        }else{
+                            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+                            //设置为已完成
+                            baseProject.setBudgetStatus("4");
+                        }
+                        //三审通过
+                    }else if(auditInfo.getAuditResult().equals("0") && auditInfo.getAuditType().equals("4")){
+                        auditInfo.setAuditResult("1");
+                        auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        auditInfo.setAuditTime(sim.format(new Date()));
+                        auditInfo.setUpdateTime(sim.format(new Date()));
+                        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                        Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+                        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+                        //设置为已完成
+                        baseProject.setBudgetStatus("4");
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    }
+                //未通过
+                }else if (batchReviewVo.getAuditResult().equals("2")){
+                    if (auditInfo.getAuditResult().equals("0")){
+                        auditInfo.setAuditResult("2");
+                        auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        auditInfo.setAuditTime(simpleDateFormat.format(new Date()));
+                        auditInfo.setUpdateTime(simpleDateFormat.format(new Date()));
+                        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                        //设置为未通过
+                        Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+                        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+                        //设置为已完成
+                        baseProject.setBudgetStatus("3");
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    }
                 }
-            }else if(batchReviewVo.getAuditResult().equals("2")){
-                   auditInfo.setAuditResult("2");
-                   auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
             }
         }
     }
@@ -349,6 +417,14 @@ public class BudgetingServiceImpl implements BudgetingService {
     @Override
     public List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo) {
         return budgetingDao.findBudgetingAll(pageBVo);
+    }
+
+    @Override
+    public void addAttribution(String id, String designCategory, String district) {
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
+        baseProject.setDesignCategory(designCategory);
+        baseProject.setDistrict(district);
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
     }
 
     @Override

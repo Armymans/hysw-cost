@@ -52,4 +52,7 @@ public class Budgeting implements Serializable {
     private String founderCompanyId;
     @Column(name = "del_flag")
     private String delFlag;
+
+
+
 }

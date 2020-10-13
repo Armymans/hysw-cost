@@ -24,4 +24,6 @@ public interface BudgetingService {
     void singleAudit(SingleAuditVo singleAuditVo);
 
     List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo);
+
+    void addAttribution(String id, String designCategory, String district);
 }

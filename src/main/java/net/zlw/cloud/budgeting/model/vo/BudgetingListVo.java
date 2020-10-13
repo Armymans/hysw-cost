@@ -3,6 +3,7 @@ package net.zlw.cloud.budgeting.model.vo;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Data
 public class BudgetingListVo {
@@ -34,4 +35,24 @@ public class BudgetingListVo {
     private String costPreparationTime;
     private String veryReceivingTime;
     private String establishmentTime;
+    //审核人id
+    private String auditorId;
+    //审核结果
+    private String auditResult;
+    //是否到账
+    private String whetherAccount;
+    private BigDecimal amountOutsourcing;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BudgetingListVo that = (BudgetingListVo) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
