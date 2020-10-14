@@ -588,7 +588,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/designCountCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/designCountCensus",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> designCountCensus(CostVo2 costVo2){
         Integer designInfoCount = projectSumService.designInfoCount(costVo2);
         Integer designChangeInfoCount = projectSumService.designChangeInfoCount(costVo2);
@@ -606,10 +606,10 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/projectDesignChangeList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/projectDesignChangeList",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> projectDesignChangeList(CostVo2 costVo2){
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.projectDesignChangeList(costVo2);
-        return RestUtil.success(baseProjectPageInfo.getList());
+        return RestUtil.page(baseProjectPageInfo);
     }
 
     /**
@@ -617,10 +617,10 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/progressPaymentList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/progressPaymentList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> progressPaymentList(CostVo2 costVo2){
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.progressPaymentList(costVo2);
-        return RestUtil.success(baseProjectPageInfo.getList());
+        return RestUtil.page(baseProjectPageInfo);
     }
 
     /**
@@ -643,7 +643,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/projectVisaChangeList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/projectVisaChangeList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> projectVisaChangeList(CostVo2 costVo2){
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.projectVisaChangeList(costVo2);
         return RestUtil.success(baseProjectPageInfo);
@@ -669,7 +669,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/projectSettlementCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/projectSettlementCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> projectSettlementCensus(CostVo2 costVo2){
         List<OneCensus4> oneCensus4s = projectSumService.projectSettlementCensus(costVo2);
         String json =
@@ -749,7 +749,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 设计部门统计 全局版
+     * 设计部门统计 全局版  设计任务数量
      * @param costVo2
      * @return
      */
@@ -759,12 +759,23 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(oneCensus3);
     }
 
-    @RequestMapping(value = "/api/projectCount/projectDesginStatus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    /***
+     * 设计任务统计 -未知
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/projectDesginStatus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> projectDesginStatus(CostVo2 costVo2){
         List<OneCensus3> oneCensus3s = projectSumService.projectDesginStatus(costVo2);
         return RestUtil.success(oneCensus3s);
     }
-    @RequestMapping(value = "/api/projectCount/censusList2",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+
+    /***
+     * 设计任务统计 -设计任务统计
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/censusList2",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> censusList2(CostVo2 costVo2){
         //todo getLoginUser().getId()
         List<OneCensus> oneCensuses = projectSumService.censusList2(costVo2);
@@ -900,7 +911,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 设计金额统计
+     * 设计任务统计 -设计任务总汇1
      * @param costVo2
      * @return
      */
@@ -919,11 +930,11 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 设计项目是否委外统计
+     * 设计任务统计 -设计任务总汇2
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/desiginoutsource",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/desiginoutsource",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginoutsource(CostVo2 costVo2){
         OneCensus5 oneCensus5 = projectSumService.desiginoutsource(costVo2);
         Integer outsourceno = oneCensus5.getOutsourceNo();
@@ -938,11 +949,11 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 设计列表
+     * 设计任务统计 -设计任务分析
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/desginCensusList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/desginCensusList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desginCensusList(CostVo2 costVo2){
         PageInfo<DesignInfo> designInfoPageInfo = projectSumService.desginCensusList(costVo2);
         return RestUtil.success(designInfoPageInfo.getList());
@@ -1471,7 +1482,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/memberAchievementsMonthCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/memberAchievementsMonthCount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>memberAchievementsMonthCount(CostVo2 costVo2){
         BigDecimal bigDecimal = projectSumService.memberAchievementsMonthCount(costVo2);
         return RestUtil.success(bigDecimal);

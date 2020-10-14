@@ -757,6 +757,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     @Select(
             "SELECT\n" +
                     "s1.id,\n" +
+                    "s1.cea_num,\n" +
                     "s1.project_num,\n" +
                     "s1.project_name,\n" +
                     "s1.design_category,\n" +
@@ -828,6 +829,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     @Select(
             "SELECT\n" +
                     "s1.id,\n" +
+                    "s1.cea_num,\n" +
                     "s1.project_num,\n" +
                     "s1.project_name,\n" +
                     "s1.design_category,\n" +

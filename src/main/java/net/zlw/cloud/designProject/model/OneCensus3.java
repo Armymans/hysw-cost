@@ -9,10 +9,10 @@ public class OneCensus3 {
     private String outMoney; //委外支出
     private String advMoney; //员工绩效
 
-    private Integer revie;
-    private Integer plot;
-    private Integer comple;
-    private Integer total;
+    private Integer revie;//待审核
+    private Integer plot;//出图中
+    private Integer comple;//完成
+    private Integer total;//全部
 
     private String projectName;
     private String id;
