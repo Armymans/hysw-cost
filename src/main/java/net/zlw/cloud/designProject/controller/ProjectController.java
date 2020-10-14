@@ -527,6 +527,10 @@ public class ProjectController extends BaseController {
         return RestUtil.success(sumVo);
     }
 
+    /**
+     * 员工首页-设计部门 消息提醒(造价也能用)
+     * @return
+     */
     @RequestMapping(value = "/api/disproject/messageList", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> messageList() {
         List<MessageNotification> messageNotifications = projectService.messageList(getLoginUser());
@@ -534,7 +538,7 @@ public class ProjectController extends BaseController {
     }
 
     /**
-     * 企业收支分析
+     * 员工首页-设计部门  个人任务统计
      * @param costVo2
      * @return
      */
@@ -617,6 +621,11 @@ public class ProjectController extends BaseController {
         return RestUtil.showJsonSuccess(json);
     }
 
+    /**
+     * 员工首页-设计部门  个人绩效分析
+     * @param individualVo
+     * @return
+     */
     @RequestMapping(value = "/api/disproject/individualList", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> individualList(IndividualVo individualVo) {
         individualVo.setId("user282");
