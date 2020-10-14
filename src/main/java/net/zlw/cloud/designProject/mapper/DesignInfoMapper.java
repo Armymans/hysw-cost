@@ -15,6 +15,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
     @Select(
                 "SELECT\n" +
                         "s2.id,\n" +
+                        "s1.merge_flag,\n" +
                         "s2.base_project_id,\n" +
                         "s1.should_be should_be,\n" +
                         "s1.cea_num,\n" +
@@ -139,6 +140,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.cea_num,\n" +
                     "s1.project_num,\n" +
                     "s1.project_name,\n" +
+                    "s1.merge_flag,\n" +
                     "(\n" +
                     "case s1.desgin_status\n" +
                     "  when \"1\" then \"待审核\"\n" +
@@ -253,6 +255,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.should_be should_be,\n" +
                     "s1.cea_num,\n" +
                     "s1.project_num,\n" +
+                    "s1.merge_flag,\n" +
                     "s1.project_name,\n" +
                     "(\n" +
                     "case s1.desgin_status\n" +
@@ -459,6 +462,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
             "SELECT\n" +
                     "s1.id,\n" +
                     "s1.cea_num,\n" +
+                    "s1.merge_flag,\n" +
                     "s1.project_num,\n" +
                     "s1.project_name,\n" +
                     "s1.construction_unit,\n" +
@@ -495,6 +499,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
             "SELECT\n" +
                     "s1.id,\n" +
                     "s1.cea_num,\n" +
+                    "s1.merge_flag,\n" +
                     "s1.project_num,\n" +
                     "s1.project_name,\n" +
                     "s1.design_category,\n" +

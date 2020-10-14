@@ -3,8 +3,9 @@ package net.zlw.cloud.progressPayment.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
-import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.designProject.mapper.BudgetingMapper;
+import net.zlw.cloud.designProject.model.Budgeting;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.*;
@@ -44,6 +45,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Resource
     private ConstructionUnitManagementMapper constructionUnitManagementMapper;
+
+    @Resource
+    private BudgetingMapper budgetingMapper;
     /**
      * 添加进度款信息
      *
@@ -54,8 +58,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public void addProgress(BaseProjectVo baseProject, UserInfo loginUser) {
 
 
+        Budgeting budgeting = budgetingMapper.selectByPrimaryKey(baseProject.getId());
+
         //项目基本信息
-        BaseProject project = findById(baseProject.getProjectNum());
+        BaseProject project = findById(budgeting.getBaseProjectId());
         //申请信息
         ApplicationInformation information = new ApplicationInformation();
         //进度款累计支付信息
@@ -614,5 +620,20 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     }
 
+    @Override
+    public BaseProject findByBuilding(String id) {
+        Budgeting byId = budgetingMapper.findById(id);
 
+        Example example = new Example(Budgeting.class);
+        example.createCriteria().andEqualTo("id",byId.getBaseProjectId());
+        BaseProject baseProject = baseProjectDao.selectOneByExample(example);
+
+        if(baseProject != null){
+            ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(baseProject.getConstructionUnit());
+            if (constructionUnitManagement!=null){
+                baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+            }
+        }
+        return baseProject;
+    }
 }

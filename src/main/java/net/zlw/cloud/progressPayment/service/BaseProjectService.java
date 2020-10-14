@@ -41,4 +41,6 @@ public interface BaseProjectService {
     List<BaseProject> findByBuildingProject(String id);
 
     BaseProject findByBaseProjectId(VisaBaseProjectVo visaBaseProjectVo);
+
+    BaseProject findByBuilding(String id);
 }

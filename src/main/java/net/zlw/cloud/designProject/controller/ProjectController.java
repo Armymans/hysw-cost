@@ -56,12 +56,16 @@ public class ProjectController extends BaseController {
      * @param mergeNum
      * @param idlist
      */
-    @GetMapping("/margeProject/{mergeName}/{mergeNum}/{idlist}")
-    public void margeProject(@PathVariable(name = "mergeName") String mergeName, @PathVariable(name = "mergeNum") String mergeNum, @PathVariable(name = "idlist") String idlist) {
+    @RequestMapping(value = "/margeProject", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> margeProject(String mergeName,String mergeNum,String idlist) {
         String[] split = idlist.split(",");
         for (String id : split) {
-            projectService.mergeProject(mergeName, mergeNum, id);
+            boolean b = projectService.mergeProject(mergeName, mergeNum, id);
+            if(!b){
+                return RestUtil.error("操作失败");
+            }
         }
+        return RestUtil.success("操作成功");
     }
 
     /**
@@ -701,6 +705,11 @@ public class ProjectController extends BaseController {
                 designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                 designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                 designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+            }else{
+                designInfo.setRevenue(new BigDecimal(0));
+                designInfo.setOfficialReceipts(new BigDecimal(0));
+                designInfo.setDisMoney(new BigDecimal(0));
+                designInfo.setPayTerm("0");
             }
         }else{
             //如果为吴江
@@ -736,21 +745,29 @@ public class ProjectController extends BaseController {
 
         //预算编制
         Budgeting budgeting = projectService.budgetingByid(baseProject.getId());
-        projectVo3.setBudgeting(budgeting);
-        //成本编制
-        CostPreparation costPreparation = projectService.costPreparationById(budgeting.getId());
-        if(costPreparation==null){
+        if(budgeting != null){
+            projectVo3.setBudgeting(budgeting);
+            //成本编制
+            CostPreparation costPreparation = projectService.costPreparationById(budgeting.getId());
+            if(costPreparation==null){
+                projectVo3.setCostPreparation(new CostPreparation());
+            }else{
+                projectVo3.setCostPreparation(costPreparation);
+            }
+            //控价编制
+            VeryEstablishment veryEstablishment = projectService.veryEstablishmentById2(budgeting.getId());
+            if(veryEstablishment == null){
+                projectVo3.setVeryEstablishment(new VeryEstablishment());
+            }else{
+                projectVo3.setVeryEstablishment(veryEstablishment);
+            }
+        }else{
+            Budgeting budgeting2 = new Budgeting();
+            projectVo3.setBudgeting(budgeting2);
             projectVo3.setCostPreparation(new CostPreparation());
-        }else{
-            projectVo3.setCostPreparation(costPreparation);
-        }
-        //控价编制
-        VeryEstablishment veryEstablishment = projectService.veryEstablishmentById2(budgeting.getId());
-        if(veryEstablishment == null){
             projectVo3.setVeryEstablishment(new VeryEstablishment());
-        }else{
-            projectVo3.setVeryEstablishment(veryEstablishment);
         }
+
         //跟踪审计信息
         TrackAuditInfo trackAuditInfo = projectService.trackAuditInfoByid(baseProject.getId());
         if(trackAuditInfo==null){
@@ -758,7 +775,6 @@ public class ProjectController extends BaseController {
         }else{
             projectVo3.setTrackAuditInfo(trackAuditInfo);
         }
-
         //计算累计值
         ProjectVo3 projectVo31 = projectService.progressPaymentInformationSum(baseProject.getId());
         projectVo3.setNewcurrentPaymentInformation(projectVo31.getNewcurrentPaymentInformation());

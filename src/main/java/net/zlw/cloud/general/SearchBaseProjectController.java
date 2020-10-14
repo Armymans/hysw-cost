@@ -36,8 +36,19 @@ public class SearchBaseProjectController {
 
     @RequestMapping(value = "/baseProject/findById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
 //    @GetMapping("/findById/{id}")
-    public Map<String,Object> findById(@RequestParam(name = "projectNum") String id){
+    public Map<String,Object> findById(@RequestParam(name = "id") String id){
         BaseProject byId = baseProjectService.findById(id);
+        return RestUtil.success(byId);
+    }
+
+    /**
+     * @Author Armyman
+     * @Description //签证变更，进度款支付，跟踪审计
+     * @Date 22:17 2020/10/14
+     **/
+    @RequestMapping(value = "/budgetingProject/findById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findById2(@RequestParam(name = "id") String id){
+        BaseProject byId = baseProjectService.findByBuilding(id);
         return RestUtil.success(byId);
     }
 

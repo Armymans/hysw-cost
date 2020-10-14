@@ -467,7 +467,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChange.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnit());
             visaChange.setContact(visaChangeInfoVo.getContact());
             visaChange.setContactNumber(visaChangeInfoVo.getContactNumber());
-            visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+            if(!"1".equals(visaChangeInfoVo.getOutsourcingAmount())){
+                visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+            }
             visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReason());
             visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
             visaChange.setUpAndDownMark("0");

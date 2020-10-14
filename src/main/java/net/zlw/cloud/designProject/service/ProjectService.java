@@ -552,7 +552,7 @@ public class ProjectService {
      * @param id
      */
 
-    public void mergeProject(String mergeName,String mergeNum,String id){
+    public boolean mergeProject(String mergeName,String mergeNum,String id){
             DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
             if(designInfo != null){
                 BaseProject baseProject = projectMapper.selectByPrimaryKey(designInfo.getBaseProjectId());
@@ -565,8 +565,12 @@ public class ProjectService {
                         String x = "x"+mergeNum;
                         projectMapper.updataMerga(x,"1",baseProject.getId(),"1");
                     }
+                    return true;
+                }else{
+                    return false;
                 }
             }
+            return true;
     }
 
     /**
@@ -736,7 +740,7 @@ public class ProjectService {
     }
 
     public BaseProject BaseProjectByid(String id){
-        BaseProject baseProject = projectMapper.selectByPrimaryKey(id);
+        BaseProject baseProject = projectMapper.selectById(id);
         return baseProject;
     }
 
@@ -1333,14 +1337,15 @@ public class ProjectService {
         List<BaseProject> baseProjects = projectMapper.selectByExample(example);
         for (BaseProject baseProject : baseProjects) {
             DesignInfo designInfo = this.designInfoByid(baseProject.getId());
-
-            AnhuiMoneyinfo anhuiMoneyinfo = this.anhuiMoneyinfoByid(designInfo.getId());
-            WujiangMoneyInfo wujiangMoneyInfo = this.wujiangMoneyInfoByid(designInfo.getId());
-            if(wujiangMoneyInfo!=null){
-                officialReceipts.add(anhuiMoneyinfo.getOfficialReceipts().add(officialReceipts)) ;
-            }
-            if(anhuiMoneyinfo!=null){
-                officialReceipts1.add( wujiangMoneyInfo.getOfficialReceipts().add(officialReceipts1));
+            if(designInfo != null){
+                AnhuiMoneyinfo anhuiMoneyinfo = this.anhuiMoneyinfoByid(designInfo.getId());
+                WujiangMoneyInfo wujiangMoneyInfo = this.wujiangMoneyInfoByid(designInfo.getId());
+                if(wujiangMoneyInfo!=null){
+                    officialReceipts.add(anhuiMoneyinfo.getOfficialReceipts().add(officialReceipts)) ;
+                }
+                if(anhuiMoneyinfo!=null){
+                    officialReceipts1.add( wujiangMoneyInfo.getOfficialReceipts().add(officialReceipts1));
+                }
             }
         }
         return officialReceipts.add(officialReceipts1);
