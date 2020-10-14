@@ -2,6 +2,7 @@ package net.zlw.cloud.followAuditing.service;
 
 
 import com.github.pagehelper.PageInfo;
+import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.followAuditing.model.TrackMonthly;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
@@ -18,7 +19,7 @@ public interface TrackApplicationInfoService {
 
     void batchReview(BatchReviewVo id);
 
-    void addTrack(TrackVo trackVo);
+    void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId);
 
     TrackVo selectTrackById(String id);
 
@@ -27,4 +28,5 @@ public interface TrackApplicationInfoService {
     void updateTrack(TrackVo trackVo);
 
     List<TrackMonthly> findAllByTrackId(String id);
+    void addTrackMonthly(TrackMonthly trackMonthly);
 }

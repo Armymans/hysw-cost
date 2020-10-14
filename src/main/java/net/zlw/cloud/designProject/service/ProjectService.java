@@ -819,7 +819,15 @@ public class ProjectService {
         //BaseProject baseProject, DesignInfo designInfo, ProjectExploration projectExploration, PackageCame packageCame
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updateTime = simpleDateFormat.format(new Date());
-        if(projectVo.getBaseProject().getDesginStatus() == "2"){
+        if("2".equals(projectVo.getBaseProject().getDesginStatus())){
+            //如果按钮状态为1 说明点击的是提交
+            if("1".equals(projectVo.getBaseProject().getOrsubmit())){
+                //审核状态从未通过中变为待审核
+                projectVo.getBaseProject().setDesginStatus("1");
+            }else {
+                //如果不为1 则为保存 状态依旧是出图中
+                projectVo.getBaseProject().setDesginStatus("2");
+            }
             //如果提交人为空 说明时保存状态未出图中 反之状态未待审核
             if(projectVo.getBaseProject().getReviewerId() == null||"".equals(projectVo.getBaseProject().getReviewerId())){
                 projectVo.getBaseProject().setDesginStatus("2");
@@ -850,35 +858,55 @@ public class ProjectService {
             //添加勘探表时间
             if(projectVo.getProjectExploration()!=null){
                 projectVo.getProjectExploration().setUpdateTime(updateTime);
-                projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
+                ProjectExploration projectExploration = this.ProjectExplorationByid(projectVo.getBaseProject().getId());
+                if(projectExploration!=null){
+                    projectVo.getProjectExploration().setId(projectExploration.getId());
+                    projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
+                }
             }
             //方案会审
             if(projectVo.getProjectExploration()!=null){
                 projectVo.getPackageCame().setUpdateTime(updateTime);
-                packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
+                PackageCame packageCame = this.PackageCameByid(projectVo.getBaseProject().getId());
+                if(packageCame!=null){
+                    projectVo.getPackageCame().setId(packageCame.getId());
+                    packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
+                }
             }
         }
-        if(projectVo.getBaseProject().getDesginStatus() == "3"){
+        if("3".equals(projectVo.getBaseProject().getDesginStatus())){
             //如果按钮状态为1 说明点击的是提交
             if("1".equals(projectVo.getBaseProject().getOrsubmit())){
                 //审核状态从未通过中变为待审核
                 projectVo.getBaseProject().setDesginStatus("1");
             }else {
-                //如果不为1 则为保存 状态依旧是出图中
+                //如果不为1 则为保存 状态依旧是未通过
                 projectVo.getBaseProject().setDesginStatus("3");
             }
                 //添加修改时间
-                projectVo.getBaseProject().setUpdateTime(updateTime);
-                projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
-                //添加设计表修改时间
-                projectVo.getDesignInfo().setUpdateTime(updateTime);
-                designInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignInfo());
-                //添加勘探表时间
+            projectVo.getBaseProject().setUpdateTime(updateTime);
+            projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
+            //添加设计表修改时间
+            projectVo.getDesignInfo().setUpdateTime(updateTime);
+            designInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignInfo());
+            //添加勘探表时间
+            if(projectVo.getProjectExploration()!=null){
                 projectVo.getProjectExploration().setUpdateTime(updateTime);
-                projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
-                //方案会审
+                ProjectExploration projectExploration = this.ProjectExplorationByid(projectVo.getBaseProject().getId());
+                if(projectExploration!=null){
+                    projectVo.getProjectExploration().setId(projectExploration.getId());
+                    projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
+                }
+            }
+            //方案会审
+            if(projectVo.getProjectExploration()!=null){
                 projectVo.getPackageCame().setUpdateTime(updateTime);
-                packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
+                PackageCame packageCame = this.PackageCameByid(projectVo.getBaseProject().getId());
+                if(packageCame!=null){
+                    projectVo.getPackageCame().setId(packageCame.getId());
+                    packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
+                }
+            }
         }
     }
 

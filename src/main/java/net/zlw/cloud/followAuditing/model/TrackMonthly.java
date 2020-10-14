@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -31,5 +32,7 @@ public class TrackMonthly implements Serializable {
     private String createTime;
     @Column(name = "update_time")
     private String updateTime;
+    @Transient
+    private String projectNum;
 
 }

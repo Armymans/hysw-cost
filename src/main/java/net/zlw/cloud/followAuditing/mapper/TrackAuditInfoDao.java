@@ -73,10 +73,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
             "b.construction_organization like concat  ('%',#{keyword},'%') \n" +
             ") and \n" +
             "tai.`status` = \"0\" and \n" +
-            "b.del_flag = \"0\" and \n" +
-            "ta.`state` = \"0\" and \n" +
-            "tm.`status` = \"0\" and \n" +
-            "ai.`status` = \"0\"\n")
+            "b.del_flag = \"0\" \n")
     List<ReturnTrackVo> selectTrackList(PageVo pageVo);
 
     @Select(
