@@ -13,6 +13,7 @@ import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.statisticAnalysis.model.EmployeeVo;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -998,6 +999,24 @@ public class ProjectSumService {
             return baseProjectPageInfo;
         }
     }
+    public Integer progressPaymentCount(CostVo2 costVo2){
+        //如果输入时间为空 则默认展示今年的区间
+        if(costVo2.getStartTime()!=null&&"".equals(costVo2.getStartTime())){
+            return projectMapper.progressPaymentCount(costVo2);
+        }else{
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            return projectMapper.progressPaymentCount(costVo21);
+        }
+    }
+    public Double progressPaymentSum(CostVo2 costVo2){
+        //如果输入时间为空 则默认展示今年的区间
+        if(costVo2.getStartTime()!=null&&"".equals(costVo2.getStartTime())){
+            return projectMapper.progressPaymentSum(costVo2);
+        }else{
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            return projectMapper.progressPaymentSum(costVo21);
+        }
+    }
     public PageInfo<BaseProject> projectVisaChangeList(CostVo2 costVo2){
         PageHelper.startPage(costVo2.getPageNum(),costVo2.getPageSize());
         if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
@@ -1024,9 +1043,25 @@ public class ProjectSumService {
     }
 
     public List<OneCensus4> projectSettlementCensus(CostVo2 costVo2){
-        List<OneCensus4> oneCensus4s = projectMapper.projectSettlementCensus(costVo2);
-        return oneCensus4s;
+        if(costVo2.getStartTime()!=null&&"".equals(costVo2.getStartTime())){
+            List<OneCensus4> oneCensus4s = projectMapper.projectSettlementCensus(costVo2);
+            return oneCensus4s;
+        }else {
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            List<OneCensus4> oneCensus4s = projectMapper.projectSettlementCensus(costVo21);
+            return oneCensus4s;
+        }
     }
+
+    public OneCensus4 projectSettlementCount(CostVo2 costVo2){
+        if(costVo2.getStartTime()!=null&&"".equals(costVo2.getStartTime())){
+            return projectMapper.projectSettlementCount(costVo2);
+        }else {
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            return projectMapper.projectSettlementCount(costVo21);
+        }
+    }
+
     public OneCensus4 projectSettlementSum(CostVo2 costVo2){
         return projectMapper.projectSettlementSum(costVo2);
     }

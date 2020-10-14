@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -1442,8 +1443,8 @@ public class ProjectService {
     public List<MessageNotification> messageList(UserInfo userInfo) {
         Example example = new Example(MessageNotification.class);
         Example.Criteria c = example.createCriteria();
-//        userInfo.getId() 1212
-        c.andEqualTo("acceptId",userInfo.getId());
+        //todo userInfo.getId()
+        c.andEqualTo("acceptId","1212");
         List<MessageNotification> messageNotifications = messageNotificationDao.selectByExample(example);
         return messageNotifications;
     }
@@ -1618,15 +1619,29 @@ public class ProjectService {
     }
 
     /**
+     * 获取本年
+     * @param costVo2
+     * @return
+     */
+    public CostVo2 NowYear(CostVo2 costVo2){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        costVo2.setYear(year+"");
+        costVo2.setStartTime(year+"-01-01");
+        costVo2.setEndTime(year+"-12-31");
+        return costVo2;
+    }
+
+    /**
      * 造价年表
      * @param costVo2
      * @return
      */
     public OneCensus2 costCensus(CostVo2 costVo2){
         String sysYear = this.getSysYear();
-        //注入当前时间
+        CostVo2 costVo21 = this.NowYear(costVo2);
         costVo2.setYear(sysYear);
-        OneCensus2 oneCensus2 = projectMapper.costCensus(costVo2);
+        OneCensus2 oneCensus2 = projectMapper.costCensus(costVo21);
         return oneCensus2;
     }
 

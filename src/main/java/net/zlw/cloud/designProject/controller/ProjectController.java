@@ -531,8 +531,9 @@ public class ProjectController extends BaseController {
      * 员工首页-设计部门 消息提醒(造价也能用)
      * @return
      */
-    @RequestMapping(value = "/api/disproject/messageList", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/disproject/messageList", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> messageList() {
+        //todo
         List<MessageNotification> messageNotifications = projectService.messageList(getLoginUser());
         return RestUtil.success(messageNotifications);
     }
@@ -789,9 +790,14 @@ public class ProjectController extends BaseController {
         return RestUtil.success(projectVo3);
     }
 
-    @RequestMapping(value = "/api/costproject/costSelectByid", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    /**
+     * 员工首页-造价部门 待办任务
+     * @param district
+     * @return
+     */
+    @RequestMapping(value = "/api/costproject/costSelectByid", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> costSelectByid(@RequestParam(name = "district") String district) {
-//        getLoginUser().getId();
+        //todo getLoginUser().getId();
         String budgetingCount = projectService.budgetingCount("user282", district);
         String settleAccountsCount = projectService.settleAccountsCount("user282", district);
         String progressPaymentInformationCount = projectService.progressPaymentInformationCount("user282", district);
@@ -806,7 +812,12 @@ public class ProjectController extends BaseController {
         return RestUtil.success(costVo);
     }
 
-    @RequestMapping(value = "/api/costproject/costCensus", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    /**
+     * 员工首页-造价部门 造价任务统计
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/costproject/costCensus", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> costCensus(CostVo2 costVo2) {
         OneCensus2 oneCensus2 = projectService.costCensus(costVo2);
         String josn =
@@ -822,23 +833,23 @@ public class ProjectController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/api/costproject/costCensusList", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/costproject/costCensusList", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> costCensusList(CostVo2 costVo2) {
         List<OneCensus2> oneCensus2s = projectService.costCensusList(costVo2);
-        String json =
+        String json2 =
                 "[{" +
                         "\"companyName\": \"造价任务\"," +
                         "\"imageAmmount\": [";
         for (OneCensus2 oneCensus2 : oneCensus2s) {
-            json +=
+            json2 +=
                     "{\"time\": \"" + oneCensus2.getYeartime() + "-" + oneCensus2.getMonthTime() + "\"," +
                             "\"truckAmmount\": \"" + oneCensus2.getTotal() + "\"" +
                             "},";
         }
-        json = json.substring(0, json.length() - 1);
-        json += "]}]";
-        JSONArray objects = JSON.parseArray(json);
-        return RestUtil.success(objects);
+        json2 = json2.substring(0, json2.length() - 1);
+        json2 += "]}]";
+        JSONArray objects2 = JSON.parseArray(json2);
+        return RestUtil.success(objects2);
     }
 
     /**
@@ -847,7 +858,7 @@ public class ProjectController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/costproject/mounthTaskCount", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/costproject/mounthTaskCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Integer mounthTaskCount(CostVo2 costVo2) {
         String sysYear = projectService.getSysYear();
         String sysMouth = projectService.getSysMouth() + "";
@@ -864,7 +875,7 @@ public class ProjectController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/costproject/yearTaskCount", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/costproject/yearTaskCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Integer yearTaskCount(CostVo2 costVo2) {
         String sysYear = projectService.getSysYear();
         costVo2.setYear(sysYear);
@@ -878,7 +889,7 @@ public class ProjectController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/costproject/yearDesCount", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/costproject/yearDesCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Integer yearDesCount(CostVo2 costVo2) {
         String sysYear = projectService.getSysYear();
         costVo2.setYear(sysYear);
@@ -892,7 +903,7 @@ public class ProjectController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/costproject/mounthDesCount", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/costproject/mounthDesCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Integer mounthDesCount(CostVo2 costVo2) {
         String sysYear = projectService.getSysYear();
         int sysMouth = projectService.getSysMouth();
