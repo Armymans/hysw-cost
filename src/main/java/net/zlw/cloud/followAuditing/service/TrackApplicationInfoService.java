@@ -26,6 +26,7 @@ public interface TrackApplicationInfoService {
     void updateMonthly(TrackMonthly trackMonthly);
 
     void updateTrack(TrackVo trackVo);
+
     List<TrackMonthly> findAllByTrackId(String id);
     void addTrackMonthly(TrackMonthly trackMonthly);
 }

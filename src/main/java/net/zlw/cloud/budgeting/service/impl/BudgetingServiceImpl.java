@@ -72,7 +72,6 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgeting.setBudgetingTime(budgetingVo.getBudgetingTime());
         budgeting.setRemarkes(budgetingVo.getBremarkes());
         budgeting.setBaseProjectId(baseProject.getId());
-        budgeting.setFounderId(loginUser.getId());
         budgeting.setDelFlag("0");
         //提交
         if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
@@ -210,11 +209,11 @@ public class BudgetingServiceImpl implements BudgetingService {
     @Override
     public void updateBudgeting(BudgetingVo budgetingVo) {
         //获取基本信息
+        System.err.println(budgetingVo.getBaseId());
         Example example = new Example(BaseProject.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("projectNum",budgetingVo.getProjectNum());
+        criteria.andEqualTo("id",budgetingVo.getBaseId());
         BaseProject baseProject = projectDao.selectOneByExample(example);
-        System.err.println(budgetingVo);
         //预算编制
         Budgeting budgeting = budgetingDao.selectByPrimaryKey(budgetingVo.getId());
         budgeting.setAmountCost(budgetingVo.getAmountCost());
@@ -240,20 +239,22 @@ public class BudgetingServiceImpl implements BudgetingService {
                 auditInfo.setAuditResult("0");
                 auditInfo.setAuditType("0");
                 auditInfo.setAuditorId(budgetingVo.getAuditorId());
+                auditInfo.setStatus("0");
                 auditInfoDao.insertSelective(auditInfo);
+                //若未通过则再次提交
             }else if (budgetingVo.getAuditNumber().equals("2")){
                 Example example1 = new Example(AuditInfo.class);
                 example1.createCriteria().andEqualTo("baseProjectId",budgeting.getId());
                 List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
                 for (AuditInfo info : auditInfos) {
-                    if (info.getAuditResult().equals("0")){
-                        info.setAuditResult("1");
+                    if (info.getAuditResult().equals("2")){
+                        info.setAuditResult("0");
+                        baseProject.setBudgetStatus("1");
+                        projectDao.updateByPrimaryKeySelective(baseProject);
                         auditInfoDao.updateByPrimaryKeySelective(info);
                     }
                 }
-
             }
-
         }else{
             baseProject.setBudgetStatus("2");
             projectDao.updateByPrimaryKeySelective(baseProject);
@@ -440,6 +441,45 @@ public class BudgetingServiceImpl implements BudgetingService {
     @Override
     public List<DesignInfo> findDesignAll(PageBVo pageBVo) {
        return baseProjectDao.findDesignAll(pageBVo);
+    }
+
+    @Override
+    public void deleteBudgeting(String id) {
+        Budgeting budgeting = budgetingDao.selectByPrimaryKey(id);
+        budgeting.setDelFlag("1");
+        budgetingDao.updateByPrimaryKeySelective(budgeting);
+
+        Example example = new Example(SurveyInformation.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("budgetingId",id);
+        c.andEqualTo("delFlag","0");
+        SurveyInformation surveyInformation = surveyInformationDao.selectOneByExample(example);
+        surveyInformation.setDelFlag("1");
+        surveyInformationDao.updateByPrimaryKeySelective(surveyInformation);
+
+        Example example1 = new Example(CostPreparation.class);
+        Example.Criteria c1 = example1.createCriteria();
+        c1.andEqualTo("budgetingId",id);
+        c1.andEqualTo("delFlag","0");
+        CostPreparation costPreparation = costPreparationDao.selectOneByExample(example1);
+        costPreparation.setDelFlag("1");
+        costPreparationDao.updateByPrimaryKeySelective(costPreparation);
+
+        Example example2 = new Example(VeryEstablishment.class);
+        Example.Criteria c2 = example2.createCriteria();
+        c2.andEqualTo("budgetingId",id);
+        c2.andEqualTo("delFlag","0");
+        VeryEstablishment veryEstablishment = veryEstablishmentDao.selectOneByExample(example2);
+        veryEstablishment.setDelFlag("1");
+        veryEstablishmentDao.updateByPrimaryKeySelective(veryEstablishment);
+
+        Example example3 = new Example(AuditInfo.class);
+        Example.Criteria criteria = example3.createCriteria();
+        criteria.andEqualTo("baseProjectId",id);
+        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example3);
+        for (AuditInfo auditInfo : auditInfos) {
+            auditInfoDao.deleteByPrimaryKey(auditInfo);
+        }
     }
 
     @Override

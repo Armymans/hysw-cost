@@ -29,4 +29,6 @@ public interface BudgetingService {
     void addAttribution(String id, String designCategory, String district);
 
     List<DesignInfo> findDesignAll(PageBVo pageBVo);
+
+    void deleteBudgeting(String id);
 }

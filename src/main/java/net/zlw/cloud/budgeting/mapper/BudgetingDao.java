@@ -112,7 +112,8 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             ") and " +
             "b.del_flag = '0' and " +
             "bt.del_flag = '0' and " +
-            "bt.founder_id = #{founderId}" +
+            "c.del_flag = '0' and " +
+            "v.del_flag = '0' " +
             "order by " +
             "b.should_be asc")
     List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo);
