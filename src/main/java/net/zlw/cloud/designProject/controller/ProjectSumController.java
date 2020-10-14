@@ -25,21 +25,39 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProjectSumController extends BaseController {
     @Resource
     private ProjectSumService projectSumService;
+
+    /**
+     * 项目统计 项目总数
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/AllprojectCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Integer AllprojectCount(){
         Integer integer = projectSumService.AllprojectCount();
         return integer;
     }
+
+    /**
+     * 项目统计 待审核总数
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/withAuditCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Integer withAuditCount(){
         return  projectSumService.withAuditCount();
     }
 
+    /**
+     * 进行中的项目
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/conductCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Integer conductCount(){
         return  projectSumService.conductCount();
     }
 
+    /**
+     * 已完成项目
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/completeCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Integer completeCount(){
         return  projectSumService.completeCount();
@@ -318,18 +336,32 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(budgetings);
     }
 
+    /**
+     * 企业总收支 总收入
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/totalRevenue",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> totalRevenue(CostVo2 costVo2){
         BigDecimal bigDecimal = projectSumService.totalRevenue(costVo2);
         return RestUtil.success(bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
     }
-
+    /**
+     * 企业总收支 总支出
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/totalexpenditure",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> totalexpenditure(CostVo2 costVo2){
         BigDecimal bigDecimal = projectSumService.totalexpenditure(costVo2);
         return RestUtil.success(bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
+    /**
+     * 企业总收支 总利润
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/totalprofit",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>totalprofit(CostVo2 costVo2){
         BigDecimal bigDecimal1 = projectSumService.totalRevenue(costVo2);
@@ -350,7 +382,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 项目统计
+     * 项目统计 项目统计图
      * @param costVo2
      * @return
      */
@@ -374,7 +406,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 本年项目数量
+     * 项目统计 本年项目数量
      * @param costVo2
      * @return
      */
@@ -387,7 +419,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 本月项目数量
+     * 项目统计 本月项目数量
      * @param costVo2
      * @return
      */
@@ -400,7 +432,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 相比上月
+     * 项目统计 相比上月
      * @param costVo2
      * @return
      */
@@ -415,7 +447,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 相比上年
+     * 项目统计 相比上年
      * @param costVo2
      * @return
      */
@@ -430,7 +462,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 总收入构成
+     * 企业收支构成 总收入构成
      * @param costVo2
      * @return
      */
@@ -455,7 +487,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 总支出构成
+     * 企业收支构成 总支出构成
      * @param costVo2
      * @return
      */
@@ -480,7 +512,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 支出条形统计表
+     * 企业收支统计 支出条形统计表
      * @param costVo2
      * @return
      */
@@ -515,7 +547,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 支出列表
+     * 企业收支统计 项目收支情况
      * @param costVo2
      * @return
      */
@@ -526,7 +558,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 信息统计
+     * 项目统计 项目信息统计
      * @param costVo2
      * @return
      */
