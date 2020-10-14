@@ -939,7 +939,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-        @RequestMapping(value = "/api/projectCount/desiginAchievementsCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+        @RequestMapping(value = "/api/projectCount/desiginAchievementsCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginAchievementsCensus(CostVo2 costVo2){
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsCensus(costVo2);
         String json =
@@ -959,26 +959,30 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 设计绩效 本月发放总数
+     * 设计绩效 发放总数
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/desiginMonthAchievements",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> desiginMonthAchievements(CostVo2 costVo2){
-        BigDecimal bigDecimal = projectSumService.desiginMonthAchievements(costVo2);
-        return RestUtil.success(bigDecimal);
+    @RequestMapping(value = "/api/projectCount/desiginAchievements",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> desiginAchievements(CostVo2 costVo2){
+        BigDecimal bigDecimal1 = projectSumService.desiginMonthAchievements(costVo2);
+        BigDecimal bigDecimal2 = projectSumService.desiginYearAchievements(costVo2);
+        ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
+        map.put("monthAchievements",bigDecimal1);
+        map.put("yearAchievements",bigDecimal2);
+        return RestUtil.success(map);
     }
 
-    /**
-     * 设计绩效 本年发放总数
-     * @param costVo2
-     * @return
-     */
-    @RequestMapping(value = "/api/projectCount/desiginYearAchievements",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> desiginYearAchievements(CostVo2 costVo2){
-        BigDecimal bigDecimal = projectSumService.desiginYearAchievements(costVo2);
-        return RestUtil.success(bigDecimal);
-    }
+//    /**
+//     * 设计绩效 本年发放总数
+//     * @param costVo2
+//     * @return
+//     */
+//    @RequestMapping(value = "/api/projectCount/desiginYearAchievements",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> desiginYearAchievements(CostVo2 costVo2){
+//        BigDecimal bigDecimal2 = projectSumService.desiginYearAchievements(costVo2);
+//        return RestUtil.success(bigDecimal2);
+//    }
 
     /**
      * 设计同比上个月比例
@@ -990,7 +994,9 @@ public class ProjectSumController extends BaseController {
         BigDecimal month = projectSumService.desiginMonthAchievements(costVo2);
         BigDecimal lastmonth = projectSumService.desiginLastMonthAchievements(costVo2);
         BigDecimal bigDecimal = projectSumService.desiginCensusRast(month, lastmonth);
-        return RestUtil.success(bigDecimal);
+        ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
+        map.put("monthAchievementsRast",bigDecimal);
+        return RestUtil.success(map);
     }
 
     /**
@@ -1003,7 +1009,9 @@ public class ProjectSumController extends BaseController {
         BigDecimal year = projectSumService.desiginYearAchievements(costVo2);
         BigDecimal lastyear = projectSumService.desiginLastYearAchievements(costVo2);
         BigDecimal bigDecimal = projectSumService.desiginCensusRast(year, lastyear);
-        return RestUtil.success(bigDecimal);
+        ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
+        map.put("yearAchievementsRast",bigDecimal);
+        return RestUtil.success(map);
     }
 
     /**
@@ -1011,7 +1019,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/desiginProvisionCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/desiginProvisionCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginProvisionCensus(CostVo2 costVo2){
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsCensus(costVo2);
 
@@ -1078,7 +1086,9 @@ public class ProjectSumController extends BaseController {
             costVo2.setId("1");
         }
         BigDecimal bigDecimal = projectSumService.desiginAchievementsOneCount(costVo2);
-        return RestUtil.success(bigDecimal);
+        ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
+        map.put("monthAchievements",bigDecimal);
+        return RestUtil.success(map);
     }
 
     /**
@@ -1095,11 +1105,13 @@ public class ProjectSumController extends BaseController {
         BigDecimal mouth = projectSumService.desiginAchievementsOneCount(costVo2);
         BigDecimal lastmouth = projectSumService.desiginLastAchievementsOneCount(costVo2);
         BigDecimal bigDecimal = projectSumService.desiginCensusRast(mouth, lastmouth);
-        return RestUtil.success(bigDecimal);
+        ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
+        map.put("monthAchievementsRast",bigDecimal);
+        return RestUtil.success(map);
     }
 
     /**
-     * 年度绩效计提统计列表
+     * 年度绩效计提统计
      * @param costVo2
      * @return
      */
@@ -1138,7 +1150,9 @@ public class ProjectSumController extends BaseController {
             costVo2.setId("1");
         }
         BigDecimal bigDecimal = projectSumService.desiginAchievementsOneCount2(costVo2);
-        return RestUtil.success(bigDecimal);
+        ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
+        map.put("yearAchievements",bigDecimal);
+        return RestUtil.success(map);
     }
 
     /**
@@ -1155,7 +1169,9 @@ public class ProjectSumController extends BaseController {
         BigDecimal mouth = projectSumService.desiginAchievementsOneCount2(costVo2);
         BigDecimal lastmouth = projectSumService.desiginLastAchievementsOneCount2(costVo2);
         BigDecimal bigDecimal = projectSumService.desiginCensusRast(mouth, lastmouth);
-        return RestUtil.success(bigDecimal);
+        ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
+        map.put("yearAchievementsRast",bigDecimal);
+        return RestUtil.success(map);
     }
 
     /**

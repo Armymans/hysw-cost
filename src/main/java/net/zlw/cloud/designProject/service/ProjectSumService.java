@@ -1269,7 +1269,7 @@ public class ProjectSumService {
      * @return
      */
     public List<OneCensus6> desiginAchievementsCensus(CostVo2 costVo2){
-        if(costVo2.getStartTime()!=null&!"".equals(costVo2.getStartTime())){
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
             return projectMapper.desiginAchievementsCensus(costVo2);
         }else{
             CostVo2 costVo21 = this.NowYear(costVo2);
@@ -1387,7 +1387,7 @@ public class ProjectSumService {
             A = new BigDecimal(1);
         }
         BigDecimal subtract = A.subtract(B);
-        BigDecimal divide = subtract.divide(A);
+        BigDecimal divide = subtract.divide(A,2,BigDecimal.ROUND_HALF_UP);
         BigDecimal multiply = divide.multiply(new BigDecimal(100));
         return multiply;
     }
