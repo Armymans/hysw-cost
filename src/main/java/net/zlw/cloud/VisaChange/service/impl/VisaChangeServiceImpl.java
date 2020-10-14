@@ -412,7 +412,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             applyChangeInformation.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
             //applyChangeInformation.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
             //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
-            applyChangeInformation.setStatus("0");
+            if(StringUtils.isNotEmpty(visaChangeInfoVo.getAuditId())){
+                applyChangeInformation.setStatus("1");
+            }else{
+                applyChangeInformation.setStatus("2");
+            }
             applyMapper.insertSelective(applyChangeInformation);
 
         }
@@ -434,7 +438,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             applyChangeInformation.setState("0");
             applyChangeInformation.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
             //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
-            applyChangeInformation.setStatus("0");
+            if(StringUtils.isNotEmpty(visaChangeInfoVo.getAuditId())){
+                applyChangeInformation.setStatus("1");
+            }else{
+                applyChangeInformation.setStatus("2");
+            }
             applyMapper.insertSelective(applyChangeInformation);
         }
 
@@ -464,7 +472,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
             visaChange.setUpAndDownMark("0");
             //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
-            visaChange.setStatus("0");
+            if(StringUtils.isNotEmpty(visaChangeInfoVo.getAuditId())){
+                visaChange.setStatus("1");
+            }else{
+                visaChange.setStatus("2");
+            }
             visaChange.setProportionContract(visaChangeInfoVo.getProportionContract());
             visaChange.setChangeNum("1");
 
@@ -497,7 +509,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
             visaChange.setUpAndDownMark("1");
             //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
-            visaChange.setStatus("0");
+            if(StringUtils.isNotEmpty(visaChangeInfoVo.getAuditId())){
+                visaChange.setStatus("1");
+            }else{
+                visaChange.setStatus("2");
+            }
             visaChange.setProportionContract(visaChangeInfoVo.getProportionContractDown());
             visaChange.setChangeNum("1");
 
