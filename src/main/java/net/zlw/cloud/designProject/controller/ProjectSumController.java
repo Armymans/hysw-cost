@@ -624,6 +624,21 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
+     * 进度款支付信息 个数综合
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/progressPaymentCountAndSum",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> progressPaymentCountAndSum(CostVo2 costVo2){
+        Integer count = projectSumService.progressPaymentCount(costVo2);
+        Double sum = projectSumService.progressPaymentSum(costVo2);
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        map.put("count",count);
+        map.put("sum",sum);
+        return RestUtil.success(map);
+    }
+
+    /**
      * 签证变更统计
      * @param costVo2
      * @return
@@ -631,7 +646,7 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/projectVisaChangeList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> projectVisaChangeList(CostVo2 costVo2){
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.projectVisaChangeList(costVo2);
-        return RestUtil.success(baseProjectPageInfo.getList());
+        return RestUtil.success(baseProjectPageInfo);
     }
 
     /**
@@ -712,6 +727,16 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(objects);
     }
 
+    /**
+     * 项目结算分析 个数展示
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/projectSettlementCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> projectSettlementCount(CostVo2 costVo2){
+        OneCensus4 oneCensus4 = projectSumService.projectSettlementCount(costVo2);
+        return RestUtil.success(oneCensus4);
+    }
     /**
      * 设计部门任务进度统计
      * @param costVo2

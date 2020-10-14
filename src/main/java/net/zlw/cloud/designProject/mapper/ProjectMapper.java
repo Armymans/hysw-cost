@@ -375,6 +375,10 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and\n" +
                     "(district = #{district} or #{district} = '')\n" +
                     "and\n" +
+                    "create_time>= #{startTime}\n" +
+                    "and \n" +
+                    "(create_time<= #{endTime} or  #{endTime} = '') \n" +
+                    "and\n" +
                     "del_flag = '0'\n" +
                     "group by year(s1.create_time)\n" +
                     "HAVING\n" +
@@ -778,6 +782,50 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     List<BaseProject> progressPaymentList(CostVo2 costVo2);
 
     @Select(
+            "SELECT \n" +
+                    "COUNT(*)\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN \n" +
+                    "progress_payment_information s2 ON s1.id = s2.base_project_id\n" +
+                    "WHERE\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time <= #{endTime} or #{endTime} = '')" +
+                    "and\n" +
+                    "(\n" +
+                    "project_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "project_name  like  CONCAT('%',#{keyword},'%') \n" +
+                    ")" +
+                    "AND\n" +
+                    "s1.del_flag = '0'"
+    )
+    Integer progressPaymentCount(CostVo2 costVo2);
+
+    @Select(
+            "SELECT \n" +
+                    "SUM(IFNULL(current_payment_Information,0))\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN \n" +
+                    "progress_payment_information s2 ON s1.id = s2.base_project_id\n" +
+                    "WHERE\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "(\n" +
+                    "project_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "project_name  like  CONCAT('%',#{keyword},'%') \n" +
+                    ")" +
+                    "AND\n" +
+                    "s1.del_flag = '0'"
+    )
+    Double progressPaymentSum(CostVo2 costVo2);
+
+    @Select(
             "SELECT\n" +
                     "s1.id,\n" +
                     "s1.project_num,\n" +
@@ -870,6 +918,27 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "GROUP BY year(s1.create_time),MONTH(s1.create_time)"
     )
     List<OneCensus4>projectSettlementCensus(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "SUM(IFNULL(s2.review_number,0)) reviewNumber,\n" +
+                    "SUM(IFNULL(s4.sumbit_money,0)) sumbitMoney,\n" +
+                    "SUM(IFNULL(s3.authorized_number,0)) authorizedNumber,\n" +
+                    "SUM(IFNULL(s3.subtract_the_number,0)) subtractTheNumber\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN last_settlement_review  s2 ON s1.id = s2.base_project_id\n" +
+                    "LEFT JOIN settlement_audit_information s3 ON s1.id = s3.base_project_id \n" +
+                    "LEFT JOIN settlement_info s4 ON s1.id = s4.base_project_Id\n" +
+                    "where\n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "(s1.district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time <= #{endTime} or #{endTime} = '')"
+    )
+    OneCensus4 projectSettlementCount(CostVo2 costVo2);
 
     @Select(
             "SELECT\n" +
