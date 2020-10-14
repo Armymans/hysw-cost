@@ -439,9 +439,11 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "count(progress_payment_status) progressPaymentInformation,\n" +
                     "count(settle_accounts_status) settleAccountsCount\n" +
                     "from\n" +
-                    "base_project\n"
+                    "base_project \n" +
+                    "where\n" +
+                    "(district = #{district} or #{district} = '')"
     )
-    CostVo3 AllprojectCount();
+    CostVo3 AllprojectCount(CostVo2 costVo2);
 
     @Select(
             "select\n" +
@@ -452,9 +454,11 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "sum(progress_payment_status = 1) progressPaymentInformation,\n" +
                     "sum(settle_accounts_status = 1) settleAccountsCount\n" +
                     "from\n" +
-                    "base_project"
+                    "base_project \n" +
+                    "where\n" +
+                    "(district = #{district} or #{district} = '')"
     )
-    CostVo3 withAuditCount();
+    CostVo3 withAuditCount(CostVo2 costVo2);
 
     @Select(
             "select\n" +
@@ -465,9 +469,11 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "sum(progress_payment_status = 6) progressPaymentInformation,\n" +
                     "sum(settle_accounts_status = 5) settleAccountsCount\n" +
                     "from\n" +
-                    "base_project"
+                    "base_project\n" +
+                    "where\n" +
+                    "(district = #{district} or #{district} = '')"
     )
-    CostVo3 conductCount();
+    CostVo3 conductCount(CostVo2 costVo2);
 
     @Select(
             "select\n" +
@@ -478,9 +484,11 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "sum(progress_payment_status != 6) progressPaymentInformation,\n" +
                     "sum(settle_accounts_status != 5) settleAccountsCount\n" +
                     "from\n" +
-                    "base_project"
+                    "base_project\n" +
+                    "where\n" +
+                    "(district = #{district} or #{district} = '')"
     )
-    CostVo3 completeCount();
+    CostVo3 completeCount(CostVo2 costVo2);
 
 
     @Select(
@@ -678,6 +686,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "s1.create_time >= #{startTime}\n" +
                     "and\n" +
                     "(s1.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "cea_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "project_name  like  CONCAT('%',#{keyword},'%')  \n" +
                     "GROUP BY\n" +
                     "s1.id\n"
     )

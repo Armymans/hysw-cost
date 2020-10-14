@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,8 +32,8 @@ public class ProjectSumController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/projectCount/AllprojectCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Integer AllprojectCount(){
-        Integer integer = projectSumService.AllprojectCount();
+    public Integer AllprojectCount(CostVo2 costVo2){
+        Integer integer = projectSumService.AllprojectCount(costVo2);
         return integer;
     }
 
@@ -41,8 +42,8 @@ public class ProjectSumController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/projectCount/withAuditCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Integer withAuditCount(){
-        return  projectSumService.withAuditCount();
+    public Integer withAuditCount(CostVo2 costVo2){
+        return  projectSumService.withAuditCount(costVo2);
     }
 
     /**
@@ -50,8 +51,8 @@ public class ProjectSumController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/projectCount/conductCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Integer conductCount(){
-        return  projectSumService.conductCount();
+    public Integer conductCount(CostVo2 costVo2){
+        return  projectSumService.conductCount(costVo2);
     }
 
     /**
@@ -59,8 +60,28 @@ public class ProjectSumController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/projectCount/completeCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Integer completeCount(){
-        return  projectSumService.completeCount();
+    public Integer completeCount(CostVo2 costVo2){
+        return  projectSumService.completeCount(costVo2);
+    }
+
+    /**
+     * 项目统计 项目数量
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/projectNumber",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> projectNumber(CostVo2 costVo2){
+        Integer integer = projectSumService.AllprojectCount(costVo2);
+        Integer integer1 = projectSumService.withAuditCount(costVo2);
+        Integer integer2 = projectSumService.conductCount(costVo2);
+        Integer integer3 = projectSumService.completeCount(costVo2);
+
+        ProjectNumber projectNumber = new ProjectNumber();
+        projectNumber.setTotal(integer);
+        projectNumber.setWithAuditCount(integer1);
+        projectNumber.setConductCount(integer2);
+        projectNumber.setCompleteCount(integer3);
+
+        return RestUtil.success(projectNumber);
     }
 
     /**
@@ -341,19 +362,39 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/totalRevenue",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/totalRevenue",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> totalRevenue(CostVo2 costVo2){
         BigDecimal bigDecimal = projectSumService.totalRevenue(costVo2);
-        return RestUtil.success(bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
+        double value = bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        // 总支出
+        BigDecimal bigDecimal1 = projectSumService.totalexpenditure(costVo2);
+        double v = bigDecimal1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        // 总利润
+        BigDecimal bigDecimal3 = projectSumService.totalRevenue(costVo2);
+        BigDecimal bigDecimal2 = projectSumService.totalexpenditure(costVo2);
+        BigDecimal subtract = bigDecimal3.subtract(bigDecimal2);
+        double value1 = subtract.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        Expenditure expenditure = new Expenditure();
+
+        expenditure.setTotalRevenue(value);
+        expenditure.setTotalexpenditure(v);
+        expenditure.setTotalprofit(value1);
+
+
+        return RestUtil.success(expenditure);
     }
     /**
      * 企业总收支 总支出
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/totalexpenditure",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/totalexpenditure",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> totalexpenditure(CostVo2 costVo2){
         BigDecimal bigDecimal = projectSumService.totalexpenditure(costVo2);
+        bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
         return RestUtil.success(bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
     }
 
@@ -369,6 +410,8 @@ public class ProjectSumController extends BaseController {
         BigDecimal subtract = bigDecimal1.subtract(bigDecimal2);
         return RestUtil.success(subtract.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
     }
+
+
 
     /**
      * 项目进度统计
@@ -386,7 +429,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/prjectCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/prjectCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>prjectCensus(CostVo2 costVo2){
         List<CostVo3> costVo3s = projectSumService.prjectCensus(costVo2);
         String json =
@@ -410,10 +453,24 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/prjectCensusYear",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/prjectCensusYear",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>prjectCensusYear(CostVo2 costVo2){
         ConcurrentHashMap<String,Integer> map = new ConcurrentHashMap<>();
+
+//        本年项目数量
         Integer yearCount = projectSumService.prjectCensusYear(costVo2);
+//        本月项目数量
+        Integer MonthCount = projectSumService.prjectCensusMonth(costVo2);
+//        相比上月
+        Integer lastMonthCount = projectSumService.lastPrjectCensusMonth(costVo2);
+        Integer MonthRast = projectSumService.prjectCensusRast(MonthCount, lastMonthCount);
+//        相比上年
+        Integer lastyearCount = projectSumService.lastPrjectCensusMonth(costVo2);
+        Integer yearRast = projectSumService.prjectCensusRast(yearCount, lastyearCount);
+
+        map.put("yearRast",yearRast);
+        map.put("MonthRast",MonthRast);
+        map.put("MonthCount",MonthCount);
         map.put("yearCount",yearCount);
         return RestUtil.success(map);
     }
@@ -466,7 +523,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/projectIncomeCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/projectIncomeCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>projectIncomeCensus(CostVo2 costVo2){
         OneCensus oneCensus = projectSumService.projectIncomeCensus(costVo2);
         String josn = "";
@@ -511,12 +568,55 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(objects);
     }
 
+
+    @RequestMapping(value = "/api/projectCount/selectProjectExpenditureCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object>selectProjectExpenditureCensus(CostVo2 costVo2){
+        // 总收入构成
+        OneCensus oneCensus = projectSumService.projectIncomeCensus(costVo2);
+        String josn = "";
+        if(oneCensus!=null){
+            josn =
+                    "[" +
+                            "{\"value1\":"+oneCensus.getMunicipalPipeline()+",\"name1\":\"市政管道\"}," +
+                            "{\"value1\":"+oneCensus.getNetworkReconstruction()+",name1:\"管网改造\"}," +
+                            "{\"value1\":"+oneCensus.getNewCommunity()+",name1:\"新建小区\"}," +
+                            "{\"value1\":"+oneCensus.getSecondaryWater()+",name1:\"二次供水类型\"}," +
+                            "{\"value1\":"+oneCensus.getCommercialHouseholds()+",name1:\"工商户\"}," +
+                            "{\"value1\":"+oneCensus.getWaterResidents()+",name1:\"居民装接水\"}," +
+                            "{\"value1\":"+oneCensus.getAdministration()+",name1:\"行政事业\"}" +
+                            "]";
+        }
+        JSONArray objects = JSON.parseArray(josn);
+        // 总支出构成
+        OneCensus oneCensus1 = projectSumService.projectExpenditureCensus(costVo2);
+        String josn1 = "";
+        if(oneCensus!=null){
+            josn1 =
+                    "[" +
+                            "{\"value1\":"+oneCensus1.getMunicipalPipeline()+",\"name1\":\"市政管道\"}," +
+                            "{\"value1\":"+oneCensus1.getNetworkReconstruction()+",name1:\"管网改造\"}," +
+                            "{\"value1\":"+oneCensus1.getNewCommunity()+",name1:\"新建小区\"}," +
+                            "{\"value1\":"+oneCensus1.getSecondaryWater()+",name1:\"二次供水类型\"}," +
+                            "{\"value1\":"+oneCensus1.getCommercialHouseholds()+",name1:\"工商户\"}," +
+                            "{\"value1\":"+oneCensus1.getWaterResidents()+",name1:\"居民装接水\"}," +
+                            "{\"value1\":"+oneCensus1.getAdministration()+",name1:\"行政事业\"}" +
+                            "]";
+        }
+        JSONArray objects1 = JSON.parseArray(josn1);
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("data11",objects);
+        map.put("data12",objects1);
+
+        return RestUtil.success(map);
+    }
+
     /**
      * 企业收支统计 支出条形统计表
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/expenditureAnalysis",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/expenditureAnalysis",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>expenditureAnalysis(CostVo2 costVo2){
         List<OneCensus3> oneCensus3s = projectSumService.expenditureAnalysis(costVo2);
         String json =
@@ -551,10 +651,12 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/BaseProjectExpenditureList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/BaseProjectExpenditureList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> BaseProjectExpenditureList(CostVo2 costVo2){
     public Map<String,Object> BaseProjectExpenditureList(CostVo2 costVo2){
-        List<BaseProject> baseProjects = projectSumService.BaseProjectExpenditureList(costVo2);
-        return RestUtil.success(baseProjects);
+        PageInfo<BaseProject> baseProjectPageInfo = projectSumService.BaseProjectExpenditureList(costVo2);
+        return RestUtil.page(baseProjectPageInfo);
+//        return RestUtil.success(baseProjectPageInfo.getList());
     }
 
     /**
@@ -562,10 +664,10 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/BaseProjectInfoCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/BaseProjectInfoCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> BaseProjectInfoCensus(CostVo2 costVo2){
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.BaseProjectInfoCensus(costVo2);
-        return RestUtil.success(baseProjectPageInfo.getList());
+        return RestUtil.page(baseProjectPageInfo);
     }
 
     /**
@@ -859,10 +961,24 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/censusList2MonthCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/censusList2MonthCount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> censusList2MonthCount(CostVo2 costVo2){
-        Integer month = projectSumService.censusList2MonthCount(costVo2);
+//        本月任务数量
         ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        Integer month = projectSumService.censusList2MonthCount(costVo2);
+
+//        本年任务数量
+
+        Integer year = projectSumService.censusList2YearCount(costVo2);
+//        同比上年
+        Integer lastYear = projectSumService.censusList2LastYearCount(costVo2);
+        Integer yearRast = projectSumService.prjectCensusRast(year, lastYear);
+//        同比上月
+        Integer lastmonth = projectSumService.censusList2lastMonthCount(costVo2);
+        Integer monthRast = projectSumService.prjectCensusRast(month, lastmonth);
+        map.put("monthRast",monthRast);
+        map.put("yearRast",yearRast);
+        map.put("year",year);
         map.put("month",month);
         return RestUtil.success(map);
     }
@@ -1215,7 +1331,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/costTaskTotalCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/costTaskTotalCount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> costTaskTotalCount(CostVo2 costVo2){
         Integer costTaskTotal = projectSumService.costTaskTotal(costVo2);
         Integer costTaskReviewed = projectSumService.costTaskReviewed(costVo2);
@@ -1235,7 +1351,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/costTaskCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/costTaskCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> costTaskCensus(CostVo2 costVo2){
         List<OneCensus6> oneCensus6s = projectSumService.costTaskCensus(costVo2);
         String json =
@@ -1322,6 +1438,53 @@ public class ProjectSumController extends BaseController {
         JSONArray objects = JSON.parseArray(josn);
         return RestUtil.success(objects);
     }
+
+    /**
+     * 造价任务汇总统计图搜索
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/selectCostTaskSummary",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectCostTaskSummary(CostVo2 costVo2){
+        OneCensus7 oneCensus7 = projectSumService.costTaskSummary(costVo2);
+        String josn =
+                "[" +
+                        "{\"value1\":"+oneCensus7.getBudgeting()+",\"name1\":\"预算编制\"}," +
+                        "{\"value1\":"+oneCensus7.getLastSettlementReview()+",name1:\"上家结算编制'\"}," +
+                        "{\"value1\":"+oneCensus7.getSettlementAuditInformation()+",name1:\"下家结算审核'\"}," +
+                        "{\"value1\":"+oneCensus7.getTrackAuditInfo()+",name1:\"跟踪审计'\"}," +
+                        "{\"value1\":"+oneCensus7.getVisaChangeInformation()+",name1:\"签证/变更''\"}," +
+                        "{\"value1\":"+oneCensus7.getProgressPaymentInformation()+",name1:\"进度款支付'\"}" +
+                        "]";
+        JSONArray objects = JSON.parseArray(josn);
+
+
+        // 是否委外
+        Integer costTaskOutsourcingCount = projectSumService.costTaskOutsourcingCount(costVo2);
+        Integer costTaskNoOutsourcingCount = projectSumService.costTaskNoOutsourcingCount(costVo2);
+        String josn1 =
+                "[" +
+                        "{\"value1\":"+costTaskOutsourcingCount+",\"name1\":\"委外\"}," +
+                        "{\"value1\":"+costTaskNoOutsourcingCount+",name1:\"内部'\"}" +
+                        "]";
+        JSONArray objects1 = JSON.parseArray(josn1);
+
+        OneCensus7 oneCensus = projectSumService.costTaskSummary(costVo2);
+
+        ConcurrentHashMap<String, Integer> map1 = new ConcurrentHashMap<>();
+        map1.put("costTaskOutsourcingCount",costTaskOutsourcingCount);
+        map1.put("costTaskNoOutsourcingCount",costTaskNoOutsourcingCount);
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("data11",objects);
+        map.put("data12",objects1);
+        map.put("data13",oneCensus);
+        map.put("data14",map1);
+
+        return RestUtil.success(map);
+
+    }
+
 
     /**
      * 造价任务汇总个数

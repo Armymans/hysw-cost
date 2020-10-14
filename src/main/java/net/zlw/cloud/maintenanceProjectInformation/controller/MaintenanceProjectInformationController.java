@@ -73,11 +73,11 @@ public class MaintenanceProjectInformationController extends BaseController {
      * 提交：把数据保存到数据库，得到一个审核人 id
      * @param maintenanceProjectInformationVo
      */
-    @RequestMapping(value = "/maintenanceProjectInformation/addMaintenanceProjectInformation",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,@RequestParam(name = "id") String id){
+    @RequestMapping(value = "/maintenanceProjectInformation/addMaintenanceProjectInformation",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo){
 //        UserInfo loginUser = getLoginUser();
 //        System.out.println("user:"+loginUser);
-        maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser(),id);
+        maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser());
         return RestUtil.success("新增提交成功");
     }
 

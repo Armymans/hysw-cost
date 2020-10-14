@@ -6,6 +6,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
 import net.zlw.cloud.VisaChange.model.VisaChange;
+import net.zlw.cloud.clearProject.model.ClearProject;
 import net.zlw.cloud.designProject.mapper.*;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
@@ -87,8 +88,8 @@ public class ProjectSumService {
      * 全部项目
      * @return
      */
-    public Integer AllprojectCount(){
-        CostVo3 costVo3 = projectMapper.AllprojectCount();
+    public Integer AllprojectCount(CostVo2 costVo2){
+        CostVo3 costVo3 = projectMapper.AllprojectCount(costVo2);
         Integer budgetingCount = costVo3.getBudgetingCount();
         Integer desginStatus = costVo3.getDesginStatus();
         Integer progressPaymentInformation = costVo3.getProgressPaymentInformation();
@@ -103,8 +104,8 @@ public class ProjectSumService {
      * 待审核项目
      * @return
      */
-    public Integer withAuditCount(){
-        CostVo3 costVo3 = projectMapper.withAuditCount();
+    public Integer withAuditCount(CostVo2 costVo2){
+        CostVo3 costVo3 = projectMapper.withAuditCount(costVo2);
         Integer budgetingCount = costVo3.getBudgetingCount();
         Integer desginStatus = costVo3.getDesginStatus();
         Integer progressPaymentInformation = costVo3.getProgressPaymentInformation();
@@ -119,8 +120,8 @@ public class ProjectSumService {
      * 已完成的项目
      * @return
      */
-    public Integer conductCount(){
-        CostVo3 costVo3 = projectMapper.conductCount();
+    public Integer conductCount(CostVo2 costVo2){
+        CostVo3 costVo3 = projectMapper.conductCount(costVo2);
         Integer budgetingCount = costVo3.getBudgetingCount();
         Integer desginStatus = costVo3.getDesginStatus();
         Integer progressPaymentInformation = costVo3.getProgressPaymentInformation();
@@ -135,8 +136,8 @@ public class ProjectSumService {
      * 进行中项目
      * @return
      */
-    public Integer completeCount(){
-        CostVo3 costVo3 = projectMapper.completeCount();
+    public Integer completeCount(CostVo2 costVo2){
+        CostVo3 costVo3 = projectMapper.completeCount(costVo2);
         Integer budgetingCount = costVo3.getBudgetingCount();
         Integer desginStatus = costVo3.getDesginStatus();
         Integer progressPaymentInformation = costVo3.getProgressPaymentInformation();
@@ -865,17 +866,24 @@ public class ProjectSumService {
         }
     }
 
-    public List<BaseProject> BaseProjectExpenditureList(CostVo2 costVo2) {
+    public PageInfo<BaseProject> BaseProjectExpenditureList(CostVo2 costVo2) {
+
+        //        设置分页助手
+        PageHelper.startPage(costVo2.getPageNum(), costVo2.getPageSize());
+
         if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
             List<BaseProject> baseProjects = projectMapper.BaseProjectExpenditureList(costVo2);
-            return baseProjects;
+
+            PageInfo<BaseProject> projectPageInfo = new PageInfo<>(baseProjects);
+            return projectPageInfo;
         }else{
             LocalDateTime now = LocalDateTime.now();
             int year = now.getYear();
             costVo2.setStartTime(year + "-01-01");
             costVo2.setEndTime(year + "-12-31");
             List<BaseProject> baseProjects = projectMapper.BaseProjectExpenditureList(costVo2);
-            return baseProjects;
+            PageInfo<BaseProject> projectPageInfo = new PageInfo<>(baseProjects);
+            return projectPageInfo;
         }
     }
 
