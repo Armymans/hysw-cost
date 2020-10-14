@@ -53,10 +53,12 @@ public class projectOverviewController extends BaseController {
         return RestUtil.success(message);
     }
     //造价部门和设计部门模块数量
-    @GetMapping("/moduleNumber")
-    public List<ModuleNumber> moduleNumber(){
+//    @GetMapping("/moduleNumber")
+    @RequestMapping(value = "/projectOverview/moduleNumber",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> moduleNumber(){
         List<BaseProject> allBaseProject = baseProjectService.findAllBaseProject();
-       return projectOverviewService.moduleNumber(allBaseProject);
+        List<ModuleNumber> moduleNumbers = projectOverviewService.moduleNumber(allBaseProject);
+        return RestUtil.success(moduleNumbers);
     }
     //造价部门和设计部门统计数据
 //    @GetMapping("/findStatisticalData")/projectOverview/findStatisticalData

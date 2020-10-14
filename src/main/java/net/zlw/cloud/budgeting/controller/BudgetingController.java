@@ -4,6 +4,7 @@ import com.alibaba.druid.sql.visitor.functions.If;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.sun.corba.se.spi.ior.iiop.IIOPFactories;
+import groovy.util.logging.Log4j;
 import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.zlw.cloud.common.RestUtil;
@@ -32,7 +33,8 @@ public class BudgetingController extends BaseController {
 //    @PostMapping("/addBudgeting")
     @RequestMapping(value = "/budgeting/addBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addBudgeting(BudgetingVo budgetingVo){
-        budgetingService.addBudgeting(budgetingVo,getLoginUser());
+        UserInfo loginUser = getLoginUser();
+        budgetingService.addBudgeting(budgetingVo,loginUser);
         return RestUtil.success("添加成功");
     }
     //根据ID查询预算信息
@@ -174,6 +176,12 @@ public class BudgetingController extends BaseController {
        List<DesignInfo> list = budgetingService.findDesignAll(pageBVo);
         PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(list);
         return RestUtil.page(designInfoPageInfo);
+    }
+    //删除预算
+    @RequestMapping(value = "/budgeting/deleteBudgeting",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> deleteBudgeting(@RequestParam(name = "id") String id){
+        budgetingService.deleteBudgeting(id);
+        return RestUtil.success();
     }
 
 

@@ -162,7 +162,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "from design_info d \n" +
             "LEFT JOIN base_project b on d.base_project_id = b.id\n" +
             "where \n" +
-            "(select id from budgeting bt where bt.base_project_id = b.id) is null and\n" +
+            "(select id from budgeting bt where bt.base_project_id = b.id and bt.del_flag = '0') is null and\n" +
             "(b.district = #{district} or #{district} = '') and \n" +
             "(b.design_category = #{designCategory} or #{designCategory} = '') and \n" +
             "(b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '') and \n" +
