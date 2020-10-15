@@ -1667,7 +1667,7 @@ public class ProjectService {
      */
     public OneCensus2 costCensus(CostVo2 costVo2){
         //todo getid
-        costVo2.setId("user282");
+        costVo2.setId("ceshi01");
         if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
             OneCensus2 oneCensus2 = projectMapper.costCensus(costVo2);
             return oneCensus2;
@@ -1684,7 +1684,7 @@ public class ProjectService {
      * @return
      */
     public List<OneCensus2> costCensusList(CostVo2 costVo2){
-        costVo2.setId("user282");
+        costVo2.setId("ceshi01");
         List<OneCensus2> oneCensus2s = null;
         if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
             oneCensus2s = projectMapper.costCensusList(costVo2);
@@ -1706,7 +1706,7 @@ public class ProjectService {
 
     public Integer yearTaskCount(CostVo2 costVo2) {
         //todo getid
-        costVo2.setId("user282");
+        costVo2.setId("ceshi01");
         CostVo2 costVo21 = this.NowYear(costVo2);
         OneCensus2 oneCensus2 = projectMapper.costCensus(costVo2);
         Integer budget = oneCensus2.getBudget();
