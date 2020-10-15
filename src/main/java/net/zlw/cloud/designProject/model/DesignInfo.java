@@ -90,6 +90,9 @@ public class DesignInfo{
     private String designChangeTime;  //设计更改时间
 
     @Transient
+    private String designUnitName; //设计单位名称
+
+    @Transient
     private String ischange;  //是否更改
 
     @Transient

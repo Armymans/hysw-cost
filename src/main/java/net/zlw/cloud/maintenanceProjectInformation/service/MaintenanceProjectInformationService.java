@@ -619,6 +619,7 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
 
         settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
+        settlementAuditInformation.setBaseProjectId(id);
         settlementAuditInformation.setContractRemarkes(maintenanceProjectInformation.getContractRemarkes());
         settlementAuditInformation.setPreparePeople(maintenanceProjectInformation.getPreparePeople2());
         settlementAuditInformation.setOutsourcing(maintenanceProjectInformation.getOutsourcing());

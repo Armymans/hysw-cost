@@ -21,65 +21,20 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                         "s1.cea_num,\n" +
                         "s1.project_num,\n" +
                         "s1.project_name,\n" +
-                        "(\n" +
-                        "case s1.desgin_status\n" +
-                        "  when \"1\" then \"待审核\"\n" +
-                        "  when \"2\" then \"出图中\"\n" +
-                        "  when \"3\" then \"未通过\"\n" +
-                        "  when \"4\" then \"已完成\"\n" +
-                        "  end\n" +
-                        ") as desgin_status,\n" +
-                        "(\n" +
-                        "case s1.district\n" +
-                        "  when \"1\" then \"芜湖\"\n" +
-                        "  when \"2\" then \"马鞍山\"\n" +
-                        "  when \"3\" then \"江北\"\n" +
-                        "  when \"4\" then \"吴江\"\n" +
-                        "  end\n" +
-                        ") as district,\n" +
+                        "s1.desgin_status,\n" +
+                        "s1.district,\n" +
                         "s1.water_address,\n" +
                         "s1.construction_unit,\n" +
                         "s2.contacts,\n" +
                         "s2.phone,\n" +
-                        "(\n" +
-                        "case s1.project_nature\n" +
-                        "  when \"1\" then \"新建\"\n" +
-                        "  when \"2\" then \"改造\"\n" +
-                        "  end\n" +
-                        ") as project_nature,\n" +
-                        "(\n" +
-                        "case s1.design_category\n" +
-                        "  when \"1\" then \"市政管道\"\n" +
-                        "  when \"2\" then \"管网改造\"\n" +
-                        "  when \"3\" then \"新建小区\"\n" +
-                        "  when \"4\" then \"二次供水项目\"\n" +
-                        "  when \"5\" then \"工商户\"\n" +
-                        "  when \"6\" then \"居民装接水\"\n" +
-                        "  when \"7\" then \"行政事业\"\n" +
-                        "  end\n" +
-                        ") as design_category,\n" +
-                        "(\n" +
-                        "case s1.project_category\n" +
-                        "  when \"1\" then \"住宅区配套\"\n" +
-                        "  when \"2\" then \"商业区配套\"\n" +
-                        "  when \"3\" then \"工商区配套\"\n" +
-                        "  end\n" +
-                        ") as project_category,\n" +
-                        "(\n" +
-                        "case s1.a_b\n" +
-                        "  when \"1\" then \"A\"\n" +
-                        "  when \"2\" then \"B\"\n" +
-                        "  end\n" +
-                        ") as a_b,\n" +
-                        "s5.design_unit_name design_unit,\n" +
+                        "s1.project_nature,\n" +
+                        "s1.design_category,\n" +
+                        "s1.project_category,\n" +
+                        "s1.a_b,\n" +
+                        "s5.design_unit_name designUnitName,\n" +
                         "s2.isaccount,\n" +
                         "s2.isdeschange,\n" +
-                        "(\n" +
-                        "case s2.outsource\n" +
-                        "  when \"0\" then \"是\"\n" +
-                        "  when \"1\" then \"否\"\n" +
-                        "  end\n" +
-                        ") as outsource,\n" +
+                        "s2.outsource,\n" +
                         "s2.outsource_money,\n" +
                         "s2.designer,\n" +
                         "s2.take_time,\n" +
@@ -141,64 +96,19 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.project_num,\n" +
                     "s1.project_name,\n" +
                     "s1.merge_flag,\n" +
-                    "(\n" +
-                    "case s1.desgin_status\n" +
-                    "  when \"1\" then \"待审核\"\n" +
-                    "  when \"2\" then \"出图中\"\n" +
-                    "  when \"3\" then \"未通过\"\n" +
-                    "  when \"4\" then \"已完成\"\n" +
-                    "  end\n" +
-                    ") as desgin_status,\n" +
-                    "(\n" +
-                    "case s1.district\n" +
-                    "  when \"1\" then \"芜湖\"\n" +
-                    "  when \"2\" then \"马鞍山\"\n" +
-                    "  when \"3\" then \"江北\"\n" +
-                    "  when \"4\" then \"吴江\"\n" +
-                    "  end\n" +
-                    ") as district,\n" +
+                    "s1.desgin_status,\n" +
+                    "s1.district,\n" +
                     "s1.water_address,\n" +
                     "s1.construction_unit,\n" +
                     "s2.contacts,\n" +
                     "s2.phone,\n" +
-                    "(\n" +
-                    "case s2.outsource\n" +
-                    "  when \"0\" then \"是\"\n" +
-                    "  when \"1\" then \"否\"\n" +
-                    "  end\n" +
-                    ") as outsource,\n" +
+                    "s2.outsource,\n" +
                     "s2.designer,\n" +
-                    "(\n" +
-                    "case s1.project_nature\n" +
-                    "  when \"1\" then \"新建\"\n" +
-                    "  when \"2\" then \"改造\"\n" +
-                    "  end\n" +
-                    ") as project_nature,\n" +
-                    "(\n" +
-                    "case s1.design_category\n" +
-                    "  when \"1\" then \"市政管道\"\n" +
-                    "  when \"2\" then \"管网改造\"\n" +
-                    "  when \"3\" then \"新建小区\"\n" +
-                    "  when \"4\" then \"二次供水项目\"\n" +
-                    "  when \"5\" then \"工商户\"\n" +
-                    "  when \"6\" then \"居民装接水\"\n" +
-                    "  when \"7\" then \"行政事业\"\n" +
-                    "  end\n" +
-                    ") as design_category,\n" +
-                    "(\n" +
-                    "case s1.project_category\n" +
-                    "  when \"1\" then \"住宅区配套\"\n" +
-                    "  when \"2\" then \"商业区配套\"\n" +
-                    "  when \"3\" then \"工商区配套\"\n" +
-                    "  end\n" +
-                    ") as project_category,\n" +
-                    "(\n" +
-                    "case s1.a_b\n" +
-                    "  when \"1\" then \"A\"\n" +
-                    "  when \"2\" then \"B\"\n" +
-                    "  end\n" +
-                    ") as a_b,\n" +
-                    "s5.design_unit_name design_unit,\n" +
+                    "s1.project_nature,\n" +
+                    "s1.design_category,\n" +
+                    "s1.project_category,\n" +
+                    "s1.a_b,\n" +
+                    "s5.design_unit_name designUnitName,\n" +
                     "s2.isaccount,\n" +
                     "s2.isdeschange,\n" +
                     "s2.outsource_money,\n" +
@@ -257,71 +167,26 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.project_num,\n" +
                     "s1.merge_flag,\n" +
                     "s1.project_name,\n" +
-                    "(\n" +
-                    "case s1.desgin_status\n" +
-                    "  when \"1\" then \"待审核\"\n" +
-                    "  when \"2\" then \"出图中\"\n" +
-                    "  when \"3\" then \"未通过\"\n" +
-                    "  when \"4\" then \"已完成\"\n" +
-                    "  end\n" +
-                    ") as desgin_status,\n" +
-                    "(\n" +
-                    "case s1.district\n" +
-                    "  when \"1\" then \"芜湖\"\n" +
-                    "  when \"2\" then \"马鞍山\"\n" +
-                    "  when \"3\" then \"江北\"\n" +
-                    "  when \"4\" then \"吴江\"\n" +
-                    "  end\n" +
-                    ") as district,\n" +
+                    "s1.desgin_status,\n" +
+                    "s1.district,\n" +
                     "s1.water_address,\n" +
                     "s1.construction_unit,\n" +
                     "s2.contacts,\n" +
                     "s2.phone,\n" +
-                    "(\n" +
-                    "case s2.outsource\n" +
-                    "  when \"0\" then \"是\"\n" +
-                    "  when \"1\" then \"否\"\n" +
-                    "  end\n" +
-                    ") as outsource,\n" +
+                    "s2.outsource,\n" +
                     "s2.designer,\n" +
-                    "(\n" +
-                    "case s1.project_nature\n" +
-                    "  when \"1\" then \"新建\"\n" +
-                    "  when \"2\" then \"改造\"\n" +
-                    "  end\n" +
-                    ") as project_nature,\n" +
-                    "(\n" +
-                    "case s1.design_category\n" +
-                    "  when \"1\" then \"市政管道\"\n" +
-                    "  when \"2\" then \"管网改造\"\n" +
-                    "  when \"3\" then \"新建小区\"\n" +
-                    "  when \"4\" then \"二次供水项目\"\n" +
-                    "  when \"5\" then \"工商户\"\n" +
-                    "  when \"6\" then \"居民装接水\"\n" +
-                    "  when \"7\" then \"行政事业\"\n" +
-                    "  end\n" +
-                    ") as design_category,\n" +
-                    "(\n" +
-                    "case s1.project_category\n" +
-                    "  when \"1\" then \"住宅区配套\"\n" +
-                    "  when \"2\" then \"商业区配套\"\n" +
-                    "  when \"3\" then \"工商区配套\"\n" +
-                    "  end\n" +
-                    ") as project_category,\n" +
-                    "(\n" +
-                    "case s1.a_b\n" +
-                    "  when \"1\" then \"A\"\n" +
-                    "  when \"2\" then \"B\"\n" +
-                    "  end\n" +
-                    ") as a_b,\n" +
-                    "s5.design_unit_name design_unit,\n" +
+                    "s1.project_nature,\n" +
+                    "s1.design_category,\n" +
+                    "s1.project_category,\n" +
+                    "s1.a_b,\n" +
+                    "s5.design_unit_name designUnitName,\n" +
                     "s2.isaccount,\n" +
                     "s2.isdeschange,\n" +
                     "s2.outsource_money,\n" +
                     "s2.take_time,\n" +
                     "s2.blueprint_start_time,\n" +
-                    "s3.design_change_time ,\n" +
-                    "s2.isfinalaccount ,\n" +
+                    "s3.design_change_time,\n" +
+                    "s2.isfinalaccount,\n" +
                     "( CASE WHEN s3.design_change_time IS NULL THEN '否' ELSE '是' END ) AS ischange\n" +
                     "FROM\n" +
                     "design_info s2 LEFT JOIN design_change_info s3 ON s2.id = s3.design_info_id \n" +
