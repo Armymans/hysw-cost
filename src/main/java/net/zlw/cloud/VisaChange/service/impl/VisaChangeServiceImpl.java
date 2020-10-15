@@ -14,11 +14,13 @@ import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.VisaChange.service.VisaChangeService;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.general.SearchBaseProjectController;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Autowired
     private BaseProjectDao baseProjectDao;
+
+    @Autowired
+    private BaseProjectService baseProjectService;
 
 
     /***
@@ -217,7 +222,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeInfoVo.setNameOfCostUnit(change.getNameOfCostUnit());
                 visaChangeInfoVo.setContact(change.getContact());
                 visaChangeInfoVo.setContactNumber(change.getContactNumber());
-                visaChangeInfoVo.setOutsourcingAmount(change.getOutsourcingAmount() + "");
+                if(!"".equals(visaChangeInfoVo.getOutsourcingAmount())){
+                    visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                }
                 visaChangeInfoVo.setVisaChangeReason(change.getVisaChangeReason());
 
                 //封装
@@ -246,7 +253,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeInfoVo.setNameOfCostUnitDown(change.getNameOfCostUnit());
                 visaChangeInfoVo.setContactDown(change.getContact());
                 visaChangeInfoVo.setContactNumberDown(change.getContactNumber());
-                visaChangeInfoVo.setOutsourcingAmountDown(change.getOutsourcingAmount() + "");
+                if(!"".equals(visaChangeInfoVo.getOutsourcingAmount())){
+                    visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                }
                 visaChangeInfoVo.setVisaChangeReasonDown(change.getVisaChangeReason());
 
                 //封装
@@ -506,7 +515,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChange.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnitDown());
             visaChange.setContact(visaChangeInfoVo.getContactDown());
             visaChange.setContactNumber(visaChangeInfoVo.getContactNumberDown());
-            visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+            if(!"".equals(visaChangeInfoVo.getOutsourcingAmount())){
+                visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+            }
             visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReasonDown());
             visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
             visaChange.setUpAndDownMark("1");
@@ -656,7 +667,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChange.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnit());
                 visaChange.setContact(visaChangeInfoVo.getContact());
                 visaChange.setContactNumber(visaChangeInfoVo.getContactNumber());
-                visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                if(!"".equals(visaChangeInfoVo.getOutsourcingAmount())){
+                    visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                }
                 visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReason());
                 visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
@@ -687,7 +700,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChange.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnitDown());
                 visaChange.setContact(visaChangeInfoVo.getContactDown());
                 visaChange.setContactNumber(visaChangeInfoVo.getContactNumberDown());
-                visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                if(!"".equals(visaChangeInfoVo.getOutsourcingAmount())){
+                    visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                }
                 visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReasonDown());
                 visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
@@ -739,7 +754,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChange.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnit());
                 visaChange.setContact(visaChangeInfoVo.getContact());
                 visaChange.setContactNumber(visaChangeInfoVo.getContactNumber());
-                visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                if(!"".equals(visaChangeInfoVo.getOutsourcingAmount())){
+                    visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                }
                 visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReason());
                 visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 visaChange.setUpAndDownMark("0");
@@ -770,7 +787,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChange.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnitDown());
                 visaChange.setContact(visaChangeInfoVo.getContactDown());
                 visaChange.setContactNumber(visaChangeInfoVo.getContactNumberDown());
-                visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                if(!"".equals(visaChangeInfoVo.getOutsourcingAmount())){
+                    visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                }
                 visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReasonDown());
                 visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 visaChange.setUpAndDownMark("1");
@@ -819,10 +838,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
         //项目信息
         String baseProjectId = visaChange.getBaseProjectId();
-        Example example1 = new Example(BaseProject.class);
-        example1.createCriteria().andEqualTo("id", baseProjectId);
-        BaseProject baseProject = baseProjectDao.selectOneByExample(example1);
-
+        BaseProject baseProject = baseProjectService.findById(baseProjectId);
         visaChangeInfoVo.setBaseProject(baseProject);
 
         //获取上下家签证/变更申请信息
@@ -895,7 +911,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChangeInfoVo.setNameOfCostUnit(visaChange.getNameOfCostUnit());
             visaChangeInfoVo.setContact(visaChange.getContact());
             visaChangeInfoVo.setContactNumber(visaChange.getContactNumber());
-            visaChangeInfoVo.setOutsourcingAmount(visaChange.getOutsourcingAmount() + "");
+            if(!"".equals(visaChangeInfoVo.getOutsourcingAmount())){
+                visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+            }
             visaChangeInfoVo.setVisaChangeReason(visaChange.getVisaChangeReason());
 
             //封装
@@ -925,7 +943,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChangeInfoVo.setNameOfCostUnitDown(visaChange.getNameOfCostUnit());
             visaChangeInfoVo.setContactDown(visaChange.getContact());
             visaChangeInfoVo.setContactNumberDown(visaChange.getContactNumber());
-            visaChangeInfoVo.setOutsourcingAmountDown(visaChange.getOutsourcingAmount() + "");
+            if(!"".equals(visaChangeInfoVo.getOutsourcingAmount())){
+                visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+            }
             visaChangeInfoVo.setVisaChangeReasonDown(visaChange.getVisaChangeReason());
 
             //封装
