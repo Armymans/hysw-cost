@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class ProgressListVo {
     private String id;
+    private String baseId;
     private String ceaNum;
     private String projectNum;
     private String projectName;
@@ -18,6 +19,7 @@ public class ProgressListVo {
     private String constructionUnit;
     private String projectCategory;
     private String projectNature;
+    private String projectType;
     private String designCategory;
     private String waterSupplyType;
     private String customerName;

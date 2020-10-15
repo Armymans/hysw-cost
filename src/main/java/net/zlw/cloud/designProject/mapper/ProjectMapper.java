@@ -666,8 +666,26 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "s1.id, " +
                     "s1.cea_num, " +
                     "s1.project_name, " +
-                    "s1.district, " +
-                    "s1.design_category, " +
+                    "( CASE s1.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,\n" +
+                    "(\n" +
+                    "\tCASE\n" +
+                    "\t\t\ts1.design_category \n" +
+                    "\t\t\tWHEN '1' THEN\n" +
+                    "\t\t\t'市政管道' \n" +
+                    "\t\t\tWHEN '2' THEN\n" +
+                    "\t\t\t'管网改造' \n" +
+                    "\t\t\tWHEN '3' THEN\n" +
+                    "\t\t\t'新建小区' \n" +
+                    "\t\t\tWHEN '4' THEN\n" +
+                    "\t\t\t'二次供水项目' \n" +
+                    "\t\t\tWHEN '5' THEN\n" +
+                    "\t\t\t'工商户' \n" +
+                    "\t\t\tWHEN '6' THEN\n" +
+                    "\t\t\t'居民装接水' \n" +
+                    "\t\t\tWHEN '7' THEN\n" +
+                    "\t\t\t'行政事业' \n" +
+                    "\t\tEND \n" +
+                    "\t\t) AS designCategory,\n" +
                     "s6.review_number, " +
                     "s7.authorized_number, " +
                     "sum( " +
@@ -713,7 +731,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "s1.id, " +
                     "s1.cea_num, " +
                     "s1.project_name, " +
-                    "s1.district, " +
+                    "( CASE s1.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,\n" +
                     "s2.amount_cost amountCost, " +
                     "s3.cost_total_amount costTotalAmount, " +
                     "s4.bidding_price_control biddingPriceControl, " +

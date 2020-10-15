@@ -5,10 +5,13 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.progressPayment.model.ProgressPaymentTotalPayment;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.PageVo;
 import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
+import net.zlw.cloud.progressPayment.model.vo.ProgressPaymentTotalPaymentVo;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
+import net.zlw.cloud.progressPayment.service.ProgressPaymentTotalPaymentService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,6 +24,9 @@ import java.util.Map;
 public class ProgressPaymentController  extends BaseController {
     @Resource
     private BaseProjectService baseProjectService;
+
+    @Resource
+    private ProgressPaymentTotalPaymentService progressPaymentTotalPaymentService;
 
     //进度款新增
 //    @PostMapping("/addProgress")
@@ -82,4 +88,10 @@ public class ProgressPaymentController  extends BaseController {
 //        baseProjectService.oneBatchReview(id);
 //        return RestUtil.success();
 //    }
+
+    @RequestMapping(value = "/progress/findAllProgressPaymentTotalPayment",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findAllProgressPaymentTotalPayment(@RequestParam(name = "id") String id){
+        List<ProgressPaymentTotalPaymentVo> allProgressPaymentTotalPayment = progressPaymentTotalPaymentService.findAllProgressPaymentTotalPayment(id);
+        return RestUtil.success(allProgressPaymentTotalPayment);
+    }
 }

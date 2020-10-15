@@ -3,6 +3,8 @@ package net.zlw.cloud.followAuditing.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.budgeting.mapper.BudgetingDao;
+import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.followAuditing.mapper.TrackApplicationInfoDao;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
@@ -46,6 +48,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     private BaseProjectDao baseProjectDao;
     @Resource
     private MemberManageDao memberManageDao;
+    @Resource
+    private BudgetingDao budgetingDao;
 
 
     @Override
@@ -53,6 +57,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         // 设置分页助手
         PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
         ArrayList<ReturnTrackVo> returnTrackVos1 = new ArrayList<>();
+        System.err.println(pageVo);
         List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
         for (ReturnTrackVo returnTrackVo : returnTrackVos) {
             if (! returnTrackVos1.contains(returnTrackVo)){
@@ -96,13 +101,25 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 example.createCriteria().andEqualTo("baseProjectId",s);
                 //跟踪审计审核
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+
+                Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+                String baseProjectId = budgeting.getBaseProjectId();
+                System.err.println(baseProjectId);
+
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
                 if (!auditInfo.getAuditResult().equals("1")){
                     auditInfo.setAuditResult(batchReviewVo.getAuditResult());
                     auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                     SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     auditInfo.setAuditTime(sim.format(new Date()));
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                   if (batchReviewVo.getAuditResult().equals("1")){
+                       baseProject.setTrackStatus("3");
+                   }else if(batchReviewVo.getAuditResult().equals("2")){
+                       baseProject.setTrackStatus("4");
+                   }
                 }
+                baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 Example example1 = new Example(TrackMonthly.class);
                 example1.createCriteria().andEqualTo("trackId",s);
                 List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
@@ -110,13 +127,19 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     for (TrackMonthly trackMonthly : trackMonthlies) {
                         Example example2 = new Example(AuditInfo.class);
                         example2.createCriteria().andEqualTo("baseProjectId",trackMonthly.getId());
-                        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example2);
-                        if (!auditInfo1.getAuditResult().equals("1")){
-                            auditInfo1.setAuditResult(batchReviewVo.getAuditResult());
-                            auditInfo1.setAuditOpinion(batchReviewVo.getAuditOpinion());
-                            auditInfo1.setAuditTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-                            auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
+//                        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example2);
+
+                        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
+                        for (AuditInfo info : auditInfos) {
+                            if (!info.getAuditResult().equals("1")){
+                                info.setAuditResult(batchReviewVo.getAuditResult());
+                                info.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                                info.setAuditTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+                                auditInfoDao.updateByPrimaryKeySelective(info);
+                            }
                         }
+
+
                     }
                 }
 

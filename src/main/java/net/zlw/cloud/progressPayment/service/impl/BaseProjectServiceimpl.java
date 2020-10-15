@@ -59,10 +59,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public void addProgress(BaseProjectVo baseProject, UserInfo loginUser) {
 
 
-        Budgeting budgeting = budgetingMapper.selectByPrimaryKey(baseProject.getId());
+//        Budgeting budgeting = budgetingMapper.selectByPrimaryKey(baseProject.getId());
 
         //项目基本信息
-        BaseProject project = findById(budgeting.getBaseProjectId());
+//        BaseProject project = findById(budgeting.getBaseProjectId());
+        BaseProject project = baseProjectDao.selectByPrimaryKey(baseProject.getId());
         //申请信息
         ApplicationInformation information = new ApplicationInformation();
         //进度款累计支付信息
@@ -406,13 +407,20 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
-    public BaseProject findById(String projectNum) {
-        Example example = new Example(BaseProject.class);
-        example.createCriteria().andEqualTo("id",projectNum);
+    public BaseProject findById(String id) {
 
-        baseProjectDao.selectByPrimaryKey(projectNum);
+        System.err.println("id:"+id);
 
-        BaseProject baseProject = baseProjectDao.selectOneByExample(example);
+        Budgeting budgeting = budgetingMapper.selectByPrimaryKey(id);
+
+//        System.err.println(budgeting);
+//        Example example = new Example(BaseProject.class);
+//        example.createCriteria().andEqualTo("id",id);
+//        BaseProject baseProject = baseProjectDao.selectOneByExample(example);
+
+        String baseProjectId = budgeting.getBaseProjectId();
+        System.err.println(baseProjectId);
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
 
         if(baseProject != null){
             ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(baseProject.getConstructionUnit());

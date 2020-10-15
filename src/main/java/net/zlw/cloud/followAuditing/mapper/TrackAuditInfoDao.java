@@ -42,6 +42,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
             "( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType,\n" +
             "b.customer_name customerName,\n" +
             "b.water_address waterAddress,\n" +
+            "b.a_b aB,\n" +
             "b.construction_organization constructionOrganization,\n" +
             "(select writter from track_monthly where track_id = tai.id limit 0,1) writter,\n" +
             "(select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) fillTime ,\n" +

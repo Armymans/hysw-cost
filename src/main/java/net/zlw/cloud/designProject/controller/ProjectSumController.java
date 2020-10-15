@@ -418,7 +418,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/projectFlow",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/projectFlow",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>projectFlow(CostVo2 costVo2){
         List<BaseProject> baseProjects = projectSumService.projectFlow(costVo2);
         return RestUtil.success(baseProjects);

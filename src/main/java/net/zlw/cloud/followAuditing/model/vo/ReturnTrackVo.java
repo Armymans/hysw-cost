@@ -29,6 +29,7 @@ public class ReturnTrackVo {
     private String outsource;
     private String auditUnitNameId;
     private String ceaTotalMoney;
+    private String aB;
 
     @Override
     public boolean equals(Object o) {

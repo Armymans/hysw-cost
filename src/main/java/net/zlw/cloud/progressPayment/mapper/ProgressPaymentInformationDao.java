@@ -66,14 +66,16 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
 
     @Select("SELECT\n" +
             "p.id id,\n" +
+            "b.id baseId,\n" +
             "b.cea_num ceaNum," +
             "b.project_num projectNum,\n" +
             "b.project_name projectName,\n" +
-            "b.progress_payment_status progressPaymentStatus,\n" +
+            "( CASE b.progress_payment_status WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '进行中' WHEN '6' THEN '已完成' END )as  progressPaymentStatus,\n" +
             "( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,\n" +
             "b.water_address waterAddress,\n" +
             "b.construction_unit constructionUnit,\n" +
             "b.project_category projectCategory,\n" +
+            "( CASE p.project_type WHEN '1' THEN '合同内进度款支付' WHEN '2' THEN '合同外进度款支付' END ) AS projectType,\n" +
             "( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,\n" +
             "(\n" +
             "\tCASE\n" +
@@ -97,7 +99,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             "( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType,\n" +
             "b.customer_name customerName,\n" +
             "(select member_name username from member_manage where id = p.founder_id) username,\n" +
-            "bt.outsourcing outsourcing,\n" +
+            "( CASE bt.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing,\n" +
             "bt.name_of_cost_unit nameOfCostUnit,\n" +
             "bt.amount_cost amountCost,\n" +
             "p.contract_amount contractAmount,\n" +
@@ -106,7 +108,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             "p.current_payment_Information currentPaymentInformation,\n" +
             "p.current_payment_ratio currentPaymentRatio,\n" +
             "pt.cumulative_number_payment cumulativeNumberPayment,\n" +
-            "p.receiving_time receiptTime,\n" +
+            "p.receiving_time receivingTime,\n" +
             "p.compile_time compileTime\n" +
             "from progress_payment_information p \n" +
             "LEFT JOIN base_project b on p.base_project_id = b.id \n" +
