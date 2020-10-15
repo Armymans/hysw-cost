@@ -126,6 +126,7 @@ public class StatusticAnalysisService {
             Calendar cal = Calendar.getInstance();
            int i = cal.get(Calendar.YEAR);
             for (PerformanceDistributionChart performanceDistributionChart : costPerformanceDistributionChart) {
+                System.err.println(performanceDistributionChart);;
                 if (performanceDistributionChart.getYearTime().equals(i+"")){
                     thisYear.add(performanceDistributionChart);
                 }

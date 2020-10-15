@@ -70,10 +70,11 @@ public class SettleAccountsController {
         BaseAccountsVo accountsVo = settleAccountsService.findAccountById(id);
         return RestUtil.success(accountsVo);
     }
-    @PutMapping("/updateAccountById")
-    public String updateAccountById(@RequestBody BaseAccountsVo baseAccountsVo){
+//    @PutMapping("/updateAccountById")
+    @RequestMapping(value = "/accounts/updateAccountById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> updateAccountById(BaseAccountsVo baseAccountsVo){
         settleAccountsService.updateAccountById(baseAccountsVo);
-        return "修改成功";
+        return RestUtil.success();
     }
     //结算批量审核
     @RequestMapping(value = "/accounts/batchReview",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)

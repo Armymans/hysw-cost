@@ -27,6 +27,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -48,10 +49,33 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private MemberManageDao memberManageDao;
     @Resource
     private SettlementInfoMapper settlementInfoMapper;
+    @Resource
+    private SettlementInfoMapper settlementInfoMapper2;
 
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo) {
         List<AccountsVo> list  = baseProjectDao.findAllAccounts(pageVo);
+        //待审核
+        ArrayList<AccountsVo> accountsVos = new ArrayList<>();
+        //处理中
+        ArrayList<AccountsVo> accountsVos1 = new ArrayList<>();
+        //未通过
+        ArrayList<AccountsVo> accountsVos2 = new ArrayList<>();
+        //待确认
+        ArrayList<AccountsVo> accountsVos3 = new ArrayList<>();
+        //已完成
+        ArrayList<AccountsVo> accountsVos4 = new ArrayList<>();
+        //全部
+        ArrayList<AccountsVo> accountsVos5 = new ArrayList<>();
+
+        for (AccountsVo accountsVo : list) {
+            if (accountsVo.getSettleAccountsStatus().equals("1")){
+                if (! accountsVos.contains(accountsVo)){
+                    System.out.println("xxxx");
+                }
+            }
+        }
+
         return list;
     }
 
@@ -113,7 +137,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void addAccount(BaseAccountsVo baseAccountsVo) {
-        System.out.println(baseAccountsVo.getBaseProject());
+        System.err.println(baseAccountsVo.getInvestigationOfTheAmount());
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //添加上家送审
         baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
@@ -122,19 +146,19 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         baseAccountsVo.getLastSettlementInfo().setCreateTime(simd.format(new Date()));
         baseAccountsVo.getLastSettlementInfo().setState("0");
         settlementInfoMapper.insertSelective(baseAccountsVo.getLastSettlementInfo());
+        //添加勘察金额
+        baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-",""));
+        baseAccountsVo.getInvestigationOfTheAmount().setBaseProjectId(baseProject.getId());
+        baseAccountsVo.getInvestigationOfTheAmount().setCreateTime(simd.format(new Date()));
+        baseAccountsVo.getInvestigationOfTheAmount().setDelFlag("0");
+        investigationOfTheAmountDao.insertSelective(baseAccountsVo.getInvestigationOfTheAmount());
         //添加下家送审
         baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
         baseAccountsVo.getSettlementInfo().setBaseProjectId(baseProject.getId());
         SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
-        baseAccountsVo.getLastSettlementInfo().setCreateTime(sim.format(new Date()));
-        baseAccountsVo.getLastSettlementInfo().setState("0");
-        settlementInfoMapper.insertSelective(baseAccountsVo.getSettlementInfo());
-        //添加勘察金额
-        baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-",""));
-        baseAccountsVo.getInvestigationOfTheAmount().setBaseProjectId(baseProject.getId());
-        baseAccountsVo.getInvestigationOfTheAmount().setCreateTime(sim.format(new Date()));
-        baseAccountsVo.getInvestigationOfTheAmount().setDelFlag("0");
-        investigationOfTheAmountDao.insertSelective(baseAccountsVo.getInvestigationOfTheAmount());
+        baseAccountsVo.getSettlementInfo().setCreateTime(sim.format(new Date()));
+        baseAccountsVo.getSettlementInfo().setState("0");
+        settlementInfoMapper2.insertSelective(baseAccountsVo.getSettlementInfo());
         //添加上家结算送审
         baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-",""));
         baseAccountsVo.getLastSettlementReview().setCreateTime(sim.format(new Date()));
@@ -187,8 +211,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
         Example example = new Example(InvestigationOfTheAmount.class);
         Example.Criteria c = example.createCriteria();
-        c.andEqualTo("baseProjectId",baseProject.getId());
-        investigationOfTheAmountDao.selectOneByExample(example);
+        c.andEqualTo("baseProjectId",id);
+        InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example);
+        baseAccountsVo.setInvestigationOfTheAmount(investigationOfTheAmount);
 
         Example example1 = new Example(SettlementInfo.class);
         Example.Criteria c1 = example1.createCriteria();
@@ -196,9 +221,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         List<SettlementInfo> settlementInfos = settlementInfoMapper.selectByExample(example1);
         for (SettlementInfo settlementInfo : settlementInfos) {
             if (settlementInfo.getSumbitMoney()!=null){
-                baseAccountsVo.setLastSettlementInfo(settlementInfo);
-            }else{
                 baseAccountsVo.setSettlementInfo(settlementInfo);
+            }else{
+                baseAccountsVo.setLastSettlementInfo(settlementInfo);
             }
         }
 
@@ -224,7 +249,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         //上家审核修改
         settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getLastSettlementInfo());
         //下家审核修改
-        settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getSettlementInfo());
+        settlementInfoMapper2.updateByPrimaryKeySelective( baseAccountsVo.getSettlementInfo());
         //勘察金额修改
         investigationOfTheAmountDao.updateByPrimaryKeySelective(baseAccountsVo.getInvestigationOfTheAmount());
         //上家送审修改
@@ -233,7 +258,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         settlementAuditInformationDao.updateByPrimaryKeySelective(baseAccountsVo.getSettlementAuditInformation());
 
         //保存
-        if (baseAccountsVo.getAuditNumber().equals("0")){
+        if (baseAccountsVo.getAuditNumber() == null || baseAccountsVo.getAuditNumber().equals("0")){
             return;
          //一审
         }else if (baseAccountsVo.getAuditNumber().equals("1")){

@@ -84,7 +84,7 @@ public class ProjectOverviewService {
         }
 
 
-        return null;
+        return 0;
     }
 
     public List<ModuleNumber> moduleNumber(List<BaseProject> allBaseProject) {

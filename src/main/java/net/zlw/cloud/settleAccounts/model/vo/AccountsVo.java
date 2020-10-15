@@ -3,8 +3,10 @@ package net.zlw.cloud.settleAccounts.model.vo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.zlw.cloud.budgeting.model.vo.BudgetingListVo;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -32,4 +34,16 @@ public class AccountsVo {
     private String designCategory;
     private String waterSupplyType;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountsVo that = (AccountsVo) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

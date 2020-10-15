@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
+import javax.sound.midi.Soundbank;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,15 @@ public class StatisticAnalysisController {
         ReturnEmployeePerformance employeePerformance =  statusticAnalysisService.EmployeePerformanceAnalysis(employeeVo);
        return RestUtil.success(employeePerformance);
     }
+    @RequestMapping(value = "/statisticAnalysis/EmployeePerformanceAnalysisPicture",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> EmployeePerformanceAnalysisPicture(){
+        Map<String, Object> stringObjectMap = EmployeePerformanceAnalysis(new EmployeeVo("","","","",""));
+        ReturnEmployeePerformance data = (ReturnEmployeePerformance)stringObjectMap.get("data");
+        JSONArray picture = data.getPicture();
+        return RestUtil.success(picture);
+
+    }
+
     //员工绩效分析列表
     @RequestMapping(value = "/statisticAnalysis/EmployeePerformanceAnalysisList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> EmployeePerformanceAnalysisList(EmployeeVo employeeVo){

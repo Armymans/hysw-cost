@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Table(name = "last_settlement_review")
 @Data
@@ -57,4 +58,17 @@ public class LastSettlementReview implements Serializable {
     private String whetherAccount;
     @Column(name = "remark")
     private String remark;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LastSettlementReview that = (LastSettlementReview) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
