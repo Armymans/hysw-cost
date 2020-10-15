@@ -43,7 +43,6 @@ import java.util.UUID;
 @Transactional
 public class VisaChangeServiceImpl implements VisaChangeService {
 
-    Date date = new Date();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm");
 
 
@@ -313,7 +312,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                         if ("0".equals(auditInfo.getAuditType())) {
                             auditInfo.setAuditResult("1");
 //                        一级审批的意见,时间
-                            auditInfo.setAuditTime(sdf.format(date));
+                            auditInfo.setAuditTime(sdf.format(new Date()));
                             auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
 //                       修改审批状态
                             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
@@ -350,7 +349,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     } else if ("2".equals(batchReviewVo.getAuditResult())) {
                         auditInfo.setAuditResult("2");
                         visaChange.setStatus("3");
-                        auditInfo.setAuditTime(sdf.format(date));
+                        auditInfo.setAuditTime(sdf.format(new Date()));
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                         vcMapper.updateByPrimaryKeySelective(visaChange);
                     }
@@ -369,8 +368,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         //TODO 需要改
         visaChangeInfoVo.setLoginUserId("123");
 
-        Date date = new Date();
-        String createTime = new SimpleDateFormat().format(date);
+        String createTime = sdf.format(new Date());
 
         //提交
         if (StringUtils.isNotEmpty(visaChangeInfoVo.getAuditId())) {
@@ -539,8 +537,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     @Override
     public void submitOrSave(VisaChangeInfoVo visaChangeInfoVo) {
 
-        Date date1 = new Date();
-        String updateTime = new SimpleDateFormat().format(date1);
+        String updateTime = sdf.format(new Date());
 
         Example example = new Example(VisaChange.class);
         example.createCriteria().andEqualTo("id", visaChangeInfoVo.getId());
@@ -559,7 +556,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("0".equals(auditInfo.getAuditType())) {
                 auditInfo.setAuditResult("1");
 //                        一级审批的意见,时间
-                auditInfo.setAuditTime(sdf.format(date));
+                auditInfo.setAuditTime(sdf.format(new Date()));
                 auditInfo.setAuditOpinion(visaChangeInfoVo.getAuditOpinion());
 //                       修改审批状态
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
@@ -596,7 +593,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         } else if ("2".equals(auditInfo.getAuditResult())) {
             auditInfo.setAuditResult("2");
             visaChange.setStatus("3");
-            auditInfo.setAuditTime(sdf.format(date));
+            auditInfo.setAuditTime(sdf.format(new Date()));
             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
             vcMapper.updateByPrimaryKeySelective(visaChange);
         }
