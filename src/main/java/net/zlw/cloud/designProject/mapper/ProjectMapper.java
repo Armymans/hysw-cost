@@ -432,12 +432,12 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "select " +
-                    "count(desgin_status ) desginStatus, " +
-                    "count(budget_status) budgetingCount, " +
-                    "count(track_status) trackAuditInfoCount, " +
-                    "count(visa_status) visaApplyChangeInformationCount, " +
-                    "count(progress_payment_status) progressPaymentInformation, " +
-                    "count(settle_accounts_status) settleAccountsCount " +
+                    "ifnull(count(desgin_status ),0) desginStatus, " +
+                    "ifnull(count(budget_status),0) budgetingCount, " +
+                    "ifnull(count(track_status),0) trackAuditInfoCount, " +
+                    "ifnull(count(visa_status),0) visaApplyChangeInformationCount, " +
+                    "ifnull(count(progress_payment_status),0) progressPaymentInformation, " +
+                    "ifnull(count(settle_accounts_status),0) settleAccountsCount " +
                     "from " +
                     "base_project "+
                     "where\n" +
@@ -447,12 +447,12 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "select\n" +
-                    "sum(desgin_status = 1) desginStatus,\n" +
-                    "sum(budget_status = 1) budgetingCount,\n" +
-                    "sum(track_status = 1) trackAuditInfoCount,\n" +
-                    "sum(visa_status = 1) visaApplyChangeInformationCount,\n" +
-                    "sum(progress_payment_status = 1) progressPaymentInformation,\n" +
-                    "sum(settle_accounts_status = 1) settleAccountsCount\n" +
+                    "ifnull(sum(desgin_status = 1),0) desginStatus,\n" +
+                    "ifnull(sum(budget_status = 1),0) budgetingCount,\n" +
+                    "ifnull(sum(track_status = 1),0) trackAuditInfoCount,\n" +
+                    "ifnull(sum(visa_status = 1),0) visaApplyChangeInformationCount,\n" +
+                    "ifnull(sum(progress_payment_status = 1),0) progressPaymentInformation,\n" +
+                    "ifnull(sum(settle_accounts_status = 1),0) settleAccountsCount\n" +
                     "from\n" +
                     "base_project \n" +
                     "where\n" +
@@ -462,12 +462,12 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "select\n" +
-                    "sum(desgin_status = 4) desginStatus,\n" +
-                    "sum(budget_status = 4) budgetingCount,\n" +
-                    "sum(track_status = 5) trackAuditInfoCount,\n" +
-                    "sum(visa_status = 6) visaApplyChangeInformationCount,\n" +
-                    "sum(progress_payment_status = 6) progressPaymentInformation,\n" +
-                    "sum(settle_accounts_status = 5) settleAccountsCount\n" +
+                    "ifnull(sum(desgin_status = 4),0) desginStatus,\n" +
+                    "ifnull(sum(budget_status = 4),0) budgetingCount,\n" +
+                    "ifnull(sum(track_status = 5),0) trackAuditInfoCount,\n" +
+                    "ifnull(sum(visa_status = 6),0) visaApplyChangeInformationCount,\n" +
+                    "ifnull(sum(progress_payment_status = 6),0) progressPaymentInformation,\n" +
+                    "ifnull(sum(settle_accounts_status = 5),0) settleAccountsCount\n" +
                     "from\n" +
                     "base_project\n" +
                     "where\n" +
@@ -477,12 +477,12 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "select\n" +
-                    "sum(desgin_status != 4) desginStatus,\n" +
-                    "sum(budget_status != 4) budgetingCount,\n" +
-                    "sum(track_status != 5) trackAuditInfoCount,\n" +
-                    "sum(visa_status != 6) visaApplyChangeInformationCount,\n" +
-                    "sum(progress_payment_status != 6) progressPaymentInformation,\n" +
-                    "sum(settle_accounts_status != 5) settleAccountsCount\n" +
+                    "ifnull(sum(desgin_status != 4),0) desginStatus,\n" +
+                    "ifnull(sum(budget_status != 4),0) budgetingCount,\n" +
+                    "ifnull(sum(track_status != 5),0) trackAuditInfoCount,\n" +
+                    "ifnull(sum(visa_status != 6),0) visaApplyChangeInformationCount,\n" +
+                    "ifnull(sum(progress_payment_status != 6),0) progressPaymentInformation,\n" +
+                    "ifnull(sum(settle_accounts_status != 5),0) settleAccountsCount\n" +
                     "from\n" +
                     "base_project\n" +
                     "where\n" +
@@ -1161,49 +1161,47 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "SELECT\n" +
-                    "COUNT(budget_status) budgetStatus,\n" +
-                    "COUNT(progress_payment_status) progressPaymentStatus,\n" +
-                    "COUNT(visa_status) visaStatus,\n" +
-                    "COUNT(settle_accounts_status) settleAccountsStatus\t\n" +
+                    "\tifnull( COUNT( budget_status ), 0 ) budgetStatus,\n" +
+                    "\tifnull( COUNT( progress_payment_status ), 0 ) progressPaymentStatus,\n" +
+                    "\tifnull( COUNT( visa_status ), 0 ) visaStatus,\n" +
+                    "\tifnull( COUNT( settle_accounts_status ), 0 ) settleAccountsStatus \n" +
                     "FROM\n" +
-                    "base_project\n" +
-                    "where\n" +
-                    "(district = #{district} or #{district} = '')"
+                    "\tbase_project \n" +
+                    "WHERE\n" +
+                    "\t(district = #{district} or #{district} = '')"
     )
     OneCensus6 costTaskTotal(CostVo2 costVo2);
 
     @Select(
             "SELECT\n" +
-                    "sum(budget_status='1') budgetStatus,\n" +
-                    "sum(progress_payment_status='1') progressPaymentStatus,\n" +
-                    "sum(visa_status='1') visaStatus,\n" +
-                    "sum(settle_accounts_status='1') settleAccountsStatus\n" +
+                    "\t\tifnull( sum( budget_status = '1' ), 0 ) budgetStatus,\n" +
+                    "\t\tifnull( sum( progress_payment_status = '1' ), 0 ) progressPaymentStatus,\n" +
+                    "\t\tifnull( sum( visa_status = '1' ), 0 ) visaStatus,\n" +
+                    "\t\tifnull( sum( settle_accounts_status = '1' ), 0 ) settleAccountsStatus \n" +
                     "FROM\n" +
-                    "base_project\n" +
-                    "where\n" +
-                    "(district = #{district} or #{district} = '')"
+                    "\t\tbase_project \n" +
+                    "WHERE\n" +
+                    "\t\t(district = #{district} or #{district} = '')"
     )
     OneCensus6 costTaskReviewed(CostVo2 costVo2);
 
     @Select(
             "SELECT\n" +
-                    "sum(budget_status='2') budgetStatus,\n" +
-                    "sum(progress_payment_status='2') progressPaymentStatus,\n" +
-                    "sum(visa_status='2') visaStatus,\n" +
-                    "sum(settle_accounts_status='2') settleAccountsStatus\n" +
+                    "ifnull(sum(budget_status='2'),0) budgetStatus,\n" +
+                    "ifnull(sum(progress_payment_status='2'),0) progressPaymentStatus,\n" +
+                    "ifnull(sum(visa_status='2'),0) visaStatus,\n" +
+                    "ifnull(sum(settle_accounts_status='2'),0) settleAccountsStatus\n" +
                     "FROM\n" +
-                    "base_project\n" +
-                    "where\n" +
-                    "(district = #{district} or #{district} = '')"
+                    "base_project"
     )
     OneCensus6 costTaskHandle(CostVo2 costVo2);
 
     @Select(
             "SELECT\n" +
-                    "sum(budget_status='4') budgetStatus,\n" +
-                    "sum(progress_payment_status='6') progressPaymentStatus,\n" +
-                    "sum(visa_status='6') visaStatus,\n" +
-                    "sum(settle_accounts_status='5') settleAccountsStatus\n" +
+                    "ifnull(sum(budget_status='4'),0) budgetStatus,\n" +
+                    "ifnull(sum(progress_payment_status='6'),0) progressPaymentStatus,\n" +
+                    "ifnull(sum(visa_status='6'),0) visaStatus,\n" +
+                    "ifnull(sum(settle_accounts_status='5'),0) settleAccountsStatus\n" +
                     "FROM\n" +
                     "base_project\n" +
                     "where\n" +
