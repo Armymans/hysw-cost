@@ -780,26 +780,6 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     List<BaseProject> BaseProjectDesignList(CostVo2 costVo2);
 
     @Select(
-            "SELECT " +
-                    "s1.id, " +
-                    "s1.project_num, " +
-                    "s1.project_name, " +
-                    "s1.design_category, " +
-                    "s1.district, " +
-                    "IFNULL(s2.total_payment_amount,0) totalPaymentAmount, " +
-                    "IFNULL(s2.accumulative_payment_proportion,0) accumulativePaymentProportion " +
-                    "FROM " +
-                    "base_project s1 LEFT JOIN progress_payment_total_payment s2 ON s1.id = s2.base_project_id " +
-                    "WHERE " +
-                    "(district = #{district} or #{district} = '') " +
-                    "and " +
-                    "s1.create_time >= #{startTime} " +
-                    "and " +
-                    "(s1.create_time <= #{endTime} or #{endTime} = '') " +
-                    "and " +
-                    "( " +
-                    "project_num like  CONCAT('%',#{keyword},'%')  or " +
-                    "project_name  like  CONCAT('%',#{keyword},'%')  " +
             "SELECT\n" +
                     "s1.id,\n" +
                     "s1.cea_num,\n" +
@@ -872,30 +852,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     Double progressPaymentSum(CostVo2 costVo2);
 
     @Select(
-            "SELECT\n" +
-                    "s1.id,\n" +
-                    "s1.cea_num,\n" +
-                    "s1.project_num,\n" +
-                    "s1.project_name,\n" +
-                    "s1.design_category,\n" +
-                    "s1.district,\n" +
-                    "s2.amount_visa_change,\n" +
-                    "s2.contract_amount,\n" +
-                    "s2.compile_time\n" +
-                    "FROM\n" +
-                    "base_project s1 LEFT JOIN visa_change_information s2 ON s1.id = s2.base_project_id\n" +
-                    "WHERE\n" +
-                    "(district = #{district} or #{district} = '')\n" +
-                    "and\n" +
-                    "s2.compile_time >= #{startTime}\n" +
-                    "and\n" +
-                    "(s2.compile_time <= #{endTime} or #{endTime} = '')\n" +
-                    "and\n" +
-                    "(\n" +
-                    "project_num like  CONCAT('%',#{keyword},'%')  or\n" +
-                    "project_name  like  CONCAT('%',#{keyword},'%') \n" +
             "SELECT " +
                     "s1.id, " +
+                    "s1.cea_num," +
                     "s1.project_num, " +
                     "s1.project_name, " +
                     "s1.design_category, " +

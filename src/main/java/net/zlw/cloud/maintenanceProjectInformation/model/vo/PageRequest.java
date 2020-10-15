@@ -9,6 +9,7 @@ import lombok.Data;
  */
 @Data
 public class PageRequest {
+
     //页码
     private Integer pageNum;
     //每页条数
