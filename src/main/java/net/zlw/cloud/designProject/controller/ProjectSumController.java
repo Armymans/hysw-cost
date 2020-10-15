@@ -1131,7 +1131,7 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/desginCensusList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desginCensusList(CostVo2 costVo2){
         PageInfo<DesignInfo> designInfoPageInfo = projectSumService.desginCensusList(costVo2);
-        return RestUtil.page(designInfoPageInfo());
+        return RestUtil.page(designInfoPageInfo);
     }
 
     /**
