@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -767,7 +768,6 @@ public class ProjectController extends BaseController {
             projectVo3.setCostPreparation(new CostPreparation());
             projectVo3.setVeryEstablishment(new VeryEstablishment());
         }
-
         //跟踪审计信息
         TrackAuditInfo trackAuditInfo = projectService.trackAuditInfoByid(baseProject.getId());
         if(trackAuditInfo==null){
@@ -775,6 +775,7 @@ public class ProjectController extends BaseController {
         }else{
             projectVo3.setTrackAuditInfo(trackAuditInfo);
         }
+
         //计算累计值
         ProjectVo3 projectVo31 = projectService.progressPaymentInformationSum(baseProject.getId());
         projectVo3.setNewcurrentPaymentInformation(projectVo31.getNewcurrentPaymentInformation());
@@ -900,32 +901,36 @@ public class ProjectController extends BaseController {
     }
 
     /**
-     * 造价页面月任务数
+     * 设计页面月任务数
      *
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/costproject/yearDesCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Integer yearDesCount(CostVo2 costVo2) {
+    @RequestMapping(value = "/api/costproject/yearDesCount", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> yearDesCount(CostVo2 costVo2) {
         String sysYear = projectService.getSysYear();
         costVo2.setYear(sysYear);
         Integer integer = projectService.yearDesCount(costVo2);
-        return integer;
+        Map<String, Integer> stringIntegerMap = new HashMap<>();
+        stringIntegerMap.put("count",integer);
+        return RestUtil.success(stringIntegerMap);
     }
 
     /**
-     * 造价页面年任务数
+     * 设计页面年任务数
      *
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/costproject/mounthDesCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Integer mounthDesCount(CostVo2 costVo2) {
+    @RequestMapping(value = "/api/costproject/mounthDesCount", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> mounthDesCount(CostVo2 costVo2) {
         String sysYear = projectService.getSysYear();
         int sysMouth = projectService.getSysMouth();
         costVo2.setYear(sysYear);
         costVo2.setMonth(sysMouth + "");
         Integer integer = projectService.mouthDesCount(costVo2);
-        return integer;
+        HashMap<String, Integer> stringIntegerHashMap = new HashMap<>();
+        stringIntegerHashMap.put("count",integer);
+        return RestUtil.success(stringIntegerHashMap);
     }
 }

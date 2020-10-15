@@ -60,7 +60,10 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "b.project_name like concat ('%',#{keyword},'%') or  \n" +
             "b.construction_unit like concat ('%',#{keyword},'%') or  \n" +
             "b.customer_name like concat ('%',#{keyword},'%') or  \n" +
-            "bt.name_of_cost_unit like concat  ('%',#{keyword},'%'))")
+            "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')) and \n" +
+            "bt.del_flag = '0' and \n" +
+            "b.del_flag = '0' and \n" +
+            "si.state = '0' \n")
     List<AccountsVo> findAllAccounts(PageVo pageVo);
 
 
@@ -174,4 +177,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "b.customer_name like concat ('%',#{keyword},'%')  \n" +
             ")")
     List<DesignInfo> findDesignAll(PageBVo pageBVo);
+
+    @Select("select * from base_project order by create_time desc limit 0,5")
+    List<BaseProject> findAllBaseProject();
 }

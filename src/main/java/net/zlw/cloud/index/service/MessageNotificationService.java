@@ -141,10 +141,12 @@ public class MessageNotificationService {
                 Example.Criteria c6 = example5.createCriteria();
                 c6.andEqualTo("baseProjectId",baseProject.getId());
                 IncomeInfo incomeInfo = incomeInfoMapper.selectOneByExample(example5);
-                //总金额累加
-                costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
-                //委外金额累加
-                costOutsourcingSpending+=budgeting.getAmountOutsourcing().doubleValue();
+                if (incomeInfo!=null){
+                    //总金额累加
+                    costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
+                    //委外金额累加
+                    costOutsourcingSpending+=budgeting.getAmountOutsourcing().doubleValue();
+                }
             }
             //上家审核
             if (lastSettlementReview!=null){
@@ -154,10 +156,12 @@ public class MessageNotificationService {
                 Example.Criteria c6 = example5.createCriteria();
                 c6.andEqualTo("baseProjectId",baseProject.getId());
                 IncomeInfo incomeInfo = incomeInfoMapper.selectOneByExample(example5);
-                //总金额累加
-                costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
-                //委外金额累加
-                costOutsourcingSpending+=lastSettlementReview.getAmountOutsourcing().doubleValue();
+                if (incomeInfo!=null){
+                    //总金额累加
+                    costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
+                    //委外金额累加
+                    costOutsourcingSpending+=lastSettlementReview.getAmountOutsourcing().doubleValue();
+                }
             }
             //下家审核
             if (settlementAuditInformation!=null){
@@ -166,10 +170,12 @@ public class MessageNotificationService {
                 Example.Criteria c6 = example5.createCriteria();
                 c6.andEqualTo("baseProjectId",baseProject.getId());
                 IncomeInfo incomeInfo = incomeInfoMapper.selectOneByExample(example5);
-                //总金额累加
-                costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
-                //委外金额累加
-                costOutsourcingSpending+=settlementAuditInformation.getAmountOutsourcing().doubleValue();
+                if (incomeInfo!=null){
+                    //总金额累加
+                    costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
+                    //委外金额累加
+                    costOutsourcingSpending+=settlementAuditInformation.getAmountOutsourcing().doubleValue();
+                }
             }
             //跟踪审计
             if (trackAuditInfo!=null){
@@ -178,10 +184,12 @@ public class MessageNotificationService {
                 Example.Criteria c6 = example5.createCriteria();
                 c6.andEqualTo("baseProjectId",baseProject.getId());
                 IncomeInfo incomeInfo = incomeInfoMapper.selectOneByExample(example5);
-                //总金额累加
-                costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
-                //委外金额累加
-                costOutsourcingSpending+=trackAuditInfo.getOutsourceMoney().doubleValue();
+                if (incomeInfo!=null){
+                    //总金额累加
+                    costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
+                    //委外金额累加
+                    costOutsourcingSpending+=trackAuditInfo.getOutsourceMoney().doubleValue();
+                }
             }
 
 
@@ -222,8 +230,11 @@ public class MessageNotificationService {
                 Example.Criteria c2 = example2.createCriteria();
                 c2.andEqualTo("baseProjectId",baseProject.getId());
                 IncomeInfo incomeInfo = incomeInfoMapper.selectOneByExample(example2);
-                designGeneralIncome+=incomeInfo.getDesignMoney().doubleValue();
-                designOutsourcingSpending+=designInfo.getOutsourceMoney().doubleValue();
+                if (incomeInfo!=null){
+                    System.err.println(incomeInfo);
+                    designGeneralIncome+=incomeInfo.getDesignMoney().doubleValue();
+                    designOutsourcingSpending+=designInfo.getOutsourceMoney().doubleValue();
+                }
             }
         }
         statisticalData.getDesignSum().setNumberProjects(designNumber);

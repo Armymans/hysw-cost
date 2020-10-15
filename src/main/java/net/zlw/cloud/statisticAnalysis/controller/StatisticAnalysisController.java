@@ -32,7 +32,6 @@ public class StatisticAnalysisController {
     public Map<String,Object> findAnalysis(pageVo pageVo){
         StatisticAnalysis analysis = statusticAnalysisService.findAnalysis(pageVo);
         return RestUtil.success(analysis);
-
     }
     //绩效计提汇总
     @RequestMapping(value = "/statisticAnalysis/performanceAccrualAndSummary",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)

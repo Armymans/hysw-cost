@@ -14,6 +14,7 @@ public class AccountsVo {
     private String ceaNum;
     private String projectNum;
     private String projectName;
+    private String settleAccountsStatus;
     private String district;
     private String constructionUnit;
     private String projectNature;
@@ -28,7 +29,6 @@ public class AccountsVo {
     private String compileTime;
     private String takeTime;
     private String projectCategory;
-    private String settleAccountsStatus;
     private String designCategory;
     private String waterSupplyType;
 

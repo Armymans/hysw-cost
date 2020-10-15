@@ -11,9 +11,11 @@ import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
+import net.zlw.cloud.settleAccounts.mapper.SettlementInfoMapper;
 import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
+import net.zlw.cloud.settleAccounts.model.SettlementInfo;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
@@ -44,6 +46,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private AuditInfoDao auditInfoDao;
     @Resource
     private MemberManageDao memberManageDao;
+    @Resource
+    private SettlementInfoMapper settlementInfoMapper;
 
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo) {
@@ -109,255 +113,167 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void addAccount(BaseAccountsVo baseAccountsVo) {
-        Example example = new Example(BaseProject.class);
-        example.createCriteria().andEqualTo("projectNum",baseAccountsVo.getProjectNum());
-        BaseProject project = baseProjectDao.selectOneByExample(example);
-        InvestigationOfTheAmount investigationOfTheAmount = new InvestigationOfTheAmount();
-        LastSettlementReview lastSettlementReview = new LastSettlementReview();
-        SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
+        System.out.println(baseAccountsVo.getBaseProject());
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
+        //添加上家送审
+        baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
+        baseAccountsVo.getLastSettlementInfo().setBaseProjectId(baseProject.getId());
+        SimpleDateFormat simd = new SimpleDateFormat("yyyy-MM-dd");
+        baseAccountsVo.getLastSettlementInfo().setCreateTime(simd.format(new Date()));
+        baseAccountsVo.getLastSettlementInfo().setState("0");
+        settlementInfoMapper.insertSelective(baseAccountsVo.getLastSettlementInfo());
+        //添加下家送审
+        baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
+        baseAccountsVo.getSettlementInfo().setBaseProjectId(baseProject.getId());
+        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+        baseAccountsVo.getLastSettlementInfo().setCreateTime(sim.format(new Date()));
+        baseAccountsVo.getLastSettlementInfo().setState("0");
+        settlementInfoMapper.insertSelective(baseAccountsVo.getSettlementInfo());
+        //添加勘察金额
+        baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-",""));
+        baseAccountsVo.getInvestigationOfTheAmount().setBaseProjectId(baseProject.getId());
+        baseAccountsVo.getInvestigationOfTheAmount().setCreateTime(sim.format(new Date()));
+        baseAccountsVo.getInvestigationOfTheAmount().setDelFlag("0");
+        investigationOfTheAmountDao.insertSelective(baseAccountsVo.getInvestigationOfTheAmount());
+        //添加上家结算送审
+        baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-",""));
+        baseAccountsVo.getLastSettlementReview().setCreateTime(sim.format(new Date()));
+        baseAccountsVo.getLastSettlementReview().setDelFlag("0");
+        baseAccountsVo.getLastSettlementReview().setBaseProjectId(baseProject.getId());
+        //添加下家结算送审
+        baseAccountsVo.getSettlementAuditInformation().setId(UUID.randomUUID().toString().replace("-",""));
+        baseAccountsVo.getSettlementAuditInformation().setCreateTime(sim.format(new Date()));
+        baseAccountsVo.getSettlementAuditInformation().setDelFlag("0");
+        baseAccountsVo.getSettlementAuditInformation().setBaseProjectId(baseProject.getId());
 
-        if (baseAccountsVo.getProjectPeople()!=null && !baseAccountsVo.getProjectPeople().equals("")){
-            lastSettlementReview.setId(UUID.randomUUID().toString());
-            lastSettlementReview.setReviewNumber(baseAccountsVo.getReviewNumber());
-            lastSettlementReview.setPreparePeople(baseAccountsVo.getPreparePeople());
-            lastSettlementReview.setProjectTime(baseAccountsVo.getProjectTime());
-            lastSettlementReview.setProjectPeople(baseAccountsVo.getProjectPeople());
-            lastSettlementReview.setContractAmount(baseAccountsVo.getContractAmount());
-            lastSettlementReview.setContractRemarkes(baseAccountsVo.getContractRemarkes());
-            lastSettlementReview.setOutsourcing(baseAccountsVo.getOutsourcing());
-            lastSettlementReview.setNameOfTheCost(baseAccountsVo.getNameOfTheCost());
-            lastSettlementReview.setContact(baseAccountsVo.getContact());
-            lastSettlementReview.setContactPhone(baseAccountsVo.getContactPhone());
-            lastSettlementReview.setAmountOutsourcing(baseAccountsVo.getAmountOutsourcing());
-            lastSettlementReview.setMaintenanceProjectInformation(baseAccountsVo.getMaintenanceProjectInformation());
-            lastSettlementReview.setBaseProjectId(project.getId());
-            lastSettlementReview.setRemark(baseAccountsVo.getLastSettleinfo().getRemark());
-
-            lastSettlementReviewDao.insert(lastSettlementReview);
+        if (baseAccountsVo.getLastSettlementReview().getId()!=null){
+            baseAccountsVo.getSettlementAuditInformation().setAccountId(baseAccountsVo.getLastSettlementReview().getId());
         }
-
-
-
-        if (baseAccountsVo.getDownContact()!=null && !baseAccountsVo.getDownContact().equals("")){
-            settlementAuditInformation.setId(UUID.randomUUID().toString() );
-            settlementAuditInformation.setAuthorizedNumber(baseAccountsVo.getAuthorizedNumber());
-            settlementAuditInformation.setSubtractTheNumber(baseAccountsVo.getSubtractTheNumber());
-            settlementAuditInformation.setNuclearNumber(baseAccountsVo.getNuclearNNumber());
-            settlementAuditInformation.setRemarkes(baseAccountsVo.getDownRemarkes());
-            settlementAuditInformation.setContractAmount(baseAccountsVo.getDownContractAmount());
-            settlementAuditInformation.setContractRemarkes(baseAccountsVo.getDownContractRemarkes());
-            settlementAuditInformation.setPreparePeople(baseAccountsVo.getDownPreparePeople());
-            settlementAuditInformation.setOutsourcing(baseAccountsVo.getDownOutsourcing());
-            settlementAuditInformation.setNameOfTheCost(baseAccountsVo.getDownNameOfTheCost());
-            settlementAuditInformation.setContact(baseAccountsVo.getDownContact());
-            settlementAuditInformation.setContactPhone(baseAccountsVo.getDownContactPhone());
-            settlementAuditInformation.setAmountOutsourcing(baseAccountsVo.getDownAmountOutsourcing());
-            settlementAuditInformation.setMaintenanceProjectInformation(baseAccountsVo.getMaintenanceProjectInformation());
-            settlementAuditInformation.setBaseProjectId(project.getId());
-            settlementAuditInformationDao.insert(settlementAuditInformation);
+        if (baseAccountsVo.getSettlementAuditInformation().getId()!=null){
+            baseAccountsVo.getLastSettlementReview().setAccountId(baseAccountsVo.getSettlementAuditInformation().getId());
         }
+        lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
+        settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
 
-
-        if (baseAccountsVo.getSettleAccountsStatus()!=null && !baseAccountsVo.getSettleAccountsStatus().equals("")){
-            project.setSettleAccountsStatus("1");
-            baseProjectDao.updateByPrimaryKeySelective(project);
+        if (baseAccountsVo.getAuditId()!=null){
+            //添加一审
             AuditInfo auditInfo = new AuditInfo();
-            if (baseAccountsVo.getDownContact()!=null && !baseAccountsVo.getDownContact().equals("")){
-                auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
-                auditInfo.setBaseProjectId(settlementAuditInformation.getId());
-                auditInfo.setAuditResult("0");
-                auditInfo.setAuditType("0");
-                auditInfoDao.insert(auditInfo);
+            auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+            if (baseAccountsVo.getSettlementAuditInformation().getId()!=null){
+                auditInfo.setBaseProjectId(baseAccountsVo.getLastSettlementReview().getId());
+            }else{
+                auditInfo.setBaseProjectId(baseAccountsVo.getSettlementAuditInformation().getId());
             }
+            auditInfo.setAuditResult("0");
+            auditInfo.setAuditType("0");
+            auditInfo.setAuditorId(baseAccountsVo.getAuditId());
+            auditInfo.setStatus("0");
+            auditInfo.setCreateTime(sim.format(new Date()));
+            auditInfoDao.insertSelective(auditInfo);
+            baseProject.setSettleAccountsStatus("1");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
         }else{
-            project.setSettleAccountsStatus("2");
-            baseProjectDao.updateByPrimaryKeySelective(project);
+            baseProject.setSettleAccountsStatus("2");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
         }
-        investigationOfTheAmount.setId(UUID.randomUUID().toString().replace("-",""));
-        investigationOfTheAmount.setSurveyDate(baseAccountsVo.getSurveyDate());
-        investigationOfTheAmount.setInvestigationPersonnel(baseAccountsVo.getInvestigationPersonnel());
-        investigationOfTheAmount.setSurveyBriefly(baseAccountsVo.getSurveyBriefly());
-        investigationOfTheAmount.setUnbalancedQuotationAdjustment(baseAccountsVo.getUnbalancedQuotationAdjustment());
-        investigationOfTheAmount.setPunishAmount(baseAccountsVo.getPunishAmount());
-        investigationOfTheAmount.setOutboundAmount(baseAccountsVo.getOutboundAmount());
-        investigationOfTheAmount.setRemarkes(baseAccountsVo.getRemarkes());
-        investigationOfTheAmount.setMaterialDifferenceAmount(baseAccountsVo.getMaterialDifferenceAmount());
-        investigationOfTheAmount.setMaintenanceProjectInformation(baseAccountsVo.getMaintenanceProjectInformation());
-        investigationOfTheAmount.setBaseProjectId(project.getId());
-        investigationOfTheAmountDao.insert(investigationOfTheAmount);
+
     }
 
     @Override
     public BaseAccountsVo findAccountById(String id) {
+        BaseAccountsVo baseAccountsVo = new BaseAccountsVo();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
+        baseAccountsVo.setBaseProject(baseProject);
 
         Example example = new Example(InvestigationOfTheAmount.class);
-        example.createCriteria().andEqualTo("baseProjectId",id);
-        InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",baseProject.getId());
+        investigationOfTheAmountDao.selectOneByExample(example);
 
-        Example example1 = new Example(LastSettlementReview.class);
-        example1.createCriteria().andEqualTo("baseProjectId",id);
-        LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example1);
+        Example example1 = new Example(SettlementInfo.class);
+        Example.Criteria c1 = example1.createCriteria();
+        c1.andEqualTo("baseProjectId",baseProject.getId());
+        List<SettlementInfo> settlementInfos = settlementInfoMapper.selectByExample(example1);
+        for (SettlementInfo settlementInfo : settlementInfos) {
+            if (settlementInfo.getSumbitMoney()!=null){
+                baseAccountsVo.setLastSettlementInfo(settlementInfo);
+            }else{
+                baseAccountsVo.setSettlementInfo(settlementInfo);
+            }
+        }
 
-        Example example2 = new Example(SettlementAuditInformation.class);
-        example2.createCriteria().andEqualTo("baseProjectId",id);
-        SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example2);
+        Example example2 = new Example(LastSettlementReview.class);
+        Example.Criteria c2 = example2.createCriteria();
+        c2.andEqualTo("baseProjectId",baseProject.getId());
+        LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example2);
+        baseAccountsVo.setLastSettlementReview(lastSettlementReview);
 
-        BaseAccountsVo baseAccountsVo = new BaseAccountsVo();
-        baseAccountsVo.setId(baseProject.getId());
-        baseAccountsVo.setProjectNum(baseProject.getProjectNum());
-        baseAccountsVo.setProjectName(baseProject.getProjectName());
-        baseAccountsVo.setApplicationNum(baseProject.getApplicationNum());
-        baseAccountsVo.setCeaNum(baseProject.getCeaNum());
-        baseAccountsVo.setDistrict(baseProject.getDistrict());
-        baseAccountsVo.setDesignCategory(baseProject.getDesignCategory());
-        baseAccountsVo.setConstructionUnit(baseProject.getConstructionUnit());
-        baseAccountsVo.setContacts(baseProject.getContacts());
-        baseAccountsVo.setContactNumber(baseProject.getContactNumber());
-        baseAccountsVo.setCustomerName(baseProject.getCustomerName());
-        baseAccountsVo.setSubject(baseProject.getSubject());
-        baseAccountsVo.setCustomerPhone(baseProject.getCustomerPhone());
-        baseAccountsVo.setConstructionOrganization(baseProject.getConstructionOrganization());
-        baseAccountsVo.setProjectNature(baseProject.getProjectNature());
-        baseAccountsVo.setProjectCategory(baseProject.getProjectCategory());
-        baseAccountsVo.setWaterAddress(baseProject.getWaterAddress());
-        baseAccountsVo.setWaterSupplyType(baseProject.getWaterSupplyType());
-        baseAccountsVo.setThisDeclaration(baseProject.getThisDeclaration());
-        baseAccountsVo.setAgent(baseProject.getAgent());
-        baseAccountsVo.setAgentPhone(baseProject.getAgentPhone());
-        baseAccountsVo.setApplicationDate(baseProject.getApplicationDate());
-        baseAccountsVo.setBusinessLocation(baseProject.getBusinessLocation());
-        baseAccountsVo.setBusinessTypes(baseProject.getBusinessTypes());
-        baseAccountsVo.setAB(baseProject.getAB());
-        baseAccountsVo.setWaterUse(baseProject.getWaterUse());
-        baseAccountsVo.setFireTableSize(baseProject.getFireTableSize());
-        baseAccountsVo.setClassificationCaliber(baseProject.getClassificationCaliber());
-        baseAccountsVo.setWaterMeterDiameter(baseProject.getWaterMeterDiameter());
-        baseAccountsVo.setSite(baseProject.getSite());
-        baseAccountsVo.setSystemNumber(baseProject.getSystemNumber());
-        baseAccountsVo.setProposer(baseProject.getProposer());
-        baseAccountsVo.setApplicationNumber(baseProject.getApplicationNumber());
-        baseAccountsVo.setSettleAccountsStatus(baseProject.getSettleAccountsStatus());
+        Example example3 = new Example(SettlementAuditInformation.class);
+        Example.Criteria c3 = example3.createCriteria();
+        c3.andEqualTo("baseProjectId",baseProject.getId());
+        SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example3);
+        baseAccountsVo.setSettlementAuditInformation(settlementAuditInformation);
 
-        baseAccountsVo.setSurveyDate(investigationOfTheAmount.getSurveyDate());
-        baseAccountsVo.setInvestigationPersonnel(investigationOfTheAmount.getInvestigationPersonnel());
-        baseAccountsVo.setSurveyBriefly(investigationOfTheAmount.getSurveyBriefly());
-        baseAccountsVo.setUnbalancedQuotationAdjustment(investigationOfTheAmount.getUnbalancedQuotationAdjustment());
-        baseAccountsVo.setPunishAmount(investigationOfTheAmount.getPunishAmount());
-        baseAccountsVo.setOutboundAmount(investigationOfTheAmount.getOutboundAmount());
-        baseAccountsVo.setRemarkes(investigationOfTheAmount.getRemarkes());
-        baseAccountsVo.setMaterialDifferenceAmount(investigationOfTheAmount.getMaterialDifferenceAmount());
-        baseAccountsVo.setMaintenanceProjectInformation(investigationOfTheAmount.getMaintenanceProjectInformation());
-
-
-        baseAccountsVo.setReviewNumber(lastSettlementReview.getReviewNumber());
-        baseAccountsVo.setPreparePeople(lastSettlementReview.getPreparePeople());
-        baseAccountsVo.setProjectTime(lastSettlementReview.getProjectTime());
-        baseAccountsVo.setProjectPeople(lastSettlementReview.getProjectPeople());
-        baseAccountsVo.setContractAmount(lastSettlementReview.getContractAmount());
-        baseAccountsVo.setContractRemarkes(lastSettlementReview.getContractRemarkes());
-        baseAccountsVo.setOutsourcing(lastSettlementReview.getOutsourcing());
-        baseAccountsVo.setNameOfTheCost(lastSettlementReview.getNameOfTheCost());
-        baseAccountsVo.setContact(lastSettlementReview.getContact());
-        baseAccountsVo.setContactPhone(lastSettlementReview.getContactPhone());
-        baseAccountsVo.setAmountOutsourcing(lastSettlementReview.getAmountOutsourcing());
-        baseAccountsVo.setMaintenanceProjectInformation(lastSettlementReview.getMaintenanceProjectInformation());
-
-        baseAccountsVo.setDownAmountOutsourcing(settlementAuditInformation.getAmountOutsourcing());
-        baseAccountsVo.setSubtractTheNumber(settlementAuditInformation.getSubtractTheNumber());
-        baseAccountsVo.setNuclearNNumber(settlementAuditInformation.getNuclearNumber());
-        baseAccountsVo.setRemarkes(settlementAuditInformation.getRemarkes());
-        baseAccountsVo.setDownContractAmount(settlementAuditInformation.getContractAmount());
-        baseAccountsVo.setDownContractRemarkes(settlementAuditInformation.getContractRemarkes());
-        baseAccountsVo.setDownPreparePeople(settlementAuditInformation.getPreparePeople());
-        baseAccountsVo.setDownOutsourcing(settlementAuditInformation.getOutsourcing());
-        baseAccountsVo.setDownNameOfTheCost(settlementAuditInformation.getNameOfTheCost());
-        baseAccountsVo.setDownContact(settlementAuditInformation.getContact());
-        baseAccountsVo.setDownContactPhone(settlementAuditInformation.getContactPhone());
-        baseAccountsVo.setDownAmountOutsourcing(settlementAuditInformation.getAmountOutsourcing());
-        baseAccountsVo.setMaintenanceProjectInformation(settlementAuditInformation.getMaintenanceProjectInformation());
 
         return baseAccountsVo;
     }
 
     @Override
     public void updateAccountById(BaseAccountsVo baseAccountsVo) {
-        BaseProject project = new BaseProject();
-        InvestigationOfTheAmount investigationOfTheAmount = new InvestigationOfTheAmount();
-        LastSettlementReview lastSettlementReview = new LastSettlementReview();
-        SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
+        //上家审核修改
+        settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getLastSettlementInfo());
+        //下家审核修改
+        settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getSettlementInfo());
+        //勘察金额修改
+        investigationOfTheAmountDao.updateByPrimaryKeySelective(baseAccountsVo.getInvestigationOfTheAmount());
+        //上家送审修改
+        lastSettlementReviewDao.updateByPrimaryKeySelective(baseAccountsVo.getLastSettlementReview());
+        //下家送审修改
+        settlementAuditInformationDao.updateByPrimaryKeySelective(baseAccountsVo.getSettlementAuditInformation());
 
-        if (baseAccountsVo.getSettleAccountsStatus()!=null && !baseAccountsVo.getSettleAccountsStatus().equals("")){
-            if (baseAccountsVo.getSettleAccountsStatus().equals("1")){
-                AuditInfo auditInfo = new AuditInfo();
-                auditInfo.setBaseProjectId(baseAccountsVo.getId());
-                auditInfo.setAuditType("0");
-                auditInfo.setAuditorId(baseAccountsVo.getAuditorId());
-                auditInfoDao.insert(auditInfo);
-            }else if(baseAccountsVo.getSettleAccountsStatus().equals("2")){
-                Example example1 = new Example(AuditInfo.class);
-                example1.createCriteria().andEqualTo("baseProjectId",baseAccountsVo.getId());
-                List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
-                for (AuditInfo info : auditInfos) {
-                    if (info.getAuditResult().equals("0")){
-                        info.setAuditResult("1");
-                        auditInfoDao.updateByPrimaryKeySelective(info);
-                    }
+        //保存
+        if (baseAccountsVo.getAuditNumber().equals("0")){
+            return;
+         //一审
+        }else if (baseAccountsVo.getAuditNumber().equals("1")){
+            //添加一审
+            AuditInfo auditInfo = new AuditInfo();
+            auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+            if (baseAccountsVo.getSettlementAuditInformation().getId()!=null){
+                auditInfo.setBaseProjectId(baseAccountsVo.getLastSettlementReview().getId());
+            }else{
+                auditInfo.setBaseProjectId(baseAccountsVo.getSettlementAuditInformation().getId());
+            }
+            auditInfo.setAuditResult("0");
+            auditInfo.setAuditType("0");
+            auditInfo.setAuditorId(baseAccountsVo.getAuditId());
+            auditInfo.setStatus("0");
+            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+            auditInfo.setCreateTime(sim.format(new Date()));
+            auditInfoDao.insertSelective(auditInfo);
+            baseProject.setSettleAccountsStatus("1");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+         //未通过审
+        } else if(baseAccountsVo.getAuditNumber().equals("2")){
+            Example example = new Example(AuditInfo.class);
+            Example.Criteria criteria = example.createCriteria();
+            if (baseAccountsVo.getSettlementAuditInformation().getId()!=null){
+                criteria.andEqualTo("baseProjectId",baseAccountsVo.getSettlementAuditInformation().getId());
+            }else if(baseAccountsVo.getLastSettlementReview().getId()!=null){
+                criteria.andEqualTo("baseProjectId",baseAccountsVo.getLastSettlementReview().getId());
+            }
+            List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+            for (AuditInfo auditInfo : auditInfos) {
+                if (auditInfo.getAuditResult().equals("2")){
+                    auditInfo.setAuditResult("0");
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                    baseProject.setSettleAccountsStatus("1");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 }
             }
-
-        }else{
-            project.setSettleAccountsStatus("1");
-            baseProjectDao.updateByPrimaryKeySelective(project);
         }
 
-        investigationOfTheAmount.setSurveyDate(baseAccountsVo.getSurveyDate());
-        investigationOfTheAmount.setInvestigationPersonnel(baseAccountsVo.getInvestigationPersonnel());
-        investigationOfTheAmount.setSurveyBriefly(baseAccountsVo.getSurveyBriefly());
-        investigationOfTheAmount.setUnbalancedQuotationAdjustment(baseAccountsVo.getUnbalancedQuotationAdjustment());
-        investigationOfTheAmount.setPunishAmount(baseAccountsVo.getPunishAmount());
-        investigationOfTheAmount.setOutboundAmount(baseAccountsVo.getOutboundAmount());
-        investigationOfTheAmount.setRemarkes(baseAccountsVo.getRemarkes());
-        investigationOfTheAmount.setMaterialDifferenceAmount(baseAccountsVo.getMaterialDifferenceAmount());
-        investigationOfTheAmount.setMaintenanceProjectInformation(baseAccountsVo.getMaintenanceProjectInformation());
-        investigationOfTheAmount.setBaseProjectId(project.getId());
-        investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
-
-
-
-        lastSettlementReview.setReviewNumber(baseAccountsVo.getReviewNumber());
-        lastSettlementReview.setPreparePeople(baseAccountsVo.getPreparePeople());
-        lastSettlementReview.setProjectTime(baseAccountsVo.getProjectTime());
-        lastSettlementReview.setProjectPeople(baseAccountsVo.getProjectPeople());
-        lastSettlementReview.setContractAmount(baseAccountsVo.getContractAmount());
-        lastSettlementReview.setContractRemarkes(baseAccountsVo.getContractRemarkes());
-        lastSettlementReview.setOutsourcing(baseAccountsVo.getOutsourcing());
-        lastSettlementReview.setNameOfTheCost(baseAccountsVo.getNameOfTheCost());
-        lastSettlementReview.setContact(baseAccountsVo.getContact());
-        lastSettlementReview.setContactPhone(baseAccountsVo.getContactPhone());
-        lastSettlementReview.setAmountOutsourcing(baseAccountsVo.getAmountOutsourcing());
-        lastSettlementReview.setMaintenanceProjectInformation(baseAccountsVo.getMaintenanceProjectInformation());
-        lastSettlementReview.setBaseProjectId(project.getId());
-        lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
-
-
-
-
-        settlementAuditInformation.setAuthorizedNumber(baseAccountsVo.getAuthorizedNumber());
-        settlementAuditInformation.setSubtractTheNumber(baseAccountsVo.getSubtractTheNumber());
-        settlementAuditInformation.setNuclearNumber(baseAccountsVo.getNuclearNNumber());
-        settlementAuditInformation.setRemarkes(baseAccountsVo.getDownRemarkes());
-        settlementAuditInformation.setContractAmount(baseAccountsVo.getDownContractAmount());
-        settlementAuditInformation.setContractRemarkes(baseAccountsVo.getDownContractRemarkes());
-        settlementAuditInformation.setPreparePeople(baseAccountsVo.getDownPreparePeople());
-        settlementAuditInformation.setOutsourcing(baseAccountsVo.getDownOutsourcing());
-        settlementAuditInformation.setNameOfTheCost(baseAccountsVo.getDownNameOfTheCost());
-        settlementAuditInformation.setContact(baseAccountsVo.getDownContact());
-        settlementAuditInformation.setContactPhone(baseAccountsVo.getDownContactPhone());
-        settlementAuditInformation.setAmountOutsourcing(baseAccountsVo.getDownAmountOutsourcing());
-        settlementAuditInformation.setMaintenanceProjectInformation(baseAccountsVo.getMaintenanceProjectInformation());
-        settlementAuditInformation.setBaseProjectId(project.getId());
-        settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
     }
 
 

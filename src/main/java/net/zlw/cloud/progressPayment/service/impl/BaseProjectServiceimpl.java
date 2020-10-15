@@ -401,7 +401,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Override
     public List<BaseProject> findAllBaseProject() {
-        return baseProjectDao.selectAll();
+        return baseProjectDao.findAllBaseProject();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.zlw.cloud.index.service;
 
+import com.github.pagehelper.PageHelper;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.model.Budgeting;
@@ -97,6 +98,9 @@ public class ProjectOverviewService {
                 }else if(baseProject.getDesginStatus().equals("4")){
                     moduleNumber.setDesignFlow("1,2");
                 }
+            }
+            if (baseProject.getProjectFlow()!=null){
+                moduleNumber.setProjectFlow(baseProject.getProjectFlow());
             }
             moduleNumbers.add(moduleNumber);
         }

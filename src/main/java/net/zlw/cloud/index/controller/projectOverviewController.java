@@ -2,6 +2,8 @@ package net.zlw.cloud.index.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
@@ -22,10 +24,7 @@ import javax.annotation.Resource;
 import javax.sound.midi.Soundbank;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 //@RequestMapping("/projectOverview")
@@ -42,7 +41,9 @@ public class projectOverviewController extends BaseController {
     @RequestMapping(value = "/projectOverview/findCommissionCount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findCommissionCount(){
        Integer i =  projectOverviewService.findCommissionCount(getLoginUser());
-       return RestUtil.success(i);
+        Map<String, Integer> stringIntegerMap = new HashMap<>();
+        stringIntegerMap.put("x1",i);
+        return RestUtil.success(stringIntegerMap);
     }
     //消息提醒数据
 //    message_notification
@@ -50,12 +51,14 @@ public class projectOverviewController extends BaseController {
     @RequestMapping(value = "/projectOverview/findMessage",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findMessage(){
         List<MessageNotification> message = messageNotificationService.findMessage();
+
         return RestUtil.success(message);
     }
     //造价部门和设计部门模块数量
 //    @GetMapping("/moduleNumber")
     @RequestMapping(value = "/projectOverview/moduleNumber",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> moduleNumber(){
+
         List<BaseProject> allBaseProject = baseProjectService.findAllBaseProject();
         List<ModuleNumber> moduleNumbers = projectOverviewService.moduleNumber(allBaseProject);
         return RestUtil.success(moduleNumbers);
