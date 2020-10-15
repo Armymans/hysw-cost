@@ -3,6 +3,7 @@ package net.zlw.cloud.progressPayment.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.designProject.model.Budgeting;
@@ -624,7 +625,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public BaseProject findByBuilding(String id) {
         Budgeting byId = budgetingMapper.findById(id);
 
-        Example example = new Example(Budgeting.class);
+        Example example = new Example(BaseProject.class);
         example.createCriteria().andEqualTo("id",byId.getBaseProjectId());
         BaseProject baseProject = baseProjectDao.selectOneByExample(example);
 
