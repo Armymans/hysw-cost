@@ -68,7 +68,7 @@ public class MaintenanceProjectInformationSumController extends BaseController {
         Integer baifen = prjectCensusRast(month,month2);
         ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
         map.put("month",month.toString());
-        map.put("baifen",baifen.toString()+"%");
+        map.put("baifen",baifen.toString());
         return RestUtil.success(map);
     }
 
@@ -84,7 +84,7 @@ public class MaintenanceProjectInformationSumController extends BaseController {
         Integer baifen = prjectCensusRast(year, year2);
         ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
         map.put("year",year.toString());
-        map.put("baifen",baifen.toString()+"%");
+        map.put("baifen",baifen.toString());
         return RestUtil.success(map);
     }
 
@@ -100,7 +100,7 @@ public class MaintenanceProjectInformationSumController extends BaseController {
      * @Description // 统计图
      * @Date 19:35 2020/10/8
      **/
-    @RequestMapping(value = "/maintenanceProjectInformationSum/statisticalFigure",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/maintenanceProjectInformationSum/statisticalFigure",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> statisticalFigure(String projectAddress,String startDate,String endDate){
         List<StatisticalFigureVo> allMaintenanceProjectInformation = maintenanceProjectInformationService.statisticalFigure(projectAddress,startDate,endDate, getLoginUser());
         String censusList = "[{\"companyName\":\"道路恢复工程\"," +
