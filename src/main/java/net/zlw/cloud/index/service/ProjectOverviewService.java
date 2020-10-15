@@ -93,9 +93,9 @@ public class ProjectOverviewService {
             ModuleNumber moduleNumber = new ModuleNumber();
             moduleNumber.setBaseProject(baseProject);
             if (baseProject.getDesginStatus()!=null){
-                if (baseProject.getDesginStatus().equals("2")){
+                if (!baseProject.getDesginStatus().equals("4")){
                     moduleNumber.setDesignFlow("1");
-                }else if(baseProject.getDesginStatus().equals("4")){
+                }else {
                     moduleNumber.setDesignFlow("1,2");
                 }
             }
