@@ -3,6 +3,7 @@ package net.zlw.cloud.designProject.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
+import net.tec.cloud.common.vo.LoginUser;
 import net.zlw.cloud.VisaApplyChangeInformation.mapper.VisaApplyChangeInformationMapper;
 import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
 import net.zlw.cloud.budgeting.mapper.VeryEstablishmentDao;
@@ -1638,16 +1639,43 @@ public class ProjectService {
     }
 
     /**
+     * 获取本月
+     * @param costVo2
+     * @return
+     */
+    public CostVo2 NowMonth(CostVo2 costVo2){
+        SimpleDateFormat sf=new SimpleDateFormat("dd");
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        //当前月
+        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //当前月最后一天
+        //设置日期为本月最大日期
+        now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
+        String day = sf.format(now.getTime());
+        //开始时间 结束时间
+        costVo2.setStartTime(year+"-"+month+"-"+"01");
+        costVo2.setEndTime(year+"-"+month+"-"+day);
+        return costVo2;
+    }
+
+    /**
      * 造价年表
      * @param costVo2
      * @return
      */
     public OneCensus2 costCensus(CostVo2 costVo2){
-        String sysYear = this.getSysYear();
-        CostVo2 costVo21 = this.NowYear(costVo2);
-        costVo2.setYear(sysYear);
-        OneCensus2 oneCensus2 = projectMapper.costCensus(costVo21);
-        return oneCensus2;
+        //todo getid
+        costVo2.setId("user282");
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            OneCensus2 oneCensus2 = projectMapper.costCensus(costVo2);
+            return oneCensus2;
+        }else{
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            OneCensus2 oneCensus2 = projectMapper.costCensus(costVo21);
+            return oneCensus2;
+        }
     }
 
     /**
@@ -1656,7 +1684,14 @@ public class ProjectService {
      * @return
      */
     public List<OneCensus2> costCensusList(CostVo2 costVo2){
-        List<OneCensus2> oneCensus2s = projectMapper.costCensusList(costVo2);
+        costVo2.setId("user282");
+        List<OneCensus2> oneCensus2s = null;
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            oneCensus2s = projectMapper.costCensusList(costVo2);
+        }else{
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            oneCensus2s = projectMapper.costCensusList(costVo21);
+        }
         for (OneCensus2 oneCensus2 : oneCensus2s) {
             Integer budget = oneCensus2.getBudget();
             Integer track = oneCensus2.getTrack();
@@ -1670,6 +1705,9 @@ public class ProjectService {
     }
 
     public Integer yearTaskCount(CostVo2 costVo2) {
+        //todo getid
+        costVo2.setId("user282");
+        CostVo2 costVo21 = this.NowYear(costVo2);
         OneCensus2 oneCensus2 = projectMapper.costCensus(costVo2);
         Integer budget = oneCensus2.getBudget();
         Integer track = oneCensus2.getTrack();

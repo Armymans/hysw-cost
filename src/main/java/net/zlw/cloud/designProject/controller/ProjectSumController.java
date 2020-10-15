@@ -748,7 +748,7 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/projectVisaChangeList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> projectVisaChangeList(CostVo2 costVo2){
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.projectVisaChangeList(costVo2);
-        return RestUtil.success(baseProjectPageInfo);
+        return RestUtil.page(baseProjectPageInfo);
     }
 
     /**
@@ -983,48 +983,48 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(map);
     }
 
-    /**
-     * 本年任务数量
-     * @param costVo2
-     * @return
-     */
-    @RequestMapping(value = "/api/projectCount/censusList2YearCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> censusList2YearCount(CostVo2 costVo2){
-        Integer year = projectSumService.censusList2YearCount(costVo2);
-        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
-        map.put("year",year);
-        return RestUtil.success(map);
-    }
-
-    /**
-     * 同比上年
-     * @param costVo2
-     * @return
-     */
-    @RequestMapping(value = "/api/projectCount/censusList2YearRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> censusList2YearRast(CostVo2 costVo2){
-        Integer year = projectSumService.censusList2YearCount(costVo2);
-        Integer lastYear = projectSumService.censusList2LastYearCount(costVo2);
-        Integer yearRast = projectSumService.prjectCensusRast(year, lastYear);
-        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
-        map.put("yearRast",yearRast);
-        return RestUtil.success(map);
-    }
-
-    /**
-     * 同比上月
-     * @param costVo2
-     * @return
-     */
-    @RequestMapping(value = "/api/projectCount/censusList2MonthRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> censusList2MonthRast(CostVo2 costVo2){
-        Integer month = projectSumService.censusList2MonthCount(costVo2);
-        Integer lastmonth = projectSumService.censusList2lastMonthCount(costVo2);
-        Integer monthRast = projectSumService.prjectCensusRast(month, lastmonth);
-        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
-        map.put("monthRast",monthRast);
-        return RestUtil.success(map);
-    }
+//    /**
+//     * 本年任务数量
+//     * @param costVo2
+//     * @return
+//     */
+//    @RequestMapping(value = "/api/projectCount/censusList2YearCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> censusList2YearCount(CostVo2 costVo2){
+//        Integer year = projectSumService.censusList2YearCount(costVo2);
+//        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+//        map.put("year",year);
+//        return RestUtil.success(map);
+//    }
+//
+//    /**
+//     * 同比上年
+//     * @param costVo2
+//     * @return
+//     */
+//    @RequestMapping(value = "/api/projectCount/censusList2YearRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> censusList2YearRast(CostVo2 costVo2){
+//        Integer year = projectSumService.censusList2YearCount(costVo2);
+//        Integer lastYear = projectSumService.censusList2LastYearCount(costVo2);
+//        Integer yearRast = projectSumService.prjectCensusRast(year, lastYear);
+//        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+//        map.put("yearRast",yearRast);
+//        return RestUtil.success(map);
+//    }
+//
+//    /**
+//     * 同比上月
+//     * @param costVo2
+//     * @return
+//     */
+//    @RequestMapping(value = "/api/projectCount/censusList2MonthRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> censusList2MonthRast(CostVo2 costVo2){
+//        Integer month = projectSumService.censusList2MonthCount(costVo2);
+//        Integer lastmonth = projectSumService.censusList2lastMonthCount(costVo2);
+//        Integer monthRast = projectSumService.prjectCensusRast(month, lastmonth);
+//        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+//        map.put("monthRast",monthRast);
+//        return RestUtil.success(map);
+//    }
 
     /**
      * 设计任务统计 -设计任务总汇1
@@ -1038,13 +1038,28 @@ public class ProjectSumController extends BaseController {
         Integer notamount = oneCensus5.getNotAmount() - amount;
         String josn =
                 "[" +
-                        "{\"value1\":"+amount+",\"name1\":\"已到账金额\"}," +
-                        "{\"value1\":"+notamount+",name1:\"未到账金额'\"}," +
+                        "{\"value1\":"+amount+",\"name1\":\"已到账数目\"}," +
+                        "{\"value1\":"+notamount+",name1:\"未到账数目'\"}," +
                         "]";
         JSONArray objects = JSON.parseArray(josn);
         return RestUtil.success(objects);
     }
 
+    /**
+     * 设计任务统计 -设计任务总汇1 数量
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/desiginMoneyCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> desiginMoneyCount(CostVo2 costVo2){
+        OneCensus5 oneCensus5 = projectSumService.desiginMoneyCensus(costVo2);
+        Integer amount = oneCensus5.getAnhuiAnount()+oneCensus5.getWujiangAmount();
+        Integer notamount = oneCensus5.getNotAmount() - amount;
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        map.put("amount",amount);
+        map.put("notamount",notamount);
+        return RestUtil.success(map);
+    }
     /**
      * 设计任务统计 -设计任务总汇2
      * @param costVo2
@@ -1063,6 +1078,50 @@ public class ProjectSumController extends BaseController {
         JSONArray objects = JSON.parseArray(josn);
         return RestUtil.success(objects);
     }
+
+    /**
+     * 设计任务统计 -设计任务总汇2 数量
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/desiginoutsourceCount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> desiginoutsourceCount(CostVo2 costVo2){
+        OneCensus5 oneCensus5 = projectSumService.desiginoutsource(costVo2);
+        Integer outsourceno = oneCensus5.getOutsourceNo();
+        Integer outsourceyes = oneCensus5.getOutsourceYes();
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        map.put("amount",outsourceno);
+        map.put("notamount",outsourceyes);
+        return RestUtil.success(map);
+    }
+
+    @RequestMapping(value = "/api/projectCount/desiginoutSourceAndCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> desiginoutSourceAndCensus(CostVo2 costVo2){
+        OneCensus5 oneCensus5 = projectSumService.desiginMoneyCensus(costVo2);
+        Integer amount = oneCensus5.getAnhuiAnount()+oneCensus5.getWujiangAmount();
+        Integer notamount = oneCensus5.getNotAmount() - amount;
+        String josn =
+                "[" +
+                        "{\"value1\":"+amount+",\"name1\":\"已到账金额\"}," +
+                        "{\"value1\":"+notamount+",name1:\"未到账金额'\"}," +
+                        "]";
+        JSONArray objects = JSON.parseArray(josn);
+
+        OneCensus5 oneCensus51 = projectSumService.desiginoutsource(costVo2);
+        Integer outsourceno = oneCensus51.getOutsourceNo();
+        Integer outsourceyes = oneCensus51.getOutsourceYes();
+        String josn1 =
+                "[" +
+                        "{\"value1\":"+outsourceno+",\"name1\":\"内部设计\"}," +
+                        "{\"value1\":"+outsourceyes+",name1:\"委外设计'\"}," +
+                        "]";
+        JSONArray objects1 = JSON.parseArray(josn);
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        map.put("objects",objects);
+        map.put("objects1",objects1);
+        return RestUtil.success(map);
+    }
+
 
     /**
      * 设计任务统计 -设计任务分析

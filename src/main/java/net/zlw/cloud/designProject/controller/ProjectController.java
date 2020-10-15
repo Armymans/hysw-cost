@@ -869,6 +869,40 @@ public class ProjectController extends BaseController {
         return RestUtil.success(objects2);
     }
 
+    @RequestMapping(value = "/api/costproject/costCensusAndSearch", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> costCensusAndSearch(CostVo2 costVo2) {
+        OneCensus2 oneCensus2 = projectService.costCensus(costVo2);
+        String josn =
+                "[" +
+                        "{\"value1\":" + oneCensus2.getBudget() + ",\"name1\":\"预算编制\"}," +
+                        "{\"value1\":" + oneCensus2.getSettleaccounts() + ",name1:\"结算编制\"}," +
+                        "{\"value1\":" + oneCensus2.getProgresspayment() + ",name1:\"进度款支付\"}," +
+                        "{\"value1\":" + oneCensus2.getVisa() + ",name1:\"签证/变更\"}," +
+                        "{\"value1\":" + oneCensus2.getTrack() + ",name1:\"跟踪审计\"}" +
+                        "]";
+        JSONArray objects = JSON.parseArray(josn);
+
+        List<OneCensus2> oneCensus2s = projectService.costCensusList(costVo2);
+        String json2 =
+                "[{" +
+                        "\"companyName\": \"造价任务\"," +
+                        "\"imageAmmount\": [";
+        for (OneCensus2 oneCensus21 : oneCensus2s) {
+            json2 +=
+                    "{\"time\": \"" + oneCensus21.getYeartime() + "-" + oneCensus21.getMonthTime() + "\"," +
+                            "\"truckAmmount\": \"" + oneCensus21.getTotal() + "\"" +
+                            "},";
+        }
+        json2 = json2.substring(0, json2.length() - 1);
+        json2 += "]}]";
+        JSONArray objects2 = JSON.parseArray(json2);
+
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        map.put("objects",objects);
+        map.put("objects2",objects2);
+        return RestUtil.success(map);
+    }
+
     /**
      * 造价页面月任务总数
      *
@@ -876,14 +910,16 @@ public class ProjectController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/costproject/mounthTaskCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Integer mounthTaskCount(CostVo2 costVo2) {
+    public Map<String, Object> mounthTaskCount(CostVo2 costVo2) {
         String sysYear = projectService.getSysYear();
         String sysMouth = projectService.getSysMouth() + "";
         costVo2.setYear(sysYear);
         costVo2.setMonth(sysMouth);
         List<OneCensus2> oneCensus2s = projectService.costCensusList(costVo2);
         OneCensus2 census2 = oneCensus2s.get(0);
-        return census2.getTotal();
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        map.put("total",census2.getTotal());
+        return RestUtil.success(map);
     }
 
     /**
@@ -893,11 +929,11 @@ public class ProjectController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/costproject/yearTaskCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Integer yearTaskCount(CostVo2 costVo2) {
-        String sysYear = projectService.getSysYear();
-        costVo2.setYear(sysYear);
+    public Map<String, Object> yearTaskCount(CostVo2 costVo2) {
         Integer integer = projectService.yearTaskCount(costVo2);
-        return integer;
+        ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+        map.put("total",integer);
+        return RestUtil.success(map);
     }
 
     /**

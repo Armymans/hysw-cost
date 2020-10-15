@@ -361,23 +361,6 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     String settleAccountsCount(@Param("id") String id,@Param("district") String district);
 
     @Select(
-            "select " +
-                    "year(s1.create_time) yeartime, " +
-                    "count(budget_status) budget, " +
-                    "count(track_status) track, " +
-                    "count(visa_status) visa, " +
-                    "count(progress_payment_status) progresspayment, " +
-                    "count(settle_accounts_status) settleaccounts " +
-                    "from " +
-                    "base_project s1 " +
-                    "where " +
-                    "founder_id = #{id} " +
-                    "and " +
-                    "(district = #{district} or #{district} = '') " +
-                    "and " +
-                    "del_flag = '0' " +
-                    "group by year(s1.create_time) " +
-                    "HAVING " +
             "select\n" +
                     "year(s1.create_time) yeartime,\n" +
                     "count(budget_status) budget,\n" +
@@ -392,14 +375,14 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and\n" +
                     "(district = #{district} or #{district} = '')\n" +
                     "and\n" +
-                    "create_time>= #{startTime}\n" +
+                        "create_time>= #{startTime}\n" +
                     "and \n" +
                     "(create_time<= #{endTime} or  #{endTime} = '') \n" +
                     "and\n" +
                     "del_flag = '0'\n" +
                     "group by year(s1.create_time)\n" +
                     "HAVING\n" +
-                    "yeartime = #{year}"
+                    "(yeartime = #{year} or #{year} = '')"
     )
     OneCensus2 costCensus(CostVo2 costVo2);
 
