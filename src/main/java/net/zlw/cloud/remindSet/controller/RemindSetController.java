@@ -7,6 +7,7 @@ import net.zlw.cloud.remindSet.service.RemindSetService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -23,5 +24,12 @@ public class RemindSetController {
     private Map<String,Object> remindSetFindAll() {
         List<RemindSet> list = remindSetService.findAll();
         return RestUtil.success(list);
+    }
+
+    @RequestMapping(value = "/api/remindSet/update", method = {RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    private Map<String,Object> update(HttpServletRequest request,String id, String[] remeberId) {
+        String[] re = request.getParameterValues("remeberId");
+        remindSetService.update(id,re);
+        return RestUtil.success("更新成功");
     }
 }

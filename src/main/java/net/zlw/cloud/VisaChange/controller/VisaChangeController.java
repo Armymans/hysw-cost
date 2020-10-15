@@ -6,6 +6,7 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeInfoVo;
+import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.VisaChange.service.VisaChangeService;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
@@ -60,6 +61,17 @@ public class VisaChangeController extends BaseController {
     @RequestMapping(value = "/visaChange/selectById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectByid(@RequestParam("id") String id){
         VisaChangeInfoVo visaChangeInfoVo = vcisService.selectById(id);
+        return RestUtil.success(visaChangeInfoVo);
+    }
+
+    /***
+     * 查看回显统计列表
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/visaChange/selectListById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectListById(@RequestParam("id") String id){
+        List<VisaChangeStatisticVo> visaChangeInfoVo = vcisService.selectListById(id);
         return RestUtil.success(visaChangeInfoVo);
     }
 

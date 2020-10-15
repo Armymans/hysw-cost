@@ -43,4 +43,14 @@ public class RemindSetService {
         }
         return list;
     }
+
+    public void update(String id, String[] remeberId) {
+        String re = "";
+        for (String s : remeberId) {
+            re += s+",";
+        }
+        re = re.substring(0 ,re.length() - 1);
+        RemindSet remindSet = remindSetMapper.selectByPrimaryKey(id);
+        remindSet.setRemeberId(re);
+    }
 }
