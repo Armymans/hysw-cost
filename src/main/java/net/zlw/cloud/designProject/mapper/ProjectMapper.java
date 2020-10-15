@@ -853,31 +853,34 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     Double progressPaymentSum(CostVo2 costVo2);
 
     @Select(
-            "SELECT " +
-                    "s1.id, " +
-                    "s1.cea_num," +
-                    "s1.project_num, " +
-                    "s1.project_name, " +
-                    "s1.design_category, " +
-                    "s1.district, " +
-                    "s2.amount_visa_change, " +
-                    "s2.contract_amount, " +
-                    "s2.compile_time " +
-                    "FROM " +
-                    "base_project s1 LEFT JOIN visa_change_information s2 ON s1.id = s2.base_project_id " +
-                    "WHERE " +
-                    "(district = #{district} or #{district} = '') " +
-                    "and " +
-                    "s2.compile_time >= #{startTime} " +
-                    "and " +
-                    "(s2.compile_time <= #{endTime} or #{endTime} = '') " +
-                    "and " +
-                    "( " +
-                    "project_num like  CONCAT('%',#{keyword},'%')  or " +
-                    "project_name  like  CONCAT('%',#{keyword},'%')  " +
-                    ")" +
-                    "and " +
-                    "s1.del_flag = '0'"
+            "SELECT\n" +
+                    "s1.id,\n" +
+                    "s1.cea_num,\n" +
+                    "s1.project_num,\n" +
+                    "s1.project_name,\n" +
+                    "s1.design_category,\n" +
+                    "s1.district,\n" +
+                    "s2.amount_visa_change,\n" +
+                    "s2.contract_amount,\n" +
+                    "s2.compile_time\n" +
+                    "FROM\n" +
+                    "base_project s1,\n" +
+                    "visa_change_information s2\n" +
+                    "where\n" +
+                    "s1.id = s2.base_project_id\n" +
+                    "and\n" +
+                    "s1.del_flag = '0'\n" +
+                    "and\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
+                    "(s1.create_time  <= #{endTime} or #{endTime} = '')\n" +
+                    "and\n" +
+                    "(\n" +
+                    "project_num like  CONCAT('%',#{keyword},'%')  or\n" +
+                    "project_name  like  CONCAT('%',#{keyword},'%') \n" +
+                    ")"
     )
     List<BaseProject> projectVisaChangeList(CostVo2 costVo2);
 
@@ -1095,23 +1098,23 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     OneCensus5 desiginoutsource(CostVo2 costVo2);
 
     @Select(
-            "\tSELECT\n" +
-                    "\tYEAR(s1.create_time) yearTime,\n" +
-                    "\tMONTH(s1.create_time) monthTime,\n" +
-                    "\tSUM(IFNULL(s2.desgin_achievements,0)) desginAchievements\n" +
-                    "\tFROM\n" +
-                    "\tbase_project s1 LEFT JOIN achievements_info s2 ON s1.id = s2.base_project_id\n" +
-                    "\twhere\n" +
-                    "\t(s1.district = #{district} or #{district} = '')\n" +
-                    "\tand\n" +
-                    "\ts1.create_time >= #{startTime}\n" +
-                    "\tand\n" +
-                    "\t(s1.create_time <= #{endTime} or #{endTime} = '')\n" +
-                    "\tand\n" +
-                    "\ts1.del_flag = '0'\n" +
-                    "\tGROUP BY\n" +
-                    "\tYEAR(s1.create_time),\n" +
-                    "\tMONTH(s1.create_time)"
+                "\tSELECT\n" +
+                        "\tYEAR(s1.create_time) yearTime,\n" +
+                        "\tMONTH(s1.create_time) monthTime,\n" +
+                        "\tSUM(IFNULL(s2.desgin_achievements,0)) desginAchievements\n" +
+                        "\tFROM\n" +
+                        "\tbase_project s1 LEFT JOIN achievements_info s2 ON s1.id = s2.base_project_id\n" +
+                        "\twhere\n" +
+                        "\t(s1.district = #{district} or #{district} = '')\n" +
+                        "\tand\n" +
+                        "\ts1.create_time >= #{startTime}\n" +
+                        "\tand\n" +
+                        "\t(s1.create_time <= #{endTime} or #{endTime} = '')\n" +
+                        "\tand\n" +
+                        "\ts1.del_flag = '0'\n" +
+                        "\tGROUP BY\n" +
+                        "\tYEAR(s1.create_time),\n" +
+                        "\tMONTH(s1.create_time)"
     )
     List<OneCensus6> desiginAchievementsCensus(CostVo2 costVo2);
 
