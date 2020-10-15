@@ -1675,29 +1675,33 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(objects);
     }
 
-    /**
-     * 本年员工绩效发放
-     * @param costVo2
-     * @return
-     */
-    @RequestMapping(value = "/api/projectCount/memberAchievementsYearCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> memberAchievementsYearCount(CostVo2 costVo2){
-        BigDecimal bigDecimal = projectSumService.memberAchievementsYearCount(costVo2);
-        return RestUtil.success(bigDecimal);
-    }
+//    /**
+//     * 本年员工绩效发放
+//     * @param costVo2
+//     * @return
+//     */
+//    @RequestMapping(value = "/api/projectCount/memberAchievementsYearCount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> memberAchievementsYearCount(CostVo2 costVo2){
+//        BigDecimal bigDecimal = projectSumService.memberAchievementsYearCount(costVo2);
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("yeartotal",bigDecimal);
+//        return RestUtil.success(map);
+//    }
 
-    /**
-     * 本年员工绩效同比上年
-     * @param costVo2
-     * @return
-     */
-    @RequestMapping(value = "/api/projectCount/memberAchievementsYearRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> memberAchievementsYearRast(CostVo2 costVo2){
-        BigDecimal memberAchievementsYearCount = projectSumService.memberAchievementsYearCount(costVo2);
-        BigDecimal memberAchievementsLastYearCount = projectSumService.memberAchievementsLastYearCount(costVo2);
-        BigDecimal bigDecimal = projectSumService.desiginCensusRast(memberAchievementsYearCount, memberAchievementsLastYearCount);
-        return RestUtil.success(bigDecimal);
-    }
+//    /**
+//     * 本年员工绩效同比上年
+//     * @param costVo2
+//     * @return
+//     */
+//    @RequestMapping(value = "/api/projectCount/memberAchievementsYearRast",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> memberAchievementsYearRast(CostVo2 costVo2){
+//        BigDecimal memberAchievementsYearCount = projectSumService.memberAchievementsYearCount(costVo2);
+//        BigDecimal memberAchievementsLastYearCount = projectSumService.memberAchievementsLastYearCount(costVo2);
+//        BigDecimal bigDecimal = projectSumService.desiginCensusRast(memberAchievementsYearCount, memberAchievementsLastYearCount);
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("yearrast",bigDecimal);
+//        return RestUtil.success(map);
+//    }
 
     /**
      * 本月员工绩效发放
@@ -1706,21 +1710,40 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/memberAchievementsMonthCount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>memberAchievementsMonthCount(CostVo2 costVo2){
+        //本月员工绩效
         BigDecimal bigDecimal = projectSumService.memberAchievementsMonthCount(costVo2);
-        return RestUtil.success(bigDecimal);
-    }
-    /**
-     * 本年员工绩效同比上月
-     * @param costVo2
-     * @return
-     */
-    @RequestMapping(value = "/api/projectCount/memberAchievementsMonthRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object>memberAchievementsMonthRast(CostVo2 costVo2){
+        //本月同比上月
         BigDecimal memberAchievementsMonthCount = projectSumService.memberAchievementsMonthCount(costVo2);
         BigDecimal memberAchievementsLastMonthCount = projectSumService.memberAchievementsLastMonthCount(costVo2);
-        BigDecimal bigDecimal = projectSumService.desiginCensusRast(memberAchievementsMonthCount, memberAchievementsLastMonthCount);
-        return RestUtil.success(bigDecimal);
+        BigDecimal bigDecimal2 = projectSumService.desiginCensusRast(memberAchievementsMonthCount, memberAchievementsLastMonthCount);
+        //本年员工绩效
+        BigDecimal bigDecimal3 = projectSumService.memberAchievementsYearCount(costVo2);
+        //同比上年
+        BigDecimal memberAchievementsYearCount = projectSumService.memberAchievementsYearCount(costVo2);
+        BigDecimal memberAchievementsLastYearCount = projectSumService.memberAchievementsLastYearCount(costVo2);
+        BigDecimal bigDecimal4 = projectSumService.desiginCensusRast(memberAchievementsYearCount, memberAchievementsLastYearCount);
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("monthtotal",bigDecimal);
+        map.put("monthrast",bigDecimal2);
+        map.put("yeartotal",bigDecimal3);
+        map.put("yearrast",bigDecimal4);
+        return RestUtil.success(map);
     }
+//    /**
+//     * 本年员工绩效同比上月
+//     * @param costVo2
+//     * @return
+//     */
+//    @RequestMapping(value = "/api/projectCount/memberAchievementsMonthRast",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object>memberAchievementsMonthRast(CostVo2 costVo2){
+//        BigDecimal memberAchievementsMonthCount = projectSumService.memberAchievementsMonthCount(costVo2);
+//        BigDecimal memberAchievementsLastMonthCount = projectSumService.memberAchievementsLastMonthCount(costVo2);
+//        BigDecimal bigDecimal = projectSumService.desiginCensusRast(memberAchievementsMonthCount, memberAchievementsLastMonthCount);
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("monthrast",bigDecimal);
+//        return RestUtil.success(map);
+//    }
 
     @RequestMapping(value = "/api/projectCount/MemberAchievementsCensus2",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>MemberAchievementsCensus2(CostVo2 costVo2){

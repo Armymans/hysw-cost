@@ -53,7 +53,7 @@ public class MaintenanceProjectInformationSumController extends BaseController {
     @RequestMapping(value = "/maintenanceProjectInformationSum/list",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllMaintenanceProjectInformation(PageRequest pageRequest){
         PageInfo<MaintenanceProjectInformation> allMaintenanceProjectInformation = maintenanceProjectInformationService.list(pageRequest, getLoginUser());
-        return RestUtil.success(allMaintenanceProjectInformation);
+        return RestUtil.page(allMaintenanceProjectInformation);
     }
 
     /**

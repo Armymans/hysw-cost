@@ -169,8 +169,9 @@ public class MaintenanceProjectInformationService{
 
             if(maintenanceProjectInformation.getPreparePeople() != null && (!"".equals(maintenanceProjectInformation.getPreparePeople()))){
                 MemberManage memberManage = memberManageDao.selectByIdAndStatus(maintenanceProjectInformation.getPreparePeople());
-
-                maintenanceProjectInformation.setMemberName(memberManage.getMemberName());
+                if(memberManage != null){
+                    maintenanceProjectInformation.setMemberName(memberManage.getMemberName());
+                }
             }
 
 //            maintenanceProjectInformation.setFounderId(userInfo.getId());

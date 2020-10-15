@@ -632,8 +632,9 @@ public class ProjectController extends BaseController {
      * @param individualVo
      * @return
      */
-    @RequestMapping(value = "/api/disproject/individualList", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/disproject/individualList", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> individualList(IndividualVo individualVo) {
+//      TODO  getLoginUser().getId()
         individualVo.setId("user282");
         PageInfo<BaseProject> projects = projectService.individualList(individualVo);
         for (BaseProject project : projects.getList()) {
@@ -675,7 +676,7 @@ public class ProjectController extends BaseController {
             project.setAmountCost(budgeting.getAmountCost());
             //应技提金额
         }
-        return RestUtil.success(projects);
+        return RestUtil.page(projects);
     }
 
 

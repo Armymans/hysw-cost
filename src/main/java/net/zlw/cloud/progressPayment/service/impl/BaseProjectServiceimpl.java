@@ -409,25 +409,21 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public BaseProject findById(String id) {
 
-        System.err.println("id:"+id);
-
         Budgeting budgeting = budgetingMapper.selectByPrimaryKey(id);
-
-//        System.err.println(budgeting);
-//        Example example = new Example(BaseProject.class);
-//        example.createCriteria().andEqualTo("id",id);
-//        BaseProject baseProject = baseProjectDao.selectOneByExample(example);
-
-        String baseProjectId = budgeting.getBaseProjectId();
-        System.err.println(baseProjectId);
-        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
-
+        BaseProject baseProject = new BaseProject();
+        if(budgeting != null){
+            String baseProjectId = budgeting.getBaseProjectId();
+            baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
+        }else{
+            baseProject = baseProjectDao.selectByPrimaryKey(id);
+        }
         if(baseProject != null){
             ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(baseProject.getConstructionUnit());
             if (constructionUnitManagement!=null){
                 baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
             }
         }
+
         return baseProject;
     }
 
