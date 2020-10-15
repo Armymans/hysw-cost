@@ -215,7 +215,11 @@ public class MaintenanceProjectInformationService{
 //        information.setId(maintenanceProjectInformation.getId());
         information.setCreateTime(createTime);
         information.setDelFlag("0");
-        information.setType("1");
+        if(StringUtils.isNotEmpty(maintenanceProjectInformation.getAuditorId())){
+            information.setType("1");
+        }else{
+            information.setType("2");
+        }
         information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
         information.setMaintenanceItemName(maintenanceProjectInformation.getMaintenanceItemName());
         information.setMaintenanceItemType(maintenanceProjectInformation.getMaintenanceItemType());
@@ -223,7 +227,9 @@ public class MaintenanceProjectInformationService{
         information.setSubmitTime(maintenanceProjectInformation.getSubmitTime());
         information.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
+        information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
+        information.setCustomerName(maintenanceProjectInformation.getCustomerName());
         information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
         information.setRemarkes(maintenanceProjectInformation.getRemarkes());
         information.setFounderId(userInfo.getId());
@@ -304,32 +310,22 @@ public class MaintenanceProjectInformationService{
 
         // 审核信息
 
-        AuditInfo auditInfo = new AuditInfo();
-
-        String s = UUID.randomUUID().toString().replaceAll("-", "");
-        auditInfo.setId(s);
-        auditInfo.setBaseProjectId(information.getId());
-
-        auditInfo.setAuditResult("0");
-
-        auditInfo.setAuditType("0");
-
-        auditInfo.setStatus("0");
-
-        // 审核人id
-        auditInfo.setAuditorId(maintenanceProjectInformation.getAuditorId());
-
-        String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
-
-        auditInfo.setCreateTime(createDate);
-
-        auditInfoDao.insertSelective(auditInfo);
-
-
+        if(StringUtils.isNotEmpty(maintenanceProjectInformation.getAuditorId())) {
+            AuditInfo auditInfo = new AuditInfo();
+            String s = UUID.randomUUID().toString().replaceAll("-", "");
+            auditInfo.setId(s);
+            auditInfo.setBaseProjectId(information.getId());
+            auditInfo.setAuditResult("0");
+            auditInfo.setAuditType("0");
+            auditInfo.setStatus("0");
+            // 审核人id
+            auditInfo.setAuditorId(maintenanceProjectInformation.getAuditorId());
+            String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+            auditInfo.setCreateTime(createDate);
+            auditInfoDao.insertSelective(auditInfo);
+        }
 //        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
-
         maintenanceProjectInformationMapper.insertSelective(information);
-
     }
 
 
@@ -538,22 +534,41 @@ public class MaintenanceProjectInformationService{
         MaintenanceVo maintenanceVo = new MaintenanceVo();
 
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectByPrimaryKey(id);
+        if(information != null){
+            maintenanceVo.setMaintenanceProjectInformation(information);
+        }else{
+            maintenanceVo.setMaintenanceProjectInformation(new MaintenanceProjectInformation());
+        }
 
 //        private SurveyInformation surveyInformation;
 //        private SettlementAuditInformation settlementAuditInformation;
 //        private InvestigationOfTheAmount investigationOfTheAmount;
         Example example = new Example(SurveyInformation.class);
-        example.createCriteria().andEqualTo("baseProjectId",information.getMaintenanceItemId());
+        example.createCriteria().andEqualTo("baseProjectId",id);
         SurveyInformation surveyInformation = surveyInformationDao.selectOneByExample(example);
+        if(surveyInformation != null){
+            maintenanceVo.setSurveyInformation(surveyInformation);
+        }else{
+            maintenanceVo.setSurveyInformation(new SurveyInformation());
+        }
 
         Example example1 = new Example(SettlementAuditInformation.class);
         example1.createCriteria().andEqualTo("maintenanceProjectInformation",information.getId());
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
+        if(settlementAuditInformation != null){
+            maintenanceVo.setSettlementAuditInformation(settlementAuditInformation);
+        }else{
+            maintenanceVo.setSettlementAuditInformation(new SettlementAuditInformation());
+        }
 
         Example example2 = new Example(InvestigationOfTheAmount.class);
         example2.createCriteria().andEqualTo("maintenanceProjectInformation",information.getMaintenanceItemId());
         InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example2);
-
+        if(investigationOfTheAmount != null){
+            maintenanceVo.setInvestigationOfTheAmount(investigationOfTheAmount);
+        }else {
+            maintenanceVo.setInvestigationOfTheAmount(new InvestigationOfTheAmount());
+        }
         return maintenanceVo;
     }
 
@@ -572,6 +587,11 @@ public class MaintenanceProjectInformationService{
         information.setId(id);
         information.setCreateTime(createTime);
         information.setDelFlag("0");
+        if(StringUtils.isNotEmpty(maintenanceProjectInformation.getAuditorId())){
+            information.setType("1");
+        }else{
+            information.setType("2");
+        }
         information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
         information.setMaintenanceItemName(maintenanceProjectInformation.getMaintenanceItemName());
         information.setMaintenanceItemType(maintenanceProjectInformation.getMaintenanceItemType());
@@ -580,6 +600,8 @@ public class MaintenanceProjectInformationService{
         information.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
+        information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
+        information.setCustomerName(maintenanceProjectInformation.getCustomerName());
         information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
         information.setRemarkes(maintenanceProjectInformation.getRemarkes());
         information.setFounderId(userInfo.getId());

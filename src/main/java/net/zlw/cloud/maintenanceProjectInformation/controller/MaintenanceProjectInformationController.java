@@ -13,6 +13,7 @@ import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectIn
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.maintenanceProjectInformation.service.MaintenanceProjectInformationService;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -74,7 +75,7 @@ public class MaintenanceProjectInformationController extends BaseController {
      * @param maintenanceProjectInformationVo
      */
     @RequestMapping(value = "/maintenanceProjectInformation/addMaintenanceProjectInformation",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo){
+    public Map<String,Object> addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo, BindingResult bindingResult){
 //        UserInfo loginUser = getLoginUser();
 //        System.out.println("user:"+loginUser);
         maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo,getLoginUser());

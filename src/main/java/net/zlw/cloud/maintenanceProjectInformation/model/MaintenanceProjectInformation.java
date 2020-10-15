@@ -36,7 +36,7 @@ public class MaintenanceProjectInformation implements Serializable {
     /**
      * 报送部门
      */
-    @Column(name = "`submitted_ department`")
+    @Column(name = "`submitted_department`")
     private String submittedDepartment;
 
     /**
