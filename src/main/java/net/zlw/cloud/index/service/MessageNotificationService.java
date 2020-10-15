@@ -172,9 +172,13 @@ public class MessageNotificationService {
                 IncomeInfo incomeInfo = incomeInfoMapper.selectOneByExample(example5);
                 if (incomeInfo!=null){
                     //总金额累加
-                    costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
+                    if (incomeInfo.getBudgetMoney()!=null){
+                        costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
+                    }
                     //委外金额累加
-                    costOutsourcingSpending+=settlementAuditInformation.getAmountOutsourcing().doubleValue();
+                    if (settlementAuditInformation.getAmountOutsourcing()!=null){
+                        costOutsourcingSpending+=settlementAuditInformation.getAmountOutsourcing().doubleValue();
+                    }
                 }
             }
             //跟踪审计
@@ -186,9 +190,13 @@ public class MessageNotificationService {
                 IncomeInfo incomeInfo = incomeInfoMapper.selectOneByExample(example5);
                 if (incomeInfo!=null){
                     //总金额累加
-                    costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
+                    if (incomeInfo.getBudgetMoney()!=null){
+                        costGeneralIncome+=incomeInfo.getBudgetMoney().doubleValue();
+                    }
                     //委外金额累加
-                    costOutsourcingSpending+=trackAuditInfo.getOutsourceMoney().doubleValue();
+                    if (trackAuditInfo.getOutsourceMoney()!=null){
+                        costOutsourcingSpending+=trackAuditInfo.getOutsourceMoney().doubleValue();
+                    }
                 }
             }
 
@@ -232,8 +240,12 @@ public class MessageNotificationService {
                 IncomeInfo incomeInfo = incomeInfoMapper.selectOneByExample(example2);
                 if (incomeInfo!=null){
                     System.err.println(incomeInfo);
-                    designGeneralIncome+=incomeInfo.getDesignMoney().doubleValue();
-                    designOutsourcingSpending+=designInfo.getOutsourceMoney().doubleValue();
+                    if (incomeInfo.getDesignMoney()!=null){
+                        designGeneralIncome+=incomeInfo.getDesignMoney().doubleValue();
+                    }
+                    if (designInfo.getOutsourceMoney()!=null){
+                        designOutsourcingSpending+=designInfo.getOutsourceMoney().doubleValue();
+                    }
                 }
             }
         }
