@@ -83,7 +83,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "where " +
             "del_flag = '0' " +
             "and " +
-            "(project_address = #{‘} or #{projectAddress}='')")
+            "(project_address = #{projectAddress} or #{projectAddress}='')")
     StatisticalNumberVo statisticalNumber(@Param("projectAddress")String projectAddress);
 
     @Select("SELECT YEAR " +
