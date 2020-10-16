@@ -38,5 +38,5 @@ logging:
     org.springframework.cloud.sleuth: DEBUG
     # org.springframework.web.servlet.DispatcherServlet: DEBUG
 app:
-  attachPath: /app/data/temp
+  attachPath: /app/data
   testPath: D://upload
