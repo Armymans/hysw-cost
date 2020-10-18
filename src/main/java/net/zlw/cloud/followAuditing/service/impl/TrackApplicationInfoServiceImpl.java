@@ -102,8 +102,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 //跟踪审计审核
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
 
-                Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
-                String baseProjectId = budgeting.getBaseProjectId();
+                TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(s);
+                String baseProjectId = trackAuditInfo.getBaseProjectId();
+//                Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+//                String baseProjectId = budgeting.getBaseProjectId();
                 System.err.println(baseProjectId);
 
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);

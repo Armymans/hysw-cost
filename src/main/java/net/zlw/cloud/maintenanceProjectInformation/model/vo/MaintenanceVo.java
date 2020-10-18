@@ -18,7 +18,7 @@ import java.util.List;
 public class MaintenanceVo {
     private MaintenanceProjectInformation maintenanceProjectInformation;
 
-    private SurveyInformation surveyInformation;
+//    private SurveyInformation surveyInformation;
 
     private SettlementAuditInformation settlementAuditInformation;
 

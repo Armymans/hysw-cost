@@ -544,14 +544,14 @@ public class MaintenanceProjectInformationService{
 //        private SurveyInformation surveyInformation;
 //        private SettlementAuditInformation settlementAuditInformation;
 //        private InvestigationOfTheAmount investigationOfTheAmount;
-        Example example = new Example(SurveyInformation.class);
-        example.createCriteria().andEqualTo("baseProjectId",id);
-        SurveyInformation surveyInformation = surveyInformationDao.selectOneByExample(example);
-        if(surveyInformation != null){
-            maintenanceVo.setSurveyInformation(surveyInformation);
-        }else{
-            maintenanceVo.setSurveyInformation(new SurveyInformation());
-        }
+//        Example example = new Example(SurveyInformation.class);
+//        example.createCriteria().andEqualTo("baseProjectId",id);
+//        SurveyInformation surveyInformation = surveyInformationDao.selectOneByExample(example);
+//        if(surveyInformation != null){
+//            maintenanceVo.setSurveyInformation(surveyInformation);
+//        }else{
+//            maintenanceVo.setSurveyInformation(new SurveyInformation());
+//        }
 
         Example example1 = new Example(SettlementAuditInformation.class);
         example1.createCriteria().andEqualTo("maintenanceProjectInformation",information.getId());
@@ -563,7 +563,7 @@ public class MaintenanceProjectInformationService{
         }
 
         Example example2 = new Example(InvestigationOfTheAmount.class);
-        example2.createCriteria().andEqualTo("maintenanceProjectInformation",information.getMaintenanceItemId());
+        example2.createCriteria().andEqualTo("maintenanceProjectInformation",information.getId());
         InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example2);
         if(investigationOfTheAmount != null){
             maintenanceVo.setInvestigationOfTheAmount(investigationOfTheAmount);
@@ -610,19 +610,19 @@ public class MaintenanceProjectInformationService{
         information.setFounderCompanyId(userInfo.getCompanyId());
 
         //勘探信息
-        SurveyInformation surveyInformation = new SurveyInformation();
-        String sid = UUID.randomUUID().toString().replace("-","");
-        surveyInformation.setId(sid);
-        surveyInformation.setCreateTime(simpleDateFormat.format(new Date()));
-        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
-        //勘察人员
-        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getInvestigationPersonnel());
-        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyBriefly());
-        // todo 项目基本信息的id
-        surveyInformation.setBaseProjectId(information.getId());
-        surveyInformation.setFounderId(userInfo.getId());
-        surveyInformation.setFounderCompanyId(userInfo.getCompanyId());
-        surveyInformationDao.insertSelective(surveyInformation);
+//        SurveyInformation surveyInformation = new SurveyInformation();
+//        String sid = UUID.randomUUID().toString().replace("-","");
+//        surveyInformation.setId(sid);
+//        surveyInformation.setCreateTime(simpleDateFormat.format(new Date()));
+//        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
+//        //勘察人员
+//        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getInvestigationPersonnel());
+//        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyBriefly());
+//        // todo 项目基本信息的id
+//        surveyInformation.setBaseProjectId(id);
+//        surveyInformation.setFounderId(userInfo.getId());
+//        surveyInformation.setFounderCompanyId(userInfo.getCompanyId());
+//        surveyInformationDao.insertSelective(surveyInformation);
 
 
 
@@ -661,17 +661,22 @@ public class MaintenanceProjectInformationService{
         // 勘探金额
 
         InvestigationOfTheAmount investigationOfTheAmount = new InvestigationOfTheAmount();
-
         String ioaId = UUID.randomUUID().toString().replace("-","");
+
+        investigationOfTheAmount.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
+        //勘察人员
+        investigationOfTheAmount.setInvestigationPersonnel(maintenanceProjectInformation.getInvestigationPersonnel());
+        investigationOfTheAmount.setSurveyBriefly(maintenanceProjectInformation.getSurveyBriefly());
+
         investigationOfTheAmount.setId(ioaId);
         investigationOfTheAmount.setCreateTime(simpleDateFormat.format(new Date()));
         investigationOfTheAmount.setDelFlag("0");
 
         investigationOfTheAmount.setFounderId(userInfo.getId());
         investigationOfTheAmount.setFounderCompanyId(userInfo.getCompanyId());
-        investigationOfTheAmount.setMaintenanceProjectInformation(maintenanceProjectInformation.getId());
+        investigationOfTheAmount.setMaintenanceProjectInformation(id);
         // todo 待修改
-        investigationOfTheAmount.setBaseProjectId(maintenanceProjectInformation.getId());
+        investigationOfTheAmount.setBaseProjectId(id);
 
 //        investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.get);
         investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
