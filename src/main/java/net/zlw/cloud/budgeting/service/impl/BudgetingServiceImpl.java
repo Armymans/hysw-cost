@@ -73,6 +73,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgeting.setRemarkes(budgetingVo.getBremarkes());
         budgeting.setBaseProjectId(baseProject.getId());
         budgeting.setDelFlag("0");
+        budgeting.setWhetherAccount("1");
         //提交
         if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
             //修改预算状态为待审核

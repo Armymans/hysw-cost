@@ -35,8 +35,14 @@ public class SearchBaseProjectController {
 
     @RequestMapping(value = "/baseProject/findById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
 //    @GetMapping("/findById/{id}")
-    public Map<String,Object> findById(@RequestParam(name = "id") String id){
-        BaseProject byId = baseProjectService.findById(id);
+    public Map<String,Object> findById(@RequestParam(name = "id",required = false) String id){
+        BaseProject byId = null;
+        try {
+            byId = baseProjectService.findById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            RestUtil.error();
+        }
         return RestUtil.success(byId);
     }
 

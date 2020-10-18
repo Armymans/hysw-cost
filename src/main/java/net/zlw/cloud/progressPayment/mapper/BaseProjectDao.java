@@ -38,7 +38,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "si.sumbit_money sumbitMoney,\n" +
             "s.authorized_number authorizedNumber,\n" +
             "IFNULL(s.take_time,l.take_time) takeTime,\n" +
-            "IFNULL(s.compile_time,l.compile_time) compileTime\n" +
+            "IFNULL(s.compile_time,l.compile_time) compileTime,\n" +
+            "IFNULL(s.whether_account,l.whether_account) whetherAccount\n" +
             "from\n" +
             "budgeting bt \n" +
             "LEFT JOIN base_project b on bt.base_project_id = b.id \n" +
@@ -63,7 +64,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')) and \n" +
             "bt.del_flag = '0' and \n" +
             "b.del_flag = '0' and \n" +
-            "si.state = '0' \n")
+            "si.state = '0'   \n")
     List<AccountsVo> findAllAccounts(PageVo pageVo);
 
 

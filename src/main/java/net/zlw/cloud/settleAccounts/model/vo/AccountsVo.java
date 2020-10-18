@@ -33,6 +33,7 @@ public class AccountsVo {
     private String projectCategory;
     private String designCategory;
     private String waterSupplyType;
+    private String whetherAccount;
 
     @Override
     public boolean equals(Object o) {

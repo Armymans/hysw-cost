@@ -251,7 +251,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "    LEFT JOIN construction_unit_management s6 ON s6.id = s2.construction_unit " +
             "                    where 1=1  and " +
             "                    s4.audit_result = 0 and" +
-            "                    s4.auditor_id = #{loginUserId} and "+
+//            "                    s4.auditor_id = #{loginUserId} and "+
             "                    s4.status = 0 and" +
             "                     (s2.district = #{district} or #{district} = '' )" +
             "                    and " +

@@ -64,12 +64,17 @@ public class SettleAccountsController {
         }
         return RestUtil.success();
     }
+    //根据ID查询结算
 //    @GetMapping("/findAccountById/{id}")
     @RequestMapping(value = "/accounts/findAccountById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> findAccountById(@RequestParam(name = "id") String id){
+    public Map<String,Object> findAccountById(@RequestParam(name = "id",required = false) String id){
+        if (id==null){
+            return RestUtil.error();
+        }
         BaseAccountsVo accountsVo = settleAccountsService.findAccountById(id);
         return RestUtil.success(accountsVo);
     }
+    //结算编辑
 //    @PutMapping("/updateAccountById")
     @RequestMapping(value = "/accounts/updateAccountById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateAccountById(BaseAccountsVo baseAccountsVo){

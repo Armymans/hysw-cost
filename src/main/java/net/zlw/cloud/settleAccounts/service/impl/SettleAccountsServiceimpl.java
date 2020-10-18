@@ -55,28 +55,16 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo) {
         List<AccountsVo> list  = baseProjectDao.findAllAccounts(pageVo);
-        //待审核
         ArrayList<AccountsVo> accountsVos = new ArrayList<>();
-        //处理中
-        ArrayList<AccountsVo> accountsVos1 = new ArrayList<>();
-        //未通过
-        ArrayList<AccountsVo> accountsVos2 = new ArrayList<>();
-        //待确认
-        ArrayList<AccountsVo> accountsVos3 = new ArrayList<>();
-        //已完成
-        ArrayList<AccountsVo> accountsVos4 = new ArrayList<>();
-        //全部
-        ArrayList<AccountsVo> accountsVos5 = new ArrayList<>();
-
         for (AccountsVo accountsVo : list) {
-            if (accountsVo.getSettleAccountsStatus().equals("1")){
-                if (! accountsVos.contains(accountsVo)){
-                    System.out.println("xxxx");
+            if (accountsVo.getSumbitMoney()!=null){
+                if (!accountsVos.contains(accountsVo)){
+                    accountsVos.add(accountsVo);
                 }
             }
         }
 
-        return list;
+        return accountsVos;
     }
 
     @Override
@@ -172,9 +160,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
         if (baseAccountsVo.getLastSettlementReview().getId()!=null){
             baseAccountsVo.getSettlementAuditInformation().setAccountId(baseAccountsVo.getLastSettlementReview().getId());
+            baseAccountsVo.getSettlementAuditInformation().setWhetherAccount("1");
         }
         if (baseAccountsVo.getSettlementAuditInformation().getId()!=null){
             baseAccountsVo.getLastSettlementReview().setAccountId(baseAccountsVo.getSettlementAuditInformation().getId());
+            baseAccountsVo.getLastSettlementReview().setWhetherAccount("1");
         }
         lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
         settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());

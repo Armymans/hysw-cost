@@ -78,7 +78,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         if ("1".equals(visaChangeVO.getStatus())) {
 
             all = vcMapper.findByNoExamine(visaChangeVO);
-
+            System.err.println(visaChangeVO.getStatus());
 
 //           未通过
         } else if ("3".equals(visaChangeVO.getStatus())) {
