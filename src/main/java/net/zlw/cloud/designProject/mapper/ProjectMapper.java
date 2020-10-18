@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Update;
 import tk.mybatis.mapper.common.Mapper;
 
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.util.List;
 
 @org.apache.ibatis.annotations.Mapper
@@ -1599,4 +1600,42 @@ public interface ProjectMapper extends Mapper<BaseProject> {
             "where id = #{id}")
     BaseProject selectById(@Param("id") String id);
 
+    @Select(
+            "SELECT\n" +
+                    "SUM(IFNULL(budget_money,0)+IFNULL(upsubmit_money,0)+IFNULL(downsubmit_money,0)+IFNULL(truck_money,0))\n" +
+                    "FROM\n" +
+                    "base_project s1,\n" +
+                    "income_info s2\n" +
+                    "WHERE\n" +
+                    "s1.id = s2.base_project_id\n" +
+                    "and\n" +
+                    "s1.building_project_id = #{id}"
+    )
+    BigDecimal consultingIncome(@Param("id") String id);
+
+    @Select(
+            "SELECT\n" +
+                    "SUM(IFNULL(s2.amount_outsourcing,0)+IFNULL(s3.amount_outsourcing,0)+IFNULL(s4.amount_outsourcing,0)+IFNULL(s5.outsource_money,0))\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN budgeting  s2 ON s1.id = s2.base_project_id\n" +
+                    "LEFT JOIN last_settlement_review s3 ON s1.id = s3.base_project_id\n" +
+                    "LEFT JOIN settlement_audit_information s4 ON s1.id = s4.base_project_id\n" +
+                    "LEFT JOIN track_audit_info s5 ON s1.id = s5.base_project_id\n" +
+                    "WHERE\n" +
+                    "s1.building_project_id = #{id}"
+    )
+    BigDecimal consultingExpenditure1(@Param("id") String id);
+
+    @Select(
+            "SELECT\n" +
+                    "SUM(IFNULL(budget_achievements,0)+IFNULL(upsubmit_achievements,0)+IFNULL(downsubmit_achievements,0)+IFNULL(truck_achievements,0))\n" +
+                    "FROM\n" +
+                    "base_project s1,\n" +
+                    "achievements_info s2\n" +
+                    "WHERE\n" +
+                    "s1.id = s2.base_project_id\n" +
+                    "AND\n" +
+                    "s1.building_project_id = #{id}"
+    )
+    BigDecimal consultingExpenditure2(@Param("id") String id);
 }

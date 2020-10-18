@@ -29,13 +29,13 @@ public class WujiangMoneyInfo{
     private BigDecimal totalMoney;
 
     @Column(name = "cost")
-    private BigDecimal cost;
+    private BigDecimal cost;  //造价费用
 
     @Column(name = "design_rate")
-    private BigDecimal designRate;
+    private BigDecimal designRate; //设计费率
 
     @Column(name = "preferential_policy")
-    private BigDecimal preferentialPolicy;
+    private BigDecimal preferentialPolicy; //优惠政策
 
     @Column(name = "revenue")
     private BigDecimal revenue; //应收收金额',

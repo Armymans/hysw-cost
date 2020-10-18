@@ -134,8 +134,8 @@ public class ProjectController extends BaseController {
      *
      * @param id
      */
-    @GetMapping("/reduction/{id}")
-    public void reduction(@PathVariable("id") String id) {
+    @RequestMapping(value = "/api/disproject/reduction", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public void reduction(String id) {
         projectService.reduction(id);
     }
 
@@ -331,97 +331,162 @@ public class ProjectController extends BaseController {
     }
 
     /**
-     * 设计项目查看
+     * 设计项目查看 第一版
      *
      * @return
      */
-    @PostMapping("/DesProjectInfoSelect")
-    public List<ProjectVo> DesProjectInfoSelect(@RequestBody BaseProject param) {
-        ArrayList<ProjectVo> projectVos = new ArrayList<>();
-        if (!"".equals(param.getVirtualCode())) {
-            //根据虚拟id查询
-            List<BaseProject> baseProjects = projectService.DesProjectInfoSelect(param.getVirtualCode());
-            for (BaseProject baseProject : baseProjects) {
-                ProjectVo projectVo = new ProjectVo();
-                projectVo.setBaseProject(baseProject);
-                //设计信息
-                DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
-                projectVo.setDesignInfo(designInfo);
-                //方案会审
-                ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
-                projectVo.setProjectExploration(projectExploration);
-                //项目勘探
-                PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
-                projectVo.setPackageCame(packageCame);
-                //项目审核
-                List<AuditInfo> auditInfos = projectService.auditInfoList(designInfo.getId());
-                projectVo.setAuditInfos(auditInfos);
-                //设计变更审核
-                List<AuditInfo> auditChangeInfos = projectService.auditInfoList(designInfo.getId());
-                projectVo.setAuditInfos2(auditChangeInfos);
-                //设计费用展示
-                if (baseProject.getDistrict() != "4") {
-                    //设计费（安徽）
-                    AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
-                    projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
-                } else {
-                    //设计费（吴江）
-                    WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
-                    projectVo.setWujiangMoneyInfo(wujiangMoneyInfo);
-                }
-                //设计变更累计
-                List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(designInfo.getId());
-                projectVo.setDesignChangeInfos(designChangeInfos);
+//    @PostMapping("/DesProjectInfoSelect")
+//    public List<ProjectVo> DesProjectInfoSelect(@RequestBody BaseProject param) {
+//        ArrayList<ProjectVo> projectVos = new ArrayList<>();
+//        if (!"".equals(param.getVirtualCode())) {
+//            //根据虚拟id查询
+//            List<BaseProject> baseProjects = projectService.DesProjectInfoSelect(param.getVirtualCode());
+//            for (BaseProject baseProject : baseProjects) {
+//                ProjectVo projectVo = new ProjectVo();
+//                projectVo.setBaseProject(baseProject);
+//                //设计信息
+//                DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
+//                projectVo.setDesignInfo(designInfo);
+//                //方案会审
+//                ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
+//                projectVo.setProjectExploration(projectExploration);
+//                //项目勘探
+//                PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
+//                projectVo.setPackageCame(packageCame);
+//                //项目审核
+//                List<AuditInfo> auditInfos = projectService.auditInfoList(designInfo.getId());
+//                projectVo.setAuditInfos(auditInfos);
+//                //设计变更审核
+//                List<AuditInfo> auditChangeInfos = projectService.auditInfoList(designInfo.getId());
+//                projectVo.setAuditInfos2(auditChangeInfos);
+//                //设计费用展示
+//                if (baseProject.getDistrict() != "4") {
+//                    //设计费（安徽）
+//                    AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
+//                    projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
+//                } else {
+//                    //设计费（吴江）
+//                    WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
+//                    projectVo.setWujiangMoneyInfo(wujiangMoneyInfo);
+//                }
+//                //设计变更累计
+//                List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(designInfo.getId());
+//                projectVo.setDesignChangeInfos(designChangeInfos);
+//
+//                //设计变更信息
+//                DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
+//                projectVo.setDesignChangeInfo(designChangeInfo);
+//                projectVos.add(projectVo);
+//            }
+//            return projectVos;
+//        }
+//
+//        //如果虚拟编号为空 说明不是合并项目 正常展示
+//        ProjectVo projectVo = new ProjectVo();
+//        //项目基本信息
+//        BaseProject baseProject = projectService.BaseProjectByid(param.getId());
+//        projectVo.setBaseProject(baseProject);
+//        //设计信息
+//        DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
+//        projectVo.setDesignInfo(designInfo);
+//        //方案会审
+//        ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
+//        projectVo.setProjectExploration(projectExploration);
+//        //项目勘探
+//        PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
+//        projectVo.setPackageCame(packageCame);
+//        //项目审核
+//        List<AuditInfo> auditInfos = projectService.auditInfoList(designInfo.getId());
+//        projectVo.setAuditInfos(auditInfos);
+//        //设计变更审核
+//        List<AuditInfo> auditChangeInfos = projectService.auditInfoList(designInfo.getId());
+//        projectVo.setAuditInfos2(auditChangeInfos);
+//        //设计变更累计
+//        List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(designInfo.getId());
+//        projectVo.setDesignChangeInfos(designChangeInfos);
+//        //设计变更信息
+//        DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
+//        projectVo.setDesignChangeInfo(designChangeInfo);
+//
+//        //设计费用展示
+//        if (baseProject.getDistrict() != "4") {
+//            //设计费（安徽）
+//            AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
+//            projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
+//        } else {
+//            //设计费（吴江）
+//            WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
+//            projectVo.setWujiangMoneyInfo(wujiangMoneyInfo);
+//        }
+//        projectVo.setDesginStatus(baseProject.getDesginStatus());
+//        projectVos.add(projectVo);
+//        return projectVos;
+//    }
 
-                //设计变更信息
-                DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
-                projectVo.setDesignChangeInfo(designChangeInfo);
-                projectVos.add(projectVo);
-            }
-            return projectVos;
-        }
-
-        //如果虚拟编号为空 说明不是合并项目 正常展示
+    /**
+     * 设计项目查看 新
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/DesProjectInfoSelect", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> DesProjectInfoSelect(String id) {
         ProjectVo projectVo = new ProjectVo();
-        //项目基本信息
-        BaseProject baseProject = projectService.BaseProjectByid(param.getId());
-        projectVo.setBaseProject(baseProject);
-        //设计信息
-        DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
+            //根据id查找设计信息
+        DesignInfo designInfo = projectService.designInfoByPrimaryKey(id);
         projectVo.setDesignInfo(designInfo);
-        //方案会审
-        ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
-        projectVo.setProjectExploration(projectExploration);
-        //项目勘探
-        PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
-        projectVo.setPackageCame(packageCame);
-        //项目审核
-        List<AuditInfo> auditInfos = projectService.auditInfoList(designInfo.getId());
-        projectVo.setAuditInfos(auditInfos);
-        //设计变更审核
-        List<AuditInfo> auditChangeInfos = projectService.auditInfoList(designInfo.getId());
-        projectVo.setAuditInfos2(auditChangeInfos);
-        //设计变更累计
-        List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(designInfo.getId());
-        projectVo.setDesignChangeInfos(designChangeInfos);
-        //设计变更信息
-        DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
-        projectVo.setDesignChangeInfo(designChangeInfo);
-
-        //设计费用展示
-        if (baseProject.getDistrict() != "4") {
-            //设计费（安徽）
+            //根据设计信息查找基本信息
+        BaseProject baseProject = projectService.baseProjectByPrimaryKey(designInfo.getBaseProjectId());
+        projectVo.setBaseProject(baseProject);
+            //各种费用
+        if(!"4".equals(baseProject.getDistrict())){
+                //设计费（安徽）
             AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
-            projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
-        } else {
-            //设计费（吴江）
+            if(anhuiMoneyinfo!=null){
+                projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
+            }else{
+                projectVo.setAnhuiMoneyinfo(new AnhuiMoneyinfo());
+            }
+        }else{
+                //设计费（吴江）
             WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
-            projectVo.setWujiangMoneyInfo(wujiangMoneyInfo);
+            if(wujiangMoneyInfo!=null){
+                projectVo.setWujiangMoneyInfo(wujiangMoneyInfo);
+            }else{
+                projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
+            }
         }
-        projectVo.setDesginStatus(baseProject.getDesginStatus());
-        projectVos.add(projectVo);
-        return projectVos;
+
+            //项目踏勘
+        PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
+        if(packageCame!=null){
+            projectVo.setPackageCame(packageCame);
+        }else{
+            projectVo.setPackageCame(new PackageCame());
+        }
+
+            //方案会审
+        ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
+        if (projectExploration!=null){
+            projectVo.setProjectExploration(projectExploration);
+        }else{
+            projectVo.setProjectExploration(new ProjectExploration());
+        }
+
+            //设计合并项目信息
+        if(baseProject.getVirtualCode()!=null){
+            List<BaseProject> baseProjects = projectService.DesProjectInfoSelect(baseProject.getVirtualCode());
+            projectVo.setMergeBaseProject(baseProjects);
+        }
+            //设计变更信息
+        DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
+        if(designChangeInfo!=null){
+            projectVo.setDesignChangeInfo(designChangeInfo);
+        }else{
+            projectVo.setDesignChangeInfo(new DesignChangeInfo());
+        }
+        return RestUtil.success(projectVo);
     }
+
 
     @PostMapping("/DesginAudandChangeAud")
     public void DesginAudandChangeAud(@RequestBody AuditInfo auditInfo) {
@@ -484,10 +549,7 @@ public class ProjectController extends BaseController {
         Long aLong = projectService.buildDay(id);
         String s = projectService.projectCount(id);
         int i = projectService.missionCount(id);
-
-        ProjectOverviewVo projectOverviewVo = new ProjectOverviewVo(aLong,"3",i);
-
-
+        ProjectOverviewVo projectOverviewVo = new ProjectOverviewVo(aLong,s,i);
         return RestUtil.success(projectOverviewVo);
     }
 
@@ -510,6 +572,11 @@ public class ProjectController extends BaseController {
         return projectService.desMoneySum(id);
     }
 
+    /**
+     * 项目概况 项目收支动态
+     * @param id
+     * @return
+     */
     //    @GetMapping("/BuildSum/{id}")
     @RequestMapping(value = "/api/disproject/BuildSum", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> BuildSum(@RequestParam(name = "id") String id) {
@@ -523,12 +590,18 @@ public class ProjectController extends BaseController {
         BigDecimal amountCostAmountSum = projectService.amountCostAmountSum(id);
         //设计费委外支出
         BigDecimal outsourceMoneySum = projectService.outsourceMoneySum(id);
+        //造价咨询费收入
+        BigDecimal consultingIncome = projectService.consultingIncome(id);
+        //造价咨询费支出
+        BigDecimal consultingExpenditure = projectService.consultingExpenditure(id);
         SumVo sumVo = new SumVo();
         sumVo.setDesMoneySum(desMoneySum);
         sumVo.setBiddingPriceControlSum(biddingPriceControlSum);
         sumVo.setCostTotalAmountSum(costTotalAmountSum);
         sumVo.setAmountCostAmountSum(amountCostAmountSum);
         sumVo.setOutsourceMoneySum(outsourceMoneySum);
+        sumVo.setConsultingIncome(consultingIncome);
+        sumVo.setConsultingExpenditure(consultingExpenditure);
         return RestUtil.success(sumVo);
     }
 

@@ -9,13 +9,15 @@ import java.util.List;
 public class ProjectVo {
     private BaseProject baseProject; //基本信息
     private DesignInfo designInfo;  //设计信息
-    private ProjectExploration projectExploration;
-    private PackageCame packageCame;
+    private ProjectExploration projectExploration; //项目踏勘
+    private PackageCame packageCame;//跟踪审计
     //设计审核信息
-    private List<AuditInfo> auditInfos;
+    private List<AuditInfo> auditInfos;  //审核状态
     //设计变更审核信息
-    private List<AuditInfo> auditInfos2;
-    private AuditInfo auditInfo;
+    private List<AuditInfo> auditInfos2; //设计变更审核状态
+    //设计合并信息
+    private List<BaseProject> mergeBaseProject;
+    private AuditInfo auditInfo; //审核信息
     private String desginStatus;
     private WujiangMoneyInfo wujiangMoneyInfo;
     private AnhuiMoneyinfo anhuiMoneyinfo;

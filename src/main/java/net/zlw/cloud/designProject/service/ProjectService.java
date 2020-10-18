@@ -282,7 +282,7 @@ public class ProjectService {
             //将部门负责人传入
             pageVo.setAdminId(memberManage.getId());
             //todo loginUser.getId()
-            pageVo.setUserId("1");
+            pageVo.setUserId("ceshi01");
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             for (DesignInfo designInfo : designInfos) {
                 //展示设计变更时间 如果为空展示 /
@@ -745,6 +745,11 @@ public class ProjectService {
         return baseProject;
     }
 
+    public BaseProject baseProjectByPrimaryKey(String id){
+        BaseProject baseProject = projectMapper.selectByPrimaryKey(id);
+        return baseProject;
+    }
+
     public AnhuiMoneyinfo anhuiMoneyinfoByid(String id){
         Example example = new Example(AnhuiMoneyinfo.class);
         Example.Criteria c = example.createCriteria();
@@ -788,6 +793,15 @@ public class ProjectService {
         c.andEqualTo("baseProjectId",id);
         DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
         return designInfo;
+    }
+
+    /**
+     * 根据设计id查询
+     * @param id
+     * @return
+     */
+    public DesignInfo designInfoByPrimaryKey(String id){
+        return designInfoMapper.selectByPrimaryKey(id);
     }
 
     public List<DesignChangeInfo> designChangeInfosByid(String id){
@@ -1361,12 +1375,47 @@ public class ProjectService {
         for (BaseProject baseProject : baseProjects) {
             DesignInfo designInfo = this.designInfoByid(baseProject.getId());
             if(designInfo!=null){
+                if(designInfo.getOutsourceMoney()==null){
+                    designInfo.setOutsourceMoney(new BigDecimal(0));
+                }
                 outsourceMoney.add(designInfo.getOutsourceMoney().add(outsourceMoney));
             }
         }
         return outsourceMoney;
     }
 
+    /**
+     * 造价咨询费支出
+     * @param id
+     * @return
+     */
+    public BigDecimal consultingExpenditure(String id){
+        //造价部门的委外金额
+        BigDecimal bigDecimal = projectMapper.consultingExpenditure1(id);
+        if (bigDecimal == null){
+            bigDecimal = new BigDecimal(0);
+        }
+        //造价部门的员工绩效
+        BigDecimal bigDecimal1 = projectMapper.consultingExpenditure2(id);
+        if (bigDecimal1 == null){
+            bigDecimal1 = new BigDecimal(0);
+        }
+        //两者相加就是支出
+        return bigDecimal.add(bigDecimal1);
+    }
+
+    /**
+     * 造价咨询费收入
+     * @param id
+     * @return
+     */
+    public BigDecimal consultingIncome(String id){
+        BigDecimal bigDecimal = projectMapper.consultingIncome(id);
+        if(bigDecimal == null){
+            bigDecimal = new BigDecimal(0);
+        }
+        return bigDecimal;
+    }
     public BigDecimal costTotalAmountSum(String id){
         Example example = new Example(BaseProject.class);
         Example.Criteria c = example.createCriteria();
@@ -1410,6 +1459,9 @@ public class ProjectService {
             c1.andEqualTo("baseProjectId",baseProject.getId());
             Budgeting budgeting = budgetingMapper.selectOneByExample(example1);
             if(budgeting!=null){
+                if(budgeting.getAmountCost()==null){
+                    budgeting.setAmountCost(new BigDecimal(0));
+                }
                 costTotalAmount.add(budgeting.getAmountCost().add(costTotalAmount));
             }
         }
@@ -1424,6 +1476,9 @@ public class ProjectService {
         for (BaseProject baseProject : baseProjects) {
             VeryEstablishment veryEstablishment = this.veryEstablishmentById(baseProject.getId());
             if(veryEstablishment!=null){
+                if (veryEstablishment.getBiddingPriceControl()==null){
+                    veryEstablishment.setBiddingPriceControl(new BigDecimal(0));
+                }
                 costTotalAmount.add(veryEstablishment.getBiddingPriceControl().add(costTotalAmount));
             }
         }

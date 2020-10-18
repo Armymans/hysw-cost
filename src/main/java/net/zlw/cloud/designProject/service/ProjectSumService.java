@@ -1032,6 +1032,10 @@ public class ProjectSumService {
             PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
             return baseProjectPageInfo;
         }else{
+//            LocalDateTime now = LocalDateTime.now();
+//            int year = now.getYear();
+//            costVo2.setStartTime(year + "-01-01");
+//            costVo2.setEndTime(year + "-12-31");
             List<BaseProject> baseProjects = projectMapper.projectVisaChangeList(costVo2);
             PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
             return baseProjectPageInfo;

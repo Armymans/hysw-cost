@@ -11,4 +11,6 @@ public class SumVo {
     private BigDecimal costTotalAmountSum;
     private BigDecimal amountCostAmountSum;
     private BigDecimal outsourceMoneySum;
+    private BigDecimal consultingExpenditure;
+    private BigDecimal consultingIncome;
 }

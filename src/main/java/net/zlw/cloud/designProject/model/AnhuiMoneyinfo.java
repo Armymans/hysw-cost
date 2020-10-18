@@ -22,40 +22,40 @@ public class AnhuiMoneyinfo{
     private String baseProjectId;
 
     @Column(name = "collection_money")
-    private String collectionMoney;
+    private String collectionMoney; //代收金额/次数
 
     @Column(name = "total_money")
-    private BigDecimal totalMoney;
+    private BigDecimal totalMoney; //总计付款
 
     @Column(name = "pump_room_cost")
-    private BigDecimal pumpRoomCost;
+    private BigDecimal pumpRoomCost;  //泵房费用
 
     @Column(name = "pay_term")
-    private String payTerm;
+    private String payTerm;  //收费方式
 
     @Column(name = "bim")
-    private BigDecimal bim;
+    private BigDecimal bim; //bim系数
 
     @Column(name = "pipeline_cost")
-    private BigDecimal pipelineCost;
+    private BigDecimal pipelineCost; //管道费用
 
     @Column(name = "professional_adjustment_factor")
-    private BigDecimal professionalAdjustmentFactor;
+    private BigDecimal professionalAdjustmentFactor;  //专业调整系数
 
     @Column(name = "complex_adjustment_factor")
-    private BigDecimal complexAdjustmentFactor;
+    private BigDecimal complexAdjustmentFactor; //复杂调整系数
 
     @Column(name = "preferential_policy")
-    private BigDecimal preferentialPolicy;
+    private BigDecimal preferentialPolicy; //优惠政策
 
     @Column(name = "revenue")
-    private BigDecimal revenue;
+    private BigDecimal revenue; //应收金额
 
     @Column(name = "official_receipts")
-    private BigDecimal officialReceipts;
+    private BigDecimal officialReceipts; //实收金额
 
     @Column(name = "collection_time")
-    private String collectionTime;
+    private String collectionTime; //收款日期
 
     @Column(name = "founder_id")
     private String founderId;
