@@ -397,7 +397,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.project_num like CONCAT('%',#{keyword},'%') or\n" +
                     "s1.project_name like CONCAT('%',#{keyword},'%') or\n" +
                     "s1.district like CONCAT('%',#{keyword},'%') or\n" +
-                    "s1.designer like CONCAT('%',#{keyword},'%') \n" +
+                    "s2.designer like CONCAT('%',#{keyword},'%') \n" +
                     ")"
     )
     List<DesignInfo> desginCensusListByDesigner(CostVo2 costVo2);

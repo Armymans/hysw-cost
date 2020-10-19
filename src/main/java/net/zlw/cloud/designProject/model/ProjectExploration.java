@@ -15,19 +15,19 @@ public class ProjectExploration {
     private String id;
 
     @Column(name = "scout")
-    private String scout;
+    private String scout; //勘探人
 
     @Column(name = "exploration_time")
-    private String explorationTime;
+    private String explorationTime; //勘探时间
 
     @Column(name = "site")
-    private String site;
+    private String site; //地点
 
     @Column(name = "exploration_ideal")
-    private String explorationIdeal;
+    private String explorationIdeal; //勘探意见
 
     @Column(name = "remark")
-        private String remark;
+    private String remark;  //备注
 
     @Column(name = "base_project_id")
     private String baseProjectId;

@@ -6,11 +6,11 @@ import java.math.BigDecimal;
 
 @Data
 public class SumVo {
-    private BigDecimal biddingPriceControlSum;
-    private BigDecimal desMoneySum;
-    private BigDecimal costTotalAmountSum;
-    private BigDecimal amountCostAmountSum;
-    private BigDecimal outsourceMoneySum;
-    private BigDecimal consultingExpenditure;
-    private BigDecimal consultingIncome;
+    private String biddingPriceControlSum;
+    private String desMoneySum;
+    private String costTotalAmountSum;
+    private String amountCostAmountSum;
+    private String outsourceMoneySum;
+    private String consultingExpenditure;
+    private String consultingIncome;
 }

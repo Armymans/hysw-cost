@@ -11,9 +11,11 @@ import net.zlw.cloud.designProject.mapper.*;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.statisticAnalysis.model.EmployeeVo;
+import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -82,7 +84,8 @@ public class ProjectSumService {
     private VisaChangeMapper visaChangeMapper;
     @Resource
     private TrackAuditInfoDao trackAuditInfoDao;
-
+    @Resource
+    private MemberManageDao memberManageDao;
 
     /**
      * 全部项目
@@ -2067,5 +2070,18 @@ public class ProjectSumService {
             CostVo2 costVo21 = this.NowYear(costVo2);
             return achievementsInfoMapper.MemberAchievementsCensus2(costVo21);
         }
+    }
+
+    /**
+     * 查询所有设计业务员
+     * @return
+     */
+    public List<MemberManage> desginPerson() {
+        Example example = new Example(MemberManage.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("depId","1");
+        c.andEqualTo("memberRoleId","6");
+        List<MemberManage> memberManages = memberManageDao.selectByExample(example);
+        return memberManages;
     }
 }

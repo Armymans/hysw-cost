@@ -724,6 +724,14 @@ public class ProjectService {
             projectVo.getPackageCame().setStatus("0");
             projectVo.getPackageCame().setCreateTime(createTime);
             packageCameMapper.insert(projectVo.getPackageCame());
+        }else{
+            PackageCame packageCame = new PackageCame();
+            packageCame.setId(packageCameuuId);
+            packageCame.setBassProjectId(DesignInfouuid);
+            //todo   loginUser.getId()
+            packageCame.setStatus("0");
+            packageCame.setCreateTime(createTime);
+            packageCameMapper.insert(projectVo.getPackageCame());
         }
 
 
@@ -734,6 +742,11 @@ public class ProjectService {
             //todo   loginUser.getId()
             projectVo.getProjectExploration().setFounderId("ceshi01");
             projectVo.getProjectExploration().setCompany_id(loginUser.getCompanyId());
+            projectVo.getProjectExploration().setStatus("0");
+            projectExplorationMapper.insert(projectVo.getProjectExploration());
+        }else{
+            projectVo.getProjectExploration().setId(projectExplorationuuid);
+            projectVo.getProjectExploration().setBaseProjectId(DesignInfouuid);
             projectVo.getProjectExploration().setStatus("0");
             projectVo.getProjectExploration().setCreateTime(createTime);
             projectExplorationMapper.insert(projectVo.getProjectExploration());
@@ -1348,7 +1361,6 @@ public class ProjectService {
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("buildingProjectId",id);
         BigDecimal officialReceipts = new BigDecimal(0);
-        BigDecimal officialReceipts1 = new BigDecimal(0);
         List<BaseProject> baseProjects = projectMapper.selectByExample(example);
         for (BaseProject baseProject : baseProjects) {
             DesignInfo designInfo = this.designInfoByid(baseProject.getId());
@@ -1356,14 +1368,14 @@ public class ProjectService {
                 AnhuiMoneyinfo anhuiMoneyinfo = this.anhuiMoneyinfoByid(designInfo.getId());
                 WujiangMoneyInfo wujiangMoneyInfo = this.wujiangMoneyInfoByid(designInfo.getId());
                 if(wujiangMoneyInfo!=null){
-                    officialReceipts.add(anhuiMoneyinfo.getOfficialReceipts().add(officialReceipts)) ;
+                    officialReceipts = anhuiMoneyinfo.getOfficialReceipts().add(officialReceipts);
                 }
                 if(anhuiMoneyinfo!=null){
-                    officialReceipts1.add( wujiangMoneyInfo.getOfficialReceipts().add(officialReceipts1));
+                    officialReceipts = wujiangMoneyInfo.getOfficialReceipts().add(officialReceipts);
                 }
             }
         }
-        return officialReceipts.add(officialReceipts1);
+        return officialReceipts.add(officialReceipts);
     }
 
     public BigDecimal outsourceMoneySum(String id){
@@ -1377,8 +1389,9 @@ public class ProjectService {
             if(designInfo!=null){
                 if(designInfo.getOutsourceMoney()==null){
                     designInfo.setOutsourceMoney(new BigDecimal(0));
+                }else{
+                    outsourceMoney.add(designInfo.getOutsourceMoney().add(outsourceMoney));
                 }
-                outsourceMoney.add(designInfo.getOutsourceMoney().add(outsourceMoney));
             }
         }
         return outsourceMoney;
@@ -1425,7 +1438,9 @@ public class ProjectService {
         for (BaseProject baseProject : baseProjects) {
             CostPreparation costPreparation = this.costPreparationById(baseProject.getId());
             if(costPreparation!=null){
-                costTotalAmount.add(costPreparation.getCostTotalAmount().add(costTotalAmount));
+                if(costPreparation.getCostTotalAmount()!=null){
+                    costTotalAmount = costPreparation.getCostTotalAmount().add(costTotalAmount);
+                }
             }
         }
         return costTotalAmount;
@@ -1461,8 +1476,9 @@ public class ProjectService {
             if(budgeting!=null){
                 if(budgeting.getAmountCost()==null){
                     budgeting.setAmountCost(new BigDecimal(0));
+                }else{
+                    costTotalAmount = budgeting.getAmountCost().add(costTotalAmount);
                 }
-                costTotalAmount.add(budgeting.getAmountCost().add(costTotalAmount));
             }
         }
         return costTotalAmount;
@@ -1478,8 +1494,9 @@ public class ProjectService {
             if(veryEstablishment!=null){
                 if (veryEstablishment.getBiddingPriceControl()==null){
                     veryEstablishment.setBiddingPriceControl(new BigDecimal(0));
+                }else{
+                    costTotalAmount = veryEstablishment.getBiddingPriceControl().add(costTotalAmount);
                 }
-                costTotalAmount.add(veryEstablishment.getBiddingPriceControl().add(costTotalAmount));
             }
         }
         return costTotalAmount;

@@ -22,6 +22,7 @@ import org.apache.ibatis.annotations.Select;
 import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.util.StringUtil;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -135,8 +136,9 @@ public class ProjectController extends BaseController {
      * @param id
      */
     @RequestMapping(value = "/api/disproject/reduction", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public void reduction(String id) {
+    public Map<String,Object> reduction(String id) {
         projectService.reduction(id);
+        return RestUtil.success();
     }
 
     /**
@@ -446,17 +448,19 @@ public class ProjectController extends BaseController {
             }else{
                 projectVo.setAnhuiMoneyinfo(new AnhuiMoneyinfo());
             }
+            projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
         }else{
-                //设计费（吴江）
+            //设计费（吴江）
             WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
             if(wujiangMoneyInfo!=null){
                 projectVo.setWujiangMoneyInfo(wujiangMoneyInfo);
             }else{
                 projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
             }
+            projectVo.setAnhuiMoneyinfo(new AnhuiMoneyinfo());
         }
 
-            //项目踏勘
+        //方案会审
         PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
         if(packageCame!=null){
             projectVo.setPackageCame(packageCame);
@@ -464,7 +468,7 @@ public class ProjectController extends BaseController {
             projectVo.setPackageCame(new PackageCame());
         }
 
-            //方案会审
+        //项目踏勘
         ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
         if (projectExploration!=null){
             projectVo.setProjectExploration(projectExploration);
@@ -580,28 +584,62 @@ public class ProjectController extends BaseController {
     //    @GetMapping("/BuildSum/{id}")
     @RequestMapping(value = "/api/disproject/BuildSum", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> BuildSum(@RequestParam(name = "id") String id) {
+        SumVo sumVo = new SumVo();
         //设计费支出
         BigDecimal desMoneySum = projectService.desMoneySum(id);
+        if(StringUtil.isEmpty(desMoneySum.toString())){
+            sumVo.setDesMoneySum("--");
+        }else{
+            sumVo.setDesMoneySum(desMoneySum.toString());
+        }
+
         //招标控制价
         BigDecimal biddingPriceControlSum = projectService.biddingPriceControlSum(id);
+        if(StringUtil.isEmpty(biddingPriceControlSum.toString())){
+            sumVo.setBiddingPriceControlSum("--");
+        }else{
+            sumVo.setBiddingPriceControlSum(biddingPriceControlSum.toString());
+        }
+
         //成本总金额
         BigDecimal costTotalAmountSum = projectService.costTotalAmountSum(id);
+        if(StringUtil.isEmpty(costTotalAmountSum.toString())){
+            sumVo.setCostTotalAmountSum("--");
+        }else {
+            sumVo.setCostTotalAmountSum(costTotalAmountSum.toString());
+        }
+
         //造价金额
         BigDecimal amountCostAmountSum = projectService.amountCostAmountSum(id);
+        if(StringUtil.isEmpty(amountCostAmountSum.toString())){
+            sumVo.setAmountCostAmountSum("--");
+        }else{
+            sumVo.setAmountCostAmountSum(amountCostAmountSum.toString());
+        }
+
         //设计费委外支出
         BigDecimal outsourceMoneySum = projectService.outsourceMoneySum(id);
+        if(StringUtil.isEmpty(outsourceMoneySum.toString())){
+            sumVo.setOutsourceMoneySum("--");
+        }else{
+            sumVo.setOutsourceMoneySum(outsourceMoneySum.toString());
+        }
+
         //造价咨询费收入
         BigDecimal consultingIncome = projectService.consultingIncome(id);
+        if(StringUtil.isEmpty(consultingIncome.toString())){
+            sumVo.setConsultingIncome("--");
+        }else {
+            sumVo.setConsultingIncome(consultingIncome.toString());
+        }
+
         //造价咨询费支出
         BigDecimal consultingExpenditure = projectService.consultingExpenditure(id);
-        SumVo sumVo = new SumVo();
-        sumVo.setDesMoneySum(desMoneySum);
-        sumVo.setBiddingPriceControlSum(biddingPriceControlSum);
-        sumVo.setCostTotalAmountSum(costTotalAmountSum);
-        sumVo.setAmountCostAmountSum(amountCostAmountSum);
-        sumVo.setOutsourceMoneySum(outsourceMoneySum);
-        sumVo.setConsultingIncome(consultingIncome);
-        sumVo.setConsultingExpenditure(consultingExpenditure);
+        if(StringUtil.isEmpty(consultingIncome.toString())){
+            sumVo.setConsultingExpenditure("--");
+        }else {
+            sumVo.setConsultingExpenditure(consultingExpenditure.toString());
+        }
         return RestUtil.success(sumVo);
     }
 
@@ -801,8 +839,7 @@ public class ProjectController extends BaseController {
         if(projectExploration==null){
             projectVo3.setProjectExploration(new ProjectExploration());
         }else{
-            projectVo3.setProjectExploration(projectExploration);
-        }
+            projectVo3.setProjectExploration(projectExploration);}
         //方案会审
         PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
         if(packageCame==null){
