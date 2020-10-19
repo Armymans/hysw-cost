@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 public class TrackVo  {
     private BaseProject baseProject;
+    //跟踪审计信息
     private TrackAuditInfo auditInfo;
     private TrackApplicationInfo trackApplicationInfo;
     private List<TrackMonthly> monthlyList = new ArrayList<>();

@@ -16,7 +16,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
             "b.cea_num ceaNum,\n" +
             "b.project_num projectNum,\n" +
             "b.project_name projectName,\n" +
-            "b.track_status trackStatus,\n" +
+            "( CASE b.track_status WHEN '1' THEN '待审核' WHEN '2' THEN '未提交' WHEN '3' THEN '进行中' WHEN '4' THEN '未通过' WHEN '5' THEN '已完成' END ) AS trackStatus,\n" +
             "( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,\n" +
             "b.construction_unit constructionUnit,\n" +
             "( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,\n" +

@@ -28,7 +28,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "                          WHEN '4' THEN 'DN300以上管道抢维修' WHEN '5' THEN 'DN300以下管道抢维修' WHEN '6' THEN '设备维修购置' WHEN '7' THEN '房屋修缮' WHEN '8' THEN '绿化种植' \n" +
             "                          WHEN '9' THEN '装饰及装修' END ) AS maintenanceItemType, \n" +
             "                          ( CASE m.type WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '已完成' END ) AS type, \n" +
-            "                          m.project_address AS district, \n" +
+            "                          ( CASE m.project_address WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district, \n" +
             "                          m.customer_name customerName, \n" +
             "                          m.prepare_people preparePeople, \n" +
             "                          c.construction_unit_name constructionUnitName, \n" +

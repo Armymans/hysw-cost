@@ -56,7 +56,6 @@ public class SettlementAuditInformation implements Serializable {
     private String accountId;
     @Column(name = "whether_account")
     private String whetherAccount;
-    @Column(name = "remark")
-    private String remark;
+
 
 }
