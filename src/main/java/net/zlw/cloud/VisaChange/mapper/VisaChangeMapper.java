@@ -90,7 +90,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "    s4.cost_unit_name as nameOfCostUnit," +
             "    (" +
             "    CASE" +
-            "    s1.status " +
+            "    s2.visa_status " +
             "    WHEN '1' THEN" +
             "    '待审核' " +
             "    WHEN '2' THEN" +
@@ -122,7 +122,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "    AND (" +
             "    s2.project_nature = #{projectNature} or #{projectNature} = '')" +
             "    AND (" +
-            "    s1.status = #{status} or #{status} = '')" +
+            "     s2.visa_status = #{status} or #{status} = '')" +
             "    AND s1.create_time >= #{createStartTime}" +
             "    AND (" +
             "    s1.create_time <= #{createEndTime} or #{createEndTime}  ='')" +
@@ -224,7 +224,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "    s5.cost_unit_name as nameOfCostUnit," +
             "    (" +
             "    CASE" +
-            "    s1.status " +
+            "    s2.visa_status " +
             "    WHEN '1' THEN" +
             "    '待审核' " +
             "    WHEN '2' THEN" +
@@ -346,7 +346,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "    s5.cost_unit_name as nameOfCostUnit," +
             "    (" +
             "    CASE" +
-            "    s1.status " +
+            "    s2.visa_status " +
             "    WHEN '1' THEN" +
             "    '待审核' " +
             "    WHEN '2' THEN" +

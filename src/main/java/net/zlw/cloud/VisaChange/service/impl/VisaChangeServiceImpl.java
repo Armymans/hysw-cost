@@ -88,6 +88,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         } else {
             all = vcMapper.findAll(visaChangeVO);
         }
+        List<VisaChangeVo> all1 = vcMapper.findAll(visaChangeVO);
+        all = all1;
+
 
         BigDecimal shang = new BigDecimal(0);
         BigDecimal xia = new BigDecimal(0);
@@ -292,65 +295,62 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 //        userInfo.getId();
         String[] split = batchReviewVo.getBatchAll().split(",");
 
-        if (split.length > 0) {
+        if (split.length!=0){
             for (String s : split) {
-                if (StringUtil.isNotEmpty(s)) {
-
-                    Example example1 = new Example(VisaChange.class);
-                    example1.createCriteria().andEqualTo("id", s);
-                    VisaChange visaChange = vcMapper.selectOneByExample(example1);
-
-                    //获得当前记录的审核人id
-                    Example example2 = new Example(AuditInfo.class);
-                    example2.createCriteria().andEqualTo("baseProjectId", s)
-                            .andEqualTo("auditResult", "0")
-                            .andEqualTo("auditorId", "123");
-                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example2);
-//                判断如果一级审核通过更改状态
-                    if ("1".equals(batchReviewVo.getAuditResult())) {
-                        if ("0".equals(auditInfo.getAuditType())) {
+                VisaChange visaChange = vcMapper.selectByPrimaryKey(s);
+                Example example = new Example(AuditInfo.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("baseProjectId",visaChange.getId());
+                List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+                for (AuditInfo auditInfo : auditInfos) {
+                    //通过
+                    if (batchReviewVo.getAuditResult().equals("1")){
+                        //一审
+                        if (auditInfo.getAuditResult().equals("0") && auditInfo.getAuditType().equals("0")){
                             auditInfo.setAuditResult("1");
-//                        一级审批的意见,时间
-                            auditInfo.setAuditTime(sdf.format(new Date()));
                             auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-//                       修改审批状态
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            auditInfo.setAuditTime(simpleDateFormat.format(new Date()));
                             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-//                            一审通过在审核表插入一条数据
+
+                            //加入二审
                             AuditInfo auditInfo1 = new AuditInfo();
-                            auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                            auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
                             auditInfo1.setBaseProjectId(s);
                             auditInfo1.setAuditResult("0");
-                            auditInfo1.setAuditOpinion(batchReviewVo.getAuditOpinion());
-                            auditInfo1.setCreateTime(sdf.format(new Date()));
-                            auditInfo1.setUpdateTime(sdf.format(new Date()));
-                            visaChange.setStatus("4");
-
-                            Example example3 = new Example(MemberManage.class);
-                            example3.createCriteria().andEqualTo("status", "0").andEqualTo("depId", "2").andEqualTo("depAdmin", "1");
-                            MemberManage memberManage = memberManageDao.selectOneByExample(example3);
-                            auditInfo1.setAuditorId(memberManage.getId());
-
-                            vcMapper.updateByPrimaryKeySelective(visaChange);
+                            auditInfo1.setAuditType("1");
+                            Example example1 = new Example(MemberManage.class);
+                            Example.Criteria c = example1.createCriteria();
+                            c.andEqualTo("depId","2");
+                            c.andEqualTo("depAdmin","1");
+                            MemberManage manage = memberManageDao.selectOneByExample(example1);
+                            auditInfo1.setAuditorId(manage.getId());
+                            auditInfo1.setStatus("0");
+                            auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
                             auditInfoDao.insertSelective(auditInfo1);
-//                      判断二级审核通过
-                        } else if ("1".equals(auditInfo.getAuditType())) {
-                            visaChange.setStatus("5");
+                            break;
+                        }else if(auditInfo.getAuditResult().equals("1") && auditInfo.getAuditType().equals("0")){
                             auditInfo.setAuditResult("1");
-
-                            Date date = new Date();
-                            auditInfo.setAuditTime(sdf.format(date));
                             auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-//                        修改表信息
-                            vcMapper.updateByPrimaryKeySelective(visaChange);
+                            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+                            auditInfo.setAuditTime(sim.format(new Date()));
                             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+                            baseProject.setVisaStatus("6");
+                            baseProjectDao.updateByPrimaryKeySelective(baseProject);
                         }
-//                    如果审核未通过,修改主表从表审核状态
-                    } else if ("2".equals(batchReviewVo.getAuditResult())) {
-                        auditInfo.setAuditResult("2");
-                        visaChange.setStatus("3");
-                        auditInfo.setAuditTime(sdf.format(new Date()));
-                        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                        vcMapper.updateByPrimaryKeySelective(visaChange);
+
+                        //不通过
+                    }else if(batchReviewVo.getAuditResult().equals("2")){
+                            auditInfo.setAuditResult("2");
+                            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+                            auditInfo.setAuditTime(sim.format(new Date()));
+                            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+                        baseProject.setVisaStatus("3");
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
                     }
                 }
             }
@@ -400,12 +400,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
 
     private void insertVisaInfoAndApplyInfo(VisaChangeInfoVo visaChangeInfoVo, String createTime) {
+        VisaChangeInformation upvisachange = new VisaChangeInformation();
+        VisaChangeInformation downvisachange = new VisaChangeInformation();
 
 
         //判断上家签证/变更申请信息
         String applicantNameUp = visaChangeInfoVo.getApplicantNameUp();
         if (StringUtil.isNotEmpty(applicantNameUp)) {
             VisaChangeInformation applyChangeInformation = new VisaChangeInformation();
+            upvisachange = applyChangeInformation;
             applyChangeInformation.setId(UUID.randomUUID().toString().replace("-", ""));
             applyChangeInformation.setApplicantName(applicantNameUp);
             applyChangeInformation.setRemark(visaChangeInfoVo.getRemarkUp());
@@ -430,6 +433,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         String applicantNameDown = visaChangeInfoVo.getApplicantNameDown();
         if (StringUtil.isNotEmpty(applicantNameDown)) {
             VisaChangeInformation applyChangeInformation = new VisaChangeInformation();
+            downvisachange = applyChangeInformation;
 
             applyChangeInformation.setId(UUID.randomUUID().toString().replace("-", ""));
             applyChangeInformation.setApplicantName(applicantNameDown);
@@ -487,6 +491,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
             visaChange.setProportionContract(visaChangeInfoVo.getProportionContract());
             visaChange.setChangeNum("1");
+            if (upvisachange.getId()!=null){
+                visaChange.setApplyChangeInfoId(upvisachange.getId());
+            }
 
             vcMapper.insertSelective(visaChange);
         }
@@ -527,6 +534,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChange.setProportionContract(visaChangeInfoVo.getProportionContractDown());
             visaChange.setChangeNum("1");
 
+            if (downvisachange.getId()!=null){
+                visaChange.setApplyChangeInfoId(downvisachange.getId());
+            }
             vcMapper.insertSelective(visaChange);
         }
     }
@@ -535,6 +545,28 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     //编辑提交/保存
     @Override
     public void submitOrSave(VisaChangeInfoVo visaChangeInfoVo) {
+
+        if (visaChangeInfoVo.getAuditNumber().equals("1")){
+            AuditInfo auditInfo = new AuditInfo();
+            auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+            auditInfo.setBaseProjectId(visaChangeInfoVo.getId());
+            auditInfo.setAuditResult("0");
+            auditInfo.setAuditType("0");
+            auditInfo.setAuditorId(visaChangeInfoVo.getAuditId());
+            auditInfo.setStatus("0");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+            String format = simpleDateFormat.format(new Date());
+            auditInfo.setCreateTime(format);
+            auditInfoDao.insertSelective(auditInfo);
+
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
+            baseProject.setVisaStatus("1");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        }else{
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
+            baseProject.setVisaStatus("2");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        }
 
         String updateTime = sdf.format(new Date());
 
@@ -552,7 +584,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         VisaChangeInformation applyChangeInformation = applyMapper.selectOneByExample(example2);
 
         //                判断如果一级审核通过更改状态
-        if ("1".equals(auditInfo.getAuditResult())) {
+        if (auditInfo!=null && "1".equals(auditInfo.getAuditResult())) {
             if ("0".equals(auditInfo.getAuditType())) {
                 auditInfo.setAuditResult("1");
 //                        一级审批的意见,时间
@@ -578,7 +610,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 vcMapper.updateByPrimaryKeySelective(visaChange);
                 auditInfoDao.insertSelective(auditInfo1);
 //                      判断二级审核通过
-            } else if ("1".equals(auditInfo.getAuditType())) {
+            } else if (auditInfo!=null && "1".equals(auditInfo.getAuditType())) {
                 visaChange.setStatus("5");
                 auditInfo.setAuditResult("1");
 
@@ -590,7 +622,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
             }
 //                    如果审核未通过,修改主表从表审核状态
-        } else if ("2".equals(auditInfo.getAuditResult())) {
+        } else if (auditInfo!=null && "2".equals(auditInfo.getAuditResult())) {
             auditInfo.setAuditResult("2");
             visaChange.setStatus("3");
             auditInfo.setAuditTime(sdf.format(new Date()));

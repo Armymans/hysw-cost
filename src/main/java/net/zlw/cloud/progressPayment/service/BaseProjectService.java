@@ -3,6 +3,7 @@ package net.zlw.cloud.progressPayment.service;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.PageVo;
@@ -43,4 +44,6 @@ public interface BaseProjectService {
     BaseProject findByBaseProjectId(VisaBaseProjectVo visaBaseProjectVo);
 
     BaseProject findByBuilding(String id);
+
+    List<AuditChekedVo> auditChek(String id);
 }

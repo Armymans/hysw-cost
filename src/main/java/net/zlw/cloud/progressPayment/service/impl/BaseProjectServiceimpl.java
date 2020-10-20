@@ -7,6 +7,7 @@ import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.designProject.model.Budgeting;
+import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.*;
@@ -640,5 +641,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             }
         }
         return baseProject;
+    }
+
+    @Override
+    public List<AuditChekedVo> auditChek(String id) {
+      return  auditInfoDao.auditChek(id);
     }
 }

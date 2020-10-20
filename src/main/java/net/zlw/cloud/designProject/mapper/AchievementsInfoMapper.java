@@ -73,12 +73,14 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "achievements_info a  \n" +
             "left join base_project b on b.id = a.base_project_id\n" +
             "left join design_info d on b.id = d.base_project_id\n" +
+            "left join member_manage mm on mm.id = a.member_id \n" +
             "where \n" +
             "(b.district = #{district} or #{district} = '') and \n" +
             "(d.blueprint_start_time > #{statTime} or #{statTime} = '') and \n" +
-            "(d.blueprint_start_time < #{endTime} or #{endTime} = '') \n" +
+            "(d.blueprint_start_time < #{endTime} or #{endTime} = '') and \n" +
+            "mm.dep_id = '1' \n" +
             "group by \n" +
-            "member_id,\n")
+            "member_id\n")
     List<PerformanceDistributionChart> findDesignPerformanceDistributionChart(pageVo pageVo);
 
     @Select("select \n" +
@@ -92,12 +94,14 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "left join last_settlement_review l on b.id = l.base_project_id\n" +
             "left join settlement_audit_information s on b.id = s.base_project_id\n" +
             "left join track_audit_info t on b.id = t.base_project_id\n" +
+            "left join member_manage mm on mm.id = a.member_id \n" +
             "where \n" +
             "(b.district = #{district} or #{district} = '') and \n" +
             "(bt.budgeting_time > #{statTime} or #{statTime} = '') and \n" +
-            "(bt.budgeting_time < #{endTime} or #{endTime} = '')  \n" +
+            "(bt.budgeting_time < #{endTime} or #{endTime} = '') and \n" +
+            "mm.dep_id = '2' \n" +
             "group by \n" +
-            "member_id,\n")
+            "member_id\n")
     List<PerformanceDistributionChart> findCostPerformanceDistributionChart(pageVo pageVo);
 
     @Select("select \n" +

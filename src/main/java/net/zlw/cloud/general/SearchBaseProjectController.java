@@ -4,6 +4,7 @@ import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.vo.LoginUser;
 import net.tec.cloud.common.web.MediaTypes;
+import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import org.springframework.web.bind.annotation.*;
@@ -56,9 +57,10 @@ public class SearchBaseProjectController {
         BaseProject byId = baseProjectService.findByBuilding(id);
         return RestUtil.success(byId);
     }
-//    //审核卡片
-//    @RequestMapping(value = "/review/auditChek",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-//    public Map<String,Object> auditChek(@RequestParam(name = "id") String id){
-//        baseProjectService.auditChek(id);
-//    }
+    //审核卡片
+    @RequestMapping(value = "/review/auditChek",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> auditChek(@RequestParam(name = "id") String id){
+        List<AuditChekedVo> list = baseProjectService.auditChek(id);
+        return RestUtil.success(list);
+    }
 }
