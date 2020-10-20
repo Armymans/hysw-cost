@@ -44,7 +44,7 @@ public class VisaChangeController extends BaseController {
 
     /***
      * 删除
-     * @param id
+     * @param id  base id
      * @return
      */
     @RequestMapping(value = "/visaChange/deleteById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)

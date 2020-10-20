@@ -139,8 +139,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
      * 删除
      * @param id
      */
-    @Update("update  visa_change_information set state = '1' where id = #{id}")
-    void deleteById(@Param("id") String id);
+
 
     @Select("select * from visa_change_information where id = #{id}")
     VisaChange selectById(@Param("id") String id);

@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,6 +64,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Autowired
     private BaseProjectService baseProjectService;
+
+
 
 
     /***
@@ -130,7 +133,31 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Override
     public void delete(String id) {
-        vcMapper.deleteById(id);
+        Example example = new Example(VisaChange.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",id);
+        List<VisaChange> visaChanges = vcMapper.selectByExample(example);
+        if (visaChanges!=null && visaChanges.size()!=0){
+            for (VisaChange visaChange : visaChanges) {
+                visaChange.setState("1");
+                vcMapper.updateByPrimaryKeySelective(visaChange);
+                VisaChangeInformation visaChangeInformation = applyMapper.selectByPrimaryKey(visaChange.getApplyChangeInfoId());
+                if (visaChangeInformation!=null){
+                    visaChangeInformation.setState("1");
+                    applyMapper.updateByPrimaryKeySelective(visaChangeInformation);
+                }
+                Example example1 = new Example(AuditInfo.class);
+                Example.Criteria cc = example1.createCriteria();
+                cc.andEqualTo("baseProjectId",visaChange.getId());
+                List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+                if (auditInfos!=null && auditInfos.size()!=0){
+                    for (AuditInfo auditInfo : auditInfos) {
+                        auditInfo.setStatus("1");
+                        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                    }
+                }
+            }
+        }
     }
 
     //编辑回显
@@ -328,7 +355,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                             auditInfo1.setStatus("0");
                             auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
                             auditInfoDao.insertSelective(auditInfo1);
-                            break;
+
                         }else if(auditInfo.getAuditResult().equals("1") && auditInfo.getAuditType().equals("0")){
                             auditInfo.setAuditResult("1");
                             auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
@@ -372,23 +399,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         //提交
         if (StringUtils.isNotEmpty(visaChangeInfoVo.getAuditId())) {
 
-            AuditInfo auditInfo = new AuditInfo();
-
-            auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
-            auditInfo.setFounderId(visaChangeInfoVo.getLoginUserId());
-            auditInfo.setCompanyId(visaChangeInfoVo.getLoginUserId());
-            auditInfo.setAuditorId(visaChangeInfoVo.getAuditId());
-            // 数据状态 0:正常 1:删除
-            auditInfo.setStatus("0");
-            // 0一审1二审2变更一审3变更二审
-            auditInfo.setAuditType("0");
-            // 0未审批 1通过 2未通过
-            auditInfo.setAuditResult("0");
-            auditInfo.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
-            auditInfo.setAuditOpinion(visaChangeInfoVo.getAuditOpinion());
-            auditInfo.setCreateTime(createTime);
-
-            auditInfoDao.insertSelective(auditInfo);
 
             insertVisaInfoAndApplyInfo(visaChangeInfoVo, createTime);
         } else {//保存
@@ -400,6 +410,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
 
     private void insertVisaInfoAndApplyInfo(VisaChangeInfoVo visaChangeInfoVo, String createTime) {
+
         VisaChangeInformation upvisachange = new VisaChangeInformation();
         VisaChangeInformation downvisachange = new VisaChangeInformation();
 
@@ -538,6 +549,31 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChange.setApplyChangeInfoId(downvisachange.getId());
             }
             vcMapper.insertSelective(visaChange);
+
+        }
+        if (visaChangeInfoVo.getAuditId()!=null && !visaChangeInfoVo.getAuditId().equals("")){
+            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+            AuditInfo auditInfo = new AuditInfo();
+            auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+            auditInfo.setBaseProjectId(upvisachange.getId());
+            auditInfo.setAuditResult("0");
+            auditInfo.setAuditType("0");
+            auditInfo.setAuditorId(visaChangeInfoVo.getAuditId());
+            auditInfo.setStatus("0");
+            auditInfo.setCreateTime(sim.format(new Date()));
+            auditInfoDao.insertSelective(auditInfo);
+            AuditInfo auditInfo1 = new AuditInfo();
+            auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+            auditInfo1.setBaseProjectId(downvisachange.getId());
+            auditInfo1.setAuditResult("0");
+            auditInfo1.setAuditType("0");
+            auditInfo1.setAuditorId(visaChangeInfoVo.getAuditId());
+            auditInfo1.setStatus("0");
+            auditInfo1.setCreateTime(sim.format(new Date()));
+            auditInfoDao.insertSelective(auditInfo1);
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
+            baseProject.setVisaStatus("1");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
         }
     }
 

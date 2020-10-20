@@ -17,7 +17,7 @@ public interface VisaChangeService {
      public PageInfo<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser );
 
 
-     public void delete(String id);
+  
 
      VisaChangeInfoVo selectByEditId(String id);
 
@@ -31,4 +31,6 @@ public interface VisaChangeService {
      VisaChangeInfoVo selectById(String id);
 
      List<VisaChangeStatisticVo> selectListById(String id);
+
+     void delete(String id);
 }
