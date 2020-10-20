@@ -192,6 +192,26 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "MONTH(bt.budgeting_time)\n")
     List<PerformanceDistributionChart> findCostPerformanceChart(pageVo pageVo);
 
+    @Select("select SUM(a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements) as PerformanceProvision ,\n" +
+            "SUM((a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements)*0.8) as IssuedDuringMmonth,\n" +
+            "YEAR(bt.budgeting_time) yearTime,\n" +
+            "MONTH(bt.budgeting_time) monthTime,\n" +
+            "SUM(a.budget_achievements) budgetAchievements, \n " +
+            "SUM(a.upsubmit_achievements) upsubmitAchievements, \n " +
+            "SUM(a.downsubmit_achievements) downsubmitAchievements, \n " +
+            "SUM(a.truck_achievements) truckAchievements \n " +
+            "from achievements_info a \n" +
+            "LEFT JOIN base_project b ON a.base_project_id = b.id\n" +
+            "LEFT JOIN budgeting bt ON bt.base_project_id = b.id\n" +
+            "where \n" +
+            "(bt.budgeting_time > #{statTime} or #{statTime} = '') and \n" +
+            "(bt.budgeting_time < #{endTime} or #{endTime} = '') and \n" +
+            "(b.district = #{district} or #{district} = '')\n" +
+            "group by \n" +
+            "YEAR(bt.budgeting_time),\n" +
+            "MONTH(bt.budgeting_time)\n")
+    List<PerformanceDistributionChart> findCostPerformanceChart2(CostVo2 costVo2);
+
     @Select("SELECT SUM(a.budget_achievements) budgetAchievements,SUM(a.upsubmit_achievements) upsubmitAchievements,SUM(a.downsubmit_achievements) downsubmitAchievements,SUM(a.truck_achievements) truckAchievements FROM `achievements_info` a")
     PerformanceDistributionChart findBTAll();
 }

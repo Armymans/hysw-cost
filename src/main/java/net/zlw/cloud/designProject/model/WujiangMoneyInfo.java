@@ -23,7 +23,10 @@ public class WujiangMoneyInfo{
     private String payTerm;
 
     @Column(name = "collection_money")
-    private String collectionMoney;
+    private String collectionMoney; //代收金额字符串
+
+    @Column(name = "collection_money_time")
+    private String collectionMoneyTime; //代收时间字符串
 
     @Column(name = "total_money")
     private BigDecimal totalMoney;
@@ -42,6 +45,12 @@ public class WujiangMoneyInfo{
 
     @Column(name = "official_receipts")
     private BigDecimal officialReceipts; //'实收金额',
+
+    @Column(name = "cost_type")
+    private String costType;
+
+    @Column(name = "one_desmoney")
+    private BigDecimal oneDesmoney;
 
     @Column(name = "collection_time")
     private String collectionTime;

@@ -24,6 +24,9 @@ public class AnhuiMoneyinfo{
     @Column(name = "collection_money")
     private String collectionMoney; //代收金额/次数
 
+    @Column(name = "collection_money_time")
+    private String collectionMoneyTime; //代收时间字符串
+
     @Column(name = "total_money")
     private BigDecimal totalMoney; //总计付款
 

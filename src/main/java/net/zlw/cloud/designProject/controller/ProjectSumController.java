@@ -10,6 +10,9 @@ import net.zlw.cloud.designProject.mapper.AchievementsInfoMapper;
 import net.zlw.cloud.designProject.mapper.IncomeInfoMapper;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectSumService;
+import net.zlw.cloud.index.model.vo.pageVo;
+import net.zlw.cloud.statisticAnalysis.model.StatisticAnalysis;
+import net.zlw.cloud.statisticAnalysis.service.StatusticAnalysisService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProjectSumController extends BaseController {
     @Resource
     private ProjectSumService projectSumService;
+
+    @Resource
+    private StatusticAnalysisService statusticAnalysisService;
 
     /**
      * 项目统计 项目总数
@@ -959,7 +965,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 本月任务数量
+     * 设计任务统计 数量
      * @param costVo2
      * @return
      */
@@ -968,9 +974,7 @@ public class ProjectSumController extends BaseController {
 //        本月任务数量
         ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
         Integer month = projectSumService.censusList2MonthCount(costVo2);
-
 //        本年任务数量
-
         Integer year = projectSumService.censusList2YearCount(costVo2);
 //        同比上年
         Integer lastYear = projectSumService.censusList2LastYearCount(costVo2);
@@ -1148,7 +1152,7 @@ public class ProjectSumController extends BaseController {
     }
 
     /**
-     * 设计绩效统计图
+     * 设计绩效统计图(员工绩效复用)
      * @param costVo2
      * @return
      */
@@ -1175,6 +1179,41 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(objects);
     }
 
+
+    /**
+     * 员工绩效分析 搜索
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/findAnalysisAndDesiginAchie",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findAnalysisAndDesiginAchie(CostVo2 costVo2){
+        //设计统计图
+        List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsCensus(costVo2);
+        String json =
+                "[{" +
+                        "\"companyName\": \"设计绩效\"," +
+                        "\"imageAmmount\": [";
+        if(oneCensus6s.size()>0){
+            for (OneCensus6 oneCensus6 : oneCensus6s) {
+                json +=
+                        "{\"time\": \""+oneCensus6.getYearTime()+"-"+oneCensus6.getMonthTime()+"\"," +
+                                "\"truckAmmount\": \""+oneCensus6.getDesginAchievements()+"\"" +
+                                "},";
+            }
+            json = json.substring(0,json.length()-1);
+        }else{
+            json += "{}";
+        }
+        json += "]}]";
+        JSONArray objects = JSON.parseArray(json);
+
+        StatisticAnalysis year = statusticAnalysisService.findYear(costVo2);
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        map.put("year",year);
+        map.put("objects",objects);
+
+        return RestUtil.success(map);
+    }
     /**
      * 设计绩效 发放总数
      * @param costVo2

@@ -17,10 +17,13 @@ public class ProjectVo {
     private List<AuditInfo> auditInfos2; //设计变更审核状态
     //设计合并信息
     private List<BaseProject> mergeBaseProject;
+
+    private WujiangMoneyInfo wujiangMoneyInfo;//吴江
+    private AnhuiMoneyinfo anhuiMoneyinfo;//安徽
+    private MoneyInfo moneyInfo;//额外支付卡片信息
+
     private AuditInfo auditInfo; //审核信息
     private String desginStatus;
-    private WujiangMoneyInfo wujiangMoneyInfo;
-    private AnhuiMoneyinfo anhuiMoneyinfo;
     private DesignChangeInfo designChangeInfo;
     private List<DesignChangeInfo> DesignChangeInfos;
 }

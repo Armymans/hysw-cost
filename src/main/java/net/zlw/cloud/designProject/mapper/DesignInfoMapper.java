@@ -378,7 +378,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "base_project s1,\n" +
                     "design_info s2 \n" +
                     "where\n" +
-                    " s1.id = s2.base_project_id\n" +
+                    "s1.id = s2.base_project_id\n" +
                     "and\n" +
                     "s2.designer = #{designer}\n" +
                     "and\n" +
