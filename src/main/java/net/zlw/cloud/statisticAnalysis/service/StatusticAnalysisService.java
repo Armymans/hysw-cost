@@ -25,6 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static jdk.nashorn.internal.objects.Global.Infinity;
+
 @Service
 public class StatusticAnalysisService {
     @Resource
@@ -43,7 +45,7 @@ public class StatusticAnalysisService {
     private ProjectMapper projectMapper;
 
     public StatisticAnalysis findAnalysis(pageVo pageVo) {
-        List<PerformanceDistributionChart> cost = achievementsInfoMapper.findCostPerformanceDistributionChart(pageVo);
+        List<PerformanceDistributionChart> cost = achievementsInfoMapper.findCostPerformanceChart(pageVo);
 
         //本月发放
         Double thisMonthPerform = 0.00;
@@ -94,6 +96,7 @@ public class StatusticAnalysisService {
         statisticAnalysis.setComparedWithLastMonth(v);
         //同比上年
         double v1 = (thisYearPerform - lastYearPerform) / lastYearPerform;
+
         statisticAnalysis.setComparedWithThePreviousYear(v1);
         System.err.println(thisYearPerform);
         System.err.println(lastYearPerform);
@@ -113,6 +116,12 @@ public class StatusticAnalysisService {
                 "}]";
         statisticAnalysis.setPicture(JSON.parseArray(picture));
         //饼状图
+       PerformanceDistributionChart performanceDistributionChart =  achievementsInfoMapper.findBTAll();
+
+        String aa = "[{value1:"+performanceDistributionChart.getBudgetAchievements()+",name1:'预算编制'},{value1:"+performanceDistributionChart.getUpsubmitAchievements()+",name1:'上家结算送审'},{value1:"+performanceDistributionChart.getDownsubmitAchievements()+",name1:'下家结算审核'},{value1:"+performanceDistributionChart.getTruckAchievements()+",name1:'跟踪审计'}]";
+        JSONArray objects = JSONArray.parseArray(aa);
+        statisticAnalysis.setPieChart(objects);
+
 
         return statisticAnalysis;
     }

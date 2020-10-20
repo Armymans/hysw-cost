@@ -19,4 +19,9 @@ public class PerformanceDistributionChart {
     //当月发放
     private BigDecimal IssuedDuringMmonth;
     private String memberName;
+    private BigDecimal budgetAchievements;
+    private BigDecimal upsubmitAchievements;
+    private BigDecimal downsubmitAchievements;
+    private BigDecimal truckAchievements;
+
 }
