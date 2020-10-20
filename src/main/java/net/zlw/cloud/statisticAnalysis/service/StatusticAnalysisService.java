@@ -91,7 +91,7 @@ public class StatusticAnalysisService {
         statisticAnalysis.setCurrentYearPaymentPerformance(thisYearPerform);
         //同比上月
         if (thisMonthPerform<=0){
-            thisMonthPerform = 0.00;
+            thisMonthPerform = 1.00;
         }
         double v = (thisMonthPerform - lastMonthPerform) / thisMonthPerform;
         System.err.println(thisMonthPerform);
@@ -99,7 +99,7 @@ public class StatusticAnalysisService {
         statisticAnalysis.setComparedWithLastMonth(v);
         //同比上年
         if (thisYearPerform<=0){
-            thisYearPerform = 0.00;
+            thisYearPerform = 1.00;
         }
         double v1 = (thisYearPerform - lastYearPerform) / thisYearPerform;
 
