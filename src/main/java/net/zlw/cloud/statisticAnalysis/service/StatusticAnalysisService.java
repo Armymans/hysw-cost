@@ -90,12 +90,18 @@ public class StatusticAnalysisService {
         statisticAnalysis.setPaymentPerformanceThisMonth(thisMonthPerform);
         statisticAnalysis.setCurrentYearPaymentPerformance(thisYearPerform);
         //同比上月
-        double v = (thisMonthPerform - lastMonthPerform) / lastMonthPerform;
+        if (thisMonthPerform<=0){
+            thisMonthPerform = 0.00;
+        }
+        double v = (thisMonthPerform - lastMonthPerform) / thisMonthPerform;
         System.err.println(thisMonthPerform);
         System.err.println(lastMonthPerform);
         statisticAnalysis.setComparedWithLastMonth(v);
         //同比上年
-        double v1 = (thisYearPerform - lastYearPerform) / lastYearPerform;
+        if (thisYearPerform<=0){
+            thisYearPerform = 0.00;
+        }
+        double v1 = (thisYearPerform - lastYearPerform) / thisYearPerform;
 
         statisticAnalysis.setComparedWithThePreviousYear(v1);
         System.err.println(thisYearPerform);
