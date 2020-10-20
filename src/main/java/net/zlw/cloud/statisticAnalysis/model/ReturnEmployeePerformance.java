@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public class ReturnEmployeePerformance {
     private Integer projectNum;
-    private String comparedMonthProjectNum;
+    private Double comparedMonthProjectNum;
     private Double achievemen;
-    private String comparedMonthAchievemen;
+    private Double comparedMonthAchievemen;
     private JSONArray picture;
 }
