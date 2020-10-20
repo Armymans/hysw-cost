@@ -96,8 +96,8 @@ public class MaintenanceProjectInformationService{
      * @return
      */
     public PageInfo<MaintenanceProjectInformation> list(PageRequest pageRequest,UserInfo userInfo){
-        //        设置分页助手
-        PageHelper.startPage(pageRequest.getPageNum(), 5);
+        //todo        设置分页助手
+        PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
 
         Example example = new Example(MaintenanceProjectInformation.class);
 
@@ -144,7 +144,7 @@ public class MaintenanceProjectInformationService{
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            criteria.andLessThanOrEqualTo("updateTime",date);
+            criteria.andLessThanOrEqualTo("createTime",date);
 
         }
 
@@ -180,7 +180,7 @@ public class MaintenanceProjectInformationService{
 
         PageInfo<MaintenanceProjectInformation> projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformations);
 
-        System.out.println("list:"+projectInformationPageInfo.getList().toString());
+        System.err.println("list:"+projectInformationPageInfo.getList().toString());
 
         return projectInformationPageInfo;
 
@@ -353,8 +353,8 @@ public class MaintenanceProjectInformationService{
                             maintenanceProjectInformation.setType("4");
                             Date date = new Date();
                             String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
-                            auditInfo.setAuditTime(format);
-                            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+//                            auditInfo.setAuditTime(format);
+//                            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
 
 
                             maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);

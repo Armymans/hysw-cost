@@ -13,5 +13,6 @@ public class PageVo {
     private String endTime;
     private String keyword;
     private String progressStatus;
+    private String userId; //当前登录用户id
 
 }

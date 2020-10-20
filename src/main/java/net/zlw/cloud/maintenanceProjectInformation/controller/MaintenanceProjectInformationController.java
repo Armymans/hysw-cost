@@ -40,7 +40,7 @@ public class MaintenanceProjectInformationController extends BaseController {
      */
 //    @PostMapping("/findAllMaintenanceProjectInformation")
 //
-    @RequestMapping(value = "/maintenanceProjectInformation/findAllMaintenanceProjectInformation", method = {RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/maintenanceProjectInformation/findAllMaintenanceProjectInformation", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> findAllMaintenanceProjectInformation(PageRequest pageRequest) {
         System.out.println("PageRequest:" + pageRequest);
         PageInfo<MaintenanceProjectInformationReturnVo> allMaintenanceProjectInformation = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, getLoginUser());

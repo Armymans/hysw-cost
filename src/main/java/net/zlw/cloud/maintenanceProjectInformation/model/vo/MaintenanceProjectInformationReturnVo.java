@@ -32,6 +32,6 @@ public class MaintenanceProjectInformationReturnVo {
     private String constructionUnitName;
     private String waterAddress;
     private String contractAmount;
-    private String district;
+    private String projectAddress;
     private String compileTime;
 }

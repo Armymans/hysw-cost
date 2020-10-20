@@ -67,7 +67,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
     @Select("SELECT\n" +
             "p.id id,\n" +
             "b.id baseId,\n" +
-            "b.cea_num ceaNum," +
+            "b.cea_num ceaNum,\n" +
             "b.project_num projectNum,\n" +
             "b.project_name projectName,\n" +
             "( CASE b.progress_payment_status WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '进行中' WHEN '6' THEN '已完成' END )as  progressPaymentStatus,\n" +
@@ -78,24 +78,24 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             "( CASE p.project_type WHEN '1' THEN '合同内进度款支付' WHEN '2' THEN '合同外进度款支付' END ) AS projectType,\n" +
             "( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,\n" +
             "(\n" +
-            "\tCASE\n" +
-            "\t\t\tb.design_category \n" +
-            "\t\t\tWHEN '1' THEN\n" +
-            "\t\t\t'市政管道' \n" +
-            "\t\t\tWHEN '2' THEN\n" +
-            "\t\t\t'管网改造' \n" +
-            "\t\t\tWHEN '3' THEN\n" +
-            "\t\t\t'新建小区' \n" +
-            "\t\t\tWHEN '4' THEN\n" +
-            "\t\t\t'二次供水项目' \n" +
-            "\t\t\tWHEN '5' THEN\n" +
-            "\t\t\t'工商户' \n" +
-            "\t\t\tWHEN '6' THEN\n" +
-            "\t\t\t'居民装接水' \n" +
-            "\t\t\tWHEN '7' THEN\n" +
-            "\t\t\t'行政事业' \n" +
-            "\t\tEND \n" +
-            "\t\t) AS designCategory,\n" +
+            "CASE\n" +
+            "b.design_category \n" +
+            "WHEN '1' THEN\n" +
+            "'市政管道' \n" +
+            "WHEN '2' THEN\n" +
+            "'管网改造' \n" +
+            "WHEN '3' THEN\n" +
+            "'新建小区' \n" +
+            "WHEN '4' THEN\n" +
+            "'二次供水项目' \n" +
+            "WHEN '5' THEN\n" +
+            "'工商户' \n" +
+            "WHEN '6' THEN\n" +
+            "'居民装接水' \n" +
+            "WHEN '7' THEN\n" +
+            "'行政事业' \n" +
+            "END \n" +
+            ") AS designCategory,\n" +
             "( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType,\n" +
             "b.customer_name customerName,\n" +
             "(select member_name username from member_manage where id = p.founder_id) username,\n" +
@@ -114,8 +114,10 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             "LEFT JOIN base_project b on p.base_project_id = b.id \n" +
             "LEFT JOIN budgeting bt on p.base_project_id = bt.base_project_id\n" +
             "LEFT JOIN progress_payment_total_payment pt on p.id = pt.progress_payment_id\n" +
+            "LEFT JOIN audit_info a on p.id = a.base_project_id\n" +
             "where\n" +
-            "(p.del_flag = '0') and \n"+
+            "(p.del_flag = '0') and \n" +
+            "(a.auditor_id = #{userId}) and\n" +
             "(b.district = #{district} or #{district} = '') and \n" +
             "(b.project_nature = #{projectNature} or #{projectNature} = '') and \n" +
             "(p.project_type = #{projectType} or #{projectType} = '') and\n" +

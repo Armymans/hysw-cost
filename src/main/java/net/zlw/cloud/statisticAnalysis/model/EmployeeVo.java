@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class EmployeeVo {
     private String district;
     private String memberId;
-    private String StatTime;
+    private String statTime;
     private String endTime;
     private String keyword;
 }
