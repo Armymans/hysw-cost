@@ -99,7 +99,7 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "(bt.budgeting_time < #{endTime} or #{endTime} = '') and \n" +
             "mm.dep_id = '2' \n" +
             "group by \n" +
-            "member_id,\n")
+            "member_id\n")
     List<PerformanceDistributionChart> findCostPerformanceDistributionChart(pageVo pageVo);
 
     @Select("select \n" +

@@ -125,6 +125,15 @@ public class StatusticAnalysisService {
 
         return statisticAnalysis;
     }
+    //折线图
+    public JSONArray picture1(pageVo pageVo) {
+        return findAnalysis(pageVo).getPicture();
+    }
+
+    //饼状图
+    public JSONArray pieChar(pageVo pageVo) {
+        return findAnalysis(pageVo).getPieChart();
+    }
 
     public String performanceAccrualAndSummary(pageVo pageVo) {
 

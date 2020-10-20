@@ -34,6 +34,20 @@ public class StatisticAnalysisController {
         StatisticAnalysis analysis = statusticAnalysisService.findAnalysis(pageVo);
         return RestUtil.success(analysis);
     }
+    //折现
+    @RequestMapping(value = "/statisticAnalysis/picture1",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> picture1(pageVo pageVo){
+        JSONArray objects = statusticAnalysisService.picture1(pageVo);
+        return RestUtil.success(objects);
+
+    }
+    //饼状
+    @RequestMapping(value = "/statisticAnalysis/pieChar",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> pieChar(pageVo pageVo){
+        JSONArray objects = statusticAnalysisService.pieChar(pageVo);
+        return RestUtil.success(objects);
+
+    }
     //绩效计提汇总
     @RequestMapping(value = "/statisticAnalysis/performanceAccrualAndSummary",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> PerformanceAccrualAndSummary(pageVo pageVo){
