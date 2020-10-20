@@ -6,13 +6,13 @@ import lombok.Data;
 @Data
 public class StatisticAnalysis {
     //本月发放绩效
-    private Double PaymentPerformanceThisMonth;
+    private Double paymentPerformanceThisMonth;
     //同比上月
-    private Double ComparedWithLastMonth;
+    private Double comparedWithLastMonth;
     //本年发放绩效
-    private Double CurrentYearPaymentPerformance;
+    private Double currentYearPaymentPerformance;
     //同比上年
-    private Double ComparedWithThePreviousYear;
+    private Double comparedWithThePreviousYear;
     //折线图
     private JSONArray picture;
     //饼状图

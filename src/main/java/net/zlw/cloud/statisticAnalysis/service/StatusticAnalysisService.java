@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -94,16 +95,19 @@ public class StatusticAnalysisService {
             thisMonthPerform = 1.00;
         }
         double v = (thisMonthPerform - lastMonthPerform) / thisMonthPerform;
+        BigDecimal bigDecimal1 = new BigDecimal(v);
+        double v3 = bigDecimal1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         System.err.println(thisMonthPerform);
         System.err.println(lastMonthPerform);
-        statisticAnalysis.setComparedWithLastMonth(v);
+        statisticAnalysis.setComparedWithLastMonth(v3);
         //同比上年
         if (thisYearPerform<=0){
             thisYearPerform = 1.00;
         }
         double v1 = (thisYearPerform - lastYearPerform) / thisYearPerform;
-
-        statisticAnalysis.setComparedWithThePreviousYear(v1);
+        BigDecimal bigDecimal = new BigDecimal(v1);
+        double v2 = bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        statisticAnalysis.setComparedWithThePreviousYear(v2);
         System.err.println(thisYearPerform);
         System.err.println(lastYearPerform);
 
