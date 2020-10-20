@@ -38,8 +38,7 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
 
 
     @Select("select \n" +
-            "year(bt.budgeting_time) yearTime,\n" +
-            "month(bt.budgeting_time) monthTime,\n" +
+            "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
             "SUM(a.desgin_achievements+a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements) as PerformanceProvision,\n" +
             "SUM((a.desgin_achievements+a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements)*0.8) as IssuedDuringMmonth\n" +
             "from \n" +
@@ -63,13 +62,11 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "(t.create_time < #{endTime} or #{endTime} = '') and \n" +
             "(d.blueprint_start_time < #{endTime} or #{endTime} = '') \n" +
             "group by \n" +
-            "year(bt.budgeting_time),\n" +
-            "month(bt.budgeting_time)")
+            "member_id\n")
     List<PerformanceDistributionChart> findAllPerformanceDistributionChart(pageVo pageVo);
 
     @Select("select \n" +
-            "year(d.blueprint_start_time) yearTime,\n" +
-            "month(d.blueprint_start_time) monthTime,\n" +
+            "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
             "SUM(a.desgin_achievements) as PerformanceProvision,\n" +
             "SUM((a.desgin_achievements)*0.8) as IssuedDuringMmonth\n" +
             "from \n" +
@@ -81,13 +78,11 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "(d.blueprint_start_time > #{statTime} or #{statTime} = '') and \n" +
             "(d.blueprint_start_time < #{endTime} or #{endTime} = '') \n" +
             "group by \n" +
-            "year(d.blueprint_start_time),\n" +
-            "month(d.blueprint_start_time)")
+            "member_id,\n")
     List<PerformanceDistributionChart> findDesignPerformanceDistributionChart(pageVo pageVo);
 
     @Select("select \n" +
-            "year(bt.budgeting_time) yearTime,\n" +
-            "month(bt.budgeting_time) monthTime,\n" +
+            "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
             "SUM(a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements) as PerformanceProvision,\n" +
             "SUM((a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements)*0.8) as IssuedDuringMmonth\n" +
             "from \n" +
@@ -102,8 +97,7 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "(bt.budgeting_time > #{statTime} or #{statTime} = '') and \n" +
             "(bt.budgeting_time < #{endTime} or #{endTime} = '')  \n" +
             "group by \n" +
-            "year(bt.budgeting_time),\n" +
-            "month(bt.budgeting_time)")
+            "member_id,\n")
     List<PerformanceDistributionChart> findCostPerformanceDistributionChart(pageVo pageVo);
 
     @Select("select \n" +

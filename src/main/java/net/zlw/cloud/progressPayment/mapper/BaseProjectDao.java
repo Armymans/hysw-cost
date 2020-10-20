@@ -19,27 +19,67 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
 
     @Select("select\n" +
             "b.id id,\n" +
+            "IFNULL(s.id,l.id) accountId , " +
             "b.cea_num ceaNum,\n" +
             "b.project_num projectNum,\n" +
             "b.project_name projectName,\n" +
-            "b.settle_accounts_status settleAccountsStatus,\n" +
-            "b.district district,\n" +
+            "(case b.settle_accounts_status\n" +
+            "\t\twhen '1' then '待审核'\n" +
+            "\t\twhen '2' then '处理中'\n" +
+            "\t\twhen '3' then '未通过'\n" +
+            "\t\twhen '4' then '待确认'\n" +
+            "\t\twhen '5' then '已完成'\n" +
+            "\t\tend\n" +
+            ") settleAccountsStatus,\n" +
+            "(case b.district\n" +
+            "\t\twhen '1' then '芜湖'\n" +
+            "\t\twhen '2' then '马鞍山'\n" +
+            "\t\twhen '3' then '江北'\n" +
+            "\t\twhen '4' then '吴江'\n" +
+            "\t\tend\n" +
+            ") district,\n" +
             "b.water_address waterAddress,\n" +
             "b.construction_unit constructionUnit,\n" +
-            "b.project_category projectCategory,\n" +
-            "b.project_nature projectNature,\n" +
-            "b.design_category designCategory,\n" +
-            "b.water_supply_type waterSupplyType,\n" +
+            "(case b.project_category\n" +
+            "\t\twhen '1' then '住宅区配套'\n" +
+            "\t\twhen '2' then '商业区配套'\n" +
+            "\t\twhen '3' then '工商区配套'\n" +
+            "\t\tend\n" +
+            ") projectCategory,\n" +
+            "(case b.project_nature\n" +
+            "\t\twhen '1' then '新建'\n" +
+            "\t\twhen '2' then '改造'\n" +
+            "\t\tend\n" +
+            ") projectNature,\n" +
+            "(case b.design_category\n" +
+            "\t\twhen '1' then '市政管道'\n" +
+            "\t\twhen '2' then '管网改造'\n" +
+            "\t\twhen '3' then '新建小区'\n" +
+            "\t\twhen '4' then '二次供水项目'\n" +
+            "\t\twhen '5' then '工商户'\n" +
+            "\t\twhen '6' then '居民装接水'\n" +
+            "\t\twhen '7' then '行政事业'\n" +
+            "\t\tend\n" +
+            ") designCategory,\n" +
+            "(case b.water_supply_type\n" +
+            "\t\twhen '1' then '直供水'\n" +
+            "\t\twhen '2' then '二次供水'\n" +
+            "\t\tend\n" +
+            ") waterSupplyType,\n" +
             "b.customer_name customerName,\n" +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople,\n" +
             "bt.outsourcing outsourcing,\n" +
-            "bt.name_of_cost_unit nameOfCostUnit,\n" +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit,\n" +
             "l.review_number lReviewNumber,\n" +
             "si.sumbit_money sumbitMoney,\n" +
             "s.authorized_number authorizedNumber,\n" +
             "IFNULL(s.take_time,l.take_time) takeTime,\n" +
             "IFNULL(s.compile_time,l.compile_time) compileTime,\n" +
-            "IFNULL(s.whether_account,l.whether_account) whetherAccount\n" +
+            "(case IFNULL(s.whether_account,l.whether_account)\n" +
+            "\t\twhen '0' then '到账'\n" +
+            "\t\twhen '1' then '未到账'\n" +
+            "\t\tend\n" +
+            ") whetherAccount\n" +
             "from\n" +
             "budgeting bt \n" +
             "LEFT JOIN base_project b on bt.base_project_id = b.id \n" +
@@ -64,7 +104,9 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')) and \n" +
             "bt.del_flag = '0' and \n" +
             "b.del_flag = '0' and \n" +
-            "si.state = '0'   \n")
+            "si.state = '0' and " +
+            "l.del_flag = '0' and " +
+            "s.del_flag = '0'  \n")
     List<AccountsVo> findAllAccounts(PageVo pageVo);
 
 

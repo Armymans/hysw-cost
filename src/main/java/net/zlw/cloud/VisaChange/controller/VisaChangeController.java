@@ -82,6 +82,7 @@ public class VisaChangeController extends BaseController {
      */
     @RequestMapping(value = "/visaChange/submitOrSave",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> submitOrSave(VisaChangeInfoVo visaChangeInfoVo){
+        System.err.println("第一"+visaChangeInfoVo);
         vcisService.submitOrSave(visaChangeInfoVo);
         return RestUtil.success("操作成功");
     }

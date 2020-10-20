@@ -139,9 +139,9 @@ public class BudgetingController extends BaseController {
     }
     //选择项目查看所有预算
     @RequestMapping(value = "/budgeting/findBudgetingAll",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> findBudgetingAll(PageBVo pageBVo){
+    public Map<String,Object> findBudgetingAll(PageBVo pageBVo,@RequestParam(name = "sid",required = false) String sid){
         PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
-        List<BudgetingListVo> list = budgetingService.findBudgetingAll(pageBVo);
+        List<BudgetingListVo> list = budgetingService.findBudgetingAll(pageBVo,sid);
         PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);
         return net.zlw.cloud.common.RestUtil.page(budgetingListVoPageInfo);
     }

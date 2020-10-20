@@ -11,12 +11,17 @@ import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
+import net.zlw.cloud.designProject.mapper.LastSettlementReviewMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
+import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
+import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
+import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +30,7 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -48,6 +54,10 @@ public class BudgetingServiceImpl implements BudgetingService {
     private MemberManageDao memberManageDao;
     @Resource
     private BaseProjectDao baseProjectDao;
+    @Resource
+    private LastSettlementReviewDao lastSettlementReviewDao;
+    @Resource
+    private SettlementAuditInformationDao settlementAuditInformationDao;
 
     @Override
     public void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser) {
@@ -373,6 +383,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
                             //设置为已完成
                             baseProject.setBudgetStatus("4");
+                            baseProjectDao.updateByPrimaryKeySelective(baseProject);
                         }
                         //三审通过
                     }else if(auditInfo.getAuditResult().equals("0") && auditInfo.getAuditType().equals("4")){
@@ -427,8 +438,30 @@ public class BudgetingServiceImpl implements BudgetingService {
 
     }
     @Override
-    public List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo) {
-        return budgetingDao.findBudgetingAll(pageBVo);
+    public List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo, String sid) {
+        List<BudgetingListVo> budgetingAll = budgetingDao.findBudgetingAll(pageBVo);
+        ArrayList<BudgetingListVo> budgetingListVos = new ArrayList<>();
+        budgetingListVos.addAll(budgetingAll);
+        System.err.println(budgetingAll.size());
+        System.err.println(budgetingListVos.size());
+        if (sid.equals("5")){
+            for (BudgetingListVo budgetingListVo : budgetingAll) {
+                Example example = new Example(LastSettlementReview.class);
+                Example example1 = new Example(SettlementAuditInformation.class);
+                Example.Criteria criteria = example.createCriteria();
+                Example.Criteria criteria1 = example1.createCriteria();
+                criteria.andEqualTo("baseProjectId",budgetingListVo.getBaseId());
+                criteria.andEqualTo("delFlag","0");
+                criteria1.andEqualTo("baseProjectId",budgetingListVo.getBaseId());
+                criteria1.andEqualTo("delFlag","0");
+                List<LastSettlementReview> lastSettlementReviews = lastSettlementReviewDao.selectByExample(example);
+                List<SettlementAuditInformation> settlementAuditInformations = settlementAuditInformationDao.selectByExample(example1);
+                if (lastSettlementReviews!=null && lastSettlementReviews.size()!=0 || settlementAuditInformations!=null && settlementAuditInformations.size()!=0){
+                    budgetingListVos.remove(budgetingListVo);
+                }
+            }
+        }
+        return budgetingListVos;
     }
 
     @Override

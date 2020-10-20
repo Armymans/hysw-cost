@@ -18,4 +18,5 @@ public class PerformanceDistributionChart {
     private BigDecimal PerformanceProvision;
     //当月发放
     private BigDecimal IssuedDuringMmonth;
+    private String memberName;
 }

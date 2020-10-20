@@ -105,7 +105,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     thisAll.setContractAmountShang(visaChange.getContractAmount());
                     thisAll.setProportionContractShang(visaChange.getProportionContract());
                     thisAll.setAmountVisaChangeShang(visaChange.getAmountVisaChange() + "");
-
                 } else {
                     xia = xia.add(new BigDecimal(visaChange.getAmountVisaChange()));
                     thisAll.setContractAmountShang("-");
@@ -542,6 +541,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         Example example = new Example(VisaChange.class);
         example.createCriteria().andEqualTo("id", visaChangeInfoVo.getId());
         VisaChange visaChange = vcMapper.selectOneByExample(example);
+        System.err.println(visaChange);
 
         Example example1 = new Example(AuditInfo.class);
         example1.createCriteria().andEqualTo("id", visaChange.getBaseProjectId());

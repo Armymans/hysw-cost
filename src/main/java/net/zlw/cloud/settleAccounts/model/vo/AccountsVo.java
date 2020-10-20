@@ -13,6 +13,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class AccountsVo {
     private String id;
+    private String accountId;
     private String ceaNum;
     private String projectNum;
     private String projectName;

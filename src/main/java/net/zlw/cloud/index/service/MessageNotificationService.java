@@ -94,18 +94,22 @@ public class MessageNotificationService {
             Example example1 = new Example(Budgeting.class);
             Example.Criteria c2 = example1.createCriteria();
             c2.andEqualTo("baseProjectId",baseProject.getId());
+            c2.andEqualTo("delFlag","0");
             //上家结算送审
             Example example2 = new Example(LastSettlementReview.class);
             Example.Criteria c3 = example2.createCriteria();
             c3.andEqualTo("baseProjectId",baseProject.getId());
+            c3.andEqualTo("delFlag","0");
             //下家结算审核
             Example example3 = new Example(SettlementAuditInformation.class);
             Example.Criteria c4 = example3.createCriteria();
             c4.andEqualTo("baseProjectId",baseProject.getId());
+            c4.andEqualTo("delFlag","0");
             //跟踪审计
             Example example4 = new Example(TrackAuditInfo.class);
             Example.Criteria c5 = example4.createCriteria();
             c5.andEqualTo("baseProjectId",baseProject.getId());
+            c5.andEqualTo("status","0");
             //如果开始时间不为空的话则进行筛选
             if (pageVo.getStatTime()!=null && !pageVo.getStatTime().equals("")){
                 c2.andGreaterThanOrEqualTo("budgetingTime",pageVo.getStatTime());
@@ -277,7 +281,7 @@ public class MessageNotificationService {
                 "                        \"imageAmmount\": [";
         for (PerformanceDistributionChart performanceDistributionChart : list1) {
             a += "{\n" +
-                    "\t\t\"time\": \""+performanceDistributionChart.getYearTime()+"-"+performanceDistributionChart.getMonthTime()+"\",\n" +
+                    "\t\t\"time\": \""+performanceDistributionChart.getMemberName()+"\",\n" +
                     "\t\t\"truckAmmount\": \""+performanceDistributionChart.getPerformanceProvision()+"\"\n" +
                     "\t}, ";
         }
@@ -288,7 +292,7 @@ public class MessageNotificationService {
                 "\t\"imageAmmount\": [";
         for (PerformanceDistributionChart performanceDistributionChart : list1) {
             a+="{\n" +
-                    "\t\t\"time\": \""+performanceDistributionChart.getYearTime()+"-"+performanceDistributionChart.getMonthTime()+"\",\n" +
+                    "\t\t\"time\": \""+performanceDistributionChart.getMemberName()+"\",\n" +
                     "\t\t\"truckAmmount\": \""+performanceDistributionChart.getIssuedDuringMmonth()+"\"\n" +
                     "\t}, ";
         }

@@ -56,5 +56,9 @@ public class SearchBaseProjectController {
         BaseProject byId = baseProjectService.findByBuilding(id);
         return RestUtil.success(byId);
     }
-
+//    //审核卡片
+//    @RequestMapping(value = "/review/auditChek",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> auditChek(@RequestParam(name = "id") String id){
+//        baseProjectService.auditChek(id);
+//    }
 }
