@@ -338,12 +338,12 @@ public class StatusticAnalysisService {
         System.out.println(thisMonthNumber);
         System.out.println(lastMonthNumber);
         double v = (Double.parseDouble(thisMonthNumber+"") - Double.parseDouble(lastMonthNumber+"")) / Double.parseDouble(lastMonthNumber+"")*100;
-        returnEmployeePerformance.setComparedMonthProjectNum(v+"%");
+        returnEmployeePerformance.setComparedMonthProjectNum(v);
         //本月绩效赋值
         returnEmployeePerformance.setAchievemen(thisMonthAchievemen);
         //对比上月绩效赋值
         double v1 = (thisMonthAchievemen - lastMonthAchievemen) / lastMonthAchievemen * 100;
-        returnEmployeePerformance.setComparedMonthAchievemen(v1+"%");
+        returnEmployeePerformance.setComparedMonthAchievemen(v1);
 
         if (employeeVo.getStatTime()==null || employeeVo.getStatTime().equals("")){
             //如果为空则设置为本年月初和月末
