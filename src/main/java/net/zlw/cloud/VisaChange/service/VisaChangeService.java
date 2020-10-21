@@ -14,7 +14,7 @@ import java.util.List;
 public interface VisaChangeService {
 
 
-     public PageInfo<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser );
+     PageInfo<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser );
 
 
   

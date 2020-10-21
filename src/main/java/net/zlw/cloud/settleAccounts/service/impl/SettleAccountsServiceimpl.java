@@ -1,7 +1,7 @@
 package net.zlw.cloud.settleAccounts.service.impl;
 
 
-import net.tec.cloud.common.util.RestUtil;
+import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
@@ -53,13 +53,26 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private SettlementInfoMapper settlementInfoMapper2;
 
     @Override
-    public List<AccountsVo> findAllAccounts(PageVo pageVo) {
+    public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
         List<AccountsVo> list  = baseProjectDao.findAllAccounts(pageVo);
         ArrayList<AccountsVo> accountsVos = new ArrayList<>();
         for (AccountsVo accountsVo : list) {
             if (accountsVo.getSumbitMoney()!=null){
                 if (!accountsVos.contains(accountsVo)){
                     accountsVos.add(accountsVo);
+                }
+            }
+        }
+        for (int i = 0; i < accountsVos.size(); i++) {
+            if (pageVo.getSettleAccountsStatus().equals("1")){
+                if (accountsVos.get(i).getAuditorId()!=null){
+                    if (!accountsVos.get(i).getAuditorId().equals(loginUser.getId())){
+                        accountsVos.remove(i);
+                        i--;
+                    }
+                }else{
+                    accountsVos.remove(i);
+                    i--;
                 }
             }
         }
@@ -73,6 +86,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example example = new Example(InvestigationOfTheAmount.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("baseProjectId",id);
+        criteria.andEqualTo("delFlag","0");
         InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example);
         investigationOfTheAmount.setDelFlag("1");
         investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
@@ -80,6 +94,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example example1 = new Example(LastSettlementReview.class);
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("baseProjectId",id);
+        criteria1.andEqualTo("delFlag","0");
         LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example1);
         if (lastSettlementReview!=null){
             lastSettlementReview.setDelFlag("1");
@@ -88,6 +103,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example example2 = new Example(SettlementAuditInformation.class);
         Example.Criteria criteria2 = example2.createCriteria();
         criteria2.andEqualTo("baseProjectId",id);
+        criteria2.andEqualTo("delFlag","0");
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example2);
         if (settlementAuditInformation!=null){
             settlementAuditInformation.setDelFlag("1");

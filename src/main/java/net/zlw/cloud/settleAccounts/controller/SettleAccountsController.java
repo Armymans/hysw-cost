@@ -3,6 +3,7 @@ package net.zlw.cloud.settleAccounts.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.RestUtil;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 //@RequestMapping("/accounts")
 @RestController
-public class SettleAccountsController {
+public class SettleAccountsController extends BaseController {
     @Resource
     private SettleAccountsService settleAccountsService;
     //查询所有结算
@@ -26,7 +27,7 @@ public class SettleAccountsController {
     @RequestMapping(value = "/accounts/findAllAccounts",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllAccounts(PageVo pageVo){
         PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
-        List<AccountsVo> allAccounts = settleAccountsService.findAllAccounts(pageVo);
+        List<AccountsVo> allAccounts = settleAccountsService.findAllAccounts(pageVo,getLoginUser());
         PageInfo<AccountsVo> accountsVoPageInfo = new PageInfo<>(allAccounts);
         return RestUtil.page(accountsVoPageInfo);
     }

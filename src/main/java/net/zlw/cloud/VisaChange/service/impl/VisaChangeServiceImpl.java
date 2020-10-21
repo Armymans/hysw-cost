@@ -75,7 +75,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     public PageInfo<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser) {
         PageHelper.startPage(visaChangeVO.getPageNum(), visaChangeVO.getPageSize());
         //TODO 需要改
-        visaChangeVO.setLoginUserId("user305");
+
+        visaChangeVO.setLoginUserId(loginUser.getId());
         List<VisaChangeVo> all = null;
         //未审核
         if ("1".equals(visaChangeVO.getStatus())) {
@@ -92,6 +93,22 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             all = vcMapper.findAll(visaChangeVO);
         }
         List<VisaChangeVo> all1 = vcMapper.findAll(visaChangeVO);
+        all.addAll(all1);
+        if (visaChangeVO.getStatus().equals("1")){
+            for (int i = 0; i < all1.size(); i++) {
+                if (all1.get(i).getAuditorId()!=null){
+                    if (!all1.get(i).getAuditorId().equals(loginUser.getId())){
+                        all1.remove(i);
+                        i--;
+                    }
+                }else {
+                    all1.remove(i);
+                    i--;
+                }
+            }
+            }
+
+
         all = all1;
 
 
@@ -126,7 +143,14 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             thisAll.setAmountVisaChangeAddShang(shang.toString());
             thisAll.setAmountVisaChangeAddXia(xia.toString());
         }
-        PageInfo<VisaChangeVo> info = new PageInfo<>(all);
+        ArrayList<VisaChangeVo> visaChangeVos = new ArrayList<>();
+        for (VisaChangeVo visaChangeVo : all) {
+            if (! visaChangeVos.contains(visaChangeVo)){
+                visaChangeVos.add(visaChangeVo);
+            }
+        }
+
+        PageInfo<VisaChangeVo> info = new PageInfo<>(visaChangeVos);
         return info;
 
     }
@@ -551,7 +575,27 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             vcMapper.insertSelective(visaChange);
 
         }
+        System.err.println(visaChangeInfoVo.getAuditId());
+        System.err.println(visaChangeInfoVo.getAuditId());
+        System.err.println(visaChangeInfoVo.getAuditId());
+        System.err.println(visaChangeInfoVo.getAuditId());
+        System.err.println(visaChangeInfoVo.getAuditId());
+        System.err.println(visaChangeInfoVo.getAuditId());
+        System.err.println(visaChangeInfoVo.getAuditId());
+        System.err.println(visaChangeInfoVo.getAuditId());
+
         if (visaChangeInfoVo.getAuditId()!=null && !visaChangeInfoVo.getAuditId().equals("")){
+            System.err.println(visaChangeInfoVo.getAuditId());
+            System.err.println(visaChangeInfoVo.getAuditId());
+            System.err.println(visaChangeInfoVo.getAuditId());
+            System.err.println(visaChangeInfoVo.getAuditId());
+            System.err.println(visaChangeInfoVo.getAuditId());
+            System.err.println(visaChangeInfoVo.getAuditId());
+            System.err.println(visaChangeInfoVo.getAuditId());
+            System.err.println(visaChangeInfoVo.getAuditId());
+            System.err.println(visaChangeInfoVo.getAuditId());
+            System.err.println(visaChangeInfoVo.getAuditId());
+
             SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
             AuditInfo auditInfo = new AuditInfo();
             auditInfo.setId(UUID.randomUUID().toString().replace("-",""));

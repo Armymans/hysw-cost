@@ -39,6 +39,7 @@ public class VisaChangeController extends BaseController {
     @RequestMapping(value = "/visaChange/findPage",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findPage(VisaChangeVo visaChangeVO){
         PageInfo<VisaChangeVo> allPage = vcisService.findAllPage(visaChangeVO, getLoginUser());
+
         return net.zlw.cloud.common.RestUtil.page(allPage);
     }
 
@@ -128,6 +129,4 @@ public class VisaChangeController extends BaseController {
         BaseProject baseProject = baseProjectService.findByBaseProjectId(visaBaseProjectVo);
         return RestUtil.success(baseProject);
     }
-
-
 }

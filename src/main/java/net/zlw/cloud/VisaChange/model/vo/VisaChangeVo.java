@@ -2,6 +2,8 @@ package net.zlw.cloud.VisaChange.model.vo;
 
 import lombok.Data;
 
+import java.util.Objects;
+
 
 @Data
 public class VisaChangeVo {
@@ -44,8 +46,19 @@ public class VisaChangeVo {
     private String amountVisaChangeXia;
     private String amountVisaChangeShang;
 
+    private String auditorId;
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VisaChangeVo that = (VisaChangeVo) o;
+        return id.equals(that.id);
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

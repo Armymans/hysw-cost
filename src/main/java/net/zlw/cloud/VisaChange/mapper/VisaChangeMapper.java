@@ -107,13 +107,15 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "    ) as status," +
             "    s1.create_time," +
             "    s1.compile_time," +
-            "    s2.project_name " +
+            "    s2.project_name, " +
+            "    aa.auditor_id auditorId" +
             "    FROM" +
             "    visa_change_information s1" +
             "    LEFT JOIN base_project s2 ON s1.base_project_id = s2.id" +
             "    LEFT JOIN budgeting s3 ON s2.id = s3.base_project_id " +
             "    LEFT JOIN cost_unit_management s4 ON s4.id = s3.name_of_cost_unit " +
             "    LEFT JOIN construction_unit_management s5 ON s5.id = s2.construction_unit " +
+            "    LEFT JOIN audit_info aa ON aa.base_project_id = s1.id  " +
             "    WHERE" +
             "    1 = 1 " +
             "    AND s1.state = 0 " +
