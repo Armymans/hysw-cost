@@ -115,7 +115,7 @@ public class ProjectService {
         if("1".equals(pageVo.getDesginStatus())){
             //则根据登录用户id展示于其身份对应的数据
             //todo getLoginUser().getId()
-            pageVo.setUserId("ceshi01");
+            pageVo.setUserId(loginUser.getId());
             designInfos = designInfoMapper.designProjectSelect(pageVo);
             if(designInfos.size()>0){
                 for (DesignInfo designInfo : designInfos) {
@@ -168,7 +168,7 @@ public class ProjectService {
         //如果状态为出图中
         if("2".equals(pageVo.getDesginStatus())){
             //todo loginUser.getId()
-            pageVo.setUserId("ceshi01");
+            pageVo.setUserId(loginUser.getId());
             designInfos = designInfoMapper.designProjectSelect2(pageVo);
             if(designInfos!=null){
                 if(designInfos.size()>0){
@@ -231,7 +231,7 @@ public class ProjectService {
             //将部门负责人传入
             pageVo.setAdminId(memberManage.getId());
             //todo loginUser.getId()
-            pageVo.setUserId("1");
+            pageVo.setUserId(loginUser.getId());
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             if(designInfos.size()>0){
                 for (DesignInfo designInfo : designInfos) {
@@ -286,7 +286,7 @@ public class ProjectService {
             //将部门负责人传入
             pageVo.setAdminId(memberManage.getId());
             //todo loginUser.getId()
-            pageVo.setUserId("ceshi01");
+            pageVo.setUserId(loginUser.getId());
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             for (DesignInfo designInfo : designInfos) {
                 //展示设计变更时间 如果为空展示 /
@@ -610,28 +610,65 @@ public class ProjectService {
      * @param auditInfo
      */
     public void batchAudit(String id, AuditInfo auditInfo, UserInfo loginUser){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String createTime = simpleDateFormat.format(new Date());
         MemberManage memberManage = memberManageDao.selectByPrimaryKey(loginUser.getId());
         DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
         BaseProject baseProject = projectMapper.selectByPrimaryKey(designInfo.getBaseProjectId());
         if(memberManage!=null){
             //判断是否为设计部门负责人
             if("4".equals(memberManage.getMemberRoleId())&&"1".equals(memberManage.getDepAdmin())){
+                //根据外键 和 互审人id 查询用户
+                Example example = new Example(AuditInfo.class);
+                Example.Criteria c = example.createCriteria();
+                c.andEqualTo("baseProjectId",id);
+                c.andEqualTo("auditorId",loginUser.getId());
                 //如果为通过 则从待审核状态变为已完成 如果为未通过则状态改为未通过
                 if("1".equals(auditInfo.getAuditResult())){
+                    //如果领导选择通过 审核类型改为二审(1) 同时项目状态变为已完成
+                    auditInfo.setAuditType("1");
                     baseProject.setDesginStatus("4");
                     projectMapper.updateByPrimaryKeySelective(baseProject);
+                    auditInfoDao.updateByExample(auditInfo,example);
                 }else if("2".equals(auditInfo.getAuditResult())){
+                    //如果领导选择未通过 审核类型改为二审(1) 同时项目状态变为未通过
+                    auditInfo.setAuditType("1");
                     baseProject.setDesginStatus("3");
                     projectMapper.updateByPrimaryKeySelective(baseProject);
+                    auditInfoDao.updateByExample(auditInfo,example);
                 }
             }
-
-
-            if("2".equals(auditInfo.getAuditResult())){
+            //不是负责人说明是普通互审人
+            else if("2".equals(auditInfo.getAuditResult())){
                 baseProject.setDesginStatus("3");
                 projectMapper.updateByPrimaryKeySelective(baseProject);
             }else if("1".equals(auditInfo.getAuditResult())){
-                //如果为通过则 审核状态变为一审
+                //获取设计部门负责人
+                Example example = new Example(MemberManage.class);
+                Example.Criteria c = example.createCriteria();
+                c.andEqualTo("depId","1");
+                c.andEqualTo("depAdmin","0");
+                MemberManage depAdmin = memberManageDao.selectOneByExample(example);
+                //如果审核通过 需要将添加一条领导审核信息
+                String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
+                auditInfo.setId(auditInfouuid);
+                auditInfo.setBaseProjectId(designInfo.getId());
+                //审核状态变为一审
+                auditInfo.setAuditType("0");
+                //赋值审核人id(领导)
+                auditInfo.setAuditorId(depAdmin.getId());
+                //添加创建时间
+                auditInfo.setCreateTime(createTime);
+                //添加创建人id
+                auditInfo.setFounderId(loginUser.getId());
+                //添加公司id
+                auditInfo.setCompanyId(loginUser.getCompanyId());
+                //状态正常
+                auditInfo.setStatus("0");
+                //添加 设计状态为
+                auditInfoDao.insert(auditInfo);
+
+                //如果为通过则 审核状态变为待审核
                 auditInfo.setAuditType("1");
             }
         }
@@ -684,7 +721,7 @@ public class ProjectService {
         projectVo.getBaseProject().setId(projectuuid);
         projectVo.getBaseProject().setCreateTime(createTime);
         //todo loginUser.getId()
-        projectVo.getBaseProject().setFounderId("ceshi01");
+        projectVo.getBaseProject().setFounderId(loginUser.getId());
         projectVo.getBaseProject().setFounderCompanyId(loginUser.getCompanyId());
         projectVo.getBaseProject().setProjectFlow("1");
         projectVo.getBaseProject().setDelFlag("0");
@@ -702,7 +739,7 @@ public class ProjectService {
             auditInfo.setAuditorId(projectVo.getBaseProject().getReviewerId());
             auditInfo.setCreateTime(createTime);
             //todo   loginUser.getId()
-            auditInfo.setFounderId("ceshi01");
+            auditInfo.setFounderId(loginUser.getId());
             auditInfo.setCompanyId(loginUser.getCompanyId());
             auditInfo.setStatus("0");
             auditInfoDao.insert(auditInfo);
@@ -715,7 +752,7 @@ public class ProjectService {
         projectVo.getDesignInfo().setId(DesignInfouuid);
         projectVo.getDesignInfo().setBaseProjectId(projectuuid);
         //todo   loginUser.getId()
-        projectVo.getDesignInfo().setFounderId("ceshi01");
+        projectVo.getDesignInfo().setFounderId(loginUser.getId());
         projectVo.getDesignInfo().setCompanyId(loginUser.getCompanyId());
         projectVo.getDesignInfo().setStatus("0");
         projectVo.getDesignInfo().setCreateTime(createTime);
@@ -727,7 +764,7 @@ public class ProjectService {
             projectVo.getPackageCame().setId(packageCameuuId);
             projectVo.getPackageCame().setBassProjectId(DesignInfouuid);
             //todo   loginUser.getId()
-            projectVo.getPackageCame().setFounderId("ceshi01");
+            projectVo.getPackageCame().setFounderId(loginUser.getId());
             projectVo.getPackageCame().setCompanyId(loginUser.getCompanyId());
             projectVo.getPackageCame().setStatus("0");
             projectVo.getPackageCame().setCreateTime(createTime);
@@ -736,7 +773,6 @@ public class ProjectService {
             PackageCame packageCame = new PackageCame();
             packageCame.setId(packageCameuuId);
             packageCame.setBassProjectId(DesignInfouuid);
-            //todo   loginUser.getId()
             packageCame.setStatus("0");
             packageCame.setCreateTime(createTime);
             packageCameMapper.insert(projectVo.getPackageCame());
@@ -748,7 +784,7 @@ public class ProjectService {
             projectVo.getProjectExploration().setId(projectExplorationuuid);
             projectVo.getProjectExploration().setBaseProjectId(DesignInfouuid);
             //todo   loginUser.getId()
-            projectVo.getProjectExploration().setFounderId("ceshi01");
+            projectVo.getProjectExploration().setFounderId(loginUser.getId());
             projectVo.getProjectExploration().setCompany_id(loginUser.getCompanyId());
             projectVo.getProjectExploration().setStatus("0");
             projectExplorationMapper.insert(projectVo.getProjectExploration());

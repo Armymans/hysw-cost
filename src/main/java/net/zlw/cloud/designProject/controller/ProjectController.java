@@ -43,7 +43,7 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/build/buildSubmit", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> buildSubmit(BuildingProject buildingProject){
         projectService.buildSubmit(buildingProject);
-        return null;
+        return RestUtil.success();
     }
 
     /**
