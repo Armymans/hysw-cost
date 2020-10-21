@@ -104,7 +104,7 @@ public class FileInfoController extends BaseController {
             e.printStackTrace();
             return RestUtil.error("操作异常,请联系管理员!");
         }
-        return RestUtil.success(attachInfo);
+        return RestUtil.success(attachInfo.getId());
     }
 
     /**
