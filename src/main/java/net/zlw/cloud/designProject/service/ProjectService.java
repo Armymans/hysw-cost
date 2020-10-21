@@ -610,14 +610,16 @@ public class ProjectService {
         DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
         BaseProject baseProject = projectMapper.selectByPrimaryKey(designInfo.getBaseProjectId());
         //说明他是设计部门负责人
-        if("4".equals(memberManage.getMemberRoleId())&&"1".equals(memberManage.getDepAdmin())){
-            //如果为通过 则从待审核状态变为已完成 如果为未通过则状态改为未通过
-            if("1".equals(auditInfo.getAuditResult())){
-                baseProject.setDesginStatus("4");
-                projectMapper.updateByPrimaryKeySelective(baseProject);
-            }else if("2".equals(auditInfo.getAuditResult())){
-                baseProject.setDesginStatus("3");
-                projectMapper.updateByPrimaryKeySelective(baseProject);
+        if(memberManage!=null){
+            if("4".equals(memberManage.getMemberRoleId())&&"1".equals(memberManage.getDepAdmin())){
+                //如果为通过 则从待审核状态变为已完成 如果为未通过则状态改为未通过
+                if("1".equals(auditInfo.getAuditResult())){
+                    baseProject.setDesginStatus("4");
+                    projectMapper.updateByPrimaryKeySelective(baseProject);
+                }else if("2".equals(auditInfo.getAuditResult())){
+                    baseProject.setDesginStatus("3");
+                    projectMapper.updateByPrimaryKeySelective(baseProject);
+                }
             }
         }
         if("2".equals(auditInfo.getAuditResult())){

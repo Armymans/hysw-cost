@@ -126,13 +126,14 @@ public class ProjectController extends BaseController {
      *
      * @param projectVo2
      */
-    @PostMapping("/batchAudit")
-    public void batchAudit(@RequestBody ProjectVo2 projectVo2) {
+//    @PostMapping("/batchAudit")
+    @RequestMapping(value = "/api/disproject/batchAudit", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> batchAudit(ProjectVo2 projectVo2) {
         String[] split = projectVo2.getIdlist().split(",");
         for (String id : split) {
             projectService.batchAudit(id, projectVo2.getAuditInfo(), getLoginUser());
-
         }
+        return RestUtil.success();
     }
 
     /**
