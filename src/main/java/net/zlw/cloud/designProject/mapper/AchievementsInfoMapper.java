@@ -204,7 +204,7 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "LEFT JOIN base_project b ON a.base_project_id = b.id\n" +
             "LEFT JOIN budgeting bt ON bt.base_project_id = b.id\n" +
             "where \n" +
-            "(bt.budgeting_time > #{statTime} or #{statTime} = '') and \n" +
+            "(bt.budgeting_time > #{startTime} or #{startTime} = '') and \n" +
             "(bt.budgeting_time < #{endTime} or #{endTime} = '') and \n" +
             "(b.district = #{district} or #{district} = '')\n" +
             "group by \n" +

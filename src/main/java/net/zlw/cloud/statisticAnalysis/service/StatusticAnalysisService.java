@@ -136,56 +136,35 @@ public class StatusticAnalysisService {
         return statisticAnalysis;
     }
 
-
-    public StatisticAnalysis findYear(CostVo2 costVo2){
+    /**
+     * 外来统计接口拆分(员工绩效统计)
+     * @param costVo2
+     * @return
+     */
+    public StatisticAnalysis    findYear(CostVo2 costVo2){
         StatisticAnalysis statisticAnalysis = new StatisticAnalysis();
 
         List<PerformanceDistributionChart> cost = achievementsInfoMapper.findCostPerformanceChart2(costVo2);
-        //本月发放
-        Double thisMonthPerform = 0.00;
         //本年发放
         Double thisYearPerform = 0.00;
         ArrayList<PerformanceDistributionChart> thisYearChart = new ArrayList<>();
-        //上月发放
-        Double lastMonthPerform = 0.00;
-        //上年发放
-        Double lastYearPerform = 0.00;
         Calendar cal = Calendar.getInstance();
-        //本月
-        int thisMonth = cal.get(Calendar.MONTH)+1;
         //本年
         int thisYear = cal.get(Calendar.YEAR);
-        //上月
-        int lastMonth = cal.get(Calendar.MONTH);
-        //上年
-        int lastYear = cal.get(Calendar.YEAR)-1;
         for (PerformanceDistributionChart performanceDistributionChart : cost) {
             //本年
             if (performanceDistributionChart.getYearTime().equals(thisYear+"")){
                 thisYearPerform += performanceDistributionChart.getIssuedDuringMmonth().doubleValue();
                 thisYearChart.add(performanceDistributionChart);
             }
-            //本月
-            if (performanceDistributionChart.getMonthTime().equals(thisMonth+"")){
-                thisMonthPerform += performanceDistributionChart.getIssuedDuringMmonth().doubleValue();
-            }
-            //上月
-            if (performanceDistributionChart.getMonthTime().equals(lastMonth+"")){
-                lastMonthPerform += performanceDistributionChart.getIssuedDuringMmonth().doubleValue();
-            }
-            //上年
-            if (performanceDistributionChart.getYearTime().equals(lastYear+"")){
-                lastYearPerform += performanceDistributionChart.getIssuedDuringMmonth().doubleValue();
-            }
-
         }
-        //同比上年
-        if (thisYearPerform<=0){
-            thisYearPerform = 1.00;
-        }
-        double v1 = (thisYearPerform - lastYearPerform) / thisYearPerform;
-
-        statisticAnalysis.setComparedWithThePreviousYear(v1);
+        //本年绩效数量总汇
+        statisticAnalysis.setCurrentYearPaymentPerformance(thisYearPerform);
+        //造价绩效统计图
+        PerformanceDistributionChart performanceDistributionChart =  achievementsInfoMapper.findBTAll();
+        String aa = "[{value1:"+performanceDistributionChart.getBudgetAchievements()+",name1:'预算编制'},{value1:"+performanceDistributionChart.getUpsubmitAchievements()+",name1:'上家结算送审'},{value1:"+performanceDistributionChart.getDownsubmitAchievements()+",name1:'下家结算审核'},{value1:"+performanceDistributionChart.getTruckAchievements()+",name1:'跟踪审计'}]";
+        JSONArray objects = JSONArray.parseArray(aa);
+        statisticAnalysis.setPieChart(objects);
 
         return statisticAnalysis;
     }

@@ -1206,12 +1206,19 @@ public class ProjectSumController extends BaseController {
         }
         json += "]}]";
         JSONArray objects = JSON.parseArray(json);
-
+        //设计统计图发放总额
+        BigDecimal bigDecimal2 = projectSumService.desiginYearAchievements(costVo2);
+        //造价统计图
+        JSONArray pieChart = statusticAnalysisService.findYear(costVo2).getPieChart();
+        //造价绩效发放总额
         StatisticAnalysis year = statusticAnalysisService.findYear(costVo2);
+        BigDecimal bigDecimal = new BigDecimal(year.getCurrentYearPaymentPerformance());
         ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
-        map.put("year",year);
-        map.put("objects",objects);
-
+        //设计绩效统计图
+        map.put("objects1",objects);
+        map.put("year1",bigDecimal2);
+        map.put("objects2",pieChart);
+        map.put("year2",bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
         return RestUtil.success(map);
     }
     /**

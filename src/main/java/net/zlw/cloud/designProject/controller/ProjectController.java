@@ -39,6 +39,11 @@ public class ProjectController extends BaseController {
     @Resource
     private ProjectService projectService;
 
+
+    public Map<String,Object> buildSubmit(){
+        return null;
+    }
+
     /**
      * 设计列表展示 条件查询
      *
