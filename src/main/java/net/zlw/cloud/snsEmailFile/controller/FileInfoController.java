@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.hash.HashMapper;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,9 +25,7 @@ import javax.xml.ws.soap.Addressing;
 import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author Armyman
@@ -114,10 +113,11 @@ public class FileInfoController extends BaseController {
      * @Date 11:31 2020/10/10
      **/
     @RequestMapping(value = "/updateFileName", method = RequestMethod.POST)
-    public Map<String, Object> updateFileName(String id, String name, String remark) {
+    public Map<String, Object> updateFileName(String code, String id, String name, String remark) {
         FileInfo fileInfo = fileInfoService.getByKey(id);
         fileInfo.setName(name);
         fileInfo.setRemark(remark);
+        fileInfo.setPlatCode(code);
         fileInfo.setUpdateTime(DateUtil.getDateTime());
         fileInfoService.updateFileName(fileInfo);
         return RestUtil.success("修改成功");
@@ -171,6 +171,18 @@ public class FileInfoController extends BaseController {
     public Map<String, Object> findById(String id) {
         FileInfo fileInfoList = fileInfoService.getByKey(id);
         return RestUtil.success(fileInfoList);
+    }
+
+    /**
+     * @Author Armyman
+     * @Description //获取唯一标识
+     * @Date 14:00 2020/10/10
+     **/
+    @RequestMapping(value = "/getPlatCode", method = RequestMethod.GET)
+    public Map<String, Object> getPlatCode() {
+        Map<String, String> map = new HashMap<>();
+        map.put("platCode", UUID.randomUUID().toString().replace("-",""));
+        return RestUtil.success(map);
     }
 
     /**
@@ -236,6 +248,7 @@ public class FileInfoController extends BaseController {
         }
         return fileName;
     }
+
 
 
 }
