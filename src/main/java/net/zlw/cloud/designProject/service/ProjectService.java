@@ -654,7 +654,8 @@ public class ProjectService {
                 auditInfo.setId(auditInfouuid);
                 auditInfo.setBaseProjectId(designInfo.getId());
                 //审核状态变为一审
-                auditInfo.setAuditType("0");
+                auditInfo.setAuditType("1");
+                auditInfo.setAuditResult("0");
                 //赋值审核人id(领导)
                 auditInfo.setAuditorId(depAdmin.getId());
                 //添加创建时间
@@ -669,7 +670,8 @@ public class ProjectService {
                 auditInfoDao.insert(auditInfo);
 
                 //如果为通过则 审核状态变为待审核
-                auditInfo.setAuditType("1");
+                auditInfo.setAuditResult("1");
+                auditInfo.setAuditType("0");
             }
         }
         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
