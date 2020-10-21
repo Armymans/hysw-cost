@@ -62,23 +62,21 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "\t\tmaintenance_project_information m\n" +
             "\t\tLEFT JOIN construction_unit_management c ON m.construction_unit_id = c.id\n" +
             "\t\tLEFT JOIN settlement_audit_information p ON m.id = p.maintenance_project_information \n" +
+            "\t\tLEFT JOIN audit_info ai on ai.base_project_id = m.id \n" +
             "\tWHERE\n" +
             "\t\t( m.del_flag = '0' ) \n" +
+            "\t\t( ai.auditor_id = #{uid}) \n" +
             "\t\tAND (\n" +
             "\t\t\tm.maintenance_item_type = #{maintenanceItemType} or #{maintenanceItemType} = '')\n" +
-            "\t\t\t\n" +
             "\t\t\tAND (\n" +
             "\t\t\t\tp.compile_time > #{startTime} OR #{startTime} = '' )\n" +
-            "\t\t\t\t\n" +
             "\t\t\t\tAND (\n" +
             "\t\t\t\t\tp.compile_time < #{endTime} OR #{endTime} = '' )\n" +
-            "\t\t\t\t\t\n" +
             "\t\t\t\t\tAND (\n" +
             "\t\t\t\t\t\tm.maintenance_item_name LIKE concat(\n" +
             "\t\t\t\t\t\t\t'%',#{keyWord}, '%' ) OR m.customer_name LIKE concat( '%', #{keyWord}, '%' ) )\n" +
-            "\t\t\t\t\t\t\t\n" +
-            "\t\t\t\t\t\tAND (\n" +
-            "\tm.type = #{type} OR #{type} = '')")
+            "AND (\n" +
+            "m.type = #{type} OR #{type} = '')")
     List<MaintenanceProjectInformationReturnVo> selectAllByDelFlag(PageRequest pageRequest);
 
 

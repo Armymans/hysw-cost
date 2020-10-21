@@ -83,6 +83,7 @@ public class BaseProjectVo {
     private BigDecimal cumulativeNumberPayment;
     private String accumulativePaymentProportion;
     private String auditorId;
+    private String auditType;
 
     private List<AuditInfo> auditInfos;
 }

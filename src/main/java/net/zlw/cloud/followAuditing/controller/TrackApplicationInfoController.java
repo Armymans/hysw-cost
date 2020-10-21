@@ -27,6 +27,7 @@ public class TrackApplicationInfoController extends BaseController {
 //    @PostMapping("/track/selectList")
     @RequestMapping(value = "/track/selectList",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectTrackList(PageVo pageVo){
+        pageVo.setUid(getLoginUser().getId());
         PageInfo<ReturnTrackVo> pageInfo = trackApplicationInfoService.selectTrackList(pageVo);
         return RestUtil.page(pageInfo);
     }

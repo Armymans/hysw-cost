@@ -42,7 +42,7 @@ public class ProgressPaymentController  extends BaseController {
     }
     //根据id查询进度款
 //    @GetMapping("/seachProgressById/{id}")
-    @RequestMapping(value = "/progress/seachProgressById",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/progress/seachProgressById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> seachProgressById(@RequestParam(name = "id") String id){
         try {
             BaseProjectVo baseProjectVo = baseProjectService.seachProgressById(id);
@@ -68,6 +68,7 @@ public class ProgressPaymentController  extends BaseController {
     @RequestMapping(value = "/progress/searchAllProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> searchAllProgress(PageVo pageVo){
         System.out.println(pageVo);
+        pageVo.setUid(getLoginUser().getId());
         PageInfo<ProgressListVo> progressListVoPageInfo = baseProjectService.searchAllProgress(pageVo);
         return RestUtil.page(progressListVoPageInfo);
     }

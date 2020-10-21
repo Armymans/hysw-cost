@@ -18,6 +18,7 @@ import springfox.documentation.spring.web.json.Json;
 import javax.annotation.Resource;
 import javax.sound.midi.Soundbank;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +48,19 @@ public class StatisticAnalysisController {
         JSONArray objects = statusticAnalysisService.pieChar(pageVo);
         return RestUtil.success(objects);
 
+    }
+    // 造价绩效统计，搜索
+    @RequestMapping(value = "/statisticAnalysis/findStatisticAnalysis",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findAnalysis1(pageVo pageVo){
+        //折线
+        JSONArray objects = statusticAnalysisService.picture1(pageVo);
+        //饼状
+        JSONArray objects1 = statusticAnalysisService.pieChar(pageVo);
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("data11",objects);
+        map.put("data12",objects1);
+        return RestUtil.success(map);
     }
     //绩效计提汇总
     @RequestMapping(value = "/statisticAnalysis/performanceAccrualAndSummary",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)

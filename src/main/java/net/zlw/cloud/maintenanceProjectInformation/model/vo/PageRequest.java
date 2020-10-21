@@ -28,6 +28,8 @@ public class PageRequest {
     //结束时间1
     private String endTime;
 
+    private String uid;
+
     public PageRequest() {
     }
 

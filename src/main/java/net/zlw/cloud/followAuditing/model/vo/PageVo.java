@@ -19,6 +19,7 @@ public class PageVo {
 
     // 跟踪审计的状态
     private String trackStatus;
+    private String uid; //当前登录用户id
 
 
 }

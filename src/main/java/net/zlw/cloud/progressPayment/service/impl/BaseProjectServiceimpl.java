@@ -108,7 +108,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 auditInfo.setBaseProjectId(paymentInformation.getId());
                 auditInfo.setAuditResult("0");
                 auditInfo.setAuditorId(baseProject.getAuditorId());
+                auditInfo.setCreateTime(format);
                 auditInfo.setAuditType("0");
+                auditInfo.setStatus("0");
                 auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
                 auditInfoDao.insert(auditInfo);
             } else {
@@ -164,9 +166,15 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         // 查询审核信息的集合
         Example auditExample = new Example(AuditInfo.class);
         Example.Criteria criteria = auditExample.createCriteria();
-        criteria.andEqualTo("baseProjectId",baseProject.getId());
-
+        criteria.andEqualTo("baseProjectId",paymentInformation.getId());
+        criteria.andEqualTo("status","0");
         List<AuditInfo> auditInfos = auditInfoDao.selectByExample(auditExample);
+
+        for (AuditInfo auditInfo : auditInfos) {
+            if("0".equals(auditInfo.getAuditResult())){
+                baseProjectVo.setAuditType(auditInfo.getAuditType());
+            }
+        }
 
 
         Example example = new Example(ApplicationInformation.class);
@@ -178,7 +186,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         ProgressPaymentTotalPayment totalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example1);
 
 
-        baseProjectVo.setId(baseProject.getId());
+        baseProjectVo.setId(id);
         baseProjectVo.setProjectNum(baseProject.getProjectNum());
         baseProjectVo.setProjectName(baseProject.getProjectName());
         baseProjectVo.setApplicationNum(baseProject.getApplicationNum());

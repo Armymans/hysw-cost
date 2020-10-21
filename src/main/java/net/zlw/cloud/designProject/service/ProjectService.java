@@ -647,7 +647,7 @@ public class ProjectService {
                 Example example = new Example(MemberManage.class);
                 Example.Criteria c = example.createCriteria();
                 c.andEqualTo("depId","1");
-                c.andEqualTo("depAdmin","0");
+                c.andEqualTo("depAdmin","1");
                 MemberManage depAdmin = memberManageDao.selectOneByExample(example);
                 //如果审核通过 需要将添加一条领导审核信息
                 String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");

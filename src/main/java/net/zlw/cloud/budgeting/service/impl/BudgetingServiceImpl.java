@@ -444,7 +444,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgetingListVos.addAll(budgetingAll);
         System.err.println(budgetingAll.size());
         System.err.println(budgetingListVos.size());
-        if (sid.equals("5")){
+        if (sid!=null && sid.equals("5")){
             for (BudgetingListVo budgetingListVo : budgetingAll) {
                 Example example = new Example(LastSettlementReview.class);
                 Example example1 = new Example(SettlementAuditInformation.class);
