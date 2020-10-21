@@ -9,6 +9,8 @@ import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
 import net.zlw.cloud.budgeting.mapper.VeryEstablishmentDao;
 import net.zlw.cloud.budgeting.model.CostPreparation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
+import net.zlw.cloud.buildingProject.mapper.BuildingProjectMapper;
+import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.designProject.mapper.*;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
@@ -94,6 +96,8 @@ public class ProjectService {
     @Resource
     private VisaApplyChangeInformationMapper visaApplyChangeInformationMapper;
 
+    @Resource
+    private BuildingProjectMapper buildingProjectMapper;
 
     /**
      * 设计页面展示
@@ -609,8 +613,8 @@ public class ProjectService {
         MemberManage memberManage = memberManageDao.selectByPrimaryKey(loginUser.getId());
         DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
         BaseProject baseProject = projectMapper.selectByPrimaryKey(designInfo.getBaseProjectId());
-        //说明他是设计部门负责人
         if(memberManage!=null){
+            //判断是否为设计部门负责人
             if("4".equals(memberManage.getMemberRoleId())&&"1".equals(memberManage.getDepAdmin())){
                 //如果为通过 则从待审核状态变为已完成 如果为未通过则状态改为未通过
                 if("1".equals(auditInfo.getAuditResult())){
@@ -621,13 +625,15 @@ public class ProjectService {
                     projectMapper.updateByPrimaryKeySelective(baseProject);
                 }
             }
-        }
-        if("2".equals(auditInfo.getAuditResult())){
-            baseProject.setDesginStatus("3");
-            projectMapper.updateByPrimaryKeySelective(baseProject);
-        }else if("1".equals(auditInfo.getAuditResult())){
-            //如果为通过则 审核状态变为一审
-            auditInfo.setAuditType("1");
+
+
+            if("2".equals(auditInfo.getAuditResult())){
+                baseProject.setDesginStatus("3");
+                projectMapper.updateByPrimaryKeySelective(baseProject);
+            }else if("1".equals(auditInfo.getAuditResult())){
+                //如果为通过则 审核状态变为一审
+                auditInfo.setAuditType("1");
+            }
         }
         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 //    }
@@ -1819,5 +1825,11 @@ public class ProjectService {
             total += oneCensus.getAdministration();
         }
         return total;
+    }
+
+    public void buildSubmit(BuildingProject buildingProject) {
+        String uuid = UUID.randomUUID().toString().replace("-","");
+        buildingProject.setId(uuid);
+        buildingProjectMapper.insert(buildingProject);
     }
 }

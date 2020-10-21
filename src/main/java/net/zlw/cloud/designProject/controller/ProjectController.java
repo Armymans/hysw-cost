@@ -9,6 +9,7 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.CostPreparation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
+import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
@@ -39,8 +40,9 @@ public class ProjectController extends BaseController {
     @Resource
     private ProjectService projectService;
 
-
-    public Map<String,Object> buildSubmit(){
+    @RequestMapping(value = "/build/buildSubmit", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> buildSubmit(BuildingProject buildingProject){
+        projectService.buildSubmit(buildingProject);
         return null;
     }
 
