@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.followAuditing.model.TrackMonthly;
+import net.zlw.cloud.followAuditing.model.vo.AuditInfoVo;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
 import net.zlw.cloud.followAuditing.model.vo.TrackVo;
@@ -24,7 +25,7 @@ public interface TrackApplicationInfoService {
 
     TrackVo selectTrackById(String id);
 
-    List<AuditInfo> findAllAuditInfosByTrackId(String id);
+    List<AuditInfoVo> findAllAuditInfosByTrackId(String id);
 
     void updateMonthly(TrackMonthly trackMonthly);
 

@@ -12,6 +12,7 @@ import net.zlw.cloud.followAuditing.mapper.TrackMonthlyDao;
 import net.zlw.cloud.followAuditing.model.TrackApplicationInfo;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.followAuditing.model.TrackMonthly;
+import net.zlw.cloud.followAuditing.model.vo.AuditInfoVo;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
 import net.zlw.cloud.followAuditing.model.vo.TrackVo;
@@ -55,19 +56,31 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     @Override
     public PageInfo<ReturnTrackVo> selectTrackList(PageVo pageVo) {
         // 设置分页助手
-        PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
+        PageHelper.startPage(pageVo.getPageNum(), pageVo.getPageSize());
         ArrayList<ReturnTrackVo> returnTrackVos1 = new ArrayList<>();
-        System.err.println(pageVo);
-        List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
-        for (ReturnTrackVo returnTrackVo : returnTrackVos) {
-            if (! returnTrackVos1.contains(returnTrackVo)){
-                returnTrackVos1.add(returnTrackVo);
+        PageInfo<ReturnTrackVo> pageInfo = new PageInfo<>();
+
+        if ("user310".equals(pageVo.getUid())) {
+            List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
+            for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                if (!returnTrackVos1.contains(returnTrackVo)) {
+                    returnTrackVos1.add(returnTrackVo);
+                }
             }
+            pageInfo = new PageInfo<>(returnTrackVos1);
+        } else {
+            List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
+            for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                if (!returnTrackVos1.contains(returnTrackVo)) {
+                    returnTrackVos1.add(returnTrackVo);
+                }
+            }
+            pageInfo = new PageInfo<>(returnTrackVos1);
+
+
         }
-        PageInfo<ReturnTrackVo> pageInfo = new PageInfo<>(returnTrackVos1);
 
         return pageInfo;
-
     }
 
     @Override
@@ -78,15 +91,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         trackAuditInfoDao.updateByPrimaryKeySelective(trackAuditInfo);
 
         Example example = new Example(TrackApplicationInfo.class);
-        example.createCriteria().andEqualTo("trackAudit",id);
+        example.createCriteria().andEqualTo("trackAudit", id);
         TrackApplicationInfo trackApplicationInfo = trackApplicationInfoDao.selectOneByExample(example);
         trackApplicationInfo.setState("1");
         trackApplicationInfoDao.updateByPrimaryKeySelective(trackApplicationInfo);
 
         Example example1 = new Example(TrackMonthly.class);
-        example1.createCriteria().andEqualTo("trackId",id);
+        example1.createCriteria().andEqualTo("trackId", id);
         TrackMonthly trackMonthly = trackMonthlyDao.selectOneByExample(example1);
-        if (trackMonthly!=null){
+        if (trackMonthly != null) {
             trackMonthly.setStatus("1");
             trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
         }
@@ -95,10 +108,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     @Override
     public void batchReview(BatchReviewVo batchReviewVo) {
         String[] split = batchReviewVo.getBatchAll().split(",");
-        if (split != null){
+        if (split != null) {
             for (String s : split) {
                 Example example = new Example(AuditInfo.class);
-                example.createCriteria().andEqualTo("baseProjectId",s);
+                example.createCriteria().andEqualTo("baseProjectId", s);
                 //跟踪审计审核
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
 
@@ -109,31 +122,31 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 System.err.println(baseProjectId);
 
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
-                if (!auditInfo.getAuditResult().equals("1")){
+                if (!auditInfo.getAuditResult().equals("1")) {
                     auditInfo.setAuditResult(batchReviewVo.getAuditResult());
                     auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                     SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     auditInfo.setAuditTime(sim.format(new Date()));
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                   if (batchReviewVo.getAuditResult().equals("1")){
-                       baseProject.setTrackStatus("3");
-                   }else if(batchReviewVo.getAuditResult().equals("2")){
-                       baseProject.setTrackStatus("4");
-                   }
+                    if (batchReviewVo.getAuditResult().equals("1")) {
+                        baseProject.setTrackStatus("3");
+                    } else if (batchReviewVo.getAuditResult().equals("2")) {
+                        baseProject.setTrackStatus("4");
+                    }
                 }
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 Example example1 = new Example(TrackMonthly.class);
-                example1.createCriteria().andEqualTo("trackId",s);
+                example1.createCriteria().andEqualTo("trackId", s);
                 List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
-                if (trackMonthlies!=null){
+                if (trackMonthlies != null) {
                     for (TrackMonthly trackMonthly : trackMonthlies) {
                         Example example2 = new Example(AuditInfo.class);
-                        example2.createCriteria().andEqualTo("baseProjectId",trackMonthly.getId());
+                        example2.createCriteria().andEqualTo("baseProjectId", trackMonthly.getId());
 //                        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example2);
 
                         List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
                         for (AuditInfo info : auditInfos) {
-                            if (!info.getAuditResult().equals("1")){
+                            if (!info.getAuditResult().equals("1")) {
                                 info.setAuditResult(batchReviewVo.getAuditResult());
                                 info.setAuditOpinion(batchReviewVo.getAuditOpinion());
                                 info.setAuditTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
@@ -152,25 +165,25 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     @Override
     public void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId) {
         Example example = new Example(BaseProject.class);
-        example.createCriteria().andEqualTo("id",baseId);
+        example.createCriteria().andEqualTo("id", baseId);
         BaseProject baseProject = baseProjectDao.selectOneByExample(example);
-        baseProject.setProjectFlow(baseProject.getProjectFlow()+",3");
+        baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
         //0保存1提交
-        if (trackVo.getStatus().equals("0")){
+        if (trackVo.getStatus().equals("0")) {
             // 设置进行中
             baseProject.setTrackStatus("3");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
             trackVo.getAuditInfo().setBaseProjectId(baseProject.getId());
-            trackVo.getAuditInfo().setId(UUID.randomUUID().toString().replace("-",""));
+            trackVo.getAuditInfo().setId(UUID.randomUUID().toString().replace("-", ""));
             trackVo.getAuditInfo().setFounderId(userInfo.getId());
             trackVo.getAuditInfo().setStatus("0");
             trackAuditInfoDao.insertSelective(trackVo.getAuditInfo());
-        }else if(trackVo.getStatus().equals("1")){
+        } else if (trackVo.getStatus().equals("1")) {
             baseProject.setTrackStatus("1");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
             //存入跟踪审计
             trackVo.getAuditInfo().setBaseProjectId(baseProject.getId());
-            trackVo.getAuditInfo().setId(UUID.randomUUID().toString().replace("-",""));
+            trackVo.getAuditInfo().setId(UUID.randomUUID().toString().replace("-", ""));
             trackVo.getAuditInfo().setFounderId(userInfo.getId());
             trackVo.getAuditInfo().setStatus("0");
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -178,7 +191,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             trackAuditInfoDao.insertSelective(trackVo.getAuditInfo());
             //存入审核表
             AuditInfo auditInfo = new AuditInfo();
-            auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+            auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
             auditInfo.setBaseProjectId(trackVo.getAuditInfo().getId());
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
@@ -186,8 +199,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             auditInfo.setCreateTime(simpleDateFormat.format(new Date()));
             Example example1 = new Example(MemberManage.class);
             Example.Criteria criteria = example1.createCriteria();
-            criteria.andEqualTo("depId","2");
-            criteria.andEqualTo("depAdmin","1");
+            criteria.andEqualTo("depId", "2");
+            criteria.andEqualTo("depAdmin", "1");
             MemberManage memberManage = memberManageDao.selectOneByExample(example1);
 
 //            Exadep_adminmple example3 = new Example(MemberManage.class);
@@ -199,29 +212,29 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         }
 
 
-        trackVo.getTrackApplicationInfo().setId(UUID.randomUUID().toString().replace("-",""));
+        trackVo.getTrackApplicationInfo().setId(UUID.randomUUID().toString().replace("-", ""));
         trackVo.getTrackApplicationInfo().setTrackAudit(trackVo.getAuditInfo().getId());
         trackApplicationInfoDao.insertSelective(trackVo.getTrackApplicationInfo());
 
         List<TrackMonthly> monthlyList = trackVo.getMonthlyList();
         for (TrackMonthly trackMonthly : monthlyList) {
-            if (trackVo.getStatus().equals("0")){
-                trackMonthly.setId(UUID.randomUUID().toString().replace("-",""));
+            if (trackVo.getStatus().equals("0")) {
+                trackMonthly.setId(UUID.randomUUID().toString().replace("-", ""));
                 trackMonthly.setTrackId(trackVo.getAuditInfo().getId());
                 trackMonthlyDao.insert(trackMonthly);
-            }else if(trackVo.getStatus().equals("1")){
-                trackMonthly.setId(UUID.randomUUID().toString().replace("-",""));
+            } else if (trackVo.getStatus().equals("1")) {
+                trackMonthly.setId(UUID.randomUUID().toString().replace("-", ""));
                 trackMonthly.setTrackId(trackVo.getAuditInfo().getId());
                 trackMonthlyDao.insert(trackMonthly);
 
                 //存入审核表
                 AuditInfo auditInfo = new AuditInfo();
-                auditInfo.setId(UUID.randomUUID().toString().replace("","-"));
+                auditInfo.setId(UUID.randomUUID().toString().replace("", "-"));
                 auditInfo.setBaseProjectId(trackMonthly.getId());
                 auditInfo.setAuditResult("0");
                 auditInfo.setAuditType("0");
                 Example example1 = new Example(MemberManage.class);
-                example1.createCriteria().andEqualTo("member_role_id","3");
+                example1.createCriteria().andEqualTo("member_role_id", "3");
                 MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                 auditInfo.setAuditorId(memberManage.getId());
                 auditInfoDao.insertSelective(auditInfo);
@@ -238,13 +251,12 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
 
         Example example = new Example(TrackApplicationInfo.class);
-        example.createCriteria().andEqualTo("trackAudit",id);
+        example.createCriteria().andEqualTo("trackAudit", id);
         TrackApplicationInfo trackApplicationInfo = trackApplicationInfoDao.selectOneByExample(example);
 
         Example example1 = new Example(TrackMonthly.class);
-        example1.createCriteria().andEqualTo("trackId",id);
+        example1.createCriteria().andEqualTo("trackId", id);
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
-
 
 
         trackVo.setBaseProject(baseProject);
@@ -253,25 +265,27 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         trackVo.setMonthlyList(trackMonthlies);
         return trackVo;
     }
+
     // TODO 回显页面，月报
-    public List<TrackMonthly> findAllByTrackId(String id){
+    public List<TrackMonthly> findAllByTrackId(String id) {
         Example example1 = new Example(TrackMonthly.class);
-        example1.createCriteria().andEqualTo("trackId",id);
+        example1.createCriteria().andEqualTo("trackId", id);
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         return trackMonthlies;
     }
 
     // todo 查看页面，审核信息
-    public List<AuditInfo> findAllAuditInfosByTrackId(String id){
+    public List<AuditInfoVo> findAllAuditInfosByTrackId(String id) {
 //        Example example2 = new Example(AuditInfo.class);
 //        example2.createCriteria().andEqualTo("baseProjectId",id);
 //        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
 
-        List<AuditInfo> allAuditInfosByTrackId = trackAuditInfoDao.findAllAuditInfosByTrackId(id);
+        List<AuditInfoVo> allAuditInfosByTrackId = trackAuditInfoDao.findAllAuditInfosByTrackId(id);
+
         return allAuditInfosByTrackId;
     }
 
-    public void addTrackMonthly(TrackMonthly trackMonthly){
+    public void addTrackMonthly(TrackMonthly trackMonthly) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         trackMonthly.setCreateTime(simpleDateFormat.format(new Date()));
         trackMonthly.setTrackId(trackMonthly.getProjectNum());
@@ -286,19 +300,19 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     @Override
     public void updateTrack(TrackVo trackVo) {
 
-        if (trackVo.getStatus().equals("0")){
+        if (trackVo.getStatus().equals("0")) {
             trackAuditInfoDao.updateByPrimaryKeySelective(trackVo.getAuditInfo());
-        }else if(trackVo.getStatus().equals("1")){
+        } else if (trackVo.getStatus().equals("1")) {
             trackAuditInfoDao.updateByPrimaryKeySelective(trackVo.getAuditInfo());
             AuditInfo auditInfo2 = new AuditInfo();
-            auditInfo2.setId(UUID.randomUUID().toString().replace("-",""));
+            auditInfo2.setId(UUID.randomUUID().toString().replace("-", ""));
             auditInfo2.setBaseProjectId(trackVo.getAuditInfo().getId());
             auditInfo2.setAuditResult("0");
             auditInfo2.setAuditType("0");
             Example example2 = new Example(MemberManage.class);
             Example.Criteria criteria = example2.createCriteria();
-            criteria.andEqualTo("depId","2");
-            criteria.andEqualTo("depAdmin","1");
+            criteria.andEqualTo("depId", "2");
+            criteria.andEqualTo("depAdmin", "1");
             MemberManage memberManage1 = memberManageDao.selectOneByExample(example2);
             auditInfo2.setAuditorId(memberManage1.getId());
             auditInfo2.setAuditTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
@@ -308,16 +322,16 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             Example example = new Example(AuditInfo.class);
             Example.Criteria c = example.createCriteria();
             for (TrackMonthly trackMonthly : trackVo.getMonthlyList()) {
-                c.andEqualTo("baseProjectId",trackMonthly.getId());
+                c.andEqualTo("baseProjectId", trackMonthly.getId());
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                if (auditInfo==null){
+                if (auditInfo == null) {
                     AuditInfo auditInfo1 = new AuditInfo();
-                    auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
                     auditInfo1.setBaseProjectId(trackMonthly.getId());
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("0");
                     Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("member_role_id","3");
+                    example1.createCriteria().andEqualTo("member_role_id", "3");
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                     auditInfo1.setAuditorId(memberManage.getId());
                     auditInfo1.setAuditTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));

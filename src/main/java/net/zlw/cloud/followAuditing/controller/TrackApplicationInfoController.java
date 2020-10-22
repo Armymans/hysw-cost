@@ -6,6 +6,7 @@ import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.followAuditing.model.TrackMonthly;
+import net.zlw.cloud.followAuditing.model.vo.AuditInfoVo;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
 import net.zlw.cloud.followAuditing.model.vo.TrackVo;
@@ -43,7 +44,7 @@ public class TrackApplicationInfoController extends BaseController {
     // 查看页面回显审核信息
     @RequestMapping(value = "/track/findAllAuditInfosByTrackId",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllAuditInfosByTrackId(@RequestParam(name = "id") String id){
-        List<AuditInfo> auditInfosByTrackId = trackApplicationInfoService.findAllAuditInfosByTrackId(id);
+        List<AuditInfoVo> auditInfosByTrackId = trackApplicationInfoService.findAllAuditInfosByTrackId(id);
         return RestUtil.success(auditInfosByTrackId);
     }
 
