@@ -348,6 +348,19 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
         if (split.length!=0){
             for (String s : split) {
+
+                VisaChange visaChange1 = vcMapper.selectByPrimaryKey(s);
+                if (!visaChange1.getUpAndDownMark().equals("1")){
+                    Example example = new Example(VisaChange.class);
+                    Example.Criteria c = example.createCriteria();
+                    c.andEqualTo("baseProjectId",visaChange1.getBaseProjectId());
+                    c.andEqualTo("state","0");
+                    c.andEqualTo("upAndDownMark","1");
+                    VisaChange visaChange = vcMapper.selectOneByExample(example);
+                    s = visaChange.getId();
+                }
+
+
                 VisaChange visaChange = vcMapper.selectByPrimaryKey(s);
                 Example example = new Example(AuditInfo.class);
                 Example.Criteria criteria = example.createCriteria();
@@ -416,7 +429,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     public void addVisChangeVo(VisaChangeInfoVo visaChangeInfoVo, UserInfo loginUser) {
 
         //TODO 需要改
-        visaChangeInfoVo.setLoginUserId("123");
+        visaChangeInfoVo.setLoginUserId(loginUser.getId());
 
         String createTime = sdf.format(new Date());
 
@@ -492,51 +505,53 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         }
 
         //本次上家签证/变更信息
+        VisaChange visaChange1 = new VisaChange();
         String amountVisaChange = visaChangeInfoVo.getAmountVisaChange();
         if (StringUtil.isNotEmpty(amountVisaChange)) {
-            VisaChange visaChange = new VisaChange();
-            visaChange.setId(UUID.randomUUID().toString().replace("-", ""));
-            visaChange.setCreatorCompanyId(visaChangeInfoVo.getLoginUserId());
-            visaChange.setCreateTime(createTime);
-            visaChange.setUpdateTime(createTime);
-            visaChange.setContractAmount(visaChangeInfoVo.getContractAmount());
-            visaChange.setCreatorId(visaChangeInfoVo.getLoginUserId());
+            visaChange1 = new VisaChange();
+            visaChange1.setId(UUID.randomUUID().toString().replace("-", ""));
+            visaChange1.setCreatorCompanyId(visaChangeInfoVo.getLoginUserId());
+            visaChange1.setCreateTime(createTime);
+            visaChange1.setUpdateTime(createTime);
+            visaChange1.setContractAmount(visaChangeInfoVo.getContractAmount());
+            visaChange1.setCreatorId(visaChangeInfoVo.getLoginUserId());
 
             //0正常1删除
-            visaChange.setState("0");
-            visaChange.setAmountVisaChange(Double.parseDouble(visaChangeInfoVo.getAmountVisaChange()));
-            visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
-            visaChange.setCompileTime(createTime);
-            visaChange.setCompletionTime(visaChangeInfoVo.getCompletionTime());
-            visaChange.setOutsourcing(visaChangeInfoVo.getOutsourcing());
-            visaChange.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnit());
-            visaChange.setContact(visaChangeInfoVo.getContact());
-            visaChange.setContactNumber(visaChangeInfoVo.getContactNumber());
+            visaChange1.setState("0");
+            visaChange1.setAmountVisaChange(Double.parseDouble(visaChangeInfoVo.getAmountVisaChange()));
+            visaChange1.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
+            visaChange1.setCompileTime(createTime);
+            visaChange1.setCompletionTime(visaChangeInfoVo.getCompletionTime());
+            visaChange1.setOutsourcing(visaChangeInfoVo.getOutsourcing());
+            visaChange1.setNameOfCostUnit(visaChangeInfoVo.getNameOfCostUnit());
+            visaChange1.setContact(visaChangeInfoVo.getContact());
+            visaChange1.setContactNumber(visaChangeInfoVo.getContactNumber());
             if(!"1".equals(visaChangeInfoVo.getOutsourcingAmount())){
-                visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
+                visaChange1.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
             }
-            visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReason());
-            visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
-            visaChange.setUpAndDownMark("0");
+            visaChange1.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReason());
+            visaChange1.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
+            visaChange1.setUpAndDownMark("0");
             //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
             if(StringUtils.isNotEmpty(visaChangeInfoVo.getAuditId())){
-                visaChange.setStatus("1");
+                visaChange1.setStatus("1");
             }else{
-                visaChange.setStatus("2");
+                visaChange1.setStatus("2");
             }
-            visaChange.setProportionContract(visaChangeInfoVo.getProportionContract());
-            visaChange.setChangeNum("1");
+            visaChange1.setProportionContract(visaChangeInfoVo.getProportionContract());
+            visaChange1.setChangeNum("1");
             if (upvisachange.getId()!=null){
-                visaChange.setApplyChangeInfoId(upvisachange.getId());
+                visaChange1.setApplyChangeInfoId(upvisachange.getId());
             }
 
-            vcMapper.insertSelective(visaChange);
+            vcMapper.insertSelective(visaChange1);
         }
 
         //本次下家签证/变更信息
+        VisaChange visaChange = new VisaChange();
         String amountVisaChangeDown = visaChangeInfoVo.getAmountVisaChangeDown();
         if (StringUtil.isNotEmpty(amountVisaChangeDown)) {
-            VisaChange visaChange = new VisaChange();
+             visaChange = new VisaChange();
             visaChange.setId(UUID.randomUUID().toString().replace("-", ""));
             visaChange.setCreatorCompanyId(visaChangeInfoVo.getLoginUserId());
             visaChange.setCreateTime(createTime);
@@ -575,31 +590,19 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             vcMapper.insertSelective(visaChange);
 
         }
-        System.err.println(visaChangeInfoVo.getAuditId());
-        System.err.println(visaChangeInfoVo.getAuditId());
-        System.err.println(visaChangeInfoVo.getAuditId());
-        System.err.println(visaChangeInfoVo.getAuditId());
-        System.err.println(visaChangeInfoVo.getAuditId());
-        System.err.println(visaChangeInfoVo.getAuditId());
-        System.err.println(visaChangeInfoVo.getAuditId());
-        System.err.println(visaChangeInfoVo.getAuditId());
+
 
         if (visaChangeInfoVo.getAuditId()!=null && !visaChangeInfoVo.getAuditId().equals("")){
-            System.err.println(visaChangeInfoVo.getAuditId());
-            System.err.println(visaChangeInfoVo.getAuditId());
-            System.err.println(visaChangeInfoVo.getAuditId());
-            System.err.println(visaChangeInfoVo.getAuditId());
-            System.err.println(visaChangeInfoVo.getAuditId());
-            System.err.println(visaChangeInfoVo.getAuditId());
-            System.err.println(visaChangeInfoVo.getAuditId());
-            System.err.println(visaChangeInfoVo.getAuditId());
-            System.err.println(visaChangeInfoVo.getAuditId());
-            System.err.println(visaChangeInfoVo.getAuditId());
+
 
             SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
             AuditInfo auditInfo = new AuditInfo();
             auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
-            auditInfo.setBaseProjectId(upvisachange.getId());
+            if (visaChange!=null){
+                auditInfo.setBaseProjectId(visaChange.getId());
+            }else if(visaChange1!=null){
+                auditInfo.setBaseProjectId(visaChange1.getId());
+            }
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
             auditInfo.setAuditorId(visaChangeInfoVo.getAuditId());
@@ -626,7 +629,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     @Override
     public void submitOrSave(VisaChangeInfoVo visaChangeInfoVo) {
 
-        if (visaChangeInfoVo.getAuditNumber().equals("1")){
+
+
+
+        if (visaChangeInfoVo.getAuditNumber()==null){
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
+            baseProject.setVisaStatus("2");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        }else if(visaChangeInfoVo.getAuditNumber().equals("1")){
+
             AuditInfo auditInfo = new AuditInfo();
             auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
             auditInfo.setBaseProjectId(visaChangeInfoVo.getId());
@@ -641,10 +652,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
             baseProject.setVisaStatus("1");
-            baseProjectDao.updateByPrimaryKeySelective(baseProject);
-        }else{
-            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
-            baseProject.setVisaStatus("2");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
         }
 
@@ -730,7 +737,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             auditInfo.setUpdateTime(updateTime);
             auditInfo.setAuditTime(updateTime);
 
-            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+//            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 
 
             String applicantNameUp = visaChangeInfoVo.getApplicantNameUp();
@@ -769,7 +776,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChange.setCreatorId(visaChangeInfoVo.getLoginUserId());
 
                 visaChange.setAmountVisaChange(Double.parseDouble(visaChangeInfoVo.getAmountVisaChange()));
-                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 visaChange.setCompileTime(updateTime);
                 visaChange.setCompletionTime(visaChangeInfoVo.getCompletionTime());
                 visaChange.setOutsourcing(visaChangeInfoVo.getOutsourcing());
@@ -802,7 +808,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChange.setCreatorId(visaChangeInfoVo.getLoginUserId());
 
                 visaChange.setAmountVisaChange(Double.parseDouble(visaChangeInfoVo.getAmountVisaChangeDown()));
-                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
+//                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 visaChange.setCompileTime(updateTime);
                 visaChange.setCompletionTime(visaChangeInfoVo.getCompletionTime());
                 visaChange.setOutsourcing(visaChangeInfoVo.getOutsourcingDown());
@@ -856,7 +862,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 //0正常1删除
                 visaChange.setState("0");
                 visaChange.setAmountVisaChange(Double.parseDouble(visaChangeInfoVo.getAmountVisaChange()));
-                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
+//                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 visaChange.setCompileTime(updateTime);
                 visaChange.setCompletionTime(visaChangeInfoVo.getCompletionTime());
                 visaChange.setOutsourcing(visaChangeInfoVo.getOutsourcing());
@@ -867,10 +873,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
                 }
                 visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReason());
-                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
+//                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 visaChange.setUpAndDownMark("0");
                 //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
-                visaChange.setStatus("0");
                 visaChange.setProportionContract(visaChangeInfoVo.getProportionContract());
                 String changeNum = visaChange.getChangeNum();
                 int num = Integer.parseInt(changeNum);
@@ -889,7 +894,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChange.setCreatorId(visaChangeInfoVo.getLoginUserId());
 
                 visaChange.setAmountVisaChange(Double.parseDouble(visaChangeInfoVo.getAmountVisaChangeDown()));
-                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
+//                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 visaChange.setCompileTime(updateTime);
                 visaChange.setCompletionTime(visaChangeInfoVo.getCompletionTime());
                 visaChange.setOutsourcing(visaChangeInfoVo.getOutsourcingDown());
@@ -900,7 +905,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     visaChange.setOutsourcingAmount(visaChangeInfoVo.getOutsourcingAmount());
                 }
                 visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReasonDown());
-                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
+//                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 visaChange.setUpAndDownMark("1");
 
                 visaChange.setProportionContract(visaChangeInfoVo.getProportionContractDown());
@@ -1167,13 +1172,30 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeInfoVo.setChangeStatisticVos(changeStatisticVos);
             }
         }
+        VisaChange visaChange1 = vcMapper.selectByPrimaryKey(id);
+        if (!visaChange1.getUpAndDownMark().equals("1")){
+            Example example1 = new Example(VisaChange.class);
+            Example.Criteria c = example1.createCriteria();
+            c.andEqualTo("baseProjectId",visaChange1.getBaseProjectId());
+            c.andEqualTo("upAndDownMark","1");
+            c.andEqualTo("state","0");
+            VisaChange visaChange2 = vcMapper.selectOneByExample(example1);
+            visaChange1 = visaChange2;
+        }
 
-        //审核信息
-        Example example2 = new Example(AuditInfo.class);
-        example2.createCriteria().andEqualTo("baseProjectId", visaChange.getId());
-        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
+        Example example1 = new Example(AuditInfo.class);
+        Example.Criteria c = example1.createCriteria();
+        c.andEqualTo("baseProjectId",visaChange1.getId());
+        c.andEqualTo("auditResult","0");
+        AuditInfo auditInfos = auditInfoDao.selectOneByExample(example1);
+        if (auditInfos!=null){
+            if (auditInfos.getAuditType().equals("0")){
+                visaChangeInfoVo.setAuditType("0");
+            }else if (auditInfos.getAuditType().equals("1")){
+                visaChangeInfoVo.setAuditType("1");
+            }
+        }
 
-        visaChangeInfoVo.setAuditInfos(auditInfos);
         return visaChangeInfoVo;
     }
 

@@ -79,6 +79,8 @@ public class VisaChangeInfoVo {
     private String auditResult;
     private String auditNumber;
 
+    private String auditType;
+
 
 
 }
