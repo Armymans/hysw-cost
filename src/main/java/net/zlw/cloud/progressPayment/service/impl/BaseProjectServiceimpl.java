@@ -576,8 +576,16 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         // 设置分页助手
         PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
         List<ProgressListVo> progressListVos = progressPaymentInformationDao.searchAllProgress(pageVo);
+        List<ProgressListVo> progressListVos1 = progressPaymentInformationDao.searchAllProgress1(pageVo);
 
-        PageInfo<ProgressListVo> progressListVoPageInfo = new PageInfo<>(progressListVos);
+        PageInfo<ProgressListVo> progressListVoPageInfo = new PageInfo<>();
+
+        if("user310".equals(pageVo.getUid())){
+            progressListVoPageInfo = new PageInfo<>(progressListVos1);
+        }else{
+            progressListVoPageInfo = new PageInfo<>(progressListVos);
+        }
+
         return progressListVoPageInfo;
     }
 

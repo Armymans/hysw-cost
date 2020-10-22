@@ -8,6 +8,7 @@ import net.zlw.cloud.budgeting.mapper.SurveyInformationDao;
 import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.model.OneCensus;
+import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
@@ -82,7 +83,15 @@ public class MaintenanceProjectInformationService{
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
 
         List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos = maintenanceProjectInformationMapper.selectAllByDelFlag(pageRequest);
-        PageInfo<MaintenanceProjectInformationReturnVo> projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);
+
+        List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos1 = maintenanceProjectInformationMapper.selectAllByDelFlag1(pageRequest);
+
+        PageInfo<MaintenanceProjectInformationReturnVo> projectInformationPageInfo = new PageInfo<>();
+        if("user310".equals(pageRequest.getUid())){
+            projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
+        }else{
+            projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);
+        }
 
         System.out.println("list:"+projectInformationPageInfo.getList().toString());
 
