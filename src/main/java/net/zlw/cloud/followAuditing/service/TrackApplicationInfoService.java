@@ -8,6 +8,7 @@ import net.zlw.cloud.followAuditing.model.TrackMonthly;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
 import net.zlw.cloud.followAuditing.model.vo.TrackVo;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
 
 import java.util.List;
 
@@ -22,6 +23,8 @@ public interface TrackApplicationInfoService {
     void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId);
 
     TrackVo selectTrackById(String id);
+
+    List<AuditInfo> findAllAuditInfosByTrackId(String id);
 
     void updateMonthly(TrackMonthly trackMonthly);
 

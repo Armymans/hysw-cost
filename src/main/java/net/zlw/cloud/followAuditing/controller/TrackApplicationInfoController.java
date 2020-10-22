@@ -10,6 +10,7 @@ import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
 import net.zlw.cloud.followAuditing.model.vo.TrackVo;
 import net.zlw.cloud.followAuditing.service.TrackApplicationInfoService;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +39,15 @@ public class TrackApplicationInfoController extends BaseController {
         List<TrackMonthly> allByTrackId = trackApplicationInfoService.findAllByTrackId(id);
         return RestUtil.success(allByTrackId);
     }
+
+    // 查看页面回显审核信息
+    @RequestMapping(value = "/track/findAllAuditInfosByTrackId",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findAllAuditInfosByTrackId(@RequestParam(name = "id") String id){
+        List<AuditInfo> auditInfosByTrackId = trackApplicationInfoService.findAllAuditInfosByTrackId(id);
+        return RestUtil.success(auditInfosByTrackId);
+    }
+
+
 
     //删除跟踪审计
 //    @DeleteMapping("/track/deleteById/{id}")

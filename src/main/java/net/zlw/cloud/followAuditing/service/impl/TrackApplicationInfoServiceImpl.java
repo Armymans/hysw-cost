@@ -173,6 +173,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             trackVo.getAuditInfo().setId(UUID.randomUUID().toString().replace("-",""));
             trackVo.getAuditInfo().setFounderId(userInfo.getId());
             trackVo.getAuditInfo().setStatus("0");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            trackVo.getAuditInfo().setCreateTime(simpleDateFormat.format(new Date()));
             trackAuditInfoDao.insertSelective(trackVo.getAuditInfo());
             //存入审核表
             AuditInfo auditInfo = new AuditInfo();
@@ -180,6 +182,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             auditInfo.setBaseProjectId(trackVo.getAuditInfo().getId());
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
+            auditInfo.setStatus("0");
+            auditInfo.setCreateTime(simpleDateFormat.format(new Date()));
             Example example1 = new Example(MemberManage.class);
             Example.Criteria criteria = example1.createCriteria();
             criteria.andEqualTo("depId","2");
@@ -240,6 +244,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         Example example1 = new Example(TrackMonthly.class);
         example1.createCriteria().andEqualTo("trackId",id);
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+
+
+
         trackVo.setBaseProject(baseProject);
         trackVo.setAuditInfo(trackAuditInfo);
         trackVo.setTrackApplicationInfo(trackApplicationInfo);
@@ -252,6 +259,16 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         example1.createCriteria().andEqualTo("trackId",id);
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         return trackMonthlies;
+    }
+
+    // todo 查看页面，审核信息
+    public List<AuditInfo> findAllAuditInfosByTrackId(String id){
+//        Example example2 = new Example(AuditInfo.class);
+//        example2.createCriteria().andEqualTo("baseProjectId",id);
+//        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
+
+        List<AuditInfo> allAuditInfosByTrackId = trackAuditInfoDao.findAllAuditInfosByTrackId(id);
+        return allAuditInfosByTrackId;
     }
 
     public void addTrackMonthly(TrackMonthly trackMonthly){

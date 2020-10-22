@@ -4,6 +4,8 @@ import net.zlw.cloud.designProject.model.CostVo2;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
 
@@ -55,6 +57,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
             "LEFT JOIN track_monthly tm on tm.track_id = tai.id\n" +
             "LEFT JOIN audit_info ai on ai.base_project_id = tai.id\n" +
             "where\n" +
+            "(ai.auditor_id = #{uid} or #{uid} = '' ) and \n" +
             "(b.district = #{district} or #{district} = '' ) and \n" +
             "(b.project_nature = #{projectNature} or #{projectNature} = '') and \n" +
             "(b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '' ) and \n" +
@@ -93,4 +96,19 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
                     "(s1.create_time<=#{endTime} or  #{endTime} = '')"
     )
     List<TrackAuditInfo> totalexpenditure(CostVo2 costVo2);
+
+    @Select("SELECT\n" +
+            "\ta.audit_opinion auditOpinion,\n" +
+            "\t( CASE a.audit_result WHEN '0' THEN '未审批' WHEN '1' THEN '通过' WHEN '2' THEN '未通过' END ) auditResult,\n" +
+            "\tm.member_name memberName,\n" +
+            "\ta.audit_time auditTime,\n" +
+            "\ta.create_time createTime \n" +
+            "FROM\n" +
+            "\taudit_info a,\n" +
+            "\tmember_manage m \n" +
+            "WHERE\n" +
+            "\ta.auditor_id = m.id\n" +
+            "and \n" +
+            "  (a.base_project_id = #{id} or #{id} = '')")
+    List<AuditInfo> findAllAuditInfosByTrackId(@Param("id") String id);
 }
