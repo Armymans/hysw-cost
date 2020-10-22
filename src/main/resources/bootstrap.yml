@@ -21,6 +21,7 @@ spring:
   datasource:
     platform: ${datasource.platform}
     url: jdbc:mysql://192.168.1.191:3306/sscp_cost?useUnicode=true&characterEncoding=utf-8
+#    url: ${db-url-hysw-znzj}
     username: admin
     password: admin
     driver-class-name: ${driver-class-name}
@@ -44,5 +45,5 @@ eureka:
   instance:
     prefer-ip-address: true
     metadata-map:
-      version: sby
+      version: 1.0.0
     

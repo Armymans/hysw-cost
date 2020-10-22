@@ -104,7 +104,9 @@ public class FileInfoController extends BaseController {
             e.printStackTrace();
             return RestUtil.error("操作异常,请联系管理员!");
         }
-        return RestUtil.success(attachInfo.getId());
+        Map<String, String> map = new HashMap<>();
+        map.put("id",attachInfo.getId());
+        return RestUtil.success(map);
     }
 
     /**
