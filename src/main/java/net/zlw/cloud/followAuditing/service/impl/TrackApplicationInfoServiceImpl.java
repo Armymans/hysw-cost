@@ -282,6 +282,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
         List<AuditInfoVo> allAuditInfosByTrackId = trackAuditInfoDao.findAllAuditInfosByTrackId(id);
 
+        for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId) {
+            auditInfoVo.setAuditWord("第一次月报");
+        }
         return allAuditInfosByTrackId;
     }
 
@@ -304,6 +307,12 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             trackAuditInfoDao.updateByPrimaryKeySelective(trackVo.getAuditInfo());
         } else if (trackVo.getStatus().equals("1")) {
             trackAuditInfoDao.updateByPrimaryKeySelective(trackVo.getAuditInfo());
+
+            String baseProjectId = trackVo.getAuditInfo().getBaseProjectId();
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
+            baseProject.setTrackStatus("1");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
             AuditInfo auditInfo2 = new AuditInfo();
             auditInfo2.setId(UUID.randomUUID().toString().replace("-", ""));
             auditInfo2.setBaseProjectId(trackVo.getAuditInfo().getId());
@@ -317,6 +326,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             auditInfo2.setAuditorId(memberManage1.getId());
             auditInfo2.setAuditTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             auditInfoDao.insertSelective(auditInfo2);
+
 
 
             Example example = new Example(AuditInfo.class);

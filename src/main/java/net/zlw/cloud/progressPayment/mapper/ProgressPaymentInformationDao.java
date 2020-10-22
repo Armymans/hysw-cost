@@ -117,7 +117,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             "LEFT JOIN audit_info a on p.id = a.base_project_id\n" +
             "where\n" +
             "(p.del_flag = '0') and \n" +
-            "(a.auditor_id = #{uid}) and\n" +
+            "(a.auditor_id = #{uid} or #{uid} = '') and\n" +
             "(b.district = #{district} or #{district} = '') and \n" +
             "(b.project_nature = #{projectNature} or #{projectNature} = '') and \n" +
             "(p.project_type = #{projectType} or #{projectType} = '') and\n" +
