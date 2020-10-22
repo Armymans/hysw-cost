@@ -23,5 +23,23 @@ public interface FileInfoMapper extends Mapper<FileInfo> {
             "WHERE " +
             " fi.STATUS = '0'  " +
             " AND fi.type = #{type} and fi.plat_code = #{key}")
-    List<FileInfo> findByFreignAndType(@Param("type") String type, @Param("key") String key);
+    List<FileInfo> findByFreignAndType(@Param("key") String key,@Param("type") String type);
+
+    @Select("SELECT " +
+            " fi.* " +
+            "FROM " +
+            " file_info fi " +
+            "WHERE " +
+            " fi.STATUS = '0'  " +
+            " AND fi.type = #{type} and fi.plat_code = #{key}")
+    List<FileInfo> findByFreignAndType2(@Param("key") String key,@Param("type") String type);
+
+    @Select("SELECT " +
+            " fi.* " +
+            "FROM " +
+            " file_info fi " +
+            "WHERE " +
+            " fi.STATUS = '0'  " +
+            " AND fi.plat_code = #{id}")
+    List<FileInfo> findByPlatCode(@Param("id")String id);
 }

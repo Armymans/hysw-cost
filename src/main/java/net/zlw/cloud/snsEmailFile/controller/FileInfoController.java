@@ -111,6 +111,67 @@ public class FileInfoController extends BaseController {
 
     /**
      * @Author Armyman
+     * @Description //上传文件
+     * @Date 11:28 2020/10/10
+     **/
+    @RequestMapping(value = "/uploadFile2", method = RequestMethod.POST)
+    public Map<String, Object> applyUpload2(@RequestParam("file") MultipartFile file, String type,String userId) {
+        log.info(getLogInfo("upload", file));
+        FileInfo attachInfo = new FileInfo();
+        try {
+            String fileName = new String(FileUtil.getFileName(file).getBytes(), "UTF-8");
+            String fileType = FileUtil.getFileExtName(file);
+
+            String fileDir = "/" + sdf2.format(new Date());
+
+            String tmpFileName = IdUtil.uuid2().substring(0, 15) + sdf.format(new Date()) + "." + fileType;
+            String filePath = fileDir + "/" + tmpFileName;
+            //上传路径
+            String path = "";
+            String os = System.getProperty("os.name");
+            if (os.toLowerCase().startsWith("win")) {
+                path = WinAttachDir;
+            } else {
+                path = LixAttachDir;
+            }
+
+            File outDir = new File(path + fileDir);
+            if (!outDir.exists()) {
+                outDir.mkdirs();
+            }
+            log.info(outDir.getAbsolutePath());
+            File targetFile = new File(outDir.getAbsolutePath(), tmpFileName);
+            try {
+                file.transferTo(targetFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            attachInfo.setFileName(fileName);
+            attachInfo.setFilePath(filePath);
+            attachInfo.setFileType(fileType);
+            attachInfo.setPlatCode(userId);
+            attachInfo.setUserId(getLoginUser().getId());
+            attachInfo.setType(type);
+            attachInfo.setCreateTime(DateUtil.getDateTime());
+            attachInfo.setStatus("1");
+            //todo
+//            attachInfo.setUserId(getLoginUser().getId());
+            attachInfo.setStatus("0");
+//            attachInfo.setCompanyId(getLoginUser().getCompanyId());
+
+            //将文件与企业材料管理进行关联
+            fileInfoService.uploadFile(attachInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error("操作异常,请联系管理员!");
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put("id",attachInfo.getId());
+        return RestUtil.success(map);
+    }
+
+    /**
+     * @Author Armyman
      * @Description //修改文件信息 名字和备注
      * @Date 11:31 2020/10/10
      **/

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import javafx.geometry.Pos;
 import net.tec.cloud.common.controller.BaseController;
+import net.tec.cloud.common.vo.LoginUser;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.CostPreparation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
@@ -18,6 +19,8 @@ import net.zlw.cloud.index.model.MessageNotification;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.security.access.method.P;
@@ -39,11 +42,54 @@ public class ProjectController extends BaseController {
 
     @Resource
     private ProjectService projectService;
+    @Resource
+    private FileInfoService fileInfoService;
 
+    /**
+     * 建设项目提交 _ 保存
+     * @param buildingProject
+     * @return
+     */
     @RequestMapping(value = "/build/buildSubmit", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> buildSubmit(BuildingProject buildingProject){
-        projectService.buildSubmit(buildingProject);
+        String uuid = projectService.buildSubmit(buildingProject);
+        //更改userid 为 建设项目id
+        String id = getLoginUser().getId();
+        List<FileInfo> xmxgt = fileInfoService.findByFreignAndType2(id, "xmxgt");
+        if(xmxgt.size()>0){
+            for (FileInfo fileInfo : xmxgt) {
+                fileInfo.setPlatCode(uuid);
+                projectService.updateFileInfo(fileInfo);
+            }
+        }
         return RestUtil.success();
+    }
+
+    /**
+     * 查看
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/build/findOne", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> buildSubmit(@Param("id") String id){
+        BuildingProject buildingProject = projectService.findOne(id);
+        return RestUtil.success(buildingProject);
+    }
+    /**
+     * 查看 查询轮播图
+     * @param
+     * @return
+     */
+    @RequestMapping(value = "/build/findImage", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findImage(@Param("id") String id){
+        List<FileInfo> fileInfo = fileInfoService.findByPlatCode(id);
+        if (fileInfo.size() > 0){
+            for (FileInfo info : fileInfo) {
+
+                info.setImgurl("");
+            }
+        }
+        return RestUtil.success(fileInfo);
     }
 
     /**
@@ -140,6 +186,19 @@ public class ProjectController extends BaseController {
         }else{
             return RestUtil.error();
         }
+    }
+
+    /**
+     * 查看审核按钮
+     * @param projectVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/oneAudit", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> oneAudit(ProjectVo2 projectVo2) {
+        if (projectVo2.getAuditInfo()!=null){
+            projectService.batchAudit(projectVo2.getIdlist(), projectVo2.getAuditInfo(), getLoginUser());
+        }
+        return RestUtil.success();
     }
 
     /**

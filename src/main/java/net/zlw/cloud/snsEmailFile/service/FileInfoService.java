@@ -45,4 +45,11 @@ public class FileInfoService {
     public List<FileInfo> findByFreignAndType(String key, String type) {
         return fileInfoMapper.findByFreignAndType(key,type);
     }
+    public List<FileInfo> findByFreignAndType2(String key, String type) {
+        return fileInfoMapper.findByFreignAndType2(key,type);
+    }
+
+    public List<FileInfo> findByPlatCode(String id) {
+        return fileInfoMapper.findByPlatCode(id);
+    }
 }

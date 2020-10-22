@@ -27,4 +27,34 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
 
     @Select("select * from building_project where id = #{id}")
     BuildingProject selectById(@Param("id") String id);
+
+    @Select("SELECT\n" +
+            "building_project_name buildingProjectName,\n" +
+            "building_project_code buildingProjectCode,\n" +
+            "building_unit  buildingUnit,\n" +
+            "supervisor_unit supervisorUnit,\n" +
+            "construction_units constructionUnits,\n" +
+            "design_units designUnits,\n" +
+            "(\n" +
+            "   case project_type\n" +
+            "        when '1' then '住宅区配套'\n" +
+            "\twhen '2' then '商业区配套'\n" +
+            "        when '3' then '工商区配套'\n" +
+            "\tend\n" +
+            ") as projectType,\n" +
+            "(\n" +
+            "   case project_nature\n" +
+            "\twhen '0' then '新建'\n" +
+            "\twhen '1' then '改造'\n" +
+            "\tend\n" +
+            ") as projectNature,\n" +
+            "client_name clientName,\n" +
+            "cost_amount costAmount,\n" +
+            "project_site projectSite,\n" +
+            "contract_start_time contractStartTime,\n" +
+            "contract_end_time contractEndTime,\n" +
+            "actual_start_time actualStartTime,\n" +
+            "actual_end_time  actualEndTime\n" +
+            "FROM building_project where id = #{id}")
+    BuildingProject findOne(String id);
 }

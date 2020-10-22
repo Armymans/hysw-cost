@@ -58,5 +58,7 @@ public class FileInfo {
 
     @Transient
     private String userName;
+    @Transient
+    private String imgurl;
 
 }

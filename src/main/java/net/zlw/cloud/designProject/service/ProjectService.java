@@ -23,6 +23,8 @@ import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.ibatis.annotations.Param;
 import org.aspectj.weaver.ast.And;
@@ -98,6 +100,9 @@ public class ProjectService {
 
     @Resource
     private BuildingProjectMapper buildingProjectMapper;
+
+    @Resource
+    private FileInfoMapper fileInfoMapper;
 
     /**
      * 设计页面展示
@@ -1875,9 +1880,17 @@ public class ProjectService {
         return total;
     }
 
-    public void buildSubmit(BuildingProject buildingProject) {
+    public String buildSubmit(BuildingProject buildingProject) {
         String uuid = UUID.randomUUID().toString().replace("-","");
         buildingProject.setId(uuid);
-        buildingProjectMapper.insert(buildingProject);
+        buildingProjectMapper.insertSelective(buildingProject);
+        return uuid;
+    }
+    public void updateFileInfo(FileInfo fileInfo){
+        fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+    }
+
+    public BuildingProject findOne(String id) {
+        return buildingProjectMapper.findOne(id);
     }
 }
