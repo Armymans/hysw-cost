@@ -98,17 +98,18 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
     List<TrackAuditInfo> totalexpenditure(CostVo2 costVo2);
 
     @Select("SELECT\n" +
-            "\ta.audit_opinion auditOpinion,\n" +
-            "\t( CASE a.audit_result WHEN '0' THEN '未审批' WHEN '1' THEN '通过' WHEN '2' THEN '未通过' END ) auditResult,\n" +
-            "\tm.member_name memberName,\n" +
-            "\ta.audit_time auditTime,\n" +
-            "\ta.create_time createTime \n" +
-            "FROM\n" +
-            "\taudit_info a,\n" +
-            "\tmember_manage m \n" +
-            "WHERE\n" +
-            "\ta.auditor_id = m.id\n" +
-            "and \n" +
-            "  (a.base_project_id = #{id} or #{id} = '')")
+            "            a.audit_opinion auditOpinion,\n" +
+            "            ( CASE a.audit_result WHEN '0' THEN '未审批' WHEN '1' THEN '通过' WHEN '2' THEN '未通过' END ) auditResult,\n" +
+            "            m.member_name memberName,\n" +
+            "            a.audit_time auditTime,\n" +
+            "            a.create_time createTime \n" +
+            "            FROM\n" +
+            "            audit_info a,\n" +
+            "            member_manage m \n" +
+            "            WHERE\n" +
+            "            a.auditor_id = m.id\n" +
+            "\t\t\t\t\t\tand a.status= '0'\n" +
+            "            and \n" +
+            "             (a.base_project_id = #{id} or #{id} = '')")
     List<AuditInfo> findAllAuditInfosByTrackId(@Param("id") String id);
 }

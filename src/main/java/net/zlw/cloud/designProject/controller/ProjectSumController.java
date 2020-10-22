@@ -1179,6 +1179,20 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(objects);
     }
 
+    /**
+     * 设计绩效 发放总数
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/desiginAchievements",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> desiginAchievements(CostVo2 costVo2){
+        BigDecimal bigDecimal1 = projectSumService.desiginMonthAchievements(costVo2);
+        BigDecimal bigDecimal2 = projectSumService.desiginYearAchievements(costVo2);
+        ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
+        map.put("monthAchievements",bigDecimal1);
+        map.put("yearAchievements",bigDecimal2);
+        return RestUtil.success(map);
+    }
 
     /**
      * 员工绩效分析 搜索
@@ -1214,28 +1228,13 @@ public class ProjectSumController extends BaseController {
         StatisticAnalysis year = statusticAnalysisService.findYear(costVo2);
         BigDecimal bigDecimal = new BigDecimal(year.getCurrentYearPaymentPerformance());
         ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
-        //设计绩效统计图
+
         map.put("objects1",objects);
         map.put("year1",bigDecimal2);
         map.put("objects2",pieChart);
         map.put("year2",bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
         return RestUtil.success(map);
     }
-    /**
-     * 设计绩效 发放总数
-     * @param costVo2
-     * @return
-     */
-    @RequestMapping(value = "/api/projectCount/desiginAchievements",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> desiginAchievements(CostVo2 costVo2){
-        BigDecimal bigDecimal1 = projectSumService.desiginMonthAchievements(costVo2);
-        BigDecimal bigDecimal2 = projectSumService.desiginYearAchievements(costVo2);
-        ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
-        map.put("monthAchievements",bigDecimal1);
-        map.put("yearAchievements",bigDecimal2);
-        return RestUtil.success(map);
-    }
-
 //    /**
 //     * 设计绩效 本年发放总数
 //     * @param costVo2

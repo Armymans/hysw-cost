@@ -612,17 +612,22 @@ public class ProjectService {
     public void batchAudit(String id, AuditInfo auditInfo, UserInfo loginUser){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = simpleDateFormat.format(new Date());
+        //获取当前成员
         MemberManage memberManage = memberManageDao.selectByPrimaryKey(loginUser.getId());
+        //根据id查询设计信息
         DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
+        //根据设计id查询基本信息
         BaseProject baseProject = projectMapper.selectByPrimaryKey(designInfo.getBaseProjectId());
+        //根据外键 和 互审人id 查询审核信息
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",id);
+        c.andEqualTo("auditorId",loginUser.getId());
+        AuditInfo auditInfo2 = auditInfoDao.selectOneByExample(example);
+
         if(memberManage!=null){
             //判断是否为设计部门负责人
             if("4".equals(memberManage.getMemberRoleId())&&"1".equals(memberManage.getDepAdmin())){
-                //根据外键 和 互审人id 查询用户
-                Example example = new Example(AuditInfo.class);
-                Example.Criteria c = example.createCriteria();
-                c.andEqualTo("baseProjectId",id);
-                c.andEqualTo("auditorId",loginUser.getId());
                 //如果为通过 则从待审核状态变为已完成 如果为未通过则状态改为未通过
                 if("1".equals(auditInfo.getAuditResult())){
                     //如果领导选择通过 审核类型改为二审(1) 同时项目状态变为已完成
@@ -642,39 +647,44 @@ public class ProjectService {
             else if("2".equals(auditInfo.getAuditResult())){
                 baseProject.setDesginStatus("3");
                 projectMapper.updateByPrimaryKeySelective(baseProject);
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo);
             }else if("1".equals(auditInfo.getAuditResult())){
                 //获取设计部门负责人
-                Example example = new Example(MemberManage.class);
-                Example.Criteria c = example.createCriteria();
-                c.andEqualTo("depId","1");
-                c.andEqualTo("depAdmin","1");
-                MemberManage depAdmin = memberManageDao.selectOneByExample(example);
+                Example example2 = new Example(MemberManage.class);
+                Example.Criteria criteria = example2.createCriteria();
+                criteria.andEqualTo("depId","1");
+                criteria.andEqualTo("depAdmin","1");
+                MemberManage depAdmin = memberManageDao.selectOneByExample(example2);
                 //如果审核通过 需要将添加一条领导审核信息
                 String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
-                auditInfo.setId(auditInfouuid);
-                auditInfo.setBaseProjectId(designInfo.getId());
-                //审核状态变为一审
-                auditInfo.setAuditType("1");
-                auditInfo.setAuditResult("0");
+                AuditInfo auditInfo1 = new AuditInfo();
+                //添加一个id
+                auditInfo1.setId(auditInfouuid);
+                //添加外键
+                auditInfo1.setBaseProjectId(designInfo.getId());
+                //审核类型为二审(领导审核)
+                auditInfo1.setAuditType("1");
+                //审核结果 结果待审核(领导审核后变为已审核)
+                auditInfo1.setAuditResult("0");
                 //赋值审核人id(领导)
-                auditInfo.setAuditorId(depAdmin.getId());
+                auditInfo1.setAuditorId(depAdmin.getId());
                 //添加创建时间
-                auditInfo.setCreateTime(createTime);
+                auditInfo1.setCreateTime(createTime);
                 //添加创建人id
-                auditInfo.setFounderId(loginUser.getId());
+                auditInfo1.setFounderId(loginUser.getId());
                 //添加公司id
-                auditInfo.setCompanyId(loginUser.getCompanyId());
+                auditInfo1.setCompanyId(loginUser.getCompanyId());
                 //状态正常
-                auditInfo.setStatus("0");
-                //添加 设计状态为
-                auditInfoDao.insert(auditInfo);
+                auditInfo1.setStatus("0");
+                //将新的领导信息添加到审核表中
+                auditInfoDao.insert(auditInfo1);
 
-                //如果为通过则 审核状态变为待审核
-                auditInfo.setAuditResult("1");
-                auditInfo.setAuditType("0");
+                //更改普通互审人得状态
+                auditInfo2.setAuditResult("1");
+                auditInfo2.setAuditType("0");
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
             }
         }
-        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 //    }
 //        //获取id后 根据id 修改审核状态和审核意见
 //        DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
