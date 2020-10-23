@@ -4,6 +4,7 @@ import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BudgetingListVo;
 import net.zlw.cloud.budgeting.model.vo.BudgetingVo;
 import net.zlw.cloud.budgeting.model.vo.PageBVo;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
@@ -86,7 +87,8 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "\t\twhen '1' then '未到账'\n" +
             "\t\tend\n" +
             ") whetherAccount ,\n" +
-            "bt.amount_outsourcing amountOutsourcing \n" +
+            "bt.amount_outsourcing amountOutsourcing, \n" +
+            "bt.founder_id founderId \n" +
             "from \n" +
             "budgeting bt \n" +
             "LEFT JOIN base_project b on bt.base_project_id = b.id\n" +

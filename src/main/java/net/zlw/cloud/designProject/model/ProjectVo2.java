@@ -7,5 +7,4 @@ import net.zlw.cloud.progressPayment.model.AuditInfo;
 public class ProjectVo2 {
     private String idlist;
     private AuditInfo auditInfo;
-    private DesignChangeInfo designChangeInfo;
 }

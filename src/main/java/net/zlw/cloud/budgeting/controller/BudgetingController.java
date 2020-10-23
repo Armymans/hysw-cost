@@ -91,11 +91,15 @@ public class BudgetingController extends BaseController {
             }
             //处理中
             if (budgetingListVo.getBudgetStatus()!=null && budgetingListVo.getBudgetStatus().equals("处理中")){
-                budgetingListVos1.add(budgetingListVo);
+                if (budgetingListVo.getFounderId().equals(getLoginUser().getId()) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
+                    budgetingListVos1.add(budgetingListVo);
+                }
             }
             //未通过
             if (budgetingListVo.getAuditResult()!=null && budgetingListVo.getAuditResult().equals("2")){
-                budgetingListVos2.add(budgetingListVo);
+                if (budgetingListVo.getFounderId().equals(getLoginUser().getId()) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
+                    budgetingListVos2.add(budgetingListVo);
+                }
             }
             //已完成
             if (budgetingListVo.getBudgetStatus() != null && budgetingListVo.getBudgetStatus().equals("已完成")){
@@ -130,8 +134,10 @@ public class BudgetingController extends BaseController {
         }
         ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
         for (BudgetingListVo budgetingListVo : list) {
-            if (!budgetingListVos4.contains(budgetingListVo)){
-                budgetingListVos4.add(budgetingListVo);
+            if (budgetingListVo.getFounderId().equals(getLoginUser().getId()) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
+                if (!budgetingListVos4.contains(budgetingListVo)){
+                    budgetingListVos4.add(budgetingListVo);
+                }
             }
         }
         PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(budgetingListVos4);
