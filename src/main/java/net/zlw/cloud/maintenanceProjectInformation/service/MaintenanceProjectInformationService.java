@@ -395,6 +395,7 @@ public class MaintenanceProjectInformationService{
                         }
                     }else if(batchReviewVo.getAuditResult().equals("2")){
                         auditInfo.setAuditResult("2");
+                        auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                         maintenanceProjectInformation.setType("3");
                         auditInfo.setAuditTime(sdf.format(date));
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
@@ -411,9 +412,8 @@ public class MaintenanceProjectInformationService{
      * 编辑
      * @param maintenanceProjectInformationVo
      * @param userInfo
-     * @param id 审核人id
      */
-    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,UserInfo userInfo,String id){
+    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,UserInfo userInfo){
 
 
         //修改时间
@@ -522,41 +522,56 @@ public class MaintenanceProjectInformationService{
 
         for (AuditInfo auditInfo : auditInfos) {
             if("2".equals(auditInfo.getAuditResult())){
-                auditInfo.setBaseProjectId(information.getId());
 
-                auditInfo.setAuditResult("0");
+                Example example3 = new Example(AuditInfo.class);
+                Example.Criteria criteria2 = example3.createCriteria();
+                criteria2.andEqualTo("baseProjectId",information.getId());
 
-                auditInfo.setAuditType("0");
+                List<AuditInfo> auditInfos1 = auditInfoDao.selectByExample(example3);
+                for (AuditInfo info : auditInfos1) {
+                    if("1".equals(info.getAuditType())){
+                        auditInfoDao.deleteByPrimaryKey(info);
+                    }
+                    info.setBaseProjectId(information.getId());
+                    info.setAuditResult("0");
 
-                auditInfo.setStatus("0");
+                    auditInfo.setStatus("0");
 
-                String updateDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+                    String updateDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
 
-                auditInfo.setUpdateTime(updateDate);
+                    info.setUpdateTime(updateDate);
 
-                auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-            }else{
-                AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfoDao.updateByPrimaryKeySelective(info);
+                }
 
-                String s = UUID.randomUUID().toString().replaceAll("-", "");
-                auditInfo1.setId(s);
-                auditInfo1.setBaseProjectId(information.getId());
+//                auditInfo.setAuditType("0");
 
-                auditInfo1.setAuditResult("0");
-
-                auditInfo1.setAuditType("0");
-
-                auditInfo1.setStatus("0");
-
-                // 审核人id
-                auditInfo1.setAuditorId(id);
-
-                String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
-
-                auditInfo1.setCreateTime(createDate);
-
-                auditInfoDao.insertSelective(auditInfo1);
+                information.setType("1");
             }
+        }
+
+        if(auditInfos.size() <=0){
+            AuditInfo auditInfo1 = new AuditInfo();
+
+            String s = UUID.randomUUID().toString().replaceAll("-", "");
+            auditInfo1.setId(s);
+            auditInfo1.setBaseProjectId(information.getId());
+
+            auditInfo1.setAuditResult("0");
+
+            auditInfo1.setAuditType("0");
+
+            auditInfo1.setStatus("0");
+
+            // 审核人id
+            auditInfo1.setAuditorId(maintenanceProjectInformationVo.getAuditorId());
+
+            String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+
+            auditInfo1.setCreateTime(createDate);
+
+            auditInfoDao.insertSelective(auditInfo1);
+            information.setType("1");
         }
 
 

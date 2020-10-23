@@ -80,7 +80,7 @@ public class MaintenanceProjectInformationController extends BaseController {
      * @param maintenanceProjectInformationVo
      */
     @RequestMapping(value = "/maintenanceProjectInformation/addMaintenanceProjectInformation", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo, BindingResult bindingResult) {
+    public Map<String, Object> addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
 //        UserInfo loginUser = getLoginUser();
 //        System.out.println("user:"+loginUser);
         maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser());
@@ -122,10 +122,10 @@ public class MaintenanceProjectInformationController extends BaseController {
      * @param maintenanceProjectInformationVo
      */
     @RequestMapping(value = "/maintenanceProjectInformation/updateMaintenanceProjectInformation", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo, @RequestParam(name = "id") String id) {
+    public Map<String, Object> updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
         UserInfo loginUser = getLoginUser();
         System.out.println("user:" + loginUser);
-        maintenanceProjectInformationService.updateMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser(), id);
+        maintenanceProjectInformationService.updateMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser());
         return RestUtil.success("编辑成功");
     }
 
