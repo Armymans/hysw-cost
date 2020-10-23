@@ -363,19 +363,21 @@ public class MaintenanceProjectInformationService{
                             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                             // 待确认
                             maintenanceProjectInformation.setType("4");
-                            Date date = new Date();
-                            String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
+
 //                            auditInfo.setAuditTime(format);
 //                            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
 
 
                             maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
+                            Date date = new Date();
+                            String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
                             //                            一审通过在审核表插入一条数据
                             AuditInfo auditInfo1 = new AuditInfo();
                             auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
                             auditInfo1.setBaseProjectId(s);
                             auditInfo1.setAuditResult("0");
                             auditInfo1.setAuditType("1");
+                            auditInfo1.setCreateTime(format);
                             Example example1 = new Example(MemberManage.class);
                             example1.createCriteria().andEqualTo("status", "0").andEqualTo("depId", "2").andEqualTo("depAdmin", "1");
                             MemberManage memberManage = memberManageDao.selectOneByExample(example1);
@@ -389,6 +391,7 @@ public class MaintenanceProjectInformationService{
                             auditInfo.setAuditTime(format);
                             auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                            maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
                         }
                     }else if(batchReviewVo.getAuditResult().equals("2")){
                         auditInfo.setAuditResult("2");
