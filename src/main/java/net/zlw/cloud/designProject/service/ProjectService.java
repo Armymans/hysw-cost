@@ -642,23 +642,35 @@ public class ProjectService {
                 //如果为通过 则从待审核状态变为已完成 如果为未通过则状态改为未通过
                 if("1".equals(auditInfo.getAuditResult())){
                     //如果领导选择通过 审核类型改为二审(1) 同时项目状态变为已完成
-                    auditInfo.setAuditType("1");
+                    auditInfo2.setAuditType("1");
+                    auditInfo2.setAuditResult(auditInfo.getAuditResult());
+                    auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
+                    auditInfo2.setUpdateTime(createTime);
                     baseProject.setDesginStatus("4");
                     projectMapper.updateByPrimaryKeySelective(baseProject);
-                    auditInfoDao.updateByExample(auditInfo,example);
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
                 }else if("2".equals(auditInfo.getAuditResult())){
                     //如果领导选择未通过 审核类型改为二审(1) 同时项目状态变为未通过
-                    auditInfo.setAuditType("1");
+                    auditInfo2.setAuditType("1");
+                    auditInfo2.setAuditResult(auditInfo.getAuditResult());
+                    auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
+                    auditInfo2.setUpdateTime(createTime);
                     baseProject.setDesginStatus("3");
                     projectMapper.updateByPrimaryKeySelective(baseProject);
-                    auditInfoDao.updateByExample(auditInfo,example);
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
                 }
             }
             //不是负责人说明是普通互审人
             else if("2".equals(auditInfo.getAuditResult())){
+                //如果是未通过则
+                //基本信息状态改为未通过
                 baseProject.setDesginStatus("3");
+                //审核信息写入
+                auditInfo2.setAuditResult(auditInfo.getAuditResult());
+                auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
+                auditInfo2.setUpdateTime(createTime);
                 projectMapper.updateByPrimaryKeySelective(baseProject);
-                auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
             }else if("1".equals(auditInfo.getAuditResult())){
                 //获取设计部门负责人
                 Example example2 = new Example(MemberManage.class);
@@ -826,6 +838,10 @@ public class ProjectService {
         BaseProject baseProject = projectMapper.selectById(id);
         return baseProject;
     }
+    public BaseProject BaseProjectByid2(String id){
+        BaseProject baseProject = projectMapper.selectById2(id);
+        return baseProject;
+    }
 
     public BaseProject baseProjectByPrimaryKey(String id){
         BaseProject baseProject = projectMapper.selectByPrimaryKey(id);
@@ -920,37 +936,50 @@ public class ProjectService {
     public void projectEdit(ProjectVo projectVo, UserInfo loginUser){
         //BaseProject baseProject, DesignInfo designInfo, ProjectExploration projectExploration, PackageCame packageCame
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //如果是为通过则
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseProjectId",projectVo.getDesignInfo().getId());
+        criteria.andEqualTo("auditResult","2");
+        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example);
         String updateTime = simpleDateFormat.format(new Date());
-        if("2".equals(projectVo.getBaseProject().getDesginStatus())){
             //如果按钮状态为1 说明点击的是提交
             if("1".equals(projectVo.getBaseProject().getOrsubmit())){
-                //审核状态从未通过中变为待审核
-                projectVo.getBaseProject().setDesginStatus("1");
+
+                //如果提交人为空 说明时保存状态未出图中 反之状态未通过
+                if(projectVo.getBaseProject().getReviewerId() == null||"".equals(projectVo.getBaseProject().getReviewerId())){
+                    if("3".equals(projectVo.getBaseProject().getDesginStatus())){
+                        //如果是未通过 提交时 将审核信息改为待审核
+                        auditInfo1.setAuditResult("0");
+                        //修改基本状态 未通过重新变为待审核
+                        projectVo.getBaseProject().setDesginStatus("1");
+                        auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
+                    }
+                }else{
+                    if("2".equals(projectVo.getBaseProject().getDesginStatus())){
+                        //如果是出图中 则需要选择互审人
+                        AuditInfo auditInfo = new AuditInfo();
+                        String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
+                        auditInfo.setId(auditInfouuid); //id
+                        auditInfo.setBaseProjectId(projectVo.getDesignInfo().getId()); //外键
+                        auditInfo.setAuditType("0"); //状态为一审
+                        auditInfo.setAuditResult("0"); //待审核
+                        auditInfo.setAuditorId(projectVo.getBaseProject().getReviewerId()); //审核人
+                        auditInfo.setCreateTime(updateTime); //创建时间
+                        auditInfo.setFounderId(loginUser.getId()); //创建人
+                        auditInfo.setCompanyId(loginUser.getCompanyId()); //创建人公司
+                        auditInfo.setStatus("0"); //状态
+                        //将互审人信息写入审核表
+                        auditInfoDao.insert(auditInfo);
+                        //审核状态从出图中变为待审核
+                        projectVo.getBaseProject().setDesginStatus("1");
+                    }
+                }
             }else {
                 //如果不为1 则为保存 状态依旧是出图中
                 projectVo.getBaseProject().setDesginStatus("2");
             }
-            //如果提交人为空 说明时保存状态未出图中 反之状态未通过
-            if(projectVo.getBaseProject().getReviewerId() == null||"".equals(projectVo.getBaseProject().getReviewerId())){
-                projectVo.getBaseProject().setDesginStatus("2");
-            }else{
-                AuditInfo auditInfo = new AuditInfo();
-                String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
-                //编辑完成 写入互审人
-                auditInfo.setId(auditInfouuid);
-                auditInfo.setBaseProjectId(projectVo.getDesignInfo().getId());
-                auditInfo.setAuditType("0");
-                auditInfo.setAuditResult("0");
-                auditInfo.setAuditorId(projectVo.getBaseProject().getReviewerId());
-                auditInfo.setCreateTime(updateTime);
-                auditInfo.setFounderId(loginUser.getId());
-                auditInfo.setCompanyId(loginUser.getCompanyId());
-                auditInfo.setStatus("0");
-                //将互审人信息写入审核表
-                auditInfoDao.insert(auditInfo);
-                //审核状态从出图中变为待审核
-                projectVo.getBaseProject().setDesginStatus("1");
-            }
+
             //添加修改时间
             projectVo.getBaseProject().setUpdateTime(updateTime);
             projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
@@ -974,42 +1003,41 @@ public class ProjectService {
                     projectVo.getPackageCame().setId(packageCame.getId());
                     packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
                 }
-            }
         }
-        if("3".equals(projectVo.getBaseProject().getDesginStatus())){
-            //如果按钮状态为1 说明点击的是提交
-            if("1".equals(projectVo.getBaseProject().getOrsubmit())){
-                //审核状态从未通过中变为待审核
-                projectVo.getBaseProject().setDesginStatus("1");
-            }else {
-                //如果不为1 则为保存 状态依旧是未通过
-                projectVo.getBaseProject().setDesginStatus("3");
-            }
-                //添加修改时间
-            projectVo.getBaseProject().setUpdateTime(updateTime);
-            projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
-            //添加设计表修改时间
-            projectVo.getDesignInfo().setUpdateTime(updateTime);
-            designInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignInfo());
-            //添加勘探表时间
-            if(projectVo.getProjectExploration()!=null){
-                projectVo.getProjectExploration().setUpdateTime(updateTime);
-                ProjectExploration projectExploration = this.ProjectExplorationByid(projectVo.getBaseProject().getId());
-                if(projectExploration!=null){
-                    projectVo.getProjectExploration().setId(projectExploration.getId());
-                    projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
-                }
-            }
-            //方案会审
-            if(projectVo.getProjectExploration()!=null){
-                projectVo.getPackageCame().setUpdateTime(updateTime);
-                PackageCame packageCame = this.PackageCameByid(projectVo.getBaseProject().getId());
-                if(packageCame!=null){
-                    projectVo.getPackageCame().setId(packageCame.getId());
-                    packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
-                }
-            }
-        }
+//        if("3".equals(projectVo.getBaseProject().getDesginStatus())){
+//            //如果按钮状态为1 说明点击的是提交
+//            if("1".equals(projectVo.getBaseProject().getOrsubmit())){
+//                //审核状态从未通过中变为待审核
+//                projectVo.getBaseProject().setDesginStatus("1");
+//            }else {
+//                //如果不为1 则为保存 状态依旧是未通过
+//                projectVo.getBaseProject().setDesginStatus("3");
+//            }
+//                //添加修改时间
+//            projectVo.getBaseProject().setUpdateTime(updateTime);
+//            projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
+//            //添加设计表修改时间
+//            projectVo.getDesignInfo().setUpdateTime(updateTime);
+//            designInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignInfo());
+//            //添加勘探表时间
+//            if(projectVo.getProjectExploration()!=null){
+//                projectVo.getProjectExploration().setUpdateTime(updateTime);
+//                ProjectExploration projectExploration = this.ProjectExplorationByid(projectVo.getBaseProject().getId());
+//                if(projectExploration!=null){
+//                    projectVo.getProjectExploration().setId(projectExploration.getId());
+//                    projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
+//                }
+//            }
+//            //方案会审
+//            if(projectVo.getProjectExploration()!=null){
+//                projectVo.getPackageCame().setUpdateTime(updateTime);
+//                PackageCame packageCame = this.PackageCameByid(projectVo.getBaseProject().getId());
+//                if(packageCame!=null){
+//                    projectVo.getPackageCame().setId(packageCame.getId());
+//                    packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
+//                }
+//            }
+//        }
     }
 
     @Resource

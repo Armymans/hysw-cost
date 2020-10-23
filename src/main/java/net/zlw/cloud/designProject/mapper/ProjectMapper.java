@@ -1600,6 +1600,48 @@ public interface ProjectMapper extends Mapper<BaseProject> {
             "where id = #{id}")
     BaseProject selectById(@Param("id") String id);
 
+
+    @Select("select \n" +
+            "id,\n" +
+            "application_num applicationNum,\n" +
+            "cea_num ceaNum,\n" +
+            "should_be shouldBe,\n" +
+            "id id,\n" +
+            "project_num projectNum,\n" +
+            "project_name projectName,\n" +
+            "district district,\n" +
+            "design_category designCategory,\n" +
+            "construction_unit constructionUnit,\n" +
+            "contacts contacts,\n" +
+            "contact_number contactNumber,\n" +
+            "customer_name customerName,\n" +
+            "subject subject,\n" +
+            "customer_phone customerPhone,\n" +
+            "construction_organization constructionOrganization,\n" +
+            "project_nature projectNature,\n" +
+            "project_category projectCategory,\n" +
+            "water_address waterAddress,\n" +
+            "water_supply_type waterSupplyType,\n" +
+            "this_declaration thisDeclaration,\n" +
+            "agent agent,\n" +
+            "agent_phone agentPhone,\n" +
+            "application_date applicationDate,\n" +
+            "business_location businessLocation,\n" +
+            "business_types businessTypes,\n" +
+            "a_b aB,\n" +
+            "water_use waterUse,\n" +
+            "fire_table_size fireTableSize,\n" +
+            "classification_caliber classificationCaliber,\n" +
+            "water_meter_diameter waterMeterDiameter,\n" +
+            "site site,\n" +
+            "system_number systemNumber,\n" +
+            "proposer proposer,\n" +
+            "application_number applicationNumber\n" +
+            "from base_project\n" +
+            "where id = #{id}")
+    BaseProject selectById2(@Param("id") String id);
+
+
     @Select(
             "SELECT\n" +
                     "SUM(IFNULL(budget_money,0)+IFNULL(upsubmit_money,0)+IFNULL(downsubmit_money,0)+IFNULL(truck_money,0))\n" +

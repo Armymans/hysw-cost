@@ -247,7 +247,7 @@ public class ProjectController extends BaseController {
     public Map<String,Object> disProjectByid(String id) {
         ProjectVo projectVo = new ProjectVo();
 
-        BaseProject baseProject = projectService.BaseProjectByid(id);
+        BaseProject baseProject = projectService.BaseProjectByid2(id);
         projectVo.setBaseProject(baseProject);
 
 
@@ -510,14 +510,14 @@ public class ProjectController extends BaseController {
          * 如果id找不大说明传过来得是baseProjectid
          */
         if(designInfo==null){
-            BaseProject baseProject = projectService.baseProjectByPrimaryKey(id);
+            BaseProject baseProject = projectService.BaseProjectByid(id);
             DesignInfo designInfo1 = projectService.designInfoByid(baseProject.getId());
             designInfo = designInfo1;
         }else{
             projectVo.setDesignInfo(designInfo);
         }
         //根据设计信息查找基本信息
-        BaseProject baseProject = projectService.baseProjectByPrimaryKey(designInfo.getBaseProjectId());
+        BaseProject baseProject = projectService.BaseProjectByid(designInfo.getBaseProjectId());
         projectVo.setBaseProject(baseProject);
         //各种费用
         if(!"4".equals(baseProject.getDistrict())){
