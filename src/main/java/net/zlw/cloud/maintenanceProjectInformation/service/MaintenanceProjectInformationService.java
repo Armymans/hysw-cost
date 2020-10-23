@@ -318,6 +318,8 @@ public class MaintenanceProjectInformationService{
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
             auditInfo.setStatus("0");
+            auditInfo.setFounderId(userInfo.getId());
+            auditInfo.setCompanyId(userInfo.getCompanyId());
             // 审核人id
             auditInfo.setAuditorId(maintenanceProjectInformation.getAuditorId());
             String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
@@ -572,6 +574,19 @@ public class MaintenanceProjectInformationService{
         }else {
             maintenanceVo.setInvestigationOfTheAmount(new InvestigationOfTheAmount());
         }
+        
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseProjectId",information.getId());
+
+        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+        for (AuditInfo auditInfo : auditInfos) {
+            if("0".equals(auditInfo.getAuditResult())){
+                maintenanceVo.setAuditType(auditInfo.getAuditType());
+            }
+        }
+
+        maintenanceVo.setAuditInfos(auditInfos);
         return maintenanceVo;
     }
 
