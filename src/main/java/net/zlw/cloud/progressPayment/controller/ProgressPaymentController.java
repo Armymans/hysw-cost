@@ -72,6 +72,7 @@ public class ProgressPaymentController  extends BaseController {
         PageInfo<ProgressListVo> progressListVoPageInfo = baseProjectService.searchAllProgress(pageVo);
         return RestUtil.page(progressListVoPageInfo);
     }
+
     //删除进度款
     @RequestMapping(value = "/progress/deleteProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteProgress(@RequestParam(name = "id") String id){

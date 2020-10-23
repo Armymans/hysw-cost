@@ -87,7 +87,7 @@ public class MaintenanceProjectInformationService{
         List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos1 = maintenanceProjectInformationMapper.selectAllByDelFlag1(pageRequest);
 
         PageInfo<MaintenanceProjectInformationReturnVo> projectInformationPageInfo = new PageInfo<>();
-        if("user310".equals(pageRequest.getUid())){
+        if("1".equals(pageRequest.getType()) || "3".equals(pageRequest.getType())){
             projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
         }else{
             projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);

@@ -60,15 +60,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         ArrayList<ReturnTrackVo> returnTrackVos1 = new ArrayList<>();
         PageInfo<ReturnTrackVo> pageInfo = new PageInfo<>();
 
-        if ("user310".equals(pageVo.getUid())) {
-            List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
-            for (ReturnTrackVo returnTrackVo : returnTrackVos) {
-                if (!returnTrackVos1.contains(returnTrackVo)) {
-                    returnTrackVos1.add(returnTrackVo);
-                }
-            }
-            pageInfo = new PageInfo<>(returnTrackVos1);
-        } else {
+        if ("1".equals(pageVo.getTrackStatus())|| "4".equals(pageVo.getTrackStatus())) {
             List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
             for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                 if (!returnTrackVos1.contains(returnTrackVo)) {
@@ -77,6 +69,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             }
             pageInfo = new PageInfo<>(returnTrackVos1);
 
+        } else {
+
+            List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
+            for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                if (!returnTrackVos1.contains(returnTrackVo)) {
+                    returnTrackVos1.add(returnTrackVo);
+                }
+            }
+            pageInfo = new PageInfo<>(returnTrackVos1);
 
         }
 

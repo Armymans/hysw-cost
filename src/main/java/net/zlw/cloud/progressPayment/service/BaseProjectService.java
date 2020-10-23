@@ -32,6 +32,7 @@ public interface BaseProjectService {
     NumberVo NumberItems();
 
     PageInfo<ProgressListVo> searchAllProgress(PageVo pageVo);
+//    PageInfo<ProgressListVo> searchAllProgressList(PageVo pageVo);
 
     void deleteProgress(String id);
 

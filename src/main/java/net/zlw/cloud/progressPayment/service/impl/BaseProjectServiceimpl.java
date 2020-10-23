@@ -580,14 +580,19 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         PageInfo<ProgressListVo> progressListVoPageInfo = new PageInfo<>();
 
-        if("user310".equals(pageVo.getUid())){
+        // 全部状态
+        if("".equals(pageVo.getProgressStatus())){
             progressListVoPageInfo = new PageInfo<>(progressListVos1);
-        }else{
+        }else if("1".equals(pageVo.getProgressStatus()) || "3".equals(pageVo.getProgressStatus())){
             progressListVoPageInfo = new PageInfo<>(progressListVos);
+        }else{
+            progressListVoPageInfo = new PageInfo<>(progressListVos1);
         }
 
         return progressListVoPageInfo;
     }
+
+
 
     @Override
     public void deleteProgress(String id) {
