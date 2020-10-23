@@ -42,6 +42,8 @@ public class BudgetingListVo {
     //是否到账
     private String whetherAccount;
     private BigDecimal amountOutsourcing;
+    //创建人
+    private String founderId;
 
     @Override
     public boolean equals(Object o) {

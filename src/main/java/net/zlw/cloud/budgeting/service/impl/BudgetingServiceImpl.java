@@ -11,7 +11,6 @@ import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
-import net.zlw.cloud.designProject.mapper.LastSettlementReviewMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
@@ -84,6 +83,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgeting.setBaseProjectId(baseProject.getId());
         budgeting.setDelFlag("0");
         budgeting.setWhetherAccount("1");
+        budgeting.setFounderId(loginUser.getId());
         //提交
         if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
             //修改预算状态为待审核
@@ -120,6 +120,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         surveyInformation.setBudgetingId(budgeting.getId());
         surveyInformation.setDelFlag("0");
         surveyInformation.setBaseProjectId(baseProject.getId());
+        surveyInformation.setFounderId(loginUser.getId());
         surveyInformationDao.insertSelective(surveyInformation);
 
         //成本编制
@@ -139,6 +140,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         costPreparation.setBudgetingId(budgeting.getId());
         costPreparation.setDelFlag("0");
         costPreparation.setBaseProjectId(baseProject.getId());
+        costPreparation.setFounderId(loginUser.getId());
         costPreparationDao.insertSelective(costPreparation);
 
         //控价编制
@@ -153,6 +155,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         veryEstablishment.setBudgetingId(budgeting.getId());
         veryEstablishment.setDelFlag("0");
         veryEstablishment.setBaseProjectId(baseProject.getId());
+        veryEstablishment.setFounderId(loginUser.getId());
         veryEstablishmentDao.insertSelective(veryEstablishment);
 
 
