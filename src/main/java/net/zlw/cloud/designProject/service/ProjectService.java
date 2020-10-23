@@ -283,15 +283,21 @@ public class ProjectService {
                 }
             }
         }else{
-            //若果为空 说明查询所有
-//            Example admin = new Example(MemberManage.class);
-//            Example.Criteria adminc = admin.createCriteria();
-//            adminc.andEqualTo("depAdmin","1");
-//            adminc.andEqualTo("depId","1");
-            //将部门负责人传入
-            pageVo.setAdminId(memberManage.getId());
-            //todo loginUser.getId()
-            pageVo.setUserId(loginUser.getId());
+            //查找集团领导
+            Example admin = new Example(MemberManage.class);
+            Example.Criteria adminc = admin.createCriteria();
+            adminc.andEqualTo("memberRoleId","2");
+            MemberManage boss = memberManageDao.selectOneByExample(admin);
+            //判断当前人是否为部门领导 如果是 则展示所有数据
+            if(boss.getId().equals(loginUser.getId())){
+                pageVo.setUserId("");
+                pageVo.setAdminId("");
+            }else{
+                //将部门负责人传入
+                pageVo.setAdminId(memberManage.getId());
+                //todo loginUser.getId()
+                pageVo.setUserId(loginUser.getId());
+            }
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             for (DesignInfo designInfo : designInfos) {
                 //展示设计变更时间 如果为空展示 /
@@ -922,7 +928,7 @@ public class ProjectService {
                 //如果不为1 则为保存 状态依旧是出图中
                 projectVo.getBaseProject().setDesginStatus("2");
             }
-            //如果提交人为空 说明时保存状态未出图中 反之状态未待审核
+            //如果提交人为空 说明时保存状态未出图中 反之状态未通过
             if(projectVo.getBaseProject().getReviewerId() == null||"".equals(projectVo.getBaseProject().getReviewerId())){
                 projectVo.getBaseProject().setDesginStatus("2");
             }else{
