@@ -87,10 +87,11 @@ public class MaintenanceProjectInformationService{
         List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos1 = maintenanceProjectInformationMapper.selectAllByDelFlag1(pageRequest);
 
         PageInfo<MaintenanceProjectInformationReturnVo> projectInformationPageInfo = new PageInfo<>();
+        //如果是待审核，或者未通过，根据uid查找
         if("1".equals(pageRequest.getType()) || "3".equals(pageRequest.getType())){
-            projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
-        }else{
             projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);
+        }else{
+            projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
         }
 
         System.out.println("list:"+projectInformationPageInfo.getList().toString());
