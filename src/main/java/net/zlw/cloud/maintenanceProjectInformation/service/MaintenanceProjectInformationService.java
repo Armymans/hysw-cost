@@ -514,26 +514,52 @@ public class MaintenanceProjectInformationService{
 
         // 审核信息
 
-        AuditInfo auditInfo = new AuditInfo();
+        Example example2 = new Example(AuditInfo.class);
+        Example.Criteria criteria1 = example2.createCriteria();
+        criteria1.andEqualTo("baseProjectId",information.getId());
 
-        String s = UUID.randomUUID().toString().replaceAll("-", "");
-        auditInfo.setId(s);
-        auditInfo.setBaseProjectId(information.getId());
+        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
 
-        auditInfo.setAuditResult("0");
+        for (AuditInfo auditInfo : auditInfos) {
+            if("2".equals(auditInfo.getAuditResult())){
+                auditInfo.setBaseProjectId(information.getId());
 
-        auditInfo.setAuditType("0");
+                auditInfo.setAuditResult("0");
 
-        auditInfo.setStatus("0");
+                auditInfo.setAuditType("0");
 
-        // 审核人id
-        auditInfo.setAuditorId(id);
+                auditInfo.setStatus("0");
 
-        String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+                String updateDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
 
-        auditInfo.setCreateTime(createDate);
+                auditInfo.setUpdateTime(updateDate);
 
-        auditInfoDao.insertSelective(auditInfo);
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+            }else{
+                AuditInfo auditInfo1 = new AuditInfo();
+
+                String s = UUID.randomUUID().toString().replaceAll("-", "");
+                auditInfo1.setId(s);
+                auditInfo1.setBaseProjectId(information.getId());
+
+                auditInfo1.setAuditResult("0");
+
+                auditInfo1.setAuditType("0");
+
+                auditInfo1.setStatus("0");
+
+                // 审核人id
+                auditInfo1.setAuditorId(id);
+
+                String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+
+                auditInfo1.setCreateTime(createDate);
+
+                auditInfoDao.insertSelective(auditInfo1);
+            }
+        }
+
+
 
 
 //        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
