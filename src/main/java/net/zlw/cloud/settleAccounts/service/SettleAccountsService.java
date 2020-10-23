@@ -16,7 +16,7 @@ public interface SettleAccountsService {
 
     void updateAccount(String s);
 
-    void addAccount(BaseAccountsVo baseAccountsVo);
+    void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser);
 
     BaseAccountsVo findAccountById(String id);
 

@@ -80,7 +80,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "\t\twhen '1' then '未到账'\n" +
             "\t\tend\n" +
             ") whetherAccount,\n" +
-            "a.auditor_id auditorId\n" +
+            "a.auditor_id auditorId,\n" +
+            "IFNULL(s.founder_id,l.founder_id) founderId \n" +
             "from\n" +
             "budgeting bt \n" +
             "LEFT JOIN base_project b on bt.base_project_id = b.id \n" +

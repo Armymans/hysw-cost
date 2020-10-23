@@ -36,6 +36,8 @@ public class AccountsVo {
     private String waterSupplyType;
     private String whetherAccount;
     private String auditorId;
+    //创建人
+    private String founderId;
 
     @Override
     public boolean equals(Object o) {

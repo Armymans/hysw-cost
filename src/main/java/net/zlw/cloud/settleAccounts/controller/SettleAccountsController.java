@@ -58,7 +58,7 @@ public class SettleAccountsController extends BaseController {
     @RequestMapping(value = "/accounts/addAccount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addAccount( BaseAccountsVo baseAccountsVo){
         try {
-            settleAccountsService.addAccount(baseAccountsVo);
+            settleAccountsService.addAccount(baseAccountsVo,getLoginUser());
         } catch (Exception e) {
             e.printStackTrace();
             return RestUtil.error();
