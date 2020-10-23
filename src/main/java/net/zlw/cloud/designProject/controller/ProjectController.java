@@ -66,7 +66,7 @@ public class ProjectController extends BaseController {
     }
 
     /**
-     * 查看
+     * 建设项目查看
      * @param
      * @return
      */
@@ -735,6 +735,15 @@ public class ProjectController extends BaseController {
         }else{
             projectVo.setDesignChangeInfo(new DesignChangeInfo());
         }
+
+        //审核信息回显 根据当前用户判断
+        AuditInfo auditInfo = projectService.auditInfoByYes(getLoginUser(),designInfo.getId());
+        if(auditInfo!=null){
+            projectVo.setAuditInfo(auditInfo);
+        }else{
+            projectVo.setAuditInfo(new AuditInfo());
+        }
+
         return RestUtil.success(projectVo);
     }
 

@@ -1899,4 +1899,14 @@ public class ProjectService {
     public BuildingProject findOne(String id) {
         return buildingProjectMapper.findOne(id);
     }
+
+    public AuditInfo auditInfoByYes(UserInfo userInfo,String id) {
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("auditorId",userInfo.getId());
+        criteria.andEqualTo("baseProjectId",id);
+        criteria.andEqualTo("auditResult","0");
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+        return auditInfo;
+    }
 }
