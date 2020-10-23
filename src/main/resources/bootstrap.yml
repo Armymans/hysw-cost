@@ -45,5 +45,5 @@ eureka:
   instance:
     prefer-ip-address: true
     metadata-map:
-      version: sby
+      version: 1.0.0
     

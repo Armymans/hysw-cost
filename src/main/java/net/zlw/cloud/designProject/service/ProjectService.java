@@ -691,8 +691,10 @@ public class ProjectService {
                 auditInfoDao.insert(auditInfo1);
 
                 //更改普通互审人得状态
-                auditInfo2.setAuditResult("1");
+                auditInfo2.setAuditResult(auditInfo.getAuditResult());
                 auditInfo2.setAuditType("0");
+                auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
+                auditInfo2.setUpdateTime(createTime);
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
             }
         }
