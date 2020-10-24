@@ -21,6 +21,8 @@ import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,107 +59,124 @@ public class BudgetingServiceImpl implements BudgetingService {
     private LastSettlementReviewDao lastSettlementReviewDao;
     @Resource
     private SettlementAuditInformationDao settlementAuditInformationDao;
+    @Resource
+    private FileInfoMapper fileInfoMapper;
 
     @Override
     public void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser) {
-        //获取基本信息
-        Example example = new Example(BaseProject.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("id",budgetingVo.getBaseId());
-        BaseProject baseProject = projectDao.selectOneByExample(example);
+//        //获取基本信息
+//        Example example = new Example(BaseProject.class);
+//        Example.Criteria criteria = example.createCriteria();
+//        criteria.andEqualTo("id",budgetingVo.getBaseId());
+//        BaseProject baseProject = projectDao.selectOneByExample(example);
+//
+//        //预算编制
+//        Budgeting budgeting = new Budgeting();
+//        budgeting.setId(UUID.randomUUID().toString().replace("-",""));
+//        budgeting.setAmountCost(budgetingVo.getAmountCost());
+//        budgeting.setBudgetingPeople(budgetingVo.getBudgetingPeople());
+//        budgeting.setAddedTaxAmount(budgetingVo.getAddedTaxAmount());
+//        budgeting.setOutsourcing(budgetingVo.getOutsourcing());
+//        budgeting.setNameOfCostUnit(budgetingVo.getNameOfCostUnit());
+//        budgeting.setContact(budgetingVo.getContact());
+//        budgeting.setContactPhone(budgetingVo.getContactPhone());
+//        budgeting.setAmountOutsourcing(budgetingVo.getAmountOutsourcing());
+//        budgeting.setReceiptTime(budgetingVo.getReceiptTime());
+//        budgeting.setBudgetingTime(budgetingVo.getBudgetingTime());
+//        budgeting.setRemarkes(budgetingVo.getBremarkes());
+//        budgeting.setBaseProjectId(baseProject.getId());
+//        budgeting.setDelFlag("0");
+//        budgeting.setWhetherAccount("1");
+//        budgeting.setFounderId(loginUser.getId());
+//        //提交
+//        if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
+//            //修改预算状态为待审核
+//            baseProject.setBudgetStatus("1");
+//            baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
+//            projectDao.updateByPrimaryKeySelective(baseProject);
+//            budgetingDao.insertSelective(budgeting);
+//            AuditInfo auditInfo = new AuditInfo();
+//            auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+//            auditInfo.setBaseProjectId(budgeting.getId());
+//            auditInfo.setAuditResult("0");
+//            auditInfo.setAuditType("0");
+//            auditInfo.setStatus("0");
+//            auditInfo.setAuditorId(budgetingVo.getAuditorId());
+//            auditInfoDao.insertSelective(auditInfo);
+//            //保存
+//        }else{
+//            //修改预算状态为处理中
+//            baseProject.setBudgetStatus("2");
+//            baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
+//            projectDao.updateByPrimaryKeySelective(baseProject);
+//            budgetingDao.insertSelective(budgeting);
+//        }
+//
+//
+//        //勘探信息
+//        SurveyInformation surveyInformation = new SurveyInformation();
+//        surveyInformation.setId(UUID.randomUUID().toString().replace("-",""));
+//        surveyInformation.setSurveyDate(budgetingVo.getSurveyDate());
+//        surveyInformation.setInvestigationPersonnel(budgetingVo.getInvestigationPersonnel());
+//        surveyInformation.setSurveyBriefly(budgetingVo.getSurveyBriefly());
+//        surveyInformation.setPriceInformationName(budgetingVo.getPriceInformationName());
+//        surveyInformation.setPriceInformationNper(budgetingVo.getPriceInformationNper());
+//        surveyInformation.setBudgetingId(budgeting.getId());
+//        surveyInformation.setDelFlag("0");
+//        surveyInformation.setBaseProjectId(baseProject.getId());
+//        surveyInformation.setFounderId(loginUser.getId());
+//        surveyInformationDao.insertSelective(surveyInformation);
+//
+//        //成本编制
+//        CostPreparation costPreparation = new CostPreparation();
+//        costPreparation.setId(UUID.randomUUID().toString().replace("-",""));
+//        costPreparation.setCostTotalAmount(budgetingVo.getCostTotalAmount());
+//        costPreparation.setVatAmount(budgetingVo.getCVatAmount());
+//        costPreparation.setTotalPackageMaterial(budgetingVo.getTotalPackageMaterial());
+//        costPreparation.setOutsourcingCostAmount(budgetingVo.getOutsourcingCostAmount());
+//        costPreparation.setOtherCost1(budgetingVo.getOtherCost1());
+//        costPreparation.setOtherCost2(budgetingVo.getOtherCost2());
+//        costPreparation.setOtherCost3(budgetingVo.getOtherCost3());
+//        costPreparation.setCostTogether(budgetingVo.getCostTogether());
+//        costPreparation.setReceivingTime(budgetingVo.getReceivingTime());
+//        costPreparation.setCostPreparationTime(budgetingVo.getCostPreparationTime());
+//        costPreparation.setRemarkes(budgetingVo.getCRemarkes());
+//        costPreparation.setBudgetingId(budgeting.getId());
+//        costPreparation.setDelFlag("0");
+//        costPreparation.setBaseProjectId(baseProject.getId());
+//        costPreparation.setFounderId(loginUser.getId());
+//        costPreparationDao.insertSelective(costPreparation);
+//
+//        //控价编制
+//        VeryEstablishment veryEstablishment = new VeryEstablishment();
+//        veryEstablishment.setId(UUID.randomUUID().toString().replace("-",""));
+//        veryEstablishment.setBiddingPriceControl(budgetingVo.getBiddingPriceControl());
+//        veryEstablishment.setVatAmount(budgetingVo.getVVatAmount());
+//        veryEstablishment.setPricingTogether(budgetingVo.getPricingTogether());
+//        veryEstablishment.setReceivingTime(budgetingVo.getVReceivingTime());
+//        veryEstablishment.setEstablishmentTime(budgetingVo.getEstablishmentTime());
+//        veryEstablishment.setRemarkes(budgetingVo.getVRemarkes());
+//        veryEstablishment.setBudgetingId(budgeting.getId());
+//        veryEstablishment.setDelFlag("0");
+//        veryEstablishment.setBaseProjectId(baseProject.getId());
+//        veryEstablishment.setFounderId(loginUser.getId());
+//        veryEstablishmentDao.insertSelective(veryEstablishment);
 
-        //预算编制
-        Budgeting budgeting = new Budgeting();
-        budgeting.setId(UUID.randomUUID().toString().replace("-",""));
-        budgeting.setAmountCost(budgetingVo.getAmountCost());
-        budgeting.setBudgetingPeople(budgetingVo.getBudgetingPeople());
-        budgeting.setAddedTaxAmount(budgetingVo.getAddedTaxAmount());
-        budgeting.setOutsourcing(budgetingVo.getOutsourcing());
-        budgeting.setNameOfCostUnit(budgetingVo.getNameOfCostUnit());
-        budgeting.setContact(budgetingVo.getContact());
-        budgeting.setContactPhone(budgetingVo.getContactPhone());
-        budgeting.setAmountOutsourcing(budgetingVo.getAmountOutsourcing());
-        budgeting.setReceiptTime(budgetingVo.getReceiptTime());
-        budgeting.setBudgetingTime(budgetingVo.getBudgetingTime());
-        budgeting.setRemarkes(budgetingVo.getBremarkes());
-        budgeting.setBaseProjectId(baseProject.getId());
-        budgeting.setDelFlag("0");
-        budgeting.setWhetherAccount("1");
-        budgeting.setFounderId(loginUser.getId());
-        //提交
-        if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
-            //修改预算状态为待审核
-            baseProject.setBudgetStatus("1");
-            baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
-            projectDao.updateByPrimaryKeySelective(baseProject);
-            budgetingDao.insertSelective(budgeting);
-            AuditInfo auditInfo = new AuditInfo();
-            auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
-            auditInfo.setBaseProjectId(budgeting.getId());
-            auditInfo.setAuditResult("0");
-            auditInfo.setAuditType("0");
-            auditInfo.setStatus("0");
-            auditInfo.setAuditorId(budgetingVo.getAuditorId());
-            auditInfoDao.insertSelective(auditInfo);
-            //保存
-        }else{
-            //修改预算状态为处理中
-            baseProject.setBudgetStatus("2");
-            baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
-            projectDao.updateByPrimaryKeySelective(baseProject);
-            budgetingDao.insertSelective(budgeting);
+        Example example1 = new Example(FileInfo.class);
+        Example.Criteria c = example1.createCriteria();
+        c.andLike("type","ysxmxj%");
+        c.andEqualTo("status","0");
+        c.andEqualTo("platCode",loginUser.getId());
+        List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
+        for (FileInfo fileInfo : fileInfos) {
+            System.err.println(fileInfo);
+            System.err.println(fileInfo);
+            System.err.println(fileInfo);
+            System.err.println(fileInfo);
+            System.err.println(fileInfo);
+
         }
-
-
-        //勘探信息
-        SurveyInformation surveyInformation = new SurveyInformation();
-        surveyInformation.setId(UUID.randomUUID().toString().replace("-",""));
-        surveyInformation.setSurveyDate(budgetingVo.getSurveyDate());
-        surveyInformation.setInvestigationPersonnel(budgetingVo.getInvestigationPersonnel());
-        surveyInformation.setSurveyBriefly(budgetingVo.getSurveyBriefly());
-        surveyInformation.setPriceInformationName(budgetingVo.getPriceInformationName());
-        surveyInformation.setPriceInformationNper(budgetingVo.getPriceInformationNper());
-        surveyInformation.setBudgetingId(budgeting.getId());
-        surveyInformation.setDelFlag("0");
-        surveyInformation.setBaseProjectId(baseProject.getId());
-        surveyInformation.setFounderId(loginUser.getId());
-        surveyInformationDao.insertSelective(surveyInformation);
-
-        //成本编制
-        CostPreparation costPreparation = new CostPreparation();
-        costPreparation.setId(UUID.randomUUID().toString().replace("-",""));
-        costPreparation.setCostTotalAmount(budgetingVo.getCostTotalAmount());
-        costPreparation.setVatAmount(budgetingVo.getCVatAmount());
-        costPreparation.setTotalPackageMaterial(budgetingVo.getTotalPackageMaterial());
-        costPreparation.setOutsourcingCostAmount(budgetingVo.getOutsourcingCostAmount());
-        costPreparation.setOtherCost1(budgetingVo.getOtherCost1());
-        costPreparation.setOtherCost2(budgetingVo.getOtherCost2());
-        costPreparation.setOtherCost3(budgetingVo.getOtherCost3());
-        costPreparation.setCostTogether(budgetingVo.getCostTogether());
-        costPreparation.setReceivingTime(budgetingVo.getReceivingTime());
-        costPreparation.setCostPreparationTime(budgetingVo.getCostPreparationTime());
-        costPreparation.setRemarkes(budgetingVo.getCRemarkes());
-        costPreparation.setBudgetingId(budgeting.getId());
-        costPreparation.setDelFlag("0");
-        costPreparation.setBaseProjectId(baseProject.getId());
-        costPreparation.setFounderId(loginUser.getId());
-        costPreparationDao.insertSelective(costPreparation);
-
-        //控价编制
-        VeryEstablishment veryEstablishment = new VeryEstablishment();
-        veryEstablishment.setId(UUID.randomUUID().toString().replace("-",""));
-        veryEstablishment.setBiddingPriceControl(budgetingVo.getBiddingPriceControl());
-        veryEstablishment.setVatAmount(budgetingVo.getVVatAmount());
-        veryEstablishment.setPricingTogether(budgetingVo.getPricingTogether());
-        veryEstablishment.setReceivingTime(budgetingVo.getVReceivingTime());
-        veryEstablishment.setEstablishmentTime(budgetingVo.getEstablishmentTime());
-        veryEstablishment.setRemarkes(budgetingVo.getVRemarkes());
-        veryEstablishment.setBudgetingId(budgeting.getId());
-        veryEstablishment.setDelFlag("0");
-        veryEstablishment.setBaseProjectId(baseProject.getId());
-        veryEstablishment.setFounderId(loginUser.getId());
-        veryEstablishmentDao.insertSelective(veryEstablishment);
-
+        System.err.println(fileInfos.size());
 
 
     }
