@@ -25,6 +25,7 @@ public class BaseAccountsVo {
 
     private String auditId;
     private String auditNumber;
+    private String auditType;
 
 
 

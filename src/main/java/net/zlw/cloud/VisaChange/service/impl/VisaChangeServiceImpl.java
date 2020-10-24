@@ -107,6 +107,14 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 }
             }
             }
+        if (visaChangeVO.getStatus().equals("3")){
+            for (int i = 0; i < all1.size(); i++) {
+                if (!all1.get(i).getFounderId().equals(loginUser.getId())){
+                    all1.remove(i);
+                    i--;
+                }
+            }
+        }
 
 
         all = all1;
@@ -400,7 +408,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                             auditInfo.setAuditTime(sim.format(new Date()));
                             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
-                            baseProject.setVisaStatus("6");
+                            baseProject.setVisaStatus("5");
                             baseProjectDao.updateByPrimaryKeySelective(baseProject);
                         }
 
@@ -479,9 +487,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         }
         //判断下家签证/变更申请信息
         String applicantNameDown = visaChangeInfoVo.getApplicantNameDown();
-        if (StringUtil.isNotEmpty(applicantNameDown)) {
             VisaChangeInformation applyChangeInformation = new VisaChangeInformation();
-            downvisachange = applyChangeInformation;
 
             applyChangeInformation.setId(UUID.randomUUID().toString().replace("-", ""));
             applyChangeInformation.setApplicantName(applicantNameDown);
@@ -495,6 +501,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             //0:正常 1:删除
             applyChangeInformation.setState("0");
             applyChangeInformation.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
+            downvisachange = applyChangeInformation;
+            downvisachange.setId(UUID.randomUUID().toString().replace("-",""));
             //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
             if(StringUtils.isNotEmpty(visaChangeInfoVo.getAuditId())){
                 applyChangeInformation.setStatus("1");
@@ -502,7 +510,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 applyChangeInformation.setStatus("2");
             }
             applyMapper.insertSelective(applyChangeInformation);
-        }
+
 
         //本次上家签证/变更信息
         VisaChange visaChange1 = new VisaChange();
@@ -584,17 +592,13 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChange.setProportionContract(visaChangeInfoVo.getProportionContractDown());
             visaChange.setChangeNum("1");
 
-            if (downvisachange.getId()!=null){
-                visaChange.setApplyChangeInfoId(downvisachange.getId());
-            }
+            visaChange.setApplyChangeInfoId(downvisachange.getId());
             vcMapper.insertSelective(visaChange);
 
         }
 
 
         if (visaChangeInfoVo.getAuditId()!=null && !visaChangeInfoVo.getAuditId().equals("")){
-
-
             SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
             AuditInfo auditInfo = new AuditInfo();
             auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
@@ -621,6 +625,10 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
             baseProject.setVisaStatus("1");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        }else {
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
+            baseProject.setVisaStatus("2");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
         }
     }
 
@@ -640,6 +648,17 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
             AuditInfo auditInfo = new AuditInfo();
             auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+
+            VisaChange visaChange = vcMapper.selectByPrimaryKey(visaChangeInfoVo.getId());
+            if (visaChange.getUpAndDownMark().equals("0")){
+                Example example = new Example(VisaChange.class);
+                Example.Criteria c = example.createCriteria();
+                c.andEqualTo("baseProjectId",visaChangeInfoVo.getBaseProjectId());
+                c.andEqualTo("state","0");
+                c.andEqualTo("upAndDownMark","1");
+                VisaChange visaChange1 = vcMapper.selectOneByExample(example);
+                visaChangeInfoVo.setId(visaChange1.getId());
+            }
             auditInfo.setBaseProjectId(visaChangeInfoVo.getId());
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
@@ -650,6 +669,28 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             auditInfo.setCreateTime(format);
             auditInfoDao.insertSelective(auditInfo);
 
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
+            baseProject.setVisaStatus("1");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        }else if(visaChangeInfoVo.getAuditNumber().equals("2")){
+            VisaChange visaChange = vcMapper.selectByPrimaryKey(visaChangeInfoVo.getId());
+            if (visaChange.getUpAndDownMark().equals("0")){
+                Example example = new Example(VisaChange.class);
+                Example.Criteria c = example.createCriteria();
+                c.andEqualTo("baseProjectId",visaChange.getBaseProjectId());
+                c.andEqualTo("state","0");
+                c.andEqualTo("upAndDownMark","1");
+                VisaChange visaChange1 = vcMapper.selectOneByExample(example);
+                visaChangeInfoVo.setId(visaChange1.getId());
+            }
+            Example example = new Example(AuditInfo.class);
+            Example.Criteria c = example.createCriteria();
+            c.andEqualTo("baseProjectId",visaChangeInfoVo.getId());
+            c.andEqualTo("status","0");
+            c.andEqualTo("auditResult","2");
+            AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+            auditInfo.setAuditResult("0");
+            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
             baseProject.setVisaStatus("1");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
@@ -874,7 +915,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 }
                 visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReason());
 //                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
-                visaChange.setUpAndDownMark("0");
+//                visaChange.setUpAndDownMark("0");
                 //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
                 visaChange.setProportionContract(visaChangeInfoVo.getProportionContract());
                 String changeNum = visaChange.getChangeNum();
@@ -906,7 +947,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 }
                 visaChange.setVisaChangeReason(visaChangeInfoVo.getVisaChangeReasonDown());
 //                visaChange.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
-                visaChange.setUpAndDownMark("1");
+//                visaChange.setUpAndDownMark("1");
 
                 visaChange.setProportionContract(visaChangeInfoVo.getProportionContractDown());
                 String changeNum = visaChange.getChangeNum();
@@ -1077,12 +1118,22 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 //累积上家签证变更金额
                 totalUp = totalUp.add(new BigDecimal(thisA.getAmountVisaChange()));
                 //累积上家签证变更占比
-                totalUpRate = totalDownRate.add(new BigDecimal(thisA.getProportionContract()));
+                if (thisA.getProportionContract()==null){
+                    thisA.setProportionContract("0");
+                }
+                if (totalDownRate!=null){
+                    totalUpRate = totalDownRate.add(new BigDecimal(thisA.getProportionContract()));
+                }
             } else {
                 //累积下家签证变更金额
                 totalDown = totalDown.add(new BigDecimal(thisA.getAmountVisaChange()));
                 //累积下家签证变更占比
-                totalDownRate = totalDownRate.add(new BigDecimal(thisA.getProportionContract()));
+                if (thisA.getProportionContract()==null){
+                    thisA.setProportionContract("0");
+                }
+                if (totalDownRate!=null){
+                    totalDownRate = totalDownRate.add(new BigDecimal(thisA.getProportionContract()));
+                }
 
             }
         }

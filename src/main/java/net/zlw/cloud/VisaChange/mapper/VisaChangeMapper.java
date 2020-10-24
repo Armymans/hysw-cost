@@ -108,7 +108,8 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "    s1.create_time," +
             "    s1.compile_time," +
             "    s2.project_name, " +
-            "    aa.auditor_id auditorId" +
+            "    aa.auditor_id auditorId," +
+            "    s1.creator_id founderId" +
             "    FROM" +
             "    visa_change_information s1" +
             "    LEFT JOIN base_project s2 ON s1.base_project_id = s2.id" +

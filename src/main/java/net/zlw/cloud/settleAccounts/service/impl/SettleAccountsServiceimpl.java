@@ -229,6 +229,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example example = new Example(InvestigationOfTheAmount.class);
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("baseProjectId",id);
+        c.andEqualTo("delFlag","0");
         InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example);
         baseAccountsVo.setInvestigationOfTheAmount(investigationOfTheAmount);
 
@@ -247,15 +248,31 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example example2 = new Example(LastSettlementReview.class);
         Example.Criteria c2 = example2.createCriteria();
         c2.andEqualTo("baseProjectId",baseProject.getId());
+        c2.andEqualTo("delFlag","0");
         LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example2);
         baseAccountsVo.setLastSettlementReview(lastSettlementReview);
 
         Example example3 = new Example(SettlementAuditInformation.class);
         Example.Criteria c3 = example3.createCriteria();
         c3.andEqualTo("baseProjectId",baseProject.getId());
+        c3.andEqualTo("delFlag","0");
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example3);
         baseAccountsVo.setSettlementAuditInformation(settlementAuditInformation);
-
+        if (settlementAuditInformation.getId()!=null){
+            baseAccountsVo.setId(settlementAuditInformation.getId());
+        }else{
+            baseAccountsVo.setId(lastSettlementReview.getId());
+        }
+        Example example4 = new Example(AuditInfo.class);
+        Example.Criteria c4 = example4.createCriteria();
+        c4.andEqualTo("baseProjectId",baseAccountsVo.getId());
+        c4.andEqualTo("status","0");
+        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example4);
+        for (AuditInfo auditInfo : auditInfos) {
+            if (auditInfo.getAuditResult().equals("0")){
+                baseAccountsVo.setAuditType(auditInfo.getAuditType());
+            }
+        }
 
         return baseAccountsVo;
     }
@@ -373,6 +390,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
                     baseProject.setSettleAccountsStatus("5");
+                    baseProject.setProgressPaymentStatus("6");
+                    baseProject.setVisaStatus("6");
+                    baseProject.setTrackStatus("5");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 }
             }else if(batchReviewVo.getAuditResult().equals("2")){

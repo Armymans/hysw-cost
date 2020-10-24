@@ -47,6 +47,7 @@ public class VisaChangeVo {
     private String amountVisaChangeShang;
 
     private String auditorId;
+    private String founderId;
 
 
     @Override
