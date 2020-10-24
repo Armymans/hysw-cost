@@ -535,7 +535,7 @@ public class MaintenanceProjectInformationService{
                     info.setBaseProjectId(information.getId());
                     info.setAuditResult("0");
 
-                    auditInfo.setStatus("0");
+                    info.setStatus("0");
 
                     String updateDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
 

@@ -20,6 +20,7 @@ public interface BaseProjectService {
     BaseProjectVo seachProgressById(String id);
 
     void updateProgress(BaseProjectVo baseProjectVo);
+    void updateProgressPayment(BaseProjectVo baseProjectVo);
 
     List<BaseProject> findBaseProject(String name);
 

@@ -93,7 +93,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         paymentInformation.setRemarkes(baseProject.getRemarkes());
         paymentInformation.setBaseProjectId(project.getId());
         paymentInformation.setId(UUID.randomUUID().toString().replace("-",""));
-        paymentInformation.setFounderId(baseProject.getAuditorId());
+        paymentInformation.setFounderId(loginUser.getId());
         paymentInformation.setDelFlag("0");
 
         String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
@@ -246,6 +246,21 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         baseProjectVo.setRemarkes(paymentInformation.getRemarkes());
         // TODO  审核信息
         baseProjectVo.setAuditInfos(auditInfos);
+
+        Example example2 = new Example(AuditInfo.class);
+        Example.Criteria criteria1 = example2.createCriteria();
+        criteria1.andEqualTo("baseProjectId",id);
+
+        List<AuditInfo> auditInfos1 = auditInfoDao.selectByExample(example2);
+
+        for (AuditInfo auditInfo : auditInfos1) {
+            if("0".equals(auditInfo.getAuditResult()) && ("0".equals(auditInfo.getAuditType()))){
+                baseProjectVo.setAuditNumber("1");
+            }else if("0".equals(auditInfo.getAuditResult()) && ("1".equals(auditInfo.getAuditType()))){
+                baseProjectVo.setAuditNumber("2");
+            }
+        }
+
         return baseProjectVo;
     }
 
@@ -261,9 +276,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         //进度款累计支付信息
         ProgressPaymentTotalPayment payment = new ProgressPaymentTotalPayment();
         //本期进度款支付信息
-        ProgressPaymentInformation paymentInformation = new ProgressPaymentInformation();
+        ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(baseProject.getId());
         //审核表
         AuditInfo auditInfo = new AuditInfo();
+
+
         if (baseProject != null && !baseProject.equals("")) {
             if (baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")) {
                 if (baseProject.getAuditNumber().equals("1")){
@@ -286,11 +303,30 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                             break;
                         }
                     }
+                }else if(baseProject.getAuditNumber().equals("0")){// 如果是 0，代表处理中状态
+                    project.setProgressPaymentStatus("1");
+                    project.setProjectFlow(project.getProjectFlow()+",4");
+                    baseProjectDao.updateByPrimaryKeySelective(project);
+                    auditInfo.setBaseProjectId(paymentInformation.getId());
+                    auditInfo.setAuditResult("0");
+                    auditInfo.setAuditorId(baseProject.getAuditorId());
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+                    String format = simpleDateFormat.format(new Date());
+                    auditInfo.setCreateTime(format);
+                    auditInfo.setAuditType("0");
+                    auditInfo.setStatus("0");
+                    auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    auditInfoDao.insert(auditInfo);
                 }
             } else {
                     project.setProgressPaymentStatus("2");
                     baseProjectDao.updateByPrimaryKeySelective(project);
             }
+
+
+
+
+
 
 
             information.setRemarkes(baseProject.getRemarkes());
@@ -327,6 +363,96 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         }
     }
 
+
+    // 未通過編輯
+    public void updateProgressPayment(BaseProjectVo baseProject){
+
+        //申请信息
+        ApplicationInformation information = new ApplicationInformation();
+        //进度款累计支付信息
+        ProgressPaymentTotalPayment payment = new ProgressPaymentTotalPayment();
+        //本期进度款支付信息
+        ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(baseProject.getId());
+        //审核表
+        AuditInfo auditInfo = new AuditInfo();
+
+        //项目基本信息
+        BaseProject project = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
+
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseProjectId", paymentInformation.getId());
+
+        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+
+        for (AuditInfo info : auditInfos) {
+            // 不通過,一審
+            if("2".equals(info.getAuditResult()) && "0".equals(info.getAuditType())){
+
+                info.setAuditResult("0");
+                info.setBaseProjectId(paymentInformation.getId());
+                String updateDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+
+                info.setUpdateTime(updateDate);
+
+                project.setProgressPaymentStatus("1");
+
+                auditInfoDao.updateByPrimaryKeySelective(info);
+                baseProjectDao.updateByPrimaryKeySelective(project);
+
+            }else if("2".equals(info.getAuditResult()) && "1".equals(info.getAuditType())){
+                auditInfoDao.deleteByPrimaryKey(info);
+
+                Example example1 = new Example(AuditInfo.class);
+
+                Example.Criteria criteria1 = example1.createCriteria();
+
+                criteria1.andEqualTo("baseProjectId",paymentInformation.getId()).andEqualTo("auditType","0");
+
+                AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example1);
+
+                auditInfo1.setAuditResult("0");
+
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
+                project.setProgressPaymentStatus("1");
+
+                baseProjectDao.updateByPrimaryKeySelective(project);
+            }
+        }
+        information.setRemarkes(baseProject.getRemarkes());
+        Example example3 = new Example(ApplicationInformation.class);
+        example3.createCriteria().andEqualTo("progressPaymentId",paymentInformation.getId());
+        applicationInformationDao.updateByExampleSelective(information,example3);
+
+
+        payment.setTotalPaymentAmount(baseProject.getTotalPaymentAmount());
+        payment.setCumulativeNumberPayment(baseProject.getCumulativeNumberPayment());
+        payment.setAccumulativePaymentProportion(baseProject.getAccumulativePaymentProportion());
+        Example example1 = new Example(ProgressPaymentTotalPayment.class);
+        example1.createCriteria().andEqualTo("progressPaymentId",paymentInformation.getId());
+        progressPaymentTotalPaymentDao.updateByExampleSelective(payment,example1);
+
+        paymentInformation.setCurrentPaymentInformation(baseProject.getCurrentPaymentInformation());
+        paymentInformation.setCumulativePaymentTimes(baseProject.getCumulativePaymentTimes());
+        paymentInformation.setCurrentPaymentRatio(baseProject.getCurrentPaymentRatio());
+        paymentInformation.setCurrentPeriodAccording(baseProject.getCurrentPeriodAccording());
+        paymentInformation.setContractAmount(baseProject.getContractAmount());
+        paymentInformation.setProjectType(baseProject.getProjectType());
+        paymentInformation.setReceivingTime(baseProject.getReceivingTime());
+        paymentInformation.setCompileTime(baseProject.getCompileTime());
+        paymentInformation.setOutsourcing(baseProject.getOutsourcing());
+        paymentInformation.setNameOfCostUnit(baseProject.getNameOfCostUnit());
+        paymentInformation.setContact(baseProject.getContact());
+        paymentInformation.setContactPhone(baseProject.getContactPhone());
+        paymentInformation.setAmountOutsourcing(baseProject.getAmountOutsourcing());
+        paymentInformation.setSituation(baseProject.getSituation());
+        paymentInformation.setRemarkes(baseProject.getRemarkes());
+        Example example4 = new Example(ProgressPaymentInformation.class);
+        example4.createCriteria().andEqualTo("progressPaymentId",paymentInformation.getId());
+        progressPaymentInformationDao.updateByExampleSelective(paymentInformation,example4);
+
+
+    }
 
 
     @Override

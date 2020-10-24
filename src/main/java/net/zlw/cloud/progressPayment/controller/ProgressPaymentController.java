@@ -64,6 +64,17 @@ public class ProgressPaymentController  extends BaseController {
             return RestUtil.success("编辑失败");
         }
     }
+
+    @RequestMapping(value = "/progress/updateProgressPayment",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> updateProgressPayment(BaseProjectVo baseProjectVo){
+        try {
+            baseProjectService.updateProgressPayment(baseProjectVo);
+            return RestUtil.success("修改成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.success("编辑失败");
+        }
+    }
     //查询进度款列表
     @RequestMapping(value = "/progress/searchAllProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> searchAllProgress(PageVo pageVo){
