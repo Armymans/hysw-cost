@@ -47,13 +47,13 @@ public class WujiangMoneyInfo{
     private BigDecimal officialReceipts; //'实收金额',
 
     @Column(name = "cost_type")
-    private String costType;
+    private String costType;  //费用类型
 
     @Column(name = "one_desmoney")
-    private BigDecimal oneDesmoney;
+    private BigDecimal oneDesmoney; //党项设计费
 
     @Column(name = "collection_time")
-    private String collectionTime;
+    private String collectionTime;  //收款日期
 
     @Column(name = "founder_id")
     private String founderId;

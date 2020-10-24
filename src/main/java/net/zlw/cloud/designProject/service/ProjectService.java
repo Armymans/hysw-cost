@@ -133,7 +133,7 @@ public class ProjectService {
                     if(!designInfo.getDistrict().equals("4")){
                         Example anhui = new Example(AnhuiMoneyinfo.class);
                         Example.Criteria c2 = anhui.createCriteria();
-                        c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                        c2.andEqualTo("baseProjectId",designInfo.getId());
                         AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                         if(anhuiMoneyinfo!=null){
                             designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
@@ -145,7 +145,7 @@ public class ProjectService {
                     }else{
                         Example wujiang = new Example(WujiangMoneyInfo.class);
                         Example.Criteria c2 = wujiang.createCriteria();
-                        c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                        c2.andEqualTo("baseProjectId",designInfo.getId());
                         WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                         if(wujiangMoneyInfo!=null){
                             designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
@@ -187,7 +187,7 @@ public class ProjectService {
                         if(!designInfo.getDistrict().equals("4")){
                             Example anhui = new Example(AnhuiMoneyinfo.class);
                             Example.Criteria c2 = anhui.createCriteria();
-                            c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                            c2.andEqualTo("baseProjectId",designInfo.getId());
                             AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                             if(anhuiMoneyinfo!=null){
                                 designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
@@ -199,7 +199,7 @@ public class ProjectService {
                         }else{
                             Example wujiang = new Example(WujiangMoneyInfo.class);
                             Example.Criteria c2 = wujiang.createCriteria();
-                            c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                            c2.andEqualTo("baseProjectId",designInfo.getId());
                             WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                             if(wujiangMoneyInfo!=null){
                                 designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
@@ -249,7 +249,7 @@ public class ProjectService {
                     if(!designInfo.getDistrict().equals("4")){
                         Example anhui = new Example(AnhuiMoneyinfo.class);
                         Example.Criteria c2 = anhui.createCriteria();
-                        c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                        c2.andEqualTo("baseProjectId",designInfo.getId());
                         AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                         if(anhuiMoneyinfo!=null){
                             designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
@@ -261,7 +261,7 @@ public class ProjectService {
                     }else{
                         Example wujiang = new Example(WujiangMoneyInfo.class);
                         Example.Criteria c2 = wujiang.createCriteria();
-                        c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                        c2.andEqualTo("baseProjectId",designInfo.getId());
                         WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                         if(wujiangMoneyInfo!=null){
                             designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
@@ -309,7 +309,7 @@ public class ProjectService {
                 if(!designInfo.getDistrict().equals("4")){
                     Example anhui = new Example(AnhuiMoneyinfo.class);
                     Example.Criteria c2 = anhui.createCriteria();
-                    c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                    c2.andEqualTo("baseProjectId",designInfo.getId());
                     AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                     if(anhuiMoneyinfo!=null){
                         designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
@@ -321,7 +321,7 @@ public class ProjectService {
                 }else{
                     Example wujiang = new Example(WujiangMoneyInfo.class);
                     Example.Criteria c2 = wujiang.createCriteria();
-                    c2.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                    c2.andEqualTo("baseProjectId",designInfo.getId());
                     WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                     if(wujiangMoneyInfo!=null){
                         designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
@@ -936,19 +936,18 @@ public class ProjectService {
     public void projectEdit(ProjectVo projectVo, UserInfo loginUser){
         //BaseProject baseProject, DesignInfo designInfo, ProjectExploration projectExploration, PackageCame packageCame
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        //如果是为通过则
-        Example example = new Example(AuditInfo.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("baseProjectId",projectVo.getDesignInfo().getId());
-        criteria.andEqualTo("auditResult","2");
-        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example);
         String updateTime = simpleDateFormat.format(new Date());
             //如果按钮状态为1 说明点击的是提交
             if("1".equals(projectVo.getBaseProject().getOrsubmit())){
-
                 //如果提交人为空 说明时保存状态未出图中 反之状态未通过
                 if(projectVo.getBaseProject().getReviewerId() == null||"".equals(projectVo.getBaseProject().getReviewerId())){
                     if("3".equals(projectVo.getBaseProject().getDesginStatus())){
+                        //如果是未通过
+                        Example example = new Example(AuditInfo.class);
+                        Example.Criteria criteria = example.createCriteria();
+                        criteria.andEqualTo("baseProjectId",projectVo.getDesignInfo().getId());
+                        criteria.andEqualTo("auditResult","2");
+                        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example);
                         //如果是未通过 提交时 将审核信息改为待审核
                         auditInfo1.setAuditResult("0");
                         //修改基本状态 未通过重新变为待审核
@@ -1048,10 +1047,12 @@ public class ProjectService {
      */
     public void anhuiMoneyInfoAdd(AnhuiMoneyinfo anhuiMoneyinfo, UserInfo loginUser) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         Example example = new Example(AnhuiMoneyinfo.class);
         Example.Criteria c = example.createCriteria();
         IncomeInfo incomeInfo = new IncomeInfo();
 
+        anhuiMoneyinfo.setId(uuid);
         anhuiMoneyinfo.setFounderId(loginUser.getId());
         anhuiMoneyinfo.setCompanyId(loginUser.getCompanyId());
         anhuiMoneyinfo.setStatus("0");
@@ -1077,9 +1078,11 @@ public class ProjectService {
                 }
                 //如果代收金额超过或者等于 应收金额后
                 if(anhuiMoneyinfo1.getRevenue().compareTo(new BigDecimal(total))<1){
+                    //同时返回标识 改账单已支付完成
                     designInfoMapper.updateFinalAccount(anhuiMoneyinfo.getBaseProjectId());
                 }
             }else{
+                //若果不是说明第一次添加
                 anhuiMoneyinfo.setCollectionMoney(collectionMoney+",");
                 //保存收入表信息
                 incomeInfo.setBaseProjectId(anhuiMoneyinfo.getBaseProjectId());
@@ -1090,10 +1093,14 @@ public class ProjectService {
         }else{
             //如果是实收 则直接添加到表中
             anhuiMoneyinfoMapper.insert(anhuiMoneyinfo);
+            //同时返回标识 改账单已支付完成
             designInfoMapper.updateFinalAccount(anhuiMoneyinfo.getBaseProjectId());
 
             //同时将设计费添加到总收入表中
             incomeInfo.setBaseProjectId(anhuiMoneyinfo.getBaseProjectId());
+            incomeInfo.setFounderCompanyId(loginUser.getCompanyId());
+            incomeInfo.setFounderId(loginUser.getId());
+            incomeInfo.setDelFlag("0");
             incomeInfo.setDesignMoney(anhuiMoneyinfo.getOfficialReceipts());
             projectSumService.addIncomeInfo(incomeInfo);
         }
@@ -1105,7 +1112,7 @@ public class ProjectService {
      */
     public void wujiangMoneyInfoAdd(WujiangMoneyInfo wujiangMoneyInfo, UserInfo loginUser) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         Example example = new Example(WujiangMoneyInfo.class);
         Example.Criteria c = example.createCriteria();
         //根据设计表id 查询数据取出代收金额
@@ -1113,6 +1120,7 @@ public class ProjectService {
 
         IncomeInfo incomeInfo = new IncomeInfo();
 
+        wujiangMoneyInfo.setId(uuid);
         wujiangMoneyInfo.setFounderId(loginUser.getId());
         wujiangMoneyInfo.setCompanyId(loginUser.getCompanyId());
         wujiangMoneyInfo.setStatus("0");
@@ -1153,6 +1161,9 @@ public class ProjectService {
 
             //同时将设计费添加到总收入表中
             incomeInfo.setBaseProjectId(wujiangMoneyInfo.getBaseProjectId());
+            incomeInfo.setFounderCompanyId(loginUser.getCompanyId());
+            incomeInfo.setFounderId(loginUser.getId());
+            incomeInfo.setDelFlag("0");
             incomeInfo.setDesignMoney(wujiangMoneyInfo.getOfficialReceipts());
             projectSumService.addIncomeInfo(incomeInfo);
         }

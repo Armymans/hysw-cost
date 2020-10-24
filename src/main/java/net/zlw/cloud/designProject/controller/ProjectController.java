@@ -281,9 +281,10 @@ public class ProjectController extends BaseController {
      * @param anhuiMoneyinfo
      * @return
      */
-    @PostMapping("/anhuiMoney")
-    public Double anhuiMoney(@RequestBody AnhuiMoneyinfo anhuiMoneyinfo) {
-        return projectService.anhuiMoney(anhuiMoneyinfo);
+    @RequestMapping(value = "/api/disproject/anhuiMoney", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> anhuiMoney(AnhuiMoneyinfo anhuiMoneyinfo) {
+        Double money = projectService.anhuiMoney(anhuiMoneyinfo);
+        return RestUtil.success(money);
     }
 
     /**
@@ -292,9 +293,10 @@ public class ProjectController extends BaseController {
      * @param wujiangMoneyInfo
      * @return
      */
-    @PostMapping("/wujiangMoneyInfo")
-    public Double wujiangMoney(@RequestBody WujiangMoneyInfo wujiangMoneyInfo) {
-        return projectService.wujiangMoney(wujiangMoneyInfo);
+    @RequestMapping(value = "/api/disproject/wujiangMoneyInfo", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> wujiangMoney(WujiangMoneyInfo wujiangMoneyInfo) {
+        Double money = projectService.wujiangMoney(wujiangMoneyInfo);
+        return RestUtil.success(money);
     }
 
     /**
@@ -302,9 +304,10 @@ public class ProjectController extends BaseController {
      *
      * @param anhuiMoneyinfo
      */
-    @PostMapping("anhuiMoneyInfoAdd")
-    public void anhuiMoneyInfoAdd(AnhuiMoneyinfo anhuiMoneyinfo) {
+    @RequestMapping(value = "/api/disproject/anhuiMoneyInfoAdd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> anhuiMoneyInfoAdd(AnhuiMoneyinfo anhuiMoneyinfo) {
         projectService.anhuiMoneyInfoAdd(anhuiMoneyinfo, getLoginUser());
+        return RestUtil.success();
     }
 
     /**
@@ -312,9 +315,10 @@ public class ProjectController extends BaseController {
      *
      * @param wujiangMoneyInfo
      */
-    @PostMapping("wujiangMoneyInfoAdd")
-    public void wujiangMoneyInfoAdd(WujiangMoneyInfo wujiangMoneyInfo) {
+    @RequestMapping(value = "/api/disproject/wujiangMoneyInfoAdd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> wujiangMoneyInfoAdd(WujiangMoneyInfo wujiangMoneyInfo) {
         projectService.wujiangMoneyInfoAdd(wujiangMoneyInfo, getLoginUser());
+        return RestUtil.success();
     }
 
     /**
