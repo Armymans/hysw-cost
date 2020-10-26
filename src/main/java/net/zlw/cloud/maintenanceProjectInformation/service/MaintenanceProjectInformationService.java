@@ -21,8 +21,11 @@ import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -71,6 +74,9 @@ public class MaintenanceProjectInformationService{
 
     @Resource
     private InvestigationOfTheAmountDao investigationOfTheAmountDao;
+
+    @Autowired
+    private FileInfoMapper fileInfoMapper;
 
 
     /**
@@ -328,6 +334,98 @@ public class MaintenanceProjectInformationService{
         }
 //        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
         maintenanceProjectInformationMapper.insertSelective(information);
+
+        // type
+        List<FileInfo> byFreignAndType = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType());
+
+        for (FileInfo fileInfo : byFreignAndType) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type1
+        List<FileInfo> byFreignAndType1 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType1());
+
+        for (FileInfo fileInfo : byFreignAndType1) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type2
+        List<FileInfo> byFreignAndType2 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType2());
+
+        for (FileInfo fileInfo : byFreignAndType2) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type3
+        List<FileInfo> byFreignAndType3 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType3());
+
+        for (FileInfo fileInfo : byFreignAndType3) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+        // type4
+        List<FileInfo> byFreignAndType4 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType4());
+
+        for (FileInfo fileInfo : byFreignAndType4) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type5
+        List<FileInfo> byFreignAndType5 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType5());
+
+        for (FileInfo fileInfo : byFreignAndType5) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type6
+        List<FileInfo> byFreignAndType6 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType6());
+
+        for (FileInfo fileInfo : byFreignAndType6) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type7
+        List<FileInfo> byFreignAndType7 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType7());
+
+        for (FileInfo fileInfo : byFreignAndType7) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type8
+        List<FileInfo> byFreignAndType8 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType8());
+
+        for (FileInfo fileInfo : byFreignAndType8) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+
+        // type9
+        List<FileInfo> byFreignAndType9 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType9());
+
+        for (FileInfo fileInfo : byFreignAndType9) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+
     }
 
 
@@ -749,6 +847,97 @@ public class MaintenanceProjectInformationService{
 
 
         maintenanceProjectInformationMapper.insertSelective(information);
+
+        // type
+        List<FileInfo> byFreignAndType = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType());
+
+        for (FileInfo fileInfo : byFreignAndType) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type1
+        List<FileInfo> byFreignAndType1 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType1());
+
+        for (FileInfo fileInfo : byFreignAndType1) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type2
+        List<FileInfo> byFreignAndType2 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType2());
+
+        for (FileInfo fileInfo : byFreignAndType2) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type3
+        List<FileInfo> byFreignAndType3 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType3());
+
+        for (FileInfo fileInfo : byFreignAndType3) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+        // type4
+        List<FileInfo> byFreignAndType4 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType4());
+
+        for (FileInfo fileInfo : byFreignAndType4) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type5
+        List<FileInfo> byFreignAndType5 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType5());
+
+        for (FileInfo fileInfo : byFreignAndType5) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type6
+        List<FileInfo> byFreignAndType6 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType6());
+
+        for (FileInfo fileInfo : byFreignAndType6) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type7
+        List<FileInfo> byFreignAndType7 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType7());
+
+        for (FileInfo fileInfo : byFreignAndType7) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+        // type8
+        List<FileInfo> byFreignAndType8 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType8());
+
+        for (FileInfo fileInfo : byFreignAndType8) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
+
+        // type9
+        List<FileInfo> byFreignAndType9 = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType9());
+
+        for (FileInfo fileInfo : byFreignAndType9) {
+            fileInfo.setPlatCode(information.getId());
+
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+
 
     }
 

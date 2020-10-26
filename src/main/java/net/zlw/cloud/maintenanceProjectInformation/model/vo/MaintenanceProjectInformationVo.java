@@ -109,4 +109,28 @@ public class MaintenanceProjectInformationVo {
     //登录人id
     private String loginUserId;
 
+
+    private String key;
+
+    // 项目信息 jwxxjxmxx
+    private String type;
+    //勘查记录 jwxxjkcjl
+    private String type1;
+    // 甲供 jwxxjjgclsbfx
+    private String type2;
+    // 乙供 jwxxjygctc
+    private String type3;
+    // 不平衡报价 jwxxjbphbjtzxx
+    private String type4;
+    // 其他扣罚条款 jwxxjqtkftkxx
+    private String type5;
+    // 其他相关信息 jwxxjqtxgxx
+    private String type6;
+    // 结算汇总表 jwxxjjsshxx
+    private String type7;
+    // 结算报告 jwxxjjsbg
+    private String type8;
+    // 结算审核其他资料 jwxxjjsshxxqtzl
+    private String type9;
+
 }
