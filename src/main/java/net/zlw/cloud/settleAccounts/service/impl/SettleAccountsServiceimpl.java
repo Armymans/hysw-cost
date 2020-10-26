@@ -20,6 +20,9 @@ import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
 import net.zlw.cloud.settleAccounts.service.SettleAccountsService;
+import net.zlw.cloud.snsEmailFile.controller.FileInfoController;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +54,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private SettlementInfoMapper settlementInfoMapper;
     @Resource
     private SettlementInfoMapper settlementInfoMapper2;
+    @Resource
+    private FileInfoMapper fileInfoMapper;
+
 
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
@@ -216,6 +222,22 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }else{
             baseProject.setSettleAccountsStatus("2");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        }
+
+        Example example = new Example(FileInfo.class);
+        Example.Criteria c = example.createCriteria();
+        c.andLike("type","jsxmxj%");
+        c.andEqualTo("status","0");
+        c.andEqualTo("userId","user305");
+        List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example);
+        for (FileInfo fileInfo : fileInfos) {
+            FileInfoController fileInfoController = new FileInfoController();
+            //修改文件外键
+            if (baseAccountsVo.getSettlementAuditInformation().getId()!=null){
+                fileInfoController.updateFileFreign(fileInfo.getId(),baseAccountsVo.getSettlementAuditInformation().getId());
+            }else{
+                fileInfoController.updateFileFreign(fileInfo.getId(),baseAccountsVo.getLastSettlementReview().getId());
+            }
         }
 
     }
