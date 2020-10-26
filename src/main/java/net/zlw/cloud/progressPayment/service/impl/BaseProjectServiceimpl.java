@@ -17,8 +17,11 @@ import net.zlw.cloud.progressPayment.model.vo.PageVo;
 import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
 import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -50,6 +53,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Resource
     private BudgetingMapper budgetingMapper;
+
+
+    @Autowired
+    private FileInfoMapper fileInfoMapper;
     /**
      * 添加进度款信息
      *
@@ -64,7 +71,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         //项目基本信息
 //        BaseProject project = findById(budgeting.getBaseProjectId());
-        BaseProject project = baseProjectDao.selectByPrimaryKey(baseProject.getId());
+        BaseProject project = baseProjectDao.selectByPrimaryKey(baseProject.getBaseId());
         //申请信息
         ApplicationInformation information = new ApplicationInformation();
         //进度款累计支付信息
@@ -136,6 +143,24 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             payment.setId(UUID.randomUUID().toString());
             progressPaymentTotalPaymentDao.insert(payment);
 
+
+            // 上传文件，新建-申请信息，列表文件
+            List<FileInfo> byFreignAndType = fileInfoMapper.findByFreignAndType(baseProject.getKey(), baseProject.getType());
+
+            for (FileInfo fileInfo : byFreignAndType) {
+                fileInfo.setPlatCode(paymentInformation.getId());
+
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
+
+            // 本期进度款支付信息列表文件
+            List<FileInfo> freignAndType = fileInfoMapper.findByFreignAndType(baseProject.getKey(), baseProject.getType1());
+
+            for (FileInfo fileInfo : freignAndType) {
+                fileInfo.setPlatCode(paymentInformation.getId());
+
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
 
 
         }

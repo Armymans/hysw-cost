@@ -22,7 +22,10 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -51,6 +54,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     private MemberManageDao memberManageDao;
     @Resource
     private BudgetingDao budgetingDao;
+
+    @Autowired
+    private FileInfoMapper fileInfoMapper;
 
 
     @Override
@@ -179,6 +185,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             trackVo.getAuditInfo().setFounderId(userInfo.getId());
             trackVo.getAuditInfo().setStatus("0");
             trackAuditInfoDao.insertSelective(trackVo.getAuditInfo());
+
+            // 上传文件，新建-申请信息，列表文件
+            List<FileInfo> byFreignAndType = fileInfoMapper.findByFreignAndType(trackVo.getKey(), trackVo.getType());
+
+            for (FileInfo fileInfo : byFreignAndType) {
+                fileInfo.setPlatCode(trackVo.getAuditInfo().getId());
+
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
         } else if (trackVo.getStatus().equals("1")) {
             baseProject.setTrackStatus("1");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
@@ -210,6 +225,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
             auditInfo.setAuditorId(memberManage.getId());
             auditInfoDao.insertSelective(auditInfo);
+
+            // 上传文件，新建-申请信息，列表文件
+            List<FileInfo> byFreignAndType = fileInfoMapper.findByFreignAndType(trackVo.getKey(), trackVo.getType());
+
+            for (FileInfo fileInfo : byFreignAndType) {
+                fileInfo.setPlatCode(trackVo.getAuditInfo().getId());
+
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
         }
 
 

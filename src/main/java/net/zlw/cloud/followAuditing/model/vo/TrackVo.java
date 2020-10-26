@@ -21,4 +21,8 @@ public class TrackVo  {
     private String trackStatus;
     //保存提交状态
     private String status;
+
+    // 上传文件
+    private String key;
+    private String type;
 }

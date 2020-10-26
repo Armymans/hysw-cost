@@ -85,5 +85,13 @@ public class BaseProjectVo {
     private String auditorId;
     private String auditType;
 
+
+    //上传文件用的 key,type
+    private String key;
+    private String type;
+    private String type1;
+
+    private String baseId;
+
     private List<AuditInfo> auditInfos;
 }
