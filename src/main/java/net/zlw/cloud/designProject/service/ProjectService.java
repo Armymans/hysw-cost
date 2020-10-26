@@ -832,6 +832,30 @@ public class ProjectService {
             projectVo.getProjectExploration().setCreateTime(createTime);
             projectExplorationMapper.insert(projectVo.getProjectExploration());
         }
+        //上传文件 项目踏勘文件
+        List<FileInfo> byFreignAndType1 = fileInfoMapper.findByFreignAndType(projectVo.getKey(), projectVo.getType1());
+        for (FileInfo fileInfo : byFreignAndType1) {
+            fileInfo.setPlatCode(DesignInfouuid);
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+        //上传文件 方案会审
+        List<FileInfo> byFreignAndType2 = fileInfoMapper.findByFreignAndType(projectVo.getKey(), projectVo.getType2());
+        for (FileInfo fileInfo : byFreignAndType2) {
+            fileInfo.setPlatCode(DesignInfouuid);
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+        //上传文件 客户提供图纸 批文资料
+        List<FileInfo> byFreignAndType3 = fileInfoMapper.findByFreignAndType(projectVo.getKey(), projectVo.getType3());
+        for (FileInfo fileInfo : byFreignAndType3) {
+            fileInfo.setPlatCode(DesignInfouuid);
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
+        //上传文件 设计信息
+        List<FileInfo> byFreignAndType4 = fileInfoMapper.findByFreignAndType(projectVo.getKey(), projectVo.getType4());
+        for (FileInfo fileInfo : byFreignAndType4) {
+            fileInfo.setPlatCode(DesignInfouuid);
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
     }
 
     public BaseProject BaseProjectByid(String id){

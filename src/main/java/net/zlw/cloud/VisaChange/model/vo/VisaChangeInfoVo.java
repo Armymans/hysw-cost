@@ -81,6 +81,9 @@ public class VisaChangeInfoVo {
 
     private String auditType;
 
-
-
+    private String type1;
+    private String type2;
+    private String type3;
+    private String type4;
+    private String key;
 }

@@ -26,4 +26,9 @@ public class ProjectVo {
     private String desginStatus;
     private DesignChangeInfo designChangeInfo;
     private List<DesignChangeInfo> DesignChangeInfos;
+    private String type1;
+    private String type2;
+    private String type3;
+    private String type4;
+    private String key;
 }

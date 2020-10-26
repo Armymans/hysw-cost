@@ -21,6 +21,8 @@ import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +67,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     @Autowired
     private BaseProjectService baseProjectService;
 
-
+    @Autowired
+    private FileInfoMapper fileInfoMapper;
 
 
     /***
@@ -443,9 +446,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
         //提交
         if (StringUtils.isNotEmpty(visaChangeInfoVo.getAuditId())) {
-
-
             insertVisaInfoAndApplyInfo(visaChangeInfoVo, createTime);
+
         } else {//保存
 
             insertVisaInfoAndApplyInfo(visaChangeInfoVo, createTime);
@@ -482,8 +484,13 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }else{
                 applyChangeInformation.setStatus("2");
             }
+            //todo 文件上传
+            List<FileInfo> byFreignAndType1 = fileInfoMapper.findByFreignAndType(visaChangeInfoVo.getKey(), visaChangeInfoVo.getType1());
+            for (FileInfo fileInfo : byFreignAndType1) {
+                fileInfo.setPlatCode(applyChangeInformation.getId());
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
             applyMapper.insertSelective(applyChangeInformation);
-
         }
         //判断下家签证/变更申请信息
         String applicantNameDown = visaChangeInfoVo.getApplicantNameDown();
@@ -508,6 +515,12 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 applyChangeInformation.setStatus("1");
             }else{
                 applyChangeInformation.setStatus("2");
+            }
+            //todo 文件上传
+            List<FileInfo> byFreignAndType2 = fileInfoMapper.findByFreignAndType(visaChangeInfoVo.getKey(), visaChangeInfoVo.getType2());
+            for (FileInfo fileInfo : byFreignAndType2) {
+                fileInfo.setPlatCode(applyChangeInformation.getId());
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
             }
             applyMapper.insertSelective(applyChangeInformation);
 
@@ -551,7 +564,12 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if (upvisachange.getId()!=null){
                 visaChange1.setApplyChangeInfoId(upvisachange.getId());
             }
-
+            //todo 文件上传
+            List<FileInfo> byFreignAndType3 = fileInfoMapper.findByFreignAndType(visaChangeInfoVo.getKey(), visaChangeInfoVo.getType3());
+            for (FileInfo fileInfo : byFreignAndType3) {
+                fileInfo.setPlatCode(visaChange1.getId());
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
             vcMapper.insertSelective(visaChange1);
         }
 
@@ -593,8 +611,13 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChange.setChangeNum("1");
 
             visaChange.setApplyChangeInfoId(downvisachange.getId());
+            //todo 文件上传
+            List<FileInfo> byFreignAndType4 = fileInfoMapper.findByFreignAndType(visaChangeInfoVo.getKey(), visaChangeInfoVo.getType4());
+            for (FileInfo fileInfo : byFreignAndType4) {
+                fileInfo.setPlatCode(visaChange.getId());
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
             vcMapper.insertSelective(visaChange);
-
         }
 
 
