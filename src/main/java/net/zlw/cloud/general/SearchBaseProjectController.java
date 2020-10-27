@@ -1,10 +1,9 @@
 package net.zlw.cloud.general;
 
-import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.util.RestUtil;
-import net.tec.cloud.common.vo.LoginUser;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.general.model.AuditChekedVo;
+import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +27,9 @@ public class SearchBaseProjectController {
     //查询所有工程项目
     @RequestMapping(value = "/baseProject/findAll",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
 //    @GetMapping("/findAll")
-    public Map<String,Object> findAllBaseProject(){
+    public Map<String,Object> findAllBaseProject(pageVo pageVo){
 
-        List<BaseProject> allBaseProject = baseProjectService.findAllBaseProject();
+        List<BaseProject> allBaseProject = baseProjectService.findAllBaseProject(pageVo);
         return RestUtil.success(allBaseProject);
     }
 
