@@ -28,7 +28,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
     AuditInfo findByTypeAnd(String id);
 
     @Select("select \n" +
-            "audit_time auditTime,\n" +
+            "IFNULL(audit_time,'-') auditTime,\n" +
             "(case audit_result\n" +
             "\t\twhen '0' then '待审核'\n" +
             "\t\twhen '1' then '已通过'\n" +
@@ -44,7 +44,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "\t\tend\n" +
             ") auditType,\n" +
             "(select member_name from member_manage where id = auditor_id)  auditor,\n" +
-            "audit_opinion auditOpinion\n" +
+            "IFNULL(audit_opinion,'-') auditOpinion\n" +
             "from audit_info \n" +
             "where \n" +
             "base_project_id = #{id}")
