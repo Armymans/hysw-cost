@@ -42,3 +42,5 @@ app:
   attachPath: /data/images
 #  attachPath: /app/data
   testPath: D://upload
+user_account: test1
+verification_flag: 0
