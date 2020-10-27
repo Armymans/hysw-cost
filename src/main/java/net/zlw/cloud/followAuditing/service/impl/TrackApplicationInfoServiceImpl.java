@@ -90,6 +90,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         return pageInfo;
     }
 
+    // 删除审计月报
+    public void deleteByIdTrackMonthly(String id){
+        TrackMonthly trackMonthly = trackMonthlyDao.selectByPrimaryKey(id);
+        trackMonthly.setStatus("1");
+        trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
+    }
+
     @Override
     public void deleteById(String id) {
         TrackAuditInfo trackAuditInfo = new TrackAuditInfo();
@@ -241,30 +248,46 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         trackVo.getTrackApplicationInfo().setTrackAudit(trackVo.getAuditInfo().getId());
         trackApplicationInfoDao.insertSelective(trackVo.getTrackApplicationInfo());
 
-        List<TrackMonthly> monthlyList = trackVo.getMonthlyList();
-        for (TrackMonthly trackMonthly : monthlyList) {
-            if (trackVo.getStatus().equals("0")) {
-                trackMonthly.setId(UUID.randomUUID().toString().replace("-", ""));
-                trackMonthly.setTrackId(trackVo.getAuditInfo().getId());
-                trackMonthlyDao.insert(trackMonthly);
-            } else if (trackVo.getStatus().equals("1")) {
-                trackMonthly.setId(UUID.randomUUID().toString().replace("-", ""));
-                trackMonthly.setTrackId(trackVo.getAuditInfo().getId());
-                trackMonthlyDao.insert(trackMonthly);
 
-                //存入审核表
-                AuditInfo auditInfo = new AuditInfo();
-                auditInfo.setId(UUID.randomUUID().toString().replace("", "-"));
-                auditInfo.setBaseProjectId(trackMonthly.getId());
-                auditInfo.setAuditResult("0");
-                auditInfo.setAuditType("0");
-                Example example1 = new Example(MemberManage.class);
-                example1.createCriteria().andEqualTo("member_role_id", "3");
-                MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                auditInfo.setAuditorId(memberManage.getId());
-                auditInfoDao.insertSelective(auditInfo);
-            }
+
+        Example example1 = new Example(TrackMonthly.class);
+        Example.Criteria criteria = example1.createCriteria();
+
+        criteria.andEqualTo("trackId", userInfo.getId());
+        criteria.andEqualTo("status", "0");
+
+        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+
+        for (TrackMonthly trackMonthly : trackMonthlies) {
+            trackMonthly.setTrackId(trackVo.getAuditInfo().getId());
+
+            trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
         }
+
+//        List<TrackMonthly> monthlyList = trackVo.getMonthlyList();
+//        for (TrackMonthly trackMonthly : monthlyList) {
+//            if (trackVo.getStatus().equals("0")) {
+//                trackMonthly.setId(UUID.randomUUID().toString().replace("-", ""));
+//                trackMonthly.setTrackId(trackVo.getAuditInfo().getId());
+//                trackMonthlyDao.insert(trackMonthly);
+//            } else if (trackVo.getStatus().equals("1")) {
+//                trackMonthly.setId(UUID.randomUUID().toString().replace("-", ""));
+//                trackMonthly.setTrackId(trackVo.getAuditInfo().getId());
+//                trackMonthlyDao.insert(trackMonthly);
+//
+//                //存入审核表
+//                AuditInfo auditInfo = new AuditInfo();
+//                auditInfo.setId(UUID.randomUUID().toString().replace("", "-"));
+//                auditInfo.setBaseProjectId(trackMonthly.getId());
+//                auditInfo.setAuditResult("0");
+//                auditInfo.setAuditType("0");
+//                Example example1 = new Example(MemberManage.class);
+//                example1.createCriteria().andEqualTo("member_role_id", "3");
+//                MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+//                auditInfo.setAuditorId(memberManage.getId());
+//                auditInfoDao.insertSelective(auditInfo);
+//            }
+//        }
 
 
     }
@@ -294,7 +317,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     // TODO 回显页面，月报
     public List<TrackMonthly> findAllByTrackId(String id) {
         Example example1 = new Example(TrackMonthly.class);
-        example1.createCriteria().andEqualTo("trackId", id);
+        Example.Criteria criteria = example1.createCriteria();
+
+        criteria.andEqualTo("trackId", id);
+        criteria.andEqualTo("status", "0");
+
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         return trackMonthlies;
     }
@@ -315,8 +342,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
     public void addTrackMonthly(TrackMonthly trackMonthly) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        trackMonthly.setId(UUID.randomUUID().toString().replace("-",""));
         trackMonthly.setCreateTime(simpleDateFormat.format(new Date()));
-        trackMonthly.setTrackId(trackMonthly.getProjectNum());
+        trackMonthly.setTrackId(trackMonthly.getTrackId());
+        trackMonthly.setStatus("0");
         trackMonthlyDao.insertSelective(trackMonthly);
     }
 

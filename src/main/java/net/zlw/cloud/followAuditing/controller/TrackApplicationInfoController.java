@@ -57,6 +57,13 @@ public class TrackApplicationInfoController extends BaseController {
         trackApplicationInfoService.deleteById(id);
         return RestUtil.success("删除成功");
     }
+
+    // 删除审计月报
+    @RequestMapping(value = "/track/deleteByIdTrackMonthly",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> deleteByIdTrackMonthly(@RequestParam(name = "id") String id){
+        trackApplicationInfoService.deleteByIdTrackMonthly(id);
+        return RestUtil.success("删除成功");
+    }
     //批量审核
 //    @PostMapping("/track/batchReview")
     @RequestMapping(value = "/track/batchReview",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
