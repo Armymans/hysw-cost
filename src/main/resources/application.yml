@@ -38,5 +38,7 @@ logging:
     org.springframework.cloud.sleuth: DEBUG
     # org.springframework.web.servlet.DispatcherServlet: DEBUG
 app:
-  attachPath: /app/data
+  #  华衍测试环境地址
+  attachPath: /data/images
+#  attachPath: /app/data
   testPath: D://upload

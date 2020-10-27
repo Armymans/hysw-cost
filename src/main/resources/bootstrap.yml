@@ -20,7 +20,7 @@ spring:
         min-idle: ${session.redis.pool.min-idle}
   datasource:
     platform: ${datasource.platform}
-    url: jdbc:mysql://192.168.1.191:3306/sscp_cost?useUnicode=true&characterEncoding=utf-8
+    url: jdbc:mysql://222.128.17.92:3306/dev_sscp?useUnicode=true&characterEncoding=utf-8
 #    url: ${db-url-hysw-znzj}
     username: admin
     password: admin
