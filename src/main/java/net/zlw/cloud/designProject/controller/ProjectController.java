@@ -23,6 +23,7 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
@@ -30,15 +31,21 @@ import tk.mybatis.mapper.util.StringUtil;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 public class ProjectController extends BaseController {
+
+    @Value("${app.attachPath}")
+    private String LixAttachDir;
+    @Value("${app.testPath}")
+    private String WinAttachDir;
 
     @Resource
     private ProjectService projectService;
@@ -81,15 +88,59 @@ public class ProjectController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/build/findImage", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> findImage(@Param("id") String id){
-        List<FileInfo> fileInfo = fileInfoService.findByPlatCode(id);
-        if (fileInfo.size() > 0){
-            for (FileInfo info : fileInfo) {
+    public Map<String, Object> findImage(@Param("id") String id) {
 
-                info.setImgurl("");
+        List<FileInfo> fileInfo = fileInfoService.findByPlatCode(id);
+        if (fileInfo.size() > 0) {
+            String internetIp = getInternetIp();
+            String url = "http://" +internetIp+"/images/";
+            for (FileInfo info : fileInfo) {
+                url = url +info.getFilePath();
+                //http://10.61.96.48/images/1.jpg
+                info.setImgurl(url);
             }
         }
         return RestUtil.success(fileInfo);
+    }
+
+    /**
+     * 获得外网IP
+     * @return 外网IP
+     */
+    private static String getInternetIp(){
+        try{
+            Enumeration<NetworkInterface> networks = NetworkInterface.getNetworkInterfaces();
+            InetAddress ip = null;
+            Enumeration<InetAddress> addrs;
+            while (networks.hasMoreElements())
+            {
+                addrs = networks.nextElement().getInetAddresses();
+                while (addrs.hasMoreElements())
+                {
+                    ip = addrs.nextElement();
+                    if (ip != null
+                            && ip instanceof Inet4Address
+                            && ip.isSiteLocalAddress()
+                            && !ip.getHostAddress().equals(getIntranetIp()))
+                    {
+                        return ip.getHostAddress();
+                    }
+                }
+            }
+
+            // 如果没有外网IP，就返回内网IP
+            return getIntranetIp();
+        } catch(Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String getIntranetIp(){
+        try{
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch(Exception e){
+            throw new RuntimeException(e);
+        }
     }
 
     /**
