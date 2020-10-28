@@ -24,7 +24,8 @@ import java.util.Optional;
 
 @Configuration
 @Transactional
-public class EHRTimer implements InitializingBean {
+public class EHRTimer {
+//public class EHRTimer implements InitializingBean {
 
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -169,8 +170,8 @@ public class EHRTimer implements InitializingBean {
 
 	}
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		ehrDataTimer();
-	}
+//	@Override
+//	public void afterPropertiesSet() throws Exception {
+//		ehrDataTimer();
+//	}
 }
