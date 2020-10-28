@@ -21,7 +21,7 @@ public interface MemberManageDao extends Mapper<MemberManage> {
     MemberManage memberManageById();
 
     @Select(
-            "SELECT id,member_name,password,member_sex,member_account,member_role_id,email,phone,founder_id,company_id,status,dep_id,dep_admin,account_auth,create_date,update_date,salt FROM member_manage WHERE status = 0 and member_account = #{userAccount}"
+            "SELECT id,member_name,password,member_sex,member_account,member_role_id,email,phone,founder_id,company_id,status,dep_id,dep_admin,account_auth,create_date,update_date,salt FROM member_manage WHERE status = 0 and member_account like '%${userAccount}%'"
     )
     MemberManage selectByAccount(@Param("userAccount") String userAccount);
 }
