@@ -10,6 +10,7 @@ import net.zlw.cloud.snsEmailFile.model.SysCompany;
 import net.zlw.cloud.snsEmailFile.util.EhrJdbc;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,6 +25,7 @@ import java.util.Optional;
 @Configuration
 @Transactional
 public class EHRTimer {
+//public class EHRTimer implements InitializingBean {
 
 
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -168,4 +170,8 @@ public class EHRTimer {
 
 	}
 
+//	@Override
+//	public void afterPropertiesSet() throws Exception {
+//		ehrDataTimer();
+//	}
 }

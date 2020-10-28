@@ -98,6 +98,10 @@ public class LoginController  extends BaseController {
         }
         return null;
     }
+    @RequestMapping(value = "/login/userLogin2", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> userLogin(String userName, String password){
+        return RestUtil.success("success"); 
+    }
 
     protected void saveLoginUserToSession(HttpSession session) {
         session.setAttribute("loginUser", getLoginUser());

@@ -92,10 +92,8 @@ public class ProjectController extends BaseController {
 
         List<FileInfo> fileInfo = fileInfoService.findByPlatCode(id);
         if (fileInfo.size() > 0) {
-            String internetIp = getInternetIp();
-            String url = "http://" +internetIp+"/images/";
             for (FileInfo info : fileInfo) {
-                url = url +info.getFilePath();
+                String url = "/images/" +info.getFilePath();
                 //http://10.61.96.48/images/1.jpg
                 info.setImgurl(url);
             }
@@ -103,45 +101,6 @@ public class ProjectController extends BaseController {
         return RestUtil.success(fileInfo);
     }
 
-    /**
-     * 获得外网IP
-     * @return 外网IP
-     */
-    private static String getInternetIp(){
-        try{
-            Enumeration<NetworkInterface> networks = NetworkInterface.getNetworkInterfaces();
-            InetAddress ip = null;
-            Enumeration<InetAddress> addrs;
-            while (networks.hasMoreElements())
-            {
-                addrs = networks.nextElement().getInetAddresses();
-                while (addrs.hasMoreElements())
-                {
-                    ip = addrs.nextElement();
-                    if (ip != null
-                            && ip instanceof Inet4Address
-                            && ip.isSiteLocalAddress()
-                            && !ip.getHostAddress().equals(getIntranetIp()))
-                    {
-                        return ip.getHostAddress();
-                    }
-                }
-            }
-
-            // 如果没有外网IP，就返回内网IP
-            return getIntranetIp();
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static String getIntranetIp(){
-        try{
-            return InetAddress.getLocalHost().getHostAddress();
-        } catch(Exception e){
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * 设计列表展示 条件查询

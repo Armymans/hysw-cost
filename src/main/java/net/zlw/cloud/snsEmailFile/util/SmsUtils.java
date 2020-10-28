@@ -44,7 +44,7 @@ public class SmsUtils {
             call.setUseSOAPAction(true);
             call.setSOAPActionURI(soapAction + "SendSMS");
 
-            String resulet = (String) call.invoke(new Object[]{phone, content, "招采平台", null, null, "0", "0"});// 调用方法并传递参数-传递的参数和设置的参数要对应，顺序不能搞错了
+            String resulet = (String) call.invoke(new Object[]{phone, content, "造价平台", null, null, "0", "0"});// 调用方法并传递参数-传递的参数和设置的参数要对应，顺序不能搞错了
 
             return resulet;
         } catch (Exception ex) {
@@ -54,7 +54,7 @@ public class SmsUtils {
     }
     
     public static void main(String[] args) {
-		String content="（华衍水务电子招标平台）尊敬，马鞍山华衍水务有限公司邀请您参与2019-MXJ093-仓库水表保温套请购的询价，请登录招采平台，在业务通知处查看详情。";
+		String content="造价平台发来问候";
 		sender("18255747151", content);
 	}
 }
