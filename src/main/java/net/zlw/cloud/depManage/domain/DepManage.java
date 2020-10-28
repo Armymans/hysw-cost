@@ -1,6 +1,8 @@
 package net.zlw.cloud.depManage.domain;
 
+
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 
 import javax.persistence.Column;
@@ -35,5 +37,6 @@ public class DepManage {
     private String updateTime;
 
     private List<MemberManage>  memberManages;
+
 
 }

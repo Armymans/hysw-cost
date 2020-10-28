@@ -15,7 +15,7 @@ public class AdUtils {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		AdUtils.connect("wang.jun03","Whhy123@");
+		AdUtils.connect("shen.jinhua","Rr20110316!");
 	}
 	
 	public static String connect(String username,String password) {

@@ -7,6 +7,7 @@ import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.snsEmailFile.mapper.SysCompanyMapper;
 import net.zlw.cloud.snsEmailFile.model.SysCompany;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
+import net.zlw.cloud.snsEmailFile.util.AESUtil;
 import net.zlw.cloud.snsEmailFile.util.AdUtils;
 import net.zlw.cloud.snsEmailFile.util.AesEncryptUtil;
 import net.zlw.cloud.snsEmailFile.util.Common;
@@ -49,7 +50,8 @@ public class LoginController  extends BaseController {
     public Map<String, Object> userLogin(String userName, String spCode, HttpSession session, String rember){
         try{
             String result = "";
-            spCode= AesEncryptUtil.desEncrypt(spCode);
+//            spCode= AesEncryptUtil.desEncrypt(spCode);
+//            spCode = AESUtil.decrypt(spCode, AESUtil.ASSETS_DEV_PWD_FIELD);
             if("1".equals(test_userAccount)){
                 log.info("域账号校验开始："+System.currentTimeMillis());
                 result = AdUtils.connect(userName, spCode);
@@ -60,7 +62,8 @@ public class LoginController  extends BaseController {
             log.info("域账号校验结果result："+result);
             String message="";
             if("OK".equals(result)){
-                message = sysUserService.userLogin("hywater\\"+userName,request);
+//                message = sysUserService.userLogin("hywater\\\\"+userName,request);
+                message = sysUserService.userLogin(userName,request);
                 String key = UUID.randomUUID().toString();
                 if("ok".equals(message)){
 
@@ -93,7 +96,7 @@ public class LoginController  extends BaseController {
             RestUtil.error("域账号登录错误");
             ex.printStackTrace();
         }
-        return RestUtil.success("success");
+        return null;
     }
 
     protected void saveLoginUserToSession(HttpSession session) {

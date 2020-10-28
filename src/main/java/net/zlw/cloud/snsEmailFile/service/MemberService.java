@@ -2,7 +2,7 @@ package net.zlw.cloud.snsEmailFile.service;
 
 import com.github.pagehelper.util.StringUtil;
 import com.sun.javafx.PlatformUtil;
-import com.sun.org.apache.regexp.internal.RE;
+
 import lombok.Data;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.snsEmailFile.mapper.PlatInformactionLogDao;

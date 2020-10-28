@@ -32,6 +32,7 @@ public class AesEncryptUtil {
 			byte[] encrypted1 = new Base64().decode(data);
 
 			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+
 			SecretKeySpec keyspec = new SecretKeySpec(key.getBytes(), "AES");
 			IvParameterSpec ivspec = new IvParameterSpec(iv.getBytes());
 

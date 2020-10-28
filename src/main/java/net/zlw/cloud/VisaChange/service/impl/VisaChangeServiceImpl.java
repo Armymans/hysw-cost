@@ -814,7 +814,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 //0:正常 1:删除
                 applyChangeInformation.setState("0");
                 applyChangeInformation.setBaseProjectId(visaChangeInfoVo.getBaseProject().getId());
-                //applyChangeInformation.setBaseProjectId(visaChangeInfoVo.getBaseProjectId());
                 //1待审核 2处理中 3未通过 4待确认 5进行中 6已完成
                 applyChangeInformation.setStatus("0");
                 applyMapper.updateByPrimaryKeySelective(applyChangeInformation);
