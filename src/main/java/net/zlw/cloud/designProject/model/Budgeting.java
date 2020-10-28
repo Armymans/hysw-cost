@@ -58,6 +58,9 @@ public class Budgeting{
     @Column(name = "del_flag")
     private String delFlag;
 
+    @Column(name = "whether_account")
+    private String whetherAccount;
+
     @Transient
     private String monthTime;
     @Transient

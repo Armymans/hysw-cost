@@ -233,9 +233,9 @@ public class ProjectSumService {
      * @return
      */
     public Double BudgetingBase(Double cost1,Double cost2){
-        if(cost1>cost2){
+        if(cost1>=cost2){
             return cost1;
-        }else if(cost2>cost1){
+        }else if(cost2>=cost1){
             return cost2;
         }
         return null;

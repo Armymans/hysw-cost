@@ -113,6 +113,9 @@ public class ProjectSumController extends BaseController {
                 money = (double)Math.round(money*100)/100;
                 budgeting.setBudgetingCost(money);
                 //预算编制标底咨询金额
+                if(budgeting.getBiddingPriceControl()==null){
+                    budgeting.setBiddingPriceControl(new BigDecimal(0));
+                }
                 Double money1 = projectSumService.anhuiBudgetingMoney(budgeting.getBiddingPriceControl());
                 System.err.println(money1);
                 money1 = (double)Math.round(money1*100)/100;
@@ -308,9 +311,11 @@ public class ProjectSumController extends BaseController {
         for (Budgeting budgeting : budgetings) {
             incomeInfo.setBaseProjectId(budgeting.getId());
             achievementsInfo.setBaseProjectId(budgeting.getId());
+            //工程类别
             budgeting.setProjectType("安装");
             BigDecimal amountCost = budgeting.getAmountCost();
             if(!"4".equals(budgeting.getDistrict())){
+                //跟踪审计计提
                 Double money = projectSumService.anhuiTrackChargeBaseRate(amountCost);
                 if(amountCost.compareTo(new BigDecimal("5000000"))<1){
                     money = (double)Math.round(money*100)/100;
@@ -1658,6 +1663,11 @@ public class ProjectSumController extends BaseController {
         return RestUtil.success(map);
     }
 
+    /**
+     * 绩效计提总汇列表
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/DesginAchievementsList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> DesginAchievementsList(CostVo2 costVo2){
         List<OneCensus8> oneCensus8s = projectSumService.DesginAchievementsList(costVo2);
@@ -1670,6 +1680,9 @@ public class ProjectSumController extends BaseController {
             total3 += oneCensus8.getBalance();
         }
         ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        total1 = (double)Math.round(total1*100)/100;
+        total2 = (double)Math.round(total2*100)/100;
+        total3 = (double)Math.round(total3*100)/100;
         map.put("DesginAchievementsList",oneCensus8s);
         map.put("total1",total1);
         map.put("total2",total2);

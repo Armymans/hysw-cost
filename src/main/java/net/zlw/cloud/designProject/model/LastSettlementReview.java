@@ -90,5 +90,5 @@ public class LastSettlementReview {
     @Transient
     private Double reviewNumberCost; //咨询费
     @Transient
-    private Double Commission; //计提
+    private Double commission; //计提
 }

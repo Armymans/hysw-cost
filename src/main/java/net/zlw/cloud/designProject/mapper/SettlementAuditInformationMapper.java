@@ -32,7 +32,7 @@ public interface SettlementAuditInformationMapper extends Mapper<SettlementAudit
                     "\tand\n" +
                     "\ts1.id = s3.base_project_id\n" +
                     "\tand\n" +
-                    "\ts1.founder_id =#{id}\n" +
+                    "\ts2.founder_id =#{id}\n" +
                     "\tand\n" +
                     " compile_time>=#{startTime}\n" +
                     "\tand\n" +
