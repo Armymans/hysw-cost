@@ -15,13 +15,18 @@ import org.springframework.web.client.RestTemplate;
 @EnableCircuitBreaker
 public class HyswCostApplication {
 
+
+
+
 	@Bean
 	@LoadBalanced
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
 
+	
 	public static void main(String[] args) {
 		SpringApplication.run(HyswCostApplication.class, args);
+
 	}
 }

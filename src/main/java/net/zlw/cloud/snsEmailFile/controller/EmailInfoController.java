@@ -60,7 +60,7 @@ public class EmailInfoController extends BaseController {
         boolean flag = true;
         try {
             MailInfo mailInfo = new MailInfo();
-            mailInfo.setMailServerHost("smtp.exmail.qq.com");
+            mailInfo.setMailServerHost("zao.jia@huayanwater.com");
             mailInfo.setMailServerPort("465");
             mailInfo.setValidate(true);
             // mailInfo.setUserName("zlwbid");

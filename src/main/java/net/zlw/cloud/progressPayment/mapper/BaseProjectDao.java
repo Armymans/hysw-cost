@@ -3,6 +3,7 @@ package net.zlw.cloud.progressPayment.mapper;
 
 import net.zlw.cloud.budgeting.model.vo.PageBVo;
 import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
@@ -223,6 +224,10 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ")")
     List<DesignInfo> findDesignAll(PageBVo pageBVo);
 
-    @Select("select * from base_project order by create_time desc limit 0,5")
-    List<BaseProject> findAllBaseProject();
+    @Select("select * from base_project where \n" +
+            "(district = #{district} or #{district} = '--' or #{district} = '') and \n" +
+            "(create_time > #{statTime} or #{statTime} = '--' or #{statTime} = '') and \n" +
+            "(create_time < #{endTime} or #{endTime} = '--' or #{endTime} = '')\n" +
+            "order by create_time desc limit 0,5")
+    List<BaseProject> findAllBaseProject(pageVo pageVo);
 }

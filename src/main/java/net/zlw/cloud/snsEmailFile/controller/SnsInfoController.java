@@ -10,11 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 
-import javax.xml.ws.soap.Addressing;
-import java.text.SimpleDateFormat;
 import java.util.UUID;
 
 
@@ -61,6 +57,7 @@ public class SnsInfoController extends BaseController {
 //            Thread t = new Thread(sns);
 //            t.start();
             }
+
             return "T";
         } catch (Exception e) {
             e.printStackTrace();

@@ -5,6 +5,7 @@ import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
+import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.designProject.model.DesignInfo;
@@ -89,6 +90,7 @@ public class ProjectOverviewService {
 
     public List<ModuleNumber> moduleNumber(List<BaseProject> allBaseProject) {
         ArrayList<ModuleNumber> moduleNumbers = new ArrayList<>();
+
         for (BaseProject baseProject : allBaseProject) {
             ModuleNumber moduleNumber = new ModuleNumber();
             moduleNumber.setBaseProject(baseProject);

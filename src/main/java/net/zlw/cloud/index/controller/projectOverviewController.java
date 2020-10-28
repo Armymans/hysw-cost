@@ -57,9 +57,18 @@ public class projectOverviewController extends BaseController {
     //造价部门和设计部门模块数量
 //    @GetMapping("/moduleNumber")
     @RequestMapping(value = "/projectOverview/moduleNumber",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> moduleNumber(){
+    public Map<String,Object> moduleNumber(pageVo pageVo){
 
-        List<BaseProject> allBaseProject = baseProjectService.findAllBaseProject();
+        if (pageVo.getDistrict().equals("芜湖")){
+            pageVo.setDistrict("1");
+        }else if(pageVo.getDistrict().equals("马鞍山")){
+            pageVo.setDistrict("2");
+        }else if(pageVo.getDistrict().equals("江北")){
+            pageVo.setDistrict("3");
+        }else if(pageVo.getDistrict().equals("吴江")){
+            pageVo.setDistrict("4");
+        }
+        List<BaseProject> allBaseProject = baseProjectService.findAllBaseProject(pageVo);
         List<ModuleNumber> moduleNumbers = projectOverviewService.moduleNumber(allBaseProject);
         return RestUtil.success(moduleNumbers);
     }

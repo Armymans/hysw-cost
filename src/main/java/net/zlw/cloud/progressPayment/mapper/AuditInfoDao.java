@@ -47,6 +47,8 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "IFNULL(audit_opinion,'-') auditOpinion\n" +
             "from audit_info \n" +
             "where \n" +
-            "base_project_id = #{id}")
+            "base_project_id = #{id}\n" +
+            "order by\n" +
+            "audit_result desc")
     List<AuditChekedVo> auditChek(@Param("id") String id);
 }

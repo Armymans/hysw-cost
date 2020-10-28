@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.general.model.AuditChekedVo;
+import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.PageVo;
@@ -24,7 +25,7 @@ public interface BaseProjectService {
 
     List<BaseProject> findBaseProject(String name);
 
-    List<BaseProject> findAllBaseProject();
+    List<BaseProject> findAllBaseProject(pageVo pageVo);
 
     void batchReview(BatchReviewVo batchReviewVo);
 
