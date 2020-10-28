@@ -100,11 +100,31 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/budgetingList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> budgetingList(CostVo2 costVo2){
 //        getLoginUser().getId();
+        //预算金额和
+        BigDecimal total1 = new BigDecimal(0);
+        //咨询费费用和
+        BigDecimal total2 = new BigDecimal(0);
+        //标底金额和
+        BigDecimal total3 = new BigDecimal(0);
+        //标底咨询费用和
+        BigDecimal total4 = new BigDecimal(0);
+        //计算基数和
+        BigDecimal total5 = new BigDecimal(0);
+        //计提和
+        BigDecimal total6 = new BigDecimal(0);
         List<Budgeting> budgetings = projectSumService.budgetingList(costVo2);
         IncomeInfo incomeInfo = new IncomeInfo();
         AchievementsInfo achievementsInfo = new AchievementsInfo();
         achievementsInfo.setMemberId(costVo2.getId());
         for (Budgeting budgeting : budgetings) {
+            //预算金额和 1
+            total1 = total1.add(budgeting.getAmountCost());
+            //标底金额和 3
+            if(budgeting.getBiddingPriceControl()==null){
+                total3 = total3.add(new BigDecimal(0));
+            }else{
+                total3 = total3.add(budgeting.getBiddingPriceControl());
+            }
             incomeInfo.setBaseProjectId(budgeting.getId());
             achievementsInfo.setBaseProjectId(budgeting.getId());
             if(!"4".equals(budgeting.getDistrict())){
@@ -112,33 +132,50 @@ public class ProjectSumController extends BaseController {
                 Double money = projectSumService.anhuiBudgetingMoney(budgeting.getAmountCost());
                 money = (double)Math.round(money*100)/100;
                 budgeting.setBudgetingCost(money);
+                //咨询费费用和 2
+                total2 = total2.add(new BigDecimal(money));
+
                 //预算编制标底咨询金额
                 if(budgeting.getBiddingPriceControl()==null){
                     budgeting.setBiddingPriceControl(new BigDecimal(0));
                 }
                 Double money1 = projectSumService.anhuiBudgetingMoney(budgeting.getBiddingPriceControl());
-                System.err.println(money1);
+                total3 = total3.add(new BigDecimal(money1));
                 money1 = (double)Math.round(money1*100)/100;
                 budgeting.setBudgetingStandard(money1);
+                //标底咨询费用和 4
+                total4 = total4.add(new BigDecimal(money1));
+
                 //预算编制咨询费计算基数
                 Double aDouble = projectSumService.BudgetingBase(money, money1);
                 aDouble = (double)Math.round(aDouble*100)/100;
                 budgeting.setBudgetingBase(aDouble);
                 incomeInfo.setBudgetMoney(new BigDecimal(aDouble));
+                //计算基数和
+                total5 = total5.add(new BigDecimal(aDouble));
+
                 //预算编制技提
                 Double aDouble1 = projectSumService.technicalImprovement(aDouble);
                 aDouble1 = (double)Math.round(aDouble1*100)/100;
                 budgeting.setBudgetingCommission(aDouble1);
                 achievementsInfo.setBudgetAchievements(aDouble1);
+                //计提和
+                total6 = total6.add(new BigDecimal(aDouble1));
             }else{
                 //预算编制造价咨询金额
                 Double money = projectSumService.wujiangBudgetingMoney(budgeting.getAmountCost());
                 money = (double)Math.round(money*100)/100;
                 budgeting.setBudgetingCost(money);
+                //咨询费费用和 2
+                total2 = total2.add(new BigDecimal(money));
+
                 //预算编制标底咨询金额
                 Double money1 = projectSumService.wujiangBudgetingMoney(budgeting.getBiddingPriceControl());
                 money1 = (double)Math.round(money1*100)/100;
                 budgeting.setBudgetingStandard(money1);
+                //标底咨询费用和 4
+                total4 = total4.add(new BigDecimal(money1));
+
                 //预算编制咨询费计算基数
                 Double aDouble = projectSumService.BudgetingBase(money, money1);
                 //如果金额小于3000 则直接返回3000
@@ -149,17 +186,31 @@ public class ProjectSumController extends BaseController {
                 aDouble = (double)Math.round(aDouble*100)/100;
                 budgeting.setBudgetingBase(aDouble);
                 incomeInfo.setBudgetMoney(new BigDecimal(aDouble));
+                //计算基数和
+                total5 = total5.add(new BigDecimal(aDouble));
+
                 //预算编制技提
                 Double aDouble1 = projectSumService.technicalImprovement(aDouble);
                 aDouble1 = (double)Math.round(aDouble1*100)/100;
                 budgeting.setBudgetingCommission(aDouble1);
                 achievementsInfo.setBudgetAchievements(aDouble1);
+                //计提和
+                total6 = total6.add(new BigDecimal(aDouble1));
             }
+
             //将信息保存到表中
-           projectSumService.addIncomeInfo(incomeInfo);
+            projectSumService.addIncomeInfo(incomeInfo);
             projectSumService.addAchievements(achievementsInfo);
         }
-        return RestUtil.success(budgetings);
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        map.put("budgetings",budgetings);
+        map.put("total1",total1.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total2",total2.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total3",total3.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total4",total4.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total5",total5.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total6",total6.setScale(2,BigDecimal.ROUND_HALF_UP));
+        return RestUtil.success(map);
     }
 
     /***
@@ -170,10 +221,17 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/LastSettlementReviewChargeList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> LastSettlementReviewChargeList(CostVo2 costVo2){
         List<LastSettlementReview> lastSettlementReviews = projectSumService.lastSettlementReviewChargeList(costVo2);
+        //造价金额和
+        BigDecimal total1 = new BigDecimal(0);
+        //咨询费费用和
+        BigDecimal total2 = new BigDecimal(0);
+        //计提和
+        BigDecimal total3 = new BigDecimal(0);
         IncomeInfo incomeInfo = new IncomeInfo();
         AchievementsInfo achievementsInfo = new AchievementsInfo();
         achievementsInfo.setMemberId(costVo2.getId());
         for (LastSettlementReview lastSettlementReview : lastSettlementReviews) {
+            total1 = total1.add(lastSettlementReview.getReviewNumber());
             //保存id
             incomeInfo.setBaseProjectId(lastSettlementReview.getId());
             achievementsInfo.setBaseProjectId(lastSettlementReview.getId());
@@ -187,30 +245,37 @@ public class ProjectSumController extends BaseController {
                 money = (double)Math.round(money*100)/100;
                 lastSettlementReview.setReviewNumberCost(money);
                 incomeInfo.setUpsubmitMoney(new BigDecimal(money));
-
+                total2 = total2.add(new BigDecimal(money));
                 //计提
                 Double aDouble1 = projectSumService.technicalImprovement(money);
                 aDouble1 = (double)Math.round(aDouble1*100)/100;
                 lastSettlementReview.setCommission(aDouble1);
                 achievementsInfo.setUpsubmitAchievements(aDouble1);
+                total3 = total3.add(new BigDecimal(aDouble1));
             }else{
                 //咨询费
                 Double money = projectSumService.wujiangLastSettlementReviewChargeMoney(lastSettlementReview.getReviewNumber());
                 money = (double)Math.round(money*100)/100;
                 lastSettlementReview.setReviewNumberCost(money);
                 incomeInfo.setUpsubmitMoney(new BigDecimal(money));
-
+                total2 = total2.add(new BigDecimal(money));
                 //计提
                 Double aDouble1 = projectSumService.technicalImprovement(money);
                 aDouble1 = (double)Math.round(aDouble1*100)/100;
                 lastSettlementReview.setCommission(aDouble1);
                 achievementsInfo.setUpsubmitAchievements(aDouble1);
+                total3 = total3.add(new BigDecimal(aDouble1));
             }
             //将信息保存到表中
             projectSumService.addIncomeInfo(incomeInfo);
             projectSumService.addAchievements(achievementsInfo);
         }
-        return RestUtil.success(lastSettlementReviews);
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        map.put("lastSettlementReviews",lastSettlementReviews);
+        map.put("total1",total1.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total2",total2.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total3",total3.setScale(2,BigDecimal.ROUND_HALF_UP));
+        return RestUtil.success(map);
     }
 
     /**
@@ -220,11 +285,31 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/settlementAuditInformationList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> settlementAuditInformationList(CostVo2 costVo2){
+        //送审金额和
+        BigDecimal total1 = new BigDecimal(0);
+        //审核金额和
+        BigDecimal total2 = new BigDecimal(0);
+        //核减金额和
+        BigDecimal total3 = new BigDecimal(0);
+        //基本费和
+        BigDecimal total4 = new BigDecimal(0);
+        //核减费和
+        BigDecimal total5 = new BigDecimal(0);
+        //计价基数和
+        BigDecimal total6 = new BigDecimal(0);
+        //计提和
+        BigDecimal total7 = new BigDecimal(0);
         List<SettlementAuditInformation> settlementAuditInformations = projectSumService.settlementAuditInformationList(costVo2);
         IncomeInfo incomeInfo = new IncomeInfo();
         AchievementsInfo achievementsInfo = new AchievementsInfo();
         achievementsInfo.setMemberId(costVo2.getId());
         for (SettlementAuditInformation settlementAuditInformation : settlementAuditInformations) {
+            //送审金额和
+            total1 = total1.add(settlementAuditInformation.getSumbitMoney());
+            //审核金额和
+            total2 = total2.add(settlementAuditInformation.getAuthorizedNumber());
+            //核减金额和
+            total3 = total3.add(settlementAuditInformation.getSubtractTheNumber());
             incomeInfo.setBaseProjectId(settlementAuditInformation.getId());
             achievementsInfo.setBaseProjectId(settlementAuditInformation.getId());
             if(!"4".equals(settlementAuditInformation.getDistrict())){
@@ -232,10 +317,12 @@ public class ProjectSumController extends BaseController {
                 Double money = projectSumService.anhuiSettlementAuditInformationChargeBase(settlementAuditInformation.getSumbitMoney());
                 money = (double)Math.round(money*100)/100;
                 settlementAuditInformation.setBaseMoney(money);
+                total4 = total4.add(new BigDecimal(money));
                 //计算核检费
                 Double money1 = projectSumService.anhuiSubtractTheNumberMoney(settlementAuditInformation.getSubtractTheNumber());
                 money1 = (double)Math.round(money1*100)/100;
                 settlementAuditInformation.setSubtractTheNumberMoney(money1);
+                total5 = total5.add(new BigDecimal(money1));
                 //计算咨询费计算基数
                 Double money2 = projectSumService.anhuiSettlementAuditInformationChargeMoney(money, money1);
                 //如果送审金额 小于60000 应收咨询费=基本费+核减费
@@ -243,58 +330,77 @@ public class ProjectSumController extends BaseController {
                     money2 = (double)Math.round(money2*100)/100;
                     settlementAuditInformation.setReviewNumberCost(money2);
                     incomeInfo.setDownsubmitMoney(new BigDecimal(money2));
+                    total6 = total6.add(new BigDecimal(money2));
                 }
                 //如果送审金额大于60000 应收咨询费小于一千则收一千
                 if(settlementAuditInformation.getSumbitMoney().compareTo(new BigDecimal("60000"))==1){
                     if(money2<1000){
                         settlementAuditInformation.setReviewNumberCost(1000.00);
                         incomeInfo.setDownsubmitMoney(new BigDecimal(1000.00));
+                        total6 = total6.add(new BigDecimal(1000.00));
                     }
                     money2 = (double)Math.round(money2*100)/100;
                     settlementAuditInformation.setReviewNumberCost(money2);
                     incomeInfo.setDownsubmitMoney(new BigDecimal(money2));
+                    total6 = total6.add(new BigDecimal(money2));
                 }
                 //计提
                 Double aDouble = projectSumService.settlementAuditImprovement(money, money1, money2);
                 aDouble = (double)Math.round(aDouble*100)/100;
                 settlementAuditInformation.setCommission(aDouble);
                 achievementsInfo.setDownsubmitAchievements(aDouble);
+                total7 = total7.add(new BigDecimal(aDouble));
             }else{
                 //计算基本费
                 Double money = projectSumService.wujiangSettlementAuditInformationChargeBase(settlementAuditInformation.getSumbitMoney());
                 money = (double)Math.round(money*100)/100;
                 settlementAuditInformation.setBaseMoney(money);
+                total4 = total4.add(new BigDecimal(money));
                 //计算核检费
                 Double money1 = projectSumService.wujiangSubtractTheNumberMoney(settlementAuditInformation.getSubtractTheNumber());
                 money1 = (double)Math.round(money1*100)/100;
                 settlementAuditInformation.setSubtractTheNumberMoney(money1);
+                total5 = total5.add(new BigDecimal(money1));
                 //计算咨询费计算基数
                 Double money2 = projectSumService.anhuiSettlementAuditInformationChargeMoney(money, money1);
                 //送审金额小于50000 应收咨询费=400+核减费
                 if(settlementAuditInformation.getSumbitMoney().compareTo(new BigDecimal("50000"))<1){
                     settlementAuditInformation.setReviewNumberCost(money1+400);
                     incomeInfo.setDownsubmitMoney(new BigDecimal(money1+400));
+                    total6 = total6.add(new BigDecimal(money2));
                 }
                 //送审金额5万至10万之间，送审金额>50000 应收咨询费=800＋核减费，
                 if(settlementAuditInformation.getSumbitMoney().compareTo(new BigDecimal("50000"))==1&&
                         settlementAuditInformation.getSumbitMoney().compareTo(new BigDecimal("100000"))==-1){
                     settlementAuditInformation.setReviewNumberCost(money1+800);
                     incomeInfo.setDownsubmitMoney(new BigDecimal(money1+800));
+                    total6 = total6.add(new BigDecimal(money2));
                 }
                 //送审金额>100000，应收咨询费=基本费＋核减费
                 money2 = (double)Math.round(money2*100)/100;
                 settlementAuditInformation.setReviewNumberCost(money2);
                 incomeInfo.setDownsubmitMoney(new BigDecimal(money2));
+                total6 = total6.add(new BigDecimal(money2));
                 //计提
                 Double aDouble = projectSumService.settlementAuditImprovement(money, money1, money2);
                 aDouble = (double)Math.round(aDouble*100)/100;
                 settlementAuditInformation.setCommission(aDouble);
                 achievementsInfo.setDownsubmitAchievements(aDouble);
+                total7 = total7.add(new BigDecimal(aDouble));
             }
             projectSumService.addIncomeInfo(incomeInfo);
             projectSumService.addAchievements(achievementsInfo);
         }
-        return RestUtil.success(settlementAuditInformations);
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        map.put("settlementAuditInformations",settlementAuditInformations);
+        map.put("total1",total1.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total2",total2.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total3",total3.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total4",total4.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total5",total5.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total6",total6.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total7",total7.setScale(2,BigDecimal.ROUND_HALF_UP));
+        return RestUtil.success(map);
     }
 
     /**
@@ -304,6 +410,18 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/trackList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> trackList(CostVo2 costVo2){
+        //500以内和
+        BigDecimal total1 = new BigDecimal(0);
+        //1000以内和
+        BigDecimal total2= new BigDecimal(0);
+        //2000以内和
+        BigDecimal total3= new BigDecimal(0);
+        //小计和
+        BigDecimal total4= new BigDecimal(0);
+        //计提和
+        BigDecimal total5= new BigDecimal(0);
+        //计价基数
+        BigDecimal total6= new BigDecimal(0);
         List<Budgeting> budgetings = projectSumService.trackList(costVo2);
         IncomeInfo incomeInfo = new IncomeInfo();
         AchievementsInfo achievementsInfo = new AchievementsInfo();
@@ -314,6 +432,7 @@ public class ProjectSumController extends BaseController {
             //工程类别
             budgeting.setProjectType("安装");
             BigDecimal amountCost = budgeting.getAmountCost();
+            total6 = total6.add(amountCost);
             if(!"4".equals(budgeting.getDistrict())){
                 //跟踪审计计提
                 Double money = projectSumService.anhuiTrackChargeBaseRate(amountCost);
@@ -322,23 +441,30 @@ public class ProjectSumController extends BaseController {
                     budgeting.setFiveHundredCost(money);
                     budgeting.setSubtotal(money);
                     incomeInfo.setTruckMoney(new BigDecimal(money));
+                    total1 = total1.add(new BigDecimal(money));
+                    total4 = total4.add(new BigDecimal(money));
                 }
                 if(amountCost.compareTo(new BigDecimal("10000000"))<1){
                     money = (double)Math.round(money*100)/100;
                     budgeting.setAThousandCost(money);
                     budgeting.setSubtotal(money);
                     incomeInfo.setTruckMoney(new BigDecimal(money));
+                    total2 = total2.add(new BigDecimal(money));
+                    total4 = total4.add(new BigDecimal(money));
                 }
                 if(amountCost.compareTo(new BigDecimal("10000000"))==1&&amountCost.compareTo(new BigDecimal("20000000"))<1){
                     money = (double)Math.round(money*100)/100;
                     budgeting.setTwoThousandCost(money);
                     budgeting.setSubtotal(money);
                     incomeInfo.setTruckMoney(new BigDecimal(money));
+                    total3 = total3.add(new BigDecimal(money));
+                    total4 = total4.add(new BigDecimal(money));
                 }
                 Double aDouble = projectSumService.trackImprovement(budgeting.getSubtotal());
                 aDouble = (double)Math.round(aDouble*100)/100;
                 budgeting.setBudgetingCommission(aDouble);
                 achievementsInfo.setTruckAchievements(aDouble);
+                total5 = total5.add(new BigDecimal(aDouble));
             }else{
                 Double money = projectSumService.wujiangTrackChargeBaseRate(amountCost);
                 if(amountCost.compareTo(new BigDecimal("5000000"))<1){
@@ -346,28 +472,43 @@ public class ProjectSumController extends BaseController {
                     budgeting.setFiveHundredCost(money);
                     budgeting.setSubtotal(money);
                     incomeInfo.setTruckMoney(new BigDecimal(money));
+                    total1 = total1.add(new BigDecimal(money));
+                    total4 = total4.add(new BigDecimal(money));
                 }
                 if(amountCost.compareTo(new BigDecimal("10000000"))<1){
                     money = (double)Math.round(money*100)/100;
                     budgeting.setAThousandCost(money);
                     budgeting.setSubtotal(money);
                     incomeInfo.setTruckMoney(new BigDecimal(money));
+                    total2 = total2.add(new BigDecimal(money));
+                    total4 = total4.add(new BigDecimal(money));
                 }
                 if(amountCost.compareTo(new BigDecimal("10000000"))==1&&amountCost.compareTo(new BigDecimal("20000000"))<1){
                     money = (double)Math.round(money*100)/100;
                     budgeting.setTwoThousandCost(money);
                     budgeting.setSubtotal(money);
                     incomeInfo.setTruckMoney(new BigDecimal(money));
+                    total3 = total3.add(new BigDecimal(money));
+                    total4 = total4.add(new BigDecimal(money));
                 }
                 Double aDouble = projectSumService.trackImprovement(budgeting.getSubtotal());
                 aDouble = (double)Math.round(aDouble*100)/100;
                 budgeting.setBudgetingCommission(aDouble);
                 achievementsInfo.setTruckAchievements(aDouble);
+                total5 = total5.add(new BigDecimal(aDouble));
             }
             projectSumService.addIncomeInfo(incomeInfo);
             projectSumService.addAchievements(achievementsInfo);
         }
-        return RestUtil.success(budgetings);
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        map.put("budgetings",budgetings);
+        map.put("total1",total1.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total2",total2.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total3",total3.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total4",total4.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total5",total5.setScale(2,BigDecimal.ROUND_HALF_UP));
+        map.put("total6",total6.setScale(2,BigDecimal.ROUND_HALF_UP));
+        return RestUtil.success(map);
     }
 
     /**
