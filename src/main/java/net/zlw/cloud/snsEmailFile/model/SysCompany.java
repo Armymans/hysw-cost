@@ -12,7 +12,7 @@ import javax.persistence.Table;
  * @Date 2020/10/27 17:54
  **/
 @Data
-@Table(name = "file_info")
+@Table(name = "cost_sys_company")
 public class SysCompany {
 
     @Id

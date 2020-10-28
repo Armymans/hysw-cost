@@ -159,7 +159,7 @@ public class MailSender {
 	 *            待发送的邮件信息
 	 */
 	public static boolean sendHtmlMail(MailInfo mailInfo) {
-		ExchangeMailUtil mailUtil = new ExchangeMailUtil("https://mail.huayanwater.com/EWS/exchange.asmx","CaiGou", "Hy123456");
+		ExchangeMailUtil mailUtil = new ExchangeMailUtil("https://mail.huayanwater.com/EWS/exchange.asmx","zjglpt", "!rh@wN4m^#q");
 		String toStr = mailInfo.getToAddress();
 		String[] to = new String[]{toStr};
 		try {
