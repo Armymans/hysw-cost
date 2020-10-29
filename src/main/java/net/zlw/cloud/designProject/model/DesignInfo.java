@@ -77,6 +77,35 @@ public class DesignInfo{
     @Column(name = "isfinalaccount")
     private String isfinalaccount;
 
+
+    //新加字段
+//    @Column(name = "project_remark")
+//    private String projectRemark;
+
+    @Column(name = "water_supply")
+    private String waterSupply;
+
+    @Column(name = "special_user")
+    private String specialUser;
+
+    @Column(name = "user_of_day")
+    private String userOfDay;
+
+    @Column(name = "time_of_user")
+    private String timeOfUser;
+
+    @Column(name = "number_of_building")
+    private String numberOfBuilding;
+
+    @Column(name = "num_building")
+    private String numBuilding;
+
+    @Column(name = "building_layers")
+    private String buildingLayers;
+
+    @Column(name = "notes_drawing_time")
+    private String notesDrawingTime;
+
 //    private BaseProject baseProject;
 //    private List<DesignChangeInfo> designChangeInfolist;
 //    private AnhuiMoneyinfo anhuiMoneyinfo;
