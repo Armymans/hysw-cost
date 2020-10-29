@@ -15,11 +15,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.soap.Addressing;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -45,7 +47,11 @@ public class MemberService {
 
     public String userLogin(String userAccount,HttpServletRequest request) {
         try {
+
             MemberManage user = userDao.selectByAccount(userAccount);
+
+
+
             if (user != null) {
                 InformationLog login = new InformationLog();
                 SysCompany company = companyDao.selectByPrimaryKey(user.getCompanyId());
