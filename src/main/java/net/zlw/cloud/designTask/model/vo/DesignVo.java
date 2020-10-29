@@ -37,7 +37,7 @@ public class DesignVo {
     private String applicationNumber;
     private String shouldBe;
     private String status;
-//    private String projectRemark;
+    private String projectRemark;
     private String waterSupply;
     private String thisTask;
     private String specialUser;
@@ -50,13 +50,15 @@ public class DesignVo {
     private String blueprintCountersignTime;
     private String blueprintStartTime;
     private String virtualCode;
+
+
     private List<WatherList> waterList;
     private List<DeclarationInformation> declarationInformation;
     private List<OperationSubmitType> operationSubmitType;
     private List<SubmitOperationDept> submitOperationDept;
     private List<ProjectDesign> projectDesign;
-    private List<CustomerProvidedFile> CustomerProvidedFile;
-    private List<MangerDemand> MangerDemand;
+    private List<CustomerProvidedFile> customerProvidedFile;
+    private List<MangerDemand> mangerDemand;
 
 
 

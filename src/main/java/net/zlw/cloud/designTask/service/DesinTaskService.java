@@ -22,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static com.sun.deploy.cache.Cache.exists;
+
 /**
  * @Classname DesinTaskService
  * @Description TODO
@@ -56,14 +58,11 @@ public class DesinTaskService {
 
     public void getDesignEngineering(String account, DesignVo designVo) {
         //设置创建时间以及修改时间
-//        String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
 
-        //查询设计集合
-        List<DesignInfo> designInfos = designInfoMapper.selectAll();
-        System.out.println(designInfos);
         //判断vo
-        if (StringUtils.isNotEmpty(designVo.getId())) {
+        if (designVo != null) {
             //创建项目对象
             BaseProject baseProject = new BaseProject();
             //添加数据
@@ -89,30 +88,32 @@ public class DesinTaskService {
             baseProject.setStatus(designVo.getStatus());
             baseProject.setThisDeclaration(designVo.getThisTask());
             baseProject.setVirtualCode(designVo.getVirtualCode());
+            baseProject.setDelFlag("0");
             //写到数据库
             baseProjectDao.insertSelective(baseProject);
 
-            //遍历设计信息表
-            for (DesignInfo thisDesI : designInfos) {
-                //判断信息表如果没有重复外键的话就添加数据
-                if (thisDesI.getBaseProjectId().contains(designVo.getBaseProjectId())) {
-                    thisDesI.setId(designVo.getId());
-                    thisDesI.setPhone(designVo.getPhone());
-//                    thisDesI.setProjectRemark(designVo.getProjectRemark());
-                    thisDesI.setWaterSupply(designVo.getWaterSupply());
-                    thisDesI.setSpecialUser(designVo.getSpecialUser());
-                    thisDesI.setUserOfDay(designVo.getUserOfDay());
-                    thisDesI.setTimeOfUser(designVo.getTimeOfUser());
-                    thisDesI.setNumberOfBuilding(designVo.getNumberOfBuilding());
-                    thisDesI.setNumBuilding(designVo.getNumBuilding());
-                    thisDesI.setBuildingLayers(designVo.getBuildingLayers());
-                    thisDesI.setNotesDrawingTime(designVo.getNotesDrawingTime());
-                    thisDesI.setBlueprintCountersignTime(designVo.getBlueprintCountersignTime());
-                    thisDesI.setBlueprintStartTime(designVo.getBlueprintStartTime());
-                }
-                //写到数据库
-                designInfoMapper.insertSelective(thisDesI);
+            DesignInfo designInfo = new DesignInfo();
+
+            //判断信息表如果没有重复外键的话就添加数据
+            if (StringUtils.isNotEmpty(designVo.getApplicationNum())) {
+                designInfo.setId(designVo.getId());
+                designInfo.setPhone(designVo.getPhone());
+                designInfo.setProjectRemark(designVo.getProjectRemark());
+                designInfo.setWaterSupply(designVo.getWaterSupply());
+                designInfo.setSpecialUser(designVo.getSpecialUser());
+                designInfo.setUserOfDay(designVo.getUserOfDay());
+                designInfo.setTimeOfUser(designVo.getTimeOfUser());
+                designInfo.setNumberOfBuilding(designVo.getNumberOfBuilding());
+                designInfo.setNumBuilding(designVo.getNumBuilding());
+                designInfo.setBuildingLayers(designVo.getBuildingLayers());
+                designInfo.setNotesDrawingTime(designVo.getNotesDrawingTime());
+                designInfo.setBlueprintCountersignTime(designVo.getBlueprintCountersignTime());
+                designInfo.setBlueprintStartTime(designVo.getBlueprintStartTime());
+                designInfo.setStatus("0");
             }
+            //写到数据库
+            designInfoMapper.insertSelective(designInfo);
+
 
             //管理表对象
             MangerDemand mangerDemand = new MangerDemand();
@@ -121,8 +122,8 @@ public class DesinTaskService {
             //遍历
             for (MangerDemand thisManger : mangerDemand1) {
                 //判断管理表是否为空
-                if (StringUtils.isNotEmpty(thisManger.getBaseProjectId())) {
-                    mangerDemand.setId(UUID.randomUUID().toString().replace("-", ""));
+                if (thisManger != null) {
+                    mangerDemand.setId(thisManger.getId());
                     mangerDemand.setBaseProjectId(designVo.getBaseProjectId());
                     mangerDemand.setCaliber(thisManger.getCaliber());
                     mangerDemand.setCount(thisManger.getCount());
@@ -135,8 +136,8 @@ public class DesinTaskService {
             //获得提交集合
             List<SubmitOperationDept> submitOperationDept1 = designVo.getSubmitOperationDept();
             for (SubmitOperationDept thisSubmitOperation : submitOperationDept1) {
-                if (StringUtils.isNotEmpty(thisSubmitOperation.getBaseProjectId())){
-                    submitOperationDept.setId(UUID.randomUUID().toString().replace("-",""));
+                if (thisSubmitOperation != null) {
+                    submitOperationDept.setId(thisSubmitOperation.getId());
                     submitOperationDept.setBaseProjectId(designVo.getBaseProjectId());
                     submitOperationDept.setExamineDept(thisSubmitOperation.getExamineDept());
                     submitOperationDept.setExamineOpinion(thisSubmitOperation.getExamineOpinion());
@@ -154,8 +155,8 @@ public class DesinTaskService {
             DeclarationInformation declarationInformation = new DeclarationInformation();
             List<DeclarationInformation> declarationInformation1 = designVo.getDeclarationInformation();
             for (DeclarationInformation thisDeclar : declarationInformation1) {
-                if (StringUtils.isNotEmpty(thisDeclar.getBaseProjectId())) {
-                    declarationInformation.setId(UUID.randomUUID().toString().replace("-", ""));
+                if (thisDeclar != null) {
+                    declarationInformation.setId(thisDeclar.getId());
                     declarationInformation.setBaseProjectId(designVo.getBaseProjectId());
                     declarationInformation.setDeclarationCount(thisDeclar.getDeclarationCount());
                     declarationInformation.setDeclarationType(thisDeclar.getDeclarationType());
@@ -173,78 +174,73 @@ public class DesinTaskService {
             List<OperationSubmitType> operationSubmitType1 = designVo.getOperationSubmitType();
             for (OperationSubmitType thisSubmitType : operationSubmitType1) {
                 //判断是否为空
-                if (StringUtils.isNotEmpty(thisSubmitType.getBaseProjectId())) {
-                    operationSubmitType.setId(UUID.randomUUID().toString().replace("-", ""));
+                if (thisSubmitType != null) {
+                    operationSubmitType.setId(thisSubmitType.getId());
                     operationSubmitType.setBaseProjectId(thisSubmitType.getBaseProjectId());
                     operationSubmitType.setOperationDept(thisSubmitType.getOperationDept());
                     operationSubmitType.setOperationTime(thisSubmitType.getOperationTime());
                     operationSubmitType.setOperationTpe(thisSubmitType.getOperationTpe());
-                    operationSubmitType.setOperator(thisSubmitType.getOperator());
+                    operationSubmitType.setOperator(account);
                     operationSubmitType.setResreon(thisSubmitType.getResreon());
                 }
                 //写入数据库
                 operationSubmitTypeDao.insertSelective(operationSubmitType);
             }
 
-            //查询文件集合
-            List<FileInfo> fileInfos = fileInfoMapper.selectAll();
+            //获得文件对象
+            FileInfo fileInfo = new FileInfo();
             //获得图纸、批文资料
             List<CustomerProvidedFile> customerProvidedFile = designVo.getCustomerProvidedFile();
-            for (FileInfo thisFile : fileInfos) {
-                for (CustomerProvidedFile thisProvidedFile : customerProvidedFile) {
-                    //如果文件信息不重复就写入
-                    if (!thisFile.getPlatCode().contains(thisProvidedFile.getBaseProjectId())) {
-                        thisFile.setId(UUID.randomUUID().toString().replace("-",""));
-                        thisFile.setPlatCode(thisProvidedFile.getBaseProjectId());
-                        thisFile.setFileName(thisProvidedFile.getCustomerProvidedFileName());
-                        thisFile.setName(thisProvidedFile.getCustomerProvidedName());
-                        thisFile.setCreateTime(thisProvidedFile.getCustomerProvidedTime());
-                        thisFile.setUserId(thisProvidedFile.getCustomerProvidedBy());
-                        thisFile.setFilePath(thisProvidedFile.getCustomerProvidedDrawing());
-                        thisFile.setType("tzpwzl");
 
-                    }
-                }
-                //插入文件表
-                fileInfoMapper.insertSelective(thisFile);
+            for (CustomerProvidedFile thisProvidedFile : customerProvidedFile) {
+                fileInfo.setId(thisProvidedFile.getId());
+                fileInfo.setPlatCode(thisProvidedFile.getBaseProjectId());
+                fileInfo.setFileName(thisProvidedFile.getCustomerProvidedFileName());
+                fileInfo.setName(thisProvidedFile.getCustomerProvidedName());
+                fileInfo.setCreateTime(thisProvidedFile.getCustomerProvidedTime());
+                fileInfo.setUserId(thisProvidedFile.getCustomerProvidedBy());
+                fileInfo.setFilePath(thisProvidedFile.getCustomerProvidedDrawing());
+                fileInfo.setType("tzpwzl");
             }
+            //插入文件表
+            fileInfoMapper.insertSelective(fileInfo);
+
+
             //获得工程设计图纸集合
             List<ProjectDesign> projectDesign = designVo.getProjectDesign();
-            for (FileInfo thisFile : fileInfos) {
-                for (ProjectDesign thisProject : projectDesign) {
-                    //如果文件信息不重复就写入
-                    if (!thisFile.getPlatCode().contains(thisProject.getBaseProjectId())) {
-                        thisFile.setId(UUID.randomUUID().toString().replace("-",""));
-                        thisFile.setPlatCode(thisProject.getBaseProjectId());
-                        thisFile.setFileName(thisProject.getProjectFileName());
-                        thisFile.setCreateTime(thisProject.getProjectUpTime());
-                        thisFile.setRemark(thisProject.getProjectUploadedBy());
-                        thisFile.setCreateTime(thisProject.getProjectUploadedBy());
-                        thisFile.setType("gcsjtz");
-                    }
+
+            for (ProjectDesign thisProject : projectDesign) {
+                //如果文件信息不重复就写入
+                    fileInfo.setId(thisProject.getId());
+                    fileInfo.setPlatCode(thisProject.getBaseProjectId());
+                    fileInfo.setFileName(thisProject.getProjectFileName());
+                    fileInfo.setCreateTime(thisProject.getProjectUpTime());
+                    fileInfo.setRemark(thisProject.getProjectUploadedBy());
+                    fileInfo.setCreateTime(thisProject.getProjectUploadedBy());
+                    fileInfo.setStatus("0");
+                    fileInfo.setType("gcsjtz");
                 }
+
                 //插入文件表
-                fileInfoMapper.insertSelective(thisFile);
-            }
+                fileInfoMapper.insertSelective(fileInfo);
+
+
             //获得水表数量清单集合
             List<WatherList> waterList = designVo.getWaterList();
-            for (FileInfo thisFile : fileInfos) {
-                for (WatherList thisWater : waterList) {
-                    //如果文件信息不重复就写入
-                    if (!thisFile.getPlatCode().contains(thisWater.getBaseProjectId())) {
-                        thisFile.setId(UUID.randomUUID().toString().replace("-",""));
-                        thisFile.setPlatCode(thisWater.getBaseProjectId());
-                        thisFile.setFileName(thisWater.getWaterListFileName());
-                        thisFile.setCreateTime(thisWater.getWaterListTime());
-                        thisFile.setUserId(thisWater.getWaterListBy());
-                        thisFile.setFilePath(thisWater.getWaterListDrawing());
-                        thisFile.setType("sbslqd");
-                    }
-                }
-                //插入文件表
-                fileInfoMapper.insertSelective(thisFile);
-            }
 
+            for (WatherList thisWater : waterList) {
+                //如果文件信息不重复就写入
+                    fileInfo.setId(thisWater.getId());
+                    fileInfo.setPlatCode(thisWater.getBaseProjectId());
+                    fileInfo.setFileName(thisWater.getWaterListFileName());
+                    fileInfo.setCreateTime(thisWater.getWaterListTime());
+                    fileInfo.setUserId(thisWater.getWaterListBy());
+                    fileInfo.setFilePath(thisWater.getWaterListDrawing());
+                    fileInfo.setType("sbslqd");
+                }
+
+                //插入文件表
+                fileInfoMapper.insertSelective(fileInfo);
 
 
         }

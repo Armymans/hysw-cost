@@ -1,6 +1,7 @@
 package net.zlw.cloud.designProject.model;
 
 import lombok.Data;
+
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
@@ -79,8 +80,8 @@ public class DesignInfo{
 
 
     //新加字段
-//    @Column(name = "project_remark")
-//    private String projectRemark;
+    @Column(name = "project_remark")
+    private String projectRemark;
 
     @Column(name = "water_supply")
     private String waterSupply;

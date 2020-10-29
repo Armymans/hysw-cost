@@ -5,10 +5,7 @@ import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designTask.model.vo.DesignVo;
 import net.zlw.cloud.designTask.service.DesinTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -26,8 +23,8 @@ public class DesinTaskController {
     @Autowired
     private DesinTaskService desinTaskService;
 
-    @RequestMapping(value = "/api/getDesignEngineering", method = {RequestMethod.GET, RequestMethod.POST})
-        public Map<String,Object> designEngineering(String account, DesignVo designVo){
+    @RequestMapping(value = "/api/getDesignEngineering", method = {RequestMethod.GET, RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+        public Map<String,Object> designEngineering(@RequestBody DesignVo designVo,@RequestParam(name = "account",required = false) String account ){
 
         desinTaskService.getDesignEngineering(account,designVo);
 
