@@ -58,6 +58,9 @@ public class BuildingProject {
     @Column(name = "project_site")
     private String projectSite;
 
+    @Column(name = "construction_units")
+    private String constructionUnits;
+
     @Column(name = "declare")
     private String declare;
 

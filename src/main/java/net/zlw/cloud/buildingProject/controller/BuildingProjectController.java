@@ -60,8 +60,4 @@ public class BuildingProjectController extends BaseController {
        buildingProjectService.buildingProjectReduction(id);
         return RestUtil.success();
     }
-
-
-
-
 }

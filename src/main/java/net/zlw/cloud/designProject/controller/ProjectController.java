@@ -137,7 +137,7 @@ public class ProjectController extends BaseController {
      * 根据id查询合并项目列表
      * @param idlist
      */
-    @RequestMapping(value = "/api/disproject/mergeProjectList", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+        @RequestMapping(value = "/api/disproject/mergeProjectList", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> mergeProjectList(String idlist) {
         ArrayList<DesignInfo> designInfos = new ArrayList<>();
         String[] split = idlist.split(",");

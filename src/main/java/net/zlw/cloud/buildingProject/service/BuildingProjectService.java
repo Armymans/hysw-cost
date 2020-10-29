@@ -71,7 +71,7 @@ public class BuildingProjectService {
      * @Date 11:56 2020/10/11
      **/
     public void buildingProjectReduction(String id) {
-        BuildingProject buildingProject = buildingProjectMapper.selectByPrimaryKey(id);
+        BuildingProject buildingProject = buildingProjectMapper.selectById(id);
         if (buildingProject != null) {
             buildingProject.setMergeFlag("0");
             buildingProjectMapper.updateByPrimaryKeySelective(buildingProject);

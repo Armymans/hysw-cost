@@ -44,6 +44,4 @@ public class BudgetingVo {
     private String vRemarkes;
     private String auditorId;
     private String auditNumber;
-
-
 }
