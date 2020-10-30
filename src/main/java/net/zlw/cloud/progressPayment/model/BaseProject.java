@@ -175,6 +175,15 @@ public class BaseProject implements Serializable {
     private String createdAt;
     @Column(name = "updated_at")
     private String updatedAt;
+    @Column(name = "area")
+    private String area;
+    @Column(name = "customer_address")
+    private String customerAddress;
+    @Column(name = "customer_email")
+    private String customerEmail;
+    @Column(name = "amount_paid")
+    private String amountPaid;
+
 
 
 }

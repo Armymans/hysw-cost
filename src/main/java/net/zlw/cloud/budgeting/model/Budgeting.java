@@ -52,6 +52,10 @@ public class Budgeting implements Serializable {
     private String founderCompanyId;
     @Column(name = "del_flag")
     private String delFlag;
+    @Column(name = "sure_result")
+    private String sureResult;
+    @Column(name = "sure_man")
+    private String sureMan;
 
 
 
