@@ -50,8 +50,6 @@ public class LoginController  extends BaseController {
     public Map<String, Object> userLogin(String userName, String spCode, HttpSession session, String rember){
         try{
             String result = "";
-//            spCode= AesEncryptUtil.desEncrypt(spCode);
-//            spCode = AESUtil.decrypt(spCode, AESUtil.ASSETS_DEV_PWD_FIELD);
             if("1".equals(test_userAccount)){
                 log.info("域账号校验开始："+System.currentTimeMillis());
                 result = AdUtils.connect(userName, spCode);
@@ -62,7 +60,6 @@ public class LoginController  extends BaseController {
             log.info("域账号校验结果result："+result);
             String message="";
             if("OK".equals(result)){
-//                message = sysUserService.userLogin("hywater\\\\"+userName,request);
                 message = sysUserService.userLogin(userName,request);
                 String key = UUID.randomUUID().toString();
                 if("ok".equals(message)){
@@ -84,19 +81,18 @@ public class LoginController  extends BaseController {
                     this.saveLoginUserToSession(session);
                     log.info("用户保存session结束，保存登录ip开始："+System.currentTimeMillis());
 
-                    RestUtil.success();
+                    return RestUtil.success();
                 }else{
-                    RestUtil.error( message);
+                    return RestUtil.error( message);
                 }
             }else{
-                RestUtil.error("域账号校验失败");
+                return RestUtil.error("域账号校验失败");
             }
         }catch(Exception ex){
             log.info("新域账号登录接口错误");
-            RestUtil.error("域账号登录错误");
             ex.printStackTrace();
+            return RestUtil.error("域账号登录错误");
         }
-        return null;
     }
     @RequestMapping(value = "/login/userLogin2", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> userLogin(String userName, String password){

@@ -49,9 +49,6 @@ public class MemberService {
         try {
 
             MemberManage user = userDao.selectByAccount(userAccount);
-
-
-
             if (user != null) {
                 InformationLog login = new InformationLog();
                 SysCompany company = companyDao.selectByPrimaryKey(user.getCompanyId());
