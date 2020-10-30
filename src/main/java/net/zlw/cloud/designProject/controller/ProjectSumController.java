@@ -1728,11 +1728,11 @@ public class ProjectSumController extends BaseController {
         String josn =
                 "[" +
                         "{\"value1\":"+oneCensus7.getBudgeting()+",\"name1\":\"预算编制\"}," +
-                        "{\"value1\":"+oneCensus7.getLastSettlementReview()+",name1:\"上家结算编制'\"}," +
-                        "{\"value1\":"+oneCensus7.getSettlementAuditInformation()+",name1:\"下家结算审核'\"}," +
-                        "{\"value1\":"+oneCensus7.getTrackAuditInfo()+",name1:\"跟踪审计'\"}," +
-                        "{\"value1\":"+oneCensus7.getVisaChangeInformation()+",name1:\"签证/变更''\"}," +
-                        "{\"value1\":"+oneCensus7.getProgressPaymentInformation()+",name1:\"进度款支付'\"}" +
+                        "{\"value1\":"+oneCensus7.getLastSettlementReview()+",name1:\"上家结算编制\"}," +
+                        "{\"value1\":"+oneCensus7.getSettlementAuditInformation()+",name1:\"下家结算审核\"}," +
+                        "{\"value1\":"+oneCensus7.getTrackAuditInfo()+",name1:\"跟踪审计\"}," +
+                        "{\"value1\":"+oneCensus7.getVisaChangeInformation()+",name1:\"签证/变更\"}," +
+                        "{\"value1\":"+oneCensus7.getProgressPaymentInformation()+",name1:\"进度款支付\"}" +
                         "]";
         JSONArray objects = JSON.parseArray(josn);
 
@@ -1743,7 +1743,7 @@ public class ProjectSumController extends BaseController {
         String josn1 =
                 "[" +
                         "{\"value1\":"+costTaskOutsourcingCount+",\"name1\":\"委外\"}," +
-                        "{\"value1\":"+costTaskNoOutsourcingCount+",name1:\"内部'\"}" +
+                        "{\"value1\":"+costTaskNoOutsourcingCount+",name1:\"内部\"}" +
                         "]";
         JSONArray objects1 = JSON.parseArray(josn1);
 
@@ -1787,7 +1787,7 @@ public class ProjectSumController extends BaseController {
         String josn =
                 "[" +
                         "{\"value1\":"+costTaskOutsourcingCount+",\"name1\":\"委外\"}," +
-                        "{\"value1\":"+costTaskNoOutsourcingCount+",name1:\"内部'\"}" +
+                        "{\"value1\":"+costTaskNoOutsourcingCount+",name1:\"内部\"}" +
                         "]";
         JSONArray objects = JSON.parseArray(josn);
         return RestUtil.success(objects);
