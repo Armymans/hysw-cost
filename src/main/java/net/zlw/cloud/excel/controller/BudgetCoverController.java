@@ -15,11 +15,21 @@ public class BudgetCoverController {
     @Resource
     private BudgetCoverService budgetCoverService;
 
+    //汇总表-神机封面导入
     @RequestMapping(value = "/budgetCover/coverImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> coverImport(){
         budgetCoverService.coverImport();
         return RestUtil.success();
     }
+    //汇总表-神机 单位汇总表导入
+    @RequestMapping(value = "/budgetCover/summaryUnitsImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> summaryUnitsImport(){
+        budgetCoverService.summaryUnitsImport();
+        return RestUtil.success();
+    }
+    //汇总表-神机 分部分项工程量清单计价表
+//    @RequestMapping(value = "/budgetCover/summaryUnitsImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+
 
 
 }
