@@ -28,10 +28,10 @@ public class BudgetCoverController {
         budgetCoverService.summaryUnitsImport();
         return RestUtil.success();
     }
-    //汇总表-神机 分部分项工程量清单计价表
+    //汇总表-神机 分部分项工程量清单计价表   /    上家结算汇总表 分部分项目工程量清单计价表
     @RequestMapping(value = "/budgetCover/partTableQuantitiesImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> partTableQuantitiesImport(){
-        budgetCoverService.partTableQuantitiesImport();
+    public Map<String,Object> partTableQuantitiesImport(@RequestParam(name = "id") String id){
+        budgetCoverService.partTableQuantitiesImport(id);
         return RestUtil.success();
     }
     //物料清单表(安徽)
@@ -40,13 +40,33 @@ public class BudgetCoverController {
         budgetCoverService.bomTableImport(id);
         return RestUtil.success();
     }
-    //上家结算汇总表(安徽)
-    @RequestMapping(value = "/budgetCover/LastSummaryCoverImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    //上家结算汇总表(安徽) 封面
+    @RequestMapping(value = "/budgetCover/lastSummaryCoverImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> LastSummaryCoverImport(@RequestParam(name = "id") String id){
         budgetCoverService.LastSummaryCoverImport(id);
         return RestUtil.success();
     }
-//    @RequestMapping(value = "/budgetCover/LastSummaryCoverImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    //上家结算汇总表 单位工程造价汇总表
+    @RequestMapping(value = "/budgetCover/unitProjectSummaryImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> UnitProjectSummaryImport(@RequestParam(name = "id") String id){
+        budgetCoverService.UnitProjectSummaryImport(id);
+        return RestUtil.success();
+    }
+    //下家结算审核汇总表 -   汇总表
+    @RequestMapping(value = "/budgetCover/summaryTableImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> summaryTableImport(@RequestParam(name = "id") String id){
+        budgetCoverService.summaryTableImport(id);
+        return RestUtil.success();
+    }
+    //下家结算审核核定单
+    @RequestMapping(value = "/budgetCover/verificationSheetImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> verificationSheetImport(@RequestParam(name = "id") String id){
+        budgetCoverService.verificationSheetImport(id);
+        return RestUtil.success();
+    }
+
+
+
 
 
 

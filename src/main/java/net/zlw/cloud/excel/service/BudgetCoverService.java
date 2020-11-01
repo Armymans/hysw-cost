@@ -6,9 +6,15 @@ public interface BudgetCoverService {
     void summaryUnitsImport();
 
 
-    void partTableQuantitiesImport();
+    void partTableQuantitiesImport(String id);
 
     void bomTableImport(String id);
 
     void LastSummaryCoverImport(String id);
+
+    void UnitProjectSummaryImport(String id);
+
+    void summaryTableImport(String id);
+
+    void verificationSheetImport(String id);
 }
