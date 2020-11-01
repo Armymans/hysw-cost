@@ -9,7 +9,7 @@ import tk.mybatis.mapper.common.Mapper;
 import java.util.List;
 
 @org.apache.ibatis.annotations.Mapper
-public interface BomTableInfomation1Dao extends Mapper<BomTableInfomation> {
+public interface BomTableInfomationDao extends Mapper<BomTableInfomation> {
 
     @Select("SELECT * FROM bom_table_infomation where del_flag = 0 and budget_id = #{id}")
     BomTableInfomation selectByBudeingId(@Param("id") String id);

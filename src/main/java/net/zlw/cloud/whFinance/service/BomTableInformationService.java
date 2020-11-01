@@ -2,7 +2,7 @@ package net.zlw.cloud.whFinance.service;
 
 
 import net.zlw.cloud.excel.dao.BomTable1Dao;
-import net.zlw.cloud.excel.dao.BomTableInfomation1Dao;
+import net.zlw.cloud.excel.dao.BomTableInfomationDao;
 import net.zlw.cloud.excel.model.BomTable;
 import net.zlw.cloud.excel.model.BomTableInfomation;
 import net.zlw.cloud.whFinance.dao.BomTableImfomationAllDao;
@@ -29,7 +29,7 @@ public class BomTableInformationService {
     private BomTableImfomationAllDao bomTableImfomationAllDao;
 
     @Resource
-    private BomTableInfomation1Dao bomTableImfomationMapper;
+    private BomTableInfomationDao bomTableImfomationMapper;
 
     public void getBomTable(BomTableVo bomTableVo,String account){
         String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());

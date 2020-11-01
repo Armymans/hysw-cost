@@ -3,7 +3,7 @@ package net.zlw.cloud.demo;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.excel.dao.BomTable1Dao;
-import net.zlw.cloud.excel.dao.BomTableInfomation1Dao;
+import net.zlw.cloud.excel.dao.BomTableInfomationDao;
 import net.zlw.cloud.excel.model.BomTable;
 import net.zlw.cloud.excel.model.BomTableInfomation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class DemoController {
 
     @Autowired
-    private BomTableInfomation1Dao bomTableInfomation1Dao;
+    private BomTableInfomationDao bomTableInfomationDao;
 
     @Autowired
     private BomTable1Dao bomTable1Dao;
@@ -37,7 +37,7 @@ public class DemoController {
      **/
     @RequestMapping(value = "/demo/getBomTableInfomation", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> getBomTableInfomation(@RequestParam("id") String id){
-        BomTableInfomation bomTableInfomation = bomTableInfomation1Dao.selectByBudeingId(id);
+        BomTableInfomation bomTableInfomation = bomTableInfomationDao.selectByBudeingId(id);
         if(bomTableInfomation != null){
             List<BomTable> bomTable = bomTable1Dao.selectByBomTableInfomationId(bomTableInfomation.getId());
             bomTableInfomation.setBomTableList(bomTable);
