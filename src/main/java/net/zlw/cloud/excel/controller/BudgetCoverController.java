@@ -2,6 +2,8 @@ package net.zlw.cloud.excel.controller;
 
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.excel.model.BudgetCover;
+import net.zlw.cloud.excel.model.SummaryShenji;
 import net.zlw.cloud.excel.service.BudgetCoverService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,8 +20,8 @@ public class BudgetCoverController {
 
     //汇总表-神机封面导入
     @RequestMapping(value = "/budgetCover/coverImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> coverImport(){
-        budgetCoverService.coverImport();
+    public Map<String,Object> coverImport(@RequestParam(name = "id") String id){
+        budgetCoverService.coverImport(id);
         return RestUtil.success();
     }
     //汇总表-神机 单位汇总表导入
@@ -63,6 +65,12 @@ public class BudgetCoverController {
     public Map<String,Object> verificationSheetImport(@RequestParam(name = "id") String id){
         budgetCoverService.verificationSheetImport(id);
         return RestUtil.success();
+    }
+    //预算封面查看
+    @RequestMapping(value = "/budgetCover/findSummaryShenjiById",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findBudgetCoverById(@RequestParam (name = "id") String id){
+        SummaryShenji budgetCover =  budgetCoverService.findBudgetCoverById(id);
+      return RestUtil.success(budgetCover);
     }
 
 

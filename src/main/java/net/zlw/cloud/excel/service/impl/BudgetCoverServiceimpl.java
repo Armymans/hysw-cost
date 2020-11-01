@@ -8,6 +8,7 @@ import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.excel.util.RMBdeal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.io.BufferedInputStream;
@@ -71,7 +72,7 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
 
 
     @Override
-    public void coverImport() {
+    public void coverImport(String id) {
         String url = "E:\\正量\\新建文件夹\\预算汇总表-神机（安徽）.xlsx";
         try {
             FileInputStream fileInputStream = new FileInputStream(new File(url));
@@ -97,6 +98,7 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
             summaryShenji.setPreparePeople(s2);
             summaryShenji.setCompileTime(s1);
             summaryShenji.setDelFlag("0");
+
             System.out.println(summaryShenji);
             summaryShenjiDao.insertSelective(summaryShenji);
         } catch (FileNotFoundException e) {
@@ -195,11 +197,14 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     @Override
     public void bomTableImport(String id) {
         try {
+            //文件路径
             String filePath = "E:\\正量\\新建文件夹\\物料清单表（安徽）.xls";
             //第几张表(最低1) 第几条数据开始(最低0)
             Sheet sheet = new Sheet(1,1);
+            //创建文件流
             FileInputStream fileInputStream = new FileInputStream(new File(filePath));
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+            //使用easyExcel读取excel中的数据
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
             BomTableInfomation bomTableInfomation = new BomTableInfomation();
             bomTableInfomation.setId(UUID.randomUUID().toString().replace("-",""));
@@ -483,6 +488,15 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public SummaryShenji findBudgetCoverById(String id) {
+        Example example = new Example(SummaryShenji.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("budgetId",id);
+        SummaryShenji summaryShenji = summaryShenjiDao.selectOneByExample(example);
+        return summaryShenji;
     }
 
 

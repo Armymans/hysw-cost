@@ -1,7 +1,10 @@
 package net.zlw.cloud.excel.service;
 
+import net.zlw.cloud.excel.model.BudgetCover;
+import net.zlw.cloud.excel.model.SummaryShenji;
+
 public interface BudgetCoverService {
-    void coverImport();
+    void coverImport(String id);
 
     void summaryUnitsImport();
 
@@ -17,4 +20,6 @@ public interface BudgetCoverService {
     void summaryTableImport(String id);
 
     void verificationSheetImport(String id);
+
+    SummaryShenji findBudgetCoverById(String id);
 }
