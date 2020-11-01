@@ -44,8 +44,8 @@ public class LastSummaryCover {
     private String reviewer;
     @Column(name = "compile_time")
     private String compileTime;
-    @Column(name = "budget_id")
-    private String budgetId;
+    @Column(name = "last_settlement_id")
+    private String lastSettlementId;
     @Column(name = "create_time")
     private String createTime;
     @Column(name = "update_time")

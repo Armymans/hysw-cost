@@ -7,44 +7,36 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 
+@Table(name = "unit_project_summary")
 @Data
-@Table(name = "part_table_quantities")
-/*
-*  `id` varchar(60) NOT NULL,
+public class UnitProjectSummary {
+    /*
+    *  `id` varchar(60) NOT NULL,
   `serial_number` varchar(60) DEFAULT NULL COMMENT '序号',
-  `project_code` varchar(60) DEFAULT NULL COMMENT '项目编码',
   `project_name` varchar(60) DEFAULT NULL COMMENT '项目名称',
-  `measurement` varchar(60) DEFAULT NULL COMMENT '计量',
-  `engineering` varchar(60) DEFAULT NULL COMMENT '工程',
-  `comprehensive_price` decimal(20,2) DEFAULT NULL COMMENT '综合单价',
-  `combined_price` decimal(20,2) DEFAULT NULL COMMENT '合价',
-  `artificial_cost` decimal(20,2) DEFAULT NULL COMMENT '其中人工费',
+  `amount` decimal(20,2) DEFAULT NULL COMMENT '金额',
+  `budget_id` varchar(60) DEFAULT NULL COMMENT '预算外键',
+  `last_settlement_id` varchar(60) DEFAULT NULL COMMENT '上家表id',
   `create_time` varchar(255) DEFAULT NULL COMMENT '创建时间',
   `update_time` varchar(255) DEFAULT NULL COMMENT '修改时间',
   `founder_id` varchar(255) DEFAULT NULL COMMENT '创建人id',
   `founder_company_id` varchar(255) DEFAULT NULL COMMENT '创建人公司id',
   `del_flag` varchar(255) DEFAULT NULL COMMENT '状态0正常1删除',
 
-* */
-public class PartTableQuantities {
+    * */
     @Id
     private String id;
     @Column(name = "serial_number")
     private String serialNumber;
-    @Column(name = "project_code")
-    private String projectCode;
+    @Column(name = "engineering_name")
+    private String engineeringName;
     @Column(name = "project_name")
     private String projectName;
-    private String measurement;
-    private String engineering;
-    @Column(name = "comprehensive_price")
-    private BigDecimal comprehensivePrice;
-    @Column(name = "combined_price")
-    private BigDecimal combinedPrice;
-    @Column(name = "artificial_cost")
-    private BigDecimal artificialCost;
-    @Column(name = "foreign_key")
-    private String foreignKey;
+    private BigDecimal amount;
+    @Column(name = "budget_id")
+    private String budgetId;
+    @Column(name = "last_settlement_id")
+    private String lastSettlementId;
     @Column(name = "create_time")
     private String createTime;
     @Column(name = "update_time")
@@ -55,7 +47,4 @@ public class PartTableQuantities {
     private String founderCompanyId;
     @Column(name = "del_flag")
     private String delFlag;
-
-
-
 }
