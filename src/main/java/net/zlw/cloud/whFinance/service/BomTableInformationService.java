@@ -1,19 +1,18 @@
 package net.zlw.cloud.whFinance.service;
 
 
+import net.zlw.cloud.excel.dao.BomTable1Dao;
+import net.zlw.cloud.excel.dao.BomTableInfomation1Dao;
+import net.zlw.cloud.excel.model.BomTable;
+import net.zlw.cloud.excel.model.BomTableInfomation;
 import net.zlw.cloud.whFinance.dao.BomTableImfomationAllDao;
 
-import net.zlw.cloud.whFinance.dao.BomTableImfomationMapper;
-import net.zlw.cloud.whFinance.dao.BomTableMapper;
-
-import net.zlw.cloud.whFinance.domain.BomTable1;
-
-import net.zlw.cloud.whFinance.domain.BomTableInfomation1;
 import net.zlw.cloud.whFinance.domain.BomTableInfomationAll;
 import net.zlw.cloud.whFinance.domain.vo.BomTableVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,20 +23,19 @@ import java.util.List;
 public class BomTableInformationService {
 
     @Autowired
-    private BomTableMapper bomTableMapper;
+    private BomTable1Dao bomTableMapper;
 
     @Autowired
     private BomTableImfomationAllDao bomTableImfomationAllDao;
 
-    @Autowired
-    private BomTableImfomationMapper bomTableImfomationMapper;
+    @Resource
+    private BomTableInfomation1Dao bomTableImfomationMapper;
 
     public void getBomTable(BomTableVo bomTableVo,String account){
         String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
         if (bomTableVo != null){
-            BomTableInfomation1 bomTableInfomation1 = new BomTableInfomation1();
-
+            BomTableInfomation bomTableInfomation1 = new BomTableInfomation();
             if (bomTableVo.getId() != null){
                 //物料基本信息表
                 bomTableInfomation1.setId(bomTableVo.getId());
@@ -80,9 +78,9 @@ public class BomTableInformationService {
 
             }
             //物料基本信息表所有的外键
-            List<BomTableInfomation1> id = bomTableImfomationMapper.findId();
+            List<BomTableInfomation> id = bomTableImfomationMapper.findId();
             //判断外键是否重复重复则更新
-            for (BomTableInfomation1 thisId : id) {
+            for (BomTableInfomation thisId : id) {
                 if (bomTableVo.getProjectId().equals(thisId.getProjectCategoriesCoding())){
                     bomTableInfomation1.setId(bomTableVo.getId());
                     bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProjectId());
@@ -105,9 +103,9 @@ public class BomTableInformationService {
             }
 
             //物料信息
-            List<BomTable1> bomTables = bomTableVo.getBomTables();
-            BomTable1 bomTable = new BomTable1();
-            for (BomTable1 thisBomTable : bomTables) {
+            List<BomTable> bomTables = bomTableVo.getBomTables();
+            BomTable bomTable = new BomTable();
+            for (BomTable thisBomTable : bomTables) {
                 if (thisBomTable.getId() != null){
                     bomTable.setId(thisBomTable.getId());
                     bomTable.setMaterialCode(thisBomTable.getMaterialCode());

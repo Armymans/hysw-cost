@@ -29,7 +29,7 @@ public class BomTable {
   `del_flag` varchar(255) DEFAULT NULL COMMENT '状态0正常1删除',
 
     * */
-    @Id
+    @Column(name = "id")
     private String id;
     @Column(name = "material_code")
     private String materialCode;
@@ -37,11 +37,15 @@ public class BomTable {
     private String itemName;
     @Column(name = "specifications_models")
     private String specificationsModels;
+    @Column(name = "unit")
     private String unit;
+    @Column(name = "univalence")
     private String univalence;
+    @Column(name = "quantity")
     private String quantity;
     @Column(name = "combined_price")
     private String combinedPrice;
+    @Column(name = "remark")
     private String remark;
     @Column(name = "bom_table_infomation_id")
     private String bomTableInfomationId;

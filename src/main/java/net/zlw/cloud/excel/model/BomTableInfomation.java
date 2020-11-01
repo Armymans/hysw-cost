@@ -32,7 +32,7 @@ public class BomTableInfomation {
   `del_flag` varchar(1) DEFAULT NULL COMMENT '状态',
 
     * */
-    @Id
+    @Column(name = "id")
     private String id;
     @Column(name = "business_process")
     private String businessProcess;
@@ -46,7 +46,9 @@ public class BomTableInfomation {
     private String ceaNum;
     @Column(name = "acquisition_types")
     private String acquisitionTypes;
+    @Column(name = "contractor")
     private String contractor;
+
     @Column(name = "project_categories_coding")
     private String projectCategoriesCoding;
     @Column(name = "project_types")
@@ -57,6 +59,7 @@ public class BomTableInfomation {
     private String projectName;
     @Column(name = "acquisition_department")
     private String acquisitionDepartment;
+    @Column(name = "remark")
     private String remark;
     @Column(name = "budget_id")
     private String budgetId;
@@ -70,6 +73,9 @@ public class BomTableInfomation {
     private String founderCompany;
     @Column(name = "del_flag")
     private String delFlag;
+    @Column(name = "business_code")
+    private String businessCode;
+
 
     private List<BomTable> bomTableList = new ArrayList<BomTable>();
 

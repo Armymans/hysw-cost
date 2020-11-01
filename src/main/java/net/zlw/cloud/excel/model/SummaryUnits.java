@@ -42,4 +42,7 @@ public class SummaryUnits {
     private String founderCompanyId;
     @Column(name = "del_flag")
     private String delFlag;
+    @Column(name = "budgeting_id")
+    private String budgetingId;
+
 }
