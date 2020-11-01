@@ -54,12 +54,14 @@ public class FileInfoController extends BaseController {
      * @Description //上传文件
      * @Date 11:28 2020/10/10
      **/
-    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+//    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+    @RequestMapping(value="/uploadFile",produces="text/plain;charset=UTF-8", method = RequestMethod.POST)
     public Map<String, Object> applyUpload1(@RequestParam("file") MultipartFile file, String type) {
         log.info(getLogInfo("upload", file));
         FileInfo attachInfo = new FileInfo();
         try {
-            String fileName = new String(FileUtil.getFileName(file).getBytes(), "UTF-8");
+//            String fileName = new String(file.getOriginalFilename().getBytes("ISO-8859-1"),"UTF-8");
+            String fileName = file.getOriginalFilename();
             String fileType = FileUtil.getFileExtName(file);
 
             String fileDir = "/" + sdf2.format(new Date());
@@ -119,7 +121,7 @@ public class FileInfoController extends BaseController {
         log.info(getLogInfo("upload", file));
         FileInfo attachInfo = new FileInfo();
         try {
-            String fileName = new String(FileUtil.getFileName(file).getBytes(), "UTF-8");
+            String fileName = new String(file.getOriginalFilename().getBytes("ISO-8859-1"),"UTF-8");
             String fileType = FileUtil.getFileExtName(file);
 
             String fileDir = "/" + sdf2.format(new Date());

@@ -6,8 +6,6 @@ import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
-import net.zlw.cloud.designProject.mapper.AchievementsInfoMapper;
-import net.zlw.cloud.designProject.mapper.IncomeInfoMapper;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.index.model.vo.pageVo;
@@ -1840,15 +1838,14 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/DesginMonthAchievementsList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/DesginMonthAchievementsList",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> DesginMonthAchievementsList(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
-
         }else{
-            costVo2.setId("1");
+            costVo2.setId("user318");
         }
         PageInfo<OneCensus9> oneCensus9PageInfo = projectSumService.DesginMonthAchievementsList(costVo2);
-        return RestUtil.success(oneCensus9PageInfo);
+        return RestUtil.page(oneCensus9PageInfo);
     }
 
     /**
@@ -1856,15 +1853,15 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/DesginYearAchievementsList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/DesginYearAchievementsList",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> DesginYearAchievementsList(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
 
         }else{
-            costVo2.setId("1");
+            costVo2.setId("user318");
         }
         PageInfo<OneCensus9> oneCensus9PageInfo = projectSumService.DesginYearAchievementsList(costVo2);
-        return RestUtil.success(oneCensus9PageInfo);
+        return RestUtil.page(oneCensus9PageInfo);
     }
 
     /**
@@ -1872,7 +1869,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/costTaskCensusList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/costTaskCensusList",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>CostTaskCensusList(CostVo2 costVo2){
         List<OneCensus10> oneCensus10s = projectSumService.costTaskCensusList(costVo2);
         return RestUtil.success(oneCensus10s);

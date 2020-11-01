@@ -46,6 +46,7 @@ public class FileInfoService {
         return fileInfoMapper.findByFreignAndType(key,type);
     }
     public List<FileInfo> findByFreignAndType2(String key, String type) {
+
         return fileInfoMapper.findByFreignAndType2(key,type);
     }
 
