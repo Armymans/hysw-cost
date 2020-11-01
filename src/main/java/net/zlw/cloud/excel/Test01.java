@@ -53,13 +53,14 @@ public class Test01 {
                     List<BomTable> bomTableList = bomTableInfomation.getBomTableList();
                     BomTable bomTable = new BomTable(UUID.randomUUID().toString().replace("-", ""), o1.get(1), o1.get(2), o1.get(3), o1.get(4), o1.get(5), o1.get(6), bomTableInfomation.getId());
                     bomTable.setDelFlag("0");
+                    bomTable.setMaterialCode(o1.get(0));
                     bomTableList.add(bomTable);
-                    System.out.println(o1);
                 }
             }
 
 
         }
         System.out.println(bomTableInfomation.getBomTableList());
+        System.out.println(bomTableInfomation);
     }
 }

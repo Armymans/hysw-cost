@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 @Service
 @Transactional
 public class BomTableInfomationServiceimpl implements BomTableInfomationService {
-//    @Resource
-//    private BomTableInfomationDao bomTableInfomationDao;
+    @Resource
+    private BomTableInfomationDao bomTableInfomationDao;
 
 }
