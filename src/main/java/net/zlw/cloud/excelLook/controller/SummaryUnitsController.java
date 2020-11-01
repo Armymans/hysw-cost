@@ -3,7 +3,6 @@ package net.zlw.cloud.excelLook.controller;
 
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
-import net.zlw.cloud.excel.dao.SummaryUnitsDao;
 import net.zlw.cloud.excel.model.SummaryUnits;
 import net.zlw.cloud.excelLook.service.SummaryUnitsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,5 @@ public class SummaryUnitsController {
         List<SummaryUnits> summaryUnits = summaryUnitsService.summaryUnitsList(id);
         return RestUtil.success(summaryUnits);
     }
-
 
 }

@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 
+/***
+ * 单位汇总查看
+ */
 @Service
 @Transactional
 public class SummaryUnitsService {
