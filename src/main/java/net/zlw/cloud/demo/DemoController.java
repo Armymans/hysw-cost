@@ -2,15 +2,13 @@ package net.zlw.cloud.demo;
 
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
-import net.zlw.cloud.excel.dao.BomTableDao;
-import net.zlw.cloud.excel.dao.BomTableInfomationDao;
+import net.zlw.cloud.excel.dao.BomTable1Dao;
+import net.zlw.cloud.excel.dao.BomTableInfomation1Dao;
 import net.zlw.cloud.excel.model.BomTable;
 import net.zlw.cloud.excel.model.BomTableInfomation;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,10 +22,10 @@ import java.util.UUID;
 public class DemoController {
 
     @Autowired
-    private BomTableInfomationDao bomTableInfomationDao;
+    private BomTableInfomation1Dao bomTableInfomation1Dao;
 
     @Autowired
-    private BomTableDao bomTableDao;
+    private BomTable1Dao bomTable1Dao;
 
     @Autowired
     private FinalReportMapper finalReportMapper;
@@ -39,9 +37,9 @@ public class DemoController {
      **/
     @RequestMapping(value = "/demo/getBomTableInfomation", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> getBomTableInfomation(@RequestParam("id") String id){
-        BomTableInfomation bomTableInfomation = bomTableInfomationDao.selectByBudeingId(id);
+        BomTableInfomation bomTableInfomation = bomTableInfomation1Dao.selectByBudeingId(id);
         if(bomTableInfomation != null){
-            List<BomTable> bomTable = bomTableDao.selectByBomTableInfomationId(bomTableInfomation.getId());
+            List<BomTable> bomTable = bomTable1Dao.selectByBomTableInfomationId(bomTableInfomation.getId());
             bomTableInfomation.setBomTableList(bomTable);
         }else{
             return RestUtil.error("暂无清单");

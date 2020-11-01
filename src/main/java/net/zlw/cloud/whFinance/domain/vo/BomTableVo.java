@@ -1,7 +1,7 @@
 package net.zlw.cloud.whFinance.domain.vo;
 
 import lombok.Data;
-import net.zlw.cloud.whFinance.domain.BomTable1;
+import net.zlw.cloud.excel.model.BomTable;
 
 import java.util.List;
 
@@ -26,5 +26,5 @@ public class BomTableVo {
     private String itemCoding;
     private String projectName;
     private String acquisitionDepartment;
-    private List<BomTable1> bomTables;
+    private List<BomTable> bomTables;
 }
