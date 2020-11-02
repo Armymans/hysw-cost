@@ -5,10 +5,7 @@ import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.excelLook.domain.SettlementReportText;
 import net.zlw.cloud.excelLook.service.SettlementReportTextService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -31,7 +28,7 @@ public class SettlementReportTextController {
     }
 //检维修正文修改
     @RequestMapping(value = "/update/settlementReportText",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> update(SettlementReportText settlementReportText){
+    public Map<String,Object> update(@RequestBody SettlementReportText settlementReportText){
          settlementReportTextService.update(settlementReportText);
         return RestUtil.success();
     }
