@@ -135,6 +135,8 @@ public class JbDesignTaskService {
                     fileInfo.setFilePath(thisFileInfos.getOpinionsLink());
                     fileInfo.setType("scxxjh");
                     fileInfo.setStatus("0");
+                    fileInfo.setFileSource("2");
+
                 }
                 fileInfoMapper.insertSelective(fileInfo);
             }

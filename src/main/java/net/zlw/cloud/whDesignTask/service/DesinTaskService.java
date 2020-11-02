@@ -199,6 +199,7 @@ public class DesinTaskService {
                 fileInfo.setUserId(thisProvidedFile.getCustomerProvidedBy());
                 fileInfo.setFilePath(thisProvidedFile.getCustomerProvidedDrawing());
                 fileInfo.setType("tzpwzl");
+                fileInfo.setFileSource("3");
             }
             //插入文件表
             fileInfoMapper.insertSelective(fileInfo);
@@ -209,18 +210,20 @@ public class DesinTaskService {
 
             for (ProjectDesign thisProject : projectDesign) {
                 //如果文件信息不重复就写入
-                    fileInfo.setId(thisProject.getId());
-                    fileInfo.setPlatCode(thisProject.getBaseProjectId());
-                    fileInfo.setFileName(thisProject.getProjectFileName());
-                    fileInfo.setCreateTime(thisProject.getProjectUpTime());
-                    fileInfo.setRemark(thisProject.getProjectUploadedBy());
-                    fileInfo.setCreateTime(thisProject.getProjectUploadedBy());
-                    fileInfo.setStatus("0");
-                    fileInfo.setType("gcsjtz");
-                }
+                fileInfo.setId(thisProject.getId());
+                fileInfo.setPlatCode(thisProject.getBaseProjectId());
+                fileInfo.setFileName(thisProject.getProjectFileName());
+                fileInfo.setCreateTime(thisProject.getProjectUpTime());
+                fileInfo.setRemark(thisProject.getProjectUploadedBy());
+                fileInfo.setCreateTime(thisProject.getProjectUploadedBy());
+                fileInfo.setStatus("0");
+                fileInfo.setFileSource("3");
 
-                //插入文件表
-                fileInfoMapper.insertSelective(fileInfo);
+                fileInfo.setType("gcsjtz");
+            }
+
+            //插入文件表
+            fileInfoMapper.insertSelective(fileInfo);
 
 
             //获得水表数量清单集合
@@ -228,17 +231,19 @@ public class DesinTaskService {
 
             for (WatherList thisWater : waterList) {
                 //如果文件信息不重复就写入
-                    fileInfo.setId(thisWater.getId());
-                    fileInfo.setPlatCode(thisWater.getBaseProjectId());
-                    fileInfo.setFileName(thisWater.getWaterListFileName());
-                    fileInfo.setCreateTime(thisWater.getWaterListTime());
-                    fileInfo.setUserId(thisWater.getWaterListBy());
-                    fileInfo.setFilePath(thisWater.getWaterListDrawing());
-                    fileInfo.setType("sbslqd");
-                }
+                fileInfo.setId(thisWater.getId());
+                fileInfo.setPlatCode(thisWater.getBaseProjectId());
+                fileInfo.setFileName(thisWater.getWaterListFileName());
+                fileInfo.setCreateTime(thisWater.getWaterListTime());
+                fileInfo.setUserId(thisWater.getWaterListBy());
+                fileInfo.setFilePath(thisWater.getWaterListDrawing());
+                fileInfo.setType("sbslqd");
+                fileInfo.setFileSource("3");
 
-                //插入文件表
-                fileInfoMapper.insertSelective(fileInfo);
+            }
+
+            //插入文件表
+            fileInfoMapper.insertSelective(fileInfo);
 
 
         }

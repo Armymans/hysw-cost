@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.List;
 
 @Data
 @Table(name = "settlement_report_text")
@@ -38,4 +39,12 @@ public class SettlementReportText {
     private String auditContent;
     @Column(name = "cause")
     private String cause;
+
+    //结算报告正文审核内容
+    private List<SettlementAuditReportTextXontent> setAuditLists;
+    //结算报告附件名称
+    private List<SettlementReportTextAttachment> setReportLists;
+    //结算报告审减原因
+    private List<SettlementReportTextReductionReasons> settReductionLists;
+
 }

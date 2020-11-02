@@ -56,9 +56,13 @@ public class FileInfo {
     @Column(name = "remark")
     private String remark;
 
+    @Column(name = "file_source")
+    private String fileSource;
+
     @Transient
     private String userName;
     @Transient
     private String imgurl;
+
 
 }
