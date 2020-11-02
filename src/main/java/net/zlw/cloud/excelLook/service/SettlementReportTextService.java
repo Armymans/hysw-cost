@@ -34,7 +34,15 @@ public class SettlementReportTextService {
 
     //结算
     public SettlementReportText list(String id){
-        return settlementReportTextDao.getList(id);
+        List<SettlementAuditReportTextXontent> auditList = settlementAuditReportTextXontentDao.getAuditList(id);
+        List<SettlementReportTextAttachment> arrachmentList = settlementReportTextAttachmentDao.getArrachmentList(id);
+        List<SettlementReportTextReductionReasons> reductionList = settlementReportTextReductionReasonsDao.getReductionList(id);
+        SettlementReportText settlementReportText = settlementReportTextDao.getSettlementReportText(id);
+        settlementReportText.setSetAuditLists(auditList);
+        settlementReportText.setSetReportLists(arrachmentList);
+        settlementReportText.setSettReductionLists(reductionList);
+
+        return settlementReportText;
     }
     //检维修
     public SettlementReportText getSettlement(String id){
@@ -46,8 +54,8 @@ public class SettlementReportTextService {
         settlementReportText.setSetAuditLists(auditList);
         settlementReportText.setSetReportLists(arrachmentList);
         settlementReportText.setSettReductionLists(reductionList);
-
         return settlementReportText;
+
 
     }
     //检维修编辑
