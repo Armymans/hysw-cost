@@ -33,36 +33,41 @@ public class SettlementReportTextService {
     private SettlementReportTextReductionReasonsDao settlementReportTextReductionReasonsDao;
 
     //结算
-    public SettlementReportText list(String id){
-        List<SettlementAuditReportTextXontent> auditList = settlementAuditReportTextXontentDao.getAuditList(id);
-        List<SettlementReportTextAttachment> arrachmentList = settlementReportTextAttachmentDao.getArrachmentList(id);
-        List<SettlementReportTextReductionReasons> reductionList = settlementReportTextReductionReasonsDao.getReductionList(id);
+    public SettlementReportText list(String id) {
         SettlementReportText settlementReportText = settlementReportTextDao.getSettlementReportText(id);
-        settlementReportText.setSetAuditLists(auditList);
-        settlementReportText.setSetReportLists(arrachmentList);
-        settlementReportText.setSettReductionLists(reductionList);
 
+        if (settlementReportText != null) {
+            List<SettlementAuditReportTextXontent> auditList = settlementAuditReportTextXontentDao.getAuditList(id);
+            settlementReportText.setSetAuditLists(auditList);
+            List<SettlementReportTextAttachment> arrachmentList = settlementReportTextAttachmentDao.getArrachmentList(id);
+            settlementReportText.setSetReportLists(arrachmentList);
+            List<SettlementReportTextReductionReasons> reductionList = settlementReportTextReductionReasonsDao.getReductionList(id);
+            settlementReportText.setSettReductionLists(reductionList);
+        }
         return settlementReportText;
     }
+
     //检维修
-    public SettlementReportText getSettlement(String id){
-
-        List<SettlementAuditReportTextXontent> auditList = settlementAuditReportTextXontentDao.getAuditList(id);
-        List<SettlementReportTextAttachment> arrachmentList = settlementReportTextAttachmentDao.getArrachmentList(id);
-        List<SettlementReportTextReductionReasons> reductionList = settlementReportTextReductionReasonsDao.getReductionList(id);
+    public SettlementReportText getSettlement(String id) {
         SettlementReportText settlementReportText = settlementReportTextDao.getSettlementReportText(id);
-        settlementReportText.setSetAuditLists(auditList);
-        settlementReportText.setSetReportLists(arrachmentList);
-        settlementReportText.setSettReductionLists(reductionList);
+        if (settlementReportText != null) {
+            List<SettlementAuditReportTextXontent> auditList = settlementAuditReportTextXontentDao.getAuditList(id);
+            List<SettlementReportTextAttachment> arrachmentList = settlementReportTextAttachmentDao.getArrachmentList(id);
+            List<SettlementReportTextReductionReasons> reductionList = settlementReportTextReductionReasonsDao.getReductionList(id);
+            settlementReportText.setSetAuditLists(auditList);
+            settlementReportText.setSetReportLists(arrachmentList);
+            settlementReportText.setSettReductionLists(reductionList);
+        }
         return settlementReportText;
 
 
     }
+
     //检维修编辑
-    public void update(SettlementReportText settlementReportText){
-        if (settlementReportText.getId() !=null && !"".equals(settlementReportText.getId())){
+    public void update(SettlementReportText settlementReportText) {
+        if (settlementReportText.getId() != null && !"".equals(settlementReportText.getId())) {
             settlementReportTextDao.updateByPrimaryKeySelective(settlementReportText);
-        }else {
+        } else {
             settlementReportTextDao.insertSelective(settlementReportText);
         }
     }
