@@ -34,7 +34,7 @@ public class SettlementReportTextService {
 
     //结算
     public SettlementReportText list(String id) {
-        SettlementReportText settlementReportText = settlementReportTextDao.getSettlementReportText(id);
+        SettlementReportText settlementReportText = settlementReportTextDao.getList(id);
 
         if (settlementReportText != null) {
             List<SettlementAuditReportTextXontent> auditList = settlementAuditReportTextXontentDao.getAuditList(id);
