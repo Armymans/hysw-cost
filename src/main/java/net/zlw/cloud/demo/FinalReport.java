@@ -40,5 +40,10 @@ public class FinalReport {
     @Column(name = "project_id")
     private String projectId;
 
+    @Column(name = "type")
+    private String type;
+
+
+
 
 }

@@ -19,10 +19,26 @@ public class FinalReportController {
     @Autowired
     private FinalReportService finalReportService;
 
-
+    /***
+     * 结算封面扉页查看
+     * @param id
+     * @return
+     */
     @RequestMapping(value = "/excel/finalReport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> getList(@RequestParam("id") String id){
         FinalReport list = finalReportService.getList(id);
         return RestUtil.success(list);
+    }
+    //检维修封面扉页查看
+    @RequestMapping(value = "/maintenance/finalReport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> getmaintenance(@RequestParam("id") String id){
+        FinalReport list = finalReportService.getFinalReport(id);
+        return RestUtil.success(list);
+    }
+//检维修封面扉页修改
+    @RequestMapping(value = "/update/finalReport",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> update(FinalReport finalReport){
+         finalReportService.updateFinalReport(finalReport);
+        return RestUtil.success();
     }
 }

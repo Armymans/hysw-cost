@@ -24,7 +24,7 @@ public class BomTableController {
 
     @Autowired
     private BomTableInfomationDao bomTableInfomationDao;
-
+//预算物料清单表
     @RequestMapping(value = "/excel/bomTable",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> getList(@RequestParam("id") String id){
         BomTableInfomation bomTableInfomation = bomTableInfomationDao.selectByBudeingId(id);

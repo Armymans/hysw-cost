@@ -25,4 +25,6 @@ public class SettlementCoverController {
         List<SettlementCover> settlementCovers = settlementCoverService.settlementCoversList(id);
         return RestUtil.success(settlementCovers);
     }
+
+
 }

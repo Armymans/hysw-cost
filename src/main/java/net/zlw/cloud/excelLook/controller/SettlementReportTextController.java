@@ -17,10 +17,22 @@ public class SettlementReportTextController {
 
     @Autowired
     private SettlementReportTextService settlementReportTextService;
-
+//结算正文查看
     @RequestMapping(value = "/excel/settlementReportText",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> getList(@RequestParam("id") String id){
         SettlementReportText list = settlementReportTextService.list(id);
         return RestUtil.success(list);
+    }
+//检维修正文查看
+    @RequestMapping(value = "/maintenance/settlementReportText",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> getMainSet(@RequestParam("id") String id){
+        SettlementReportText list = settlementReportTextService.getSettlement(id);
+        return RestUtil.success(list);
+    }
+//检维修正文修改
+    @RequestMapping(value = "/update/settlementReportText",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> update(SettlementReportText settlementReportText){
+         settlementReportTextService.update(settlementReportText);
+        return RestUtil.success();
     }
 }

@@ -19,7 +19,7 @@ public class SummaryUnitsController {
 
     @Autowired
     private SummaryUnitsService summaryUnitsService;
-
+//预算单位汇总表
     @RequestMapping(value = "/excel/summaryUnits",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findList(@RequestParam("id") String id){
 

@@ -11,6 +11,10 @@ import java.util.List;
 public interface SettlementDirectoryDao extends Mapper<SettlementDirectory> {
 
 
-    @Select("SELECT * FROM settlement_directory WHERE foreign_key = #{id}")
+    @Select("SELECT * FROM settlement_directory WHERE type = 0 AND del_flag = 0 AND foreign_key = #{id}")
     List<SettlementDirectory> getList(@Param("id") String id);
+
+
+    @Select("SELECT * FROM settlement_directory WHERE type = 1 AND del_flag = 0 AND foreign_key = #{id}")
+    List<SettlementDirectory> getMantenceList(@Param("id") String id);
 }

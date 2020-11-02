@@ -18,7 +18,7 @@ public class QuantitiesPartialWorksController {
 
     @Autowired
     private QuantitiesPartialWorksService quantitiesPartialWorksService;
-
+//预算分部分项查看
     @RequestMapping(value = "/excel/quantitiesPartialWorks",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> getList(@RequestParam("id") String id){
         List<QuantitiesPartialWorks> quantitiesPartialWorks = quantitiesPartialWorksService.quantitiesPartialWorksList(id);
