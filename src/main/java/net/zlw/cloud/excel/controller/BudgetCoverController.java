@@ -2,15 +2,16 @@ package net.zlw.cloud.excel.controller;
 
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.demo.FinalReport;
 import net.zlw.cloud.excel.model.BudgetCover;
+import net.zlw.cloud.excel.model.ReportTextVo;
 import net.zlw.cloud.excel.model.SummaryShenji;
 import net.zlw.cloud.excel.service.BudgetCoverService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import net.zlw.cloud.excelLook.domain.SettlementDirectory;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -72,11 +73,28 @@ public class BudgetCoverController {
         SummaryShenji budgetCover =  budgetCoverService.findBudgetCoverById(id);
       return RestUtil.success(budgetCover);
     }
-
-
-
-
-
-
-
+    //下家结算审核 甲供材料分析表
+    @RequestMapping(value = "/budgetCover/materialAnalysisImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> materialAnalysisImport(@RequestParam(name = "id") String id){
+        budgetCoverService.materialAnalysisImport(id);
+        return RestUtil.success();
+    }
+    //结算报告 封面扉页编辑
+    @RequestMapping(value = "/budgetCover/updateFinalReport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> updateFinalReport(FinalReport finalReport){
+        budgetCoverService.updateFinalReport(finalReport);
+        return RestUtil.success();
+    }
+    //结算报告目录编辑
+    @RequestMapping(value = "/budgetCover/updateDirectory",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> updateDirectory(SettlementDirectory settlementDirectory){
+        budgetCoverService.updateDirectory(settlementDirectory);
+        return RestUtil.success();
+    }
+    //结算报告正文编辑
+    @RequestMapping(value = "/budgetCover/updateReportContent",method = {RequestMethod.POST,RequestMethod.GET})
+    public Map<String,Object> updateReportContent(@RequestBody ReportTextVo reportTextVo){
+        budgetCoverService.updateReportContent(reportTextVo);
+        return RestUtil.success();
+    }
 }

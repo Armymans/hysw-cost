@@ -12,4 +12,7 @@ public interface SettlementReportTextAttachmentDao extends Mapper<SettlementRepo
 
     @Select("SELECT * FROM settlement_report_text_attachment WHERE del_flag = 0 AND settlement_report_text_id =#{id}")
     List<SettlementReportTextAttachment> getArrachmentList(@Param("id") String id);
+
+    @Select("select * from settlement_report_text_attachment where id = #{id}")
+    SettlementReportTextAttachment selectByPrimaryKeyReport(@Param("id") String id);
 }

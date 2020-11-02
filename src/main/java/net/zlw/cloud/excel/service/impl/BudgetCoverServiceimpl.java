@@ -2,10 +2,14 @@ package net.zlw.cloud.excel.service.impl;
 
 import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.metadata.Sheet;
+import net.zlw.cloud.demo.FinalReport;
+import net.zlw.cloud.demo.FinalReportMapper;
 import net.zlw.cloud.excel.dao.*;
 import net.zlw.cloud.excel.model.*;
 import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.excel.util.RMBdeal;
+import net.zlw.cloud.excelLook.dao.*;
+import net.zlw.cloud.excelLook.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -46,6 +50,23 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     private VerificationSheetDao verificationSheetDao;
     @Resource
     private VerificationSheetProjectDao verificationSheetProjectDao;
+    @Resource
+    private MaterialAnalysisDao materialAnalysisDao;
+    @Resource
+    private FinalReportMapper finalReportMapper;
+    @Resource
+    private SettlementDirectoryDao settlementDirectoryDao;
+    @Resource
+    private SettlementReportTextDao settlementReportTextDao;
+    @Resource
+    private SettlementAuditReportTextXontentDao settlementAuditReportTextXontentDao;
+    @Resource
+    private SettlementReportTextAttachmentDao settlementReportTextAttachmentDao;
+    @Resource
+    private SettlementReportTextReductionReasonsDao settlementReportTextReductionReasonsDao;
+
+
+
 
 
     private String[] hanArr = { "零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖" };
@@ -222,13 +243,17 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
             bomTableInfomation.setAcquisitionDepartment(((List<String>) read.get(11)).get(2));
             bomTableInfomation.setRemark(((List<String>) read.get(12)).get(2));
             bomTableInfomation.setBudgetId(id);
-            System.out.println(bomTableInfomation);
+//            System.out.println(bomTableInfomation);
             bomTableInfomation.setDelFlag("0");
             bomTableInfomation.setBomTableList(new ArrayList<BomTable>());
             for (int i = 0; i < read.size(); i++) {
+                System.out.println(read.get(i));
+                //将获取到的每一条数据进行转换
                 List<String> o1 = (List<String>) read.get(i);
+                //定义数字正则
                 String f = "^[+-]?\\d+(\\d+)?$";
                 Pattern compile = Pattern.compile(f);
+                //每次遍历都进行取值和添加
                 if (i>=14){
                     if (compile.matcher(o1.get(0)).matches()){
                         List<BomTable> bomTableList = bomTableInfomation.getBomTableList();
@@ -236,13 +261,13 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
                         bomTable.setDelFlag("0");
                         bomTable.setMaterialCode(o1.get(0));
                         bomTableList.add(bomTable);
-                        bomTable1Dao.insertSelective(bomTable);
+//                        bomTable1Dao.insertSelective(bomTable);
                     }
                 }
 
 
             }
-            bomTableInfomationDao.insertSelective(bomTableInfomation);
+//            bomTableInfomationDao.insertSelective(bomTableInfomation);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -332,7 +357,6 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
             String projectName = "";
-
 
             //调用核定单的工程名称
             String filePath1 = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
@@ -497,6 +521,150 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
         criteria.andEqualTo("budgetId",id);
         SummaryShenji summaryShenji = summaryShenjiDao.selectOneByExample(example);
         return summaryShenji;
+    }
+
+    @Override
+    public void materialAnalysisImport(String id) {
+        try {
+            String filePath = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
+            //第几张表(最低1) 第几条数据开始(最低0)
+            Sheet sheet = new Sheet(3, 1);
+            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+            List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
+
+            //调用核定单工程名称
+            String projectName = "";
+
+            //调用核定单的工程名称
+            String filePath1 = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
+            //第几张表(最低1) 第几条数据开始(最低0)
+            Sheet sheet1 = new Sheet(2, 3);
+            FileInputStream fileInputStream1 = new FileInputStream(new File(filePath1));
+            BufferedInputStream bufferedInputStream1 = new BufferedInputStream(fileInputStream1);
+            List<Object> read1 = EasyExcelFactory.read(bufferedInputStream1, sheet1);
+            projectName = ((List<String>)read1.get(2)).get(2);
+            for (int i = 0; i < read.size(); i++) {
+
+                if (i >= 2){
+                    MaterialAnalysis materialAnalysis = new MaterialAnalysis();
+                    materialAnalysis.setId(UUID.randomUUID().toString().replace("-",""));
+                    materialAnalysis.setProjectName(projectName);
+                    materialAnalysis.setSerialNumber(((List<String>)read.get(i)).get(0));
+                    materialAnalysis.setMaterialName(((List<String>)read.get(i)).get(1));
+                    materialAnalysis.setSpecifications(((List<String>)read.get(i)).get(2));
+                    materialAnalysis.setUnit(((List<String>)read.get(i)).get(3));
+                    materialAnalysis.setOutboundOrderQuantity(((List<String>)read.get(i)).get(4));
+                    if (((List<String>) read.get(i)).get(5)!=null && !"".equals(((List<String>) read.get(i)).get(5))){
+                        BigDecimal bigDecimal = new BigDecimal(((List<String>) read.get(i)).get(5));
+                        materialAnalysis.setContractAmount(bigDecimal);
+                    }
+                    if (((List<String>) read.get(i)).get(6)!=null && !"".equals(((List<String>) read.get(i)).get(6))){
+                        BigDecimal bigDecimal1 = new BigDecimal(((List<String>) read.get(i)).get(6));
+                        materialAnalysis.setChangeVisa(bigDecimal1);
+                    }
+                    if (((List<String>) read.get(i)).get(7)!=null  && !"".equals(((List<String>) read.get(i)).get(7))){
+                        BigDecimal bigDecimal2 = new BigDecimal(((List<String>) read.get(i)).get(7));
+                        materialAnalysis.setCompletionFigureAmount(bigDecimal2);
+                    }
+                    if (((List<String>) read.get(i)).get(8)!=null && !"".equals(((List<String>) read.get(i)).get(8))){
+                        BigDecimal bigDecimal3 = new BigDecimal(((List<String>) read.get(i)).get(8));
+                        materialAnalysis.setContractPrice(bigDecimal3);
+                    }
+                    if (((List<String>) read.get(i)).get(9)!=null && !"".equals(((List<String>) read.get(i)).get(9))){
+                        BigDecimal bigDecimal = new BigDecimal(((List<String>) read.get(i)).get(9));
+                        materialAnalysis.setOutboundDifferences(bigDecimal);
+                    }
+                    if (((List<String>) read.get(i)).get(10)!=null && !"".equals(((List<String>) read.get(i)).get(10))){
+                        BigDecimal bigDecimal = new BigDecimal(((List<String>) read.get(i)).get(10));
+                        materialAnalysis.setTurnForQuantity(bigDecimal);
+                    }
+                    if (((List<String>) read.get(i)).get(11)!=null && !"".equals(((List<String>) read.get(i)).get(11))){
+                        BigDecimal bigDecimal = new BigDecimal(((List<String>) read.get(i)).get(11));
+                        materialAnalysis.setTurnForIncreaseCosts(bigDecimal);
+                    }
+                    if (((List<String>) read.get(i)).get(12)!=null && !"".equals(((List<String>) read.get(i)).get(12))){
+                        BigDecimal bigDecimal = new BigDecimal(((List<String>) read.get(i)).get(12));
+                        materialAnalysis.setOutboundPrice(bigDecimal);
+                    }
+                    if (((List<String>) read.get(i)).get(13)!=null && !"".equals(((List<String>) read.get(i)).get(13))){
+                        BigDecimal bigDecimal = new BigDecimal(((List<String>) read.get(i)).get(13));
+                        materialAnalysis.setOutboundUsPrice(bigDecimal);
+                    }
+                    if (((List<String>) read.get(i)).get(14)!=null && !"".equals(((List<String>) read.get(i)).get(14))){
+                        BigDecimal bigDecimal = new BigDecimal(((List<String>) read.get(i)).get(14));
+                        materialAnalysis.setMoreNumber(bigDecimal);
+                    }
+                    if (((List<String>) read.get(i)).get(15)!=null && !"".equals(((List<String>) read.get(i)).get(15))){
+                        BigDecimal bigDecimal = new BigDecimal(((List<String>) read.get(i)).get(15));
+                        materialAnalysis.setMoreAmount(bigDecimal);
+                    }
+                    materialAnalysis.setSettlementId(id);
+                    materialAnalysisDao.insertSelective(materialAnalysis);
+                    if (((List<String>) read.get(i)).get(1).contains("小计")){
+                        break;
+                    }
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    @Override
+    public void updateFinalReport(FinalReport finalReport) {
+        System.err.println(finalReport);
+        finalReportMapper.updateByPrimaryKeySelective(finalReport);
+    }
+
+    @Override
+    public void updateDirectory(SettlementDirectory settlementDirectory) {
+        SettlementDirectory settlementDirectory1 = settlementDirectoryDao.selectByPrimaryKey(settlementDirectory.getId());
+        if (settlementDirectory1!=null){
+            settlementDirectoryDao.updateByPrimaryKeySelective(settlementDirectory);
+        }else{
+            settlementDirectory.setDelFlag("0");
+            settlementDirectoryDao.insertSelective(settlementDirectory);
+        }
+
+    }
+
+    @Override
+    public void updateReportContent(ReportTextVo reportTextVo) {
+        SettlementReportText settlementReportText = reportTextVo.getSettlementReportText();
+        settlementReportTextDao.updateByPrimaryKeySelective(settlementReportText);
+        for (SettlementAuditReportTextXontent setAuditList : reportTextVo.getSetAuditLists()) {
+            SettlementAuditReportTextXontent settlementAuditReportTextXontent = settlementAuditReportTextXontentDao.selectByPrimaryKeyAudit(setAuditList.getId());
+            if (settlementAuditReportTextXontent!=null){
+                settlementAuditReportTextXontentDao.updateByPrimaryKeySelective(setAuditList);
+            }else{
+                setAuditList.setDelFlag("0");
+                settlementAuditReportTextXontentDao.insertSelective(setAuditList);
+            }
+        }
+
+        for (SettlementReportTextAttachment setReportList : reportTextVo.getSetReportLists()) {
+            SettlementReportTextAttachment settlementReportTextAttachment = settlementReportTextAttachmentDao.selectByPrimaryKeyReport(setReportList.getId());
+            if (settlementReportTextAttachment!=null){
+                settlementReportTextAttachmentDao.updateByPrimaryKeySelective(setReportList);
+            }else{
+                setReportList.setDelFlag("0");
+                settlementReportTextAttachmentDao.insertSelective(setReportList);
+            }
+        }
+
+        for (SettlementReportTextReductionReasons settReductionList : reportTextVo.getSettReductionLists()) {
+            SettlementReportTextReductionReasons settlementReportTextReductionReasons = settlementReportTextReductionReasonsDao.selectByPrimaryKeyReasons(settReductionList.getId());
+            if (settlementReportTextReductionReasons!=null){
+                settlementReportTextReductionReasonsDao.updateByPrimaryKeySelective(settReductionList);
+            }else{
+                settReductionList.setDelFlag("0");
+                settlementReportTextReductionReasonsDao.insertSelective(settReductionList);
+            }
+        }
     }
 
 

@@ -18,7 +18,7 @@ public class SettlementAuditReportTextXontent {
     private String settlementReportTextId;
     @Column(name = "create_time")
     private String createTime;
-    @Column(name = "updateTime")
+    @Column(name = "update_time")
     private String updateTime;
     @Column(name = "founder_id")
     private String founderId;

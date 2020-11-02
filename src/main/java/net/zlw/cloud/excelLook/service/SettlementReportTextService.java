@@ -59,8 +59,6 @@ public class SettlementReportTextService {
             settlementReportText.setSettReductionLists(reductionList);
         }
         return settlementReportText;
-
-
     }
 
     //检维修编辑
