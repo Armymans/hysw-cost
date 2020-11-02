@@ -51,7 +51,7 @@ public class EHRTimer {
      * -2099 如果多个时间段用，隔开 0 0 14,16 * * ？ 代表每天下午2点和4点执行 0 0 14-16 * * ？ 代表每天下午2点到4点执行
      * 也就是 14 15 16 执行
      */
-//    @Scheduled(cron = "0 0 0 * * ?") // 秒 分 时 日 月 天 年
+    @Scheduled(cron = "0 0 0 * * ?") // 秒 分 时 日 月 天 年
     public void ehrDataTimer() {
         EhrJdbc ehrJdbc = new EhrJdbc();
         try {
@@ -243,6 +243,7 @@ public class EHRTimer {
                     mkyUser.setSalt("123456");
                     mkyUser.setEmail(memberManage.getEmail());
                     mkyUser.setUserType("2");
+                    mkyUser.setComId("com21");
                     mkyUser.setOrgId(memberManage.getCompanyId());
                     mkyUser.setPhone(memberManage.getPhone());
                     mkyUser.setCreateDatetime(sdf.format(new Date()));

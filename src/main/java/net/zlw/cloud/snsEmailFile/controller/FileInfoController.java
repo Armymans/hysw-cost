@@ -4,24 +4,23 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.DateUtil;
 import net.tec.cloud.common.util.FileUtil;
 import net.tec.cloud.common.util.IdUtil;
-import net.tec.cloud.common.vo.LoginUser;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
-import org.apache.commons.lang3.StringUtils;
+import net.zlw.cloud.snsEmailFile.util.Common;
+import net.zlw.cloud.snsEmailFile.util.FileOperationUtil;
+import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.hash.HashMapper;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.rpc.ServiceException;
-import javax.xml.ws.soap.Addressing;
 import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -39,7 +38,8 @@ public class FileInfoController extends BaseController {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");
     private static final transient Logger log = LoggerFactory.getLogger(FileInfoController.class);
-
+    //判断是否启用  区分文档库
+    private static final String doc_flag = Common.getValueByProperty("doc_flag","/platform.properties");
     @Value("${app.attachPath}")
     private String LixAttachDir;
     @Value("${app.testPath}")
@@ -47,6 +47,9 @@ public class FileInfoController extends BaseController {
 
     @Autowired
     private FileInfoService fileInfoService;
+
+    @Autowired
+    private MemberManageDao memberManageDao;
 
 
     /**
@@ -90,6 +93,7 @@ public class FileInfoController extends BaseController {
             }
             attachInfo.setFileName(fileName);
             attachInfo.setFilePath(filePath);
+            attachInfo.setFileSource("1");
             attachInfo.setFileType(fileType);
             attachInfo.setUserId(getLoginUser().getId());
             attachInfo.setType(type);
@@ -150,6 +154,7 @@ public class FileInfoController extends BaseController {
             }
             attachInfo.setFileName(fileName);
             attachInfo.setFilePath(filePath);
+            attachInfo.setFileSource("1");
             attachInfo.setFileType(fileType);
             attachInfo.setPlatCode(userId);
             attachInfo.setUserId(getLoginUser().getId());
@@ -259,7 +264,8 @@ public class FileInfoController extends BaseController {
     public void downloadFile(@RequestParam(value = "id", required = false) String id) {
         try {
             FileInfo docInfo = fileInfoService.getByKey(id);
-            if (docInfo != null) {
+            //本地文件
+            if (docInfo != null && "1".equals(docInfo.getFileSource())) {
                 String attachName = docInfo.getFileName() + "." + docInfo.getFileType();//文件名+文件类型  要不下载的无法查看
                 String filePath = docInfo.getFilePath();
                 String os = System.getProperty("os.name");
@@ -290,6 +296,51 @@ public class FileInfoController extends BaseController {
                         }
                     }
                 }
+            }else{
+                //外部文件
+                try {
+                    //String attachName = "文件.txt"; //文件名称 带后缀
+                    String attachName = docInfo.getFileName() + "." + docInfo.getFileType();//文件名+文件类型  要不下载的无法查看
+                    String codedfilename = "";
+                    String agent = request.getHeader("USER-AGENT");//获取浏览器请求头中的user-agent
+                    if (null != agent && -1 != agent.indexOf("MSIE") || null != agent && -1 != agent.indexOf("Trident")) {// ie
+                        String name = java.net.URLEncoder.encode(attachName, "UTF8");
+                        codedfilename = name;
+                    } else if (null != agent && -1 != agent.indexOf("Mozilla")) {// 火狐,chrome等
+                        codedfilename = new String(attachName.getBytes("UTF-8"), "iso-8859-1");
+                    } else {
+                        codedfilename = new String(attachName.getBytes("UTF-8"), "iso-8859-1");
+                    }
+                    response.setHeader("content-type", "application/octet-stream");//服务器告诉浏览器数据类型
+                    response.setContentType("application/octet-stream");//二进制流 不知道下载文件类型
+                    response.setHeader("Content-Disposition", "attachment;filename="+codedfilename );//告诉浏览器这个文件的名称和内容
+
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(getLoginUser().getId());
+                    String userAccount = memberManage.getMemberAccount();
+                    Map<String, Object> download = null;
+//                    if("0".equals(doc_flag)){
+//                        download = FileOperationUtil.download(userAccount, id);
+//                    }else{
+                        download = FileOperationUtil.fileDownload(userAccount, id , docInfo.getFileSource());
+//                    }
+                    OutputStream os = null;
+                    try {
+                        os = response.getOutputStream();
+                        Object object = download.get("data");
+                        byte[] bytes = null;
+                        if( object != null ) {
+                            bytes = (byte[])object;
+                        }
+                        os.write(bytes);
+                        os.flush();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -314,6 +365,52 @@ public class FileInfoController extends BaseController {
         return fileName;
     }
 
+    public void download1(String id) {
+        try {
+            //String attachName = "文件.txt"; //文件名称 带后缀
+            FileInfo file = fileInfoService.getByKey(id);
 
+            String attachName = file.getFileName();
+            String codedfilename = "";
+            String agent = request.getHeader("USER-AGENT");//获取浏览器请求头中的user-agent
+            if (null != agent && -1 != agent.indexOf("MSIE") || null != agent && -1 != agent.indexOf("Trident")) {// ie
+                String name = java.net.URLEncoder.encode(attachName, "UTF8");
+                codedfilename = name;
+            } else if (null != agent && -1 != agent.indexOf("Mozilla")) {// 火狐,chrome等
+                codedfilename = new String(attachName.getBytes("UTF-8"), "iso-8859-1");
+            } else {
+                codedfilename = new String(attachName.getBytes("UTF-8"), "iso-8859-1");
+            }
+            response.setHeader("content-type", "application/octet-stream");//服务器告诉浏览器数据类型
+            response.setContentType("application/octet-stream");//二进制流 不知道下载文件类型
+            response.setHeader("Content-Disposition", "attachment;filename="+codedfilename );//告诉浏览器这个文件的名称和内容
+
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(getLoginUser().getId());
+            String userAccount = memberManage.getMemberAccount();
+            Map<String, Object> download = null;
+            if("0".equals(doc_flag)){
+                download = FileOperationUtil.download(userAccount, id);
+            }else{
+                download = FileOperationUtil.fileDownload(userAccount, id , file.getFileSource());
+            }
+            OutputStream os = null;
+            try {
+                os = response.getOutputStream();
+                Object object = download.get("data");
+                byte[] bytes = null;
+                if( object != null ) {
+                    bytes = (byte[])object;
+                }
+                os.write(bytes);
+                os.flush();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

@@ -4,6 +4,8 @@ import com.github.pagehelper.util.StringUtil;
 import com.sun.javafx.PlatformUtil;
 
 import lombok.Data;
+import net.zlw.cloud.depManage.domain.DepManage;
+import net.zlw.cloud.depManage.mapper.DepManageMapper;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.snsEmailFile.mapper.PlatInformactionLogDao;
 import net.zlw.cloud.snsEmailFile.mapper.SysCompanyMapper;
@@ -45,14 +47,23 @@ public class MemberService {
     @Autowired
     private PlatInformactionLogDao platInformactionLogDao;
 
+    @Autowired
+    private DepManageMapper depManageMapper;
+
     public String userLogin(String userAccount,HttpServletRequest request) {
         try {
-
+            if(userAccount.contains("\\")){
+                String[] split = userAccount.split("\\\\");
+                userAccount = split[0] +"\\\\"+split[1];
+            }
             MemberManage user = userDao.selectByAccount(userAccount);
             if (user != null) {
                 InformationLog login = new InformationLog();
                 SysCompany company = companyDao.selectByPrimaryKey(user.getCompanyId());
-                if (company != null) {
+                DepManage depManage = depManageMapper.selectByPrimaryKey(user.getCompanyId());
+                if (company == null && depManage == null) {
+                    return "用户信息未同步，请联系管理员。";
+                } else {
                     String ip = getIp(request);
                     login.setCompanyId(company.getId());
                     login.setCompanyName(company.getName());
@@ -71,8 +82,6 @@ public class MemberService {
                     log.info("==============================用户登录日志保存成功，返回成功信息===================");
 
                     return "ok";
-                } else {
-                    return "用户信息未同步，请联系管理员。";
                 }
             } else {
                 return "用户未同步，请联系管理员。";
