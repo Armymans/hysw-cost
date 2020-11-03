@@ -41,6 +41,7 @@ public class LastSummaryCover {
     private String unit;
     @Column(name = "prepare_people")
     private String preparePeople;
+    @Column(name = "reviewer")
     private String reviewer;
     @Column(name = "compile_time")
     private String compileTime;

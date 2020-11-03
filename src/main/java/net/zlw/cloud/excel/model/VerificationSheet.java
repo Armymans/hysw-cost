@@ -5,7 +5,9 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Table(name = "verification_sheet")
 @Data
@@ -89,6 +91,9 @@ public class VerificationSheet {
     private String founderCompanyId;
     @Column(name = "del_flag")
     private String delFlag;
+
+    @Transient
+    private List<VerificationSheetProject> sheetProjects;
 
 
 }

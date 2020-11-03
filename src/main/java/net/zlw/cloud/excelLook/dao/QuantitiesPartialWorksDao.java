@@ -12,4 +12,7 @@ public interface QuantitiesPartialWorksDao extends Mapper<QuantitiesPartialWorks
 
     @Select("SELECT s1.*,s2.* FROM quantities_partial_works s1 LEFT JOIN budgeting s2 ON s1.budgeting_id = s2.id WHERE s1.budgeting_id = #{id}")
     List<QuantitiesPartialWorks> getList(@Param("id") String id);
+
+    @Select("SELECT * FROM quantities_partial_works WHERE  budgeting_id = #{id}")
+    List<QuantitiesPartialWorks> selectQuantitiespartialWorksById(@Param("id") String id);
 }

@@ -23,6 +23,12 @@ public class QuantitiesPartialWorksController {
     public Map<String,Object> getList(@RequestParam("id") String id){
         List<QuantitiesPartialWorks> quantitiesPartialWorks = quantitiesPartialWorksService.quantitiesPartialWorksList(id);
         return RestUtil.success(quantitiesPartialWorks);
+    }
 
+    //上家结算分部分项查看
+    @RequestMapping(value = "/cover/quantitiesPartialWorks",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> getQuantitiesPartialWorks (@RequestParam("id") String id){
+        List<QuantitiesPartialWorks> quantitiesPartialWorks = quantitiesPartialWorksService.quantitiesPartialWorksLists(id);
+        return RestUtil.success(quantitiesPartialWorks);
     }
 }
