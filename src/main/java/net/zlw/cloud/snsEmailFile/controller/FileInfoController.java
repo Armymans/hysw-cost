@@ -57,8 +57,8 @@ public class FileInfoController extends BaseController {
      * @Description //上传文件
      * @Date 11:28 2020/10/10
      **/
-//    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
-    @RequestMapping(value="/uploadFile",produces="text/plain;charset=UTF-8", method = RequestMethod.POST)
+    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+//    @RequestMapping(value="/uploadFile",produces="text/plain;charset=UTF-8", method = RequestMethod.POST)
     public Map<String, Object> applyUpload1(@RequestParam("file") MultipartFile file, String type) {
         log.info(getLogInfo("upload", file));
         FileInfo attachInfo = new FileInfo();
@@ -200,10 +200,7 @@ public class FileInfoController extends BaseController {
      **/
     @RequestMapping(value = "/updateFileFreign", method = RequestMethod.POST)
     public Map<String, Object> updateFileFreign(String id, String key) {
-        FileInfo fileInfo = fileInfoService.getByKey(id);
-        fileInfo.setPlatCode(key);
-        fileInfo.setUpdateTime(DateUtil.getDateTime());
-        fileInfoService.updateFileName(fileInfo);
+        fileInfoService.updateFileName2(id,key);
         return RestUtil.success("修改成功");
     }
 

@@ -1,5 +1,6 @@
 package net.zlw.cloud.snsEmailFile.service;
 
+import net.tec.cloud.common.util.DateUtil;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,13 @@ public class FileInfoService {
     }
 
     public void updateFileName(FileInfo fileInfo) {
+        fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+    }
+
+    public void updateFileName2(String id,String key) {
+        FileInfo fileInfo = fileInfoMapper.selectByPrimaryKey(id);
+        fileInfo.setPlatCode(key);
+        fileInfo.setUpdateTime(DateUtil.getDateTime());
         fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
     }
 

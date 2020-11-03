@@ -24,12 +24,15 @@ import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.controller.FileInfoController;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.xml.ws.soap.Addressing;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,6 +65,8 @@ public class BudgetingServiceImpl implements BudgetingService {
     private SettlementAuditInformationDao settlementAuditInformationDao;
     @Resource
     private FileInfoMapper fileInfoMapper;
+    @Autowired
+    private FileInfoService fileInfoService;
 
     @Override
     public void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser) {
@@ -171,9 +176,8 @@ public class BudgetingServiceImpl implements BudgetingService {
         c.andEqualTo("userId",loginUser.getId());
         List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
         for (FileInfo fileInfo : fileInfos) {
-            FileInfoController fileInfoController = new FileInfoController();
             //修改文件外键
-            fileInfoController.updateFileFreign(fileInfo.getId(),budgeting.getId());
+            fileInfoService.updateFileName2(fileInfo.getId(),budgeting.getId());
         }
     }
 

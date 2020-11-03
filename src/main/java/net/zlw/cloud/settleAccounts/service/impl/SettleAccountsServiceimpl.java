@@ -23,7 +23,9 @@ import net.zlw.cloud.settleAccounts.service.SettleAccountsService;
 import net.zlw.cloud.snsEmailFile.controller.FileInfoController;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -56,6 +58,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private SettlementInfoMapper settlementInfoMapper2;
     @Resource
     private FileInfoMapper fileInfoMapper;
+    @Autowired
+    private FileInfoService fileInfoService;
 
 
     @Override
@@ -231,12 +235,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         c.andEqualTo("userId","user305");
         List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example);
         for (FileInfo fileInfo : fileInfos) {
-            FileInfoController fileInfoController = new FileInfoController();
             //修改文件外键
             if (baseAccountsVo.getSettlementAuditInformation().getId()!=null){
-                fileInfoController.updateFileFreign(fileInfo.getId(),baseAccountsVo.getSettlementAuditInformation().getId());
+                fileInfoService.updateFileName2(fileInfo.getId(),baseAccountsVo.getSettlementAuditInformation().getId());
             }else{
-                fileInfoController.updateFileFreign(fileInfo.getId(),baseAccountsVo.getLastSettlementReview().getId());
+                fileInfoService.updateFileName2(fileInfo.getId(),baseAccountsVo.getLastSettlementReview().getId());
             }
         }
 
