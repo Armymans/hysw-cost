@@ -593,7 +593,6 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         int i = baseProjectDao.selectCountByExample(null);
         numberVo.setTotalNumberOfProjects(i);
 
-
         int ii = 0;
         Example example = new Example(BaseProject.class);
         Example.Criteria c = example.createCriteria();
