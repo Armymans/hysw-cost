@@ -227,10 +227,12 @@ public class ProjectController extends BaseController {
      *
      * @param id
      */
-//    @("/deleteProject/{id}")
+//    @GetMapping("/deleteProject/{id}")
     @RequestMapping(value = "/api/disproject/deleteProject", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public void deleteProject(@RequestParam(name = "id") String id) {
+    public Map<String,Object> deleteProject(@RequestParam("id") String id) {
         projectService.deleteProject(id);
+        return RestUtil.success();
+
     }
 
     /**
