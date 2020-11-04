@@ -46,6 +46,8 @@ public class WarningDetails {
     private String founderCompanyId;
     @Column(name = "del_flag")
     private String delFlag;
+    @Column(name = "risk_time")
+    private String riskTime;
 
     @Transient
     private AuditInfo auditInfo;

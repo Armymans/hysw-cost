@@ -21,7 +21,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
     )
     void batchAudit(@Param("id") String id, @Param("auditResult") String auditResult, @Param("auditOpinion") String auditOpinion);
 
-    @Select("select * from audit_info where base_project_id = #{id} and audit_type = 'risk' and audit_result ='0' and auditor_id = #{userId}")
+    @Select("select * from audit_info where base_project_id = #{id}  and audit_result ='0' and auditor_id = #{userId}")
     AuditInfo findByTypeAndAuditorIdAndAuditResult(@Param("userId") String userId, @Param("id") String id);
 
     @Select("select * from audit_info where base_project_id = #{id} and audit_type = 'risk'")
