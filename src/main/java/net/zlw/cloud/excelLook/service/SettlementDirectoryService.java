@@ -5,7 +5,10 @@ import net.zlw.cloud.excelLook.domain.SettlementDirectory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /***
  * 目录查看
@@ -30,6 +33,8 @@ public class SettlementDirectoryService {
         if (settlementDirectory.getId() != null && !"".equals(settlementDirectory.getId())){
             settlementDirectoryDao.updateByPrimaryKeySelective(settlementDirectory);
         }else {
+            settlementDirectory.setId(UUID.randomUUID().toString().replace("-",""));
+            settlementDirectory.setCreateTime(new SimpleDateFormat("yyyy-dd-MM HH:mm:ss" ).format(new Date()));
             settlementDirectoryDao.insertSelective(settlementDirectory);
 
         }
