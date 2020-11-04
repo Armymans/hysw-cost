@@ -65,13 +65,18 @@ public class MemberService {
                     return "用户信息未同步，请联系管理员。";
                 } else {
                     String ip = getIp(request);
-                    login.setCompanyId(company.getId());
-                    login.setCompanyName(company.getName());
+                    if(company != null){
+                        login.setBusinessType(company.getBusinessType());
+                        login.setCompanyId(company.getId());
+                        login.setCompanyName(company.getName());
+                    }else{
+                        login.setCompanyId(depManage.getId());
+                        login.setCompanyName(depManage.getDepName());
+                    }
                     login.setUserId(user.getId());
                     login.setUserName(user.getMemberName());
                     login.setLoginIpAddress(ip);
                     login.setLogType("100");
-                    login.setBusinessType(company.getBusinessType());
                     login.setId(UUID.randomUUID().toString());
                     String date = sdf.format(new Date());
                     login.setLoginTime(date);

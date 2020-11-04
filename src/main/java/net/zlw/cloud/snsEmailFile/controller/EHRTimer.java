@@ -141,6 +141,10 @@ public class EHRTimer {
                 user.setId(id);
                 user.setMemberName(userName);
                 user.setEmail(email);
+                if(userAccount.contains("\\")){
+                    String[] split = userAccount.split("\\\\");
+                    userAccount = split[1];
+                }
                 user.setMemberAccount(userAccount);
                 if("男".equals(gender)){
                     user.setMemberSex("0");
