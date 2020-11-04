@@ -227,8 +227,9 @@ public class ProjectController extends BaseController {
      *
      * @param id
      */
-    @GetMapping("/deleteProject/{id}")
-    public void deleteProject(@PathVariable("id") String id) {
+//    @("/deleteProject/{id}")
+    @RequestMapping(value = "/api/disproject/deleteProject", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public void deleteProject(@RequestParam(name = "id") String id) {
         projectService.deleteProject(id);
     }
 

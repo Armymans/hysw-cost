@@ -47,7 +47,6 @@ public class StatisticAnalysisController {
     public Map<String,Object> pieChar(pageVo pageVo){
         JSONArray objects = statusticAnalysisService.pieChar(pageVo);
         return RestUtil.success(objects);
-
     }
     // 造价绩效统计，搜索
     @RequestMapping(value = "/statisticAnalysis/findStatisticAnalysis",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
@@ -86,7 +85,6 @@ public class StatisticAnalysisController {
         ReturnEmployeePerformance data = (ReturnEmployeePerformance)stringObjectMap.get("data");
         JSONArray picture = data.getPicture();
         return RestUtil.success(picture);
-
     }
 
     //员工绩效分析列表

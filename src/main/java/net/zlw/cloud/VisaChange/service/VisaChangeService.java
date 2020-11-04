@@ -9,12 +9,13 @@ import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface VisaChangeService {
 
 
-     PageInfo<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser );
+     ArrayList<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser );
 
 
   

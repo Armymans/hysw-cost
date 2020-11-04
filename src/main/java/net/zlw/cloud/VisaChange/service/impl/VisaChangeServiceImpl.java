@@ -75,8 +75,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
      * 分页查询所有
      */
     @Override
-    public PageInfo<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser) {
-        PageHelper.startPage(visaChangeVO.getPageNum(), visaChangeVO.getPageSize());
+    public ArrayList<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser) {
+
         //TODO 需要改
 
         visaChangeVO.setLoginUserId(loginUser.getId());
@@ -161,8 +161,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
         }
 
-        PageInfo<VisaChangeVo> info = new PageInfo<>(visaChangeVos);
-        return info;
+
+        return visaChangeVos;
 
     }
 

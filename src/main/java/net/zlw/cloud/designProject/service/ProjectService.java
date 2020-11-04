@@ -30,6 +30,7 @@ import org.apache.ibatis.annotations.Param;
 import org.aspectj.weaver.ast.And;
 import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -40,6 +41,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@Transactional
 public class ProjectService {
     @Resource
     private ProjectMapper projectMapper;  //基本信息
