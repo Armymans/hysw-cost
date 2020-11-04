@@ -3,7 +3,6 @@ package net.zlw.cloud.designProject.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
-import net.tec.cloud.common.vo.LoginUser;
 import net.zlw.cloud.VisaApplyChangeInformation.mapper.VisaApplyChangeInformationMapper;
 import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
 import net.zlw.cloud.budgeting.mapper.VeryEstablishmentDao;
@@ -26,9 +25,6 @@ import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
-import org.apache.ibatis.annotations.Param;
-import org.aspectj.weaver.ast.And;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -1956,6 +1952,7 @@ public class ProjectService {
     public String buildSubmit(BuildingProject buildingProject) {
         String uuid = UUID.randomUUID().toString().replace("-","");
         buildingProject.setId(uuid);
+        buildingProject.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         buildingProjectMapper.insertSelective(buildingProject);
         return uuid;
     }

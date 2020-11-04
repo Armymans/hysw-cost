@@ -93,7 +93,7 @@ public class SettlementReportTextService {
             //附件
             SettlementReportTextAttachment settlementReportTextAttachment = new SettlementReportTextAttachment();
             for (SettlementReportTextAttachment setReportList : setReportLists) {
-                //如果审核id不为空就修改
+                //如果附件id不为空就修改
                 if (setReportList.getId() != null) {
                     settlementReportTextAttachment.setNameAttachment(setReportList.getNameAttachment());
                     settlementReportTextAttachmentDao.updateByPrimaryKeySelective(settlementReportTextAttachment);
@@ -109,7 +109,7 @@ public class SettlementReportTextService {
             //审减
             SettlementReportTextReductionReasons settlementReportTextReductionReasons = new SettlementReportTextReductionReasons();
             for (SettlementReportTextReductionReasons thisReason : settReductionLists) {
-                //如果审核id不为空就修改
+                //如果审减id不为空就修改
                 if (thisReason.getId() != null) {
                     settlementReportTextReductionReasons.setReductionReason(thisReason.getReductionReason());
                     settlementReportTextReductionReasonsDao.updateByPrimaryKeySelective(settlementReportTextReductionReasons);
