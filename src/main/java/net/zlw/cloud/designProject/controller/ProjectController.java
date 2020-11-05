@@ -55,20 +55,20 @@ public class ProjectController extends BaseController {
 
         try {
             String uid = projectService.buildSubmit(buildingProject);
-
+            //更改userid 为 建设项目id
+            String id = getLoginUser().getId();
+            List<FileInfo> xmxgt = fileInfoService.findByFreignAndType2(id, "xmxgt");
+            if(xmxgt.size()>0){
+                for (FileInfo fileInfo : xmxgt) {
+                    fileInfo.setPlatCode(uid);
+                    projectService.updateFileInfo(fileInfo);
+                }
+            }
         }catch (Exception e){
             return RestUtil.error(e.getMessage());
         }
 
-        //更改userid 为 建设项目id
-//        String id = getLoginUser().getId();
-//        List<FileInfo> xmxgt = fileInfoService.findByFreignAndType2(id, "xmxgt");
-//        if(xmxgt.size()>0){
-//            for (FileInfo fileInfo : xmxgt) {
-//                fileInfo.setPlatCode(uid);
-//                projectService.updateFileInfo(fileInfo);
-//            }
-//        }
+
         return RestUtil.success();
     }
 

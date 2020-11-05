@@ -808,14 +808,14 @@ public class ProjectService {
             projectVo.getPackageCame().setStatus("0");
             projectVo.getPackageCame().setCreateTime(createTime);
             packageCameMapper.insert(projectVo.getPackageCame());
-        }else{
-            PackageCame packageCame = new PackageCame();
-            packageCame.setId(packageCameuuId);
-            packageCame.setBassProjectId(DesignInfouuid);
-            packageCame.setStatus("0");
-            packageCame.setCreateTime(createTime);
-            packageCameMapper.insert(projectVo.getPackageCame());
         }
+//        else{
+//            projectVo.getPackageCame().setId(packageCameuuId);
+//            projectVo.getPackageCame().setBassProjectId(DesignInfouuid);
+//            projectVo.getPackageCame().setStatus("0");
+//            projectVo.getPackageCame().setCreateTime(createTime);
+//            packageCameMapper.insert(projectVo.getPackageCame());
+//        }
 
 
         //项目踏勘
@@ -1961,10 +1961,11 @@ public class ProjectService {
         String uuid = UUID.randomUUID().toString().replace("-","");
         List<BuildingProject> nameAndCode = buildingProjectMapper.findNameAndCode(buildingProject.getBuildingProjectName(),buildingProject.getBuildingProjectCode());
         if (nameAndCode.size() > 0){
-           throw new Exception("建设名称或者编号重复");
+           throw new RuntimeException("建设名称或者编号重复");
 
         }else {
             buildingProject.setId(uuid);
+            //完成状态
             buildingProject.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             buildingProjectMapper.insertSelective(buildingProject);
         }
