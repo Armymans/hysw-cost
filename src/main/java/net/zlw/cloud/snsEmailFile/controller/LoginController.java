@@ -1,5 +1,6 @@
 package net.zlw.cloud.snsEmailFile.controller;
 
+import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.vo.LoginUser;
 import net.tec.cloud.common.web.MediaTypes;
@@ -95,7 +96,11 @@ public class LoginController  extends BaseController {
         }
     }
     @RequestMapping(value = "/login/userLogin2", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> userLogin(String userName, String password){
+    public Map<String, Object> userLogin(){
+        UserInfo loginUser = getLoginUser();
+        if(loginUser == null){
+            new Exception("获取登录信息失败");
+        }
         return RestUtil.success("success"); 
     }
 
