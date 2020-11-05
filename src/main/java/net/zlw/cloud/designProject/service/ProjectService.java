@@ -781,6 +781,10 @@ public class ProjectService {
             projectVo.getBaseProject().setDesginStatus("1");
         }
 
+        List<BaseProject> list = projectMapper.duplicateChecking(projectVo.getBaseProject());
+        if (list!=null && list.size()!=0){
+            throw new RuntimeException("项目编号或项目名称重复");
+        }
         projectMapper.insert(projectVo.getBaseProject());
 
         //设计表添加
@@ -1003,6 +1007,10 @@ public class ProjectService {
 
             //添加修改时间
             projectVo.getBaseProject().setUpdateTime(updateTime);
+            List<BaseProject> list = projectMapper.duplicateCheckingByUpdate(projectVo.getBaseProject());
+            if (list!=null && list.size()!=0){
+                throw new RuntimeException("项目编号或项目名称重复");
+            }
             projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
             //添加设计表修改时间
             projectVo.getDesignInfo().setUpdateTime(updateTime);

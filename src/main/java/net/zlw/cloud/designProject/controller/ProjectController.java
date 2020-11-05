@@ -240,7 +240,12 @@ public class ProjectController extends BaseController {
         //             @RequestBody DesignInfo designInfo,
         //             @RequestBody ProjectExploration projectExploration,
         //             @RequestBody PackageCame packageCame
-        projectService.disProjectSubmit(projectVo, getLoginUser());
+        try {
+            projectService.disProjectSubmit(projectVo, getLoginUser());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success();
     }
 
@@ -335,7 +340,12 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/disproject/UpdateProjectSubmit1", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateProjectSubmit1(ProjectVo projectVo) {
-        projectService.projectEdit(projectVo, getLoginUser());
+        try {
+            projectService.projectEdit(projectVo, getLoginUser());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success();
     }
 

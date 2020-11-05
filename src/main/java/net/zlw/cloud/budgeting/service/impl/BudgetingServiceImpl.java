@@ -199,7 +199,16 @@ public class BudgetingServiceImpl implements BudgetingService {
         example2.createCriteria().andEqualTo("budgetingId",id);
         VeryEstablishment veryEstablishment = veryEstablishmentDao.selectOneByExample(example2);
 
+        Example example3 = new Example(AuditInfo.class);
+        Example.Criteria c = example3.createCriteria();
+        c.andEqualTo("baseProjectId",id);
+        c.andEqualTo("auditResult","0");
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example3);
+
+
         BudgetingVo budgetingVo = new BudgetingVo();
+        budgetingVo.setAuditInfo(auditInfo);
+
         budgetingVo.setId(budgeting.getId());
         budgetingVo.setProjectNum(baseProject.getProjectNum());
         budgetingVo.setAmountCost(budgeting.getAmountCost());
@@ -299,12 +308,15 @@ public class BudgetingServiceImpl implements BudgetingService {
         Example example1 = new Example(SurveyInformation.class);
         example1.createCriteria().andEqualTo("budgetingId",budgetingVo.getId());
         SurveyInformation surveyInformation = surveyInformationDao.selectOneByExample(example1);
+        System.err.println(surveyInformation);
         surveyInformation.setSurveyDate(budgetingVo.getSurveyDate());
         surveyInformation.setInvestigationPersonnel(budgetingVo.getInvestigationPersonnel());
         surveyInformation.setSurveyBriefly(budgetingVo.getSurveyBriefly());
         surveyInformation.setPriceInformationName(budgetingVo.getPriceInformationName());
         surveyInformation.setPriceInformationNper(budgetingVo.getPriceInformationNper());
         surveyInformation.setBudgetingId(budgeting.getId());
+        System.err.println(surveyInformation);
+        System.err.println(budgetingVo);
         surveyInformationDao.updateByPrimaryKeySelective(surveyInformation);
 
         //成本编制

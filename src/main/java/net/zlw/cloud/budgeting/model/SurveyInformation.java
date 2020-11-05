@@ -4,6 +4,7 @@ package net.zlw.cloud.budgeting.model;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @Table(name = "survey_information")
 public class SurveyInformation implements Serializable{
     //唯一标识
+    @Id
     private String id;
     //勘察日期
     @Column(name = "survey_date")

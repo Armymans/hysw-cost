@@ -1,6 +1,7 @@
 package net.zlw.cloud.budgeting.model.vo;
 
 import lombok.Data;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
 
 import java.math.BigDecimal;
 
@@ -44,4 +45,6 @@ public class BudgetingVo {
     private String vRemarkes;
     private String auditorId;
     private String auditNumber;
+
+    private AuditInfo auditInfo;
 }

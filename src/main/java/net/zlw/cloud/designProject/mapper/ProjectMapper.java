@@ -1592,6 +1592,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
             "fire_table_size fireTableSize, " +
             "classification_caliber classificationCaliber, " +
             "water_meter_diameter waterMeterDiameter, " +
+            "virtual_code virtualCode , " +
             "site site, " +
             "system_number systemNumber, " +
             "proposer proposer, " +
@@ -1680,4 +1681,10 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "s1.building_project_id = #{id}"
     )
     BigDecimal consultingExpenditure2(@Param("id") String id);
+
+    @Select("select * from base_project where project_num = #{projectNum} or project_name = #{projectName}")
+    List<BaseProject> duplicateChecking(BaseProject baseProject);
+
+    @Select("select * from base_project where project_num = #{projectNum} or project_name = #{projectName} and id != #{id}")
+    List<BaseProject> duplicateCheckingByUpdate(BaseProject baseProject);
 }
