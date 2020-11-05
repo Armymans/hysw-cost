@@ -2,11 +2,8 @@ package net.zlw.cloud.designProject.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
-import javafx.geometry.Pos;
 import net.tec.cloud.common.controller.BaseController;
-import net.tec.cloud.common.vo.LoginUser;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.CostPreparation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
@@ -22,21 +19,17 @@ import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
-import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.UnknownHostException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
@@ -60,6 +53,7 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/build/buildSubmit", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> buildSubmit(BuildingProject buildingProject){
         String uuid = projectService.buildSubmit(buildingProject);
+
         //更改userid 为 建设项目id
         String id = getLoginUser().getId();
         List<FileInfo> xmxgt = fileInfoService.findByFreignAndType2(id, "xmxgt");

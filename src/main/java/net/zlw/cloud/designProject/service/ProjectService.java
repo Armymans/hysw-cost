@@ -1951,9 +1951,18 @@ public class ProjectService {
 
     public String buildSubmit(BuildingProject buildingProject) {
         String uuid = UUID.randomUUID().toString().replace("-","");
-        buildingProject.setId(uuid);
-        buildingProject.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        buildingProjectMapper.insertSelective(buildingProject);
+        List<BuildingProject> nameAndCode = buildingProjectMapper.findNameAndCode();
+        if (nameAndCode.size()>0){
+            for (BuildingProject thisNameAndCode : nameAndCode) {
+                if (thisNameAndCode.getBuildingProjectName() != buildingProject.getBuildingProjectName() && thisNameAndCode.getBuildingProjectCode() != buildingProject.getBuildingProjectCode()){
+                    buildingProject.setId(uuid);
+                    buildingProject.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                    buildingProjectMapper.insertSelective(buildingProject);
+                }else {
+                   new Exception("项目名称或项目编号有重复，请重新输入");
+                }
+            }
+        }
         return uuid;
     }
     public void updateFileInfo(FileInfo fileInfo){

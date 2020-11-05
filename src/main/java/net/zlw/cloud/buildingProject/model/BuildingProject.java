@@ -100,4 +100,7 @@ public class BuildingProject {
     @Column(name = "merge_flag")
     private String mergeFlag;
 
+    @Column(name = "accomplish_status")
+    private String accomplishStatus;
+
 }

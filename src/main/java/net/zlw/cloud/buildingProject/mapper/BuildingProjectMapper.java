@@ -15,14 +15,14 @@ import java.util.List;
 @Mapper
 public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<BuildingProject> {
 
-    @Select("SELECT " +
-            " distinct bp.id, " +
-            " building_project_name buildingProjectName," +
-            " building_project_code" +
-            " FROM " +
-            " building_project bp " +
-            " left join base_project b on b.building_project_id != bp.id " +
-            " where bp.status = 0 and bp.or_submit = 1")
+    @Select("SELECT \n" +
+            "            distinct bp.id, \n" +
+            "            building_project_name buildingProjectName,\n" +
+            "            building_project_code\n" +
+            "            FROM \n" +
+            "            building_project bp \n" +
+            "            left join base_project b on b.building_project_id != bp.id \n" +
+            "            where bp.status = 0 and bp.or_submit = 1")
     List<BuildingProject> findBuildingProject();
 
     @Select("select * from building_project where id = #{id}")
@@ -57,4 +57,8 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
             "actual_end_time  actualEndTime\n" +
             "FROM building_project where id = #{id}")
     BuildingProject findOne(String id);
+
+
+    @Select("SELECT building_project_name,building_project_code FROM building_project")
+    List<BuildingProject> findNameAndCode();
 }

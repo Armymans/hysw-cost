@@ -2,6 +2,7 @@ package net.zlw.cloud.buildingProject.service;
 
 import net.zlw.cloud.buildingProject.mapper.BuildingProjectMapper;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
+import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class BuildingProjectService {
     @Autowired
     private BaseProjectService baseProjectService;
 
+    @Autowired
+    private BaseProjectDao baseProjectDao;
+
 
     /**
      * @Author Armyman
@@ -42,19 +46,18 @@ public class BuildingProjectService {
      * @Description //建设项目合并
      * @Date 14:23 2020/10/11
      **/
-    public void buildingProjectMerge(String ids, String id, String code) {
+    public void buildingProjectMerge(String ids, String id) {
         //建设项目id
         BuildingProject buildingProject = buildingProjectMapper.selectById(id);
         if (buildingProject != null) {
-            buildingProject.setBuildingProjectCode(code);
-            buildingProject.setMergeFlag("1");
+            buildingProject.setMergeFlag("0");
             buildingProjectMapper.updateByPrimaryKeySelective(buildingProject);
         }
         //工程项目ids
         String[] split = ids.split(",");
         for (String s : split) {
             BaseProject baseProject = baseProjectService.findById(s);
-            if (baseProject != null && "1".equals(baseProject.getMergeFlag())) {
+            if (baseProject != null ) {
                 baseProject.setBuildingProjectId(id);
                 baseProject.setMergeFlag("0");
                 baseProject.setUpdateTime(sdf.format(new Date()));
@@ -73,17 +76,20 @@ public class BuildingProjectService {
     public void buildingProjectReduction(String id) {
         BuildingProject buildingProject = buildingProjectMapper.selectById(id);
         if (buildingProject != null) {
-            buildingProject.setMergeFlag("0");
+            buildingProject.setMergeFlag("1");
             buildingProjectMapper.updateByPrimaryKeySelective(buildingProject);
         }
         //工程项目ids
         List<BaseProject> baseProject = baseProjectService.findByBuildingProject(id);
         if (baseProject.size() > 0) {
             for (BaseProject project : baseProject) {
+//                project.setId(UUID.randomUUID().toString().replace("-",""));
                 project.setBuildingProjectId(null);
                 project.setMergeFlag("1");
                 project.setUpdateTime(sdf.format(new Date()));
-                baseProjectService.updateProject(project);
+//                baseProjectService.updateProject(project);
+//                baseProjectDao.updateByPrimaryKey(project);
+                baseProjectDao.updateByPrimaryKeySelective(project);
             }
         }
     }

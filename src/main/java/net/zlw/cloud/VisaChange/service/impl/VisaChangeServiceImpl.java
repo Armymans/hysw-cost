@@ -1,10 +1,7 @@
 package net.zlw.cloud.VisaChange.service.impl;
 
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
-import net.tec.cloud.common.vo.LoginUser;
 import net.zlw.cloud.VisaApplyChangeInformation.model.VisaChangeInformation;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeInformationMapper;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
@@ -14,7 +11,6 @@ import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.VisaChange.service.VisaChangeService;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
-import net.zlw.cloud.general.SearchBaseProjectController;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -31,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
 
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -460,6 +455,30 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
         VisaChangeInformation upvisachange = new VisaChangeInformation();
         VisaChangeInformation downvisachange = new VisaChangeInformation();
+        if ("".equals(visaChangeInfoVo.getAmountVisaChange())){
+                visaChangeInfoVo.setAmountVisaChange(new BigDecimal("0").toString());
+        }
+        if ("".equals(visaChangeInfoVo.getAmountVisaChangeDown())){
+            visaChangeInfoVo.setAmountVisaChangeDown(new BigDecimal("0").toString());
+        }
+
+        if ("".equals(visaChangeInfoVo.getContractAmount())){
+            visaChangeInfoVo.setAmountVisaChange(new BigDecimal("0").toString());
+        }
+        if ("".equals(visaChangeInfoVo.getContractAmountDown())){
+            visaChangeInfoVo.setContractAmountDown(new BigDecimal("0").toString());
+        }
+
+        if ("".equals(visaChangeInfoVo.getOutsourcingAmount())){
+            visaChangeInfoVo.setOutsourcingAmount(new BigDecimal("0").toString());
+        }
+
+        if ("".equals(visaChangeInfoVo.getOutsourcingAmountDown())){
+            visaChangeInfoVo.setOutsourcingAmountDown(new BigDecimal("0").toString());
+        }
+        if ("".equals(visaChangeInfoVo.getSubmitMoneyDown())){
+            visaChangeInfoVo.setSubmitMoneyDown(new BigDecimal("0").toString());
+        }
 
 
         //判断上家签证/变更申请信息
@@ -661,6 +680,31 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     public void submitOrSave(VisaChangeInfoVo visaChangeInfoVo) {
 
 
+        if ("".equals(visaChangeInfoVo.getAmountVisaChange())){
+            visaChangeInfoVo.setAmountVisaChange(new BigDecimal("0").toString());
+        }
+        if ("".equals(visaChangeInfoVo.getAmountVisaChangeDown())){
+            visaChangeInfoVo.setAmountVisaChangeDown(new BigDecimal("0").toString());
+        }
+
+        if ("".equals(visaChangeInfoVo.getContractAmount())){
+            visaChangeInfoVo.setAmountVisaChange(new BigDecimal("0").toString());
+        }
+        if ("".equals(visaChangeInfoVo.getContractAmountDown())){
+            visaChangeInfoVo.setContractAmountDown(new BigDecimal("0").toString());
+        }
+
+        if ("".equals(visaChangeInfoVo.getOutsourcingAmount())){
+            visaChangeInfoVo.setOutsourcingAmount(new BigDecimal("0").toString());
+        }
+
+        if ("".equals(visaChangeInfoVo.getOutsourcingAmountDown())){
+            visaChangeInfoVo.setOutsourcingAmountDown(new BigDecimal("0").toString());
+        }
+
+        if ("".equals(visaChangeInfoVo.getSubmitMoneyDown())){
+            visaChangeInfoVo.setSubmitMoneyDown(new BigDecimal("0").toString());
+        }
 
 
         if (visaChangeInfoVo.getAuditNumber()==null){

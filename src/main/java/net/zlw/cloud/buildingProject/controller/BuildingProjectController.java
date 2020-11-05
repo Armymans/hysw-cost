@@ -1,11 +1,9 @@
 package net.zlw.cloud.buildingProject.controller;
 
-import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.buildingProject.service.BuildingProjectService;
-import net.zlw.cloud.clearProject.model.vo.ClearProjectVo;
 import net.zlw.cloud.common.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,8 +43,8 @@ public class BuildingProjectController extends BaseController {
      **/
 //    hysw/cost/api/buildingProject/findBuildingProject
     @RequestMapping(value = "/buildingProjectMerge",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> buildingProjectMerge(String ids,String id,String code){
-       buildingProjectService.buildingProjectMerge(ids,id,code);
+    public Map<String,Object> buildingProjectMerge(String ids,String id){
+       buildingProjectService.buildingProjectMerge(ids,id);
         return RestUtil.success();
     }
 
@@ -59,5 +57,6 @@ public class BuildingProjectController extends BaseController {
     public Map<String,Object> buildingProjectReduction(String id){
        buildingProjectService.buildingProjectReduction(id);
         return RestUtil.success();
+
     }
 }
