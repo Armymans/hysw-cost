@@ -51,20 +51,54 @@ public class ProjectController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/build/buildSubmit", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> buildSubmit(BuildingProject buildingProject){
-        String uuid = projectService.buildSubmit(buildingProject);
+    public Map<String,Object> buildSubmit(BuildingProject buildingProject) throws Exception {
+
+        try {
+            String uid = projectService.buildSubmit(buildingProject);
+
+        }catch (Exception e){
+            return RestUtil.error(e.getMessage());
+        }
 
         //更改userid 为 建设项目id
-        String id = getLoginUser().getId();
-        List<FileInfo> xmxgt = fileInfoService.findByFreignAndType2(id, "xmxgt");
-        if(xmxgt.size()>0){
-            for (FileInfo fileInfo : xmxgt) {
-                fileInfo.setPlatCode(uuid);
-                projectService.updateFileInfo(fileInfo);
-            }
-        }
+//        String id = getLoginUser().getId();
+//        List<FileInfo> xmxgt = fileInfoService.findByFreignAndType2(id, "xmxgt");
+//        if(xmxgt.size()>0){
+//            for (FileInfo fileInfo : xmxgt) {
+//                fileInfo.setPlatCode(uid);
+//                projectService.updateFileInfo(fileInfo);
+//            }
+//        }
         return RestUtil.success();
     }
+
+    /***
+     * 编辑建设项目
+     * @param buildingProject
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/update/buildSubmit", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> buildUpdate(BuildingProject buildingProject) throws Exception {
+
+        try {
+             projectService.updateSubmit(buildingProject);
+        }catch (Exception e){
+            return RestUtil.error(e.getMessage());
+        }
+
+        //更改userid 为 建设项目id
+//        String id = getLoginUser().getId();
+//        List<FileInfo> xmxgt = fileInfoService.findByFreignAndType2(id, "xmxgt");
+//        if(xmxgt.size()>0){
+//            for (FileInfo fileInfo : xmxgt) {
+//                fileInfo.setPlatCode(uid);
+//                projectService.updateFileInfo(fileInfo);
+//            }
+//        }
+        return RestUtil.success();
+    }
+
 
     /**
      * 建设项目查看

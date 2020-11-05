@@ -1957,21 +1957,29 @@ public class ProjectService {
         return total;
     }
 
-    public String buildSubmit(BuildingProject buildingProject) {
+    public String buildSubmit(BuildingProject buildingProject) throws Exception {
         String uuid = UUID.randomUUID().toString().replace("-","");
-        List<BuildingProject> nameAndCode = buildingProjectMapper.findNameAndCode();
-        if (nameAndCode.size()>0){
-            for (BuildingProject thisNameAndCode : nameAndCode) {
-                if (thisNameAndCode.getBuildingProjectName() != buildingProject.getBuildingProjectName() && thisNameAndCode.getBuildingProjectCode() != buildingProject.getBuildingProjectCode()){
-                    buildingProject.setId(uuid);
-                    buildingProject.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                    buildingProjectMapper.insertSelective(buildingProject);
-                }else {
-                   new Exception("项目名称或项目编号有重复，请重新输入");
-                }
-            }
+        List<BuildingProject> nameAndCode = buildingProjectMapper.findNameAndCode(buildingProject.getBuildingProjectName(),buildingProject.getBuildingProjectCode());
+        if (nameAndCode.size() > 0){
+           throw new Exception("建设名称或者编号重复");
+
+        }else {
+            buildingProject.setId(uuid);
+            buildingProject.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            buildingProjectMapper.insertSelective(buildingProject);
         }
+
         return uuid;
+    }
+
+    public void updateSubmit(BuildingProject buildingProject) throws Exception {
+        List<BuildingProject> nameAndCodeAndId = buildingProjectMapper.findNameAndCodeAndId(buildingProject.getId(), buildingProject.getBuildingProjectName(), buildingProject.getBuildingProjectCode());
+        if (nameAndCodeAndId.size()>0){
+            throw new Exception("建设名称或者编号重复");
+        }else {
+            buildingProjectMapper.updateByPrimaryKeySelective(buildingProject);
+        }
+
     }
     public void updateFileInfo(FileInfo fileInfo){
         fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
