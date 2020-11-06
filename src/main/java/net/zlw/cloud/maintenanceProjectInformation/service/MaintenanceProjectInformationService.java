@@ -885,6 +885,21 @@ public class MaintenanceProjectInformationService{
         }
 
         maintenanceVo.setAuditInfos(auditInfos);
+
+        Example auditExample = new Example(AuditInfo.class);
+        Example.Criteria criteria1 = auditExample.createCriteria();
+        criteria1.andEqualTo("baseProjectId",information.getId());
+        criteria1.andEqualTo("auditType",'0');
+//        criteria1.andEqualTo("auditResult",'0');
+
+
+
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditExample);
+        if(auditInfo != null){
+            maintenanceVo.setAuditInfo(auditInfo);
+        }
+
+
         return maintenanceVo;
     }
 
