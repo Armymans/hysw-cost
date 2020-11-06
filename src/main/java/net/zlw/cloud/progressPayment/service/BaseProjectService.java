@@ -49,4 +49,5 @@ public interface BaseProjectService {
     BaseProject findByBuilding(String id);
 
     List<AuditChekedVo> auditChek(String id);
+    BaseProject findBaseProjectById(String id);
 }

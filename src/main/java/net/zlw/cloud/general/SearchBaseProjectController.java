@@ -46,6 +46,19 @@ public class SearchBaseProjectController {
         return RestUtil.success(byId);
     }
 
+    @RequestMapping(value = "/baseProject/findBaseProjectById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+//    @GetMapping("/findById/{id}")
+    public Map<String,Object> findBaseProjectById(@RequestParam(name = "id",required = false) String id){
+        BaseProject byId = null;
+        try {
+            byId = baseProjectService.findBaseProjectById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            RestUtil.error();
+        }
+        return RestUtil.success(byId);
+    }
+
     /**
      * @Author Armyman
      * @Description //签证变更，进度款支付，跟踪审计

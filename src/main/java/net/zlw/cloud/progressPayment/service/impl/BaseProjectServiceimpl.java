@@ -586,6 +586,18 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         return baseProject;
     }
+    @Override
+    public BaseProject findBaseProjectById(String id) {
+        Budgeting budgeting = budgetingMapper.selectByPrimaryKey(id);
+        BaseProject baseProject = new BaseProject();
+        if(budgeting != null){
+            String baseProjectId = budgeting.getBaseProjectId();
+            baseProject = baseProjectDao.findBaseProjectId(baseProjectId);
+        }else{
+            baseProject = baseProjectDao.findBaseProjectId(id);
+        }
+        return baseProject;
+    }
 
     @Override
     public NumberVo NumberItems() {

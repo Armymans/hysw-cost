@@ -5,7 +5,6 @@ import net.zlw.cloud.budgeting.model.vo.PageBVo;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
-import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
@@ -230,4 +229,97 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "(create_time < #{endTime} or #{endTime} = '--' or #{endTime} = '')\n" +
             "order by create_time desc limit 0,5")
     List<BaseProject> findAllBaseProject(pageVo pageVo);
+
+    @Select("SELECT * FROM base_project WHERE merge_flag = '0' AND id = #{id}")
+    BaseProject findBaseProject(@Param("id") String id);
+
+    @Select("SELECT\n" +
+            "\tb.id id,\n" +
+            "\tb.cea_num ceaNum,\n" +
+            "\tb.project_num projectNum,\n" +
+            "\tb.project_name projectName,\n" +
+            "\tb.application_num applicationNum,\n" +
+            "\tb.water_address waterAddress,\n" +
+            "\tb.construction_unit constructionUnit,\n" +
+            "\tb.contacts,\n" +
+            "\tb.contact_number,\n" +
+            "\tb.customer_name customerName,\n" +
+            "\tb.this_declaration thisDeclaration,\n" +
+            "\tb.agent,\n" +
+            "\tb.agent_phone,\n" +
+            "\tb.application_date applicationDate,\n" +
+            "\tb.business_location businessLocation,\n" +
+            "\tb.business_types businessTypes,\n" +
+            "\tb.a_b aB,\n" +
+            "\tb.water_use waterUse,\n" +
+            "\tb.fire_table_size fireTableSize,\n" +
+            "\tb.classification_caliber classificationCaliber,\n" +
+            "\tb.water_meter_diameter waterMeterDiameter,\n" +
+            "\tb.site site,\n" +
+            "\tb.system_number systemNumber,\n" +
+            "\tb.proposer proposer,\n" +
+            "\tb.application_number applicationNumber,\n" +
+            "\tb.construction_organization constructionOrganization,\n" +
+            "\t(CASE \n" +
+            "\t     b.subject \n" +
+            "\t\t\t WHEN '1' THEN '居民住户' \n" +
+            "\t\t\t WHEN '2' THEN '开发商' \n" +
+            "\t\t\t WHEN '3' THEN '政府事业' \n" +
+            "\t\t\t WHEN '4' THEN '工商户' \n" +
+            "\t\t\t WHEN '5' THEN '芜湖华衍' \n" +
+            "\t\t\t END \n" +
+            "\t\t\t ) subject,\n" +
+            "\t( \n" +
+            "\t CASE\n" +
+            "\t     b.district \n" +
+            "\t\t\t WHEN '1' THEN '芜湖' \n" +
+            "\t\t\t WHEN '2' THEN '马鞍山' \n" +
+            "\t\t\t WHEN '3' THEN '江北' \n" +
+            "\t\t\t WHEN '4' THEN '吴江' \n" +
+            "\t\t\t END\n" +
+            "\t\t\t ) district,\n" +
+            "\t( \n" +
+            "\tCASE \n" +
+            "\t    b.project_category \n" +
+            "\t\t\tWHEN '1' THEN '住宅区配套' \n" +
+            "\t\t\tWHEN '2' THEN '商业区配套' \n" +
+            "\t\t\tWHEN '3' THEN '工商区配套' \n" +
+            "\t\t\tEND ) projectCategory,\n" +
+            "\t( \n" +
+            "\tCASE \n" +
+            "\t    b.project_nature \n" +
+            "\t  WHEN '1' THEN '新建' \n" +
+            "\t\tWHEN '2' THEN '改造' \n" +
+            "\t\tEND \n" +
+            "\t\t) projectNature,\n" +
+            "\t(\n" +
+            "\tCASE\n" +
+            "\t\t\tb.design_category \n" +
+            "\t\t\tWHEN '1' THEN\n" +
+            "\t\t\t'市政管道' \n" +
+            "\t\t\tWHEN '2' THEN\n" +
+            "\t\t\t'管网改造' \n" +
+            "\t\t\tWHEN '3' THEN\n" +
+            "\t\t\t'新建小区' \n" +
+            "\t\t\tWHEN '4' THEN\n" +
+            "\t\t\t'二次供水项目' \n" +
+            "\t\t\tWHEN '5' THEN\n" +
+            "\t\t\t'工商户' \n" +
+            "\t\t\tWHEN '6' THEN\n" +
+            "\t\t\t'居民装接水' \n" +
+            "\t\t\tWHEN '7' THEN\n" +
+            "\t\t\t'行政事业' \n" +
+            "\t\tEND \n" +
+            "\t\t) designCategory,\n" +
+            "\t\t( \n" +
+            "\t\tCASE \n" +
+            "\t\tb.water_supply_type \n" +
+            "\t\tWHEN '1' THEN '直供水' \n" +
+            "\t\tWHEN '2' THEN '二次供水' \n" +
+            "\t\tEND\n" +
+            "\t\t)waterSupplyType\n" +
+            "\tFROM base_project b \n" +
+            "LEFT JOIN cost_unit_management c ON c.id = b.construction_organization\n" +
+            "WHERE b.del_flag = '0' AND b.id = #{id}")
+    BaseProject findBaseProjectId(@Param("id") String id);
 }

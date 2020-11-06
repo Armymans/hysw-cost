@@ -1960,12 +1960,16 @@ public class ProjectService {
     public String buildSubmit(BuildingProject buildingProject) throws Exception {
         String uuid = UUID.randomUUID().toString().replace("-","");
         List<BuildingProject> nameAndCode = buildingProjectMapper.findNameAndCode(buildingProject.getBuildingProjectName(),buildingProject.getBuildingProjectCode());
+        //判断如果decimal类型如果为空就设置为0
+        if ("".equals(buildingProject.getCostAmount())){
+            buildingProject.setCostAmount("0");
+        }
         if (nameAndCode.size() > 0){
            throw new RuntimeException("建设名称或者编号重复");
-
         }else {
             buildingProject.setId(uuid);
             //完成状态
+            buildingProject.setMergeFlag("0");
             buildingProject.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             buildingProjectMapper.insertSelective(buildingProject);
         }
@@ -1975,6 +1979,9 @@ public class ProjectService {
 
     public void updateSubmit(BuildingProject buildingProject) throws Exception {
         List<BuildingProject> nameAndCodeAndId = buildingProjectMapper.findNameAndCodeAndId(buildingProject.getId(), buildingProject.getBuildingProjectName(), buildingProject.getBuildingProjectCode());
+        if ("".equals(buildingProject.getCostAmount())){
+            buildingProject.setCostAmount("0");
+        }
         if (nameAndCodeAndId.size()>0){
             throw new Exception("建设名称或者编号重复");
         }else {

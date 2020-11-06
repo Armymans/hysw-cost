@@ -50,21 +50,25 @@ public class BuildingProjectService {
         //建设项目id
         BuildingProject buildingProject = buildingProjectMapper.selectById(id);
         if (buildingProject != null) {
-            buildingProject.setMergeFlag("0");
+            buildingProject.setMergeFlag("1");
             buildingProjectMapper.updateByPrimaryKeySelective(buildingProject);
         }
         //工程项目ids
         String[] split = ids.split(",");
         for (String s : split) {
             BaseProject baseProject = baseProjectService.findById(s);
-            if (baseProject != null ) {
+            BaseProject baseProject1 = baseProjectDao.findBaseProject(s);
+            if (baseProject1 != null){
+                 throw new RuntimeException("合并项目已存在,请重新选择");
+            }else if (baseProject != null ) {
                 baseProject.setBuildingProjectId(id);
                 baseProject.setMergeFlag("0");
                 baseProject.setUpdateTime(sdf.format(new Date()));
                 baseProjectService.updateProject(baseProject);
-            }else{
-                new Exception("项目信息错误，请确认后合并");
             }
+//            else{
+//                new RuntimeException("项目信息错误，请确认后合并");
+//            }
         }
     }
 
@@ -76,7 +80,7 @@ public class BuildingProjectService {
     public void buildingProjectReduction(String id) {
         BuildingProject buildingProject = buildingProjectMapper.selectById(id);
         if (buildingProject != null) {
-            buildingProject.setMergeFlag("1");
+            buildingProject.setMergeFlag("2");
             buildingProjectMapper.updateByPrimaryKeySelective(buildingProject);
         }
         //工程项目ids
