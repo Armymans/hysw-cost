@@ -21,7 +21,6 @@ import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
-import net.zlw.cloud.snsEmailFile.controller.FileInfoController;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
@@ -32,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.xml.ws.soap.Addressing;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -182,7 +180,7 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
-    public BudgetingVo selectBudgetingById(String id) {
+    public BudgetingVo selectBudgetingById(String id, UserInfo loginUser) {
         Budgeting budgeting = budgetingDao.selectByPrimaryKey(id);
 
         Example example = new Example(SurveyInformation.class);
@@ -244,6 +242,12 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgetingVo.setVReceivingTime(veryEstablishment.getReceivingTime());
         budgetingVo.setEstablishmentTime(veryEstablishment.getEstablishmentTime());
         budgetingVo.setVRemarkes(veryEstablishment.getRemarkes());
+
+        if (loginUser.getId().equals(budgetingVo.getAuditInfo().getAuditorId())){
+            budgetingVo.setCheckHidden("0");
+        } else {
+            budgetingVo.setCheckHidden("1");
+        }
 
         return budgetingVo;
     }
@@ -551,7 +555,7 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
-    public UnionQueryVo unionQuery(String id) {
+    public UnionQueryVo unionQuery(String id, UserInfo loginUser) {
         UnionQueryVo unionQueryVo = new UnionQueryVo();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
         unionQueryVo.setBaseProject(baseProject);
@@ -571,7 +575,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         Example.Criteria criteria1 = example1.createCriteria();
         criteria1.andEqualTo("baseProjectId",idi);
         Budgeting budgeting1 = budgetingDao.selectOneByExample(example1);
-        BudgetingVo budgeting = selectBudgetingById(budgeting1.getId());
+        BudgetingVo budgeting = selectBudgetingById(budgeting1.getId(), loginUser);
         unionQueryVo.setBudgeting(budgeting);
 
         return unionQueryVo;

@@ -35,7 +35,7 @@ public class BudgetingController extends BaseController {
 //    @GetMapping("/selectBudgetingById/{id}")
     @RequestMapping(value = "/budgeting/selectBudgetingById",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectBudgetingById(@RequestParam(name = "id") String id){
-        BudgetingVo budgetingVo = budgetingService.selectBudgetingById(id);
+        BudgetingVo budgetingVo = budgetingService.selectBudgetingById(id,getLoginUser());
         return RestUtil.success(budgetingVo);
     }
     //编辑预算信息
@@ -154,7 +154,7 @@ public class BudgetingController extends BaseController {
     //预算合并查询
     @RequestMapping(value = "/budgeting/unionQuery",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> unionQuery(@RequestParam(name = "baseId") String id){
-       UnionQueryVo unionQueryVo =  budgetingService.unionQuery(id);
+       UnionQueryVo unionQueryVo =  budgetingService.unionQuery(id,getLoginUser());
        return RestUtil.success(unionQueryVo);
     }
     //预算编制单条审核

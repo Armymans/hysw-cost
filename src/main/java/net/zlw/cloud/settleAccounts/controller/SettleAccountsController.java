@@ -72,7 +72,7 @@ public class SettleAccountsController extends BaseController {
         if (id==null){
             return RestUtil.error();
         }
-        BaseAccountsVo accountsVo = settleAccountsService.findAccountById(id);
+        BaseAccountsVo accountsVo = settleAccountsService.findAccountById(id,getLoginUser());
         return RestUtil.success(accountsVo);
     }
     //结算编辑

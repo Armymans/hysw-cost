@@ -20,7 +20,6 @@ import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
 import net.zlw.cloud.settleAccounts.service.SettleAccountsService;
-import net.zlw.cloud.snsEmailFile.controller.FileInfoController;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
@@ -160,19 +159,20 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         System.err.println(baseAccountsVo.getInvestigationOfTheAmount());
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //添加上家送审
+        System.out.println(baseAccountsVo);
         baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
         baseAccountsVo.getLastSettlementInfo().setBaseProjectId(baseProject.getId());
         SimpleDateFormat simd = new SimpleDateFormat("yyyy-MM-dd");
         baseAccountsVo.getLastSettlementInfo().setCreateTime(simd.format(new Date()));
         baseAccountsVo.getLastSettlementInfo().setState("0");
-        baseAccountsVo.getLastSettlementInfo().setFouderId(loginUser.getId());
+//        baseAccountsVo.getLastSettlementInfo().setFouderId(loginUser.getId());
         settlementInfoMapper.insertSelective(baseAccountsVo.getLastSettlementInfo());
         //添加勘察金额
         baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-",""));
         baseAccountsVo.getInvestigationOfTheAmount().setBaseProjectId(baseProject.getId());
         baseAccountsVo.getInvestigationOfTheAmount().setCreateTime(simd.format(new Date()));
         baseAccountsVo.getInvestigationOfTheAmount().setDelFlag("0");
-        baseAccountsVo.getInvestigationOfTheAmount().setFounderId(loginUser.getId());
+//        baseAccountsVo.getInvestigationOfTheAmount().setFounderId(loginUser.getId());
         investigationOfTheAmountDao.insertSelective(baseAccountsVo.getInvestigationOfTheAmount());
         //添加下家送审
         baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
@@ -180,20 +180,20 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
         baseAccountsVo.getSettlementInfo().setCreateTime(sim.format(new Date()));
         baseAccountsVo.getSettlementInfo().setState("0");
-        baseAccountsVo.getSettlementInfo().setFouderId(loginUser.getId());
+//        baseAccountsVo.getSettlementInfo().setFouderId(loginUser.getId());
         settlementInfoMapper2.insertSelective(baseAccountsVo.getSettlementInfo());
         //添加上家结算送审
         baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-",""));
         baseAccountsVo.getLastSettlementReview().setCreateTime(sim.format(new Date()));
         baseAccountsVo.getLastSettlementReview().setDelFlag("0");
         baseAccountsVo.getLastSettlementReview().setBaseProjectId(baseProject.getId());
-        baseAccountsVo.getLastSettlementReview().setFounderId(loginUser.getId());
+//        baseAccountsVo.getLastSettlementReview().setFounderId(loginUser.getId());
         //添加下家结算送审
         baseAccountsVo.getSettlementAuditInformation().setId(UUID.randomUUID().toString().replace("-",""));
         baseAccountsVo.getSettlementAuditInformation().setCreateTime(sim.format(new Date()));
         baseAccountsVo.getSettlementAuditInformation().setDelFlag("0");
         baseAccountsVo.getSettlementAuditInformation().setBaseProjectId(baseProject.getId());
-        baseAccountsVo.getSettlementAuditInformation().setFounderId(loginUser.getId());
+//        baseAccountsVo.getSettlementAuditInformation().setFounderId(loginUser.getId());
 
         if (baseAccountsVo.getLastSettlementReview().getId()!=null){
             baseAccountsVo.getSettlementAuditInformation().setAccountId(baseAccountsVo.getLastSettlementReview().getId());
@@ -246,7 +246,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     }
 
     @Override
-    public BaseAccountsVo findAccountById(String id) {
+    public BaseAccountsVo findAccountById(String id, UserInfo loginUser) {
         BaseAccountsVo baseAccountsVo = new BaseAccountsVo();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
         baseAccountsVo.setBaseProject(baseProject);
@@ -296,6 +296,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         for (AuditInfo auditInfo : auditInfos) {
             if (auditInfo.getAuditResult().equals("0")){
                 baseAccountsVo.setAuditType(auditInfo.getAuditType());
+                if (loginUser.getId().equals(auditInfo.getAuditorId())){
+                    baseAccountsVo.setCheckAudit("0");
+                }else{
+                    baseAccountsVo.setCheckAudit("1");
+                }
             }
         }
 

@@ -41,7 +41,7 @@ import java.util.UUID;
 @Transactional
 public class VisaChangeServiceImpl implements VisaChangeService {
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 
     @Autowired
@@ -74,7 +74,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
         //TODO 需要改
 
-        visaChangeVO.setLoginUserId(loginUser.getId());
+//        visaChangeVO.setLoginUserId(loginUser.getId());
         List<VisaChangeVo> all = null;
         //未审核
         if ("1".equals(visaChangeVO.getStatus())) {
@@ -960,6 +960,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
             //本次上家签证/变更信息
             String amountVisaChange = visaChangeInfoVo.getAmountVisaChange();
+            System.err.println("ssssssssss"+amountVisaChange);
             if (StringUtil.isNotEmpty(amountVisaChange)) {
                 visaChange.setCreatorCompanyId(visaChangeInfoVo.getLoginUserId());
                 visaChange.setUpdateTime(updateTime);
@@ -989,11 +990,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 num = num + 1;
                 visaChange.setChangeNum(num + "");
 
+                if (visaChange.getContractAmount().equals("")){
+                    visaChange.setContractAmount("0");
+                }
                 vcMapper.updateByPrimaryKeySelective(visaChange);
             }
 
             //本次下家签证/变更信息
             String amountVisaChangeDown = visaChangeInfoVo.getAmountVisaChangeDown();
+            System.err.println("xxxxxxxx"+amountVisaChangeDown);
             if (StringUtil.isNotEmpty(amountVisaChangeDown)) {
                 visaChange.setCreatorCompanyId(visaChangeInfoVo.getLoginUserId());
                 visaChange.setUpdateTime(updateTime);
@@ -1020,7 +1025,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 int num = Integer.parseInt(changeNum);
                 num = num + 1;
                 visaChange.setChangeNum(num + "");
-
+                System.err.println(visaChange);
+                if (visaChange.getContractAmount().equals("")){
+                    System.err.println("s5ad451d");
+                    visaChange.setContractAmount("0");
+                }
                 vcMapper.updateByPrimaryKeySelective(visaChange);
 
 
@@ -1197,7 +1206,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (thisA.getProportionContract()==null){
                     thisA.setProportionContract("0");
                 }
-                if (totalDownRate!=null){
+                System.err.println(totalDownRate);
+                System.err.println(thisA.getProportionContract());
+                if (totalDownRate!=null && !totalDownRate.equals("")){
                     totalDownRate = totalDownRate.add(new BigDecimal(thisA.getProportionContract()));
                 }
 

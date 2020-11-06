@@ -296,7 +296,6 @@ public class ProjectController extends BaseController {
         BaseProject baseProject = projectService.BaseProjectByid2(id);
         projectVo.setBaseProject(baseProject);
 
-
         DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
         projectVo.setDesignInfo(designInfo);
         projectVo.setDesginStatus(baseProject.getDesginStatus());

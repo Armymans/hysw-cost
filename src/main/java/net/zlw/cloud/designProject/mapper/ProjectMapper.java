@@ -1542,6 +1542,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
             "  when '7' then '行政事业' " +
             "  end " +
             ") as designCategory, " +
+            "desgin_status desginStatus , " +
             "construction_unit constructionUnit, " +
             "contacts contacts, " +
             "contact_number contactNumber, " +

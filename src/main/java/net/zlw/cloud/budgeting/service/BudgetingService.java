@@ -10,7 +10,7 @@ import java.util.List;
 public interface BudgetingService {
     void addBudgeting(BudgetingVo budgetingVo,UserInfo loginUser);
 
-    BudgetingVo selectBudgetingById(String id);
+    BudgetingVo selectBudgetingById(String id, UserInfo loginUser);
 
     void updateBudgeting(BudgetingVo budgetingVo);
 
@@ -20,7 +20,7 @@ public interface BudgetingService {
 
     List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo);
 
-    UnionQueryVo unionQuery(String id);
+    UnionQueryVo unionQuery(String id, UserInfo loginUser);
 
     void singleAudit(SingleAuditVo singleAuditVo);
 
