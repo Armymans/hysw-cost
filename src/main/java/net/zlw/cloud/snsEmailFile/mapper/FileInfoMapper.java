@@ -42,4 +42,7 @@ public interface FileInfoMapper extends Mapper<FileInfo> {
             " fi.STATUS = '0'  " +
             " AND fi.plat_code = #{id}")
     List<FileInfo> findByPlatCode(@Param("id")String id);
+
+    @Select("SELECT * FROM file_info WHERE plat_code = #{id}")
+    FileInfo findIdByStatus(@Param("id") String id);
 }

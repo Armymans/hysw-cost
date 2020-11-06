@@ -2,16 +2,16 @@ package net.zlw.cloud.whDesignTask.service;
 
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
+import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.whDesignTask.dao.DeclarationInformationDao;
 import net.zlw.cloud.whDesignTask.dao.MangerDemandDao;
 import net.zlw.cloud.whDesignTask.dao.OperationSubmitTypeDao;
 import net.zlw.cloud.whDesignTask.dao.SubmitOperationDeptDao;
 import net.zlw.cloud.whDesignTask.model.*;
 import net.zlw.cloud.whDesignTask.model.vo.DesignVo;
-import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
-import net.zlw.cloud.progressPayment.model.BaseProject;
-import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
-import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @Classname DesinTaskService
@@ -64,7 +63,7 @@ public class DesinTaskService {
             //创建项目对象
             BaseProject baseProject = new BaseProject();
             //添加数据
-            baseProject.setId(UUID.randomUUID().toString().replace("-", ""));
+            baseProject.setId(designVo.getApplicationNum());
             baseProject.setApplicationNum(designVo.getApplicationNum());
             baseProject.setDistrict(designVo.getDistinct());
             baseProject.setProjectName(designVo.getProjectName());
@@ -86,6 +85,7 @@ public class DesinTaskService {
             baseProject.setStatus(designVo.getStatus());
             baseProject.setThisDeclaration(designVo.getThisTask());
             baseProject.setVirtualCode(designVo.getVirtualCode());
+
             baseProject.setDelFlag("0");
             //写到数据库
             baseProjectDao.insertSelective(baseProject);
@@ -94,7 +94,7 @@ public class DesinTaskService {
 
             //判断信息表如果没有重复外键的话就添加数据
             if (StringUtils.isNotEmpty(designVo.getApplicationNum())) {
-                designInfo.setId(designVo.getId());
+                designInfo.setId(designVo.getApplicationNum());
                 designInfo.setPhone(designVo.getPhone());
                 designInfo.setProjectRemark(designVo.getProjectRemark());
                 designInfo.setWaterSupply(designVo.getWaterSupply());
@@ -154,7 +154,7 @@ public class DesinTaskService {
             List<DeclarationInformation> declarationInformation1 = designVo.getDeclarationInformation();
             for (DeclarationInformation thisDeclar : declarationInformation1) {
                 if (thisDeclar != null) {
-                    declarationInformation.setId(thisDeclar.getId());
+                    declarationInformation.setId(designVo.getApplicationNum());
                     declarationInformation.setBaseProjectId(designVo.getBaseProjectId());
                     declarationInformation.setDeclarationCount(thisDeclar.getDeclarationCount());
                     declarationInformation.setDeclarationType(thisDeclar.getDeclarationType());
@@ -173,7 +173,7 @@ public class DesinTaskService {
             for (OperationSubmitType thisSubmitType : operationSubmitType1) {
                 //判断是否为空
                 if (thisSubmitType != null) {
-                    operationSubmitType.setId(thisSubmitType.getId());
+                    operationSubmitType.setId(designVo.getApplicationNum());
                     operationSubmitType.setBaseProjectId(thisSubmitType.getBaseProjectId());
                     operationSubmitType.setOperationDept(thisSubmitType.getOperationDept());
                     operationSubmitType.setOperationTime(thisSubmitType.getOperationTime());
@@ -198,6 +198,7 @@ public class DesinTaskService {
                 fileInfo.setCreateTime(thisProvidedFile.getCustomerProvidedTime());
                 fileInfo.setUserId(thisProvidedFile.getCustomerProvidedBy());
                 fileInfo.setFilePath(thisProvidedFile.getCustomerProvidedDrawing());
+                fileInfo.setPlatCode(designVo.getApplicationNum());
                 fileInfo.setType("tzpwzl");
                 fileInfo.setFileSource("3");
             }
@@ -216,6 +217,8 @@ public class DesinTaskService {
                 fileInfo.setCreateTime(thisProject.getProjectUpTime());
                 fileInfo.setRemark(thisProject.getProjectUploadedBy());
                 fileInfo.setCreateTime(thisProject.getProjectUploadedBy());
+                fileInfo.setPlatCode(designVo.getApplicationNum());
+
                 fileInfo.setStatus("0");
                 fileInfo.setFileSource("3");
 
@@ -237,6 +240,7 @@ public class DesinTaskService {
                 fileInfo.setCreateTime(thisWater.getWaterListTime());
                 fileInfo.setUserId(thisWater.getWaterListBy());
                 fileInfo.setFilePath(thisWater.getWaterListDrawing());
+                fileInfo.setPlatCode(designVo.getApplicationNum());
                 fileInfo.setType("sbslqd");
                 fileInfo.setFileSource("3");
 

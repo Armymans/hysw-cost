@@ -2,9 +2,7 @@ package net.zlw.cloud.budgeting.mapper;
 
 import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BudgetingListVo;
-import net.zlw.cloud.budgeting.model.vo.BudgetingVo;
 import net.zlw.cloud.budgeting.model.vo.PageBVo;
-
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
@@ -188,4 +186,6 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "bt.del_flag = '0'  " +
             "order by b.should_be asc")
     List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo);
+    @Select("SELECT * FROM budgeting WHERE id = #{id}")
+    Budgeting findIdByStatus();
 }

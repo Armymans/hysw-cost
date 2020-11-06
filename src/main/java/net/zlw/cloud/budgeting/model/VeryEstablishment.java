@@ -38,5 +38,20 @@ public class VeryEstablishment implements Serializable {
   private String founderCompanyId;
   @Column(name = "del_flag")
   private String delFlag;
+  @Column(name = "price_result")
+  private String priceResult;
+  @Column(name = "price_opinion")
+  private String priceOpinion;
+  @Column(name = "price_examiner")
+  private String priceExaminer;
+  @Column(name = "price_examine_time")
+  private String priceExamineTime;
+  @Column(name = "status")
+  private String status;
+  @Column(name = "totalPriceControlLabel")
+  private String totalPriceControlLabel;
+  @Column(name = "application_num")
+  private String applicationNum;
+
 
 }

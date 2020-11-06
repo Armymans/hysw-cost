@@ -22,7 +22,7 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
             "            FROM \n" +
             "            building_project bp \n" +
             "            left join base_project b on b.building_project_id != bp.id \n" +
-            "            where bp.status = 0 and bp.or_submit = 1")
+            "            where bp.status = 0 and bp.or_submit = 1 and bp.merge_flag = 2")
     List<BuildingProject> findBuildingProject();
 
     @Select("select * from building_project where id = #{id}")
