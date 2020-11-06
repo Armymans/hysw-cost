@@ -247,7 +247,15 @@ public class MaintenanceProjectInformationService{
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
         information.setCustomerName(maintenanceProjectInformation.getCustomerName());
-        information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
+        // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
+        if("".equals(maintenanceProjectInformation.getReviewAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            information.setReviewAmount(bd);
+        }else{
+            information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
+        }
+
         information.setRemarkes(maintenanceProjectInformation.getRemarkes());
         information.setFounderId(userInfo.getId());
 
@@ -263,11 +271,41 @@ public class MaintenanceProjectInformationService{
         // todo 检维修项目信息id
         settlementAuditInformation.setMaintenanceProjectInformation(information.getId());
 
-        settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
-        settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
-        settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
+        //  `authorized_number` decimal
+        if("".equals(maintenanceProjectInformation.getAuthorizedNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setAuthorizedNumber(bd);
+        }else{
+            settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
+        }
+        // `subtract_the_number` decimal
+        if("".equals(maintenanceProjectInformation.getSubtractTheNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setSubtractTheNumber(bd);
+        }else{
+            settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
+        }
 
-        settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
+        // `nuclear_number` decimal
+        if("".equals(maintenanceProjectInformation.getNuclearNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setNuclearNumber(bd);
+        }else{
+            settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
+        }
+
+        // `contract_amount` decimal
+        if("".equals(maintenanceProjectInformation.getContractAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setContractAmount(bd);
+        }else{
+            settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
+        }
+
         settlementAuditInformation.setBaseProjectId(uuid);
         settlementAuditInformation.setContractRemarkes(maintenanceProjectInformation.getContractRemarkes());
         settlementAuditInformation.setPreparePeople(maintenanceProjectInformation.getPreparePeople2());
@@ -275,7 +313,15 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setNameOfTheCost(maintenanceProjectInformation.getNameOfTheCost());
         settlementAuditInformation.setContact(maintenanceProjectInformation.getContact());
         settlementAuditInformation.setContactPhone(maintenanceProjectInformation.getContactPhone());
-        settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
+        // `amount_outsourcing` decimal
+        if("".equals(maintenanceProjectInformation.getAmountOutsourcing())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setAmountOutsourcing(bd);
+        }else{
+            settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
+        }
+
         settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
         settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
 
@@ -306,10 +352,42 @@ public class MaintenanceProjectInformationService{
         investigationOfTheAmount.setBaseProjectId(information.getId());
 
 //        investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.get);
-        investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
-        investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
-        investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
-        investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
+        // `unbalanced_quotation_adjustment` decimal
+        if("".equals(maintenanceProjectInformation.getUnbalancedQuotationAdjustment())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setUnbalancedQuotationAdjustment(bd);
+        }else{
+            investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
+        }
+
+//        `punish_amount` decimal
+        if("".equals(maintenanceProjectInformation.getPunishAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setPunishAmount(bd);
+        }else{
+            investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
+        }
+
+//        `outbound_amount` decimal
+        if("".equals(maintenanceProjectInformation.getOutboundAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setOutboundAmount(bd);
+        }else{
+            investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
+        }
+
+//        `material_difference_amount` decimal
+        if("".equals(maintenanceProjectInformation.getMaterialDifferenceAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setMaterialDifferenceAmount(bd);
+        }else{
+            investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
+        }
+
 
         investigationOfTheAmountDao.insert(investigationOfTheAmount);
 
@@ -534,7 +612,14 @@ public class MaintenanceProjectInformationService{
         information.setPreparePeople(maintenanceProjectInformationVo.getPreparePeople());
         information.setProjectAddress(maintenanceProjectInformationVo.getProjectAddress());
         information.setConstructionUnitId(maintenanceProjectInformationVo.getConstructionUnitId());
-        information.setReviewAmount(maintenanceProjectInformationVo.getReviewAmount());
+        // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
+        if("".equals(maintenanceProjectInformation.getReviewAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            information.setReviewAmount(bd);
+        }else{
+            information.setReviewAmount(maintenanceProjectInformationVo.getReviewAmount());
+        }
         information.setRemarkes(maintenanceProjectInformationVo.getRemarkes());
         information.setCustomerName(maintenanceProjectInformationVo.getCustomerName());
         //        information.setFounderId(userInfo.getId());
@@ -550,11 +635,41 @@ public class MaintenanceProjectInformationService{
         // todo 检维修项目信息id
         settlementAuditInformation.setMaintenanceProjectInformation(information.getId());
 
-        settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformationVo.getAuthorizedNumber());
-        settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformationVo.getSubtractTheNumber());
-        settlementAuditInformation.setNuclearNumber(maintenanceProjectInformationVo.getNuclearNumber());
 
-        settlementAuditInformation.setContractAmount(maintenanceProjectInformationVo.getContractAmount());
+        //  `authorized_number` decimal
+        if("".equals(maintenanceProjectInformationVo.getAuthorizedNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setAuthorizedNumber(bd);
+        }else{
+            settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformationVo.getAuthorizedNumber());
+        }
+        // `subtract_the_number` decimal
+        if("".equals(maintenanceProjectInformationVo.getSubtractTheNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setSubtractTheNumber(bd);
+        }else{
+            settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformationVo.getSubtractTheNumber());
+        }
+
+        // `nuclear_number` decimal
+        if("".equals(maintenanceProjectInformationVo.getNuclearNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setNuclearNumber(bd);
+        }else{
+            settlementAuditInformation.setNuclearNumber(maintenanceProjectInformationVo.getNuclearNumber());
+        }
+
+        // `contract_amount` decimal
+        if("".equals(maintenanceProjectInformationVo.getContractAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setContractAmount(bd);
+        }else{
+            settlementAuditInformation.setContractAmount(maintenanceProjectInformationVo.getContractAmount());
+        }
         settlementAuditInformation.setBaseProjectId(information.getId());
         settlementAuditInformation.setContractRemarkes(maintenanceProjectInformationVo.getContractRemarkes());
         settlementAuditInformation.setPreparePeople(maintenanceProjectInformationVo.getPreparePeople2());
@@ -562,7 +677,15 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setNameOfTheCost(maintenanceProjectInformationVo.getNameOfTheCost());
         settlementAuditInformation.setContact(maintenanceProjectInformationVo.getContact());
         settlementAuditInformation.setContactPhone(maintenanceProjectInformationVo.getContactPhone());
-        settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformationVo.getAmountOutsourcing());
+        // `amount_outsourcing` decimal
+        if("".equals(maintenanceProjectInformationVo.getAmountOutsourcing())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setAmountOutsourcing(bd);
+        }else{
+            settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformationVo.getAmountOutsourcing());
+
+        }
         settlementAuditInformation.setCompileTime(maintenanceProjectInformationVo.getCompileTime());
         settlementAuditInformation.setRemarkes(maintenanceProjectInformationVo.getRemark());
 
@@ -596,10 +719,43 @@ public class MaintenanceProjectInformationService{
         investigationOfTheAmount.setBaseProjectId(information.getId());
 
 //        investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.get);
-        investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformationVo.getUnbalancedQuotationAdjustment());
-        investigationOfTheAmount.setPunishAmount(maintenanceProjectInformationVo.getPunishAmount());
-        investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformationVo.getOutboundAmount());
-        investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformationVo.getMaterialDifferenceAmount());
+
+        // `unbalanced_quotation_adjustment` decimal
+        if("".equals(maintenanceProjectInformationVo.getUnbalancedQuotationAdjustment())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setUnbalancedQuotationAdjustment(bd);
+        }else{
+            investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformationVo.getUnbalancedQuotationAdjustment());
+        }
+
+//        `punish_amount` decimal
+        if("".equals(maintenanceProjectInformationVo.getPunishAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setPunishAmount(bd);
+        }else{
+            investigationOfTheAmount.setPunishAmount(maintenanceProjectInformationVo.getPunishAmount());
+        }
+
+//        `outbound_amount` decimal
+        if("".equals(maintenanceProjectInformationVo.getOutboundAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setOutboundAmount(bd);
+        }else{
+            investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformationVo.getOutboundAmount());
+        }
+
+//        `material_difference_amount` decimal
+        if("".equals(maintenanceProjectInformationVo.getMaterialDifferenceAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setMaterialDifferenceAmount(bd);
+        }else{
+            investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformationVo.getMaterialDifferenceAmount());
+        }
+
 
         Example example1 = new Example(InvestigationOfTheAmount.class);
         Example.Criteria example1Criteria = example1.createCriteria();
@@ -762,27 +918,19 @@ public class MaintenanceProjectInformationService{
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setCustomerName(maintenanceProjectInformation.getCustomerName());
-        information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
+        // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
+        if("".equals(maintenanceProjectInformation.getReviewAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            information.setReviewAmount(bd);
+        }else{
+            information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
+        }
+
         information.setRemarkes(maintenanceProjectInformation.getRemarkes());
         information.setFounderId(userInfo.getId());
 
         information.setFounderCompanyId(userInfo.getCompanyId());
-
-        //勘探信息
-//        SurveyInformation surveyInformation = new SurveyInformation();
-//        String sid = UUID.randomUUID().toString().replace("-","");
-//        surveyInformation.setId(sid);
-//        surveyInformation.setCreateTime(simpleDateFormat.format(new Date()));
-//        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
-//        //勘察人员
-//        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getInvestigationPersonnel());
-//        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyBriefly());
-//        // todo 项目基本信息的id
-//        surveyInformation.setBaseProjectId(id);
-//        surveyInformation.setFounderId(userInfo.getId());
-//        surveyInformation.setFounderCompanyId(userInfo.getCompanyId());
-//        surveyInformationDao.insertSelective(surveyInformation);
-
 
 
 
@@ -796,11 +944,40 @@ public class MaintenanceProjectInformationService{
         // todo 检维修项目信息id
         settlementAuditInformation.setMaintenanceProjectInformation(information.getId());
 
-        settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
-        settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
-        settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
+        // `authorized_number` decimal
+        if("".equals(maintenanceProjectInformation.getAuthorizedNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setAuthorizedNumber(bd);
+        }else{
+            settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
+        }
+        // `subtract_the_number` decimal
+        if("".equals(maintenanceProjectInformation.getSubtractTheNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setSubtractTheNumber(bd);
+        }else{
+            settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
+        }
 
-        settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
+        // `nuclear_number` decimal
+        if("".equals(maintenanceProjectInformation.getNuclearNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setNuclearNumber(bd);
+        }else{
+            settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
+        }
+
+        // `contract_amount` decimal
+        if("".equals(maintenanceProjectInformation.getContractAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setContractAmount(bd);
+        }else{
+            settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
+        }
         settlementAuditInformation.setBaseProjectId(id);
         settlementAuditInformation.setContractRemarkes(maintenanceProjectInformation.getContractRemarkes());
         settlementAuditInformation.setPreparePeople(maintenanceProjectInformation.getPreparePeople2());
@@ -808,7 +985,14 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setNameOfTheCost(maintenanceProjectInformation.getNameOfTheCost());
         settlementAuditInformation.setContact(maintenanceProjectInformation.getContact());
         settlementAuditInformation.setContactPhone(maintenanceProjectInformation.getContactPhone());
-        settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
+        // `amount_outsourcing` decimal
+        if("".equals(maintenanceProjectInformation.getAmountOutsourcing())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setAmountOutsourcing(bd);
+        }else{
+            settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
+        }
         settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
         settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
 
@@ -838,10 +1022,42 @@ public class MaintenanceProjectInformationService{
         investigationOfTheAmount.setBaseProjectId(id);
 
         investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.getAmountRemarks());
-        investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
-        investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
-        investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
-        investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
+
+        // `unbalanced_quotation_adjustment` decimal
+        if("".equals(maintenanceProjectInformation.getUnbalancedQuotationAdjustment())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setUnbalancedQuotationAdjustment(bd);
+        }else{
+            investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
+        }
+
+//        `punish_amount` decimal
+        if("".equals(maintenanceProjectInformation.getPunishAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setPunishAmount(bd);
+        }else{
+            investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
+        }
+
+//        `outbound_amount` decimal
+        if("".equals(maintenanceProjectInformation.getOutboundAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setOutboundAmount(bd);
+        }else{
+            investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
+        }
+
+//        `material_difference_amount` decimal
+        if("".equals(maintenanceProjectInformation.getMaterialDifferenceAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setMaterialDifferenceAmount(bd);
+        }else{
+            investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
+        }
 
         investigationOfTheAmountDao.insert(investigationOfTheAmount);
 
@@ -962,25 +1178,19 @@ public class MaintenanceProjectInformationService{
         information.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
-        information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
+        // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
+        if("".equals(maintenanceProjectInformation.getReviewAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            information.setReviewAmount(bd);
+        }else{
+            information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
+        }
         information.setRemarkes(maintenanceProjectInformation.getRemarkes());
 //        information.setFounderId(userInfo.getId());
 //
 //        information.setFounderCompanyId(userInfo.getCompanyId());
 
-        //勘探信息
-
-//        Example example = new Example(SurveyInformation.class);
-//        example.createCriteria().andEqualTo("baseProjectId",maintenanceProjectInformation.getId());
-//        SurveyInformation surveyInformation = surveyInformationDao.selectOneByExample(example);
-//
-//        surveyInformation.setUpdateTime(simpleDateFormat.format(new Date()));
-//        surveyInformation.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
-//        //勘察人员
-//        surveyInformation.setInvestigationPersonnel(maintenanceProjectInformation.getInvestigationPersonnel());
-//        surveyInformation.setSurveyBriefly(maintenanceProjectInformation.getSurveyBriefly());
-//
-//        surveyInformationDao.updateByPrimaryKeySelective(surveyInformation);
 
 
         //结算审核信息
@@ -991,19 +1201,55 @@ public class MaintenanceProjectInformationService{
 
         settlementAuditInformation.setUpdateTime(simpleDateFormat.format(new Date()));
 
+        //  `authorized_number` decimal
+        if("".equals(maintenanceProjectInformation.getAuthorizedNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setAuthorizedNumber(bd);
+        }else{
+            settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
+        }
+        // `subtract_the_number` decimal
+        if("".equals(maintenanceProjectInformation.getSubtractTheNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setSubtractTheNumber(bd);
+        }else{
+            settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
+        }
 
-        settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
-        settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
-        settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
+        // `nuclear_number` decimal
+        if("".equals(maintenanceProjectInformation.getNuclearNumber())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setNuclearNumber(bd);
+        }else{
+            settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
+        }
 
-        settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
+        // `contract_amount` decimal
+        if("".equals(maintenanceProjectInformation.getContractAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setContractAmount(bd);
+        }else{
+            settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
+        }
+
         settlementAuditInformation.setContractRemarkes(maintenanceProjectInformation.getContractRemarkes());
         settlementAuditInformation.setPreparePeople(maintenanceProjectInformation.getPreparePeople2());
         settlementAuditInformation.setOutsourcing(maintenanceProjectInformation.getOutsourcing());
         settlementAuditInformation.setNameOfTheCost(maintenanceProjectInformation.getNameOfTheCost());
         settlementAuditInformation.setContact(maintenanceProjectInformation.getContact());
         settlementAuditInformation.setContactPhone(maintenanceProjectInformation.getContactPhone());
-        settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
+        // `amount_outsourcing` decimal
+        if("".equals(maintenanceProjectInformation.getAmountOutsourcing())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            settlementAuditInformation.setAmountOutsourcing(bd);
+        }else{
+            settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
+        }
         settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
         settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
 
@@ -1026,11 +1272,41 @@ public class MaintenanceProjectInformationService{
         investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.getAmountRemarks());
         investigationOfTheAmount.setUpdateTime(simpleDateFormat.format(new Date()));
 
+        // `unbalanced_quotation_adjustment` decimal
+        if("".equals(maintenanceProjectInformation.getUnbalancedQuotationAdjustment())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setUnbalancedQuotationAdjustment(bd);
+        }else{
+            investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
+        }
 
-        investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
-        investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
-        investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
-        investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
+//        `punish_amount` decimal
+        if("".equals(maintenanceProjectInformation.getPunishAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setPunishAmount(bd);
+        }else{
+            investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
+        }
+
+//        `outbound_amount` decimal
+        if("".equals(maintenanceProjectInformation.getOutboundAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setOutboundAmount(bd);
+        }else{
+            investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
+        }
+
+//        `material_difference_amount` decimal
+        if("".equals(maintenanceProjectInformation.getMaterialDifferenceAmount())){
+            String str1="0";
+            BigDecimal bd=new BigDecimal(str1);
+            investigationOfTheAmount.setMaterialDifferenceAmount(bd);
+        }else{
+            investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
+        }
 
         investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
 

@@ -34,5 +34,9 @@ public class TrackMonthly implements Serializable {
     private String updateTime;
     @Transient
     private String projectNum;
+    @Transient
+    private String fid;
+    @Transient
+    private String code;
 
 }

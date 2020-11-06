@@ -1,12 +1,16 @@
 package net.zlw.cloud.snsEmailFile.service;
 
 import net.tec.cloud.common.util.DateUtil;
+import net.zlw.cloud.followAuditing.mapper.TrackMonthlyDao;
+import net.zlw.cloud.followAuditing.model.TrackMonthly;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +29,9 @@ public class FileInfoService {
     @Autowired
     private FileInfoMapper fileInfoMapper;
 
+    @Resource
+    private TrackMonthlyDao trackMonthlyDao;
+
 
     public void uploadFile(FileInfo attachInfo) {
         try {
@@ -37,6 +44,20 @@ public class FileInfoService {
 
     public FileInfo getByKey(String id) {
         return fileInfoMapper.selectByPrimaryKey(id);
+    }
+
+    public FileInfo findOne(String id){
+//        TrackMonthly trackMonthly = trackMonthlyDao.selectByPrimaryKey(id);
+
+        Example example = new Example(FileInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        criteria.andEqualTo("platCode",id);
+        criteria.andEqualTo("type","gzsjxjsjyb");
+
+        List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example);
+
+        return fileInfos.get(0);
     }
 
     public void updateFileName(FileInfo fileInfo) {

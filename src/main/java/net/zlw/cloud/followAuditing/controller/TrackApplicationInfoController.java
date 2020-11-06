@@ -2,6 +2,7 @@ package net.zlw.cloud.followAuditing.controller;
 
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
+import net.tec.cloud.common.util.DateUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.RestUtil;
@@ -13,6 +14,9 @@ import net.zlw.cloud.followAuditing.model.vo.TrackVo;
 import net.zlw.cloud.followAuditing.service.TrackApplicationInfoService;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -24,6 +28,8 @@ import java.util.Map;
 public class TrackApplicationInfoController extends BaseController {
     @Resource
     private TrackApplicationInfoService trackApplicationInfoService;
+    @Autowired
+    private FileInfoService fileInfoService;
 
     //查询所有跟踪审计
 //    @PostMapping("/track/selectList")
@@ -104,7 +110,14 @@ public class TrackApplicationInfoController extends BaseController {
 
     @RequestMapping(value = "/track/addMonthly",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addMaonthly(TrackMonthly monthly){
+        System.out.println(monthly);
         trackApplicationInfoService.addTrackMonthly(monthly);
+        FileInfo fileInfo = fileInfoService.getByKey(monthly.getFid());
+        fileInfo.setName(monthly.getTitle());
+        fileInfo.setRemark(monthly.getId());
+        fileInfo.setPlatCode(monthly.getId());
+        fileInfo.setUpdateTime(DateUtil.getDateTime());
+        fileInfoService.updateFileName(fileInfo);
         return RestUtil.success("新增成功");
     }
 

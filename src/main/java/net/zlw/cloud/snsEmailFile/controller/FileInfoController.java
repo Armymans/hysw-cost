@@ -341,6 +341,95 @@ public class FileInfoController extends BaseController {
         }
     }
 
+
+    // 跟踪审计月报下载
+    @RequestMapping(value = "/downloadFile1", method = RequestMethod.GET)
+    public void downloadFile1(@RequestParam(value = "id", required = false) String id) {
+        try {
+            FileInfo docInfo = fileInfoService.findOne(id);
+            //本地文件
+            if (docInfo != null && "1".equals(docInfo.getFileSource())) {
+                String attachName = docInfo.getFileName() + "." + docInfo.getFileType();//文件名+文件类型  要不下载的无法查看
+                String filePath = docInfo.getFilePath();
+                String os = System.getProperty("os.name");
+                if (os.toLowerCase().startsWith("win")) {
+                    filePath = WinAttachDir + filePath;
+                } else {
+                    filePath = LixAttachDir + filePath;
+                }
+                String fileName = encodeFileName(attachName);
+                response.setHeader("content-type", "application/octet-stream");//服务器告诉浏览器数据类型
+                response.setContentType("application/octet-stream");//二进制流 不知道下载文件类型
+                response.setHeader("Content-Disposition", "attachment;filename=" + fileName);//告诉浏览器这个文件的名称和内容
+                BufferedInputStream bis = null;
+                OutputStream outputStream = response.getOutputStream();
+                try {
+                    bis = new BufferedInputStream(new FileInputStream(new File(filePath)));
+                    byte[] buff = new byte[bis.available()];
+                    bis.read(buff);
+                    outputStream.write(buff);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (bis != null) {
+                        try {
+                            bis.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }else{
+                //外部文件
+                try {
+                    //String attachName = "文件.txt"; //文件名称 带后缀
+                    String attachName = docInfo.getFileName() + "." + docInfo.getFileType();//文件名+文件类型  要不下载的无法查看
+                    String codedfilename = "";
+                    String agent = request.getHeader("USER-AGENT");//获取浏览器请求头中的user-agent
+                    if (null != agent && -1 != agent.indexOf("MSIE") || null != agent && -1 != agent.indexOf("Trident")) {// ie
+                        String name = java.net.URLEncoder.encode(attachName, "UTF8");
+                        codedfilename = name;
+                    } else if (null != agent && -1 != agent.indexOf("Mozilla")) {// 火狐,chrome等
+                        codedfilename = new String(attachName.getBytes("UTF-8"), "iso-8859-1");
+                    } else {
+                        codedfilename = new String(attachName.getBytes("UTF-8"), "iso-8859-1");
+                    }
+                    response.setHeader("content-type", "application/octet-stream");//服务器告诉浏览器数据类型
+                    response.setContentType("application/octet-stream");//二进制流 不知道下载文件类型
+                    response.setHeader("Content-Disposition", "attachment;filename="+codedfilename );//告诉浏览器这个文件的名称和内容
+
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(getLoginUser().getId());
+                    String userAccount = memberManage.getMemberAccount();
+                    Map<String, Object> download = null;
+//                    if("0".equals(doc_flag)){
+//                        download = FileOperationUtil.download(userAccount, id);
+//                    }else{
+                    download = FileOperationUtil.fileDownload(userAccount, id , docInfo.getFileSource());
+//                    }
+                    OutputStream os = null;
+                    try {
+                        os = response.getOutputStream();
+                        Object object = download.get("data");
+                        byte[] bytes = null;
+                        if( object != null ) {
+                            bytes = (byte[])object;
+                        }
+                        os.write(bytes);
+                        os.flush();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * @Author Armyman
      * @Description //浏览器兼容

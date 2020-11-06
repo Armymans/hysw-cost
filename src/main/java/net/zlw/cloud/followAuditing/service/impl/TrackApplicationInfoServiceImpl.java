@@ -184,12 +184,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
         //0保存1提交
         if (trackVo.getStatus().equals("0")) {
-            // 设置进行中
-            baseProject.setTrackStatus("3");
+            // 设置未提交
+            baseProject.setTrackStatus("2");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
             trackVo.getAuditInfo().setBaseProjectId(baseProject.getId());
             trackVo.getAuditInfo().setId(UUID.randomUUID().toString().replace("-", ""));
-            trackVo.getAuditInfo().setFounderId(userInfo.getId());
+            if(userInfo != null){
+                trackVo.getAuditInfo().setFounderId(userInfo.getId());
+            }
+            trackVo.getAuditInfo().setFounderId("user312");
             trackVo.getAuditInfo().setStatus("0");
             trackAuditInfoDao.insertSelective(trackVo.getAuditInfo());
 
@@ -253,7 +256,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         Example example1 = new Example(TrackMonthly.class);
         Example.Criteria criteria = example1.createCriteria();
 
-        criteria.andEqualTo("trackId", userInfo.getId());
+        if(userInfo != null){
+            criteria.andEqualTo("trackId", userInfo.getId());
+        }
+        // todo 待修改
+        criteria.andEqualTo("trackId", "user312");
         criteria.andEqualTo("status", "0");
 
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
