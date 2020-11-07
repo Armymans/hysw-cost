@@ -108,14 +108,8 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
 //            "group by \n" +
 //            "member_id\n")
 //    List<PerformanceDistributionChart> findDesignPerformanceDistributionChart(pageVo pageVo);
-    @Select("select \n" +
-            "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
-            "SUM(a.desgin_achievements) as PerformanceProvision,\n" +
-            "SUM((a.desgin_achievements)*0.8) as IssuedDuringMmonth\n" +
-            "from \n" +
-            "achievements_info a  \n" +
-            "left join base_project b on b.id = a.base_project_id\n" +
-            "left join design_info d on b.id = d.base_project_id\n" +
+    @Select(
+            "select (select member_name from member_manage where id = a.member_id ) memberName, SUM(a.desgin_achievements) as PerformanceProvision, SUM((a.desgin_achievements)*0.8) as IssuedDuringMmonth from achievements_info a INNER join base_project b on b.id = a.base_project_id INNER join design_info d on b.id = d.base_project_id inner join (select id from member_manage where member_role_id ='4' or member_role_id = '6') aaa on a.member_id = aaa.id \n" +
             "where \n" +
             "(b.district = #{district} or #{district} = '') and \n" +
             "(d.blueprint_start_time > #{statTime} or #{statTime} = '') and \n" +
