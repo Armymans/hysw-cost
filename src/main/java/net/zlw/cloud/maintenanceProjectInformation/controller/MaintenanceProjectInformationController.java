@@ -96,7 +96,7 @@ public class MaintenanceProjectInformationController extends BaseController {
      */
     @RequestMapping(value = "/maintenanceProjectInformation/selectMaintenanceProjectInformationById", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> selectMaintenanceProjectInformationById(@RequestParam(name = "id") String id) {
-        MaintenanceVo maintenanceVo = maintenanceProjectInformationService.selectMaintenanceProjectInformationById(id);
+        MaintenanceVo maintenanceVo = maintenanceProjectInformationService.selectMaintenanceProjectInformationById(id,getLoginUser());
         return RestUtil.success(maintenanceVo);
     }
 

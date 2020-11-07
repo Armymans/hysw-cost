@@ -257,9 +257,15 @@ public class MaintenanceProjectInformationService{
         }
 
         information.setRemarkes(maintenanceProjectInformation.getRemarkes());
-        information.setFounderId(userInfo.getId());
+        if(userInfo != null){
+            information.setFounderId(userInfo.getId());
+            information.setFounderCompanyId(userInfo.getCompanyId());
+        }else{
+            information.setFounderId("user312");
+        }
 
-        information.setFounderCompanyId(userInfo.getCompanyId());
+
+
 
         //结算审核信息
         SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
@@ -325,8 +331,13 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
         settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
 
-        settlementAuditInformation.setFounderId(userInfo.getId());
-        settlementAuditInformation.setFounderCompanyId(userInfo.getCompanyId());
+        if(userInfo != null){
+            settlementAuditInformation.setFounderId(userInfo.getId());
+            settlementAuditInformation.setFounderCompanyId(userInfo.getCompanyId());
+        }else{
+            settlementAuditInformation.setFounderId("user312");
+        }
+
         settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
 
@@ -345,8 +356,13 @@ public class MaintenanceProjectInformationService{
         investigationOfTheAmount.setCreateTime(simpleDateFormat.format(new Date()));
         investigationOfTheAmount.setDelFlag("0");
 
-        investigationOfTheAmount.setFounderId(userInfo.getId());
-        investigationOfTheAmount.setFounderCompanyId(userInfo.getCompanyId());
+        if(userInfo != null){
+            investigationOfTheAmount.setFounderId(userInfo.getId());
+            investigationOfTheAmount.setFounderCompanyId(userInfo.getCompanyId());
+        }else{
+            investigationOfTheAmount.setFounderId("user312");
+        }
+
         investigationOfTheAmount.setMaintenanceProjectInformation(information.getId());
         // todo 待修改
         investigationOfTheAmount.setBaseProjectId(information.getId());
@@ -402,8 +418,11 @@ public class MaintenanceProjectInformationService{
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
             auditInfo.setStatus("0");
-            auditInfo.setFounderId(userInfo.getId());
-            auditInfo.setCompanyId(userInfo.getCompanyId());
+            if(userInfo != null){
+                auditInfo.setFounderId(userInfo.getId());
+                auditInfo.setCompanyId(userInfo.getCompanyId());
+            }
+            auditInfo.setFounderId("user312");
             // 审核人id
             auditInfo.setAuditorId(maintenanceProjectInformation.getAuditorId());
             String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
@@ -843,7 +862,7 @@ public class MaintenanceProjectInformationService{
      * @param id
      * @return
      */
-    public MaintenanceVo selectMaintenanceProjectInformationById(String id){
+    public MaintenanceVo selectMaintenanceProjectInformationById(String id,UserInfo userInfo){
 
         MaintenanceVo maintenanceVo = new MaintenanceVo();
 
@@ -886,17 +905,26 @@ public class MaintenanceProjectInformationService{
 
         maintenanceVo.setAuditInfos(auditInfos);
 
+        //查找审核数据
         Example auditExample = new Example(AuditInfo.class);
         Example.Criteria criteria1 = auditExample.createCriteria();
         criteria1.andEqualTo("baseProjectId",information.getId());
-        criteria1.andEqualTo("auditType",'0');
-//        criteria1.andEqualTo("auditResult",'0');
+//        criteria1.andEqualTo("auditType",'0');
+        // 未审批
+        criteria1.andEqualTo("auditResult",'0');
+        criteria1.andEqualTo("founderId",userInfo.getId());
 
 
 
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditExample);
         if(auditInfo != null){
             maintenanceVo.setAuditInfo(auditInfo);
+        }
+        // 0 代表一审，未审批
+        if("0".equals(auditInfo.getAuditType())){
+            maintenanceVo.setAuditNumber("0");
+        }else if("0".equals(auditInfo.getAuditType())){
+            maintenanceVo.setAuditNumber("1");
         }
 
 
