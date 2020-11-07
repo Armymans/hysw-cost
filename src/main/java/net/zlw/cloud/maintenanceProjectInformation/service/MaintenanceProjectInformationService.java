@@ -912,7 +912,7 @@ public class MaintenanceProjectInformationService{
 //        criteria1.andEqualTo("auditType",'0');
         // 未审批
         criteria1.andEqualTo("auditResult",'0');
-        criteria1.andEqualTo("auditorId",userId);
+        criteria1.andEqualTo("auditorId",userInfo.getId());
 
 
 
