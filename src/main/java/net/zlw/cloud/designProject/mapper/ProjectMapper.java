@@ -705,6 +705,11 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "s1.create_time >= #{startTime} " +
                     "and " +
                     "(s1.create_time <= #{endTime} or #{endTime} = '') " +
+                    " and " +
+                    "(" +
+                    "s1.cea_num like concat('%',#{keyword},'%') or\n" +
+                    "s1.project_name like concat('%',#{keyword},'%') " +
+                    ")" +
                     "GROUP BY " +
                     "s1.id "
     )
@@ -936,9 +941,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "SUM(IFNULL(s3.authorized_number,0)) authorizedNumber, " +
                     "SUM(IFNULL(s3.subtract_the_number,0)) subtractTheNumber " +
                     "FROM " +
-                    "base_project s1 LEFT JOIN last_settlement_review  s2 ON s1.id = s2.base_project_id " +
-                    "LEFT JOIN settlement_audit_information s3 ON s1.id = s3.base_project_id  " +
-                    "LEFT JOIN settlement_info s4 ON s1.id = s4.base_project_Id " +
+                    "base_project s1 inner JOIN last_settlement_review  s2 ON s1.id = s2.base_project_id " +
+                    "inner JOIN settlement_audit_information s3 ON s1.id = s3.base_project_id  " +
+                    "inner JOIN settlement_info s4 ON s1.id = s4.base_project_Id " +
                     "where " +
                     "(s1.district = #{district} or #{district} = '') " +
                     "and " +
@@ -1686,6 +1691,6 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     @Select("select * from base_project where project_num = #{projectNum} or project_name = #{projectName}")
     List<BaseProject> duplicateChecking(BaseProject baseProject);
 
-    @Select("select * from base_project where project_num = #{projectNum} or project_name = #{projectName} and id != #{id}")
+    @Select("select * from base_project where (project_num = #{projectNum} or project_name = #{projectName}) and id != #{id}")
     List<BaseProject> duplicateCheckingByUpdate(BaseProject baseProject);
 }

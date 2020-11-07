@@ -47,6 +47,7 @@ public class StatusticAnalysisService {
     public StatisticAnalysis findAnalysis(pageVo pageVo) {
         List<PerformanceDistributionChart> cost = achievementsInfoMapper.findCostPerformanceChart(pageVo);
 
+        System.err.println(pageVo);
         //本月发放
         Double thisMonthPerform = 0.00;
         //本年发放
@@ -67,6 +68,7 @@ public class StatusticAnalysisService {
         int lastYear = cal.get(Calendar.YEAR)-1;
         for (PerformanceDistributionChart performanceDistributionChart : cost) {
             //本年
+            System.out.println(performanceDistributionChart);
             if (performanceDistributionChart.getYearTime().equals(thisYear+"")){
                 thisYearPerform += performanceDistributionChart.getIssuedDuringMmonth().doubleValue();
                 thisYearChart.add(performanceDistributionChart);

@@ -435,7 +435,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     public void addVisChangeVo(VisaChangeInfoVo visaChangeInfoVo, UserInfo loginUser) {
 
         //TODO 需要改
-        visaChangeInfoVo.setLoginUserId(loginUser.getId());
+//        visaChangeInfoVo.setLoginUserId(loginUser.getId());
 
         String createTime = sdf.format(new Date());
 
@@ -553,7 +553,12 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChange1.setCreatorCompanyId(visaChangeInfoVo.getLoginUserId());
             visaChange1.setCreateTime(createTime);
             visaChange1.setUpdateTime(createTime);
-            visaChange1.setContractAmount(visaChangeInfoVo.getContractAmount());
+
+            if (visaChangeInfoVo.getContractAmount().equals("")){
+                visaChange1.setContractAmount("0");
+            }else{
+                visaChange1.setContractAmount(visaChangeInfoVo.getContractAmount());
+            }
             visaChange1.setCreatorId(visaChangeInfoVo.getLoginUserId());
 
             //0正常1删除
@@ -589,6 +594,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 fileInfo.setPlatCode(visaChange1.getId());
                 fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
             }
+            System.err.println("----0----"+visaChange1);
             vcMapper.insertSelective(visaChange1);
         }
 

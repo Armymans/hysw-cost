@@ -297,9 +297,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             if (auditInfo.getAuditResult().equals("0")){
                 baseAccountsVo.setAuditType(auditInfo.getAuditType());
                 if (loginUser.getId().equals(auditInfo.getAuditorId())){
-                    baseAccountsVo.setCheckAudit("0");
+                    baseAccountsVo.setCheckAudit(auditInfo.getAuditType());
                 }else{
-                    baseAccountsVo.setCheckAudit("1");
+                    baseAccountsVo.setCheckAudit(auditInfo.getAuditType());
                 }
             }
         }

@@ -83,6 +83,8 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
 
     @Select("select \n" +
             "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
+            "YEAR(bt.budgeting_time) yearTime,\n" +
+            "MONTH(bt.budgeting_time) monthTime,\n" +
             "SUM(a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements) as PerformanceProvision,\n" +
             "SUM((a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements)*0.8) as IssuedDuringMmonth\n" +
             "from \n" +

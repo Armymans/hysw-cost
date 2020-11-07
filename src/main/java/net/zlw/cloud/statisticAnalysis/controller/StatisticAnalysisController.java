@@ -77,6 +77,14 @@ public class StatisticAnalysisController {
     @RequestMapping(value = "/statisticAnalysis/EmployeePerformanceAnalysis",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
      public Map<String,Object> EmployeePerformanceAnalysis(EmployeeVo employeeVo){
         ReturnEmployeePerformance employeePerformance =  statusticAnalysisService.EmployeePerformanceAnalysis(employeeVo);
+        if (employeePerformance.getComparedMonthProjectNum()!=null){
+            double v = (double) Math.round((employeePerformance.getComparedMonthProjectNum()) * 100) / 100;
+            employeePerformance.setComparedMonthProjectNum(v);
+        }
+        if (employeePerformance.getComparedMonthAchievemen()!=null){
+            double v = (double) Math.round((employeePerformance.getComparedMonthAchievemen()) * 100) / 100;
+            employeePerformance.setComparedMonthAchievemen(v);
+        }
        return RestUtil.success(employeePerformance);
     }
     @RequestMapping(value = "/statisticAnalysis/EmployeePerformanceAnalysisPicture",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)

@@ -810,6 +810,8 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/BaseProjectExpenditureList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
 //    public Map<String,Object> BaseProjectExpenditureList(CostVo2 costVo2){
     public Map<String,Object> BaseProjectExpenditureList(CostVo2 costVo2){
+
+
         PageInfo<BaseProject> baseProjectPageInfo = projectSumService.BaseProjectExpenditureList(costVo2);
         return RestUtil.page(baseProjectPageInfo);
 //        return RestUtil.success(baseProjectPageInfo.getList());
@@ -929,6 +931,7 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/projectSettlementCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> projectSettlementCensus(CostVo2 costVo2){
+
         List<OneCensus4> oneCensus4s = projectSumService.projectSettlementCensus(costVo2);
         String json =
                 "[{" +

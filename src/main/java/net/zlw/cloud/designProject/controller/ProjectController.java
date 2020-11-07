@@ -154,7 +154,7 @@ public class ProjectController extends BaseController {
         String[] split = idlist.split(",");
         for (String id : split) {
             boolean b = projectService.mergeProject(mergeName, mergeNum, id);
-            if(!b){
+            if(!  b){
                 return RestUtil.error("操作失败");
             }
         }
@@ -270,6 +270,9 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/disproject/disProjectadd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> disProjectadd(ProjectVo projectVo) {
+        if (projectVo.getDesignInfo().getOutsourceMoney() == null || projectVo.getDesignInfo().getOutsourceMoney().equals("")){
+            projectVo.getDesignInfo().setOutsourceMoney(new BigDecimal(0));
+        }
         //@RequestBody BaseProject baseProject,
         //             @RequestBody DesignInfo designInfo,
         //             @RequestBody ProjectExploration projectExploration,

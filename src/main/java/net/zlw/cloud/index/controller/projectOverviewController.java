@@ -80,8 +80,12 @@ public class projectOverviewController extends BaseController {
         return RestUtil.success(statisticalData);
     }
     //绩效发放统计图
-    @RequestMapping(value = "/projectOverview/PerformanceDistributionChart/{id}",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> findPerformanceDistributionChart(pageVo pageVo, @PathVariable(name = "id") String id){
+    @RequestMapping(value = "/projectOverview/PerformanceDistributionChart",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findPerformanceDistributionChart(pageVo pageVo){
+        String id = pageVo.getDepartment();
+        if(id==null||id.equals("")){
+            id = "0";
+        }
         String performanceDistributionChart = messageNotificationService.findPerformanceDistributionChart(pageVo, id);
         JSONArray objects = JSON.parseArray(performanceDistributionChart);
         return RestUtil.success(objects);

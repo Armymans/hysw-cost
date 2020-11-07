@@ -573,10 +573,18 @@ public class ProjectSumService {
         List<IncomeInfo> incomeInfos = incomeInfoMapper.totalRevenue(costVo2);
         BigDecimal total = new BigDecimal(0);
         for (IncomeInfo incomeInfo : incomeInfos) {
-            total = total.add(incomeInfo.getBudgetMoney());
-            total = total.add(incomeInfo.getUpsubmitMoney());
-            total = total.add(incomeInfo.getDownsubmitMoney());
-            total = total.add(incomeInfo.getTruckMoney());
+            if (incomeInfo.getBudgetMoney()!=null){
+                total = total.add(incomeInfo.getBudgetMoney());
+            }
+            if (incomeInfo.getUpsubmitMoney()!=null){
+                total = total.add(incomeInfo.getUpsubmitMoney());
+            }
+            if (incomeInfo.getDownsubmitMoney()!=null){
+                total = total.add(incomeInfo.getDownsubmitMoney());
+            }
+            if (incomeInfo.getTruckMoney()!=null){
+                total = total.add(incomeInfo.getTruckMoney());
+            }
         }
         List<WujiangMoneyInfo> wujiangMoneyInfos = wujiangMoneyInfoMapper.totalRevenue(costVo2);
         for (WujiangMoneyInfo wujiangMoneyInfo : wujiangMoneyInfos) {
