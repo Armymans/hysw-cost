@@ -292,17 +292,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example.Criteria c4 = example4.createCriteria();
         c4.andEqualTo("baseProjectId",baseAccountsVo.getId());
         c4.andEqualTo("status","0");
-        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example4);
-        for (AuditInfo auditInfo : auditInfos) {
-            if (auditInfo.getAuditResult().equals("0")){
-                baseAccountsVo.setAuditType(auditInfo.getAuditType());
-                if (loginUser.getId().equals(auditInfo.getAuditorId())){
-                    baseAccountsVo.setCheckAudit(auditInfo.getAuditType());
-                }else{
-                    baseAccountsVo.setCheckAudit(auditInfo.getAuditType());
-                }
-            }
-        }
+        c4.andEqualTo("auditResult","0");
+        c4.andEqualTo("auditorId",loginUser.getId());
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example4);
+        baseAccountsVo.setCheckAudit(auditInfo.getAuditType());
+        System.err.println(auditInfo.getAuditType());
 
         return baseAccountsVo;
     }
