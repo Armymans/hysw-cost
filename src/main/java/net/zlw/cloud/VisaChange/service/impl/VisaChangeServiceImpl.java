@@ -1209,7 +1209,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 //累积下家签证变更金额
                 totalDown = totalDown.add(new BigDecimal(thisA.getAmountVisaChange()));
                 //累积下家签证变更占比
-                if (thisA.getProportionContract()==null){
+                if (thisA.getProportionContract()==null || thisA.getProportionContract().equals("")){
                     thisA.setProportionContract("0");
                 }
                 System.err.println(totalDownRate);
