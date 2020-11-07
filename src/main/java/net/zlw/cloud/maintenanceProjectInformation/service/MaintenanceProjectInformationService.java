@@ -919,13 +919,14 @@ public class MaintenanceProjectInformationService{
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditExample);
         if(auditInfo != null){
             maintenanceVo.setAuditInfo(auditInfo);
+            // 0 代表一审，未审批
+            if("0".equals(auditInfo.getAuditType())){
+                maintenanceVo.setAuditNumber("0");
+            }else if("0".equals(auditInfo.getAuditType())){
+                maintenanceVo.setAuditNumber("1");
+            }
         }
-        // 0 代表一审，未审批
-        if("0".equals(auditInfo.getAuditType())){
-            maintenanceVo.setAuditNumber("0");
-        }else if("0".equals(auditInfo.getAuditType())){
-            maintenanceVo.setAuditNumber("1");
-        }
+
 
 
         return maintenanceVo;

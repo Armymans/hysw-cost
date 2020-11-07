@@ -1244,12 +1244,12 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "select\n" +
-                    "count(s2.id) budgeting,\n" +
-                    "count(s3.id) lastSettlementReview,\n" +
-                    "count(s4.id) settlementAuditInformation,\n" +
-                    "count(s5.id) trackAuditInfo,\n" +
-                    "count(s6.id) visaChangeInformation,\n" +
-                    "count(s7.id) progressPaymentInformation\n" +
+                    "count(DISTINCT s2.id) budgeting,\n" +
+                    "count(DISTINCT s3.id) lastSettlementReview,\n" +
+                    "count(DISTINCT s4.id) settlementAuditInformation,\n" +
+                    "count(DISTINCT s5.id) trackAuditInfo,\n" +
+                    "count(DISTINCT s6.id) visaChangeInformation,\n" +
+                    "count(DISTINCT s7.id) progressPaymentInformation\n" +
                     "from\n" +
                     "base_project s1 LEFT JOIN budgeting s2 ON s1.id = s2.base_project_id\n" +
                     "LEFT JOIN last_settlement_review s3 ON s1.id = s3.base_project_id\n" +
