@@ -103,6 +103,7 @@ public class MaintenanceProjectInformationVo {
     private String auditResult;
     private String auditOpinion;
     private String auditType;
+    private String auditNumber;
 
     private List<AuditInfo> auditInfos;
 

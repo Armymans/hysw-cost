@@ -37,6 +37,33 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
     List<AchievementsInfo> totalexpenditure(CostVo2 costVo2);
 
 
+    //    @Select("select \n" +
+//            "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
+//            "SUM(a.desgin_achievements+a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements) as PerformanceProvision,\n" +
+//            "SUM((a.desgin_achievements+a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements)*0.8) as IssuedDuringMmonth\n" +
+//            "from \n" +
+//            "achievements_info a  \n" +
+//            "left join base_project b on b.id = a.base_project_id\n" +
+//            "left join budgeting bt on b.id = bt.base_project_id\n" +
+//            "left join last_settlement_review l on b.id = l.base_project_id\n" +
+//            "left join settlement_audit_information s on b.id = s.base_project_id\n" +
+//            "left join track_audit_info t on b.id = t.base_project_id\n" +
+//            "left join design_info d on b.id = d.base_project_id\n" +
+//            "where \n" +
+//            "(b.district = #{district} or #{district} = '') and \n" +
+//            "(bt.budgeting_time > #{statTime} or #{statTime} = '') and \n" +
+//            "(l.compile_time > #{statTime} or #{statTime} = '') and \n" +
+//            "(s.compile_time > #{statTime} or #{statTime} = '') and \n" +
+//            "(t.create_time > #{statTime} or #{statTime} = '') and \n" +
+//            "(d.blueprint_start_time > #{statTime} or #{statTime} = '') and \n" +
+//            "(bt.budgeting_time < #{endTime} or #{endTime} = '') and \n" +
+//            "(l.compile_time < #{endTime} or #{endTime} = '') and \n" +
+//            "(s.compile_time < #{endTime} or #{endTime} = '') and \n" +
+//            "(t.create_time < #{endTime} or #{endTime} = '') and \n" +
+//            "(d.blueprint_start_time < #{endTime} or #{endTime} = '') \n" +
+//            "group by \n" +
+//            "member_id\n")
+//    List<PerformanceDistributionChart> findAllPerformanceDistributionChart(pageVo pageVo);
     @Select("select \n" +
             "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
             "SUM(a.desgin_achievements+a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements) as PerformanceProvision,\n" +
@@ -62,9 +89,25 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "(t.create_time < #{endTime} or #{endTime} = '') and \n" +
             "(d.blueprint_start_time < #{endTime} or #{endTime} = '') \n" +
             "group by \n" +
-            "member_id\n")
+            "a.member_id\n")
     List<PerformanceDistributionChart> findAllPerformanceDistributionChart(pageVo pageVo);
 
+
+    //    @Select("select \n" +
+//            "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
+//            "SUM(a.desgin_achievements) as PerformanceProvision,\n" +
+//            "SUM((a.desgin_achievements)*0.8) as IssuedDuringMmonth\n" +
+//            "from \n" +
+//            "achievements_info a  \n" +
+//            "left join base_project b on b.id = a.base_project_id\n" +
+//            "left join design_info d on b.id = d.base_project_id\n" +
+//            "where \n" +
+//            "(b.district = #{district} or #{district} = '') and \n" +
+//            "(d.blueprint_start_time > #{statTime} or #{statTime} = '') and \n" +
+//            "(d.blueprint_start_time < #{endTime} or #{endTime} = '') \n" +
+//            "group by \n" +
+//            "member_id\n")
+//    List<PerformanceDistributionChart> findDesignPerformanceDistributionChart(pageVo pageVo);
     @Select("select \n" +
             "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
             "SUM(a.desgin_achievements) as PerformanceProvision,\n" +
@@ -78,9 +121,29 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "(d.blueprint_start_time > #{statTime} or #{statTime} = '') and \n" +
             "(d.blueprint_start_time < #{endTime} or #{endTime} = '') \n" +
             "group by \n" +
-            "member_id\n")
+            "a.member_id\n")
     List<PerformanceDistributionChart> findDesignPerformanceDistributionChart(pageVo pageVo);
 
+    //    @Select("select \n" +
+//            "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
+//            "SUM(a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements) as PerformanceProvision,\n" +
+//            "SUM((a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements)*0.8) as IssuedDuringMmonth\n" +
+//            "from \n" +
+//            "achievements_info a  \n" +
+//            "left join base_project b on b.id = a.base_project_id\n" +
+//            "left join budgeting bt on b.id = bt.base_project_id\n" +
+//            "left join last_settlement_review l on b.id = l.base_project_id\n" +
+//            "left join settlement_audit_information s on b.id = s.base_project_id\n" +
+//            "left join track_audit_info t on b.id = t.base_project_id\n" +
+//            "left join member_manage mm on mm.id = a.member_id \n" +
+//            "where \n" +
+//            "(b.district = #{district} or #{district} = '') and \n" +
+//            "(bt.budgeting_time > #{statTime} or #{statTime} = '') and \n" +
+//            "(bt.budgeting_time < #{endTime} or #{endTime} = '') and \n" +
+//            "mm.dep_id = '2' \n" +
+//            "group by \n" +
+//            "member_id\n")
+//    List<PerformanceDistributionChart> findCostPerformanceDistributionChart(pageVo pageVo);
     @Select("select \n" +
             "(select member_name  from member_manage where id = a.member_id ) memberName,\n" +
             "YEAR(bt.budgeting_time) yearTime,\n" +
@@ -101,7 +164,7 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "(bt.budgeting_time < #{endTime} or #{endTime} = '') and \n" +
             "mm.dep_id = '2' \n" +
             "group by \n" +
-            "member_id\n")
+            "a.member_id\n")
     List<PerformanceDistributionChart> findCostPerformanceDistributionChart(pageVo pageVo);
 
     @Select("select \n" +

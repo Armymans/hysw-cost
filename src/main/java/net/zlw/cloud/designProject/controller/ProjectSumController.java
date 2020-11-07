@@ -1476,7 +1476,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCensus(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user282");
+            costVo2.setId("user312");
         }
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsOneCensus(costVo2);
         String json =
@@ -1509,7 +1509,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCount(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user282");
+            costVo2.setId("user312");
         }
         BigDecimal bigDecimal = projectSumService.desiginAchievementsOneCount(costVo2);
         ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
@@ -1526,7 +1526,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCountRast(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user282");
+            costVo2.setId("user312");
         }
         BigDecimal mouth = projectSumService.desiginAchievementsOneCount(costVo2);
         BigDecimal lastmouth = projectSumService.desiginLastAchievementsOneCount(costVo2);
@@ -1545,7 +1545,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCensus2(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user282");
+            costVo2.setId("user312");
         }
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsOneCensus2(costVo2);
 
@@ -1578,7 +1578,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCount2(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user282");
+            costVo2.setId("user312");
         }
         BigDecimal bigDecimal = projectSumService.desiginAchievementsOneCount2(costVo2);
         ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
@@ -1595,7 +1595,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCountRast2(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user282");
+            costVo2.setId("user312");
         }
         BigDecimal mouth = projectSumService.desiginAchievementsOneCount2(costVo2);
         BigDecimal lastmouth = projectSumService.desiginLastAchievementsOneCount2(costVo2);

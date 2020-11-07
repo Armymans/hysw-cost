@@ -29,5 +29,6 @@ public class MaintenanceVo {
     private AuditInfo auditInfo;
 
     private String auditType;
+    private String auditNumber;
 
 }
