@@ -862,7 +862,7 @@ public class MaintenanceProjectInformationService{
      * @param id
      * @return
      */
-    public MaintenanceVo selectMaintenanceProjectInformationById(String id,UserInfo userInfo){
+    public MaintenanceVo selectMaintenanceProjectInformationById(String id,String userId,UserInfo userInfo){
 
         MaintenanceVo maintenanceVo = new MaintenanceVo();
 
@@ -912,7 +912,7 @@ public class MaintenanceProjectInformationService{
 //        criteria1.andEqualTo("auditType",'0');
         // 未审批
         criteria1.andEqualTo("auditResult",'0');
-        criteria1.andEqualTo("founderId",userInfo.getId());
+        criteria1.andEqualTo("auditorId",userId);
 
 
 

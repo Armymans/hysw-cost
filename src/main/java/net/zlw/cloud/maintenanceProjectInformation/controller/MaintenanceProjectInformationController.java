@@ -42,7 +42,7 @@ public class MaintenanceProjectInformationController extends BaseController {
 //
     @RequestMapping(value = "/maintenanceProjectInformation/findAllMaintenanceProjectInformation", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> findAllMaintenanceProjectInformation(PageRequest pageRequest) {
-        pageRequest.setUid(getLoginUser().getId());
+//        pageRequest.setUid(getLoginUser().getId());
         System.out.println("PageRequest:" + pageRequest);
         PageInfo<MaintenanceProjectInformationReturnVo> allMaintenanceProjectInformation = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, getLoginUser());
         return net.zlw.cloud.common.RestUtil.page(allMaintenanceProjectInformation);
@@ -95,8 +95,8 @@ public class MaintenanceProjectInformationController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/maintenanceProjectInformation/selectMaintenanceProjectInformationById", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> selectMaintenanceProjectInformationById(@RequestParam(name = "id") String id) {
-        MaintenanceVo maintenanceVo = maintenanceProjectInformationService.selectMaintenanceProjectInformationById(id,getLoginUser());
+    public Map<String, Object> selectMaintenanceProjectInformationById(String id,String userId) {
+        MaintenanceVo maintenanceVo = maintenanceProjectInformationService.selectMaintenanceProjectInformationById(id,userId,getLoginUser());
         return RestUtil.success(maintenanceVo);
     }
 
