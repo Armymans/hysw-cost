@@ -233,100 +233,103 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
     @Select("SELECT * FROM base_project WHERE merge_flag = '0' AND id = #{id}")
     BaseProject findBaseProject(@Param("id") String id);
 
-    @Select("SELECT\n" +
-            "            b.id id,\n" +
-            "            b.cea_num ceaNum,\n" +
-            "            b.project_num projectNum,\n" +
-            "            b.project_name projectName,\n" +
-            "            b.application_num applicationNum,\n" +
-            "            b.water_address waterAddress,\n" +
-            "          b.construction_unit constructionUnit,\n" +
-            "          b.contacts,\n" +
-            "          b.contact_number,\n" +
-            "          b.customer_name customerName,\n" +
-            "          b.customer_phone customerPhone,\n" +
-            "          b.this_declaration thisDeclaration,\n" +
-            "          b.agent,\n" +
-            "          b.agent_phone,\n" +
-            "          b.application_date applicationDate,\n" +
-            "          b.business_location businessLocation,\n" +
-            "          b.business_types businessTypes,\n" +
-            "          b.water_use waterUse,\n" +
-            "          b.fire_table_size fireTableSize,\n" +
-            "          b.classification_caliber classificationCaliber,\n" +
-            "          b.water_meter_diameter waterMeterDiameter,\n" +
-            "          b.site site,\n" +
-            "          b.system_number systemNumber,\n" +
-            "          b.proposer proposer,\n" +
-            "          b.application_number applicationNumber,\n" +
-            "          b.construction_organization constructionOrganization,\n" +
-            "\t\t\t\t\t(CASE \n" +
-            "                 b.a_b\n" +
-            "             WHEN '1' THEN 'A' \n" +
-            "             WHEN '2' THEN 'B' \n" +
-            "             END \n" +
-            "             ) ab,\n" +
-            "            (CASE \n" +
-            "                 b.subject \n" +
-            "             WHEN '1' THEN '居民住户' \n" +
-            "             WHEN '2' THEN '开发商' \n" +
-            "             WHEN '3' THEN '政府事业' \n" +
-            "             WHEN '4' THEN '工商户' \n" +
-            "             WHEN '5' THEN '芜湖华衍' \n" +
-            "             END \n" +
-            "             ) subject,\n" +
-            "            ( \n" +
-            "             CASE\n" +
-            "                 b.district \n" +
-            "             WHEN '1' THEN '芜湖' \n" +
-            "             WHEN '2' THEN '马鞍山' \n" +
-            "             WHEN '3' THEN '江北' \n" +
-            "             WHEN '4' THEN '吴江' \n" +
-            "             END\n" +
-            "             ) district,\n" +
-            "            ( \n" +
-            "            CASE \n" +
-            "                b.project_category \n" +
-            "            WHEN '1' THEN '住宅区配套' \n" +
-            "            WHEN '2' THEN '商业区配套' \n" +
-            "            WHEN '3' THEN '工商区配套' \n" +
-            "            END ) projectCategory,\n" +
-            "            ( \n" +
-            "            CASE \n" +
-            "                b.project_nature \n" +
-            "              WHEN '1' THEN '新建' \n" +
-            "            WHEN '2' THEN '改造' \n" +
-            "            END \n" +
-            "            ) projectNature,\n" +
-            "            (\n" +
-            "            CASE\n" +
-            "            b.design_category \n" +
-            "            WHEN '1' THEN\n" +
-            "            '市政管道' \n" +
-            "            WHEN '2' THEN\n" +
-            "            '管网改造' \n" +
-            "            WHEN '3' THEN\n" +
-            "            '新建小区' \n" +
-            "            WHEN '4' THEN\n" +
-            "            '二次供水项目' \n" +
-            "            WHEN '5' THEN\n" +
-            "            '工商户' \n" +
-            "            WHEN '6' THEN\n" +
-            "            '居民装接水' \n" +
-            "            WHEN '7' THEN\n" +
-            "            '行政事业' \n" +
-            "            END \n" +
-            "            ) designCategory,\n" +
-            "            ( \n" +
-            "            CASE \n" +
-            "            b.water_supply_type \n" +
-            "            WHEN '1' THEN '直供水' \n" +
-            "            WHEN '2' THEN '二次供水' \n" +
-            "            END\n" +
-            "            )waterSupplyType\n" +
-            "            FROM base_project b \n" +
-            "            LEFT JOIN cost_unit_management c ON c.id = b.construction_organization\n" +
-            "            WHERE b.del_flag = '0' AND b.id = #{id}")
+    @Select(
+            "SELECT\n" +
+                    "b.id id,\n" +
+                    "b.cea_num ceaNum,\n" +
+                    "b.project_num projectNum,\n" +
+                    "b.project_name projectName,\n" +
+                    "b.application_num applicationNum,\n" +
+                    "b.water_address waterAddress,\n" +
+                    "b.construction_unit constructionUnit,\n" +
+                    "b.contacts,\n" +
+                    "b.contact_number,\n" +
+                    "b.customer_name customerName,\n" +
+                    "b.customer_phone customerPhone,\n" +
+                    "b.this_declaration thisDeclaration,\n" +
+                    "b.agent,\n" +
+                    "b.agent_phone,\n" +
+                    "b.application_date applicationDate,\n" +
+                    "b.business_location businessLocation,\n" +
+                    "b.business_types businessTypes,\n" +
+                    "b.water_use waterUse,\n" +
+                    "b.fire_table_size fireTableSize,\n" +
+                    "b.classification_caliber classificationCaliber,\n" +
+                    "b.water_meter_diameter waterMeterDiameter,\n" +
+                    "b.site site,\n" +
+                    "b.system_number systemNumber,\n" +
+                    "b.proposer proposer,\n" +
+                    "b.application_number applicationNumber,\n" +
+                    "b.construction_organization constructionOrganization,\n" +
+                    "b.management_table managementTable,\n" +
+                    "(CASE \n" +
+                    "      b.a_b\n" +
+                    "  WHEN '1' THEN 'A' \n" +
+                    "  WHEN '2' THEN 'B' \n" +
+                    "  END \n" +
+                    "  ) ab,\n" +
+                    " (CASE \n" +
+                    "      b.subject \n" +
+                    "  WHEN '1' THEN '居民住户' \n" +
+                    "  WHEN '2' THEN '开发商' \n" +
+                    "  WHEN '3' THEN '政府事业' \n" +
+                    "  WHEN '4' THEN '工商户' \n" +
+                    "  WHEN '5' THEN '芜湖华衍' \n" +
+                    "  END \n" +
+                    "  ) subject,\n" +
+                    " ( \n" +
+                    "  CASE\n" +
+                    "      b.district \n" +
+                    "  WHEN '1' THEN '芜湖' \n" +
+                    "  WHEN '2' THEN '马鞍山' \n" +
+                    "  WHEN '3' THEN '江北' \n" +
+                    "  WHEN '4' THEN '吴江' \n" +
+                    "  END\n" +
+                    "  ) district,\n" +
+                    " ( \n" +
+                    " CASE \n" +
+                    "     b.project_category \n" +
+                    " WHEN '1' THEN '住宅区配套' \n" +
+                    " WHEN '2' THEN '商业区配套' \n" +
+                    " WHEN '3' THEN '工商区配套' \n" +
+                    " END ) projectCategory,\n" +
+                    " ( \n" +
+                    " CASE \n" +
+                    "     b.project_nature \n" +
+                    "   WHEN '1' THEN '新建' \n" +
+                    " WHEN '2' THEN '改造' \n" +
+                    " END \n" +
+                    " ) projectNature,\n" +
+                    " (\n" +
+                    " CASE\n" +
+                    " b.design_category \n" +
+                    " WHEN '1' THEN\n" +
+                    " '市政管道' \n" +
+                    " WHEN '2' THEN\n" +
+                    " '管网改造' \n" +
+                    " WHEN '3' THEN\n" +
+                    " '新建小区' \n" +
+                    " WHEN '4' THEN\n" +
+                    " '二次供水项目' \n" +
+                    " WHEN '5' THEN\n" +
+                    " '工商户' \n" +
+                    " WHEN '6' THEN\n" +
+                    " '居民装接水' \n" +
+                    " WHEN '7' THEN\n" +
+                    " '行政事业' \n" +
+                    " END \n" +
+                    " ) designCategory,\n" +
+                    " ( \n" +
+                    " CASE \n" +
+                    " b.water_supply_type \n" +
+                    " WHEN '1' THEN '直供水' \n" +
+                    " WHEN '2' THEN '二次供水' \n" +
+                    " END\n" +
+                    " )waterSupplyType\n" +
+                    " FROM base_project b \n" +
+                    " LEFT JOIN cost_unit_management c ON c.id = b.construction_organization\n" +
+                    " WHERE b.del_flag = '0' AND b.id = #{id}"
+    )
     BaseProject findBaseProjectId(@Param("id") String id);
 
 

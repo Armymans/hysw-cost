@@ -115,6 +115,9 @@ public class BaseProject{
     @Column(name = "application_number")
     private String applicationNumber; //申报户数
 
+    @Column(name = "management_table")
+    private String managementTable; //管理表字段
+
     @Column(name = "desgin_status")
     private String desginStatus; //设计状态 1待审核 2出图中 3未通过 4未到账 5已到账',
 
@@ -162,6 +165,8 @@ public class BaseProject{
 
     @Column(name = "del_flag")
     private String delFlag; //删除标识 0,正常1,删除
+
+
 
     @Transient
     private String reviewerId; //互相审核人

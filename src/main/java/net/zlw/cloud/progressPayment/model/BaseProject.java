@@ -183,7 +183,8 @@ public class BaseProject implements Serializable {
     private String customerEmail;
     @Column(name = "amount_paid")
     private String amountPaid;
-
+    @Column(name = "management_table")
+    private String managementTable;
 
 
 }
