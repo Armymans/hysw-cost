@@ -40,11 +40,11 @@ public class VisaChangeController extends BaseController {
      */
     @RequestMapping(value = "/visaChange/findPage",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findPage(VisaChangeVo visaChangeVO){
-        PageHelper.startPage(visaChangeVO.getPageNum(),visaChangeVO.getPageSize());
+//        PageHelper.startPage(visaChangeVO.getPageNum(),visaChangeVO.getPageSize());
        List<VisaChangeVo> allPage = vcisService.findAllPage(visaChangeVO, getLoginUser());
-        PageInfo<VisaChangeVo> visaChangeVoPageInfo = new PageInfo<>(allPage);
+//        PageInfo<VisaChangeVo> visaChangeVoPageInfo = new PageInfo<>(allPage);
 
-        return RestUtil.page(visaChangeVoPageInfo);
+        return RestUtil.success(allPage);
     }
 
     /***

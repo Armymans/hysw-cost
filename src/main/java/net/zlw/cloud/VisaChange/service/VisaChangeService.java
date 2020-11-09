@@ -18,8 +18,6 @@ public interface VisaChangeService {
      ArrayList<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser );
 
 
-  
-
      VisaChangeInfoVo selectByEditId(String id);
 
      public void approvalProcess(BatchReviewVo batchReviewVo,UserInfo userInfo);
