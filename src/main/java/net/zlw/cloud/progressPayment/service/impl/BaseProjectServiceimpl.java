@@ -212,6 +212,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
 
         baseProjectVo.setId(id);
+        baseProjectVo.setManagementTable(baseProject.getManagementTable()); //后加的 管理表字段
         baseProjectVo.setProjectNum(baseProject.getProjectNum());
         baseProjectVo.setProjectName(baseProject.getProjectName());
         baseProjectVo.setApplicationNum(baseProject.getApplicationNum());

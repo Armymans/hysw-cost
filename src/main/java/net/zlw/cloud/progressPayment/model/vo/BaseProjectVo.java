@@ -94,4 +94,6 @@ public class BaseProjectVo {
     private String baseId;
 
     private List<AuditInfo> auditInfos;
+
+    private String managementTable;
 }
