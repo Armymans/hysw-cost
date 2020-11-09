@@ -68,12 +68,13 @@ public class ClearProjectController extends BaseController {
 //        List<ClearProject> allClearProject = clearProjectService.findAllClearProject(pageRequest, getLoginUser());
         PageInfo<ClearProject> allClearProject = clearProjectService.findAllClearProject(pageRequest, getLoginUser());
         return RestUtil.page(allClearProject);
-//        return RestUtil.success(allClearProject);
+
     }
 
 
     /**
      * 分页查询招标项目
+     *
      */
     @RequestMapping(value = "/clearProject/findAllCallForBids",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllCallForBids(PageVo pageVo){
