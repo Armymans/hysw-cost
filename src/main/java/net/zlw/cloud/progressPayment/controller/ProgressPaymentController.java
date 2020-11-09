@@ -6,17 +6,18 @@ import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.general.model.AuditChekedVo;
-import net.zlw.cloud.progressPayment.model.ProgressPaymentTotalPayment;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.PageVo;
 import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
 import net.zlw.cloud.progressPayment.model.vo.ProgressPaymentTotalPaymentVo;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.progressPayment.service.ProgressPaymentTotalPaymentService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
 

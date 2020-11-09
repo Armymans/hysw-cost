@@ -2,19 +2,15 @@ package net.zlw.cloud.maintenanceProjectInformation.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.netflix.client.http.HttpRequest;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.SurveyInformationDao;
-import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
-import net.zlw.cloud.designProject.model.OneCensus;
-import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
+import net.zlw.cloud.maintenanceProjectInformation.mapper.MaintenanceProjectInformationMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.*;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
-import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
@@ -27,13 +23,10 @@ import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-
-import net.zlw.cloud.maintenanceProjectInformation.mapper.MaintenanceProjectInformationMapper;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,7 +41,7 @@ import java.util.UUID;
  * @Version 1.0
  */
 @Service
-public class MaintenanceProjectInformationService{
+public class MaintenanceProjectInformationService {
     Date date = new Date();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm");
 
@@ -63,7 +56,6 @@ public class MaintenanceProjectInformationService{
 
     @Resource
     private MemberManageDao memberManageDao;
-
 
 
     @Resource
@@ -81,10 +73,11 @@ public class MaintenanceProjectInformationService{
 
     /**
      * 分页查询所有
+     *
      * @param userInfo
      * @return
      */
-    public PageInfo<MaintenanceProjectInformationReturnVo> findAllMaintenanceProjectInformation(PageRequest pageRequest,UserInfo userInfo){
+    public PageInfo<MaintenanceProjectInformationReturnVo> findAllMaintenanceProjectInformation(PageRequest pageRequest, UserInfo userInfo) {
         //        设置分页助手
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
 
@@ -94,24 +87,49 @@ public class MaintenanceProjectInformationService{
 
         PageInfo<MaintenanceProjectInformationReturnVo> projectInformationPageInfo = new PageInfo<>();
         //如果是待审核，或者未通过，根据uid查找
-        if("1".equals(pageRequest.getType()) || "3".equals(pageRequest.getType())){
-            projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);
-        }else{
-            projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
-        }
+        if ("1".equals(pageRequest.getType()) || "3".equals(pageRequest.getType())) {
 
-        System.out.println("list:"+projectInformationPageInfo.getList().toString());
+            //当前处理人
+            for (MaintenanceProjectInformationReturnVo thisVo : maintenanceProjectInformationReturnVos) {
+                Example example = new Example(AuditInfo.class);
+                example.createCriteria().andEqualTo("baseProjectId", thisVo.getId());
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                if (auditInfo != null){
+                    if (auditInfo.getAuditorId() != null){
+                        Example example1 = new Example(MemberManage.class);
+                        example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        if (memberManage != null){
+                            thisVo.setCurrentHandler(memberManage.getMemberName());
+                        }
+                    }
+                }
+
+            }
+
+
+        projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);
+    }else
+
+    {
+        projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
+    }
+
+        System.out.println("list:"+projectInformationPageInfo.getList().
+
+    toString());
 
         return projectInformationPageInfo;
 
-    }
+}
 
     /**
      * 统计分析 列表
+     *
      * @param userInfo
      * @return
      */
-    public PageInfo<MaintenanceProjectInformation> list(PageRequest pageRequest,UserInfo userInfo){
+    public PageInfo<MaintenanceProjectInformation> list(PageRequest pageRequest, UserInfo userInfo) {
         //todo        设置分页助手
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
 
@@ -119,22 +137,22 @@ public class MaintenanceProjectInformationService{
 
         Example.Criteria criteria = example.createCriteria();
 
-        criteria.andEqualTo("delFlag","0");
+        criteria.andEqualTo("delFlag", "0");
         // 查询条件  状态
-        if(pageRequest.getType() != null && (!"".equals(pageRequest.getType()))){
-            criteria.andEqualTo("type",pageRequest.getType());
+        if (pageRequest.getType() != null && (!"".equals(pageRequest.getType()))) {
+            criteria.andEqualTo("type", pageRequest.getType());
         }
 
         // TODO 登陆人
 //        criteria.andEqualTo("founderId",userInfo.getId());
         //  地区
-        if(pageRequest.getDistrict() != null && (!"".equals(pageRequest.getDistrict()))){
-            criteria.andEqualTo("projectAddress",pageRequest.getDistrict());
+        if (pageRequest.getDistrict() != null && (!"".equals(pageRequest.getDistrict()))) {
+            criteria.andEqualTo("projectAddress", pageRequest.getDistrict());
         }
 
 
         // 查询条件 开始时间
-        if(pageRequest.getStartTime() != null && (!"".equals(pageRequest.getStartTime()))){
+        if (pageRequest.getStartTime() != null && (!"".equals(pageRequest.getStartTime()))) {
             String startTime = pageRequest.getStartTime();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -144,13 +162,13 @@ public class MaintenanceProjectInformationService{
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            criteria.andGreaterThanOrEqualTo("createTime",date);
+            criteria.andGreaterThanOrEqualTo("createTime", date);
 
         }
 
 
         // 查询条件 结束时间
-        if(pageRequest.getEndTime() != null && (!"".equals(pageRequest.getEndTime()))){
+        if (pageRequest.getEndTime() != null && (!"".equals(pageRequest.getEndTime()))) {
             String endTime = pageRequest.getEndTime();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -160,13 +178,13 @@ public class MaintenanceProjectInformationService{
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            criteria.andLessThanOrEqualTo("createTime",date);
+            criteria.andLessThanOrEqualTo("createTime", date);
 
         }
 
         // 查询条件 内容
-        if(pageRequest.getKeyWord() != null && (!"".equals(pageRequest.getKeyWord()))){
-           criteria.andLike("maintenanceItemName","%"+pageRequest.getKeyWord()+"%");
+        if (pageRequest.getKeyWord() != null && (!"".equals(pageRequest.getKeyWord()))) {
+            criteria.andLike("maintenanceItemName", "%" + pageRequest.getKeyWord() + "%");
         }
 
         List<MaintenanceProjectInformation> maintenanceProjectInformations = maintenanceProjectInformationMapper.selectByExample(example);
@@ -175,7 +193,7 @@ public class MaintenanceProjectInformationService{
         for (MaintenanceProjectInformation maintenanceProjectInformation : maintenanceProjectInformations) {
 
             //滤空判断
-            if(maintenanceProjectInformation.getConstructionUnitId()!= null && (!"".equals(maintenanceProjectInformation.getConstructionUnitId()))){
+            if (maintenanceProjectInformation.getConstructionUnitId() != null && (!"".equals(maintenanceProjectInformation.getConstructionUnitId()))) {
                 ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(maintenanceProjectInformation.getConstructionUnitId());
 //                maintenanceProjectInformation.setConstructionUnitManagement(constructionUnitManagement);
                 //获取施工单位名字
@@ -183,9 +201,9 @@ public class MaintenanceProjectInformationService{
             }
 
 
-            if(maintenanceProjectInformation.getPreparePeople() != null && (!"".equals(maintenanceProjectInformation.getPreparePeople()))){
+            if (maintenanceProjectInformation.getPreparePeople() != null && (!"".equals(maintenanceProjectInformation.getPreparePeople()))) {
                 MemberManage memberManage = memberManageDao.selectByIdAndStatus(maintenanceProjectInformation.getPreparePeople());
-                if(memberManage != null){
+                if (memberManage != null) {
                     maintenanceProjectInformation.setMemberName(memberManage.getMemberName());
                 }
             }
@@ -196,7 +214,7 @@ public class MaintenanceProjectInformationService{
 
         PageInfo<MaintenanceProjectInformation> projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformations);
 
-        System.err.println("list:"+projectInformationPageInfo.getList().toString());
+        System.err.println("list:" + projectInformationPageInfo.getList().toString());
 
         return projectInformationPageInfo;
 
@@ -205,21 +223,23 @@ public class MaintenanceProjectInformationService{
 
     /**
      * 检维修--删除
+     *
      * @param id
      */
-    public void deleteMaintenanceProjectInformation(String id){
+    public void deleteMaintenanceProjectInformation(String id) {
         maintenanceProjectInformationMapper.deleteMaintenanceProjectInformation(id);
     }
 
 
     /**
      * 检维修--新增--提交
+     *
      * @param maintenanceProjectInformation
      * @param userInfo
      */
-    public void addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation,UserInfo userInfo){
+    public void addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo) {
 
-        String uuid = UUID.randomUUID().toString().replaceAll("-","");
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         System.err.println(uuid);
         //创建时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -232,9 +252,9 @@ public class MaintenanceProjectInformationService{
 //        information.setId(maintenanceProjectInformation.getId());
         information.setCreateTime(createTime);
         information.setDelFlag("0");
-        if(StringUtils.isNotEmpty(maintenanceProjectInformation.getAuditorId())){
+        if (StringUtils.isNotEmpty(maintenanceProjectInformation.getAuditorId())) {
             information.setType("1");
-        }else{
+        } else {
             information.setType("2");
         }
         information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
@@ -248,29 +268,27 @@ public class MaintenanceProjectInformationService{
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
         information.setCustomerName(maintenanceProjectInformation.getCustomerName());
         // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
-        if("".equals(maintenanceProjectInformation.getReviewAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getReviewAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             information.setReviewAmount(bd);
-        }else{
+        } else {
             information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
         }
 
         information.setRemarkes(maintenanceProjectInformation.getRemarkes());
-        if(userInfo != null){
+        if (userInfo != null) {
             information.setFounderId(userInfo.getId());
             information.setFounderCompanyId(userInfo.getCompanyId());
-        }else{
+        } else {
             information.setFounderId("user312");
         }
-
-
 
 
         //结算审核信息
         SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
 
-        String saiId = UUID.randomUUID().toString().replace("-","");
+        String saiId = UUID.randomUUID().toString().replace("-", "");
         settlementAuditInformation.setId(saiId);
         settlementAuditInformation.setCreateTime(simpleDateFormat.format(new Date()));
 
@@ -278,37 +296,37 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setMaintenanceProjectInformation(information.getId());
 
         //  `authorized_number` decimal
-        if("".equals(maintenanceProjectInformation.getAuthorizedNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getAuthorizedNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setAuthorizedNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
         }
         // `subtract_the_number` decimal
-        if("".equals(maintenanceProjectInformation.getSubtractTheNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getSubtractTheNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setSubtractTheNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
         }
 
         // `nuclear_number` decimal
-        if("".equals(maintenanceProjectInformation.getNuclearNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getNuclearNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setNuclearNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
         }
 
         // `contract_amount` decimal
-        if("".equals(maintenanceProjectInformation.getContractAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getContractAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setContractAmount(bd);
-        }else{
+        } else {
             settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
         }
 
@@ -320,21 +338,21 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setContact(maintenanceProjectInformation.getContact());
         settlementAuditInformation.setContactPhone(maintenanceProjectInformation.getContactPhone());
         // `amount_outsourcing` decimal
-        if("".equals(maintenanceProjectInformation.getAmountOutsourcing())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getAmountOutsourcing())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setAmountOutsourcing(bd);
-        }else{
+        } else {
             settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
         }
 
         settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
         settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
 
-        if(userInfo != null){
+        if (userInfo != null) {
             settlementAuditInformation.setFounderId(userInfo.getId());
             settlementAuditInformation.setFounderCompanyId(userInfo.getCompanyId());
-        }else{
+        } else {
             settlementAuditInformation.setFounderId("user312");
         }
 
@@ -344,7 +362,7 @@ public class MaintenanceProjectInformationService{
         // 勘探金额
 
         InvestigationOfTheAmount investigationOfTheAmount = new InvestigationOfTheAmount();
-        String ioaId = UUID.randomUUID().toString().replace("-","");
+        String ioaId = UUID.randomUUID().toString().replace("-", "");
 
         investigationOfTheAmount.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
         //勘察人员
@@ -356,10 +374,10 @@ public class MaintenanceProjectInformationService{
         investigationOfTheAmount.setCreateTime(simpleDateFormat.format(new Date()));
         investigationOfTheAmount.setDelFlag("0");
 
-        if(userInfo != null){
+        if (userInfo != null) {
             investigationOfTheAmount.setFounderId(userInfo.getId());
             investigationOfTheAmount.setFounderCompanyId(userInfo.getCompanyId());
-        }else{
+        } else {
             investigationOfTheAmount.setFounderId("user312");
         }
 
@@ -369,38 +387,38 @@ public class MaintenanceProjectInformationService{
 
 //        investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.get);
         // `unbalanced_quotation_adjustment` decimal
-        if("".equals(maintenanceProjectInformation.getUnbalancedQuotationAdjustment())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getUnbalancedQuotationAdjustment())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setUnbalancedQuotationAdjustment(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
         }
 
 //        `punish_amount` decimal
-        if("".equals(maintenanceProjectInformation.getPunishAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getPunishAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setPunishAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
         }
 
 //        `outbound_amount` decimal
-        if("".equals(maintenanceProjectInformation.getOutboundAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getOutboundAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setOutboundAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
         }
 
 //        `material_difference_amount` decimal
-        if("".equals(maintenanceProjectInformation.getMaterialDifferenceAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getMaterialDifferenceAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setMaterialDifferenceAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
         }
 
@@ -410,7 +428,7 @@ public class MaintenanceProjectInformationService{
 
         // 审核信息
 
-        if(StringUtils.isNotEmpty(maintenanceProjectInformation.getAuditorId())) {
+        if (StringUtils.isNotEmpty(maintenanceProjectInformation.getAuditorId())) {
             AuditInfo auditInfo = new AuditInfo();
             String s = UUID.randomUUID().toString().replaceAll("-", "");
             auditInfo.setId(s);
@@ -418,7 +436,7 @@ public class MaintenanceProjectInformationService{
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
             auditInfo.setStatus("0");
-            if(userInfo != null){
+            if (userInfo != null) {
                 auditInfo.setFounderId(userInfo.getId());
                 auditInfo.setCompanyId(userInfo.getCompanyId());
             }
@@ -528,17 +546,18 @@ public class MaintenanceProjectInformationService{
 
     /**
      * 批量审核
+     *
      * @param batchReviewVo
      */
-    public void batchReview(BatchReviewVo batchReviewVo){
+    public void batchReview(BatchReviewVo batchReviewVo) {
         //获取批量审核的id
         String[] split = batchReviewVo.getBatchAll().split(",");
-        if(split.length > 0){
+        if (split.length > 0) {
             for (String s : split) {
-                if(StringUtil.isNotEmpty(s)){
+                if (StringUtil.isNotEmpty(s)) {
                     Example example = new Example(AuditInfo.class);
                     // auditResult = 0 , 未审批
-                    example.createCriteria().andEqualTo("baseProjectId",s).andEqualTo("auditResult","0");
+                    example.createCriteria().andEqualTo("baseProjectId", s).andEqualTo("auditResult", "0");
                     AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
 
                     MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectById(s);
@@ -546,9 +565,9 @@ public class MaintenanceProjectInformationService{
                     maintenanceProjectInformation.setType("1");
 
                     // 判断更改状态
-                    if(batchReviewVo.getAuditResult().equals("1")){
+                    if (batchReviewVo.getAuditResult().equals("1")) {
                         // 0 一审
-                        if(auditInfo.getAuditType().equals("0")){
+                        if (auditInfo.getAuditType().equals("0")) {
                             // 审核通过
                             auditInfo.setAuditResult("1");
                             //一级审批的意见，时间
@@ -578,7 +597,7 @@ public class MaintenanceProjectInformationService{
                             MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                             auditInfo1.setAuditorId(memberManage.getId());
                             auditInfoDao.insertSelective(auditInfo1);
-                        }else if(auditInfo.getAuditType().equals("1")){//二审
+                        } else if (auditInfo.getAuditType().equals("1")) {//二审
                             auditInfo.setAuditResult("1");
                             maintenanceProjectInformation.setType("5");
                             Date date = new Date();
@@ -588,7 +607,7 @@ public class MaintenanceProjectInformationService{
                             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                             maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
                         }
-                    }else if(batchReviewVo.getAuditResult().equals("2")){
+                    } else if (batchReviewVo.getAuditResult().equals("2")) {
                         auditInfo.setAuditResult("2");
                         auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                         maintenanceProjectInformation.setType("3");
@@ -605,10 +624,11 @@ public class MaintenanceProjectInformationService{
 
     /**
      * 编辑
+     *
      * @param maintenanceProjectInformationVo
      * @param userInfo
      */
-    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo,UserInfo userInfo){
+    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo, UserInfo userInfo) {
 
 
         //修改时间
@@ -632,11 +652,11 @@ public class MaintenanceProjectInformationService{
         information.setProjectAddress(maintenanceProjectInformationVo.getProjectAddress());
         information.setConstructionUnitId(maintenanceProjectInformationVo.getConstructionUnitId());
         // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
-        if("".equals(maintenanceProjectInformation.getReviewAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getReviewAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             information.setReviewAmount(bd);
-        }else{
+        } else {
             information.setReviewAmount(maintenanceProjectInformationVo.getReviewAmount());
         }
         information.setRemarkes(maintenanceProjectInformationVo.getRemarkes());
@@ -656,37 +676,37 @@ public class MaintenanceProjectInformationService{
 
 
         //  `authorized_number` decimal
-        if("".equals(maintenanceProjectInformationVo.getAuthorizedNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformationVo.getAuthorizedNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setAuthorizedNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformationVo.getAuthorizedNumber());
         }
         // `subtract_the_number` decimal
-        if("".equals(maintenanceProjectInformationVo.getSubtractTheNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformationVo.getSubtractTheNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setSubtractTheNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformationVo.getSubtractTheNumber());
         }
 
         // `nuclear_number` decimal
-        if("".equals(maintenanceProjectInformationVo.getNuclearNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformationVo.getNuclearNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setNuclearNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setNuclearNumber(maintenanceProjectInformationVo.getNuclearNumber());
         }
 
         // `contract_amount` decimal
-        if("".equals(maintenanceProjectInformationVo.getContractAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformationVo.getContractAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setContractAmount(bd);
-        }else{
+        } else {
             settlementAuditInformation.setContractAmount(maintenanceProjectInformationVo.getContractAmount());
         }
         settlementAuditInformation.setBaseProjectId(information.getId());
@@ -697,11 +717,11 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setContact(maintenanceProjectInformationVo.getContact());
         settlementAuditInformation.setContactPhone(maintenanceProjectInformationVo.getContactPhone());
         // `amount_outsourcing` decimal
-        if("".equals(maintenanceProjectInformationVo.getAmountOutsourcing())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformationVo.getAmountOutsourcing())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setAmountOutsourcing(bd);
-        }else{
+        } else {
             settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformationVo.getAmountOutsourcing());
 
         }
@@ -710,7 +730,7 @@ public class MaintenanceProjectInformationService{
 
         Example example = new Example(SettlementAuditInformation.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("maintenanceProjectInformation",information.getId());
+        criteria.andEqualTo("maintenanceProjectInformation", information.getId());
 
         SettlementAuditInformation selectOneByExample = settlementAuditInformationDao.selectOneByExample(example);
 
@@ -740,45 +760,45 @@ public class MaintenanceProjectInformationService{
 //        investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.get);
 
         // `unbalanced_quotation_adjustment` decimal
-        if("".equals(maintenanceProjectInformationVo.getUnbalancedQuotationAdjustment())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformationVo.getUnbalancedQuotationAdjustment())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setUnbalancedQuotationAdjustment(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformationVo.getUnbalancedQuotationAdjustment());
         }
 
 //        `punish_amount` decimal
-        if("".equals(maintenanceProjectInformationVo.getPunishAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformationVo.getPunishAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setPunishAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setPunishAmount(maintenanceProjectInformationVo.getPunishAmount());
         }
 
 //        `outbound_amount` decimal
-        if("".equals(maintenanceProjectInformationVo.getOutboundAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformationVo.getOutboundAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setOutboundAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformationVo.getOutboundAmount());
         }
 
 //        `material_difference_amount` decimal
-        if("".equals(maintenanceProjectInformationVo.getMaterialDifferenceAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformationVo.getMaterialDifferenceAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setMaterialDifferenceAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformationVo.getMaterialDifferenceAmount());
         }
 
 
         Example example1 = new Example(InvestigationOfTheAmount.class);
         Example.Criteria example1Criteria = example1.createCriteria();
-        example1Criteria.andEqualTo("maintenanceProjectInformation",information.getId());
+        example1Criteria.andEqualTo("maintenanceProjectInformation", information.getId());
 
         InvestigationOfTheAmount ofTheAmount = investigationOfTheAmountDao.selectOneByExample(example1);
 
@@ -789,20 +809,20 @@ public class MaintenanceProjectInformationService{
 
         Example example2 = new Example(AuditInfo.class);
         Example.Criteria criteria1 = example2.createCriteria();
-        criteria1.andEqualTo("baseProjectId",information.getId());
+        criteria1.andEqualTo("baseProjectId", information.getId());
 
         List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
 
         for (AuditInfo auditInfo : auditInfos) {
-            if("2".equals(auditInfo.getAuditResult())){
+            if ("2".equals(auditInfo.getAuditResult())) {
 
                 Example example3 = new Example(AuditInfo.class);
                 Example.Criteria criteria2 = example3.createCriteria();
-                criteria2.andEqualTo("baseProjectId",information.getId());
+                criteria2.andEqualTo("baseProjectId", information.getId());
 
                 List<AuditInfo> auditInfos1 = auditInfoDao.selectByExample(example3);
                 for (AuditInfo info : auditInfos1) {
-                    if("1".equals(info.getAuditType())){
+                    if ("1".equals(info.getAuditType())) {
                         auditInfoDao.deleteByPrimaryKey(info);
                     }
                     info.setBaseProjectId(information.getId());
@@ -823,7 +843,7 @@ public class MaintenanceProjectInformationService{
             }
         }
 
-        if(auditInfos.size() <=0){
+        if (auditInfos.size() <= 0) {
             AuditInfo auditInfo1 = new AuditInfo();
 
             String s = UUID.randomUUID().toString().replaceAll("-", "");
@@ -848,8 +868,6 @@ public class MaintenanceProjectInformationService{
         }
 
 
-
-
 //        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
 
         maintenanceProjectInformationMapper.updateByPrimaryKeySelective(information);
@@ -859,46 +877,47 @@ public class MaintenanceProjectInformationService{
 
     /**
      * 根据id,查找回显数据
+     *
      * @param id
      * @return
      */
-    public MaintenanceVo selectMaintenanceProjectInformationById(String id,String userId,UserInfo userInfo){
+    public MaintenanceVo selectMaintenanceProjectInformationById(String id, String userId, UserInfo userInfo) {
 
         MaintenanceVo maintenanceVo = new MaintenanceVo();
 
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectByPrimaryKey(id);
-        if(information != null){
+        if (information != null) {
             maintenanceVo.setMaintenanceProjectInformation(information);
-        }else{
+        } else {
             maintenanceVo.setMaintenanceProjectInformation(new MaintenanceProjectInformation());
         }
 
 
         Example example1 = new Example(SettlementAuditInformation.class);
-        example1.createCriteria().andEqualTo("maintenanceProjectInformation",information.getId());
+        example1.createCriteria().andEqualTo("maintenanceProjectInformation", information.getId());
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
-        if(settlementAuditInformation != null){
+        if (settlementAuditInformation != null) {
             maintenanceVo.setSettlementAuditInformation(settlementAuditInformation);
-        }else{
+        } else {
             maintenanceVo.setSettlementAuditInformation(new SettlementAuditInformation());
         }
 
         Example example2 = new Example(InvestigationOfTheAmount.class);
-        example2.createCriteria().andEqualTo("maintenanceProjectInformation",information.getId());
+        example2.createCriteria().andEqualTo("maintenanceProjectInformation", information.getId());
         InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example2);
-        if(investigationOfTheAmount != null){
+        if (investigationOfTheAmount != null) {
             maintenanceVo.setInvestigationOfTheAmount(investigationOfTheAmount);
-        }else {
+        } else {
             maintenanceVo.setInvestigationOfTheAmount(new InvestigationOfTheAmount());
         }
-        
+
         Example example = new Example(AuditInfo.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("baseProjectId",information.getId());
+        criteria.andEqualTo("baseProjectId", information.getId());
 
         List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
         for (AuditInfo auditInfo : auditInfos) {
-            if("0".equals(auditInfo.getAuditResult())){
+            if ("0".equals(auditInfo.getAuditResult())) {
                 maintenanceVo.setAuditType(auditInfo.getAuditType());
             }
         }
@@ -908,25 +927,23 @@ public class MaintenanceProjectInformationService{
         //查找审核数据
         Example auditExample = new Example(AuditInfo.class);
         Example.Criteria criteria1 = auditExample.createCriteria();
-        criteria1.andEqualTo("baseProjectId",information.getId());
+        criteria1.andEqualTo("baseProjectId", information.getId());
 //        criteria1.andEqualTo("auditType",'0');
         // 未审批
-        criteria1.andEqualTo("auditResult",'0');
-        criteria1.andEqualTo("auditorId",userInfo.getId());
-
+        criteria1.andEqualTo("auditResult", '0');
+        criteria1.andEqualTo("auditorId", userInfo.getId());
 
 
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditExample);
-        if(auditInfo != null){
+        if (auditInfo != null) {
             maintenanceVo.setAuditInfo(auditInfo);
             // 0 代表一审，未审批
-            if("0".equals(auditInfo.getAuditType())){
+            if ("0".equals(auditInfo.getAuditType())) {
                 maintenanceVo.setAuditNumber("0");
-            }else if("0".equals(auditInfo.getAuditType())){
+            } else if ("0".equals(auditInfo.getAuditType())) {
                 maintenanceVo.setAuditNumber("1");
             }
         }
-
 
 
         return maintenanceVo;
@@ -935,9 +952,9 @@ public class MaintenanceProjectInformationService{
     /**
      * 新增--保存
      */
-    public void saveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation,UserInfo userInfo){
+    public void saveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo) {
 
-        String id = UUID.randomUUID().toString().replaceAll("-","");
+        String id = UUID.randomUUID().toString().replaceAll("-", "");
         //创建时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = simpleDateFormat.format(new Date());
@@ -947,9 +964,9 @@ public class MaintenanceProjectInformationService{
         information.setId(id);
         information.setCreateTime(createTime);
         information.setDelFlag("0");
-        if(StringUtils.isNotEmpty(maintenanceProjectInformation.getAuditorId())){
+        if (StringUtils.isNotEmpty(maintenanceProjectInformation.getAuditorId())) {
             information.setType("1");
-        }else{
+        } else {
             information.setType("2");
         }
         information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
@@ -963,11 +980,11 @@ public class MaintenanceProjectInformationService{
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setCustomerName(maintenanceProjectInformation.getCustomerName());
         // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
-        if("".equals(maintenanceProjectInformation.getReviewAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getReviewAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             information.setReviewAmount(bd);
-        }else{
+        } else {
             information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
         }
 
@@ -977,11 +994,10 @@ public class MaintenanceProjectInformationService{
         information.setFounderCompanyId(userInfo.getCompanyId());
 
 
-
         //结算审核信息
         SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
 
-        String saiId = UUID.randomUUID().toString().replace("-","");
+        String saiId = UUID.randomUUID().toString().replace("-", "");
         settlementAuditInformation.setId(saiId);
         settlementAuditInformation.setCreateTime(simpleDateFormat.format(new Date()));
 
@@ -989,37 +1005,37 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setMaintenanceProjectInformation(information.getId());
 
         // `authorized_number` decimal
-        if("".equals(maintenanceProjectInformation.getAuthorizedNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getAuthorizedNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setAuthorizedNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
         }
         // `subtract_the_number` decimal
-        if("".equals(maintenanceProjectInformation.getSubtractTheNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getSubtractTheNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setSubtractTheNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
         }
 
         // `nuclear_number` decimal
-        if("".equals(maintenanceProjectInformation.getNuclearNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getNuclearNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setNuclearNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
         }
 
         // `contract_amount` decimal
-        if("".equals(maintenanceProjectInformation.getContractAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getContractAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setContractAmount(bd);
-        }else{
+        } else {
             settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
         }
         settlementAuditInformation.setBaseProjectId(id);
@@ -1030,11 +1046,11 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setContact(maintenanceProjectInformation.getContact());
         settlementAuditInformation.setContactPhone(maintenanceProjectInformation.getContactPhone());
         // `amount_outsourcing` decimal
-        if("".equals(maintenanceProjectInformation.getAmountOutsourcing())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getAmountOutsourcing())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setAmountOutsourcing(bd);
-        }else{
+        } else {
             settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
         }
         settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
@@ -1048,7 +1064,7 @@ public class MaintenanceProjectInformationService{
         // 勘探金额
 
         InvestigationOfTheAmount investigationOfTheAmount = new InvestigationOfTheAmount();
-        String ioaId = UUID.randomUUID().toString().replace("-","");
+        String ioaId = UUID.randomUUID().toString().replace("-", "");
 
         investigationOfTheAmount.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
         //勘察人员
@@ -1068,38 +1084,38 @@ public class MaintenanceProjectInformationService{
         investigationOfTheAmount.setRemarkes(maintenanceProjectInformation.getAmountRemarks());
 
         // `unbalanced_quotation_adjustment` decimal
-        if("".equals(maintenanceProjectInformation.getUnbalancedQuotationAdjustment())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getUnbalancedQuotationAdjustment())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setUnbalancedQuotationAdjustment(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
         }
 
 //        `punish_amount` decimal
-        if("".equals(maintenanceProjectInformation.getPunishAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getPunishAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setPunishAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
         }
 
 //        `outbound_amount` decimal
-        if("".equals(maintenanceProjectInformation.getOutboundAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getOutboundAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setOutboundAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
         }
 
 //        `material_difference_amount` decimal
-        if("".equals(maintenanceProjectInformation.getMaterialDifferenceAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getMaterialDifferenceAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setMaterialDifferenceAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
         }
 
@@ -1204,7 +1220,7 @@ public class MaintenanceProjectInformationService{
     /**
      * 编辑--保存
      */
-    public void updateSaveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation,UserInfo userInfo){
+    public void updateSaveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo) {
 
         //修改时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1223,11 +1239,11 @@ public class MaintenanceProjectInformationService{
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
         // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
-        if("".equals(maintenanceProjectInformation.getReviewAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getReviewAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             information.setReviewAmount(bd);
-        }else{
+        } else {
             information.setReviewAmount(maintenanceProjectInformation.getReviewAmount());
         }
         information.setRemarkes(maintenanceProjectInformation.getRemarkes());
@@ -1236,47 +1252,46 @@ public class MaintenanceProjectInformationService{
 //        information.setFounderCompanyId(userInfo.getCompanyId());
 
 
-
         //结算审核信息
 
         Example example1 = new Example(SettlementAuditInformation.class);
-        example1.createCriteria().andEqualTo("maintenanceProjectInformation",maintenanceProjectInformation.getId());
+        example1.createCriteria().andEqualTo("maintenanceProjectInformation", maintenanceProjectInformation.getId());
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
 
         settlementAuditInformation.setUpdateTime(simpleDateFormat.format(new Date()));
 
         //  `authorized_number` decimal
-        if("".equals(maintenanceProjectInformation.getAuthorizedNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getAuthorizedNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setAuthorizedNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setAuthorizedNumber(maintenanceProjectInformation.getAuthorizedNumber());
         }
         // `subtract_the_number` decimal
-        if("".equals(maintenanceProjectInformation.getSubtractTheNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getSubtractTheNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setSubtractTheNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setSubtractTheNumber(maintenanceProjectInformation.getSubtractTheNumber());
         }
 
         // `nuclear_number` decimal
-        if("".equals(maintenanceProjectInformation.getNuclearNumber())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getNuclearNumber())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setNuclearNumber(bd);
-        }else{
+        } else {
             settlementAuditInformation.setNuclearNumber(maintenanceProjectInformation.getNuclearNumber());
         }
 
         // `contract_amount` decimal
-        if("".equals(maintenanceProjectInformation.getContractAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getContractAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setContractAmount(bd);
-        }else{
+        } else {
             settlementAuditInformation.setContractAmount(maintenanceProjectInformation.getContractAmount());
         }
 
@@ -1287,11 +1302,11 @@ public class MaintenanceProjectInformationService{
         settlementAuditInformation.setContact(maintenanceProjectInformation.getContact());
         settlementAuditInformation.setContactPhone(maintenanceProjectInformation.getContactPhone());
         // `amount_outsourcing` decimal
-        if("".equals(maintenanceProjectInformation.getAmountOutsourcing())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getAmountOutsourcing())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             settlementAuditInformation.setAmountOutsourcing(bd);
-        }else{
+        } else {
             settlementAuditInformation.setAmountOutsourcing(maintenanceProjectInformation.getAmountOutsourcing());
         }
         settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
@@ -1303,7 +1318,7 @@ public class MaintenanceProjectInformationService{
         // 勘探金额
 
         Example example2 = new Example(InvestigationOfTheAmount.class);
-        example2.createCriteria().andEqualTo("maintenanceProjectInformation",maintenanceProjectInformation.getId());
+        example2.createCriteria().andEqualTo("maintenanceProjectInformation", maintenanceProjectInformation.getId());
 
         InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example2);
 
@@ -1317,38 +1332,38 @@ public class MaintenanceProjectInformationService{
         investigationOfTheAmount.setUpdateTime(simpleDateFormat.format(new Date()));
 
         // `unbalanced_quotation_adjustment` decimal
-        if("".equals(maintenanceProjectInformation.getUnbalancedQuotationAdjustment())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getUnbalancedQuotationAdjustment())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setUnbalancedQuotationAdjustment(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setUnbalancedQuotationAdjustment(maintenanceProjectInformation.getUnbalancedQuotationAdjustment());
         }
 
 //        `punish_amount` decimal
-        if("".equals(maintenanceProjectInformation.getPunishAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getPunishAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setPunishAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setPunishAmount(maintenanceProjectInformation.getPunishAmount());
         }
 
 //        `outbound_amount` decimal
-        if("".equals(maintenanceProjectInformation.getOutboundAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getOutboundAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setOutboundAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setOutboundAmount(maintenanceProjectInformation.getOutboundAmount());
         }
 
 //        `material_difference_amount` decimal
-        if("".equals(maintenanceProjectInformation.getMaterialDifferenceAmount())){
-            String str1="0";
-            BigDecimal bd=new BigDecimal(str1);
+        if ("".equals(maintenanceProjectInformation.getMaterialDifferenceAmount())) {
+            String str1 = "0";
+            BigDecimal bd = new BigDecimal(str1);
             investigationOfTheAmount.setMaterialDifferenceAmount(bd);
-        }else{
+        } else {
             investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
         }
 
@@ -1369,7 +1384,7 @@ public class MaintenanceProjectInformationService{
     }
 
     public List<StatisticalFigureVo> statisticalFigure(String projectAddress, String startDate, String endDate, UserInfo loginUser) {
-        return maintenanceProjectInformationMapper.statisticalFigure(projectAddress,startDate,endDate);
+        return maintenanceProjectInformationMapper.statisticalFigure(projectAddress, startDate, endDate);
     }
 
     /**
@@ -1384,7 +1399,7 @@ public class MaintenanceProjectInformationService{
         //当前月
         String month = String.valueOf(now.get(Calendar.MONTH) + 1);
 
-         String day = year+"-"+month;
+        String day = year + "-" + month;
         return maintenanceProjectInformationMapper.monthCount(day);
     }
 
@@ -1412,7 +1427,7 @@ public class MaintenanceProjectInformationService{
         //当前月
         String month = String.valueOf(now.get(Calendar.MONTH));
 
-         String day = year+"-"+month;
+        String day = year + "-" + month;
         return maintenanceProjectInformationMapper.monthCount(day);
     }
 

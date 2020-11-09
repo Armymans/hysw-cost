@@ -4,12 +4,21 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
-import net.zlw.cloud.common.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
+import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.DesignInfo;
-import org.springframework.web.bind.annotation.*;
+import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -22,6 +31,13 @@ public class BudgetingController extends BaseController {
     @Resource
     private BudgetingService budgetingService;
     private static String founderId;
+
+
+
+    @Autowired
+    private MemberManageDao memberManageDao;
+    @Autowired
+    private AuditInfoDao auditInfoDao;
 
     //添加预算信息
 //    @PostMapping("/addBudgeting")
@@ -82,6 +98,20 @@ public class BudgetingController extends BaseController {
         for (BudgetingListVo budgetingListVo : list) {
             //待审核
             if (pageBVo.getBudgetingStatus().equals("1")){
+
+                    //根据条件查找当前处理人
+                    Example example = new Example(AuditInfo.class);
+                    example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
+                                            .andEqualTo("auditResult","0");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                Example example1 = new Example(MemberManage.class);
+                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    if (memberManage !=null){
+                        budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+
+                    }
+
                 UserInfo loginUser = getLoginUser();
                 String id = loginUser.getId();
                 System.err.println(id);
@@ -111,17 +141,17 @@ public class BudgetingController extends BaseController {
             PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(budgetingListVos);
             return RestUtil.page(budgetingListVoPageInfo);
         }
-        //处理中
+//        //处理中
         if (pageBVo.getBudgetingStatus().equals("2")){
             PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(budgetingListVos1);
             return RestUtil.page(budgetingListVoPageInfo);
         }
-        //未通过
+//        //未通过
         if (pageBVo.getBudgetingStatus().equals("3")){
             PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(budgetingListVos2);
             return RestUtil.page(budgetingListVoPageInfo);
         }
-        //已完成
+//        //已完成
         if (pageBVo.getBudgetingStatus().equals("4")){
             ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
             for (BudgetingListVo budgetingListVo : budgetingListVos3) {

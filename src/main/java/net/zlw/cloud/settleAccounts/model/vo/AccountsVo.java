@@ -3,9 +3,10 @@ package net.zlw.cloud.settleAccounts.model.vo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.zlw.cloud.budgeting.model.vo.BudgetingListVo;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 @Data
@@ -38,6 +39,10 @@ public class AccountsVo {
     private String auditorId;
     //创建人
     private String founderId;
+
+    //当前处理人
+    private String currentHandler;
+    private List<AuditInfo> auditInfoList;
 
     @Override
     public boolean equals(Object o) {

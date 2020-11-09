@@ -3,9 +3,10 @@ package net.zlw.cloud.maintenanceProjectInformation.model.vo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.security.access.method.P;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * @Author dell
@@ -34,4 +35,8 @@ public class MaintenanceProjectInformationReturnVo {
     private String contractAmount;
     private String projectAddress;
     private String compileTime;
+
+    private String currentHandler;
+
+    private List<AuditInfo> auditInfoList;
 }

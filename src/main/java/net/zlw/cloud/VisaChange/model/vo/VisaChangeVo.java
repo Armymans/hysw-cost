@@ -1,7 +1,9 @@
 package net.zlw.cloud.VisaChange.model.vo;
 
 import lombok.Data;
+import net.zlw.cloud.progressPayment.model.AuditInfo;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -48,6 +50,9 @@ public class VisaChangeVo {
 
     private String auditorId;
     private String founderId;
+
+    private String currentHandler;
+    private List<AuditInfo> auditInfoList;
 
 
     @Override

@@ -4,7 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
-import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.followAuditing.mapper.TrackApplicationInfoDao;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
@@ -69,6 +68,23 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         if ("1".equals(pageVo.getTrackStatus())|| "4".equals(pageVo.getTrackStatus())) {
             List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
             for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                //当前处理人
+                Example example = new Example(AuditInfo.class);
+                example.createCriteria().andEqualTo("baseProjectId",returnTrackVo.getId())
+                                        .andEqualTo("auditResult","0");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                if (auditInfo != null){
+                    if (auditInfo.getAuditorId() != null){
+                        Example example1 = new Example(MemberManage.class);
+                        example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        if (memberManage != null){
+                            returnTrackVo.setCurrentHandler(memberManage.getMemberName());
+                        }
+                    }
+                }
+
+
                 if (!returnTrackVos1.contains(returnTrackVo)) {
                     returnTrackVos1.add(returnTrackVo);
                 }

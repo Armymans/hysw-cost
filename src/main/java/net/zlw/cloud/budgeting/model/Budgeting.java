@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -56,6 +57,10 @@ public class Budgeting implements Serializable {
     private String sureResult;
     @Column(name = "sure_man")
     private String sureMan;
+
+    //当前处理人
+    @Transient
+    private String currentHandler;
 
 
 

@@ -120,6 +120,20 @@ public class ProjectService {
             //todo getLoginUser().getId()
             pageVo.setUserId(loginUser.getId());
             designInfos = designInfoMapper.designProjectSelect(pageVo);
+            for (DesignInfo thisDesign : designInfos) {
+                Example example = new Example(AuditInfo.class);
+                example.createCriteria().andEqualTo("baseProjectId",thisDesign.getId())
+                                        .andEqualTo("auditResult","0");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                if (auditInfo != null){
+                    if (auditInfo.getAuditorId() != null){
+                        Example example1 = new Example(MemberManage.class);
+                        example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                        MemberManage memberManage1 = memberManageDao.selectOneByExample(example1);
+                        thisDesign.setCurrentHandler(memberManage1.getMemberName());
+                    }
+                }
+            }
             if(designInfos.size()>0){
                 for (DesignInfo designInfo : designInfos) {
                     //展示设计变更时间 如果为空展示 /

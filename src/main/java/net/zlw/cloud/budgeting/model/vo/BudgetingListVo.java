@@ -35,6 +35,8 @@ public class BudgetingListVo {
     private String costPreparationTime;
     private String veryReceivingTime;
     private String establishmentTime;
+    //当前处理人
+    private String currentHandler;
     //审核人id
     private String auditorId;
     //审核结果

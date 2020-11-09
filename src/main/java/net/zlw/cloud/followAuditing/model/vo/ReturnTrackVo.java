@@ -3,8 +3,8 @@ package net.zlw.cloud.followAuditing.model.vo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.zlw.cloud.budgeting.model.vo.BudgetingListVo;
 
+import java.util.List;
 import java.util.Objects;
 
 @Data
@@ -30,6 +30,10 @@ public class ReturnTrackVo {
     private String auditUnitNameId;
     private String ceaTotalMoney;
     private String aB;
+
+    private String currentHandler;
+
+    private List<AuditInfoVo> auditInfoVoList;
 
     @Override
     public boolean equals(Object o) {

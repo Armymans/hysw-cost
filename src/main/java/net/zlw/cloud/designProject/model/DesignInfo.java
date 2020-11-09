@@ -2,8 +2,6 @@ package net.zlw.cloud.designProject.model;
 
 import lombok.Data;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -171,4 +169,7 @@ public class DesignInfo{
     private String waterSupplyType;
     @Transient
     private String customerName;
+
+    @Transient
+    private String currentHandler;
 }

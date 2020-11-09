@@ -36,6 +36,8 @@ public class ProgressListVo {
     private String receivingTime;
     private String compileTime;
 
+    //当前处理人
+    private String currentHandler;
 
     private List<AuditInfo> auditInfos;
 }

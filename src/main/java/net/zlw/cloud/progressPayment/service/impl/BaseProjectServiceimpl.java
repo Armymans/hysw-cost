@@ -747,6 +747,23 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         if("".equals(pageVo.getProgressStatus())){
             progressListVoPageInfo = new PageInfo<>(progressListVos1);
         }else if("1".equals(pageVo.getProgressStatus()) || "3".equals(pageVo.getProgressStatus())){
+            //当前处理人
+            for (ProgressListVo thisPro : progressListVos) {
+                Example example1 = new Example(AuditInfo.class);
+                example1.createCriteria().andEqualTo("baseProjectId",thisPro.getId())
+                                       .andEqualTo("auditResult","0");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
+                if (auditInfo != null){
+                if (auditInfo.getAuditorId() != null) {
+                    Example example = new Example(MemberManage.class);
+                    example.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example);
+                    if (memberManage != null) {
+                        thisPro.setCurrentHandler(memberManage.getMemberName());
+                    }
+                }
+                }
+            }
             progressListVoPageInfo = new PageInfo<>(progressListVos);
         }else{
             progressListVoPageInfo = new PageInfo<>(progressListVos1);
