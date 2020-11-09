@@ -85,6 +85,7 @@ public class BaseProjectVo {
     private String auditorId;
     private String auditType;
 
+    private String setManagementTable;
 
     //上传文件用的 key,type
     private String key;
@@ -96,4 +97,7 @@ public class BaseProjectVo {
     private List<AuditInfo> auditInfos;
 
     private AuditInfo auditInfo;
+
+    public void setManagementTable(String managementTable) {
+    }
 }
