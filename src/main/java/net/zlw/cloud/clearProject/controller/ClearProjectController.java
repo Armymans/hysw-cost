@@ -6,8 +6,11 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.service.impl.BudgetingServiceImpl;
 import net.zlw.cloud.clearProject.model.Budgeting;
+import net.zlw.cloud.clearProject.model.CallForBids;
 import net.zlw.cloud.clearProject.model.ClearProject;
 import net.zlw.cloud.clearProject.model.vo.ClearProjectVo;
+import net.zlw.cloud.clearProject.model.vo.PageVo;
+import net.zlw.cloud.clearProject.service.CallForBidsService;
 import net.zlw.cloud.clearProject.service.ClearProjectService;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
@@ -33,6 +36,9 @@ public class ClearProjectController extends BaseController {
     
     @Resource
     private BudgetingServiceImpl budgetingService;
+
+    @Resource
+    private CallForBidsService callForBidsService;
 
     /**
      * 新增--确定
@@ -64,6 +70,26 @@ public class ClearProjectController extends BaseController {
         return RestUtil.page(allClearProject);
 //        return RestUtil.success(allClearProject);
     }
+
+
+    /**
+     * 分页查询招标项目
+     */
+    @RequestMapping(value = "/clearProject/findAllCallForBids",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findAllCallForBids(PageVo pageVo){
+
+        PageInfo<CallForBids> all = callForBidsService.findAll(pageVo);
+
+        return RestUtil.page(all);
+    }
+
+    @RequestMapping(value = "/clearProject/selectCallForBidById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findById(@RequestParam(name = "id")String id){
+
+        CallForBids byId = callForBidsService.findById(id);
+        return RestUtil.success(byId);
+    }
+
 
     /**
      * 新建--项目名称--预算编制回显

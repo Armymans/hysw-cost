@@ -1845,7 +1845,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> DesginMonthAchievementsList(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user318");
+            costVo2.setId("user312");
         }
         PageInfo<OneCensus9> oneCensus9PageInfo = projectSumService.DesginMonthAchievementsList(costVo2);
         return RestUtil.page(oneCensus9PageInfo);
@@ -1861,7 +1861,7 @@ public class ProjectSumController extends BaseController {
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
 
         }else{
-            costVo2.setId("user318");
+            costVo2.setId("user312");
         }
         PageInfo<OneCensus9> oneCensus9PageInfo = projectSumService.DesginYearAchievementsList(costVo2);
         return RestUtil.page(oneCensus9PageInfo);

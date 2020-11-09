@@ -135,7 +135,9 @@ public interface BudgetingDao extends Mapper<Budgeting> {
     @Select("select * from budgeting where id = #{id}")
     net.zlw.cloud.clearProject.model.Budgeting findById(@Param("id") String id);
 
+
     @Select("select\n" +
+            "DISTINCT\n " +
             "bt.id id,\n" +
             "b.id baseId,\n" +
             "b.should_be shouldBe,\n" +
@@ -183,9 +185,11 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')\n" +
             ") and " +
             "b.del_flag = '0' and " +
+            "b.budget_status = '4' and " +
             "bt.del_flag = '0'  " +
             "order by b.should_be asc")
     List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo);
+
     @Select("SELECT * FROM budgeting WHERE id = #{id}")
     Budgeting findIdByStatus();
 }

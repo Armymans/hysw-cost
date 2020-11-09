@@ -1,5 +1,6 @@
 package net.zlw.cloud.budgeting.service.impl;
 
+import net.bytebuddy.dynamic.loading.PackageDefinitionStrategy;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
@@ -12,6 +13,8 @@ import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
 import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
+import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -65,6 +68,9 @@ public class BudgetingServiceImpl implements BudgetingService {
     private FileInfoMapper fileInfoMapper;
     @Autowired
     private FileInfoService fileInfoService;
+
+    @Resource
+    private TrackAuditInfoDao trackAuditInfoDao;
 
     @Override
     public void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser) {
@@ -482,6 +488,65 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgetingListVos.addAll(budgetingAll);
         System.err.println(budgetingAll.size());
         System.err.println(budgetingListVos.size());
+        // 判断状态 结算
+        if (sid!=null && sid.equals("5")){
+            for (BudgetingListVo budgetingListVo : budgetingAll) {
+                Example example = new Example(LastSettlementReview.class);
+                Example example1 = new Example(SettlementAuditInformation.class);
+                Example.Criteria criteria = example.createCriteria();
+                Example.Criteria criteria1 = example1.createCriteria();
+                criteria.andEqualTo("baseProjectId",budgetingListVo.getBaseId());
+                criteria.andEqualTo("delFlag","0");
+                criteria1.andEqualTo("baseProjectId",budgetingListVo.getBaseId());
+                criteria1.andEqualTo("delFlag","0");
+                List<LastSettlementReview> lastSettlementReviews = lastSettlementReviewDao.selectByExample(example);
+                List<SettlementAuditInformation> settlementAuditInformations = settlementAuditInformationDao.selectByExample(example1);
+                if (lastSettlementReviews!=null || lastSettlementReviews.size()>0 || settlementAuditInformations!=null || settlementAuditInformations.size()>0){
+                    budgetingListVos.remove(budgetingListVo);
+                }
+            }
+        }else if("3".equals(sid)){// 跟踪审计
+            for (BudgetingListVo budgetingListVo : budgetingAll) {
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetingListVo.getBaseId());
+
+                Example example = new Example(TrackAuditInfo.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("status","0");
+
+                List<TrackAuditInfo> trackAuditInfos = trackAuditInfoDao.selectByExample(example);
+                for (TrackAuditInfo trackAuditInfo : trackAuditInfos) {
+                    if(trackAuditInfo.getBaseProjectId().equals(baseProject.getId())){
+                        budgetingListVos.remove(budgetingListVo);
+                    }
+                }
+            }
+        }else if("2".equals(sid)){
+            for (BudgetingListVo budgetingListVo : budgetingAll) {
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetingListVo.getBaseId());
+
+                Example example = new Example(Budgeting.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("delFlag","0");
+
+                List<Budgeting> budgetings = budgetingDao.selectByExample(example);
+                for (Budgeting budgeting : budgetings) {
+                    if(baseProject.getId().equals(budgeting.getBaseProjectId())){
+                        budgetingListVos.remove(budgetingListVo);
+                    }
+                }
+            }
+        }
+        return budgetingListVos;
+    }
+
+    // 备份
+    public List<BudgetingListVo> findBudgetingAll1(PageBVo pageBVo, String sid) {
+        List<BudgetingListVo> budgetingAll = budgetingDao.findBudgetingAll(pageBVo);
+        ArrayList<BudgetingListVo> budgetingListVos = new ArrayList<>();
+        budgetingListVos.addAll(budgetingAll);
+        System.err.println(budgetingAll.size());
+        System.err.println(budgetingListVos.size());
+        // 判断状态
         if (sid!=null && sid.equals("5")){
             for (BudgetingListVo budgetingListVo : budgetingAll) {
                 Example example = new Example(LastSettlementReview.class);

@@ -47,7 +47,7 @@ public class ProgressPaymentController  extends BaseController {
     @RequestMapping(value = "/progress/seachProgressById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> seachProgressById(@RequestParam(name = "id") String id){
         try {
-            BaseProjectVo baseProjectVo = baseProjectService.seachProgressById(id);
+            BaseProjectVo baseProjectVo = baseProjectService.seachProgressById(id,getLoginUser());
             return RestUtil.success(baseProjectVo);
         } catch (Exception e) {
             e.printStackTrace();

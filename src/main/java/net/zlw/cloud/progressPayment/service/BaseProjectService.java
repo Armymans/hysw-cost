@@ -18,7 +18,7 @@ public interface BaseProjectService {
 
     void addProgress(BaseProjectVo baseProject, UserInfo loginUser);
 
-    BaseProjectVo seachProgressById(String id);
+    BaseProjectVo seachProgressById(String id,UserInfo userInfo);
 
     void updateProgress(BaseProjectVo baseProjectVo);
     void updateProgressPayment(BaseProjectVo baseProjectVo);

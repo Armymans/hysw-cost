@@ -170,7 +170,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
      * 根据id查询进度款信息
      */
     @Override
-    public BaseProjectVo seachProgressById(String id) {
+    public BaseProjectVo seachProgressById(String id,UserInfo userInfo) {
         /*
         * //项目基本信息
         BaseProject project = new BaseProject();
@@ -286,6 +286,28 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 baseProjectVo.setAuditNumber("2");
             }
         }
+
+
+        //查找审核数据
+        Example auditInfoExample = new Example(AuditInfo.class);
+        Example.Criteria criteria2 = auditInfoExample.createCriteria();
+        criteria2.andEqualTo("baseProjectId",paymentInformation.getId());
+//        criteria1.andEqualTo("auditType",'0');
+        // 未审批
+        criteria1.andEqualTo("auditResult",'0');
+        criteria1.andEqualTo("auditorId",userInfo.getId());
+
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditInfoExample);
+        if(auditInfo != null){
+            baseProjectVo.setAuditInfo(auditInfo);
+            // 0 代表一审，未审批
+            if("0".equals(auditInfo.getAuditType())){
+                baseProjectVo.setAuditNumber("0");
+            }else if("0".equals(auditInfo.getAuditType())){
+                baseProjectVo.setAuditNumber("1");
+            }
+        }
+
 
         return baseProjectVo;
     }

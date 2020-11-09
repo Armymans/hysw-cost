@@ -52,5 +52,7 @@ public class RemindSetService {
         re = re.substring(0 ,re.length() - 1);
         RemindSet remindSet = remindSetMapper.selectByPrimaryKey(id);
         remindSet.setRemeberId(re);
+
+        remindSetMapper.updateByPrimaryKeySelective(remindSet);
     }
 }

@@ -3,7 +3,9 @@ package net.zlw.cloud.clearProject.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.clearProject.mapper.CallForBidsMapper;
 import net.zlw.cloud.clearProject.model.BaseProject;
+import net.zlw.cloud.clearProject.model.CallForBids;
 import net.zlw.cloud.clearProject.model.ClearProject;
 import net.zlw.cloud.clearProject.model.vo.ClearProjectVo;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
@@ -41,6 +43,8 @@ public class ClearProjectService{
 
     @Resource
     private ConstructionUnitManagementMapper constructionUnitManagementMapper;
+    @Resource
+    private CallForBidsMapper callForBidsMapper;
 
     /**
      * 新增--确定
@@ -50,18 +54,21 @@ public class ClearProjectService{
 
         String projectId = clearProjectVo.getProjectId();
 
-        Budgeting budgeting = budgetingMapper.findById(projectId);
+//        Budgeting budgeting = budgetingMapper.findById(projectId);
+//
+//        String baseProjectId = budgeting.getBaseProjectId();
+//
+//        BaseProject baseProject = baseProjectMapper.fingById(baseProjectId);
 
-        String baseProjectId = budgeting.getBaseProjectId();
 
-        BaseProject baseProject = baseProjectMapper.fingById(baseProjectId);
+        CallForBids callForBids = callForBidsMapper.selectByPrimaryKey(clearProjectVo.getId());
 
 
         ClearProject clearProject = new ClearProject();
         String uuId = UUID.randomUUID().toString().replaceAll("-","");
         clearProject.setId(uuId);
 //        clearProject.setProjectNum(clearProjectVo.getProjectNum());
-        clearProject.setProjectName(baseProject.getProjectName());
+        clearProject.setProjectName(callForBids.getBidProjectName());
 
 
         //招标人
@@ -70,17 +77,22 @@ public class ClearProjectService{
         clearProject.setProcuratorialAgency(clearProjectVo.getProcuratorialAgency());
         clearProject.setBidder(clearProjectVo.getBidder());
         clearProject.setBidPrice(clearProjectVo.getBidPrice());
-        clearProject.setBudgetingId(projectId);
+        clearProject.setBudgetingId(callForBids.getId());
         // TODO 待修改
         clearProject.setProjectAddress("123");
 
-        clearProject.setFounderId("user282");
 
-        clearProject.setFounderCompanyId("com0");
-        //创建人id
-//        clearProject.setFounderId(userInfo.getId());
-//        //创建人公司id
-//        clearProject.setFounderCompanyId(userInfo.getCompanyId());
+        if(userInfo != null){
+            //创建人id
+            clearProject.setFounderId(userInfo.getId());
+            //创建人公司id
+            clearProject.setFounderCompanyId(userInfo.getCompanyId());
+        }else{
+            clearProject.setFounderId("user312");
+
+            clearProject.setFounderCompanyId("com0");
+        }
+
 
         clearProject.setDelFlag("0");
 
@@ -93,6 +105,9 @@ public class ClearProjectService{
         clearProject.setFounderTime(createTime);
 
 
+        callForBids.setClearProjectId(clearProject.getId());
+
+        callForBidsMapper.updateByPrimaryKeySelective(callForBids);
         //添加到数据库
         clearProjectMapper.insertSelective(clearProject);
     }
@@ -145,11 +160,16 @@ public class ClearProjectService{
             }
 
             // 清标人
-//            String userId = userInfo.getId();
+            if(userInfo != null){
+                String userId = userInfo.getId();
 
-//            clearProject.setFounderName(userInfo.getUsername());
-            //TODO 待修改
-            clearProject.setFounderName("123");
+                clearProject.setFounderName(userInfo.getUsername());
+            }else{
+                //TODO 待修改
+                clearProject.setFounderName("123");
+            }
+
+
 
         }
 
