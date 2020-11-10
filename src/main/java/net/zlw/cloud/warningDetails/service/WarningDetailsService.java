@@ -202,9 +202,9 @@ public class WarningDetailsService {
 
 
     public List<WarningDetailsVo> findDetails(PageVo pageVo, UserInfo loginUser) {
-     List<WarningDetailsVo> list =  warningDetailsMapper.findDetails(pageVo,"user320");
+     List<WarningDetailsVo> list =  warningDetailsMapper.findDetails(pageVo,loginUser.getId());
         for (WarningDetailsVo warningDetailsVo : list) {
-            if (warningDetailsVo.getFounderId().equals("user320")){
+            if (warningDetailsVo.getFounderId().equals(loginUser.getId())){
                 warningDetailsVo.setCheckInstructions("0");
             }else{
                 warningDetailsVo.setCheckInstructions("1");
