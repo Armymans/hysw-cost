@@ -491,6 +491,11 @@ public class BudgetingServiceImpl implements BudgetingService {
         // 判断状态 结算
         if (sid!=null && sid.equals("5")){
             for (BudgetingListVo budgetingListVo : budgetingAll) {
+                System.err.println(budgetingAll);
+                System.err.println(budgetingAll);
+                System.err.println(budgetingAll);
+                System.err.println(budgetingAll);
+
                 Example example = new Example(LastSettlementReview.class);
                 Example example1 = new Example(SettlementAuditInformation.class);
                 Example.Criteria criteria = example.createCriteria();

@@ -7,7 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
+
 @Data
 @Table(name = "authority_management")
 public class AuthorityManagement implements java.io.Serializable {

@@ -1,17 +1,16 @@
 package net.zlw.cloud.warningDetails.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
-import net.zlw.cloud.warningDetails.model.WarningDetailAndAuditInfoVo;
-import net.zlw.cloud.warningDetails.model.WarningDetails;
+import net.zlw.cloud.warningDetails.model.*;
 import net.zlw.cloud.warningDetails.service.WarningDetailsService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Map;
 
 /**  风险预警说明回显和编辑
@@ -46,7 +45,7 @@ public class WarningDetailsController extends BaseController {
     @RequestMapping(value = "/detailById", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public  Map<String,Object> detailById(String id,String userId) {
         //获取预警信息  获取审核信息
-        WarningDetails warningDetails = warningDetailsService.detailById(id, userId);
+        WarningDetails warningDetails = warningDetailsService.detailById(id, userId,getLoginUser());
         return RestUtil.success(warningDetails);
     }
 
@@ -54,6 +53,21 @@ public class WarningDetailsController extends BaseController {
     public  Map<String,Object> updateWarningDetails(WarningDetailAndAuditInfoVo warningDetailAndAuditInfoVo) {
         warningDetailsService.updateWarningDetails(warningDetailAndAuditInfoVo);
         return RestUtil.success();
+    }
+    //新增预警
+    @RequestMapping(value = "/addDetails", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> addDetails(DetailsVo detail){
+        warningDetailsService.addDetails(detail,getLoginUser());
+        return RestUtil.success();
+    }
+    //查询预警
+    @RequestMapping(value = "/findDetails", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findDetails(PageVo pageVo){
+        PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
+        List<WarningDetailsVo> list = warningDetailsService.findDetails(pageVo,getLoginUser());
+        PageInfo<WarningDetailsVo> warningDetailsVoPageInfo = new PageInfo<>(list);
+        return RestUtil.page(warningDetailsVoPageInfo);
+
     }
 
 

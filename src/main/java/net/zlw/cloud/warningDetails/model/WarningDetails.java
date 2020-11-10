@@ -52,4 +52,6 @@ public class WarningDetails {
     @Transient
     private AuditInfo auditInfo;
 
+    private String checkAudit;
+
 }

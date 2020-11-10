@@ -84,7 +84,7 @@ public class ProgressPaymentController  extends BaseController {
     @RequestMapping(value = "/progress/searchAllProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> searchAllProgress(PageVo pageVo){
         System.out.println(pageVo);
-        pageVo.setUid(getLoginUser().getId());
+        pageVo.setUid("user320");
         PageInfo<ProgressListVo> progressListVoPageInfo = baseProjectService.searchAllProgress(pageVo);
         return RestUtil.page(progressListVoPageInfo);
     }

@@ -738,7 +738,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
 
 
-
         if (visaChangeInfoVo.getAuditNumber()==null || visaChangeInfoVo.getAuditNumber().equals("")){
             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeInfoVo.getBaseProjectId());
             baseProject.setVisaStatus("2");
@@ -1322,7 +1321,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             //封装
             VisaChangeStatisticVo statisticVo = new VisaChangeStatisticVo();
             if (statisticVo != null) {
-
 
                 statisticVo.setId(byChangNum.getChangeNum());
                 statisticVo.setAmountVisaChangeUp("-");

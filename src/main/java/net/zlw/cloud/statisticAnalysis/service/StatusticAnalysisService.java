@@ -85,7 +85,6 @@ public class StatusticAnalysisService {
             if (performanceDistributionChart.getYearTime().equals(lastYear+"")){
                 lastYearPerform += performanceDistributionChart.getIssuedDuringMmonth().doubleValue();
             }
-
         }
         StatisticAnalysis statisticAnalysis = new StatisticAnalysis();
 

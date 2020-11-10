@@ -417,6 +417,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     auditInfo1.setBaseProjectId(audit);
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("1");
+                    auditInfo1.setStatus("0");
                     Example example1 = new Example(MemberManage.class);
                     example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
 

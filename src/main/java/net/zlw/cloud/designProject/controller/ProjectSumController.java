@@ -98,7 +98,7 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/budgetingList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> budgetingList(CostVo2 costVo2){
 //        getLoginUser().getId();
-        costVo2.setId(getLoginUser().getId());
+//        costVo2.setId(getLoginUser().getId());
         //预算金额和
         BigDecimal total1 = new BigDecimal(0);
         //咨询费费用和
@@ -285,7 +285,7 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/settlementAuditInformationList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> settlementAuditInformationList(CostVo2 costVo2){
-        costVo2.setId(getLoginUser().getId());
+//        costVo2.setId(getLoginUser().getId());
         //送审金额和
         BigDecimal total1 = new BigDecimal(0);
         //审核金额和
@@ -411,7 +411,7 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/trackList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> trackList(CostVo2 costVo2){
-        costVo2.setId(getLoginUser().getId());
+//        costVo2.setId(getLoginUser().getId());
         //500以内和
         BigDecimal total1 = new BigDecimal(0);
         //1000以内和

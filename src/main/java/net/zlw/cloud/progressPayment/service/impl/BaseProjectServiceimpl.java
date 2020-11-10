@@ -279,13 +279,13 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         List<AuditInfo> auditInfos1 = auditInfoDao.selectByExample(example2);
 
-        for (AuditInfo auditInfo : auditInfos1) {
-            if("0".equals(auditInfo.getAuditResult()) && ("0".equals(auditInfo.getAuditType()))){
-                baseProjectVo.setAuditNumber("1");
-            }else if("0".equals(auditInfo.getAuditResult()) && ("1".equals(auditInfo.getAuditType()))){
-                baseProjectVo.setAuditNumber("2");
-            }
-        }
+//        for (AuditInfo auditInfo : auditInfos1) {
+//            if("0".equals(auditInfo.getAuditResult()) && ("0".equals(auditInfo.getAuditType()))){
+//                baseProjectVo.setAuditNumber("1");
+//            }else if("0".equals(auditInfo.getAuditResult()) && ("1".equals(auditInfo.getAuditType()))){
+//                baseProjectVo.setAuditNumber("2");
+//            }
+//        }
 
 
         //查找审核数据
@@ -294,8 +294,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         criteria2.andEqualTo("baseProjectId",paymentInformation.getId());
 //        criteria1.andEqualTo("auditType",'0');
         // 未审批
-        criteria1.andEqualTo("auditResult",'0');
-        criteria1.andEqualTo("auditorId",userInfo.getId());
+        criteria2.andEqualTo("auditResult",'0');
+        criteria2.andEqualTo("auditorId",userInfo.getId());
 
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditInfoExample);
         if(auditInfo != null){
@@ -303,7 +303,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             // 0 代表一审，未审批
             if("0".equals(auditInfo.getAuditType())){
                 baseProjectVo.setAuditNumber("0");
-            }else if("0".equals(auditInfo.getAuditType())){
+            }else if("1".equals(auditInfo.getAuditType())){
                 baseProjectVo.setAuditNumber("1");
             }
         }
