@@ -152,11 +152,15 @@ public class ClearProjectService{
 
 
             if(clearProject.getBudgetingId() != null){
-                Budgeting budgeting = budgetingMapper.findById(clearProject.getBudgetingId());
-
-                BaseProject baseProject = baseProjectMapper.fingById(budgeting.getBaseProjectId());
-
-                clearProject.setProjectAddress(baseProject.getDistrict());
+//                Budgeting budgeting = budgetingMapper.findById(clearProject.getBudgetingId());
+//
+//                BaseProject baseProject = baseProjectMapper.fingById(budgeting.getBaseProjectId());
+//
+//                clearProject.setProjectAddress(baseProject.getDistrict());
+                CallForBids callForBids = callForBidsMapper.selectByPrimaryKey(clearProject.getBudgetingId());
+                if(callForBids!= null){
+                    clearProject.setProjectAddress(callForBids.getBidProjectAddress());
+                }
             }
 
             // 清标人

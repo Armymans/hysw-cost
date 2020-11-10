@@ -31,6 +31,8 @@ public class CallForBids implements Serializable {
 
     @Column(name = "status")
     private String status;
+    @Column(name = "bid_project_address")
+    private String bidProjectAddress;
 
     private static final long serialVersionUID = 1L;
 }
