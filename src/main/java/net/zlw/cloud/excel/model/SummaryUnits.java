@@ -45,4 +45,7 @@ public class SummaryUnits {
     @Column(name = "budgeting_id")
     private String budgetingId;
 
+    @Column(name = "total_amount")
+    private String totalAmount;
+
 }

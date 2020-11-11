@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 
 @Data
 public class QuantitiesPartialWorks {
@@ -21,17 +22,20 @@ public class QuantitiesPartialWorks {
     @Column(name = "quantities")
     private String quantities;
     @Column(name = "comprehensive_unit_price")
-    private String comprehensiveUnitPrice;
+    private BigDecimal comprehensiveUnitPrice;
     @Column(name = "and_price")
-    private String andPrice;
+    private BigDecimal andPrice;
     @Column(name = "rate_artificial_cost")
-    private String rateArtificialCost;
+    private BigDecimal rateArtificialCost;
     @Column(name = "fixed_mechanical_fee")
-    private String fixedMechanicalFee;
+    private BigDecimal fixedMechanicalFee;
     @Column(name = "temporary_valuation")
-    private String temporaryValuation;
+    private BigDecimal temporaryValuation;
     @Column(name = "budgeting_id")
     private String budgetingId;
+    @Column(name = "item_name")
+    private String itemName;
+
 
 
 

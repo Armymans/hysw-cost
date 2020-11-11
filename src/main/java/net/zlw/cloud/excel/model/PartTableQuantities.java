@@ -55,6 +55,8 @@ public class PartTableQuantities {
     private String founderCompanyId;
     @Column(name = "del_flag")
     private String delFlag;
+    @Column(name = "signalment")
+    private String signalment;
 
 
 
