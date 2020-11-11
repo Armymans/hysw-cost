@@ -65,11 +65,11 @@ public class VisaChangeController extends BaseController {
         return RestUtil.success();
     }
 
-    //删除
-    @RequestMapping(value = "/visachange/deleteVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> deleteVisa(){
-
-    }
+//    //删除
+//    @RequestMapping(value = "/visachange/deleteVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> deleteVisa(){
+//
+//    }
 
 
 

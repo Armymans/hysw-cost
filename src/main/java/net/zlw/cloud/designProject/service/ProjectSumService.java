@@ -907,7 +907,7 @@ public class ProjectSumService {
             for (BaseProject baseProject : baseProjects) {
                 List<VisaChange> visaChanges = this.visaChangesById(baseProject.getId());
                 for (VisaChange visaChange : visaChanges) {
-                    total += visaChange.getAmountVisaChange();
+                    total += visaChange.getAmountVisaChange().doubleValue();
                 }
                 baseProject.setVisaMoney(new BigDecimal(total));
             }
@@ -923,7 +923,7 @@ public class ProjectSumService {
             for (BaseProject baseProject : baseProjects) {
                 List<VisaChange> visaChanges = this.visaChangesById(baseProject.getId());
                 for (VisaChange visaChange : visaChanges) {
-                    total += visaChange.getAmountVisaChange();
+                    total += visaChange.getAmountVisaChange().doubleValue();
                 }
                 baseProject.setVisaMoney(new BigDecimal(total));
             }

@@ -3,7 +3,7 @@ package net.zlw.cloud.designProject.service;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
-import net.zlw.cloud.VisaApplyChangeInformation.mapper.VisaApplyChangeInformationMapper;
+import net.zlw.cloud.VisaChange.mapper.VisaApplyChangeInformationMapper;
 import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
 import net.zlw.cloud.budgeting.mapper.VeryEstablishmentDao;
 import net.zlw.cloud.budgeting.model.CostPreparation;
@@ -2010,6 +2010,13 @@ public class ProjectService {
         if (nameAndCodeAndId.size()>0){
             throw new Exception("建设名称或者编号重复");
         }else {
+            System.err.println(buildingProject);
+            System.err.println(buildingProject);
+            System.err.println(buildingProject);
+            System.err.println(buildingProject);
+            System.err.println(buildingProject);
+            System.err.println(buildingProject);
+
             buildingProjectMapper.updateByPrimaryKeySelective(buildingProject);
         }
 

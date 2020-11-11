@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,25 +39,25 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 
-    @Autowired
+    @Resource
     private VisaChangeMapper visaChangeMapper;
 
-    @Autowired
+    @Resource
     private AuditInfoDao auditInfoDao;
 
-    @Autowired
+    @Resource
     private MemberManageDao memberManageDao;
 
-    @Autowired
+    @Resource
     private VisaApplyChangeInformationMapper visaApplyChangeInformationMapper;
 
-    @Autowired
+    @Resource
     private BaseProjectDao baseProjectDao;
 
-    @Autowired
+    @Resource
     private BaseProjectService baseProjectService;
 
-    @Autowired
+    @Resource
     private FileInfoMapper fileInfoMapper;
 
     private SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");

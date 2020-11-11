@@ -16,12 +16,12 @@ import java.util.List;
 @RequestMapping("/api/VisaApplyChangeInformation")
 public class VisaApplyChangeInformationController {
 
-    @Resource
-    private VisaApplyChangeInformationService visaApplyChangeInformationService;
-
-    @GetMapping("/findVaciList")
-    public List<VisaApplyChangeInformation> findVaciList() {
-        return visaApplyChangeInformationService.findVaciList();
-    }
+//    @Resource
+//    private VisaApplyChangeInformationService visaApplyChangeInformationService;
+//
+//    @GetMapping("/findVaciList")
+//    public List<VisaApplyChangeInformation> findVaciList() {
+//        return visaApplyChangeInformationService.findVaciList();
+//    }
 
 }
