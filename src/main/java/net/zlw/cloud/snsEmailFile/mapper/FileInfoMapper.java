@@ -3,6 +3,7 @@ package net.zlw.cloud.snsEmailFile.mapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
@@ -45,4 +46,14 @@ public interface FileInfoMapper extends Mapper<FileInfo> {
 
     @Select("SELECT * FROM file_info WHERE plat_code = #{id}")
     FileInfo findIdByStatus(@Param("id") String id);
+
+    @Update(
+            "UPDATE\n" +
+                    "file_info\n" +
+                    "SET\n" +
+                    "status = '1'\n" +
+                    "WHERE\n" +
+                    "user_id = #{key}"
+    )
+    void deleteOldFileList(@Param("key") String key);
 }

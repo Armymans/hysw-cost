@@ -82,4 +82,8 @@ public class FileInfoService {
     public List<FileInfo> findByPlatCode(String id) {
         return fileInfoMapper.findByPlatCode(id);
     }
+
+    public void deleteOldFileList(String key) {
+        fileInfoMapper.deleteOldFileList(key);
+    }
 }

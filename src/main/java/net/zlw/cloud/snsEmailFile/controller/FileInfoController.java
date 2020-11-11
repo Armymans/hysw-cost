@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import tk.mybatis.mapper.entity.Example;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -51,6 +52,15 @@ public class FileInfoController extends BaseController {
     @Autowired
     private MemberManageDao memberManageDao;
 
+    /**
+     * 删除滞留文件列表
+     * @return
+     */
+    @RequestMapping(value = "/deleteOldFileList", method = RequestMethod.POST)
+    public Map<String,Object> deleteOldFileList(String key){
+        fileInfoService.deleteOldFileList(key);
+        return RestUtil.success();
+    }
 
     /**
      * @Author Armyman
