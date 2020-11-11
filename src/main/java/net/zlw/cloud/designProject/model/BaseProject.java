@@ -166,8 +166,8 @@ public class BaseProject{
     @Column(name = "del_flag")
     private String delFlag; //删除标识 0,正常1,删除
 
-
-
+    @Transient
+    private String desId; //设计表id
     @Transient
     private String reviewerId; //互相审核人
     @Transient
