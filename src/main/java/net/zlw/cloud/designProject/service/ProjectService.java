@@ -974,6 +974,10 @@ public class ProjectService {
      * @param projectVo
      */
     public void projectEdit(ProjectVo projectVo, UserInfo loginUser){
+        List<BaseProject> list = projectMapper.duplicateCheckingByUpdate(projectVo.getBaseProject());
+        if (list!=null && list.size()!=0){
+            throw new RuntimeException("项目编号或项目名称重复");
+        }
         //BaseProject baseProject, DesignInfo designInfo, ProjectExploration projectExploration, PackageCame packageCame
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updateTime = simpleDateFormat.format(new Date());
@@ -1021,10 +1025,6 @@ public class ProjectService {
 
             //添加修改时间
             projectVo.getBaseProject().setUpdateTime(updateTime);
-            List<BaseProject> list = projectMapper.duplicateCheckingByUpdate(projectVo.getBaseProject());
-            if (list!=null && list.size()!=0){
-                throw new RuntimeException("项目编号或项目名称重复");
-            }
             projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
             //添加设计表修改时间
             projectVo.getDesignInfo().setUpdateTime(updateTime);
