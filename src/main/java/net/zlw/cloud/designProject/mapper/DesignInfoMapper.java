@@ -80,8 +80,9 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                         "s1.project_category like  CONCAT('%',#{keyword},'%')  or\n" +
                         "s2.design_unit like  CONCAT('%',#{keyword},'%') \n" +
                         ")" +
-                        " ORDER BY " +
-                        " s1.should_be "
+                        "ORDER BY " +
+                        "s1.should_be,\n" +
+                        "s1.create_time"
     )
     List<DesignInfo> designProjectSelect(DesignPageVo pageVo);
 
@@ -152,8 +153,9 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.project_category like  CONCAT('%',#{keyword},'%')  or\n" +
                     "s2.design_unit like  CONCAT('%',#{keyword},'%') \n" +
                     ")" +
-                    " ORDER BY " +
-                    " s1.should_be "
+                    "ORDER BY " +
+                    "s1.should_be,\n" +
+                    "s1.create_time"
     )
     List<DesignInfo> designProjectSelect2(DesignPageVo pageVo);
 
@@ -223,8 +225,9 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.project_category like  CONCAT('%',#{keyword},'%')  or\n" +
                     "s2.design_unit like  CONCAT('%',#{keyword},'%') \n" +
                     ")" +
-                    " ORDER BY " +
-                    " s1.should_be "
+                    "ORDER BY " +
+                    "s1.should_be,\n" +
+                    "s1.create_time"
     )
     List<DesignInfo> designProjectSelect3(DesignPageVo pageVo);
 

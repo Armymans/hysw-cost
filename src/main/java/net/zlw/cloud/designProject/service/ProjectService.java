@@ -1342,8 +1342,18 @@ public class ProjectService {
     public List<BaseProject> DesProjectInfoSelect(String id) {
         Example baseProjectexample = new Example(BaseProject.class);
         Example.Criteria baseProjectc = baseProjectexample.createCriteria();
+        //根据虚拟编号查询 同时不能为主表
         baseProjectc.andEqualTo("virtualCode",id);
+        baseProjectc.andNotEqualTo("mergeFlag","0");
         List<BaseProject> baseProjects = projectMapper.selectByExample(baseProjectexample);
+        for (BaseProject baseProject : baseProjects) {
+            //将设计表id注入
+            Example example = new Example(DesignInfo.class);
+            Example.Criteria Designc = example.createCriteria();
+            Designc.andEqualTo("baseProjectId",baseProject.getId());
+            DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
+            baseProject.setDesId(designInfo.getId());
+        }
         return baseProjects;
     }
 
