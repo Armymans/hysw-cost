@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 
 //上下家签证/变更信息
@@ -30,7 +31,7 @@ public class VisaChange implements Serializable {
   @Column(name = "state")
   private String state;
   @Column(name = "amount_visa_change")
-  private double amountVisaChange;
+  private BigDecimal amountVisaChange;
   @Column(name = "compile_time")
   private String compileTime;
   @Column(name = "completion_time")
@@ -58,7 +59,9 @@ public class VisaChange implements Serializable {
   @Column(name = "proportion_contract")
   private String proportionContract;
   @Column(name = "change_num")
-  private String changeNum;
+  private Integer changeNum;
+  @Column(name = "cumulative_change_amount")
+  private BigDecimal cumulativeChangeAmount;
 
 
 

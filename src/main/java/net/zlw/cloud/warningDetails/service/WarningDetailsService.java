@@ -84,8 +84,8 @@ public class WarningDetailsService {
         auditInfo.setStatus("0");
         String date = sdf.format(new Date());
         auditInfo.setCreateTime(date);
-        auditInfo.setFounderId(userInfo.getId());
-        auditInfo.setCompanyId(userInfo.getCompanyId());
+        auditInfo.setFounderId("user310");
+        auditInfo.setCompanyId("user88");
         auditInfoDao.insert(auditInfo);
         return warningDetails;
     }
@@ -98,6 +98,7 @@ public class WarningDetailsService {
      * @return
      */
     public WarningDetails detailById(String id, String userId, UserInfo loginUser) {
+
         //查询预警信息
         WarningDetails warningDetails = warningDetailsMapper.selectByPrimaryKey(id);
         warningDetails.setStatus("2");

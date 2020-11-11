@@ -67,9 +67,7 @@ public class WarningDetailsController extends BaseController {
         List<WarningDetailsVo> list = warningDetailsService.findDetails(pageVo,getLoginUser());
         PageInfo<WarningDetailsVo> warningDetailsVoPageInfo = new PageInfo<>(list);
         return RestUtil.page(warningDetailsVoPageInfo);
-
     }
-
 
 }
 

@@ -109,7 +109,6 @@ public class BudgetingController extends BaseController {
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                     if (memberManage !=null){
                         budgetingListVo.setCurrentHandler(memberManage.getMemberName());
-
                     }
 
                 UserInfo loginUser = getLoginUser();

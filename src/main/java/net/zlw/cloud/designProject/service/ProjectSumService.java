@@ -631,12 +631,12 @@ public class ProjectSumService {
                 total = total.add(progressPaymentInformation.getAmountOutsourcing());
             }
         }
-        List<VisaChange> totalexpenditure3 = visaChangeMapper.totalexpenditure(costVo2);
-        for (VisaChange visaChange : totalexpenditure3) {
-            if(visaChange!=null){
-                total = total.add(new BigDecimal(visaChange.getOutsourcingAmount()));
-            }
-        }
+//        List<VisaChange> totalexpenditure3 = visaChangeMapper.totalexpenditure(costVo2);
+//        for (VisaChange visaChange : totalexpenditure3) {
+//            if(visaChange!=null){
+//                total = total.add(new BigDecimal(visaChange.getOutsourcingAmount()));
+//            }
+//        }
         List<LastSettlementReview> totalexpenditure4 = lastSettlementReviewMapper.totalexpenditure(costVo2);
         for (LastSettlementReview lastSettlementReview : totalexpenditure4) {
             if(lastSettlementReview!=null){

@@ -1,35 +1,19 @@
 package net.zlw.cloud.VisaChange.service;
 
 
-
-import com.github.pagehelper.PageInfo;
-import net.tec.cloud.common.bean.UserInfo;
-import net.zlw.cloud.VisaChange.model.vo.VisaChangeInfoVo;
-import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
+import net.zlw.cloud.VisaChange.model.vo.PageVo;
+import net.zlw.cloud.VisaChange.model.vo.VisaChangeListVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
-import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface VisaChangeService {
 
+     List<VisaChangeListVo> findAllVisa(PageVo visaChangeVo);
 
-     ArrayList<VisaChangeVo> findAllPage(VisaChangeVo visaChangeVO, UserInfo loginUser );
+     void addVisa(VisaChangeVo visaChangeVo,String id);
 
+     void updateVisa(VisaChangeVo visaChangeVo, String id);
 
-     VisaChangeInfoVo selectByEditId(String id);
-
-     public void approvalProcess(BatchReviewVo batchReviewVo,UserInfo userInfo);
-
-     void addVisChangeVo(VisaChangeInfoVo visaChangeInfoVo,UserInfo loginUser);
-
-
-     void submitOrSave(VisaChangeInfoVo visaChangeInfoVo);
-
-     VisaChangeInfoVo selectById(String id);
-
-     List<VisaChangeStatisticVo> selectListById(String id);
-
-     void delete(String id);
+     VisaChangeVo findVisaById(String baseId, String visaNum, String id);
 }
