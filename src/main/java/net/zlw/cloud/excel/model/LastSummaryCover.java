@@ -57,4 +57,13 @@ public class LastSummaryCover {
     private String founderCompanyId;
     @Column(name = "del_flag")
     private String delFlag;
+
+    @Column(name = "project_num")
+    private String projectNum;
+
+    @Column(name = "construction_organization")
+    private String constructionOrganization;
+
+    @Column(name = "build_cost")
+    private String buildCost;
 }
