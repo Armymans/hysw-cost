@@ -238,6 +238,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "SELECT\n" +
                     "b.id id,\n" +
                     "b.cea_num ceaNum,\n" +
+                    "b.budget_status budgetStatus,\n" +
                     "b.project_num projectNum,\n" +
                     "b.project_name projectName,\n" +
                     "b.application_num applicationNum,\n" +
