@@ -10,9 +10,11 @@ import net.zlw.cloud.excelLook.domain.QuantitiesPartialWorks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -359,10 +361,7 @@ public class AhExcelServiceImpl implements AhExcelService {
         }
     }
 
-    @Override
-    public void excelRead(MultipartFile file, String id) {
 
-    }
 
 
 }
