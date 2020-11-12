@@ -4,9 +4,6 @@ import com.alibaba.excel.EasyExcelFactory;
 import com.alibaba.excel.metadata.Sheet;
 import net.zlw.cloud.excel.model.BomTable;
 import net.zlw.cloud.excel.model.BomTableInfomation;
-import org.junit.runner.RunWith;
-import org.junit.runner.Runner;
-import org.springframework.boot.SpringApplication;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -22,12 +19,12 @@ public class Test01 {
     public static void main(String[] args) throws FileNotFoundException {
         String filePath = "E:\\正量\\新建文件夹\\物料清单表（安徽）.xls";
         //第几张表(最低1) 第几条数据开始(最低0)
-        Sheet sheet = new Sheet(1,1);
+        Sheet sheet = new Sheet(1, 1);
         FileInputStream fileInputStream = new FileInputStream(new File(filePath));
         BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
         List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
         BomTableInfomation bomTableInfomation = new BomTableInfomation();
-        bomTableInfomation.setId(UUID.randomUUID().toString().replace("-",""));
+        bomTableInfomation.setId(UUID.randomUUID().toString().replace("-", ""));
         bomTableInfomation.setBusinessProcess(((List<String>) read.get(0)).get(2));
         bomTableInfomation.setDateOf(((List<String>) read.get(1)).get(2));
         bomTableInfomation.setSalesOrganization(((List<String>) read.get(2)).get(2));
@@ -48,8 +45,8 @@ public class Test01 {
             List<String> o1 = (List<String>) read.get(i);
             String f = "^[+-]?\\d+(\\d+)?$";
             Pattern compile = Pattern.compile(f);
-            if (i>=14){
-                if (compile.matcher(o1.get(0)).matches()){
+            if (i >= 14) {
+                if (compile.matcher(o1.get(0)).matches()) {
                     List<BomTable> bomTableList = bomTableInfomation.getBomTableList();
                     BomTable bomTable = new BomTable(UUID.randomUUID().toString().replace("-", ""), o1.get(1), o1.get(2), o1.get(3), o1.get(4), o1.get(5), o1.get(6), bomTableInfomation.getId());
                     bomTable.setDelFlag("0");
@@ -63,4 +60,5 @@ public class Test01 {
         System.out.println(bomTableInfomation.getBomTableList());
         System.out.println(bomTableInfomation);
     }
+
 }

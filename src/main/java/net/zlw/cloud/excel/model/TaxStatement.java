@@ -40,5 +40,7 @@ public class TaxStatement {
     private String itemName;
     @Column(name = "foreign_key")
     private String foreignKey;
+    @Column(name = "project_code")
+    private String projectCode;
 
 }
