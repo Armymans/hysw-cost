@@ -108,6 +108,7 @@ public class ProjectService {
      * @return
      */
     public PageInfo<DesignInfo> designProjectSelect(DesignPageVo pageVo, UserInfo loginUser){
+        //分页原因所以放这
         MemberManage memberManage = memberManageDao.memberManageById();
         //分页插件
         PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
@@ -118,7 +119,7 @@ public class ProjectService {
         if("1".equals(pageVo.getDesginStatus())){
             //则根据登录用户id展示于其身份对应的数据
             //todo getLoginUser().getId()
-            pageVo.setUserId(loginUser.getId());
+            pageVo.setUserId("user333");
             designInfos = designInfoMapper.designProjectSelect(pageVo);
             for (DesignInfo thisDesign : designInfos) {
                 Example example = new Example(AuditInfo.class);
@@ -127,6 +128,7 @@ public class ProjectService {
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
                 if (auditInfo != null){
                     if (auditInfo.getAuditorId() != null){
+                        //获得当前处理人
                         Example example1 = new Example(MemberManage.class);
                         example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
                         MemberManage memberManage1 = memberManageDao.selectOneByExample(example1);
@@ -236,15 +238,8 @@ public class ProjectService {
             PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
             return designInfoPageInfo;
         }
-
-        if("3".equals(pageVo.getDesginStatus())||"4".equals(pageVo.getDesginStatus())){
-            //如果状态为未通过 或者 已完成
-            //获取当前设计部门负责人
-//            Example admin = new Example(MemberManage.class);
-//            Example.Criteria adminc = admin.createCriteria();
-//            adminc.andEqualTo("depAdmin","1");
-//            adminc.andEqualTo("depId","1");
-//            MemberManage memberManage = memberManageDao.selectOneByExample(admin);
+        //如果为未通过
+        if("3".equals(pageVo.getDesginStatus())){
             //将部门负责人传入
             pageVo.setAdminId(memberManage.getId());
             //todo loginUser.getId()
@@ -294,7 +289,57 @@ public class ProjectService {
                     }
                 }
             }
+        }
+        //如果为已完成
+        if("4".equals(pageVo.getDesginStatus())){
+            //已完成不分层级所以全部展示
+            designInfos = designInfoMapper.designProjectSelect4(pageVo);
+            if(designInfos.size()>0){
+                for (DesignInfo designInfo : designInfos) {
+                    //展示设计变更时间 如果为空展示 /
+                    if(designInfo.getDesignChangeTime()==null || designInfo.getDesignChangeTime().equals("")){
+                        designInfo.setDesignChangeTime("/");
+                    }
+                    //根据地区判断相应的设计费 应付金额 实付金额
+                    //如果为安徽
+                    if(!designInfo.getDistrict().equals("4")){
+                        Example anhui = new Example(AnhuiMoneyinfo.class);
+                        Example.Criteria c2 = anhui.createCriteria();
+                        c2.andEqualTo("baseProjectId",designInfo.getId());
+                        AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
+                        if(anhuiMoneyinfo!=null){
+                            designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                            designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                            designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                            designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+                        }
+                        //如果为吴江
+                    }else{
+                        Example wujiang = new Example(WujiangMoneyInfo.class);
+                        Example.Criteria c2 = wujiang.createCriteria();
+                        c2.andEqualTo("baseProjectId",designInfo.getId());
+                        WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
+                        if(wujiangMoneyInfo!=null){
+                            designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                            designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                            designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
+                            designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
+                        }
+                    }
+                    //获取预算表中的造价金额
+                    Example example = new Example(Budgeting.class);
+                    Example.Criteria c = example.createCriteria();
+                    c.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                    Budgeting budgeting = budgetingMapper.selectOneByExample(example);
+                    if(budgeting!=null){
+                        designInfo.setAmountCost(budgeting.getAmountCost());
+                    }else{
+                        designInfo.setAmountCost(new BigDecimal(0));
+                    }
+                }
+            }
         }else{
+            //查询全部
             //查找集团领导
             Example admin = new Example(MemberManage.class);
             Example.Criteria adminc = admin.createCriteria();
@@ -1286,16 +1331,28 @@ public class ProjectService {
     public void disProjectChangeEdit(ProjectVo projectVo, UserInfo loginUser) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updateTime = simpleDateFormat.format(new Date());
-            //如果提交人为空 说明时保存状态未出图中 反之状态未待审核
+        //如果按钮状态为1 说明点击的是提交
+        if("1".equals(projectVo.getBaseProject().getOrsubmit())){
+            //如果提交人为空 为空说明是未通过
             if(projectVo.getBaseProject().getReviewerId() == null||"".equals(projectVo.getBaseProject().getReviewerId())){
-                projectVo.getBaseProject().setDesginStatus("2");
+                //如果是设计变更未通过
+                Example example = new Example(AuditInfo.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("baseProjectId",projectVo.getDesignInfo().getId());
+                criteria.andEqualTo("auditResult","2");
+                AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example);
+                //如果是未通过 提交时 将审核信息改为待审核
+                auditInfo1.setAuditResult("0");
+                //修改基本状态 未通过重新变为待审核
+                projectVo.getBaseProject().setDesginStatus("1");
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
             }else{
                 AuditInfo auditInfo = new AuditInfo();
                 String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
                 //编辑完成 写入互审人
                 auditInfo.setId(auditInfouuid);
                 auditInfo.setBaseProjectId(projectVo.getDesignInfo().getId());
-                auditInfo.setAuditType("0");
+                auditInfo.setAuditType("2");
                 auditInfo.setAuditResult("0");
                 auditInfo.setAuditorId(projectVo.getBaseProject().getReviewerId());
                 auditInfo.setCreateTime(updateTime);
@@ -1307,7 +1364,10 @@ public class ProjectService {
                 //审核状态从出图中变为待审核
                 projectVo.getBaseProject().setDesginStatus("1");
             }
-
+        }else{
+            //如果不为1 则为保存 状态依旧是出图中
+            projectVo.getBaseProject().setDesginStatus("2");
+        }
             //添加设计变更信息
             packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
             String DesignChangeInfoid = UUID.randomUUID().toString().replaceAll("-","");
@@ -1319,19 +1379,9 @@ public class ProjectService {
             projectVo.getDesignChangeInfo().setStatus("0");
             designChangeInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignChangeInfo());
 
-            //添加设计表修改时间
-            projectVo.getDesignInfo().setUpdateTime(updateTime);
-            designInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignInfo());
-            //添加勘探表时间
-            if(projectVo.getProjectExploration()!=null){
-                projectVo.getProjectExploration().setUpdateTime(updateTime);
-                projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
-            }
-            //方案会审
-            if(projectVo.getPackageCame()!=null){
-            projectVo.getPackageCame().setUpdateTime(updateTime);
-            packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
-            }
+            //添加修改时间
+            projectVo.getBaseProject().setUpdateTime(updateTime);
+            projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
     }
 
     /**
@@ -2032,6 +2082,7 @@ public class ProjectService {
     public AuditInfo auditInfoByYes(UserInfo userInfo,String id) {
         Example example = new Example(AuditInfo.class);
         Example.Criteria criteria = example.createCriteria();
+        //todo userInfo.getId()
         criteria.andEqualTo("auditorId",userInfo.getId());
         criteria.andEqualTo("baseProjectId",id);
         criteria.andEqualTo("auditResult","0");

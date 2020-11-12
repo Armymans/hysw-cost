@@ -1522,89 +1522,95 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     )
     void updateMergeProject1(@Param("id") String id);
 
-    @Select("select  \n" +
-            "application_num applicationNum, \n" +
-            "cea_num ceaNum, \n" +
-            "id id, \n" +
-            "project_num projectNum, \n" +
-            "project_name projectName, \n" +
-            "( \n" +
-            "case district \n" +
-            "  when '1' then '芜湖' \n" +
-            "  when '2' then '马鞍山' \n" +
-            "  when '3' then '江北' \n" +
-            "  when '4' then '吴江' \n" +
-            "  end \n" +
-            ") as district, \n" +
-            "( \n" +
-            "case design_category \n" +
-            "  when '1' then '市政管道' \n" +
-            "  when '2' then '管网改造' \n" +
-            "  when '3' then '新建小区' \n" +
-            "  when '4' then '二次供水项目' \n" +
-            "  when '5' then '工商户' \n" +
-            "  when '6' then '居民装接水' \n" +
-            "  when '7' then '行政事业' \n" +
-            "  end \n" +
-            ") as designCategory, \n" +
-            "desgin_status desginStatus , \n" +
-            "construction_unit constructionUnit, \n" +
-            "contacts contacts, \n" +
-            "contact_number contactNumber, \n" +
-            "customer_name customerName, \n" +
-            "(case subject \n" +
-            "  when '1' then '居民住户' \n" +
-            "  when '2' then '开发商' \n" +
-            "  when '3' then '政府事业' \n" +
-            "  when '4' then '工商户' \n" +
-            "  when '5' then '芜湖华衍' \n" +
-            "  end \n" +
-            ") as subject, \n" +
-            "customer_phone customerPhone, \n" +
-            "construction_organization constructionOrganization, \n" +
-            "( \n" +
-            "case project_nature \n" +
-            "  when '1' then '新建' \n" +
-            "  when '2' then '改造' \n" +
-            "  end \n" +
-            ") as projectNature, \n" +
-            "( \n" +
-            "case project_category \n" +
-            "  when '1' then '住宅区配套' \n" +
-            "  when '2' then '商业区配套' \n" +
-            "  when '3' then '工商区配套' \n" +
-            "  end \n" +
-            ") as projectCategory, \n" +
-            "water_address waterAddress, \n" +
-            "( \n" +
-            "case water_supply_type \n" +
-            "  when '1' then '直供水' \n" +
-            "  when '2' then '二次供水' \n" +
-            "  end \n" +
-            ") as waterSupplyType, \n" +
-            "this_declaration thisDeclaration, \n" +
-            "agent agent, \n" +
-            "agent_phone agentPhone, \n" +
-            "application_date applicationDate, \n" +
-            "business_location businessLocation, \n" +
-            "business_types businessTypes, \n" +
-            "( \n" +
-            "case a_b \n" +
-            "  when '1' then 'A' \n" +
-            "  when '2' then 'B' \n" +
-            "  end \n" +
-            ") as aB, \n" +
-            "water_use waterUse, \n" +
-            "fire_table_size fireTableSize, \n" +
-            "classification_caliber classificationCaliber, \n" +
-            "water_meter_diameter waterMeterDiameter, \n" +
-            "virtual_code virtualCode , \n" +
-            "site site, \n" +
-            "system_number systemNumber, \n" +
-            "proposer proposer, \n" +
+    @Select("select \n" +
+            "application_num applicationNum,\n" +
+            "cea_num ceaNum,\n" +
+            "id id,\n" +
+            "project_num projectNum,\n" +
+            "project_name projectName,\n" +
+            "(\n" +
+            " case  should_be\n" +
+            "\twhen '0' then '紧急'\t\n" +
+            "\twhen '1' then '不紧急'\t\n" +
+            "\tend\n" +
+            ") shouldBe,\n" +
+            "(\n" +
+            "case district\n" +
+            "  when '1' then '芜湖'\n" +
+            "  when '2' then '马鞍山'\n" +
+            "  when '3' then '江北'\n" +
+            "  when '4' then '吴江'\n" +
+            "  end\n" +
+            ") as district,\n" +
+            "(\n" +
+            "case design_category\n" +
+            "  when '1' then '市政管道'\n" +
+            "  when '2' then '管网改造'\n" +
+            "  when '3' then '新建小区'\n" +
+            "  when '4' then '二次供水项目'\n" +
+            "  when '5' then '工商户'\n" +
+            "  when '6' then '居民装接水'\n" +
+            "  when '7' then '行政事业'\n" +
+            "  end\n" +
+            ") as designCategory,\n" +
+            "desgin_status desginStatus ,\n" +
+            "construction_unit constructionUnit,\n" +
+            "contacts contacts,\n" +
+            "contact_number contactNumber,\n" +
+            "customer_name customerName,\n" +
+            "(case subject\n" +
+            "  when '1' then '居民住户'\n" +
+            "  when '2' then '开发商'\n" +
+            "  when '3' then '政府事业'\n" +
+            "  when '4' then '工商户'\n" +
+            "  when '5' then '芜湖华衍'\n" +
+            "  end\n" +
+            ") as subject,\n" +
+            "customer_phone customerPhone,\n" +
+            "construction_organization constructionOrganization,\n" +
+            "(\n" +
+            "case project_nature\n" +
+            "  when '1' then '新建'\n" +
+            "  when '2' then '改造'\n" +
+            "  end\n" +
+            ") as projectNature,\n" +
+            "(\n" +
+            "case project_category\n" +
+            "  when '1' then '住宅区配套'\n" +
+            "  when '2' then '商业区配套'\n" +
+            "  when '3' then '工商区配套'\n" +
+            "  end\n" +
+            ") as projectCategory,\n" +
+            "water_address waterAddress,\n" +
+            "(\n" +
+            "case water_supply_type\n" +
+            "  when '1' then '直供水'\n" +
+            "  when '2' then '二次供水'\n" +
+            "  end\n" +
+            ") as waterSupplyType,\n" +
+            "this_declaration thisDeclaration,\n" +
+            "agent agent,\n" +
+            "agent_phone agentPhone,\n" +
+            "application_date applicationDate,\n" +
+            "business_location businessLocation,\n" +
+            "business_types businessTypes,\n" +
+            "(\n" +
+            "case a_b\n" +
+            "  when '1' then 'A'\n" +
+            "  when '2' then 'B'\n" +
+            "  end\n" +
+            ") as aB,\n" +
+            "water_use waterUse,\n" +
+            "fire_table_size fireTableSize,\n" +
+            "classification_caliber classificationCaliber,\n" +
+            "water_meter_diameter waterMeterDiameter,\n" +
+            "virtual_code virtualCode ,\n" +
+            "site site,\n" +
+            "system_number systemNumber,\n" +
+            "proposer proposer,\n" +
             "application_number applicationNumber,\n" +
             "management_table managementTable\n" +
-            "from base_project \n" +
+            "from base_project\n" +
             "where id = #{id}")
     BaseProject selectById(@Param("id") String id);
 

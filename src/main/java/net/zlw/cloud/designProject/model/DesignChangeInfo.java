@@ -7,6 +7,7 @@ import net.zlw.cloud.progressPayment.model.AuditInfo;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 
 @Table(name = "design_change_info")
@@ -48,4 +49,6 @@ public class DesignChangeInfo{
     private String designInfoId;
 
     private AuditInfo auditInfo;
+    @Transient
+    private String idNumber; //次序
 }
