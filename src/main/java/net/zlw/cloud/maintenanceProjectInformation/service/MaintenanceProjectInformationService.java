@@ -109,9 +109,7 @@ public class MaintenanceProjectInformationService {
 
 
         projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);
-    }else
-
-    {
+    }else {
         projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
     }
 

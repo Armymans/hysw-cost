@@ -1,6 +1,5 @@
 package net.zlw.cloud.maintenanceProjectInformation.mapper;
 
-import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationReturnVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
@@ -77,7 +76,8 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "m.maintenance_item_name LIKE concat(\n" +
             "'%',#{keyWord}, '%' ) OR m.customer_name LIKE concat( '%', #{keyWord}, '%' ) )\n" +
             "AND (\n" +
-            "m.type = #{type} OR #{type} = '')")
+            "m.type = #{type} OR #{type} = '')" +
+            "ORDER BY m.create_time DESC")
     List<MaintenanceProjectInformationReturnVo> selectAllByDelFlag(PageRequest pageRequest);
 
     @Select("SELECT\n" +
@@ -134,7 +134,8 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "m.maintenance_item_name LIKE concat(\n" +
             "'%',#{keyWord}, '%' ) OR m.customer_name LIKE concat( '%', #{keyWord}, '%' ) )\n" +
             "AND (\n" +
-            "m.type = #{type} OR #{type} = '')")
+            "m.type = #{type} OR #{type} = '')" +
+            "ORDER BY m.create_time DESC")
     List<MaintenanceProjectInformationReturnVo> selectAllByDelFlag1(PageRequest pageRequest);
 
 
