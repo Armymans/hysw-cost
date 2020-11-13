@@ -319,7 +319,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     public TrackVo selectTrackById(String id) {
         TrackVo trackVo = new TrackVo();
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(id);
-        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
+        BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(trackAuditInfo.getBaseProjectId());
 
         Example example = new Example(TrackApplicationInfo.class);
         example.createCriteria().andEqualTo("trackAudit", id);
@@ -329,7 +329,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         example1.createCriteria().andEqualTo("trackId", id);
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
 
-
+        trackVo.setTrackStatus(baseProject.getTrackStatus());
         trackVo.setBaseProject(baseProject);
         trackVo.setAuditInfo(trackAuditInfo);
         trackVo.setTrackApplicationInfo(trackApplicationInfo);
@@ -357,9 +357,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
         List<AuditInfoVo> allAuditInfosByTrackId = trackAuditInfoDao.findAllAuditInfosByTrackId(id);
 
-        for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId) {
-            auditInfoVo.setAuditWord("第一次月报");
+        for (int i = 0; i < allAuditInfosByTrackId.size(); i++) {
+            allAuditInfosByTrackId.get(i).setAuditorId("第"+i+"次月报");
         }
+
+//        for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId) {
+//            auditInfoVo.setAuditWord("第一次月报");
+//        }
         return allAuditInfosByTrackId;
     }
 

@@ -334,6 +334,69 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
     )
     BaseProject findBaseProjectId(@Param("id") String id);
 
+    @Select("SELECT\n" +
+            "\tb.id id,\n" +
+            "\tb.cea_num ceaNum,\n" +
+            "\tb.budget_status budgetStatus,\n" +
+            "\tb.project_num projectNum,\n" +
+            "\tb.project_name projectName,\n" +
+            "\tb.application_num applicationNum,\n" +
+            "\tb.water_address waterAddress,\n" +
+            "\tb.construction_unit constructionUnit,\n" +
+            "\tb.contacts,\n" +
+            "\tb.contact_number,\n" +
+            "\tb.customer_name customerName,\n" +
+            "\tb.customer_phone customerPhone,\n" +
+            "\tb.this_declaration thisDeclaration,\n" +
+            "\tb.agent,\n" +
+            "\tb.agent_phone,\n" +
+            "\tb.application_date applicationDate,\n" +
+            "\tb.business_location businessLocation,\n" +
+            "\tb.business_types businessTypes,\n" +
+            "\tb.water_use waterUse,\n" +
+            "\tb.fire_table_size fireTableSize,\n" +
+            "\tb.classification_caliber classificationCaliber,\n" +
+            "\tb.water_meter_diameter waterMeterDiameter,\n" +
+            "\tb.site site,\n" +
+            "\tb.track_status trackStatus,\n" +
+            "\tb.system_number systemNumber,\n" +
+            "\tb.proposer proposer,\n" +
+            "\tb.application_number applicationNumber,\n" +
+            "\tb.construction_organization constructionOrganization,\n" +
+            "\tb.management_table managementTable,\n" +
+            "\t( CASE b.a_b WHEN '1' THEN 'A' WHEN '2' THEN 'B' END ) ab,\n" +
+            "\t( CASE b.should_be WHEN '0' THEN '紧急' WHEN '1' THEN '不紧急' END ) shouldBe,\n" +
+            "\t( CASE b.SUBJECT WHEN '1' THEN '居民住户' WHEN '2' THEN '开发商' WHEN '3' THEN '政府事业' WHEN '4' THEN '工商户' WHEN '5' THEN '芜湖华衍' END ) SUBJECT,\n" +
+            "\t( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) district,\n" +
+            "\t( CASE b.project_category WHEN '1' THEN '住宅区配套' WHEN '2' THEN '商业区配套' WHEN '3' THEN '工商区配套' END ) projectCategory,\n" +
+            "\t( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) projectNature,\n" +
+            "\t(\n" +
+            "\tCASE\n" +
+            "\t\t\tb.design_category \n" +
+            "\t\t\tWHEN '1' THEN\n" +
+            "\t\t\t'市政管道' \n" +
+            "\t\t\tWHEN '2' THEN\n" +
+            "\t\t\t'管网改造' \n" +
+            "\t\t\tWHEN '3' THEN\n" +
+            "\t\t\t'新建小区' \n" +
+            "\t\t\tWHEN '4' THEN\n" +
+            "\t\t\t'二次供水项目' \n" +
+            "\t\t\tWHEN '5' THEN\n" +
+            "\t\t\t'工商户' \n" +
+            "\t\t\tWHEN '6' THEN\n" +
+            "\t\t\t'居民装接水' \n" +
+            "\t\t\tWHEN '7' THEN\n" +
+            "\t\t\t'行政事业' \n" +
+            "\t\tEND \n" +
+            "\t\t) designCategory,\n" +
+            "\t\t( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) waterSupplyType \n" +
+            "\tFROM\n" +
+            "\t\tbase_project b \n" +
+            "\tWHERE\n" +
+            "\tb.del_flag = '0' \n" +
+            "\tAND b.id = #{id}")
+    BaseProject findTrackBaseProjectId(@Param("id") String id);
+
 
     @Select("SELECT * FROM base_project WHERE id = #{id}")
     BaseProject findIdByStatus(@Param("id")String id);
