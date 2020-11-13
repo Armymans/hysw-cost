@@ -802,6 +802,10 @@ public class ProjectService {
      * @param projectVo
      */
     public void disProjectSubmit(ProjectVo projectVo, UserInfo loginUser) {
+        List<BaseProject> list = projectMapper.duplicateChecking(projectVo.getBaseProject());
+        if (list!=null && list.size()!=0){
+            throw new RuntimeException("项目编号或项目名称重复");
+        }
         //baseProject, designInfo, packageCame, projectExploration
         String projectuuid = UUID.randomUUID().toString().replaceAll("-", "");
         String DesignInfouuid = UUID.randomUUID().toString().replaceAll("-", "");
@@ -840,10 +844,6 @@ public class ProjectService {
             projectVo.getBaseProject().setDesginStatus("1");
         }
 
-        List<BaseProject> list = projectMapper.duplicateChecking(projectVo.getBaseProject());
-        if (list!=null && list.size()!=0){
-            throw new RuntimeException("项目编号或项目名称重复");
-        }
         projectMapper.insert(projectVo.getBaseProject());
 
         //设计表添加

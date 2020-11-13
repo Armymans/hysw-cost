@@ -138,6 +138,7 @@ public class EHRTimer {
                 }
 
                 String userName = employeeInfoSimplify.getString("EmpName");
+                String workType = employeeInfoSimplify.getString("WorkType");
                 String userAccount = employeeInfoSimplify.getString("Account");
                 String orgId = employeeInfoSimplify.getString("OrgCode");
                 String email = employeeInfoSimplify.getString("Email");
@@ -161,15 +162,27 @@ public class EHRTimer {
 
                 Optional<DepManage> deptOptional = deptList.stream().filter(dept -> StringUtils.equals(dept.getId(), orgId)).findFirst();
 
-                if ("000".equals(orgId)) {
-                    user.setCompanyId(orgId);
-                    user.setDepAdmin("1");
-                } else {
+                user.setCompanyId(orgId);
+                //判断是吴江还是芜湖
+                if(orgId != null && !"".equals(orgId)){
+                    String s = orgId.substring(0, 3);
+                    //吴江
+                    if("001".equals(s)){
+                        user.setWorkType("2");
+                    }else{
+                        //芜湖
+                        user.setWorkType("1");
+                    }
+                }
+//                if ("000".equals(orgId)) {
+//                    user.setCompanyId(orgId);
+//                    user.setDepAdmin("1");
+//                } else {
 //                    if (deptOptional.isPresent()) {
 //                        DepManage platDept = deptOptional.get();
-                        user.setCompanyId(orgId);
+//                        user.setCompanyId(orgId);
 //                    }
-                }
+//                }
                 user.setPhone(phone);
                 userList2.add(user);
             }
@@ -282,7 +295,7 @@ public class EHRTimer {
         }
 
     }
-//
+
 //    @Override
 //    public void afterPropertiesSet() throws Exception {
 //        ehrDataTimer();

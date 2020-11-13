@@ -61,6 +61,9 @@ public class MemberManage {
     @Column(name = "dep_admin")
     private String depAdmin;
 
+    @Column(name = "work_type")
+    private String workType;
+
     @Column(name = "account_auth")
     private BigDecimal accountAuth;
 
