@@ -39,8 +39,8 @@ logging:
     # org.springframework.web.servlet.DispatcherServlet: DEBUG
 app:
   #  华衍测试环境地址
-  attachPath: /data/images
-#  attachPath: /app/data
+  attachPath: /app/data
+  #  attachPath: /app/data
   testPath: D://upload
 user_account: test1
 verification_flag: 0
@@ -50,4 +50,19 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
+audit:
+  wujiang: #吴江
+   sheji: #设计
+    designHead: 201803018 #刘永涛
+    designManager: 201803018 #刘永涛
+   zaojia: #造价
+     costHead: 201411001 #夏薇
+     costManager: 200610002 #殷莉萍
+  wuhu: #芜湖
+    sheji: #设计
+      designHead: 198910006 #朱让宁
+      designManager: 201803018 #刘永涛
+    zaojia: #造价
+      costHead: 200101005 #罗均
+      costManager: 200610002 #殷莉萍
 

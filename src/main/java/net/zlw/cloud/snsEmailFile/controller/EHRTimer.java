@@ -90,10 +90,17 @@ public class EHRTimer {
                     String orgName = orgInfo.getString("OrgName");
                     String id = orgInfo.getString("OrgCode");
                     String parentOrgCode = orgInfo.getString("ParentOrgCode");
-                    sysCompany.setId(id);
-                    sysCompany.setCompanyCode(orgCode);
+                    if(id.equals("hywater")){
+                        sysCompany.setId("org8047");
+                        sysCompany.setCompanyCode("org8047");
+                    }else{
+                        sysCompany.setId(id);
+                        sysCompany.setCompanyCode(orgCode);
+                    }
                     sysCompany.setName(orgName);
-                    sysCompany.setParentId(parentOrgCode);
+                    if(parentOrgCode != null && parentOrgCode.equals("hywater")){
+                        sysCompany.setParentId("org8047");
+                    }
                     companyList2.add(sysCompany);
                 } else {
                     String orgCode = orgInfo.getString("OrgCode");
@@ -141,7 +148,7 @@ public class EHRTimer {
                 user.setId(id);
                 user.setMemberName(userName);
                 user.setEmail(email);
-                if(userAccount.contains("\\")){
+                if(userAccount !=  null && userAccount.contains("\\")){
                     String[] split = userAccount.split("\\\\");
                     userAccount = split[1];
                 }
@@ -158,10 +165,10 @@ public class EHRTimer {
                     user.setCompanyId(orgId);
                     user.setDepAdmin("1");
                 } else {
-                    if (deptOptional.isPresent()) {
-                        DepManage platDept = deptOptional.get();
-                        user.setCompanyId(platDept.getCompanyId());
-                    }
+//                    if (deptOptional.isPresent()) {
+//                        DepManage platDept = deptOptional.get();
+                        user.setCompanyId(orgId);
+//                    }
                 }
                 user.setPhone(phone);
                 userList2.add(user);
@@ -224,7 +231,11 @@ public class EHRTimer {
                 EmOrg emOrg = new EmOrg();
                 emOrg.setId(depManage.getId());
                 emOrg.setName(depManage.getDepName());
-                emOrg.setPid(depManage.getCompanyId());
+                if(depManage.getCompanyId().equals("hywater")){
+                    emOrg.setPid("org8047");
+                }else{
+                    emOrg.setPid(depManage.getCompanyId());
+                }
                 emOrg.setCompanyId("com21");
                 emOrg.setCreateDate(sdf.format(new Date()));
                 emOrg.setDelFlag("0");
@@ -271,7 +282,7 @@ public class EHRTimer {
         }
 
     }
-
+//
 //    @Override
 //    public void afterPropertiesSet() throws Exception {
 //        ehrDataTimer();
