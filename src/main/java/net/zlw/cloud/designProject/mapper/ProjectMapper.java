@@ -1530,8 +1530,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
             "project_name projectName,\n" +
             "(\n" +
             " case  should_be\n" +
-            "\twhen '0' then '紧急'\t\n" +
-            "\twhen '1' then '不紧急'\t\n" +
+            "\twhen '0' then '是'\t\n" +
+            "\twhen '1' then '否'\t\n" +
             "\tend\n" +
             ") shouldBe,\n" +
             "(\n" +

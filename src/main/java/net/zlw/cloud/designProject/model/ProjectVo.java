@@ -24,7 +24,7 @@ public class ProjectVo {
 
     private AuditInfo auditInfo; //审核信息
     private String desginStatus;
-    private DesignChangeInfo designChangeInfo;
+    private DesignChangeInfo designChangeInfo; //设计变更
     private List<DesignChangeInfo> DesignChangeInfos;
     private String type1;
     private String type2;

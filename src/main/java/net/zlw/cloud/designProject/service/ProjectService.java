@@ -119,7 +119,7 @@ public class ProjectService {
         if("1".equals(pageVo.getDesginStatus())){
             //则根据登录用户id展示于其身份对应的数据
             //todo getLoginUser().getId()
-            pageVo.setUserId("user333");
+            pageVo.setUserId(loginUser.getId());
             designInfos = designInfoMapper.designProjectSelect(pageVo);
             for (DesignInfo thisDesign : designInfos) {
                 Example example = new Example(AuditInfo.class);
