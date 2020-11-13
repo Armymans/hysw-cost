@@ -46,6 +46,25 @@ public class FileInfoController extends BaseController {
     @Value("${app.testPath}")
     private String WinAttachDir;
 
+    @Value("${audit.wujiang.sheji.designHead}")
+    private String wjsjh;
+    @Value("${audit.wujiang.sheji.designManager}")
+    private String wjsjm;
+    @Value("${audit.wujiang.zaojia.costHead}")
+    private String wjzjh;
+    @Value("${audit.wujiang.zaojia.costManager}")
+    private String wjzjm;
+
+    @Value("${audit.wuhu.sheji.designHead}")
+    private String whsjh;
+    @Value("${audit.wuhu.sheji.designManager}")
+    private String whsjm;
+    @Value("${audit.wuhu.zaojia.costHead}")
+    private String whzjh;
+    @Value("${audit.wuhu.zaojia.costManager}")
+    private String whzjm;
+
+
     @Autowired
     private FileInfoService fileInfoService;
 
