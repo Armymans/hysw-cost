@@ -115,7 +115,8 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "c.del_flag = '0' and " +
             "v.del_flag = '0' " +
             "order by " +
-            "b.should_be asc")
+            "b.should_be asc,\n" +
+            "b.create_time desc")
     List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo);
 
     /**
