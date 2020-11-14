@@ -37,5 +37,10 @@ public class VisaChangeListVo {
     private String createTime;
     private String compileTime;
 
+    private String upAndDownMark;
+    private String baseProjectId;
+    private String showUpdate;
+    private String founderId;
+
 
 }

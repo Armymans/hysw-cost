@@ -56,7 +56,7 @@ public class SettleAccountsController extends BaseController {
     //结算新增
 //    @PostMapping("/addAccount")
     @RequestMapping(value = "/accounts/addAccount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> addAccount( BaseAccountsVo baseAccountsVo){
+    public Map<String,Object> addAccount(BaseAccountsVo baseAccountsVo){
         try {
             settleAccountsService.addAccount(baseAccountsVo,getLoginUser());
         } catch (Exception e) {

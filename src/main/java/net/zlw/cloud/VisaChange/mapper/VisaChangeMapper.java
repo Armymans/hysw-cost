@@ -18,7 +18,9 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
 
 
     @Select("select\n" +
-            "distinct v.id,\n" +
+            " distinct v.id," +
+            "v.up_and_down_mark upAndDownMark,\n" +
+            "v.base_project_id baseProjectId," +
             "b.cea_num ceaNum,\n" +
             "b.project_num projectNum,\n" +
             "(case b.visa_status\n" +
@@ -67,20 +69,12 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             ") outsourcing,\n" +
             "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit,\n" +
             "bt.amount_cost amountCost,\n" +
-            "v.contract_amount contractAmountShang,\n" +
-            "v.cumulative_change_amount amountVisaChangeAddShang,\n" +
-            "v.proportion_contract proportionContractShang,\n" +
-            "v2.contract_amount contractAmountXia,\n" +
-            "v2.cumulative_change_amount amountVisaChangeAddXia,\n" +
-            "v2.proportion_contract proportionContractXia,\n" +
-            "v.amount_visa_change currentShang,\n" +
-            "v2.amount_visa_change currentXia\n" +
+            "v.creator_id founderId \n" +
             "from \n" +
             "visa_change_information v \n" +
-            "LEFT JOIN base_project b on b.id = v.base_project_id and v.up_and_down_mark = '0'\n" +
+            "LEFT JOIN base_project b on b.id = v.base_project_id \n" +
             "LEFT JOIN budgeting bt on v.base_project_id = bt.base_project_id \n" +
             "LEFT JOIN visa_apply_change_information vv on vv.base_project_id  = v.base_project_id\n" +
-            "left join visa_change_information v2 on v.base_project_id = v2.base_project_id and v2.up_and_down_mark = '1'\n" +
             "where \n" +
             "(b.district = #{district} or #{district} = '') and \n" +
             "(b.project_nature = #{projectNature} or #{projectNature} = '') and \n" +

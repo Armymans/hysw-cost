@@ -2,6 +2,8 @@ package net.zlw.cloud.budgeting.service.impl;
 
 import net.bytebuddy.dynamic.loading.PackageDefinitionStrategy;
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
+import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
 import net.zlw.cloud.budgeting.mapper.SurveyInformationDao;
@@ -71,6 +73,10 @@ public class BudgetingServiceImpl implements BudgetingService {
 
     @Resource
     private TrackAuditInfoDao trackAuditInfoDao;
+
+    @Resource
+    private VisaChangeMapper visaChangeMapper;
+
 
     @Override
     public void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser) {
@@ -538,6 +544,16 @@ public class BudgetingServiceImpl implements BudgetingService {
                     if(baseProject.getId().equals(budgeting.getBaseProjectId())){
                         budgetingListVos.remove(budgetingListVo);
                     }
+                }
+            }
+        }else if(sid!=null && sid.equals("4")){
+            for (BudgetingListVo budgetingListVo : budgetingAll) {
+                Example example = new Example(VisaChange.class);
+                Example.Criteria c = example.createCriteria();
+                c.andEqualTo("baseProjectId",budgetingListVo.getBaseId());
+                List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
+                if (visaChanges!=null && visaChanges.size()!=0){
+                    budgetingListVos.remove(budgetingListVo);
                 }
             }
         }
