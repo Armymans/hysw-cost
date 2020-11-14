@@ -73,7 +73,6 @@ public class MemberManage {
     @Column(name = "update_date")
     private String updateDate;
 
-
     @Column(name = "salt")
     private String salt;
 
