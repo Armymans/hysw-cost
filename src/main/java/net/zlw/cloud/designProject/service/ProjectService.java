@@ -1353,7 +1353,7 @@ public class ProjectService {
                         Example example = new Example(AuditInfo.class);
                         Example.Criteria criteria = example.createCriteria();
                         criteria.andEqualTo("baseProjectId",projectVo.getDesignInfo().getId());
-                        criteria.andEqualTo("auditResultauditResult","2");
+                        criteria.andEqualTo("auditResult","2");
                         AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example);
                         //如果是未通过 提交时 将审核信息改为待审核
                         auditInfo1.setAuditResult("0");
