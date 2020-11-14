@@ -73,7 +73,7 @@ public class VisaChangeController extends BaseController {
                     list.remove(list.get(i));
                     i--;
                 }
-                if (!id.equals("201803018") || !id.equals("201411001") || !id.equals("200610002") || !id.equals("198910006") || !id.equals("201803018") || !id.equals("200101005") ){
+                if (!id.equals(wjsjh) || !id.equals(wjsjm) || !id.equals(wjzjh) || !id.equals(wjzjm) || !id.equals(whsjh) || !id.equals(whsjm) || !id.equals(whzjh) || !id.equals(whzjm) ){
                     if (!list.get(i).getFounderId().equals(id)){
                         list.remove(list.get(i));
                         i--;
