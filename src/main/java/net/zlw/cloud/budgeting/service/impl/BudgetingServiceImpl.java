@@ -546,11 +546,13 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }
                 }
             }
+            //签证变更
         }else if(sid!=null && sid.equals("4")){
             for (BudgetingListVo budgetingListVo : budgetingAll) {
                 Example example = new Example(VisaChange.class);
                 Example.Criteria c = example.createCriteria();
                 c.andEqualTo("baseProjectId",budgetingListVo.getBaseId());
+                c.andEqualTo("state","0");
                 List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
                 if (visaChanges!=null && visaChanges.size()!=0){
                     budgetingListVos.remove(budgetingListVo);
