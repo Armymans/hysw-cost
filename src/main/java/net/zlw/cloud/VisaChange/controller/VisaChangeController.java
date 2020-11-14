@@ -63,8 +63,8 @@ public class VisaChangeController extends BaseController {
     //查询所有
     @RequestMapping(value = "/visachange/findAllVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllVisa(PageVo pageVo){
-//        String id = getLoginUser().getId();
-        String id = "user309";
+        String id = getLoginUser().getId();
+//        String id = "user309";
         //TODO id测试写死
         List<VisaChangeListVo> list =  vcisService.findAllVisa(pageVo);
         if (pageVo.getStatus()!=null && pageVo.getStatus().equals("1")){
@@ -72,6 +72,7 @@ public class VisaChangeController extends BaseController {
                 if (!list.get(i).getStatus().equals("待审核")){
                     list.remove(list.get(i));
                     i--;
+                    continue;
                 }
                 if (!id.equals(wjsjh) || !id.equals(wjsjm) || !id.equals(wjzjh) || !id.equals(wjzjm) || !id.equals(whsjh) || !id.equals(whsjm) || !id.equals(whzjh) || !id.equals(whzjm) ){
                     if (!list.get(i).getFounderId().equals(id)){
@@ -155,27 +156,27 @@ public class VisaChangeController extends BaseController {
     //新增签证变更
     @RequestMapping(value = "/visachange/addVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addVisa(VisaChangeVo visaChangeVo){
-        vcisService.addVisa(visaChangeVo,"user309");
+        vcisService.addVisa(visaChangeVo,getLoginUser().getId());
         return RestUtil.success();
     }
 
     //根据id查询签证变更
     @RequestMapping(value = "/visachange/findVisaById",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findVisaById(@RequestParam(name = "baseId") String baseId,@RequestParam(name = "visaNum1") String visaNum){
-       VisaChangeVo visaChangeVo =  vcisService.findVisaById(baseId,visaNum,"user309");
+       VisaChangeVo visaChangeVo =  vcisService.findVisaById(baseId,visaNum,getLoginUser().getId());
        return RestUtil.success(visaChangeVo);
     }
 
     //编辑
     @RequestMapping(value = "/visachange/updateVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateVisa(VisaChangeVo visaChangeVo){
-        vcisService.updateVisa(visaChangeVo,"user309");
+        vcisService.updateVisa(visaChangeVo,getLoginUser().getId());
         return RestUtil.success();
     }
     //批量审核
     @RequestMapping(value = "/visachange/batchReview",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo){
-        vcisService.batchReview(batchReviewVo,"user309");
+        vcisService.batchReview(batchReviewVo,getLoginUser().getId());
         return RestUtil.success();
     }
     //查询变更统计信息
@@ -234,8 +235,9 @@ public class VisaChangeController extends BaseController {
     @RequestMapping(value = "/visachange/showHiddenCard",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> showHiddenCard(@RequestParam(name = "baseId") String baseId){
         HashMap<String, String> str = new HashMap<>();
-        String i =  vcisService.showHiddenCard("user309",baseId);
-       return RestUtil.success(i);
+        String i =  vcisService.showHiddenCard(getLoginUser().getId(),baseId);
+        str.put("xx",i);
+       return RestUtil.success(str);
     }
 
 
