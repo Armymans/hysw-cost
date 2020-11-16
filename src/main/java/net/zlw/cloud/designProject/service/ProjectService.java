@@ -330,6 +330,15 @@ public class ProjectService {
                     if(designInfo.getDesignChangeTime()==null || designInfo.getDesignChangeTime().equals("")){
                         designInfo.setDesignChangeTime("/");
                     }
+
+                    //归属按钮展示
+                    //todo loginUser.getId();
+                    String loginUserId = loginUser.getId();
+                    //如果当前登入人等于创建人
+                    if(designInfo.getFounderId().equals(loginUserId)){
+                        //说明当前项目是创建人项目
+                        designInfo.setAscriptionFlag("1");
+                    }
                     //根据地区判断相应的设计费 应付金额 实付金额
                     //如果为安徽
                     if(!designInfo.getDistrict().equals("4")){

@@ -133,7 +133,9 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             "b.customer_name like concat ('%',#{keyword},'%') or \n" +
             "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')\n" +
             ") and \n" +
-            "(b.progress_payment_status = #{progressStatus} or #{progressStatus} = '')")
+            "(b.progress_payment_status = #{progressStatus} or #{progressStatus} = '')" +
+            "ORDER BY\n" +
+            "p.create_time desc")
     List<ProgressListVo> searchAllProgress(PageVo pageVo);
 
 
@@ -204,7 +206,9 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             "b.customer_name like concat ('%',#{keyword},'%') or \n" +
             "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')\n" +
             ") and \n" +
-            "(b.progress_payment_status = #{progressStatus} or #{progressStatus} = '')")
+            "(b.progress_payment_status = #{progressStatus} or #{progressStatus} = '')" +
+            "ORDER BY\n" +
+            "p.create_time desc")
     List<ProgressListVo> searchAllProgress1(PageVo pageVo);
 
     @Select(

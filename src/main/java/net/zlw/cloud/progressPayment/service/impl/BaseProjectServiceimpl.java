@@ -140,6 +140,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             payment.setAccumulativePaymentProportion(baseProject.getAccumulativePaymentProportion());
             payment.setBaseProjectId(project.getId());
             payment.setProgressPaymentId(paymentInformation.getId());
+            payment.setDelFlag("0");
             payment.setId(UUID.randomUUID().toString());
             progressPaymentTotalPaymentDao.insert(payment);
 

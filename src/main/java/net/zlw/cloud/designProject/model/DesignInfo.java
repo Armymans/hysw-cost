@@ -172,4 +172,7 @@ public class DesignInfo{
 
     @Transient
     private String currentHandler;
+
+    @Transient
+    private String ascriptionFlag; //归属标识
 }

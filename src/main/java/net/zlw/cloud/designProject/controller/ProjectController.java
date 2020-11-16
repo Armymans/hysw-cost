@@ -254,10 +254,9 @@ public class ProjectController extends BaseController {
      */
 //    @GetMapping("/deleteProject/{id}")
     @RequestMapping(value = "/api/disproject/deleteProject", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> deleteProject(@RequestParam("id") String id) {
+    public Map<String,Object> deleteProject(String id) {
         projectService.deleteProject(id);
         return RestUtil.success();
-
     }
 
     /**
@@ -786,9 +785,8 @@ public class ProjectController extends BaseController {
             BaseProject baseProject = projectService.BaseProjectByid(id);
             DesignInfo designInfo1 = projectService.designInfoByid(baseProject.getId());
             designInfo = designInfo1;
-        }else{
-            projectVo.setDesignInfo(designInfo);
         }
+        projectVo.setDesignInfo(designInfo);
         //根据设计信息查找基本信息
         BaseProject baseProject = projectService.BaseProjectByid(designInfo.getBaseProjectId());
         projectVo.setBaseProject(baseProject);

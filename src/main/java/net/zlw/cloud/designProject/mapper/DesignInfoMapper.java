@@ -330,6 +330,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s2.blueprint_start_time,\n" +
                     "s3.design_change_time,\n" +
                     "s2.isfinalaccount,\n" +
+                    "s1.founder_id,\n" +
                     "( CASE WHEN s3.design_change_time IS NULL THEN '否' ELSE '是' END ) AS ischange\n" +
                     "FROM\n" +
                     "design_info s2 LEFT JOIN design_change_info s3 ON s2.id = s3.design_info_id \n" +
@@ -366,7 +367,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     ")\n" +
                     "ORDER BY \n" +
                     "s1.create_time DESC,\n" +
-                    "s1.should_be "
+                    "s1.should_be"
     )
     List<DesignInfo> designProjectSelect4(DesignPageVo pageVo);
     @Select(
