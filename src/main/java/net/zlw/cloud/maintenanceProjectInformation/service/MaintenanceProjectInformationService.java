@@ -262,7 +262,7 @@ public class MaintenanceProjectInformationService {
         information.setSubmitTime(maintenanceProjectInformation.getSubmitTime());
         information.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
-        information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
+//        information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
         information.setCustomerName(maintenanceProjectInformation.getCustomerName());
         // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0

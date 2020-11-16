@@ -616,13 +616,14 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         BaseProject baseProject = new BaseProject();
         if(budgeting != null){
             String baseProjectId = budgeting.getBaseProjectId();
-            baseProject = baseProjectDao.findBaseProjectId(baseProjectId);
+//            baseProject = baseProjectDao.findBaseProjectId(baseProjectId);
+            baseProject = baseProjectDao.findTrackBaseProjectId(baseProjectId);
         }else{
-            baseProject = baseProjectDao.findBaseProjectId(id);
+//            baseProject = baseProjectDao.findBaseProjectId(id);
+            baseProject = baseProjectDao.findTrackBaseProjectId(id);
         }
         return baseProject;
     }
-
     @Override
     public NumberVo NumberItems() {
         NumberVo numberVo = new NumberVo();
