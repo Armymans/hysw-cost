@@ -46,6 +46,8 @@ public class BudgetingListVo {
     private BigDecimal amountOutsourcing;
     //创建人
     private String founderId;
+    //是否显示到账
+    private String showWhether;
 
     @Override
     public boolean equals(Object o) {

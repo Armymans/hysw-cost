@@ -13,6 +13,7 @@ import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.cyberneko.html.filters.Identity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -163,6 +164,13 @@ public class BudgetingController extends BaseController {
             for (BudgetingListVo budgetingListVo : budgetingListVos3) {
                 if (!budgetingListVos4.contains(budgetingListVo)){
                     budgetingListVos4.add(budgetingListVo);
+                }
+            }
+            for (BudgetingListVo budgetingListVo : budgetingListVos4) {
+                if (budgetingListVo.getFounderId().equals("user325") || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
+                    budgetingListVo.setShowWhether("1");
+                }else{
+                    budgetingListVo.setShowWhether("2");
                 }
             }
             PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(budgetingListVos4);
