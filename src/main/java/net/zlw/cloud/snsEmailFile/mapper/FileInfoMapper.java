@@ -56,4 +56,7 @@ public interface FileInfoMapper extends Mapper<FileInfo> {
                     "user_id = #{key}"
     )
     void deleteOldFileList(@Param("key") String key);
+
+    @Update("UPDATE file_info SET `status` = '1' WHERE user_id = #{foundId}")
+    void updateStatus(@Param("foundId") String foundId);
 }
