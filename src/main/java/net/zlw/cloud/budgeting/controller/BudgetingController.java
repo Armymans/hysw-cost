@@ -113,7 +113,7 @@ public class BudgetingController extends BaseController {
                     }
 
                 UserInfo loginUser = getLoginUser();
-                String id = "user325";
+                String id = getLoginUser().getId();
                 System.err.println(budgetingListVo);
                 System.err.println(budgetingListVo);
                 System.err.println(budgetingListVo);
@@ -128,7 +128,7 @@ public class BudgetingController extends BaseController {
             }
             //处理中
             if (budgetingListVo.getBudgetStatus()!=null && budgetingListVo.getBudgetStatus().equals("处理中")){
-                if (budgetingListVo.getFounderId().equals("user325") || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
+                if (budgetingListVo.getFounderId().equals(getLoginUser().getId()) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
                     budgetingListVos1.add(budgetingListVo);
                 }
             }
@@ -167,7 +167,7 @@ public class BudgetingController extends BaseController {
                 }
             }
             for (BudgetingListVo budgetingListVo : budgetingListVos4) {
-                if (budgetingListVo.getFounderId().equals("user325") || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
+                if (budgetingListVo.getFounderId().equals(getLoginUser().getId()) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
                     budgetingListVo.setShowWhether("1");
                 }else{
                     budgetingListVo.setShowWhether("2");
