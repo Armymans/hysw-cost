@@ -786,9 +786,8 @@ public class ProjectController extends BaseController {
             BaseProject baseProject = projectService.BaseProjectByid(id);
             DesignInfo designInfo1 = projectService.designInfoByid(baseProject.getId());
             designInfo = designInfo1;
-        }else{
-            projectVo.setDesignInfo(designInfo);
         }
+        projectVo.setDesignInfo(designInfo);
         //根据设计信息查找基本信息
         BaseProject baseProject = projectService.BaseProjectByid(designInfo.getBaseProjectId());
         projectVo.setBaseProject(baseProject);
