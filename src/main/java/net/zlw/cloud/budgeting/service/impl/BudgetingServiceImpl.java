@@ -214,6 +214,15 @@ public class BudgetingServiceImpl implements BudgetingService {
         c.andEqualTo("baseProjectId",id);
         c.andEqualTo("auditResult","0");
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example3);
+        if (auditInfo == null){
+            Example example4 = new Example(AuditInfo.class);
+            Example.Criteria c2 = example4.createCriteria();
+            c2.andEqualTo("baseProjectId",id);
+            c2.andEqualTo("auditResult","2");
+             auditInfo = auditInfoDao.selectOneByExample(example4);
+        }
+
+
 
 
         BudgetingVo budgetingVo = new BudgetingVo();
@@ -255,10 +264,13 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgetingVo.setEstablishmentTime(veryEstablishment.getEstablishmentTime());
         budgetingVo.setVRemarkes(veryEstablishment.getRemarkes());
 
-        if (loginUser.getId().equals(budgetingVo.getAuditInfo().getAuditorId())){
-            budgetingVo.setCheckHidden("0");
-        } else {
-            budgetingVo.setCheckHidden("1");
+        if (budgetingVo.getAuditInfo()!=null){
+
+            if ("user309".equals(budgetingVo.getAuditInfo().getAuditorId())){
+                budgetingVo.setCheckHidden("0");
+            } else {
+                budgetingVo.setCheckHidden("1");
+            }
         }
 
         return budgetingVo;
@@ -639,6 +651,19 @@ public class BudgetingServiceImpl implements BudgetingService {
         List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example3);
         for (AuditInfo auditInfo : auditInfos) {
             auditInfoDao.deleteByPrimaryKey(auditInfo);
+        }
+    }
+
+    @Override
+    public void deleteBudgetingFile(String id) {
+        Example example = new Example(FileInfo.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("platCode",id);
+        c.andEqualTo("status","0");
+        List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example);
+        for (FileInfo fileInfo : fileInfos) {
+            fileInfo.setStatus("1");
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
         }
     }
 

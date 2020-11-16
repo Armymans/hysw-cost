@@ -31,4 +31,6 @@ public interface BudgetingService {
     List<DesignInfo> findDesignAll(PageBVo pageBVo);
 
     void deleteBudgeting(String id);
+
+    void deleteBudgetingFile(String id);
 }

@@ -63,8 +63,8 @@ public class VisaChangeController extends BaseController {
     //查询所有
     @RequestMapping(value = "/visachange/findAllVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllVisa(PageVo pageVo){
-        String id = getLoginUser().getId();
-//        String id = "user309";
+//        String id = getLoginUser().getId();
+        String id = "user310";
         //TODO id测试写死
         List<VisaChangeListVo> list =  vcisService.findAllVisa(pageVo);
         if (pageVo.getStatus()!=null && pageVo.getStatus().equals("1")){
@@ -74,7 +74,10 @@ public class VisaChangeController extends BaseController {
                     i--;
                     continue;
                 }
-                if (!id.equals(wjsjh) || !id.equals(wjsjm) || !id.equals(wjzjh) || !id.equals(wjzjm) || !id.equals(whsjh) || !id.equals(whsjm) || !id.equals(whzjh) || !id.equals(whzjm) ){
+                if (id.equals(wjsjh) || id.equals(wjsjm) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(whsjh) || id.equals(whsjm) || id.equals(whzjh) || id.equals(whzjm) ){
+
+                }else{
+
                     if (!list.get(i).getFounderId().equals(id)){
                         list.remove(list.get(i));
                         i--;
