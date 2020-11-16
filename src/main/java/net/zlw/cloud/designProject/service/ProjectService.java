@@ -333,7 +333,7 @@ public class ProjectService {
 
                     //归属按钮展示
                     //todo loginUser.getId();
-                    String loginUserId = loginUser.getId();
+                    String loginUserId = "user333";
                     //如果当前登入人等于创建人
                     if(designInfo.getFounderId().equals(loginUserId)){
                         //说明当前项目是创建人项目
@@ -1216,6 +1216,7 @@ public class ProjectService {
             projectVo.getProjectExploration().setCreateTime(createTime);
             projectExplorationMapper.insert(projectVo.getProjectExploration());
         }
+
         //上传文件 项目踏勘文件
         List<FileInfo> byFreignAndType1 = fileInfoMapper.findByFreignAndType(projectVo.getKey(), projectVo.getType1());
         for (FileInfo fileInfo : byFreignAndType1) {
@@ -1708,7 +1709,15 @@ public class ProjectService {
             projectVo.getDesignChangeInfo().setFounderId(loginUserId);
             projectVo.getDesignChangeInfo().setCompanyId(companyId);
             projectVo.getDesignChangeInfo().setStatus("0");
-            designChangeInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignChangeInfo());
+            //添加一条设计变更信息
+            designChangeInfoMapper.insert(projectVo.getDesignChangeInfo());
+
+            //添加设计变更文件
+            List<FileInfo> byFreignAndType1 = fileInfoMapper.findByFreignAndType(projectVo.getKey(), projectVo.getType1());
+            for (FileInfo fileInfo : byFreignAndType1) {
+                fileInfo.setPlatCode(DesignChangeInfoid);
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
 
             //添加修改时间
             projectVo.getBaseProject().setUpdateTime(updateTime);
