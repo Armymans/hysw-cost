@@ -53,16 +53,16 @@ pagehelper:
 audit:
   wujiang: #吴江
    sheji: #设计
-    designHead: 201803018 #刘永涛
-    designManager: 201803018 #刘永涛
+    designHead: 201803018 #刘永涛 liu.yongtao
+    designManager: 201803018 #刘永涛 liu.yongtao
    zaojia: #造价
-     costHead: 201411001 #夏薇
-     costManager: 200610002 #殷莉萍
+     costHead: 201411001 #夏薇 xia.wei
+     costManager: 200610002 #殷莉萍 yin.liping
   wuhu: #芜湖
     sheji: #设计
-      designHead: 198910006 #朱让宁
-      designManager: 201803018 #刘永涛
+      designHead: 198910006 #朱让宁 zhu.rangning
+      designManager: 201803018 #刘永涛 liu.yongtao
     zaojia: #造价
-      costHead: 200101005 #罗均
-      costManager: 200610002 #殷莉萍
+      costHead: 200101005 #罗均 luo.jun01
+      costManager: 200610002 #殷莉萍 yin.liping
 
