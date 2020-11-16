@@ -112,15 +112,22 @@ public class BudgetingController extends BaseController {
                     }
 
                 UserInfo loginUser = getLoginUser();
-                String id = loginUser.getId();
-                System.err.println(id);
-                if (budgetingListVo.getAuditorId().equals(id) && budgetingListVo.getAuditResult().equals("0")){
+                String id = "user325";
+                System.err.println(budgetingListVo);
+                System.err.println(budgetingListVo);
+                System.err.println(budgetingListVo);
+                System.err.println(budgetingListVo);
+                System.err.println(budgetingListVo);
+                System.err.println(budgetingListVo);
+
+
+                if (auditInfo.getAuditorId().equals(id) && auditInfo.getAuditResult().equals("0")){
                     budgetingListVos.add(budgetingListVo);
                 }
             }
             //处理中
             if (budgetingListVo.getBudgetStatus()!=null && budgetingListVo.getBudgetStatus().equals("处理中")){
-                if (budgetingListVo.getFounderId().equals(getLoginUser().getId()) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
+                if (budgetingListVo.getFounderId().equals("user325") || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
                     budgetingListVos1.add(budgetingListVo);
                 }
             }
@@ -210,6 +217,12 @@ public class BudgetingController extends BaseController {
     @RequestMapping(value = "/budgeting/deleteBudgeting",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteBudgeting(@RequestParam(name = "id") String id){
         budgetingService.deleteBudgeting(id);
+        return RestUtil.success();
+    }
+    //新建删除所有文件
+    @RequestMapping(value = "/budgeting/deleteBudgetingFile",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> deleteBudgetingFile(@RequestParam(name = "id") String id){
+        budgetingService.deleteBudgetingFile(id);
         return RestUtil.success();
     }
 

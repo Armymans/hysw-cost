@@ -149,7 +149,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
 
 
-                    if (auditInfo!=null && !visaChangeReturnVo.getStatus().equals("进行中")){
+                    if (auditInfo==null && !visaChangeReturnVo.getStatus().equals("进行中")){
                         visaChangeReturnVo.setShowUpdate("2");
                     }else if(visaChangeReturnVo.getStatus().equals("进行中")){
                         visaChangeReturnVo.setShowUpdate("3");
