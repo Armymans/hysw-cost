@@ -114,12 +114,7 @@ public class BudgetingController extends BaseController {
 
                 UserInfo loginUser = getLoginUser();
                 String id = getLoginUser().getId();
-                System.err.println(budgetingListVo);
-                System.err.println(budgetingListVo);
-                System.err.println(budgetingListVo);
-                System.err.println(budgetingListVo);
-                System.err.println(budgetingListVo);
-                System.err.println(budgetingListVo);
+
 
 
                 if (auditInfo.getAuditorId().equals(id) && auditInfo.getAuditResult().equals("0")){
