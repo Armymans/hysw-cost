@@ -37,10 +37,10 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             ") auditResult," +
             "(case audit_type\n" +
             "\t\twhen '0' then '互审'\n" +
-            "\t\twhen '1' then '上级审核'\n" +
-            "\t\twhen '2' then '变更一审'\n" +
-            "\t\twhen '3' then '变更二审'\n" +
-            "\t\twhen '4' then '三审'\n" +
+            "\t\twhen '1' then '上级领导审核'\n" +
+            "\t\twhen '2' then '变更互审'\n" +
+            "\t\twhen '3' then '变更上级领导审核'\n" +
+            "\t\twhen '4' then '总经理审核'\n" +
             "\t\tend\n" +
             ") auditType,\n" +
             "(select member_name from member_manage where id = auditor_id)  auditor,\n" +
