@@ -1,6 +1,5 @@
 package net.zlw.cloud.budgeting.service.impl;
 
-import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
 import net.zlw.cloud.VisaChange.model.VisaChange;
@@ -14,7 +13,6 @@ import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
-import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
@@ -104,7 +102,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgeting.setBaseProjectId(baseProject.getId());
         budgeting.setDelFlag("0");
         budgeting.setWhetherAccount("1");
-        budgeting.setFounderId("user309");
+        budgeting.setFounderId(loginUser.getId());
         //提交
         if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
             //修改预算状态为待审核
@@ -141,7 +139,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         surveyInformation.setBudgetingId(budgeting.getId());
         surveyInformation.setDelFlag("0");
         surveyInformation.setBaseProjectId(baseProject.getId());
-        surveyInformation.setFounderId("user309");
+        surveyInformation.setFounderId(loginUser.getId());
         surveyInformationDao.insertSelective(surveyInformation);
 
         //成本编制
@@ -161,7 +159,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         costPreparation.setBudgetingId(budgeting.getId());
         costPreparation.setDelFlag("0");
         costPreparation.setBaseProjectId(baseProject.getId());
-        costPreparation.setFounderId("user309");
+        costPreparation.setFounderId(loginUser.getId());
         costPreparationDao.insertSelective(costPreparation);
 
         //控价编制
@@ -176,7 +174,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         veryEstablishment.setBudgetingId(budgeting.getId());
         veryEstablishment.setDelFlag("0");
         veryEstablishment.setBaseProjectId(baseProject.getId());
-        veryEstablishment.setFounderId("user309");
+        veryEstablishment.setFounderId(loginUser.getId());
         veryEstablishmentDao.insertSelective(veryEstablishment);
 
         //修改文件外键
@@ -184,7 +182,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         Example.Criteria c = example1.createCriteria();
         c.andLike("type","ysxmxj%");
         c.andEqualTo("status","0");
-        c.andEqualTo("userId","user309");
+        c.andEqualTo("userId",loginUser.getId());
         List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
         for (FileInfo fileInfo : fileInfos) {
             //修改文件外键
@@ -485,10 +483,18 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
-    public void intoAccount(String ids) {
+    public void intoAccount(String s1, String ids) {
         String[] split = ids.split(",");
         for (String s : split) {
+            if (s.equals(ids) || ids.equals("user309") || ids.equals("user308")){
+
+            }else{
+                throw new RuntimeException("您没有权限进行此操作,请联系编制人或领导进行操作");
+            }
+        }
+        for (String s : split) {
             Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+
             budgeting.setWhetherAccount("0");
             budgetingDao.updateByPrimaryKeySelective(budgeting);
         }
@@ -575,11 +581,16 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
             }
             for (BudgetingListVo budgetingListVo : budgetingListVos4) {
-                if (budgetingListVo.getFounderId().equals(id) || id.equals("user309") || id.equals("user308")){
-                    budgetingListVo.setShowWhether("1");
-                }else{
-                    budgetingListVo.setShowWhether("2");
+                String baseId = budgetingListVo.getBaseId();
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+                if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
+                    if (budgetingListVo.getFounderId().equals(id)){
+                        budgetingListVo.setShowWhether("1");
+                    }else{
+                        budgetingListVo.setShowWhether("2");
+                    }
                 }
+
             }
             ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos4;
             return budgetingListVoPageInfo;
@@ -588,7 +599,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         System.err.println(list);
         for (BudgetingListVo budgetingListVo : list) {
 
-            if (budgetingListVo.getFounderId().equals("user320")){
+            if (budgetingListVo.getFounderId().equals(id)){
                 if (!budgetingListVos4.contains(budgetingListVo)){
                     budgetingListVos4.add(budgetingListVo);
                 }
