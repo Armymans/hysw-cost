@@ -116,7 +116,7 @@ public class BudgetingServiceImpl implements BudgetingService {
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
             auditInfo.setStatus("0");
-            auditInfo.setAuditorId(budgetingVo.getAuditorId());
+            auditInfo.setAuditorId(budgetingVo.getAuditorId() );
             auditInfoDao.insertSelective(auditInfo);
             //保存
         }else{
@@ -265,7 +265,7 @@ public class BudgetingServiceImpl implements BudgetingService {
 
         if (budgetingVo.getAuditInfo()!=null){
 
-            if ("user309".equals(budgetingVo.getAuditInfo().getAuditorId())){
+            if (loginUser.getId().equals(budgetingVo.getAuditInfo().getAuditorId())){
                 budgetingVo.setCheckHidden("0");
             } else {
                 budgetingVo.setCheckHidden("1");
@@ -542,7 +542,7 @@ public class BudgetingServiceImpl implements BudgetingService {
             System.err.println(list+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus());
             if (budgetingListVo.getBudgetStatus()!=null && budgetingListVo.getBudgetStatus().equals("处理中")){
 
-                if (budgetingListVo.getFounderId().equals("user320")){
+                if (budgetingListVo.getFounderId().equals(id)){
                     budgetingListVos1.add(budgetingListVo);
                 }
             }
