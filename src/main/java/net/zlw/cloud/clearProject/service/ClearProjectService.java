@@ -144,9 +144,15 @@ public class ClearProjectService {
 
     }
 
-    public PageInfo<ClearProject> findAll(PageRequest pageRequest) {
+    public PageInfo<ClearProject> findAll(PageRequest pageRequest, UserInfo loginUser) {
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
         List<ClearProject> allClearProject = clearProjectMapper.findAllClearProject(pageRequest);
+        if (loginUser != null){
+            for (ClearProject clearProject : allClearProject) {
+                clearProject.setFounderId(loginUser.getId());
+                clearProject.setFounderName(loginUser.getUsername());
+            }
+        }
         PageInfo<ClearProject> pageInfo = new PageInfo<>(allClearProject);
         return pageInfo;
     }

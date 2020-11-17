@@ -75,7 +75,7 @@ public class ClearProjectController extends BaseController {
     public Map<String,Object> findClearProjectList(PageRequest pageRequest){
         System.out.println("PageRequest:"+pageRequest);
 //        List<ClearProject> allClearProject = clearProjectService.findAllClearProject(pageRequest, getLoginUser());
-        PageInfo<ClearProject> all = clearProjectService.findAll(pageRequest);
+        PageInfo<ClearProject> all = clearProjectService.findAll(pageRequest,getLoginUser());
         return RestUtil.page(all);
 
     }
