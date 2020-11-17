@@ -249,7 +249,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example.Criteria c = example.createCriteria();
         c.andLike("type", "jsxmxj%");
         c.andEqualTo("status", "0");
-        c.andEqualTo("userId", "user305");
+        c.andEqualTo("userId", loginUser.getId());
         List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example);
         for (FileInfo fileInfo : fileInfos) {
             //修改文件外键
