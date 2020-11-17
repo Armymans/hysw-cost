@@ -1771,17 +1771,20 @@ public class ProjectService {
             designChangeInfoMapper.insert(projectVo.getDesignChangeInfo());
 
             //同时将该条设计信息标记为设计变更信息
-            DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(projectVo.getDesignChangeInfo().getId());
+            Example example = new Example(DesignInfo.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("baseProjectId",projectVo.getBaseProject().getId());
+            DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
             designInfo.setIsdeschange("1");
             designInfoMapper.updateByPrimaryKeySelective(designInfo);
 
             //添加设计变更文件
             List<FileInfo> byFreignAndType1 = fileInfoMapper.findByFreignAndType(projectVo.getKey(), projectVo.getType1());
             for (FileInfo fileInfo : byFreignAndType1) {
-                fileInfo.setPlatCode(DesignChangeInfoid);
+                //由于在页面取不到设计变更id 所以用设计表id
+                fileInfo.setPlatCode(projectVo.getDesignInfo().getId());
                 fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
             }
-
             //添加修改时间
             projectVo.getBaseProject().setUpdateTime(updateTime);
             projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
