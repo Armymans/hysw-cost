@@ -86,104 +86,11 @@ public class BudgetingController extends BaseController {
         if (founderId!=null){
             pageBVo.setFounderId(founderId);
         }
-        PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
-        List<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo);
-        //待审核
-        List<BudgetingListVo> budgetingListVos = new ArrayList<>();
-        //处理中
-        ArrayList<BudgetingListVo> budgetingListVos1 = new ArrayList<>();
-        //未通过
-        ArrayList<BudgetingListVo> budgetingListVos2 = new ArrayList<>();
-        //已完成
-        ArrayList<BudgetingListVo> budgetingListVos3 = new ArrayList<>();
-        for (BudgetingListVo budgetingListVo : list) {
-            //待审核
-            if (pageBVo.getBudgetingStatus().equals("1")){
-
-                    //根据条件查找当前处理人
-                    Example example = new Example(AuditInfo.class);
-                    example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
-                                            .andEqualTo("auditResult","0");
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
-                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    if (memberManage !=null){
-                        budgetingListVo.setCurrentHandler(memberManage.getMemberName());
-                    }
-
-                UserInfo loginUser = getLoginUser();
-                String id = getLoginUser().getId();
-
-
-
-                if ( auditInfo.getAuditResult().equals("0")){
-                    if(auditInfo.getAuditorId().equals(id) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308") || budgetingListVo.getFounderId().equals(id)){
-
-                        budgetingListVos.add(budgetingListVo);
-                    }
-                }
-            }
-            //处理中
-            if (budgetingListVo.getBudgetStatus()!=null && budgetingListVo.getBudgetStatus().equals("处理中")){
-                if (budgetingListVo.getFounderId().equals(getLoginUser().getId())){
-                    budgetingListVos1.add(budgetingListVo);
-                }
-            }
-            //未通过
-            if (budgetingListVo.getAuditResult()!=null && budgetingListVo.getAuditResult().equals("2")){
-                if (budgetingListVo.getFounderId().equals(getLoginUser().getId())){
-                    budgetingListVos2.add(budgetingListVo);
-                }
-            }
-            //已完成
-            if (budgetingListVo.getBudgetStatus() != null && budgetingListVo.getBudgetStatus().equals("已完成")){
-                budgetingListVos3.add(budgetingListVo);
-            }
-        }
-        //待审核
-        if (pageBVo.getBudgetingStatus().equals("1")){
-            PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(budgetingListVos);
-            return RestUtil.page(budgetingListVoPageInfo);
-        }
-//        //处理中
-        if (pageBVo.getBudgetingStatus().equals("2")){
-            PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(budgetingListVos1);
-            return RestUtil.page(budgetingListVoPageInfo);
-        }
-//        //未通过
-        if (pageBVo.getBudgetingStatus().equals("3")){
-            PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(budgetingListVos2);
-            return RestUtil.page(budgetingListVoPageInfo);
-        }
-//        //已完成
-        if (pageBVo.getBudgetingStatus().equals("4")){
-            ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
-            for (BudgetingListVo budgetingListVo : budgetingListVos3) {
-                if (!budgetingListVos4.contains(budgetingListVo)){
-                    budgetingListVos4.add(budgetingListVo);
-                }
-            }
-            for (BudgetingListVo budgetingListVo : budgetingListVos4) {
-                if (budgetingListVo.getFounderId().equals(getLoginUser().getId()) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
-                    budgetingListVo.setShowWhether("1");
-                }else{
-                    budgetingListVo.setShowWhether("2");
-                }
-            }
-            PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(budgetingListVos4);
-            return RestUtil.page(budgetingListVoPageInfo);
-        }
-        ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
-        for (BudgetingListVo budgetingListVo : list) {
-            if (budgetingListVo.getFounderId().equals(getLoginUser().getId())){
-                if (!budgetingListVos4.contains(budgetingListVo)){
-                    budgetingListVos4.add(budgetingListVo);
-                }
-            }
-        }
-        PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(budgetingListVos4);
+        PageHelper.startPage(pageBVo.getPageNum(),999);
+        List<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo,getLoginUser().getId());
+        PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);
         return RestUtil.page(budgetingListVoPageInfo);
+
     }
     //选择项目查看所有预算
     @RequestMapping(value = "/budgeting/findBudgetingAll",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)

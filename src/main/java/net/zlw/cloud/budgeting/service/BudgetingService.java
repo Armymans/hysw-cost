@@ -18,7 +18,7 @@ public interface BudgetingService {
 
     void intoAccount(String ids);
 
-    List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo);
+    List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo, String id);
 
     UnionQueryVo unionQuery(String id, UserInfo loginUser);
 
