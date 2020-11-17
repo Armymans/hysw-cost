@@ -11,18 +11,13 @@ import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
-import net.zlw.cloud.progressPayment.model.AuditInfo;
-import net.zlw.cloud.warningDetails.model.MemberManage;
-import org.cyberneko.html.filters.Identity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -94,12 +89,11 @@ public class BudgetingController extends BaseController {
         List<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo,getLoginUser().getId());
         PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);
         return RestUtil.page(budgetingListVoPageInfo);
-
     }
     //选择项目查看所有预算
     @RequestMapping(value = "/budgeting/findBudgetingAll",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findBudgetingAll(PageBVo pageBVo,@RequestParam(name = "sid",required = false) String sid){
-        PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
+        PageHelper.startPage(pageBVo.getPageNum(),999);
         List<BudgetingListVo> list = budgetingService.findBudgetingAll(pageBVo,sid);
         PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);
         return net.zlw.cloud.common.RestUtil.page(budgetingListVoPageInfo);

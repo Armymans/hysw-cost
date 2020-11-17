@@ -70,10 +70,19 @@ public class ClearProjectController extends BaseController {
         return RestUtil.page(allClearProject);
 
     }
+//  查询所有
+    @RequestMapping(value = "/clearProject/findClearProjectList",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findClearProjectList(PageRequest pageRequest){
+        System.out.println("PageRequest:"+pageRequest);
+//        List<ClearProject> allClearProject = clearProjectService.findAllClearProject(pageRequest, getLoginUser());
+        PageInfo<ClearProject> all = clearProjectService.findAll(pageRequest);
+        return RestUtil.page(all);
+
+    }
 
 
     /**
-     * 分页查询招标项目
+     * 采购项目匹配
      *
      */
     @RequestMapping(value = "/clearProject/findAllCallForBids",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
@@ -97,13 +106,25 @@ public class ClearProjectController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/clearProject/findAllByFounderId",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> findAllByFounderId(){
+    public Map<String,Object> findAllByFounderId(String id){
 //        UserInfo loginUser = getLoginUser();
 //        List<Budgeting> allByFounderId = budgetingService.findAllByFounderId(loginUser.getId());
-        List<Budgeting> allByFounderId = budgetingService.findAllByFounderId("user282");
+        List<Budgeting> allByFounderId = budgetingService.findAllByFounderId(id);
         return RestUtil.success(allByFounderId);
     }
 
+    /**
+        * @Author sjf
+        * @Description //清标回显预算项目
+        * @Date 18:56 2020/11/17
+        * @Param
+        * @return
+     **/
+    @RequestMapping(value = "/clearProject/findOneByBudgeting",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findOneBudgeting(@RequestParam(name = "id") String id){
+        net.zlw.cloud.budgeting.model.Budgeting oneBudgeting = budgetingService.findOneBudgeting(id);
+        return RestUtil.success(oneBudgeting);
+    }
     /**
      * 采购项目匹配
      * @return

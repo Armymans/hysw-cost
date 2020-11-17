@@ -2,8 +2,6 @@ package net.zlw.cloud.clearProject.model.vo;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import java.math.BigDecimal;
 
 /**
@@ -24,9 +22,13 @@ public class ClearProjectVo {
     private String projectNum;
 
     /**
+     * 项目id
+     */
+    private String baseId;
+    /**
      * 项目名称id
      */
-    private String projectId;
+    private String projectName;
 
     /**
      * 招标人

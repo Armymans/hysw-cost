@@ -36,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -667,10 +666,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         // 判断状态 结算
         if (sid!=null && sid.equals("5")){
             for (BudgetingListVo budgetingListVo : budgetingAll) {
-                System.err.println(budgetingAll);
-                System.err.println(budgetingAll);
-                System.err.println(budgetingAll);
-                System.err.println(budgetingAll);
+
 
                 Example example = new Example(LastSettlementReview.class);
                 Example example1 = new Example(SettlementAuditInformation.class);
@@ -728,6 +724,18 @@ public class BudgetingServiceImpl implements BudgetingService {
                     budgetingListVos.remove(budgetingListVo);
                 }
             }
+        }else if(sid!=null && sid.equals("6")){
+            List<BudgetingListVo> clearProjectAll = budgetingDao.findClearProjectAll(pageBVo);
+            System.err.println(clearProjectAll);
+            System.err.println(clearProjectAll);
+            System.err.println(clearProjectAll);
+            System.err.println(clearProjectAll);
+            System.err.println(clearProjectAll);
+            System.err.println(clearProjectAll);
+            System.err.println(clearProjectAll);
+            System.err.println(clearProjectAll);
+            return clearProjectAll;
+
         }
         return budgetingListVos;
     }
@@ -911,5 +919,11 @@ public class BudgetingServiceImpl implements BudgetingService {
     public List<net.zlw.cloud.clearProject.model.Budgeting> findBudgetingByBudgetStatus(String founderId){
         List<net.zlw.cloud.clearProject.model.Budgeting> budgetingByBudgetStatus = budgetingDao.findBudgetingByBudgetStatus(founderId);
         return budgetingByBudgetStatus;
+    }
+
+    public Budgeting findOneBudgeting(String id) {
+        Budgeting budgeting = budgetingDao.findBudgeting(id);
+        return budgeting;
+
     }
 }

@@ -1,9 +1,12 @@
 package net.zlw.cloud.clearProject.model;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import javax.persistence.*;
 import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.io.Serializable;
 
 @Data
 @Table(name = "clear_project")
@@ -61,12 +64,19 @@ public class ClearProject implements Serializable {
     private String budgetingId;
 
     @Transient
-    private String constructionUnitName;
+    private String constructionUnit;
 
     @Transient
     private String founderName;
     @Transient
     private String founderTime;
+
+    @Transient
+    private String tenderer;
+    @Transient
+    private String bidMoney;
+    @Transient
+    private String bidProjectAddress;
 
     private static final long serialVersionUID = 1L;
 }

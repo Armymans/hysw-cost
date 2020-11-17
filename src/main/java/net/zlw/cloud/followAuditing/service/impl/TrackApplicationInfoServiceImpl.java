@@ -129,10 +129,12 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
         Example example1 = new Example(TrackMonthly.class);
         example1.createCriteria().andEqualTo("trackId", id);
-        TrackMonthly trackMonthly = trackMonthlyDao.selectOneByExample(example1);
-        if (trackMonthly != null) {
-            trackMonthly.setStatus("1");
-            trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
+        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+        if (trackMonthlies.size() >0) {
+            for (TrackMonthly trackMonthly : trackMonthlies) {
+                trackMonthly.setStatus("1");
+                trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
+            }
         }
     }
 

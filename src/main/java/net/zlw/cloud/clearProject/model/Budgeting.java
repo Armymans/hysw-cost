@@ -1,9 +1,12 @@
 package net.zlw.cloud.clearProject.model;
 
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import javax.persistence.*;
-import lombok.Data;
 
 @Data
 @Table(name = "budgeting")
@@ -140,6 +143,9 @@ public class Budgeting implements Serializable {
      */
     @Column(name = "del_flag")
     private String delFlag;
+
+    @Column(name = "clear_status")
+    private String clearStatus;
 
     private static final long serialVersionUID = 1L;
 }

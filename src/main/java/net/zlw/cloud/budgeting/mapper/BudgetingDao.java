@@ -193,4 +193,44 @@ public interface BudgetingDao extends Mapper<Budgeting> {
 
     @Select("SELECT * FROM budgeting WHERE id = #{id}")
     Budgeting findIdByStatus();
+
+
+
+
+    @Select("select" +
+            "             bt.id id," +
+            "             b.id baseId," +
+            "             b.project_num projectNum," +
+            "             b.project_name projectName," +
+            "             b.water_address waterAddress," +
+            "             b.construction_unit constructionUnit" +
+            "             from " +
+            "             budgeting bt " +
+            "             LEFT JOIN base_project b on bt.base_project_id = b.id" +
+            "             where " +
+            "             b.del_flag = '0' and   " +
+            "             b.budget_status = '4' and " +
+            "             bt.clear_status != '1' and " +
+            "             bt.del_flag = '0' and (" +
+            "             b.project_name like concat ('%',#{keyword},'%') or " +
+            "             b.project_num like concat ('%',#{keyword},'%') " +
+            "              )")
+    List<BudgetingListVo> findClearProjectAll(PageBVo pageBVo);
+
+    @Select("select" +
+            "  bt.id id, " +
+            "  b.id baseId, " +
+            "  b.project_num projectNum, " +
+            "  b.project_name projectName " +
+            "  from  " +
+            "  budgeting bt  " +
+            "  LEFT JOIN base_project b on bt.base_project_id = b.id " +
+            "  where " +
+            "  bt.id = #{id}  " +
+            "  and  " +
+            "  b.del_flag = '0' and    " +
+            "  b.budget_status = '4' and  " +
+            "  bt.clear_status != '1' and  " +
+            "  bt.del_flag = '0' ")
+    Budgeting findBudgeting(@Param("id") String id);
 }

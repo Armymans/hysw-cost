@@ -62,6 +62,12 @@ public class Budgeting implements Serializable {
     @Transient
     private String currentHandler;
 
+    @Transient
+    private String projectNum;
+
+    @Transient
+    private String projectName;
+
 
 
 }
