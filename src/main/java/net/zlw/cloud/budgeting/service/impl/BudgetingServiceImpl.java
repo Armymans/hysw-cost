@@ -470,6 +470,7 @@ public class BudgetingServiceImpl implements BudgetingService {
 //                            c.andEqualTo("memberRoleId","2");
 //                            MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                         String founderId = budgeting.getFounderId();
+
                         Example example1 = new Example(MemberManage.class);
                         Example.Criteria cc = example1.createCriteria();
                         cc.andEqualTo("id",founderId);
@@ -526,7 +527,7 @@ public class BudgetingServiceImpl implements BudgetingService {
     public void intoAccount(String s1, String ids) {
         String[] split = ids.split(",");
         for (String s : split) {
-            if (s.equals(ids) || ids.equals("user309") || ids.equals("user308")){
+            if (s.equals(ids) || ids.equals(whzjh) || ids.equals(whzjm) || ids.equals(wjzjh)){
 
             }else{
                 throw new RuntimeException("您没有权限进行此操作,请联系编制人或领导进行操作");
@@ -572,7 +573,8 @@ public class BudgetingServiceImpl implements BudgetingService {
 
 
                 if ( auditInfo.getAuditResult().equals("0")){
-                    if(auditInfo.getAuditorId().equals(id) || id.equals("user309") || id.equals("user308") || budgetingListVo.getFounderId().equals(id)){
+
+                    if(auditInfo.getAuditorId().equals(id) || id.equals(whzjh) || id.equals(whzjm) ||id.equals(wjzjh) || budgetingListVo.getFounderId().equals(id)){
 
                         budgetingListVos.add(budgetingListVo);
                     }
