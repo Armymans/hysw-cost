@@ -1,6 +1,6 @@
 package net.zlw.cloud.budgeting.service.impl;
 
-import net.bytebuddy.dynamic.loading.PackageDefinitionStrategy;
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
 import net.zlw.cloud.VisaChange.model.VisaChange;
@@ -14,6 +14,7 @@ import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
+import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
@@ -494,9 +495,107 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
-    public List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo) {
+    public List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo, String id) {
 
-        return  budgetingDao.findAllBudgeting(pageBVo);
+        List<BudgetingListVo> list = budgetingDao.findAllBudgeting(pageBVo);
+
+
+        //待审核
+        List<BudgetingListVo> budgetingListVos = new ArrayList<>();
+        //处理中
+        ArrayList<BudgetingListVo> budgetingListVos1 = new ArrayList<>();
+        //未通过
+        ArrayList<BudgetingListVo> budgetingListVos2 = new ArrayList<>();
+        //已完成
+        ArrayList<BudgetingListVo> budgetingListVos3 = new ArrayList<>();
+        for (BudgetingListVo budgetingListVo : list) {
+            //待审核
+            if (pageBVo.getBudgetingStatus().equals("1")){
+
+                //根据条件查找当前处理人
+                Example example = new Example(AuditInfo.class);
+                example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
+                        .andEqualTo("auditResult","0");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                Example example1 = new Example(MemberManage.class);
+                example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                if (memberManage !=null){
+                    budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+                }
+
+
+                if ( auditInfo.getAuditResult().equals("0")){
+                    if(auditInfo.getAuditorId().equals(id) || id.equals("user309") || id.equals("user308") || budgetingListVo.getFounderId().equals(id)){
+
+                        budgetingListVos.add(budgetingListVo);
+                    }
+                }
+            }
+            //处理中
+            System.err.println(list+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus());
+            if (budgetingListVo.getBudgetStatus()!=null && budgetingListVo.getBudgetStatus().equals("处理中")){
+
+                if (budgetingListVo.getFounderId().equals("user320")){
+                    budgetingListVos1.add(budgetingListVo);
+                }
+            }
+            //未通过
+            if (budgetingListVo.getAuditResult()!=null && budgetingListVo.getAuditResult().equals("2")){
+                if (budgetingListVo.getFounderId().equals(id)){
+                    budgetingListVos2.add(budgetingListVo);
+                }
+            }
+            //已完成
+            if (budgetingListVo.getBudgetStatus() != null && budgetingListVo.getBudgetStatus().equals("已完成")){
+                budgetingListVos3.add(budgetingListVo);
+            }
+        }
+        //待审核
+        if (pageBVo.getBudgetingStatus().equals("1")){
+            List<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos;
+            return budgetingListVoPageInfo;
+        }
+//        //处理中
+        if (pageBVo.getBudgetingStatus().equals("2")){
+            ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos1;
+            return budgetingListVoPageInfo;
+        }
+//        //未通过
+        if (pageBVo.getBudgetingStatus().equals("3")){
+            ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos2;
+            return budgetingListVoPageInfo;
+        }
+//        //已完成
+        if (pageBVo.getBudgetingStatus().equals("4")){
+            ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
+            for (BudgetingListVo budgetingListVo : budgetingListVos3) {
+                if (!budgetingListVos4.contains(budgetingListVo)){
+                    budgetingListVos4.add(budgetingListVo);
+                }
+            }
+            for (BudgetingListVo budgetingListVo : budgetingListVos4) {
+                if (budgetingListVo.getFounderId().equals(id) || id.equals("user309") || id.equals("user308")){
+                    budgetingListVo.setShowWhether("1");
+                }else{
+                    budgetingListVo.setShowWhether("2");
+                }
+            }
+            ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos4;
+            return budgetingListVoPageInfo;
+        }
+        ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
+        System.err.println(list);
+        for (BudgetingListVo budgetingListVo : list) {
+
+            if (budgetingListVo.getFounderId().equals("user320")){
+                if (!budgetingListVos4.contains(budgetingListVo)){
+                    budgetingListVos4.add(budgetingListVo);
+                }
+            }
+        }
+        ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos4;
+        return budgetingListVoPageInfo;
 
     }
     @Override
