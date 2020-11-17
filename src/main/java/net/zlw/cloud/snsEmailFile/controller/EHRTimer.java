@@ -307,7 +307,6 @@ public class EHRTimer implements InitializingBean {
         CaiGouJdbc ehrJdbc = new CaiGouJdbc();
         try {
             ResultSet bidInfoSimplify = ehrJdbc.getBidInfoSimplify();
-            List<CallForBids> callForBids1 = callForBidsMapper.selectAll();
             while (bidInfoSimplify.next()) {
                 CallForBids callForBids = new CallForBids();
                 String projectCode = bidInfoSimplify.getString("project_code");
@@ -344,17 +343,11 @@ public class EHRTimer implements InitializingBean {
                             callForBids.setProcuratorialAgency("无");
                         }
                         callForBids.setId(UUID.randomUUID().toString().replace("-",""));
-                        if (callForBids1.size() > 0) {
-                            for (CallForBids forBids : callForBids1) {
-                                //判断更新还是新增
-                                if (forBids.getBidProjectNum().equals(projectCode)) {
-                                    callForBids.setId(forBids.getId());
-                                    callForBidsMapper.updateByPrimaryKeySelective(callForBids);
-                                } else {
-                                    callForBidsMapper.insert(callForBids);
-                                }
-                            }
-                        } else {
+                        CallForBids callForBid = callForBidsMapper.selectByProjectNum(projectCode);
+                        if(callForBid != null){
+                            callForBids.setId(callForBid.getId());
+                            callForBidsMapper.updateByPrimaryKeySelective(callForBids);
+                        }else{
                             callForBidsMapper.insert(callForBids);
                         }
                     }

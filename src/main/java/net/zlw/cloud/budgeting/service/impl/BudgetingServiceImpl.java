@@ -524,7 +524,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 criteria1.andEqualTo("delFlag","0");
                 List<LastSettlementReview> lastSettlementReviews = lastSettlementReviewDao.selectByExample(example);
                 List<SettlementAuditInformation> settlementAuditInformations = settlementAuditInformationDao.selectByExample(example1);
-                if (lastSettlementReviews!=null || lastSettlementReviews.size()>0 || settlementAuditInformations!=null || settlementAuditInformations.size()>0){
+                if (lastSettlementReviews.size()>0 || settlementAuditInformations.size()>0){
                     budgetingListVos.remove(budgetingListVo);
                 }
             }

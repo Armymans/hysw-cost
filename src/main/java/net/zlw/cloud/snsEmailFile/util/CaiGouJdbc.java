@@ -33,7 +33,7 @@ public class CaiGouJdbc {
 	public ResultSet getWinInfoSimplify(String projectCode) throws Exception {
 		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		Connection conn = (Connection) DriverManager.getConnection(url, userName, password);
-		String sql = "SELECT * FROM plat_win_bid where bid_section_code = '"+projectCode+"'";
+		String sql = "SELECT * FROM plat_win_bid where bid_section_code = '"+projectCode+"' and status = 1";
 		PreparedStatement statement = conn.prepareStatement(sql);
 		ResultSet resultSet = statement.executeQuery();
 		return resultSet;
