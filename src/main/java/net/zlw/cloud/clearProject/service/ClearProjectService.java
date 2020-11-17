@@ -70,16 +70,16 @@ public class ClearProjectService{
 //        clearProject.setProjectNum(clearProjectVo.getProjectNum());
         clearProject.setProjectName(callForBids.getBidProjectName());
 
-
-        //招标人
-        clearProject.setTenderer(clearProjectVo.getTenderer());
-        //招标代理机构
-        clearProject.setProcuratorialAgency(clearProjectVo.getProcuratorialAgency());
-        clearProject.setBidder(clearProjectVo.getBidder());
-        clearProject.setBidPrice(clearProjectVo.getBidPrice());
-        clearProject.setBudgetingId(callForBids.getId());
-        // TODO 待修改
-        clearProject.setProjectAddress("123");
+// TODO
+//        //招标人
+//        clearProject.setTenderer(clearProjectVo.getTenderer());
+//        //招标代理机构
+//        clearProject.setProcuratorialAgency(clearProjectVo.getProcuratorialAgency());
+//        clearProject.setBidder(clearProjectVo.getBidder());
+//        clearProject.setBidPrice(clearProjectVo.getBidPrice());
+//        clearProject.setBudgetingId(callForBids.getId());
+//        // TODO 待修改
+//        clearProject.setProjectAddress("123");
 
 
         if(userInfo != null){
@@ -142,13 +142,13 @@ public class ClearProjectService{
         List<ClearProject> clearProjects = clearProjectMapper.selectByExample(example);
 
         for (ClearProject clearProject : clearProjects) {
-
-            if(clearProject.getConstructionUnitId()!= null){
-                ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(clearProject.getConstructionUnitId());
-
-                // 建设单位
-                clearProject.setConstructionUnitName(constructionUnitManagement.getConstructionUnitName());
-            }
+// TODO
+//            if(clearProject.getConstructionUnitId()!= null){
+//                ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(clearProject.getConstructionUnitId());
+//
+//                // 建设单位
+//                clearProject.setConstructionUnitName(constructionUnitManagement.getConstructionUnitName());
+//            }
 
 
             if(clearProject.getBudgetingId() != null){
@@ -158,9 +158,10 @@ public class ClearProjectService{
 //
 //                clearProject.setProjectAddress(baseProject.getDistrict());
                 CallForBids callForBids = callForBidsMapper.selectByPrimaryKey(clearProject.getBudgetingId());
-                if(callForBids!= null){
-                    clearProject.setProjectAddress(callForBids.getBidProjectAddress());
-                }
+// TODO
+//                if(callForBids!= null){
+//                    clearProject.setProjectAddress(callForBids.getBidProjectAddress());
+//                }
             }
 
             // 清标人

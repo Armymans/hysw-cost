@@ -28,30 +28,6 @@ public class ClearProject implements Serializable {
     private String projectName;
 
     /**
-     * 招标人
-     */
-    @Column(name = "tenderer")
-    private String tenderer;
-
-    /**
-     * 招标代理机构
-     */
-    @Column(name = "procuratorial_agency")
-    private String procuratorialAgency;
-
-    /**
-     * 投标人
-     */
-    @Column(name = "bidder")
-    private String bidder;
-
-    /**
-     * 投标总价
-     */
-    @Column(name = "bid_price")
-    private BigDecimal bidPrice;
-
-    /**
      * 创建时间
      */
     @Column(name = "create_time")
@@ -84,14 +60,8 @@ public class ClearProject implements Serializable {
     @Column(name = "budgeting_id")
     private String budgetingId;
 
-    @Column(name = "construction_unit_id")
-    private String constructionUnitId;
-
     @Transient
     private String constructionUnitName;
-
-    @Column(name = "project_address")
-    private String projectAddress;
 
     @Transient
     private String founderName;

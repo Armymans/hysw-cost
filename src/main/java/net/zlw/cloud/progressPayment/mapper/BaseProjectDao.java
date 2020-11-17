@@ -366,7 +366,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "\tb.construction_organization constructionOrganization,\n" +
             "\tb.management_table managementTable,\n" +
             "\t( CASE b.a_b WHEN '1' THEN 'A' WHEN '2' THEN 'B' END ) ab,\n" +
-            "\t( CASE b.should_be WHEN '0' THEN '紧急' WHEN '1' THEN '不紧急' END ) shouldBe,\n" +
+            "\t( CASE b.should_be WHEN '0' THEN '是' WHEN '1' THEN '否' END ) shouldBe,\n" +
             "\t( CASE b.SUBJECT WHEN '1' THEN '居民住户' WHEN '2' THEN '开发商' WHEN '3' THEN '政府事业' WHEN '4' THEN '工商户' WHEN '5' THEN '芜湖华衍' END ) SUBJECT,\n" +
             "\t( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) district,\n" +
             "\t( CASE b.project_category WHEN '1' THEN '住宅区配套' WHEN '2' THEN '商业区配套' WHEN '3' THEN '工商区配套' END ) projectCategory,\n" +
