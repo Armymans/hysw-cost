@@ -51,4 +51,62 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "order by\n" +
             "audit_result desc")
     List<AuditChekedVo> auditChek(@Param("id") String id);
+
+    @Select(
+            "select\n" +
+                    "IFNULL(audit_time,'-') auditTime,\n" +
+                    "(case audit_result\n" +
+                    "when '0' then '待审核'\n" +
+                    "when '1' then '已通过'\n" +
+                    "when '2' then '未通过'\n" +
+                    "end\n" +
+                    ") auditResult,\n" +
+                    "(case audit_type\n" +
+                    "when '0' then '互审'\n" +
+                    "when '1' then '上级审核'\n" +
+                    "when '2' then '变更一审'\n" +
+                    "when '3' then '变更二审'\n" +
+                    "when '4' then '三审'\n" +
+                    "end\n" +
+                    ") auditType,\n" +
+                    "(select member_name from member_manage where id = auditor_id)  auditor,\n" +
+                    "IFNULL(audit_opinion,'-') auditOpinion\n" +
+                    "from audit_info\n" +
+                    "where\n" +
+                    "base_project_id = #{id}\n" +
+                    "and\n" +
+                    "change_flag = '1'\n" +
+                    "order by\n" +
+                    "audit_result desc"
+    )
+    List<AuditChekedVo> auditDesginChek(@Param("id") String id);
+
+    @Select(
+            "select\n" +
+                    "IFNULL(audit_time,'-') auditTime,\n" +
+                    "(case audit_result\n" +
+                    "when '0' then '待审核'\n" +
+                    "when '1' then '已通过'\n" +
+                    "when '2' then '未通过'\n" +
+                    "end\n" +
+                    ") auditResult,\n" +
+                    "(case audit_type\n" +
+                    "when '0' then '互审'\n" +
+                    "when '1' then '上级审核'\n" +
+                    "when '2' then '变更一审'\n" +
+                    "when '3' then '变更二审'\n" +
+                    "when '4' then '三审'\n" +
+                    "end\n" +
+                    ") auditType,\n" +
+                    "(select member_name from member_manage where id = auditor_id)  auditor,\n" +
+                    "IFNULL(audit_opinion,'-') auditOpinion\n" +
+                    "from audit_info\n" +
+                    "where\n" +
+                    "base_project_id = #{id}\n" +
+                    "and\n" +
+                    "change_flag = '0'\n" +
+                    "order by\n" +
+                    "audit_result desc"
+    )
+    List<AuditChekedVo> auditChangeDesginChek(@Param("id") String id);
 }

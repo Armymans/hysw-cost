@@ -872,4 +872,14 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public List<AuditChekedVo> auditChek(String id) {
       return  auditInfoDao.auditChek(id);
     }
+
+    @Override
+    public List<AuditChekedVo> auditDesginChek(String id) {
+        return auditInfoDao.auditDesginChek(id);
+    }
+
+    @Override
+    public List<AuditChekedVo> auditChangeDesginChek(String id) {
+        return auditInfoDao.auditChangeDesginChek(id);
+    }
 }

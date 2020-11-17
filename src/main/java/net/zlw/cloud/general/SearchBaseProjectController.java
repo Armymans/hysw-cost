@@ -75,4 +75,26 @@ public class SearchBaseProjectController {
         List<AuditChekedVo> list = baseProjectService.auditChek(id);
         return RestUtil.success(list);
     }
+
+    /**
+     * 设计审核卡片
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/review/auditDesginChek",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> auditDesginChek(@RequestParam(name = "id") String id){
+        List<AuditChekedVo> list = baseProjectService.auditDesginChek(id);
+        return RestUtil.success(list);
+    }
+
+    /**
+     * 设计变更审核卡片
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/review/auditChangeDesginChek",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> auditChangeDesginChek(@RequestParam(name = "id") String id){
+        List<AuditChekedVo> list = baseProjectService.auditChangeDesginChek(id);
+        return RestUtil.success(list);
+    }
 }
