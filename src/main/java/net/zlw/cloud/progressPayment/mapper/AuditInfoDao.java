@@ -67,6 +67,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "when '2' then '变更一审'\n" +
                     "when '3' then '变更二审'\n" +
                     "when '4' then '三审'\n" +
+                    "when '5' then '变更三审'\n" +
                     "end\n" +
                     ") auditType,\n" +
                     "(select member_name from member_manage where id = auditor_id)  auditor,\n" +
@@ -76,6 +77,8 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "base_project_id = #{id}\n" +
                     "and\n" +
                     "change_flag = '1'\n" +
+                    "and\n" +
+                    "status = '0'\n" +
                     "order by\n" +
                     "audit_result desc"
     )
@@ -96,6 +99,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "when '2' then '变更一审'\n" +
                     "when '3' then '变更二审'\n" +
                     "when '4' then '三审'\n" +
+                    "when '5' then '变更三审'\n" +
                     "end\n" +
                     ") auditType,\n" +
                     "(select member_name from member_manage where id = auditor_id)  auditor,\n" +
@@ -105,8 +109,15 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "base_project_id = #{id}\n" +
                     "and\n" +
                     "change_flag = '0'\n" +
+                    "and\n" +
+                    "status = '0'\n" +
                     "order by\n" +
                     "audit_result desc"
     )
     List<AuditChekedVo> auditChangeDesginChek(@Param("id") String id);
+
+    @Update(
+            "update audit_info set `status` = '1' where id=#{id}"
+    )
+    void deleteChangeOld(@Param("id") String id);
 }

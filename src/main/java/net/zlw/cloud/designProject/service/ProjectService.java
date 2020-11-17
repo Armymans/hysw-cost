@@ -770,9 +770,11 @@ public class ProjectService {
                         if("0".equals(auditInfo2.getChangeFlag())){
                             //改为设计变更三审待审核
                             auditInfo1.setAuditType("5");
+                            auditInfo1.setChangeFlag("0");
                         }else{
                             //审核类型为三审待审核(领导审核)
                             auditInfo1.setAuditType("4");
+                            auditInfo1.setChangeFlag("1");
                         }
                         //审核结果 结果待审核(领导审核后变为已审核)
                         auditInfo1.setAuditResult("0");
@@ -877,13 +879,15 @@ public class ProjectService {
                         auditInfo1.setBaseProjectId(designInfo.getId());
                         //如果当前项目为设计变更项目
                         if("0".equals(auditInfo2.getChangeFlag())){
+                            //根据设计外键删除之前得设计变更信息
+                            this.deleteDesChangeAudit(designInfo.getId());
                             //改为设计变更二审待审核
                             auditInfo1.setAuditType("3");
-                            auditInfo2.setChangeFlag("0");
+                            auditInfo1.setChangeFlag("0");
                         }else{
                             //审核类型为二审待审核(领导审核)
                             auditInfo1.setAuditType("1");
-                            auditInfo2.setChangeFlag("1");
+                            auditInfo1.setChangeFlag("1");
                         }
                         //审核结果 结果待审核(领导审核后变为已审核)
                         auditInfo1.setAuditResult("0");
@@ -992,13 +996,15 @@ public class ProjectService {
                         //审核类型为三审(领导审核)
                         //如果当前项目为设计变更项目
                         if("0".equals(auditInfo2.getChangeFlag())){
-                            //改为设计变更三审待审核
+                            //根据设计外键删除之前得设计变更信息
+                            this.deleteDesChangeAudit(designInfo.getId());
+                            //改为设计变更三审审待审核
                             auditInfo1.setAuditType("5");
-                            auditInfo2.setChangeFlag("0");
+                            auditInfo1.setChangeFlag("0");
                         }else{
                             //审核类型为三审待审核(领导审核)
                             auditInfo1.setAuditType("4");
-                            auditInfo2.setChangeFlag("1");
+                            auditInfo1.setChangeFlag("1");
                         }
                         //审核结果 结果待审核(领导审核后变为已审核)
                         auditInfo1.setAuditResult("0");
@@ -1134,11 +1140,15 @@ public class ProjectService {
      * 删除旧的设计变更审核信息
      */
     public void deleteDesChangeAudit(String id){
+        //根据外键和设计状态查询设计变更审核
         Example example = new Example(AuditInfo.class);
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("baseProjectId",id);
         c.andEqualTo("changeFlag","0"); //设计变更相关
-        AuditInfo auditInfo2 = auditInfoDao.selectOneByExample(example);
+        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+        for (AuditInfo auditInfo : auditInfos) {
+            auditInfoDao.deleteChangeOld(auditInfo.getId());
+        }
     }
 
     /**
@@ -1222,6 +1232,7 @@ public class ProjectService {
         projectVo.getDesignInfo().setFounderId(loginUser.getId());
         projectVo.getDesignInfo().setCompanyId(loginUser.getCompanyId());
         projectVo.getDesignInfo().setStatus("0");
+        projectVo.getDesignInfo().setIsdeschange("0");
         projectVo.getDesignInfo().setCreateTime(createTime);
         designInfoMapper.insert(projectVo.getDesignInfo());
 
@@ -1447,6 +1458,7 @@ public class ProjectService {
             projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
             //添加设计表修改时间
             projectVo.getDesignInfo().setUpdateTime(updateTime);
+            projectVo.getDesignInfo().setIsdeschange("0");
             designInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignInfo());
             //添加勘探表时间
             if(projectVo.getProjectExploration()!=null){
@@ -1757,6 +1769,11 @@ public class ProjectService {
             projectVo.getDesignChangeInfo().setStatus("0");
             //添加一条设计变更信息
             designChangeInfoMapper.insert(projectVo.getDesignChangeInfo());
+
+            //同时将该条设计信息标记为设计变更信息
+            DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(projectVo.getDesignChangeInfo().getId());
+            designInfo.setIsdeschange("1");
+            designInfoMapper.updateByPrimaryKeySelective(designInfo);
 
             //添加设计变更文件
             List<FileInfo> byFreignAndType1 = fileInfoMapper.findByFreignAndType(projectVo.getKey(), projectVo.getType1());

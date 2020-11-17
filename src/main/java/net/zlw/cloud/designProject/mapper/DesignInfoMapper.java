@@ -81,8 +81,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                         "s2.design_unit like  CONCAT('%',#{keyword},'%') \n" +
                         ")\n" +
                         "ORDER BY \n" +
-                        "s1.create_time DESC,\n" +
-                        "s1.should_be"
+                        "s1.should_be,\n" +
+                        "s1.create_time DESC"
     )
     List<DesignInfo> designProjectSelect(DesignPageVo pageVo);
 
@@ -153,8 +153,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s2.design_unit like  CONCAT('%',#{keyword},'%') \n" +
                     ")\n" +
                     "ORDER BY \n" +
-                    "s1.create_time DESC,\n" +
-                    "s1.should_be"
+                    "s1.should_be,\n" +
+                    "s1.create_time DESC"
     )
     List<DesignInfo> designProjectSelect1(DesignPageVo pageVo);
 
@@ -224,8 +224,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s2.design_unit like  CONCAT('%',#{keyword},'%') \n" +
                     ")" +
                     "ORDER BY " +
-                    "s1.create_time DESC,\n" +
-                    "s1.should_be "
+                    "s1.should_be,\n" +
+                    "s1.create_time DESC"
     )
     List<DesignInfo> designProjectSelect2(DesignPageVo pageVo);
 
@@ -296,8 +296,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s2.design_unit like  CONCAT('%',#{keyword},'%') \n" +
                     ")\n" +
                     "ORDER BY \n" +
-                    "s1.create_time DESC,\n" +
-                    "s1.should_be"
+                    "s1.should_be,\n" +
+                    "s1.create_time DESC"
     )
     List<DesignInfo> designProjectSelect3(DesignPageVo pageVo);
 
@@ -366,8 +366,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s2.design_unit like  CONCAT('%',#{keyword},'%') \n" +
                     ")\n" +
                     "ORDER BY \n" +
-                    "s1.create_time DESC,\n" +
-                    "s1.should_be"
+                    "s1.should_be,\n" +
+                    "s1.create_time DESC"
     )
     List<DesignInfo> designProjectSelect4(DesignPageVo pageVo);
     @Select(
