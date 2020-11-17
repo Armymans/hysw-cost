@@ -73,7 +73,11 @@ public class BudgetingController extends BaseController {
     //预算到账
     @RequestMapping(value = "/budgeting/intoAccount",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> intoAccount(@RequestParam(name = "ids") String ids){
-        budgetingService.intoAccount(ids);
+        try {
+            budgetingService.intoAccount(ids,getLoginUser().getId());
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success("成功");
     }
     //查询所有

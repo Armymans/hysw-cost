@@ -16,7 +16,7 @@ public interface BudgetingService {
 
     void batchReview(BatchReviewVo batchReviewVo);
 
-    void intoAccount(String ids);
+    void intoAccount(String s, String ids);
 
     List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo, String id);
 
