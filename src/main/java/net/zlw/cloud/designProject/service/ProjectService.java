@@ -805,6 +805,7 @@ public class ProjectService {
                         auditInfo2.setAuditResult(auditInfo.getAuditResult());
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setUpdateTime(createTime);
+                        auditInfo2.setAuditTime(createTime);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
 
                     }else if("2".equals(auditInfo.getAuditResult())){
@@ -823,6 +824,7 @@ public class ProjectService {
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setUpdateTime(createTime);
                         baseProject.setDesginStatus("3");
+                        auditInfo2.setAuditTime(createTime);
                         projectMapper.updateByPrimaryKeySelective(baseProject);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
                     }
@@ -845,6 +847,7 @@ public class ProjectService {
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setUpdateTime(createTime);
                         baseProject.setDesginStatus("4");
+                        auditInfo2.setAuditTime(createTime);
                         projectMapper.updateByPrimaryKeySelective(baseProject);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
                     }else if("2".equals(auditInfo.getAuditResult())){
@@ -861,6 +864,7 @@ public class ProjectService {
                         }
                         auditInfo2.setAuditResult(auditInfo.getAuditResult());
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
+                        auditInfo2.setAuditTime(createTime);
                         auditInfo2.setUpdateTime(createTime);
                         baseProject.setDesginStatus("3");
                         projectMapper.updateByPrimaryKeySelective(baseProject);
@@ -917,6 +921,7 @@ public class ProjectService {
                             auditInfo2.setChangeFlag("1");
                         }
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
+                        auditInfo2.setAuditTime(createTime);
                         auditInfo2.setUpdateTime(createTime);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
                     }else{
@@ -937,6 +942,7 @@ public class ProjectService {
                         auditInfo2.setAuditResult(auditInfo.getAuditResult());
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setUpdateTime(createTime);
+                        auditInfo2.setAuditTime(createTime);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
                     }
                 }
@@ -961,6 +967,7 @@ public class ProjectService {
                         auditInfo2.setAuditResult(auditInfo.getAuditResult());
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setUpdateTime(createTime);
+                        auditInfo2.setAuditTime(createTime);
                         baseProject.setDesginStatus("4");
                         projectMapper.updateByPrimaryKeySelective(baseProject);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
@@ -978,6 +985,7 @@ public class ProjectService {
                         auditInfo2.setAuditResult(auditInfo.getAuditResult());
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setUpdateTime(createTime);
+                        auditInfo2.setAuditTime(createTime);
                         baseProject.setDesginStatus("3");
                         projectMapper.updateByPrimaryKeySelective(baseProject);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
@@ -1035,6 +1043,7 @@ public class ProjectService {
                         }
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setUpdateTime(createTime);
+                        auditInfo2.setAuditTime(createTime);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
                     }else{
                         //如果是未通过则
@@ -1055,6 +1064,7 @@ public class ProjectService {
                         auditInfo2.setAuditResult(auditInfo.getAuditResult());
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setUpdateTime(createTime);
+                        auditInfo2.setAuditTime(createTime);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
                     }
                 }
@@ -1424,6 +1434,7 @@ public class ProjectService {
                         AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example);
                         //如果是未通过 提交时 将审核信息改为待审核
                         auditInfo1.setAuditResult("0");
+                        auditInfo1.setAuditOpinion(null);
                         //修改基本状态 未通过重新变为待审核
                         projectVo.getBaseProject().setDesginStatus("1");
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
@@ -1767,16 +1778,13 @@ public class ProjectService {
             projectVo.getDesignChangeInfo().setFounderId(loginUserId);
             projectVo.getDesignChangeInfo().setCompanyId(companyId);
             projectVo.getDesignChangeInfo().setStatus("0");
+
+        if(projectVo.getBaseProject().getReviewerId() == null||"".equals(projectVo.getBaseProject().getReviewerId())){
+            //如果为未通过将信息修改
+            designChangeInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignChangeInfo());
+        }else{
             //添加一条设计变更信息
             designChangeInfoMapper.insert(projectVo.getDesignChangeInfo());
-
-            //同时将该条设计信息标记为设计变更信息
-            Example example = new Example(DesignInfo.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("baseProjectId",projectVo.getBaseProject().getId());
-            DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
-            designInfo.setIsdeschange("1");
-            designInfoMapper.updateByPrimaryKeySelective(designInfo);
 
             //添加设计变更文件
             List<FileInfo> byFreignAndType1 = fileInfoMapper.findByFreignAndType(projectVo.getKey(), projectVo.getType1());
@@ -1785,6 +1793,15 @@ public class ProjectService {
                 fileInfo.setPlatCode(projectVo.getDesignInfo().getId());
                 fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
             }
+        }
+            //同时将该条设计信息标记为设计变更信息
+            Example example = new Example(DesignInfo.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("baseProjectId",projectVo.getBaseProject().getId());
+            DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
+            designInfo.setIsdeschange("1");
+            designInfoMapper.updateByPrimaryKeySelective(designInfo);
+
             //添加修改时间
             projectVo.getBaseProject().setUpdateTime(updateTime);
             projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
