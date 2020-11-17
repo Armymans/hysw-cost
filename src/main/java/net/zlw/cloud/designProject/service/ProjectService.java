@@ -339,7 +339,7 @@ public class ProjectService {
 
                     //归属按钮展示
                     //todo loginUser.getId();
-                    String loginUserId = "user333";
+                    String loginUserId = loginUser.getId();;
                     //如果当前登入人等于创建人
                     if(designInfo.getFounderId().equals(loginUserId)){
                         //说明当前项目是创建人项目
@@ -377,6 +377,7 @@ public class ProjectService {
                     Example example = new Example(Budgeting.class);
                     Example.Criteria c = example.createCriteria();
                     c.andEqualTo("baseProjectId",designInfo.getBaseProjectId());
+                    c.andEqualTo("delFlag","0");
                     Budgeting budgeting = budgetingMapper.selectOneByExample(example);
                     if(budgeting!=null){
                         designInfo.setAmountCost(budgeting.getAmountCost());
