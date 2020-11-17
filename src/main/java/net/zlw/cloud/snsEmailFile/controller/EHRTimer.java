@@ -2,6 +2,8 @@ package net.zlw.cloud.snsEmailFile.controller;
 
 import com.sun.javafx.PlatformUtil;
 import net.tec.cloud.common.util.DateUtil;
+import net.zlw.cloud.clearProject.mapper.CallForBidsMapper;
+import net.zlw.cloud.clearProject.model.CallForBids;
 import net.zlw.cloud.depManage.domain.DepManage;
 import net.zlw.cloud.depManage.mapper.DepManageMapper;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -11,6 +13,7 @@ import net.zlw.cloud.snsEmailFile.mapper.SysCompanyMapper;
 import net.zlw.cloud.snsEmailFile.model.EmOrg;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.SysCompany;
+import net.zlw.cloud.snsEmailFile.util.CaiGouJdbc;
 import net.zlw.cloud.snsEmailFile.util.EhrJdbc;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang3.StringUtils;
@@ -22,15 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Configuration
 @Transactional
-public class EHRTimer {
-//public class EHRTimer implements InitializingBean {
+//public class EHRTimer {
+public class EHRTimer implements InitializingBean {
 
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -45,6 +45,8 @@ public class EHRTimer {
     private EmOrgMapper emOrgMapper;
     @Autowired
     private MkyUserMapper mkyUserMapper;
+    @Autowired
+    private CallForBidsMapper callForBidsMapper;
 
     /**
      * 取值范围 秒 0 - 59 分 0 - 59 时 0 - 23 日 0 - 31 按实际月份来 月 0 - 11 天 1 - 7 周几 年 1970
@@ -90,15 +92,15 @@ public class EHRTimer {
                     String orgName = orgInfo.getString("OrgName");
                     String id = orgInfo.getString("OrgCode");
                     String parentOrgCode = orgInfo.getString("ParentOrgCode");
-                    if(id.equals("hywater")){
+                    if (id.equals("hywater")) {
                         sysCompany.setId("org8047");
                         sysCompany.setCompanyCode("org8047");
-                    }else{
+                    } else {
                         sysCompany.setId(id);
                         sysCompany.setCompanyCode(orgCode);
                     }
                     sysCompany.setName(orgName);
-                    if(parentOrgCode != null && parentOrgCode.equals("hywater")){
+                    if (parentOrgCode != null && parentOrgCode.equals("hywater")) {
                         sysCompany.setParentId("org8047");
                     }
                     companyList2.add(sysCompany);
@@ -149,14 +151,14 @@ public class EHRTimer {
                 user.setId(id);
                 user.setMemberName(userName);
                 user.setEmail(email);
-                if(userAccount !=  null && userAccount.contains("\\")){
+                if (userAccount != null && userAccount.contains("\\")) {
                     String[] split = userAccount.split("\\\\");
                     userAccount = split[1];
                 }
                 user.setMemberAccount(userAccount);
-                if("男".equals(gender)){
+                if ("男".equals(gender)) {
                     user.setMemberSex("0");
-                }else if("女".equals(gender)){
+                } else if ("女".equals(gender)) {
                     user.setMemberSex("1");
                 }
 
@@ -164,12 +166,12 @@ public class EHRTimer {
 
                 user.setCompanyId(orgId);
                 //判断是吴江还是芜湖
-                if(orgId != null && !"".equals(orgId)){
+                if (orgId != null && !"".equals(orgId)) {
                     String s = orgId.substring(0, 3);
                     //吴江
-                    if("001".equals(s)){
+                    if ("001".equals(s)) {
                         user.setWorkType("2");
-                    }else{
+                    } else {
                         //芜湖
                         user.setWorkType("1");
                     }
@@ -190,9 +192,9 @@ public class EHRTimer {
             // 保存公司
             for (SysCompany platSysCompany : companyList2) {
                 SysCompany sysCompany = sysCompanyDao.selectByPrimaryKey(platSysCompany.getId());
-                if(sysCompany != null){
+                if (sysCompany != null) {
                     sysCompanyDao.updateByPrimaryKeySelective(platSysCompany);
-                }else{
+                } else {
                     sysCompanyDao.insertSelective(platSysCompany);
                 }
             }
@@ -200,9 +202,9 @@ public class EHRTimer {
             // 保存用户
             for (MemberManage platSysUser : userList2) {
                 MemberManage memberManage = sysUserDao.selectByPrimaryKey(platSysUser.getId());
-                if(memberManage != null){
+                if (memberManage != null) {
                     sysUserDao.updateByPrimaryKeySelective(platSysUser);
-                }else{
+                } else {
                     sysUserDao.insertSelective(platSysUser);
                 }
             }
@@ -210,9 +212,9 @@ public class EHRTimer {
             //保存部门
             for (DepManage depManage : deptList2) {
                 DepManage depManage1 = deptDao.selectByPrimaryKey(depManage.getId());
-                if(depManage1 != null){
+                if (depManage1 != null) {
                     deptDao.updateByPrimaryKeySelective(depManage);
-                }else{
+                } else {
                     deptDao.insertSelective(depManage);
                 }
             }
@@ -233,9 +235,9 @@ public class EHRTimer {
                 emOrg.setDelFlag("0");
                 emOrg.setOrgType("1");
                 EmOrg emOrg1 = emOrgMapper.selectByPrimaryKey(sysCompany.getId());
-                if(emOrg1 != null){
+                if (emOrg1 != null) {
                     emOrgMapper.updateByPrimaryKeySelective(emOrg);
-                }else{
+                } else {
                     emOrgMapper.insertSelective(emOrg);
                 }
             }
@@ -244,9 +246,9 @@ public class EHRTimer {
                 EmOrg emOrg = new EmOrg();
                 emOrg.setId(depManage.getId());
                 emOrg.setName(depManage.getDepName());
-                if(depManage.getCompanyId().equals("hywater")){
+                if (depManage.getCompanyId().equals("hywater")) {
                     emOrg.setPid("org8047");
-                }else{
+                } else {
                     emOrg.setPid(depManage.getCompanyId());
                 }
                 emOrg.setCompanyId("com21");
@@ -254,15 +256,15 @@ public class EHRTimer {
                 emOrg.setDelFlag("0");
                 emOrg.setOrgType("2");
                 EmOrg emOrg1 = emOrgMapper.selectByPrimaryKey(depManage.getId());
-                if(emOrg1 != null){
+                if (emOrg1 != null) {
                     emOrgMapper.updateByPrimaryKeySelective(emOrg);
-                }else{
+                } else {
                     emOrgMapper.insertSelective(emOrg);
                 }
             }
 
             for (MemberManage memberManage : user) {
-                if(memberManage.getMemberAccount() != null && !"".equals(memberManage.getMemberAccount())&& !memberManage.getMemberAccount().contains("hysw")){
+                if (memberManage.getMemberAccount() != null && !"".equals(memberManage.getMemberAccount()) && !memberManage.getMemberAccount().contains("hysw")) {
                     MkyUser mkyUser = new MkyUser();
                     mkyUser.setId(memberManage.getId());
                     mkyUser.setUserCode(memberManage.getMemberAccount());
@@ -280,9 +282,9 @@ public class EHRTimer {
                     mkyUser.setStatus("1");
                     mkyUser.setDelFlag("0");
                     MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(mkyUser.getId());
-                    if(mkyUser1 != null){
+                    if (mkyUser1 != null) {
                         mkyUserMapper.updateByPrimaryKeySelective(mkyUser);
-                    }else{
+                    } else {
                         mkyUserMapper.insertSelective(mkyUser);
                     }
                 }
@@ -296,8 +298,78 @@ public class EHRTimer {
 
     }
 
-//    @Override
-//    public void afterPropertiesSet() throws Exception {
+    /**
+     * @Author Armyman
+     * @Description //获取采购数据
+     * @Date 16:58 2020/11/16
+     **/
+    public void CaiGouDataTimer() {
+        CaiGouJdbc ehrJdbc = new CaiGouJdbc();
+        try {
+            ResultSet bidInfoSimplify = ehrJdbc.getBidInfoSimplify();
+            List<CallForBids> callForBids1 = callForBidsMapper.selectAll();
+            while (bidInfoSimplify.next()) {
+                CallForBids callForBids = new CallForBids();
+                String projectCode = bidInfoSimplify.getString("project_code");
+                String companyId = bidInfoSimplify.getString("company_id");
+                String userId = bidInfoSimplify.getString("user_id");
+                String archiveProjectName = bidInfoSimplify.getString("archive_project_name");
+                callForBids.setBidProjectNum(projectCode);
+                callForBids.setBidProjectName(archiveProjectName);
+                callForBids.setStatus("0");
+                //招标
+                ResultSet winInfoSimplify = ehrJdbc.getWinInfoSimplify(projectCode);
+                while (winInfoSimplify.next()) {
+                    String bidderName = winInfoSimplify.getString("bidder_name");
+                    String winBidPrice = winInfoSimplify.getString("win_bid_price");
+                    callForBids.setBidWinner(bidderName);
+                    callForBids.setBidMoney(winBidPrice);
+                    //建设单位 投标人
+                    ResultSet companyInfoSimplify = ehrJdbc.getCompanySimplify(companyId);
+                    while (companyInfoSimplify.next()) {
+                        String companyName = companyInfoSimplify.getString("name");
+                        callForBids.setTenderer(companyName);
+                        callForBids.setConstructionUnit(companyName);
+                        //代理机构
+                        ResultSet userInfoSimplify = ehrJdbc.getUserInfoSimplify(userId);
+                        if (userInfoSimplify.next()) {
+                            while (userInfoSimplify.next()) {
+                                ResultSet companyInfoSimplify2 = ehrJdbc.getCompanySimplify(companyId);
+                                while (companyInfoSimplify2.next()) {
+                                    String name = companyInfoSimplify2.getString("name");
+                                    callForBids.setProcuratorialAgency(name);
+                                }
+                            }
+                        } else {
+                            callForBids.setProcuratorialAgency("无");
+                        }
+                        callForBids.setId(UUID.randomUUID().toString().replace("-",""));
+                        if (callForBids1.size() > 0) {
+                            for (CallForBids forBids : callForBids1) {
+                                //判断更新还是新增
+                                if (forBids.getBidProjectNum().equals(projectCode)) {
+                                    callForBids.setId(forBids.getId());
+                                    callForBidsMapper.updateByPrimaryKeySelective(callForBids);
+                                } else {
+                                    callForBidsMapper.insert(callForBids);
+                                }
+                            }
+                        } else {
+                            callForBidsMapper.insert(callForBids);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
 //        ehrDataTimer();
-//    }
+//        CaiGouDataTimer();
+    }
 }

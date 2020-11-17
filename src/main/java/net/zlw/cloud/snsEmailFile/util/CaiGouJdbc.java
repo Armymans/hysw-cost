@@ -15,7 +15,7 @@ public class CaiGouJdbc {
 	public ResultSet getBidInfoSimplify() throws Exception {
 		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		Connection conn = (Connection) DriverManager.getConnection(url, userName, password);
-		String sql = "SELECT * FROM plat_archive_project where status = 1";
+		String sql = "SELECT * FROM plat_archive_project where status = 1 and archive_project_type = 1";
 		PreparedStatement statement = conn.prepareStatement(sql);
 		ResultSet resultSet = statement.executeQuery();
 		return resultSet;
@@ -25,15 +25,6 @@ public class CaiGouJdbc {
 		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		Connection conn = (Connection) DriverManager.getConnection(url, userName, password);
 		String sql = "SELECT * FROM plat_bid_section where tender_project_code = '"+projectCode+"'";
-		PreparedStatement statement = conn.prepareStatement(sql);
-		ResultSet resultSet = statement.executeQuery();
-		return resultSet;
-	}
-
-	public ResultSet getSectionInfoSimplify2(String projectCode) throws Exception {
-		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		Connection conn = (Connection) DriverManager.getConnection(url, userName, password);
-		String sql = "SELECT * FROM plat_bid_section where bid_section_code = '"+projectCode+"'";
 		PreparedStatement statement = conn.prepareStatement(sql);
 		ResultSet resultSet = statement.executeQuery();
 		return resultSet;
