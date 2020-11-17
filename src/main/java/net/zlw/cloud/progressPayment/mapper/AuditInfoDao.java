@@ -80,7 +80,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "and\n" +
                     "status = '0'\n" +
                     "order by\n" +
-                    "create_time desc"
+                    "create_time"
     )
     List<AuditChekedVo> auditDesginChek(@Param("id") String id);
 
@@ -112,7 +112,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "and\n" +
                     "status = '0'\n" +
                     "order by\n" +
-                    "create_time desc"
+                    "create_time"
     )
     List<AuditChekedVo> auditChangeDesginChek(@Param("id") String id);
 

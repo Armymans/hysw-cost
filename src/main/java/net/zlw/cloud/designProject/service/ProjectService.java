@@ -1747,6 +1747,8 @@ public class ProjectService {
                 projectVo.getBaseProject().setDesginStatus("1");
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
             }else{
+                //根据设计id删除之前的审核信息
+                this.deleteDesChangeAudit(projectVo.getDesignInfo().getId());
                 AuditInfo auditInfo = new AuditInfo();
                 String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
                 //编辑完成 写入互审人
