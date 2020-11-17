@@ -30,6 +30,7 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -75,6 +76,25 @@ public class BudgetingServiceImpl implements BudgetingService {
 
     @Resource
     private VisaChangeMapper visaChangeMapper;
+
+
+    @Value("${audit.wujiang.sheji.designHead}")
+    private String wjsjh;
+    @Value("${audit.wujiang.sheji.designManager}")
+    private String wjsjm;
+    @Value("${audit.wujiang.zaojia.costHead}")
+    private String wjzjh;
+    @Value("${audit.wujiang.zaojia.costManager}")
+    private String wjzjm;
+
+    @Value("${audit.wuhu.sheji.designHead}")
+    private String whsjh;
+    @Value("${audit.wuhu.sheji.designManager}")
+    private String whsjm;
+    @Value("${audit.wuhu.zaojia.costHead}")
+    private String whzjh;
+    @Value("${audit.wuhu.zaojia.costManager}")
+    private String whzjm;
 
 
     @Override
@@ -405,12 +425,25 @@ public class BudgetingServiceImpl implements BudgetingService {
                         twoBatch.setAuditResult("0");
                         twoBatch.setAuditType("1");
                         //上级领导
+//                        Example example1 = new Example(MemberManage.class);
+//                        Example.Criteria c = example1.createCriteria();
+//                        c.andEqualTo("depId","2");
+//                        c.andEqualTo("depAdmin","1");
+//                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+                        String founderId = budgeting.getFounderId();
                         Example example1 = new Example(MemberManage.class);
-                        Example.Criteria c = example1.createCriteria();
-                        c.andEqualTo("depId","2");
-                        c.andEqualTo("depAdmin","1");
+                        Example.Criteria cc = example1.createCriteria();
+                        cc.andEqualTo("id",founderId);
                         MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                        twoBatch.setAuditorId(memberManage.getId());
+                        //1芜湖
+                        if (memberManage.getWorkType().equals("1")){
+                            twoBatch.setAuditorId(whzjh);
+                            //吴江
+                        }else if (memberManage.getWorkType().equals("2")){
+                            twoBatch.setAuditorId(wjzjh);
+                        }
+
                         twoBatch.setStatus("0");
                         twoBatch.setCreateTime(sim.format(new Date()));
                         //二审添加
@@ -424,28 +457,35 @@ public class BudgetingServiceImpl implements BudgetingService {
                         auditInfo.setAuditTime(sim.format(new Date()));
                         auditInfo.setUpdateTime(sim.format(new Date()));
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                        //判断是否需要三审
+                        //添加三审
                         Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
-                        if (budgeting.getAmountCost().compareTo(new BigDecimal("8000000.00"))>=0){
+
                             AuditInfo auditInfo1 = new AuditInfo();
                             auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
                             auditInfo1.setBaseProjectId(s);
                             auditInfo1.setAuditResult("0");
                             auditInfo1.setAuditType("4");
-                            Example example1 = new Example(MemberManage.class);
-                            Example.Criteria c = example1.createCriteria();
-                            c.andEqualTo("memberRoleId","2");
-                            MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                            auditInfo1.setAuditorId(memberManage.getId());
+//                            Example example1 = new Example(MemberManage.class);
+//                            Example.Criteria c = example1.createCriteria();
+//                            c.andEqualTo("memberRoleId","2");
+//                            MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        String founderId = budgeting.getFounderId();
+                        Example example1 = new Example(MemberManage.class);
+                        Example.Criteria cc = example1.createCriteria();
+                        cc.andEqualTo("id",founderId);
+                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        //1芜湖
+                        if (memberManage.getWorkType().equals("1")){
+                            auditInfo1.setAuditorId(whzjm);
+                            //吴江
+                        }else if (memberManage.getWorkType().equals("2")){
+                            auditInfo1.setAuditorId(wjzjm);
+                        }
+//                            auditInfo1.setAuditorId(memberManage.getId());
                             auditInfo1.setStatus("0");
                             auditInfo1.setCreateTime(sim.format(new Date()));
                             auditInfoDao.insertSelective(auditInfo1);
-                        }else{
-                            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
-                            //设置为已完成
-                            baseProject.setBudgetStatus("4");
-                            baseProjectDao.updateByPrimaryKeySelective(baseProject);
-                        }
+
                         //三审通过
                     }else if(auditInfo.getAuditResult().equals("0") && auditInfo.getAuditType().equals("4")){
                         auditInfo.setAuditResult("1");
@@ -560,7 +600,13 @@ public class BudgetingServiceImpl implements BudgetingService {
         //待审核
         if (pageBVo.getBudgetingStatus().equals("1")){
             List<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos;
-            return budgetingListVoPageInfo;
+            ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
+            for (BudgetingListVo budgetingListVo : budgetingListVoPageInfo) {
+                if (!budgetingListVos4.contains(budgetingListVo)){
+                    budgetingListVos4.add(budgetingListVo);
+                }
+            }
+            return budgetingListVos4;
         }
 //        //处理中
         if (pageBVo.getBudgetingStatus().equals("2")){
