@@ -63,11 +63,11 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     ") auditResult,\n" +
                     "(case audit_type\n" +
                     "when '0' then '互审'\n" +
-                    "when '1' then '上级审核'\n" +
-                    "when '2' then '变更一审'\n" +
-                    "when '3' then '变更二审'\n" +
-                    "when '4' then '三审'\n" +
-                    "when '5' then '变更三审'\n" +
+                    "when '1' then '上级领导审核'\n" +
+                    "when '2' then '变更互审'\n" +
+                    "when '3' then '变更上级领导审核'\n" +
+                    "when '4' then '部门主管审核'\n" +
+                    "when '5' then '变更部门主管审核'\n" +
                     "end\n" +
                     ") auditType,\n" +
                     "(select member_name from member_manage where id = auditor_id)  auditor,\n" +
@@ -95,11 +95,11 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     ") auditResult,\n" +
                     "(case audit_type\n" +
                     "when '0' then '互审'\n" +
-                    "when '1' then '上级审核'\n" +
-                    "when '2' then '变更一审'\n" +
-                    "when '3' then '变更二审'\n" +
-                    "when '4' then '三审'\n" +
-                    "when '5' then '变更三审'\n" +
+                    "when '1' then '上级领导审核'\n" +
+                    "when '2' then '变更互审'\n" +
+                    "when '3' then '变更上级领导审核'\n" +
+                    "when '4' then '部门主管审核'\n" +
+                    "when '5' then '变更部门主管审核'\n" +
                     "end\n" +
                     ") auditType,\n" +
                     "(select member_name from member_manage where id = auditor_id)  auditor,\n" +
