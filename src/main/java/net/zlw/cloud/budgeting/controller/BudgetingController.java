@@ -117,19 +117,22 @@ public class BudgetingController extends BaseController {
 
 
 
-                if (auditInfo.getAuditorId().equals(id) && auditInfo.getAuditResult().equals("0")){
-                    budgetingListVos.add(budgetingListVo);
+                if ( auditInfo.getAuditResult().equals("0")){
+                    if(auditInfo.getAuditorId().equals(id) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308") || budgetingListVo.getFounderId().equals(id)){
+
+                        budgetingListVos.add(budgetingListVo);
+                    }
                 }
             }
             //处理中
             if (budgetingListVo.getBudgetStatus()!=null && budgetingListVo.getBudgetStatus().equals("处理中")){
-                if (budgetingListVo.getFounderId().equals(getLoginUser().getId()) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
+                if (budgetingListVo.getFounderId().equals(getLoginUser().getId())){
                     budgetingListVos1.add(budgetingListVo);
                 }
             }
             //未通过
             if (budgetingListVo.getAuditResult()!=null && budgetingListVo.getAuditResult().equals("2")){
-                if (budgetingListVo.getFounderId().equals(getLoginUser().getId()) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
+                if (budgetingListVo.getFounderId().equals(getLoginUser().getId())){
                     budgetingListVos2.add(budgetingListVo);
                 }
             }
@@ -173,7 +176,7 @@ public class BudgetingController extends BaseController {
         }
         ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
         for (BudgetingListVo budgetingListVo : list) {
-            if (budgetingListVo.getFounderId().equals(getLoginUser().getId()) || budgetingListVo.getFounderId().equals("user309") || budgetingListVo.getFounderId().equals("user308")){
+            if (budgetingListVo.getFounderId().equals(getLoginUser().getId())){
                 if (!budgetingListVos4.contains(budgetingListVo)){
                     budgetingListVos4.add(budgetingListVo);
                 }
