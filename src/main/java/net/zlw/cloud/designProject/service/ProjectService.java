@@ -1731,6 +1731,12 @@ public class ProjectService {
         //todo loginUser.getId(); loginUser.getCompanyId();
         String loginUserId = loginUser.getId();
         String companyId = loginUser.getCompanyId();
+
+        Example change = new Example(DesignChangeInfo.class);
+        Example.Criteria changec = change.createCriteria();
+        changec.andEqualTo("designInfoId",projectVo.getDesignInfo().getId());
+        changec.andEqualTo("status","0");
+
         //如果按钮状态为1 说明点击的是提交
         if("1".equals(projectVo.getBaseProject().getOrsubmit())){
             //如果提交人为空 为空说明是未通过
@@ -1746,6 +1752,14 @@ public class ProjectService {
                 //修改基本状态 未通过重新变为待审核
                 projectVo.getBaseProject().setDesginStatus("1");
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
+
+                //将之前的设计变更信息设为不可用
+                DesignChangeInfo designChangeInfo = designChangeInfoMapper.selectOneByExample(change);
+                if(designChangeInfo!=null){
+                    designChangeInfo.setStatus("1"); //将该条数据删除
+                    designChangeInfoMapper.updateByPrimaryKeySelective(designChangeInfo);
+                }
+
             }else{
                 //根据设计id删除之前的审核信息
                 this.deleteDesChangeAudit(projectVo.getDesignInfo().getId());
@@ -1766,6 +1780,12 @@ public class ProjectService {
                 auditInfoDao.insert(auditInfo);
                 //审核状态从出图中变为待审核
                 projectVo.getBaseProject().setDesginStatus("1");
+                //将之前的设计变更信息设为不可用
+                DesignChangeInfo designChangeInfo = designChangeInfoMapper.selectOneByExample(change);
+                if(designChangeInfo!=null){
+                    designChangeInfo.setStatus("1"); //将该条数据删除
+                    designChangeInfoMapper.updateByPrimaryKeySelective(designChangeInfo);
+                }
             }
         }else{
             //如果不为1 则为保存 状态依旧是出图中
