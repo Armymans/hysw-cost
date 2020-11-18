@@ -36,6 +36,7 @@ public class TrackApplicationInfoController extends BaseController {
 //    @PostMapping("/track/selectList")
     @RequestMapping(value = "/track/selectList",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectTrackList(PageVo pageVo){
+        //todo getLoginUser().getId()
         pageVo.setUid(getLoginUser().getId());
         PageInfo<ReturnTrackVo> pageInfo = trackApplicationInfoService.selectTrackList(pageVo);
         return RestUtil.page(pageInfo);
@@ -75,7 +76,13 @@ public class TrackApplicationInfoController extends BaseController {
 //    @PostMapping("/track/batchReview")
     @RequestMapping(value = "/track/batchReview",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo){
-        trackApplicationInfoService.batchReview(batchReviewVo);
+        String[] split = batchReviewVo.getBatchAll().split(",");
+        for (String s : split) {
+            if(s!=null){
+                batchReviewVo.setBatchAll(s);
+                trackApplicationInfoService.batchReview(batchReviewVo,getLoginUser());
+            }
+        }
         return RestUtil.success("审核完毕");
     }
     //添加跟踪审计

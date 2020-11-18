@@ -84,11 +84,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     ||whzjm.equals(pageVo.getUid())){
                 //如果为部门领导查看所有
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
-                pageInfo = new PageInfo<>(returnTrackVos1);
+                pageInfo = new PageInfo<>(returnTrackVos);
             }else{
                 //普通员工则根据创建人查看
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
-                pageInfo = new PageInfo<>(returnTrackVos1);
+                pageInfo = new PageInfo<>(returnTrackVos);
             }
         }
 
@@ -96,11 +96,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         //但是进行中的和已完成按钮除查看只有领导和创建人可操作
         if("3".equals(pageVo.getTrackStatus())||"5".equals(pageVo.getTrackStatus())){
             List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
-            pageInfo = new PageInfo<>(returnTrackVos1);
+            pageInfo = new PageInfo<>(returnTrackVos);
         }else{
             //全部，未提交和未通过谁创建谁看到
             List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
-            pageInfo = new PageInfo<>(returnTrackVos1);
+            pageInfo = new PageInfo<>(returnTrackVos);
         }
 
         return pageInfo;
@@ -177,60 +177,114 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     }
 
     @Override
-    public void batchReview(BatchReviewVo batchReviewVo) {
-        String[] split = batchReviewVo.getBatchAll().split(",");
-        if (split != null) {
-            for (String s : split) {
-                Example example = new Example(AuditInfo.class);
-                example.createCriteria().andEqualTo("baseProjectId", s);
-                //跟踪审计审核
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+    public void batchReview(BatchReviewVo batchReviewVo,UserInfo userInfo) {
+        //获取当前用户id
+        String userId = userInfo.getId();
+        //获取当前公司id
+        String companyId = userInfo.getCompanyId();
+        //获取当前登陆人信息
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        //根据主键查询
+        TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(batchReviewVo.getBatchAll());
 
-                TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(s);
-                String baseProjectId = trackAuditInfo.getBaseProjectId();
+        Example example = new Example(AuditInfo.class);
+        example.createCriteria().andEqualTo("baseProjectId",batchReviewVo.getBatchAll());
+        //跟踪审计审核
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+
+
+        String baseProjectId = trackAuditInfo.getBaseProjectId();
 //                Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
 //                String baseProjectId = budgeting.getBaseProjectId();
-                System.err.println(baseProjectId);
-
-                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
-                if (!auditInfo.getAuditResult().equals("1")) {
-                    auditInfo.setAuditResult(batchReviewVo.getAuditResult());
-                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-                    SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    auditInfo.setAuditTime(sim.format(new Date()));
-                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                    if (batchReviewVo.getAuditResult().equals("1")) {
-                        baseProject.setTrackStatus("3");
-                    } else if (batchReviewVo.getAuditResult().equals("2")) {
-                        baseProject.setTrackStatus("4");
-                    }
-                }
-                baseProjectDao.updateByPrimaryKeySelective(baseProject);
-                Example example1 = new Example(TrackMonthly.class);
-                example1.createCriteria().andEqualTo("trackId", s);
-                List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
-                if (trackMonthlies != null) {
-                    for (TrackMonthly trackMonthly : trackMonthlies) {
-                        Example example2 = new Example(AuditInfo.class);
-                        example2.createCriteria().andEqualTo("baseProjectId", trackMonthly.getId());
-//                        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example2);
-
-                        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
-                        for (AuditInfo info : auditInfos) {
-                            if (!info.getAuditResult().equals("1")) {
-                                info.setAuditResult(batchReviewVo.getAuditResult());
-                                info.setAuditOpinion(batchReviewVo.getAuditOpinion());
-                                info.setAuditTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-                                auditInfoDao.updateByPrimaryKeySelective(info);
-                            }
-                        }
+        System.err.println(baseProjectId);
 
 
-                    }
-                }
-
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
+        if (!auditInfo.getAuditResult().equals("1")) {
+            auditInfo.setAuditResult(batchReviewVo.getAuditResult());
+            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            auditInfo.setAuditTime(sim.format(new Date()));
+            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+            if (batchReviewVo.getAuditResult().equals("1")) {
+                baseProject.setTrackStatus("3");
+            } else if (batchReviewVo.getAuditResult().equals("2")) {
+                baseProject.setTrackStatus("4");
             }
         }
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        Example example1 = new Example(TrackMonthly.class);
+        example1.createCriteria().andEqualTo("trackId",batchReviewVo.getBatchAll());
+        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+        if (trackMonthlies != null) {
+            for (TrackMonthly trackMonthly : trackMonthlies) {
+                Example example2 = new Example(AuditInfo.class);
+                example2.createCriteria().andEqualTo("baseProjectId", trackMonthly.getId());
+//                        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example2);
+
+                List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
+                for (AuditInfo info : auditInfos) {
+                    if (!info.getAuditResult().equals("1")) {
+                        info.setAuditResult(batchReviewVo.getAuditResult());
+                        info.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                        info.setAuditTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+                        auditInfoDao.updateByPrimaryKeySelective(info);
+                    }
+                }
+            }
+        }
+
+//        String[] split = batchReviewVo.getBatchAll().split(",");
+//        if (split != null) {
+//            for (String s : split) {
+//                Example example = new Example(AuditInfo.class);
+//                example.createCriteria().andEqualTo("baseProjectId", s);
+//                //跟踪审计审核
+//                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+//
+//                TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(s);
+//                String baseProjectId = trackAuditInfo.getBaseProjectId();
+////                Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+////                String baseProjectId = budgeting.getBaseProjectId();
+//                System.err.println(baseProjectId);
+//
+//
+//                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
+//                if (!auditInfo.getAuditResult().equals("1")) {
+//                    auditInfo.setAuditResult(batchReviewVo.getAuditResult());
+//                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+//                    SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                    auditInfo.setAuditTime(sim.format(new Date()));
+//                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+//                    if (batchReviewVo.getAuditResult().equals("1")) {
+//                        baseProject.setTrackStatus("3");
+//                    } else if (batchReviewVo.getAuditResult().equals("2")) {
+//                        baseProject.setTrackStatus("4");
+//                    }
+//                }
+//                baseProjectDao.updateByPrimaryKeySelective(baseProject);
+//                Example example1 = new Example(TrackMonthly.class);
+//                example1.createCriteria().andEqualTo("trackId", s);
+//                List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+//                if (trackMonthlies != null) {
+//                    for (TrackMonthly trackMonthly : trackMonthlies) {
+//                        Example example2 = new Example(AuditInfo.class);
+//                        example2.createCriteria().andEqualTo("baseProjectId", trackMonthly.getId());
+////                        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example2);
+//
+//                        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
+//                        for (AuditInfo info : auditInfos) {
+//                            if (!info.getAuditResult().equals("1")) {
+//                                info.setAuditResult(batchReviewVo.getAuditResult());
+//                                info.setAuditOpinion(batchReviewVo.getAuditOpinion());
+//                                info.setAuditTime(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+//                                auditInfoDao.updateByPrimaryKeySelective(info);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
     @Override

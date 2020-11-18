@@ -19,7 +19,7 @@ public interface TrackApplicationInfoService {
 
     void deleteById(String id);
 
-    void batchReview(BatchReviewVo id);
+    void batchReview(BatchReviewVo id,UserInfo userInfo);
 
     void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId);
 
