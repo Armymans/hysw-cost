@@ -25,6 +25,7 @@ import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -58,6 +59,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     @Autowired
     private FileInfoMapper fileInfoMapper;
 
+    @Value("${audit.wujiang.zaojia.costHead}")
+    private String wjzjh;  //吴江造价领导
+    @Value("${audit.wujiang.zaojia.costManager}")
+    private String wjzjm; //吴江造价经理
+
+    @Value("${audit.wuhu.zaojia.costHead}")
+    private String whzjh; //芜湖造价领导
+    @Value("${audit.wuhu.zaojia.costManager}")
+    private String whzjm; //吴江造价经理
 
     @Override
     public PageInfo<ReturnTrackVo> selectTrackList(PageVo pageVo) {
@@ -65,6 +75,44 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         PageHelper.startPage(pageVo.getPageNum(), pageVo.getPageSize());
         ArrayList<ReturnTrackVo> returnTrackVos1 = new ArrayList<>();
         PageInfo<ReturnTrackVo> pageInfo = new PageInfo<>();
+
+
+        //待审核领导看所有，部门主管也看所有，员工自己创建的（无互审）
+        if ("1".equals(pageVo.getTrackStatus())) {
+            //如果当前用户等于芜湖吴江部门主管.部门经理则 展示所有待审核信息
+            if(wjzjh.equals(pageVo.getUid()) ||wjzjm.equals(pageVo.getUid()) ||whzjh.equals(pageVo.getUid())
+                    ||whzjm.equals(pageVo.getUid())){
+
+            }else{
+                //普通员工则根据创建人查看
+                List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
+                for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                    //当前处理人
+                    Example example = new Example(AuditInfo.class);
+                    example.createCriteria().andEqualTo("baseProjectId", returnTrackVo.getId())
+                            .andEqualTo("auditResult", "0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    if (auditInfo != null) {
+                        if (auditInfo.getAuditorId() != null) {
+                            Example example1 = new Example(MemberManage.class);
+                            example1.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
+                            MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                            if (memberManage != null) {
+                                returnTrackVo.setCurrentHandler(memberManage.getMemberName());
+                            }
+                        }
+                    }
+
+                    if (!returnTrackVos1.contains(returnTrackVo)) {
+                        returnTrackVos1.add(returnTrackVo);
+                    }
+                }
+                pageInfo = new PageInfo<>(returnTrackVos1);
+            }
+        }
+
+
+
 
         if ("1".equals(pageVo.getTrackStatus()) || "4".equals(pageVo.getTrackStatus())) {
             List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
@@ -227,7 +275,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             if (userInfo != null) {
                 trackVo.getAuditInfo().setFounderId(userInfo.getId());
             }
-            trackVo.getAuditInfo().setFounderId("user312");
+            trackVo.getAuditInfo().setFounderId(userInfo.getId());
             trackVo.getAuditInfo().setStatus("0");
             trackAuditInfoDao.insertSelective(trackVo.getAuditInfo());
 
@@ -306,7 +354,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             criteria.andEqualTo("trackId", userInfo.getId());
         }
         // todo 待修改
-        criteria.andEqualTo("trackId", "user312");
+        criteria.andEqualTo("trackId", userInfo.getId());
         criteria.andEqualTo("status", "0");
 
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
@@ -379,6 +427,18 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         return trackMonthlies;
     }
 
+    // TODO 回显页面，新增页面月报显示
+    public List<TrackMonthly> findAllByTrackId2(String id) {
+        Example example1 = new Example(TrackMonthly.class);
+        Example.Criteria criteria = example1.createCriteria();
+
+        criteria.andEqualTo("trackId", id);
+        criteria.andEqualTo("status", "0");
+
+        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+        return trackMonthlies;
+    }
+
     // todo 查看页面，审核信息
     public List<AuditInfoVo> findAllAuditInfosByTrackId(String id) {
 //        Example example2 = new Example(AuditInfo.class);
@@ -388,7 +448,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         List<AuditInfoVo> allAuditInfosByTrackId = trackAuditInfoDao.findAllAuditInfosByTrackId(id);
 
         for (int i = 0; i < allAuditInfosByTrackId.size(); i++) {
-            allAuditInfosByTrackId.get(i).setAuditorId("第" + i + "次月报");
+            allAuditInfosByTrackId.get(i).setAuditWord("第" + i + "次月报");
         }
 
 //        for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId) {
@@ -401,6 +461,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         trackMonthly.setId(UUID.randomUUID().toString().replace("-", ""));
         trackMonthly.setCreateTime(simpleDateFormat.format(new Date()));
+        trackMonthly.setTrackId(trackMonthly.getCode());
+        trackMonthly.setFounderId(trackMonthly.getCode());
         trackMonthly.setTrackId(trackMonthly.getTrackId());
         trackMonthly.setStatus("0");
         trackMonthlyDao.insertSelective(trackMonthly);
