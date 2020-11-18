@@ -84,7 +84,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
-        loginUser = new UserInfo("user309",null,null,true);
+//        loginUser = new UserInfo("user309",null,null,true);
         List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
         ArrayList<AccountsVo> returnList = new ArrayList<>();
         for (AccountsVo accountsVo : list) {
