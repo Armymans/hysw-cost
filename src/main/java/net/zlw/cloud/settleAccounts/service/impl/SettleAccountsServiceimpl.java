@@ -204,41 +204,58 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser) {
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         System.err.println(baseAccountsVo.getInvestigationOfTheAmount());
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //添加上家送审
         System.out.println(baseAccountsVo);
-        baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
-        baseAccountsVo.getLastSettlementInfo().setBaseProjectId(baseProject.getId());
-        SimpleDateFormat simd = new SimpleDateFormat("yyyy-MM-dd");
-        baseAccountsVo.getLastSettlementInfo().setCreateTime(simd.format(new Date()));
-        baseAccountsVo.getLastSettlementInfo().setState("0");
-        baseAccountsVo.getLastSettlementInfo().setFouderId(loginUser.getId());
-        settlementInfoMapper.insertSelective(baseAccountsVo.getLastSettlementInfo());
+        if (baseAccountsVo.getSumbitNameUp() != null){
+            baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
+            baseAccountsVo.getLastSettlementInfo().setBaseProjectId(baseProject.getId());
+            baseAccountsVo.getLastSettlementInfo().setCreateTime(data);
+            baseAccountsVo.getLastSettlementInfo().setState("0");
+            baseAccountsVo.getLastSettlementInfo().setFouderId(loginUser.getId());
+            baseAccountsVo.getLastSettlementInfo().setRemark(baseAccountsVo.getRemarkUp());
+            baseAccountsVo.getLastSettlementInfo().setSumbitName(baseAccountsVo.getSumbitNameUp());
+            settlementInfoMapper.insertSelective(baseAccountsVo.getLastSettlementInfo());
+        }
         //添加勘察金额
-        baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-",""));
-        baseAccountsVo.getInvestigationOfTheAmount().setBaseProjectId(baseProject.getId());
-        baseAccountsVo.getInvestigationOfTheAmount().setCreateTime(simd.format(new Date()));
-        baseAccountsVo.getInvestigationOfTheAmount().setDelFlag("0");
-        baseAccountsVo.getInvestigationOfTheAmount().setFounderId(loginUser.getId());
-        investigationOfTheAmountDao.insertSelective(baseAccountsVo.getInvestigationOfTheAmount());
+        if (baseAccountsVo.getInvestigationOfTheAmount() != null){
+            baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-",""));
+            baseAccountsVo.getInvestigationOfTheAmount().setBaseProjectId(baseProject.getId());
+            baseAccountsVo.getInvestigationOfTheAmount().setCreateTime(data);
+            baseAccountsVo.getInvestigationOfTheAmount().setDelFlag("0");
+            baseAccountsVo.getInvestigationOfTheAmount().setFounderId(loginUser.getId());
+            investigationOfTheAmountDao.insertSelective(baseAccountsVo.getInvestigationOfTheAmount());
+        }
+
         //添加下家送审
-        baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
-        baseAccountsVo.getSettlementInfo().setBaseProjectId(baseProject.getId());
-        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
-        baseAccountsVo.getSettlementInfo().setCreateTime(sim.format(new Date()));
-        baseAccountsVo.getSettlementInfo().setState("0");
-        baseAccountsVo.getSettlementInfo().setFouderId(loginUser.getId());
-        settlementInfoMapper2.insertSelective(baseAccountsVo.getSettlementInfo());
+        if (baseAccountsVo.getSumbitMoneyDown() != null){
+            baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
+            baseAccountsVo.getSettlementInfo().setBaseProjectId(baseProject.getId());
+
+            baseAccountsVo.getSettlementInfo().setCreateTime(data);
+            if (baseAccountsVo.getLastSettlementInfo().getSumbitMoney() !=null){
+                baseAccountsVo.getSettlementInfo().setSumbitMoney(baseAccountsVo.getSumbitMoneyDown());
+            }else {
+                baseAccountsVo.getSettlementInfo().setSumbitMoney("0");
+            }
+            baseAccountsVo.getSettlementInfo().setSumbitName(baseAccountsVo.getSumbitNameDown());
+            baseAccountsVo.getSettlementInfo().setRemark(baseAccountsVo.getRemarkDown());
+            baseAccountsVo.getSettlementInfo().setState("0");
+            baseAccountsVo.getSettlementInfo().setFouderId(loginUser.getId());
+            settlementInfoMapper2.insertSelective(baseAccountsVo.getSettlementInfo());
+        }
+
         //添加上家结算送审
         baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-",""));
-        baseAccountsVo.getLastSettlementReview().setCreateTime(sim.format(new Date()));
+        baseAccountsVo.getLastSettlementReview().setCreateTime(data);
         baseAccountsVo.getLastSettlementReview().setDelFlag("0");
         baseAccountsVo.getLastSettlementReview().setBaseProjectId(baseProject.getId());
         baseAccountsVo.getLastSettlementReview().setFounderId(loginUser.getId());
         //添加下家结算送审
         baseAccountsVo.getSettlementAuditInformation().setId(UUID.randomUUID().toString().replace("-", ""));
-        baseAccountsVo.getSettlementAuditInformation().setCreateTime(sim.format(new Date()));
+        baseAccountsVo.getSettlementAuditInformation().setCreateTime(data);
         baseAccountsVo.getSettlementAuditInformation().setDelFlag("0");
         baseAccountsVo.getSettlementAuditInformation().setBaseProjectId(baseProject.getId());
         baseAccountsVo.getSettlementAuditInformation().setFounderId(loginUser.getId());
@@ -267,7 +284,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             auditInfo.setAuditType("0");
             auditInfo.setAuditorId(baseAccountsVo.getAuditId());
             auditInfo.setStatus("0");
-            auditInfo.setCreateTime(sim.format(new Date()));
+            auditInfo.setCreateTime(data);
             auditInfoDao.insertSelective(auditInfo);
             baseProject.setSettleAccountsStatus("1");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
@@ -356,6 +373,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //上家审核修改
         settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getLastSettlementInfo());
+
+        //判断decimal是否为空
+        if (baseAccountsVo.getSumbitMoneyDown() == null){
+            baseAccountsVo.setSumbitMoneyDown("0");
+        }
+        baseAccountsVo.getSettlementInfo().setSumbitMoney(baseAccountsVo.getSumbitMoneyDown());
         //下家审核修改
         settlementInfoMapper2.updateByPrimaryKeySelective( baseAccountsVo.getSettlementInfo());
         //勘察金额修改
