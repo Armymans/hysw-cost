@@ -2,6 +2,7 @@ package net.zlw.cloud.settleAccounts.service.impl;
 
 
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
@@ -25,6 +26,7 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -61,54 +63,83 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private FileInfoService fileInfoService;
 
 
+    @Value("${audit.wujiang.sheji.designHead}")
+    private String wjsjh;
+    @Value("${audit.wujiang.sheji.designManager}")
+    private String wjsjm;
+    @Value("${audit.wujiang.zaojia.costHead}")
+    private String wjzjh;
+    @Value("${audit.wujiang.zaojia.costManager}")
+    private String wjzjm;
+
+    @Value("${audit.wuhu.sheji.designHead}")
+    private String whsjh;
+    @Value("${audit.wuhu.sheji.designManager}")
+    private String whsjm;
+    @Value("${audit.wuhu.zaojia.costHead}")
+    private String whzjh;
+    @Value("${audit.wuhu.zaojia.costManager}")
+    private String whzjm;
+
+
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
+//        loginUser = new UserInfo("user309",null,null,true);
         List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
-        ArrayList<AccountsVo> accountsVos = new ArrayList<>();
+        ArrayList<AccountsVo> returnList = new ArrayList<>();
         for (AccountsVo accountsVo : list) {
-            if (accountsVo.getSumbitMoney() != null) {
-                if (!accountsVos.contains(accountsVo)) {
-                    accountsVos.add(accountsVo);
-                }
-            }
-        }
-        for (int i = 0; i < accountsVos.size(); i++) {
-            if (pageVo.getSettleAccountsStatus().equals("1")) {
-                //当前处理人
-                Example example1 = new Example(AuditInfo.class);
-                example1.createCriteria().andEqualTo("baseProjectId",accountsVos.get(i).getId())
-                                         .andEqualTo("auditResult","0");
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
-                if (auditInfo != null){
-                    if (auditInfo.getAuditorId() != null){
-                        Example example = new Example(MemberManage.class);
-                        example.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
-                        MemberManage memberManage = memberManageDao.selectOneByExample(example);
-                        if (memberManage != null) {
-                            accountsVos.get(i).setCurrentHandler(memberManage.getMemberName());
-                        }
+            //待审核
+            if (pageVo.getSettleAccountsStatus().equals("1")){
+                Example example = new Example(AuditInfo.class);
+                example.createCriteria().andEqualTo("baseProjectId",accountsVo.getAccountId())
+                        .andEqualTo("auditResult","0");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                if (auditInfo!=null){
+                    Example example1 = new Example(MemberManage.class);
+                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    if (memberManage !=null){
+                        accountsVo.setCurrentHandler(memberManage.getMemberName());
                     }
                 }
 
-
-                if (accountsVos.get(i).getAuditorId() != null) {
-                    if (!accountsVos.get(i).getAuditorId().equals(loginUser.getId())) {
-                        accountsVos.remove(i);
-                        i--;
-                    }
-                } else {
-                    accountsVos.remove(i);
-                    i--;
+                if (loginUser.getId().equals(accountsVo.getFounderId()) || whzjh.equals(accountsVo.getFounderId()) || whzjm.equals(accountsVo.getFounderId()) || wjzjh.equals(accountsVo.getFounderId()) || loginUser.getId().equals(accountsVo.getAuditorId())){
+                    returnList.add(accountsVo);
                 }
             }
-            if (pageVo.getSettleAccountsStatus().equals("3")) {
-                if (accountsVos.get(i).getFounderId() == null && !accountsVos.get(i).getFounderId().equals(loginUser.getId())) {
-                    accountsVos.remove(i);
-                    i--;
+            //处理中
+            if (pageVo.getSettleAccountsStatus().equals("2")){
+                if (loginUser.getId().equals(accountsVo.getFounderId())){
+                    returnList.add(accountsVo);
+                }
+            }
+            //未通过
+            if (pageVo.getSettleAccountsStatus().equals("3")){
+                if (loginUser.getId().equals(accountsVo.getFounderId())){
+                    returnList.add(accountsVo);
+                }
+            }
+            //待确认
+            if (pageVo.getSettleAccountsStatus().equals("4")){
+                returnList.add(accountsVo);
+            }
+            //已完成
+            if (pageVo.getSettleAccountsStatus().equals("5")){
+                returnList.add(accountsVo);
+            }
+            //全部
+            if (pageVo.getSettleAccountsStatus().equals("") || pageVo.getSettleAccountsStatus().equals("0")){
+                if (loginUser.getId().equals(accountsVo.getFounderId())){
+                    returnList.add(accountsVo);
                 }
             }
         }
-
+        ArrayList<AccountsVo> accountsVos = new ArrayList<>();
+        for (AccountsVo accountsVo : returnList) {
+            if (! accountsVos.contains(accountsVo)){
+                accountsVos.add(accountsVo);
+            }
+        }
         return accountsVos;
     }
 
@@ -173,41 +204,58 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser) {
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         System.err.println(baseAccountsVo.getInvestigationOfTheAmount());
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //添加上家送审
         System.out.println(baseAccountsVo);
-        baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
-        baseAccountsVo.getLastSettlementInfo().setBaseProjectId(baseProject.getId());
-        SimpleDateFormat simd = new SimpleDateFormat("yyyy-MM-dd");
-        baseAccountsVo.getLastSettlementInfo().setCreateTime(simd.format(new Date()));
-        baseAccountsVo.getLastSettlementInfo().setState("0");
-        baseAccountsVo.getLastSettlementInfo().setFouderId(loginUser.getId());
-        settlementInfoMapper.insertSelective(baseAccountsVo.getLastSettlementInfo());
+        if (baseAccountsVo.getSumbitNameUp() != null){
+            baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
+            baseAccountsVo.getLastSettlementInfo().setBaseProjectId(baseProject.getId());
+            baseAccountsVo.getLastSettlementInfo().setCreateTime(data);
+            baseAccountsVo.getLastSettlementInfo().setState("0");
+            baseAccountsVo.getLastSettlementInfo().setFouderId(loginUser.getId());
+            baseAccountsVo.getLastSettlementInfo().setRemark(baseAccountsVo.getRemarkUp());
+            baseAccountsVo.getLastSettlementInfo().setSumbitName(baseAccountsVo.getSumbitNameUp());
+            settlementInfoMapper.insertSelective(baseAccountsVo.getLastSettlementInfo());
+        }
         //添加勘察金额
-        baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-",""));
-        baseAccountsVo.getInvestigationOfTheAmount().setBaseProjectId(baseProject.getId());
-        baseAccountsVo.getInvestigationOfTheAmount().setCreateTime(simd.format(new Date()));
-        baseAccountsVo.getInvestigationOfTheAmount().setDelFlag("0");
-        baseAccountsVo.getInvestigationOfTheAmount().setFounderId(loginUser.getId());
-        investigationOfTheAmountDao.insertSelective(baseAccountsVo.getInvestigationOfTheAmount());
+        if (baseAccountsVo.getInvestigationOfTheAmount() != null){
+            baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-",""));
+            baseAccountsVo.getInvestigationOfTheAmount().setBaseProjectId(baseProject.getId());
+            baseAccountsVo.getInvestigationOfTheAmount().setCreateTime(data);
+            baseAccountsVo.getInvestigationOfTheAmount().setDelFlag("0");
+            baseAccountsVo.getInvestigationOfTheAmount().setFounderId(loginUser.getId());
+            investigationOfTheAmountDao.insertSelective(baseAccountsVo.getInvestigationOfTheAmount());
+        }
+
         //添加下家送审
-        baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
-        baseAccountsVo.getSettlementInfo().setBaseProjectId(baseProject.getId());
-        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
-        baseAccountsVo.getSettlementInfo().setCreateTime(sim.format(new Date()));
-        baseAccountsVo.getSettlementInfo().setState("0");
-        baseAccountsVo.getSettlementInfo().setFouderId(loginUser.getId());
-        settlementInfoMapper2.insertSelective(baseAccountsVo.getSettlementInfo());
+        if (baseAccountsVo.getSumbitMoneyDown() != null){
+            baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
+            baseAccountsVo.getSettlementInfo().setBaseProjectId(baseProject.getId());
+
+            baseAccountsVo.getSettlementInfo().setCreateTime(data);
+            if (baseAccountsVo.getLastSettlementInfo().getSumbitMoney() !=null){
+                baseAccountsVo.getSettlementInfo().setSumbitMoney(baseAccountsVo.getSumbitMoneyDown());
+            }else {
+                baseAccountsVo.getSettlementInfo().setSumbitMoney("0");
+            }
+            baseAccountsVo.getSettlementInfo().setSumbitName(baseAccountsVo.getSumbitNameDown());
+            baseAccountsVo.getSettlementInfo().setRemark(baseAccountsVo.getRemarkDown());
+            baseAccountsVo.getSettlementInfo().setState("0");
+            baseAccountsVo.getSettlementInfo().setFouderId(loginUser.getId());
+            settlementInfoMapper2.insertSelective(baseAccountsVo.getSettlementInfo());
+        }
+
         //添加上家结算送审
         baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-",""));
-        baseAccountsVo.getLastSettlementReview().setCreateTime(sim.format(new Date()));
+        baseAccountsVo.getLastSettlementReview().setCreateTime(data);
         baseAccountsVo.getLastSettlementReview().setDelFlag("0");
         baseAccountsVo.getLastSettlementReview().setBaseProjectId(baseProject.getId());
         baseAccountsVo.getLastSettlementReview().setFounderId(loginUser.getId());
         //添加下家结算送审
         baseAccountsVo.getSettlementAuditInformation().setId(UUID.randomUUID().toString().replace("-", ""));
-        baseAccountsVo.getSettlementAuditInformation().setCreateTime(sim.format(new Date()));
+        baseAccountsVo.getSettlementAuditInformation().setCreateTime(data);
         baseAccountsVo.getSettlementAuditInformation().setDelFlag("0");
         baseAccountsVo.getSettlementAuditInformation().setBaseProjectId(baseProject.getId());
         baseAccountsVo.getSettlementAuditInformation().setFounderId(loginUser.getId());
@@ -236,7 +284,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             auditInfo.setAuditType("0");
             auditInfo.setAuditorId(baseAccountsVo.getAuditId());
             auditInfo.setStatus("0");
-            auditInfo.setCreateTime(sim.format(new Date()));
+            auditInfo.setCreateTime(data);
             auditInfoDao.insertSelective(auditInfo);
             baseProject.setSettleAccountsStatus("1");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
@@ -325,6 +373,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //上家审核修改
         settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getLastSettlementInfo());
+
+        //判断decimal是否为空
+        if (baseAccountsVo.getSumbitMoneyDown() == null){
+            baseAccountsVo.setSumbitMoneyDown("0");
+        }
+        baseAccountsVo.getSettlementInfo().setSumbitMoney(baseAccountsVo.getSumbitMoneyDown());
         //下家审核修改
         settlementInfoMapper2.updateByPrimaryKeySelective( baseAccountsVo.getSettlementInfo());
         //勘察金额修改
@@ -348,7 +402,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 auditInfo.setBaseProjectId(baseAccountsVo.getSettlementAuditInformation().getId());
             }
             auditInfo.setAuditResult("0");
-            auditInfo.setAuditType("0");
+            if (baseProject.getSettleAccountsStatus().equals("2")){
+                auditInfo.setAuditType("0");
+            }else if(baseProject.getSettleAccountsStatus().equals("4")){
+                auditInfo.setAuditType("2");
+            }
             auditInfo.setAuditorId(baseAccountsVo.getAuditId());
             auditInfo.setStatus("0");
             SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
@@ -418,11 +476,22 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("1");
                     auditInfo1.setStatus("0");
+//                    Example example1 = new Example(MemberManage.class);
+//                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
+//
+//                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
+                    String founderId = settlementAuditInformation1.getFounderId();
                     Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
-
+                    Example.Criteria cc = example1.createCriteria();
+                    cc.andEqualTo("id",founderId);
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    auditInfo1.setAuditorId(memberManage.getId());
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjh);
+                    }else if(memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjh);
+                    }
+//                    auditInfo1.setAuditorId(memberManage.getId());
                     auditInfoDao.insertSelective(auditInfo1);
 
                 }else if(auditInfo.getAuditType().equals("1")){
@@ -432,6 +501,127 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     auditInfo.setAuditTime(format);
                     auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
+                    AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+                    auditInfo1.setBaseProjectId(audit);
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditType("4");
+                    auditInfo1.setStatus("0");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
+//                    Example example1 = new Example(MemberManage.class);
+//                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
+//
+//                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
+                    String founderId = settlementAuditInformation1.getFounderId();
+                    Example example1 = new Example(MemberManage.class);
+                    Example.Criteria cc = example1.createCriteria();
+                    cc.andEqualTo("id",founderId);
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjm);
+                    }else if(memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjm);
+                    }
+//                    auditInfo1.setAuditorId(memberManage.getId());
+                    auditInfoDao.insertSelective(auditInfo1);
+
+//                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
+//                    baseProject.setSettleAccountsStatus("5");
+//                    baseProject.setProgressPaymentStatus("6");
+//                    baseProject.setVisaStatus("6");
+//                    baseProject.setTrackStatus("5");
+//                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    //三审
+                }else if(auditInfo.getAuditType().equals("4")){
+                    auditInfo.setAuditResult("1");
+                    Date date = new Date();
+                    String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
+                    auditInfo.setAuditTime(format);
+                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
+                    baseProject.setSettleAccountsStatus("4");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    //待确认一审
+                }else if(auditInfo.getAuditType().equals("2")){
+                    auditInfo.setAuditResult("1");
+                    Date date = new Date();
+                    String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
+                    auditInfo.setAuditTime(format);
+                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
+                    AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+                    auditInfo1.setBaseProjectId(audit);
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditType("3");
+                    auditInfo1.setStatus("0");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
+//                    Example example1 = new Example(MemberManage.class);
+//                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
+//
+//                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
+                    String founderId = settlementAuditInformation1.getFounderId();
+                    Example example1 = new Example(MemberManage.class);
+                    Example.Criteria cc = example1.createCriteria();
+                    cc.andEqualTo("id",founderId);
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjh);
+                    }else if(memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjh);
+                    }
+//                    auditInfo1.setAuditorId(memberManage.getId());
+                    auditInfoDao.insertSelective(auditInfo1);
+                    //二审通过进三审
+                } else if(auditInfo.getAuditType().equals("3")){
+                    auditInfo.setAuditResult("1");
+                    Date date = new Date();
+                    String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
+                    auditInfo.setAuditTime(format);
+                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
+                    AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+                    auditInfo1.setBaseProjectId(audit);
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditType("5");
+                    auditInfo1.setStatus("0");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
+//                    Example example1 = new Example(MemberManage.class);
+//                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
+//
+//                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
+                    String founderId = settlementAuditInformation1.getFounderId();
+                    Example example1 = new Example(MemberManage.class);
+                    Example.Criteria cc = example1.createCriteria();
+                    cc.andEqualTo("id",founderId);
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjm);
+                    }else if(memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjm);
+                    }
+//                    auditInfo1.setAuditorId(memberManage.getId());
+                    auditInfoDao.insertSelective(auditInfo1);
+                    //三审通过已完成
+                }else if(auditInfo.getAuditType().equals("5")){
+                    auditInfo.setAuditResult("1");
+                    Date date = new Date();
+                    String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
+                    auditInfo.setAuditTime(format);
+                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
                     baseProject.setSettleAccountsStatus("5");
                     baseProject.setProgressPaymentStatus("6");

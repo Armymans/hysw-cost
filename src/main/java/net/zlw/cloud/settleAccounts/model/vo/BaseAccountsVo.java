@@ -9,8 +9,6 @@ import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.settleAccounts.model.SettlementInfo;
 
-import java.math.BigDecimal;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,6 +25,13 @@ public class BaseAccountsVo {
     private String auditNumber;
     private String auditType;
     private String checkAudit;
+    //上家结算送审
+    private String sumbitNameUp;
+    private String remarkUp;
+    //下家结算送审
+    private String sumbitMoneyDown;
+    private String sumbitNameDown;
+    private String remarkDown;
 
 
 
