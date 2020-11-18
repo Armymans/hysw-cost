@@ -96,7 +96,7 @@ public class BudgetingController extends BaseController {
         PageHelper.startPage(pageBVo.getPageNum(),999);
         List<BudgetingListVo> list = budgetingService.findBudgetingAll(pageBVo,sid);
         PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);
-        return net.zlw.cloud.common.RestUtil.page(budgetingListVoPageInfo);
+        return RestUtil.page(budgetingListVoPageInfo);
     }
     //预算合并查询
     @RequestMapping(value = "/budgeting/unionQuery",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)

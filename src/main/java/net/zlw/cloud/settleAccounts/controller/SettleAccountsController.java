@@ -26,7 +26,7 @@ public class SettleAccountsController extends BaseController {
 //    @PostMapping("/findAllAccounts")
     @RequestMapping(value = "/accounts/findAllAccounts",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllAccounts(PageVo pageVo){
-        PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
+        PageHelper.startPage(pageVo.getPageNum(),999);
         List<AccountsVo> allAccounts = settleAccountsService.findAllAccounts(pageVo,getLoginUser());
         PageInfo<AccountsVo> accountsVoPageInfo = new PageInfo<>(allAccounts);
         return RestUtil.page(accountsVoPageInfo);
