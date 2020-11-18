@@ -33,6 +33,8 @@ public class BaseAccountsVo {
     private String sumbitNameDown;
     private String remarkDown;
 
+    private String showHidden;
+
 
 
 

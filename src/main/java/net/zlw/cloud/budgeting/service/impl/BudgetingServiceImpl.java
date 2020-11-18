@@ -544,8 +544,6 @@ public class BudgetingServiceImpl implements BudgetingService {
     public List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo, String id) {
 
         List<BudgetingListVo> list = budgetingDao.findAllBudgeting(pageBVo);
-
-
         //待审核
         List<BudgetingListVo> budgetingListVos = new ArrayList<>();
         //处理中
@@ -569,7 +567,6 @@ public class BudgetingServiceImpl implements BudgetingService {
                 if (memberManage !=null){
                     budgetingListVo.setCurrentHandler(memberManage.getMemberName());
                 }
-
 
                 if ( auditInfo.getAuditResult().equals("0")){
 
