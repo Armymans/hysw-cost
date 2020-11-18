@@ -82,77 +82,67 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             //如果当前用户等于芜湖吴江部门主管.部门经理则 展示所有待审核信息
             if(wjzjh.equals(pageVo.getUid()) ||wjzjm.equals(pageVo.getUid()) ||whzjh.equals(pageVo.getUid())
                     ||whzjm.equals(pageVo.getUid())){
-
+                //如果为部门领导查看所有
+                List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
+                pageInfo = new PageInfo<>(returnTrackVos1);
             }else{
                 //普通员工则根据创建人查看
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
-                for (ReturnTrackVo returnTrackVo : returnTrackVos) {
-                    //当前处理人
-                    Example example = new Example(AuditInfo.class);
-                    example.createCriteria().andEqualTo("baseProjectId", returnTrackVo.getId())
-                            .andEqualTo("auditResult", "0");
-                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                    if (auditInfo != null) {
-                        if (auditInfo.getAuditorId() != null) {
-                            Example example1 = new Example(MemberManage.class);
-                            example1.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
-                            MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                            if (memberManage != null) {
-                                returnTrackVo.setCurrentHandler(memberManage.getMemberName());
-                            }
-                        }
-                    }
-
-                    if (!returnTrackVos1.contains(returnTrackVo)) {
-                        returnTrackVos1.add(returnTrackVo);
-                    }
-                }
                 pageInfo = new PageInfo<>(returnTrackVos1);
             }
         }
 
-
-
-
-        if ("1".equals(pageVo.getTrackStatus()) || "4".equals(pageVo.getTrackStatus())) {
-            List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
-            for (ReturnTrackVo returnTrackVo : returnTrackVos) {
-                //当前处理人
-                Example example = new Example(AuditInfo.class);
-                example.createCriteria().andEqualTo("baseProjectId", returnTrackVo.getId())
-                        .andEqualTo("auditResult", "0");
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                if (auditInfo != null) {
-                    if (auditInfo.getAuditorId() != null) {
-                        Example example1 = new Example(MemberManage.class);
-                        example1.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
-                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                        if (memberManage != null) {
-                            returnTrackVo.setCurrentHandler(memberManage.getMemberName());
-                        }
-                    }
-                }
-
-
-                if (!returnTrackVos1.contains(returnTrackVo)) {
-                    returnTrackVos1.add(returnTrackVo);
-                }
-            }
-            pageInfo = new PageInfo<>(returnTrackVos1);
-
-        } else {
-
+        //进行中，已完成不分层级，都能看到
+        //但是进行中的和已完成按钮除查看只有领导和创建人可操作
+        if("3".equals(pageVo.getTrackStatus())||"5".equals(pageVo.getTrackStatus())){
             List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
-            for (ReturnTrackVo returnTrackVo : returnTrackVos) {
-                if (!returnTrackVos1.contains(returnTrackVo)) {
-                    returnTrackVos1.add(returnTrackVo);
-                }
-            }
             pageInfo = new PageInfo<>(returnTrackVos1);
-
+        }else{
+            //全部，未提交和未通过谁创建谁看到
+            List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
+            pageInfo = new PageInfo<>(returnTrackVos1);
         }
 
         return pageInfo;
+//        if ("1".equals(pageVo.getTrackStatus()) || "4".equals(pageVo.getTrackStatus())) {
+//            List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
+//            for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+//                //当前处理人
+//                Example example = new Example(AuditInfo.class);
+//                example.createCriteria().andEqualTo("baseProjectId", returnTrackVo.getId())
+//                        .andEqualTo("auditResult", "0");
+//                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+//                if (auditInfo != null) {
+//                    if (auditInfo.getAuditorId() != null) {
+//                        Example example1 = new Example(MemberManage.class);
+//                        example1.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
+//                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+//                        if (memberManage != null) {
+//                            returnTrackVo.setCurrentHandler(memberManage.getMemberName());
+//                        }
+//                    }
+//                }
+//
+//
+//                if (!returnTrackVos1.contains(returnTrackVo)) {
+//                    returnTrackVos1.add(returnTrackVo);
+//                }
+//            }
+//            pageInfo = new PageInfo<>(returnTrackVos1);
+//
+//        } else {
+//
+//            List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
+//            for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+//                if (!returnTrackVos1.contains(returnTrackVo)) {
+//                    returnTrackVos1.add(returnTrackVo);
+//                }
+//            }
+//            pageInfo = new PageInfo<>(returnTrackVos1);
+//
+//        }
+//
+//        return pageInfo;
     }
 
     // 删除审计月报
