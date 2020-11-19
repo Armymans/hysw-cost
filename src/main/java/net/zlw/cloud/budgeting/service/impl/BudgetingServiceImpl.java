@@ -338,6 +338,8 @@ public class BudgetingServiceImpl implements BudgetingService {
                 for (AuditInfo info : auditInfos) {
                     if (info.getAuditResult().equals("2")){
                         info.setAuditResult("0");
+                        info.setAuditOpinion("");
+                        info.setAuditTime("");
                         baseProject.setBudgetStatus("1");
                         projectDao.updateByPrimaryKeySelective(baseProject);
                         auditInfoDao.updateByPrimaryKeySelective(info);
@@ -345,7 +347,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
             }
         }else{
-            baseProject.setBudgetStatus("2");
+
             projectDao.updateByPrimaryKeySelective(baseProject);
             budgetingDao.updateByPrimaryKeySelective(budgeting);
         }
