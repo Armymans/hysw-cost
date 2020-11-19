@@ -671,11 +671,26 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             newMonthly.andEqualTo("status", "0");
             List<TrackMonthly> trackMonthlyNew = trackMonthlyDao.selectByExample(exa);
             boolean booleans = true;
+            System.out.println(trackMonthlyNew);
+            System.out.println(trackMonthlyNew);
+            System.out.println(trackMonthlyNew);
+            System.out.println(trackMonthlyNew);
+            System.out.println(trackMonthlyNew);
+
+            System.out.println("123---------");
             for (TrackMonthly trackMonthly : trackMonthlyNew) {
+                System.out.println(booleans);
+                System.out.println(booleans);
+                System.out.println(booleans);
                 Example newAudid = new Example(AuditInfo.class);
                 Example.Criteria newAudidc = newAudid.createCriteria();
                 newAudidc.andEqualTo("baseProjectId",trackMonthly.getId());
                 List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+                System.out.println(auditInfos);
+                System.out.println(auditInfos);
+                System.out.println(auditInfos);
+                System.out.println(auditInfos);
+                System.out.println(auditInfos);
                 if (auditInfos.size()>0){
                     booleans= false;
                 }
@@ -684,15 +699,6 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
             if(auditInfo==null){ //未提交 进行中
                 if (booleans){ //未提交
-                    System.out.println(booleans);
-                    System.out.println(booleans);
-                    System.out.println(booleans);
-                    System.out.println(booleans);
-                    System.out.println(booleans);
-                    System.out.println(booleans);
-                    System.out.println(booleans);
-                    System.out.println(booleans);
-
                     //存入审核表
                     MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
                     AuditInfo auditInfo1 = new AuditInfo();
@@ -711,13 +717,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     }
                     auditInfoDao.insertSelective(auditInfo1);
                 }else{ //进行中
-                    Example OldEx = new Example(TrackMonthly.class);
-                    Example.Criteria oldMonthly = OldEx.createCriteria();
-                    oldMonthly.andEqualTo("trackId",userInfo.getId());
-                    oldMonthly.andEqualTo("status", "0");
-                    TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOneByExample(OldEx);
-                    if(trackMonthlyOld!=null){
-                        trackMonthlyOld.setTrackId(trackVo.getAuditInfo().getId());
+                    TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(trackVo.getAuditInfo().getId());
                         trackMonthlyOld.setAuditCount(trackMonthlyNew.size()+1+"");
                         trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
 
@@ -738,9 +738,6 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                             auditInfo1.setAuditorId(wjzjh);
                         }
                         auditInfoDao.insertSelective(auditInfo1);
-                    }else{
-                        throw new Exception("请上传月报");
-                    }
                 }
             }else{
                 //未通过
@@ -749,18 +746,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 trackMonthly.setStatus("1");
                 trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
 
-                Example OldEx = new Example(TrackMonthly.class);
-                Example.Criteria oldMonthly = OldEx.createCriteria();
-                oldMonthly.andEqualTo("trackId",userInfo.getId());
-                oldMonthly.andEqualTo("status", "0");
-                TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOneByExample(OldEx);
-                if(trackMonthlyOld!=null){
-                    trackMonthlyOld.setTrackId(trackVo.getAuditInfo().getId());
-                    trackMonthlyOld.setAuditCount(trackMonthlyNew.size()+1+"");
-                    trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
-                }else{
-                    throw new Exception("请上传月报");
-                }
+                TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(trackVo.getAuditInfo().getId());
+                trackMonthlyOld.setTrackId(trackVo.getAuditInfo().getId());
+                trackMonthlyOld.setAuditCount(trackMonthlyNew.size()+1+"");
+                trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
 
                 auditInfo.setAuditResult("0");
                 auditInfo.setAuditOpinion(null);

@@ -28,4 +28,9 @@ public interface TrackMonthlyDao extends Mapper<TrackMonthly> {
             "SELECT * FROM track_monthly WHERE track_id = #{id} and `status` = '0'"
     )
     List<TrackMonthly> selectByTrickId2(@Param("id") String id);
+
+    @Select(
+            "SELECT * FROM track_monthly WHERE `status` = '0'  and track_id = #{id} ORDER BY create_time DESC limit 1"
+    )
+    TrackMonthly selectOne1(@Param("id") String id);
 }
