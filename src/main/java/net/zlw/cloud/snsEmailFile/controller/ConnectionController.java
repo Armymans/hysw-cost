@@ -1,5 +1,11 @@
 package net.zlw.cloud.snsEmailFile.controller;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,6 +18,9 @@ import java.net.URL;
  * @Description 调用外部接口 连接
  * @Date 2020/11/18 14:01
  **/
+
+@Controller
+@RequestMapping("/connection")
 public class ConnectionController {
 
     public static void interfaceUtil(String path,String data) {
@@ -56,9 +65,17 @@ public class ConnectionController {
         }
     }
 
-    public static void main(String[] args) {
-        interfaceUtil("https://caigou.huayanwater.com/yunbidding/index/platsysinfo!getLogoAbout.action?siteFlag=false", "");
 
+
+    public static void main(String[] args) {
+//        interfaceUtil("https://caigou.huayanwater.com/yunbidding/index/platsysinfo!getLogoAbout.action?siteFlag=false", "");
+        interfaceUtil("http://10.61.96.48:8080/hysw/api/messageNotifcation/selectfindAll?pageNum=1&pageSize=15&startTime=&endTime=&keyWord=", "");
+
+    }
+
+    @RequestMapping(value = "/test")
+    public void test(){
+        interfaceUtil("http://10.61.96.48:8080/hysw/api/messageNotifcation/selectfindAll?pageNum=1&pageSize=15&startTime=&endTime=&keyWord=", "");
     }
 
 }

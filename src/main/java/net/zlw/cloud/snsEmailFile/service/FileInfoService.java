@@ -86,4 +86,12 @@ public class FileInfoService {
     public void deleteOldFileList(String key) {
         fileInfoMapper.deleteOldFileList(key);
     }
+
+    public void insert(FileInfo fileInfo) {
+        try {
+            fileInfoMapper.insert(fileInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
