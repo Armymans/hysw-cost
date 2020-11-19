@@ -68,6 +68,7 @@ public class BudgetingController extends BaseController {
     //预算到账
     @RequestMapping(value = "/budgeting/intoAccount",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> intoAccount(@RequestParam(name = "ids") String ids){
+
         try {
             budgetingService.intoAccount(ids,getLoginUser().getId());
         } catch (Exception e) {
@@ -136,6 +137,13 @@ public class BudgetingController extends BaseController {
         budgetingService.deleteBudgetingFile(id);
         return RestUtil.success();
     }
+    //编辑CEA编号
+    @RequestMapping(value = "/budgeting/updateCEA",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> updateCEA(@RequestParam(name = "baseId") String baseId,@RequestParam(name = "ceaNum") String ceaNum){
+        budgetingService.updateCEA(baseId,ceaNum);
+        return RestUtil.success();
+    }
+
 
 }
 

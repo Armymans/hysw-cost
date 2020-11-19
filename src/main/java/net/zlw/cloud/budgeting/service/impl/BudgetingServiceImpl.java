@@ -524,10 +524,12 @@ public class BudgetingServiceImpl implements BudgetingService {
 
     @Override
     public void intoAccount(String s1, String ids) {
-        String[] split = ids.split(",");
+        String[] split = s1.split(",");
         for (String s : split) {
-            if (s.equals(ids) || ids.equals(whzjh) || ids.equals(whzjm) || ids.equals(wjzjh)){
-
+            Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+            String founderId = budgeting.getFounderId();
+            if (founderId.equals(ids) || ids.equals(whzjh) || ids.equals(whzjm) || ids.equals(wjzjh)){
+                System.err.println("xxxxxxx");
             }else{
                 throw new RuntimeException("您没有权限进行此操作,请联系编制人或领导进行操作");
             }
@@ -828,6 +830,13 @@ public class BudgetingServiceImpl implements BudgetingService {
             fileInfo.setStatus("1");
             fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
         }
+    }
+
+    @Override
+    public void updateCEA(String baseId, String ceaNum) {
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+        baseProject.setCeaNum(ceaNum);
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
     }
 
     @Override

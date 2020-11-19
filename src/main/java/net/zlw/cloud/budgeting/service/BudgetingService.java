@@ -33,4 +33,6 @@ public interface BudgetingService {
     void deleteBudgeting(String id);
 
     void deleteBudgetingFile(String id);
+
+    void updateCEA(String baseId, String ceaNum);
 }
