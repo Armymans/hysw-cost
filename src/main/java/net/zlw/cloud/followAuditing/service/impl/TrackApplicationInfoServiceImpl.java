@@ -684,6 +684,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
             if(auditInfo==null){ //未提交 进行中
                 if (booleans){ //未提交
+                    System.out.println(booleans);
+                    System.out.println(booleans);
+                    System.out.println(booleans);
+                    System.out.println(booleans);
+                    System.out.println(booleans);
+                    System.out.println(booleans);
+                    System.out.println(booleans);
+                    System.out.println(booleans);
+
                     //存入审核表
                     MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
                     AuditInfo auditInfo1 = new AuditInfo();
