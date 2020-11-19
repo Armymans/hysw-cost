@@ -519,7 +519,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     }
 
     @Override
-    public TrackVo selectTrackById(String id) {
+    public TrackVo selectTrackById(String id,UserInfo userInfo) {
         TrackVo trackVo = new TrackVo();
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(id);
         BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(trackAuditInfo.getBaseProjectId());
@@ -531,9 +531,21 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         Example example1 = new Example(TrackMonthly.class);
         example1.createCriteria().andEqualTo("trackId", id);
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
-
+        AuditInfo auditInfo = null;
         trackVo.setAuditWord("第"+trackMonthlies.size()+"次月报");
-
+        for (TrackMonthly trackMonthly : trackMonthlies) {
+            Example example2 = new Example(AuditInfo.class);
+            example2.createCriteria().andEqualTo("baseProjectId",trackMonthly.getId())
+                    .andEqualTo("status","0")
+                    .andEqualTo("auditorId",userInfo.getId())
+                    .andEqualTo("auditResult","0");
+            auditInfo= auditInfoDao.selectOneByExample(example2);
+        }
+        if(auditInfo==null){
+            trackVo.setAuditResult("0"); //不审核
+        }else{
+            trackVo.setAuditResult("1");
+        }
         trackVo.setTrackStatus(baseProject.getTrackStatus());
         trackVo.setBaseProject(baseProject);
         trackVo.setAuditInfo(trackAuditInfo);

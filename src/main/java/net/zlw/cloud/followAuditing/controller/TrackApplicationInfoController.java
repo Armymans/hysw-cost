@@ -101,7 +101,7 @@ public class TrackApplicationInfoController extends BaseController {
 //    @GetMapping("/track/selectTrackById/{id}")
     @RequestMapping(value = "/track/selectTrackById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectTrackById(@RequestParam(name = "id") String id){
-       TrackVo trackVo =  trackApplicationInfoService.selectTrackById(id);
+       TrackVo trackVo =  trackApplicationInfoService.selectTrackById(id,getLoginUser());
         return RestUtil.success(trackVo);
     }
     //修改审计月报

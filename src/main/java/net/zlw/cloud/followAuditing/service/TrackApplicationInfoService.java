@@ -23,7 +23,7 @@ public interface TrackApplicationInfoService {
 
     void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId) throws Exception;
 
-    TrackVo selectTrackById(String id);
+    TrackVo selectTrackById(String id,UserInfo userInfo);
 
     List<AuditInfoVo> findAllAuditInfosByTrackId(String id);
 

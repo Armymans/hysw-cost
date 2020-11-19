@@ -25,4 +25,5 @@ public class TrackVo  {
     // 上传文件
     private String key;
     private String type;
+    private String auditResult;
 }
