@@ -26,6 +26,7 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -357,10 +358,25 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     }
 
     @Override
-    public void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId) {
+    public void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId) throws Exception {
         //todo userInfo.getCompanyId() userInfo.getId()
         String userInfoId = userInfo.getId();
         String companyId = userInfo.getCompanyId();
+
+        //月报
+        Example example1 = new Example(TrackMonthly.class);
+        Example.Criteria criteria = example1.createCriteria();
+        // todo 待修改
+        criteria.andEqualTo("trackId", userInfoId);
+        criteria.andEqualTo("status", "0");
+        TrackMonthly trackMonthly1 = trackMonthlyDao.selectOneByExample(example1);
+        if(trackMonthly1==null){
+            throw new Exception("请上传月报");
+        }
+        trackMonthly1.setAuditCount("1");
+        trackMonthly1.setTrackId(trackVo.getAuditInfo().getId());
+        trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly1);
+
 
         Example example = new Example(BaseProject.class);
         example.createCriteria().andEqualTo("id", baseId);
@@ -405,6 +421,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
             }
         } else if (trackVo.getStatus().equals("1")) {
+
             baseProject.setTrackStatus("1");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
             //存入跟踪审计
@@ -432,7 +449,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfoId);
             AuditInfo auditInfo = new AuditInfo();
             auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
-            auditInfo.setBaseProjectId(trackVo.getAuditInfo().getId());
+            auditInfo.setBaseProjectId(trackMonthly1.getId());
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
             auditInfo.setStatus("0");
@@ -464,25 +481,6 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         trackVo.getTrackApplicationInfo().setId(UUID.randomUUID().toString().replace("-", ""));
         trackVo.getTrackApplicationInfo().setTrackAudit(trackVo.getAuditInfo().getId());
         trackApplicationInfoDao.insertSelective(trackVo.getTrackApplicationInfo());
-
-
-        Example example1 = new Example(TrackMonthly.class);
-        Example.Criteria criteria = example1.createCriteria();
-
-        if (userInfo != null) {
-            criteria.andEqualTo("trackId", userInfoId);
-        }
-        // todo 待修改
-        criteria.andEqualTo("trackId", userInfoId);
-        criteria.andEqualTo("status", "0");
-
-        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
-
-        for (TrackMonthly trackMonthly : trackMonthlies) {
-            trackMonthly.setTrackId(trackVo.getAuditInfo().getId());
-
-            trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
-        }
 
 //        List<TrackMonthly> monthlyList = trackVo.getMonthlyList();
 //        for (TrackMonthly trackMonthly : monthlyList) {
@@ -527,8 +525,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
 
         List<AuditInfoVo> allAuditInfosByTrackId = this.findAllAuditInfosByTrackId(trackAuditInfo.getBaseProjectId());
-        trackVo.setAuditWord("第"+allAuditInfosByTrackId.size()+"次月报");
-
+        if(allAuditInfosByTrackId.size()==0){
+            trackVo.setAuditWord("第"+(allAuditInfosByTrackId.size()+1)+"次月报");
+        }else{
+            trackVo.setAuditWord("第"+allAuditInfosByTrackId.size()+"次月报");
+        }
         trackVo.setTrackStatus(baseProject.getTrackStatus());
         trackVo.setBaseProject(baseProject);
         trackVo.setAuditInfo(trackAuditInfo);
@@ -569,8 +570,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
         List<AuditInfoVo> allAuditInfosByTrackId = trackAuditInfoDao.findAllAuditInfosByTrackId(id);
 
-        for (int i = 0; i < allAuditInfosByTrackId.size(); i++) {
-            allAuditInfosByTrackId.get(i).setAuditWord("第" + (i+1) + "次月报");
+        Example example = new Example(TrackMonthly.class);
+        example.createCriteria().andEqualTo("trackId",id);
+        int count = trackMonthlyDao.selectCountByExample(example);
+        for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId) {
+            auditInfoVo.setAuditWord(count+"count");
         }
 
 //        for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId) {
@@ -596,7 +600,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     }
 
     @Override
-    public void updateTrack(TrackVo trackVo) {
+    public void updateTrack(TrackVo trackVo,UserInfo userInfo) throws Exception {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
         //如果点击得是保存
         if (trackVo.getStatus().equals("0")) {
             trackAuditInfoDao.updateByPrimaryKeySelective(trackVo.getAuditInfo());
@@ -610,15 +616,99 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
             Example example = new Example(AuditInfo.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("baseProjectId",trackVo.getAuditInfo().getId());
-            criteria.andEqualTo("auditResult","2");
+            Example.Criteria c = example.createCriteria();
+            c.andEqualTo("baseProjectId",trackVo.getAuditInfo().getId());
+            c.andEqualTo("auditResult","2"); //未通过
             AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
 
-            auditInfo.setAuditResult("0");
-            //修改基本状态
-            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+            //月报
+            Example exa = new Example(TrackMonthly.class);
+            Example.Criteria newMonthly = exa.createCriteria();
+            newMonthly.andEqualTo("trackId",trackVo.getAuditInfo().getId());
+            newMonthly.andEqualTo("status", "0");
+            List<TrackMonthly> trackMonthlyNew = trackMonthlyDao.selectByExample(exa);
 
+            if(auditInfo==null){ //未提交 进行中
+                Example newAudid = new Example(AuditInfo.class);
+                Example.Criteria newAudidc = newAudid.createCriteria();
+                newAudidc.andEqualTo("baseProjectId",trackMonthlyNew.get(0).getId());
+                List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+                if (auditInfos.size()==0){ //未提交
+                    //存入审核表
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
+                    AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                    auditInfo1.setBaseProjectId(trackMonthlyNew.get(0).getId());
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditType("0");
+                    auditInfo1.setStatus("0");
+                    auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
+                    //判断当前项目创建人属于哪个地区 根据地区提交给相应领导
+                    //如果为芜湖
+                    if("1".equals(memberManage.getWorkType())){
+                        auditInfo1.setAuditorId(whzjh);
+                    }else{
+                        auditInfo1.setAuditorId(wjzjh);
+                    }
+                    auditInfoDao.insertSelective(auditInfo1);
+                }else{ //进行中
+                    Example OldEx = new Example(TrackMonthly.class);
+                    Example.Criteria oldMonthly = OldEx.createCriteria();
+                    oldMonthly.andEqualTo("trackId",userInfo.getId());
+                    oldMonthly.andEqualTo("status", "0");
+                    TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOneByExample(OldEx);
+                    if(trackMonthlyOld!=null){
+                        trackMonthlyOld.setTrackId(trackVo.getAuditInfo().getId());
+                        trackMonthlyOld.setAuditCount(trackMonthlyNew.size()+1+"");
+                        trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
+
+                        //存入审核表
+                        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
+                        AuditInfo auditInfo1 = new AuditInfo();
+                        auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                        auditInfo1.setBaseProjectId(trackMonthlyOld.getId());
+                        auditInfo1.setAuditResult("0");
+                        auditInfo1.setAuditType("0");
+                        auditInfo1.setStatus("0");
+                        auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
+                        //判断当前项目创建人属于哪个地区 根据地区提交给相应领导
+                        //如果为芜湖
+                        if("1".equals(memberManage.getWorkType())){
+                            auditInfo1.setAuditorId(whzjh);
+                        }else{
+                            auditInfo1.setAuditorId(wjzjh);
+                        }
+                        auditInfoDao.insertSelective(auditInfo1);
+                    }else{
+                        throw new Exception("请上传月报");
+                    }
+                }
+            }else{
+                //未通过
+                //todo 更新月报信息
+                TrackMonthly trackMonthly = trackMonthlyDao.selectByPrimaryKey(auditInfo.getBaseProjectId());
+                trackMonthly.setStatus("1");
+                trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
+
+                Example OldEx = new Example(TrackMonthly.class);
+                Example.Criteria oldMonthly = OldEx.createCriteria();
+                oldMonthly.andEqualTo("trackId",userInfo.getId());
+                oldMonthly.andEqualTo("status", "0");
+                TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOneByExample(OldEx);
+                if(trackMonthlyOld!=null){
+                    trackMonthlyOld.setTrackId(trackVo.getAuditInfo().getId());
+                    trackMonthlyOld.setAuditCount(trackMonthlyNew.size()+1+"");
+                    trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
+                }else{
+                    throw new Exception("请上传月报");
+                }
+
+                auditInfo.setAuditResult("0");
+                auditInfo.setAuditOpinion(null);
+                auditInfo.setAuditTime(null);
+                //修改基本状态
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+            }
 //            AuditInfo auditInfo2 = new AuditInfo();
 //            auditInfo2.setId(UUID.randomUUID().toString().replace("-", ""));
 //            auditInfo2.setBaseProjectId(trackVo.getAuditInfo().getId());

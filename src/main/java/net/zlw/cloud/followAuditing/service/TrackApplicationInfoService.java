@@ -21,7 +21,7 @@ public interface TrackApplicationInfoService {
 
     void batchReview(BatchReviewVo id,UserInfo userInfo);
 
-    void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId);
+    void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId) throws Exception;
 
     TrackVo selectTrackById(String id);
 
@@ -31,7 +31,7 @@ public interface TrackApplicationInfoService {
 
     void deleteByIdTrackMonthly(String id);
 
-    void updateTrack(TrackVo trackVo);
+    void updateTrack(TrackVo trackVo,UserInfo userInfo) throws Exception;
 
     List<TrackMonthly> findAllByTrackId(String id);
 

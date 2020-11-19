@@ -90,7 +90,11 @@ public class TrackApplicationInfoController extends BaseController {
     @RequestMapping(value = "/track/addTrack",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addTrack(TrackVo trackVo,@RequestParam(name = "baseId") String baseId){
         System.out.println(baseId);
-        trackApplicationInfoService.addTrack(trackVo,getLoginUser(),baseId);
+        try {
+            trackApplicationInfoService.addTrack(trackVo,getLoginUser(),baseId);
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success("添加成功");
     }
     //跟踪审计信息回显
@@ -111,7 +115,11 @@ public class TrackApplicationInfoController extends BaseController {
 //    @PutMapping("/track/updateTrack")
     @RequestMapping(value = "/track/updateTrack",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateTrack(TrackVo trackVo){
-        trackApplicationInfoService.updateTrack(trackVo);
+        try {
+            trackApplicationInfoService.updateTrack(trackVo,getLoginUser());
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success("修改成功");
     }
     //新增月报
