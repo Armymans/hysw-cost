@@ -242,15 +242,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 .andEqualTo("status","0");
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         AuditInfo auditInfo = new AuditInfo();
-        for (TrackMonthly trackMonthly : trackMonthlies) {
+        TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(trackAuditInfo.getId());
             //查询当前审核信息
             Example example = new Example(AuditInfo.class);
             Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("baseProjectId",trackMonthly.getId()); //审核信息外键
+            criteria.andEqualTo("baseProjectId",trackMonthlyOld.getId()); //审核信息外键
             criteria.andEqualTo("auditorId",userId); //审核人
             criteria.andEqualTo("auditResult","0"); //审核状态
             auditInfo = auditInfoDao.selectOneByExample(example);
-        }
+
 
         //基本信息
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
