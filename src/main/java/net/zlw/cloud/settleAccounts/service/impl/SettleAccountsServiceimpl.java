@@ -84,7 +84,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
-//        loginUser = new UserInfo("user309",null,null,true);
+//        loginUser = new UserInfo("200101005",null,null,true);
         List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
         ArrayList<AccountsVo> returnList = new ArrayList<>();
         for (AccountsVo accountsVo : list) {
@@ -103,7 +103,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     }
                 }
 
-                if (loginUser.getId().equals(accountsVo.getFounderId()) || whzjh.equals(accountsVo.getFounderId()) || whzjm.equals(accountsVo.getFounderId()) || wjzjh.equals(accountsVo.getFounderId()) || loginUser.getId().equals(accountsVo.getAuditorId())){
+                if (loginUser.getId().equals(accountsVo.getFounderId()) || whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId()) || loginUser.getId().equals(auditInfo.getAuditorId())){
                     returnList.add(accountsVo);
                 }
             }
@@ -362,6 +362,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example4);
         if (auditInfo!=null){
             baseAccountsVo.setCheckAudit(auditInfo.getAuditType());
+            if (auditInfo.getAuditType().equals("0") || auditInfo.getAuditType().equals("1") || auditInfo.getAuditType().equals("4")){
+                baseAccountsVo.setShowHidden("1");
+            }else if(auditInfo.getAuditType().equals("2") || auditInfo.getAuditType().equals("3") || auditInfo.getAuditType().equals("5")){
+                baseAccountsVo.setShowHidden("2");
+            }
         }
 //        System.err.println(auditInfo.getAuditType());
 
@@ -480,11 +485,16 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
 //
 //                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
-                    String founderId = settlementAuditInformation1.getFounderId();
+                   String fouderId = "";
+                    if (settlementAuditInformation!=null){
+                        fouderId = settlementAuditInformation.getFounderId();
+                    }else if(lastSettlementReview!=null){
+                        fouderId = lastSettlementReview.getFounderId();
+                    }
+
                     Example example1 = new Example(MemberManage.class);
                     Example.Criteria cc = example1.createCriteria();
-                    cc.andEqualTo("id",founderId);
+                    cc.andEqualTo("id",fouderId);
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                     if (memberManage.getWorkType().equals("1")){
                         auditInfo1.setAuditorId(whzjh);
@@ -514,11 +524,16 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
 //
 //                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
-                    String founderId = settlementAuditInformation1.getFounderId();
+//                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
+                    String fouderId = "";
+                    if (settlementAuditInformation!=null){
+                        fouderId = settlementAuditInformation.getFounderId();
+                    }else if(lastSettlementReview!=null){
+                        fouderId = lastSettlementReview.getFounderId();
+                    }
                     Example example1 = new Example(MemberManage.class);
                     Example.Criteria cc = example1.createCriteria();
-                    cc.andEqualTo("id",founderId);
+                    cc.andEqualTo("id",fouderId);
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                     if (memberManage.getWorkType().equals("1")){
                         auditInfo1.setAuditorId(whzjm);
@@ -566,8 +581,15 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
 //
 //                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
-                    String founderId = settlementAuditInformation1.getFounderId();
+//                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
+
+//                    String founderId = settlementAuditInformation1.getFounderId();
+                    String founderId = "";
+                    if (settlementAuditInformation!=null){
+                        founderId = settlementAuditInformation.getFounderId();
+                    }else if(lastSettlementReview!=null){
+                        founderId = lastSettlementReview.getFounderId();
+                    }
                     Example example1 = new Example(MemberManage.class);
                     Example.Criteria cc = example1.createCriteria();
                     cc.andEqualTo("id",founderId);
@@ -600,8 +622,14 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
 //
 //                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
-                    String founderId = settlementAuditInformation1.getFounderId();
+//                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
+//                    String founderId = settlementAuditInformation1.getFounderId();
+                    String founderId = "";
+                    if (settlementAuditInformation!=null){
+                        founderId = settlementAuditInformation.getFounderId();
+                    }else if(lastSettlementReview!=null){
+                        founderId = lastSettlementReview.getFounderId();
+                    }
                     Example example1 = new Example(MemberManage.class);
                     Example.Criteria cc = example1.createCriteria();
                     cc.andEqualTo("id",founderId);
