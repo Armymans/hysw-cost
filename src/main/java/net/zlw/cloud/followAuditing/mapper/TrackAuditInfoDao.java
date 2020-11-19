@@ -56,7 +56,6 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
                     "LEFT JOIN base_project b on tai.base_project_id = b.id\n" +
                     "LEFT JOIN track_application_info ta on ta.track_audit = tai.id\n" +
                     "LEFT JOIN track_monthly tm on tm.track_id = tai.id\n" +
-                    "LEFT JOIN audit_info ai on ai.base_project_id = tai.id\n" +
                     "where\n" +
                     "tai.`status` = 0 \n" +
                     "and\n" +
