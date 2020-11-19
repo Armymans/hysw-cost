@@ -237,10 +237,6 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
         //根据主键查询
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(batchReviewVo.getBatchAll());
-        Example example1 = new Example(TrackMonthly.class);
-        example1.createCriteria().andEqualTo("trackId",trackAuditInfo.getId())
-                .andEqualTo("status","0");
-        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         AuditInfo auditInfo = new AuditInfo();
         TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(trackAuditInfo.getId());
             //查询当前审核信息
@@ -263,13 +259,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     //如果为通过
                     if("1".equals(batchReviewVo.getAuditResult())){
 
-                        String s = trackMonthlyDao.selectByTrickId(trackAuditInfo.getId());
+//                        String s = trackMonthlyDao.selectByTrickId(trackAuditInfo.getId());
 
                         //创建一条新的审核信息
                         String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
                         AuditInfo newAuditInfo = new AuditInfo();
                         newAuditInfo.setId(auditInfouuid);
-                        newAuditInfo.setBaseProjectId(s);
+                        newAuditInfo.setBaseProjectId(trackMonthlyOld.getId());
                         newAuditInfo.setAuditType("4");
                         //审核结果 结果待审核
                         newAuditInfo.setAuditResult("0");
