@@ -704,7 +704,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     auditInfoDao.insertSelective(auditInfo1);
                 }else{ //进行中
                     TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(trackVo.getAuditInfo().getId());
-                        trackMonthlyOld.setAuditCount(trackMonthlyNew.size()+1+"");
+                        trackMonthlyOld.setAuditCount(trackMonthlyNew.size()+"");
                         trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
 
                         //存入审核表
