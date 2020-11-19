@@ -95,7 +95,6 @@ public class ClearProjectController extends BaseController {
 
     @RequestMapping(value = "/clearProject/selectCallForBidById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findById(@RequestParam(name = "id")String id){
-
         CallForBids byId = callForBidsService.findById(id);
         return RestUtil.success(byId);
     }

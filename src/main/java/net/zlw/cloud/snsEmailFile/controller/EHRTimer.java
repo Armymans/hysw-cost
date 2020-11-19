@@ -11,8 +11,10 @@ import net.zlw.cloud.snsEmailFile.mapper.EmOrgMapper;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.mapper.SysCompanyMapper;
 import net.zlw.cloud.snsEmailFile.model.EmOrg;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.SysCompany;
+import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.snsEmailFile.util.CaiGouJdbc;
 import net.zlw.cloud.snsEmailFile.util.EhrJdbc;
 import net.zlw.cloud.warningDetails.model.MemberManage;
@@ -47,13 +49,15 @@ public class EHRTimer implements InitializingBean {
     private MkyUserMapper mkyUserMapper;
     @Autowired
     private CallForBidsMapper callForBidsMapper;
+    @Autowired
+    private FileInfoService fileInfoService;
 
     /**
      * 取值范围 秒 0 - 59 分 0 - 59 时 0 - 23 日 0 - 31 按实际月份来 月 0 - 11 天 1 - 7 周几 年 1970
      * -2099 如果多个时间段用，隔开 0 0 14,16 * * ？ 代表每天下午2点和4点执行 0 0 14-16 * * ？ 代表每天下午2点到4点执行
      * 也就是 14 15 16 执行
      */
-//    @Scheduled(cron = "0 0 0 * * ?") // 秒 分 时 日 月 天 年
+//    @Scheduled(cron = "0 0 0 * * ?") // 秒 分 时 日 月 天 年 每天十二点执行
     public void ehrDataTimer() {
         EhrJdbc ehrJdbc = new EhrJdbc();
         try {
@@ -300,13 +304,15 @@ public class EHRTimer implements InitializingBean {
 
     /**
      * @Author Armyman
-     * @Description //获取采购数据
+     * @Description //获取芜湖招标采购数据
      * @Date 16:58 2020/11/16
      **/
+    //@Scheduled(cron = "0 30 0 * * ?") // 秒 分 时 日 月 天 年  每天十二点半执行
     public void CaiGouDataTimer() {
-        CaiGouJdbc ehrJdbc = new CaiGouJdbc();
+        CaiGouJdbc caiGouJdbc = new CaiGouJdbc();
         try {
-            ResultSet bidInfoSimplify = ehrJdbc.getBidInfoSimplify();
+            //芜湖招标信息
+            ResultSet bidInfoSimplify = caiGouJdbc.getBidInfoSimplify();
             while (bidInfoSimplify.next()) {
                 CallForBids callForBids = new CallForBids();
                 String projectCode = bidInfoSimplify.getString("project_code");
@@ -316,24 +322,26 @@ public class EHRTimer implements InitializingBean {
                 callForBids.setBidProjectNum(projectCode);
                 callForBids.setBidProjectName(archiveProjectName);
                 callForBids.setStatus("0");
-                //招标
-                ResultSet winInfoSimplify = ehrJdbc.getWinInfoSimplify(projectCode);
+                //获取中标的数据
+                ResultSet winInfoSimplify = caiGouJdbc.getWinInfoSimplify(projectCode);
                 while (winInfoSimplify.next()) {
                     String bidderName = winInfoSimplify.getString("bidder_name");
                     String winBidPrice = winInfoSimplify.getString("win_bid_price");
+                    String applyCompanyId = winInfoSimplify.getString("apply_company_id");
                     callForBids.setBidWinner(bidderName);
                     callForBids.setBidMoney(winBidPrice);
-                    //建设单位 投标人
-                    ResultSet companyInfoSimplify = ehrJdbc.getCompanySimplify(companyId);
+                    //投标人
+                    ResultSet companyInfoSimplify = caiGouJdbc.getCompanySimplify(companyId);
                     while (companyInfoSimplify.next()) {
                         String companyName = companyInfoSimplify.getString("name");
                         callForBids.setTenderer(companyName);
                         callForBids.setConstructionUnit(companyName);
                         //代理机构
-                        ResultSet userInfoSimplify = ehrJdbc.getUserInfoSimplify(userId);
+                        String replace = UUID.randomUUID().toString().replace("-", "");
+                        ResultSet userInfoSimplify = caiGouJdbc.getUserInfoSimplify(userId);
                         if (userInfoSimplify.next()) {
                             while (userInfoSimplify.next()) {
-                                ResultSet companyInfoSimplify2 = ehrJdbc.getCompanySimplify(companyId);
+                                ResultSet companyInfoSimplify2 = caiGouJdbc.getCompanySimplify(companyId);
                                 while (companyInfoSimplify2.next()) {
                                     String name = companyInfoSimplify2.getString("name");
                                     callForBids.setProcuratorialAgency(name);
@@ -342,19 +350,68 @@ public class EHRTimer implements InitializingBean {
                         } else {
                             callForBids.setProcuratorialAgency("无");
                         }
-                        callForBids.setId(UUID.randomUUID().toString().replace("-",""));
+                        callForBids.setId(replace);
                         CallForBids callForBid = callForBidsMapper.selectByProjectNum(projectCode);
                         if(callForBid != null){
                             callForBids.setId(callForBid.getId());
                             callForBidsMapper.updateByPrimaryKeySelective(callForBids);
                         }else{
                             callForBidsMapper.insert(callForBids);
+                            //招标文件数据
+                            ResultSet bidFileSimplify = caiGouJdbc.getBidFileSimplify(projectCode);
+                            while (bidFileSimplify.next()){
+                                String fileName = bidFileSimplify.getString("file_name");
+                                String filePath = bidFileSimplify.getString("file_path");
+                                String id = bidFileSimplify.getString("id");
+                                String fileType = bidFileSimplify.getString("file_type");
+                                String fileSource = bidFileSimplify.getString("file_source");
+                                String[] split = fileName.split("\\.");
+                                FileInfo fileInfo = new FileInfo();
+                                fileInfo.setId(id);
+                                fileInfo.setPlatCode(replace);
+                                fileInfo.setName(split[0]);
+                                fileInfo.setFileName(split[0]);
+                                fileInfo.setFilePath(filePath);
+                                fileInfo.setType(fileType);
+                                fileInfo.setFileType(split[1]);
+                                fileInfo.setStatus("0");
+//                                if("wh".equals(fileSource)){
+                                    fileInfo.setFileSource("3");
+//                                }
+                                fileInfoService.insert(fileInfo);
+                            }
+                            //中标文件数据
+                            ResultSet bidProSimplify = caiGouJdbc.getBidProSimplify(projectCode,applyCompanyId);
+                            while (bidProSimplify.next()){
+                                String bidder = bidProSimplify.getString("bidder");
+                                ResultSet bidWinFileSimplify = caiGouJdbc.getBidWinFileSimplify(bidder);
+                                while (bidWinFileSimplify.next()){
+                                    String fileName = bidWinFileSimplify.getString("file_name");
+                                    String id = bidWinFileSimplify.getString("id");
+                                    String filePath = bidWinFileSimplify.getString("file_path");
+                                    String fileType = bidWinFileSimplify.getString("file_type");
+                                    String fileSource = bidWinFileSimplify.getString("file_source");
+                                    String[] split = fileName.split("\\.");
+                                    FileInfo fileInfo = new FileInfo();
+                                    fileInfo.setId(id);
+                                    fileInfo.setPlatCode(replace);
+                                    fileInfo.setName(split[0]);
+                                    fileInfo.setFileName(split[0]);
+                                    fileInfo.setFilePath(filePath);
+                                    fileInfo.setType(fileType);
+                                    fileInfo.setFileType(split[1]);
+                                    fileInfo.setStatus("0");
+//                                    if("wh".equals(fileSource)){
+                                        fileInfo.setFileSource("3");
+//                                    }
+                                    fileInfoService.insert(fileInfo);
+                                }
+                            }
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

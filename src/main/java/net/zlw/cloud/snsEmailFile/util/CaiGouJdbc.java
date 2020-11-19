@@ -15,7 +15,34 @@ public class CaiGouJdbc {
 	public ResultSet getBidInfoSimplify() throws Exception {
 		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		Connection conn = (Connection) DriverManager.getConnection(url, userName, password);
-		String sql = "SELECT * FROM plat_archive_project where status = 1 and archive_project_type = 1";
+		String sql = "SELECT * FROM plat_archive_project where status = 1 and archive_project_type = 1 and company_id != '001'";
+		PreparedStatement statement = conn.prepareStatement(sql);
+		ResultSet resultSet = statement.executeQuery();
+		return resultSet;
+	}
+
+	public ResultSet getBidFileSimplify(String projectCode) throws Exception {
+		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		Connection conn = (Connection) DriverManager.getConnection(url, userName, password);
+		String sql = "SELECT * FROM plat_file_info where plat_code = '"+projectCode+"' and file_type = 'snd'";
+		PreparedStatement statement = conn.prepareStatement(sql);
+		ResultSet resultSet = statement.executeQuery();
+		return resultSet;
+	}
+
+	public ResultSet getBidWinFileSimplify(String projectCode) throws Exception {
+		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		Connection conn = (Connection) DriverManager.getConnection(url, userName, password);
+		String sql = "SELECT * FROM plat_file_info where plat_code = '"+projectCode+"' and file_type = 'tdr'";
+		PreparedStatement statement = conn.prepareStatement(sql);
+		ResultSet resultSet = statement.executeQuery();
+		return resultSet;
+	}
+
+	public ResultSet getBidProSimplify(String projectCode,String companyId) throws Exception {
+		Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		Connection conn = (Connection) DriverManager.getConnection(url, userName, password);
+		String sql = "SELECT * FROM plat_bid_pro where bid_section_code = '"+projectCode+"' and create_company_id = '"+companyId+"'";
 		PreparedStatement statement = conn.prepareStatement(sql);
 		ResultSet resultSet = statement.executeQuery();
 		return resultSet;

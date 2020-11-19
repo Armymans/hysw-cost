@@ -86,14 +86,20 @@ public class BudgetingController extends BaseController {
         if (founderId!=null){
             pageBVo.setFounderId(founderId);
         }
-        PageHelper.startPage(pageBVo.getPageNum(),999);
-        List<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo,getLoginUser().getId());
+
+        PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
+        List<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo, getLoginUser().getId());
+//        PageInfo<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo,"user324");
         PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);
+
+
         return RestUtil.page(budgetingListVoPageInfo);
     }
+
     //选择项目查看所有预算
     @RequestMapping(value = "/budgeting/findBudgetingAll",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findBudgetingAll(PageBVo pageBVo,@RequestParam(name = "sid",required = false) String sid){
+
         PageHelper.startPage(pageBVo.getPageNum(),999);
         List<BudgetingListVo> list = budgetingService.findBudgetingAll(pageBVo,sid);
         PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);

@@ -1,5 +1,6 @@
 package net.zlw.cloud.budgeting.service.impl;
 
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
 import net.zlw.cloud.VisaChange.model.VisaChange;
@@ -544,21 +545,21 @@ public class BudgetingServiceImpl implements BudgetingService {
 
     @Override
     public List<BudgetingListVo> findAllBudgeting(PageBVo pageBVo, String id) {
+//        List<BudgetingListVo> list = budgetingDao.findAllBudgeting(pageBVo);
 
-        List<BudgetingListVo> list = budgetingDao.findAllBudgeting(pageBVo);
+        List<BudgetingListVo> returnList = new ArrayList<>();
+
         //待审核
-        List<BudgetingListVo> budgetingListVos = new ArrayList<>();
-        //处理中
-        ArrayList<BudgetingListVo> budgetingListVos1 = new ArrayList<>();
-        //未通过
-        ArrayList<BudgetingListVo> budgetingListVos2 = new ArrayList<>();
-        //已完成
-        ArrayList<BudgetingListVo> budgetingListVos3 = new ArrayList<>();
-        for (BudgetingListVo budgetingListVo : list) {
-            //待审核
-            if (pageBVo.getBudgetingStatus().equals("1")){
-
-                //根据条件查找当前处理人
+        if (pageBVo.getBudgetingStatus().equals("1")){
+            //领导看所有
+            List<BudgetingListVo> list1 = new ArrayList<>();
+            if ( id.equals(whzjh) || id.equals(whzjm) ||id.equals(wjzjh)){
+                list1 = budgetingDao.findAllBudgetingCheckLeader(pageBVo);
+                //普通员工
+            }else {
+                 list1 = budgetingDao.findAllBudgetingCheckStaff(pageBVo,id);
+            }
+            for (BudgetingListVo budgetingListVo : list1) {
                 Example example = new Example(AuditInfo.class);
                 example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
                         .andEqualTo("auditResult","0");
@@ -569,64 +570,8 @@ public class BudgetingServiceImpl implements BudgetingService {
                 if (memberManage !=null){
                     budgetingListVo.setCurrentHandler(memberManage.getMemberName());
                 }
-
-                if ( auditInfo.getAuditResult().equals("0")){
-
-                    if(auditInfo.getAuditorId().equals(id) || id.equals(whzjh) || id.equals(whzjm) ||id.equals(wjzjh) || budgetingListVo.getFounderId().equals(id)){
-
-                        budgetingListVos.add(budgetingListVo);
-                    }
-                }
             }
-            //处理中
-            System.err.println(list+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus()+pageBVo.getBudgetingStatus());
-            if (budgetingListVo.getBudgetStatus()!=null && budgetingListVo.getBudgetStatus().equals("处理中")){
-
-                if (budgetingListVo.getFounderId().equals(id)){
-                    budgetingListVos1.add(budgetingListVo);
-                }
-            }
-            //未通过
-            if (budgetingListVo.getAuditResult()!=null && budgetingListVo.getAuditResult().equals("2")){
-                if (budgetingListVo.getFounderId().equals(id)){
-                    budgetingListVos2.add(budgetingListVo);
-                }
-            }
-            //已完成
-            if (budgetingListVo.getBudgetStatus() != null && budgetingListVo.getBudgetStatus().equals("已完成")){
-                budgetingListVos3.add(budgetingListVo);
-            }
-        }
-        //待审核
-        if (pageBVo.getBudgetingStatus().equals("1")){
-            List<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos;
-            ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
-            for (BudgetingListVo budgetingListVo : budgetingListVoPageInfo) {
-                if (!budgetingListVos4.contains(budgetingListVo)){
-                    budgetingListVos4.add(budgetingListVo);
-                }
-            }
-            return budgetingListVos4;
-        }
-//        //处理中
-        if (pageBVo.getBudgetingStatus().equals("2")){
-            ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos1;
-            return budgetingListVoPageInfo;
-        }
-//        //未通过
-        if (pageBVo.getBudgetingStatus().equals("3")){
-            ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos2;
-            return budgetingListVoPageInfo;
-        }
-//        //已完成
-        if (pageBVo.getBudgetingStatus().equals("4")){
-            ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
-            for (BudgetingListVo budgetingListVo : budgetingListVos3) {
-                if (!budgetingListVos4.contains(budgetingListVo)){
-                    budgetingListVos4.add(budgetingListVo);
-                }
-            }
-            for (BudgetingListVo budgetingListVo : budgetingListVos4) {
+            for (BudgetingListVo budgetingListVo : list1) {
                 String baseId = budgetingListVo.getBaseId();
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
                 if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
@@ -636,23 +581,175 @@ public class BudgetingServiceImpl implements BudgetingService {
                         budgetingListVo.setShowWhether("2");
                     }
                 }
-
             }
-            ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos4;
-            return budgetingListVoPageInfo;
+            return list1;
         }
-        ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
-        System.err.println(list);
-        for (BudgetingListVo budgetingListVo : list) {
-
-            if (budgetingListVo.getFounderId().equals(id)){
-                if (!budgetingListVos4.contains(budgetingListVo)){
-                    budgetingListVos4.add(budgetingListVo);
+        //处理中
+        if (pageBVo.getBudgetingStatus().equals("2")){
+            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,id);
+            for (BudgetingListVo budgetingListVo : list1) {
+                String baseId = budgetingListVo.getBaseId();
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+                if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
+                    if (budgetingListVo.getFounderId().equals(id)){
+                        budgetingListVo.setShowWhether("1");
+                    }else{
+                        budgetingListVo.setShowWhether("2");
+                    }
                 }
             }
+            return list1;
         }
-        ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos4;
-        return budgetingListVoPageInfo;
+        //未通过
+        if (pageBVo.getBudgetingStatus().equals("3")){
+            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,id);
+            for (BudgetingListVo budgetingListVo : list1) {
+                String baseId = budgetingListVo.getBaseId();
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+                if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
+                    if (budgetingListVo.getFounderId().equals(id)){
+                        budgetingListVo.setShowWhether("1");
+                    }else{
+                        budgetingListVo.setShowWhether("2");
+                    }
+                }
+            }
+            return list1;
+        }
+        //已完成
+        if (pageBVo.getBudgetingStatus().equals("4")){
+            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingCompleted(pageBVo,id);
+            for (BudgetingListVo budgetingListVo : list1) {
+                String baseId = budgetingListVo.getBaseId();
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+                if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
+                    if (budgetingListVo.getFounderId().equals(id)){
+                        budgetingListVo.setShowWhether("1");
+                    }else{
+                        budgetingListVo.setShowWhether("2");
+                    }
+                }
+            }
+            return list1;
+        }
+        //全部
+        if (pageBVo.getBudgetingStatus().equals("")){
+            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,id);
+            for (BudgetingListVo budgetingListVo : list1) {
+                String baseId = budgetingListVo.getBaseId();
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+                if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
+                    if (budgetingListVo.getFounderId().equals(id)){
+                        budgetingListVo.setShowWhether("1");
+                    }else{
+                        budgetingListVo.setShowWhether("2");
+                    }
+                }
+            }
+            return list1;
+        }
+
+//        PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(returnList);
+        return null;
+
+//
+//        for (BudgetingListVo budgetingListVo : list) {
+//            //待审核
+////            if (pageBVo.getBudgetingStatus().equals("1")){
+////
+////                //根据条件查找当前处理人
+////                Example example = new Example(AuditInfo.class);
+////                example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
+////                        .andEqualTo("auditResult","0");
+////                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+////                Example example1 = new Example(MemberManage.class);
+////                example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+////                MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+////                if (memberManage !=null){
+////                    budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+////                }
+////
+////                List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingCheck(pageBVo);
+////
+////                if ( auditInfo.getAuditResult().equals("0")){
+////
+////                    if(auditInfo.getAuditorId().equals(id) || id.equals(whzjh) || id.equals(whzjm) ||id.equals(wjzjh) || budgetingListVo.getFounderId().equals(id)){
+////
+////                        budgetingListVos.add(budgetingListVo);
+////                    }
+////                }
+////            }
+//            //处理中
+////            if (budgetingListVo.getBudgetStatus()!=null && budgetingListVo.getBudgetStatus().equals("处理中")){
+////
+////                if (budgetingListVo.getFounderId().equals(id)){
+////                    budgetingListVos1.add(budgetingListVo);
+////                }
+////            }
+//            //未通过
+//            if (budgetingListVo.getAuditResult()!=null && budgetingListVo.getAuditResult().equals("2")){
+//                if (budgetingListVo.getFounderId().equals(id)){
+//                    budgetingListVos2.add(budgetingListVo);
+//                }
+//            }
+//            //已完成
+//            if (budgetingListVo.getBudgetStatus() != null && budgetingListVo.getBudgetStatus().equals("已完成")){
+//                budgetingListVos3.add(budgetingListVo);
+//            }
+//        }
+//        //待审核
+//        if (pageBVo.getBudgetingStatus().equals("1")){
+//            List<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos;
+//            ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
+//            for (BudgetingListVo budgetingListVo : budgetingListVoPageInfo) {
+//                if (!budgetingListVos4.contains(budgetingListVo)){
+//                    budgetingListVos4.add(budgetingListVo);
+//                }
+//            }
+//            returnList = budgetingListVos4;
+//            PageInfo<BudgetingListVo> budgetingListVoPageInfo1 = new PageInfo<>(returnList);
+//            return budgetingListVoPageInfo1;
+//        }
+////        //处理中
+//        if (pageBVo.getBudgetingStatus().equals("2")){
+//            ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos1;
+//            returnList = budgetingListVoPageInfo;
+//            PageInfo<BudgetingListVo> budgetingListVoPageInfo1 = new PageInfo<>(returnList);
+//            return budgetingListVoPageInfo1;
+//        }
+////        //未通过
+//        if (pageBVo.getBudgetingStatus().equals("3")){
+//            ArrayList<BudgetingListVo> budgetingListVoPageInfo = budgetingListVos2;
+//            returnList = budgetingListVoPageInfo;
+//            PageInfo<BudgetingListVo> budgetingListVoPageInfo1 = new PageInfo<>(returnList);
+//            return budgetingListVoPageInfo1;
+//        }
+////        //已完成
+//        if (pageBVo.getBudgetingStatus().equals("4")){
+//            ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
+//            for (BudgetingListVo budgetingListVo : budgetingListVos3) {
+//                if (!budgetingListVos4.contains(budgetingListVo)){
+//                    budgetingListVos4.add(budgetingListVo);
+//                }
+//            }
+//
+//            returnList = budgetingListVos4;
+//            PageInfo<BudgetingListVo> budgetingListVoPageInfo1 = new PageInfo<>(returnList);
+//            return budgetingListVoPageInfo1;
+//        }
+//        ArrayList<BudgetingListVo> budgetingListVos4 = new ArrayList<>();
+//        System.err.println(list);
+//        for (BudgetingListVo budgetingListVo : list) {
+//
+//            if (budgetingListVo.getFounderId().equals(id)){
+//                if (!budgetingListVos4.contains(budgetingListVo)){
+//                    budgetingListVos4.add(budgetingListVo);
+//                }
+//            }
+//        }
+//        returnList = budgetingListVos4;
+//        PageInfo<BudgetingListVo> budgetingListVoPageInfo1 = new PageInfo<>(returnList);
+//        return budgetingListVoPageInfo1;
 
     }
     @Override
