@@ -21,7 +21,7 @@ public class TrackVo  {
     private String trackStatus;
     //保存提交状态
     private String status;
-
+    private String auditWord; //月报次数
     // 上传文件
     private String key;
     private String type;
