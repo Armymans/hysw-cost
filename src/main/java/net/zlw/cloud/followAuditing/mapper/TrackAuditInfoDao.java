@@ -16,7 +16,6 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
     @Select(
             "select  " +
                     "tai.id id,  " +
-                    "tm.id tmId,  " +
                     "b.cea_num ceaNum,  " +
                     "b.project_num projectNum,  " +
                     "b.project_name projectName,  " +
@@ -96,7 +95,6 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
     @Select(
             "select  " +
                     "tai.id id,  " +
-                    "tm.id tmId,  " +
                     "b.cea_num ceaNum,  " +
                     "b.project_num projectNum,  " +
                     "b.project_name projectName,  " +
