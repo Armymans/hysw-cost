@@ -671,26 +671,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             newMonthly.andEqualTo("status", "0");
             List<TrackMonthly> trackMonthlyNew = trackMonthlyDao.selectByExample(exa);
             boolean booleans = true;
-            System.out.println(trackMonthlyNew);
-            System.out.println(trackMonthlyNew);
-            System.out.println(trackMonthlyNew);
-            System.out.println(trackMonthlyNew);
-            System.out.println(trackMonthlyNew);
-
-            System.out.println("123---------");
             for (TrackMonthly trackMonthly : trackMonthlyNew) {
-                System.out.println(booleans);
-                System.out.println(booleans);
-                System.out.println(booleans);
                 Example newAudid = new Example(AuditInfo.class);
                 Example.Criteria newAudidc = newAudid.createCriteria();
                 newAudidc.andEqualTo("baseProjectId",trackMonthly.getId());
-                List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
-                System.out.println(auditInfos);
-                System.out.println(auditInfos);
-                System.out.println(auditInfos);
-                System.out.println(auditInfos);
-                System.out.println(auditInfos);
+                List<AuditInfo> auditInfos = auditInfoDao.selectByExample(newAudid);
                 if (auditInfos.size()>0){
                     booleans= false;
                 }
