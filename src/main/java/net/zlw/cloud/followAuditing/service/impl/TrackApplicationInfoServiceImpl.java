@@ -670,13 +670,20 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             newMonthly.andEqualTo("trackId",trackVo.getAuditInfo().getId());
             newMonthly.andEqualTo("status", "0");
             List<TrackMonthly> trackMonthlyNew = trackMonthlyDao.selectByExample(exa);
-
-            if(auditInfo==null){ //未提交 进行中
+            boolean booleans = true;
+            for (TrackMonthly trackMonthly : trackMonthlyNew) {
                 Example newAudid = new Example(AuditInfo.class);
                 Example.Criteria newAudidc = newAudid.createCriteria();
-                newAudidc.andEqualTo("baseProjectId",trackMonthlyNew.get(0).getId());
+                newAudidc.andEqualTo("baseProjectId",trackMonthly.getId());
                 List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
-                if (auditInfos.size()==0){ //未提交
+                if (auditInfos.size()>0){
+                    booleans= false;
+                }
+            }
+
+
+            if(auditInfo==null){ //未提交 进行中
+                if (booleans){ //未提交
                     //存入审核表
                     MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
                     AuditInfo auditInfo1 = new AuditInfo();
