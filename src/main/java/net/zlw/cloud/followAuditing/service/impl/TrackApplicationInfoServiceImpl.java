@@ -229,13 +229,21 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
         //根据主键查询
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(batchReviewVo.getBatchAll());
-        //查询当前审核信息
-        Example example = new Example(AuditInfo.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("baseProjectId",batchReviewVo.getBatchAll()); //审核信息外键
-        criteria.andEqualTo("auditorId",userId); //审核人
-        criteria.andEqualTo("auditResult","0"); //审核状态
-        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+        Example example1 = new Example(TrackMonthly.class);
+        example1.createCriteria().andEqualTo("trackId",trackAuditInfo.getId())
+                .andEqualTo("status","0");
+        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+        AuditInfo auditInfo = new AuditInfo();
+        for (TrackMonthly trackMonthly : trackMonthlies) {
+            //查询当前审核信息
+            Example example = new Example(AuditInfo.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("baseProjectId",trackMonthly.getId()); //审核信息外键
+            criteria.andEqualTo("auditorId",userId); //审核人
+            criteria.andEqualTo("auditResult","0"); //审核状态
+            auditInfo = auditInfoDao.selectOneByExample(example);
+        }
+
         //基本信息
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
         //查询当前该项目归哪个地区负责(根据项目创建人的地区判断)
