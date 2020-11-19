@@ -544,14 +544,14 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         AuditInfo auditInfo = null;
         trackVo.setAuditWord("第"+trackMonthlies.size()+"次月报");
-        for (TrackMonthly trackMonthly : trackMonthlies) {
+        TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(id);
             Example example2 = new Example(AuditInfo.class);
-            example2.createCriteria().andEqualTo("baseProjectId",trackMonthly.getId())
+            example2.createCriteria().andEqualTo("baseProjectId",trackMonthlyOld.getId())
                     .andEqualTo("status","0")
                     .andEqualTo("auditorId",userInfo.getId())
                     .andEqualTo("auditResult","0");
             auditInfo= auditInfoDao.selectOneByExample(example2);
-        }
+
         if(auditInfo==null){
             trackVo.setAuditResult("0"); //不审核
         }else{
@@ -617,10 +617,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         List<AuditInfoVo> allAuditInfosByTrackId = new ArrayList<>();
         for (TrackMonthly trackMonthly : trackMonthlies) {
-            allAuditInfosByTrackId = trackAuditInfoDao.findAllAuditInfosByTrackId(trackMonthly.getId());
-            for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId) {
+            List<AuditInfoVo> allAuditInfosByTrackId2 = trackAuditInfoDao.findAllAuditInfosByTrackId(trackMonthly.getId());
+            for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId2) {
                 auditInfoVo.setAuditWord("第"+trackMonthly.getAuditCount()+"次月报");
             }
+            allAuditInfosByTrackId.addAll(allAuditInfosByTrackId2);
         }
 
         return allAuditInfosByTrackId;
