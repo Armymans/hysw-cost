@@ -49,7 +49,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "where   " +
             "base_project_id = #{id}  " +
             "order by  " +
-            "audit_type desc")
+            "audit_type asc")
     List<AuditChekedVo> auditChek(@Param("id") String id);
 
     @Select(
