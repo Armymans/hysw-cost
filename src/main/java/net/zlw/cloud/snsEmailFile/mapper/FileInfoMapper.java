@@ -59,4 +59,14 @@ public interface FileInfoMapper extends Mapper<FileInfo> {
 
     @Update("UPDATE file_info SET `status` = '1' WHERE user_id = #{foundId}")
     void updateStatus(@Param("foundId") String foundId);
+
+    @Select("SELECT " +
+            " fi.* , " +
+            "FROM " +
+            " file_info fi " +
+            "WHERE " +
+            " fi.STATUS = '0'  " +
+            " AND fi.type = #{type} and fi.plat_code = #{key}")
+    FileInfo findByCodeAndType(@Param("type") String type,@Param("key") String key);
+
 }
