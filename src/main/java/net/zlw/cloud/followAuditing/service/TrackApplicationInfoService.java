@@ -36,4 +36,6 @@ public interface TrackApplicationInfoService {
     List<TrackMonthly> findAllByTrackId(String id);
 
     void addTrackMonthly(TrackMonthly trackMonthly);
+
+    List<TrackMonthly> findAllByTrackId3(String id,UserInfo userInfo);
 }

@@ -570,6 +570,24 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         return trackMonthlies;
     }
 
+    public List<TrackMonthly> findAllByTrackId3(String id,UserInfo userInfo) {
+        ArrayList<TrackMonthly> trackMonthlies1 = new ArrayList<>();
+        Example example1 = new Example(TrackMonthly.class);
+        Example.Criteria criteria = example1.createCriteria();
+        criteria.andEqualTo("trackId", id);
+        criteria.andEqualTo("status", "0");
+        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+        trackMonthlies1.addAll(trackMonthlies);
+
+        Example example2 = new Example(TrackMonthly.class);
+        Example.Criteria criteria2 = example2.createCriteria();
+        criteria2.andEqualTo("trackId",userInfo.getId());
+        criteria2.andEqualTo("status", "0");
+        List<TrackMonthly> trackMonthlies2 = trackMonthlyDao.selectByExample(example2);
+        trackMonthlies1.addAll(trackMonthlies2);
+        return trackMonthlies1;
+    }
+
     // TODO 回显页面，新增页面月报显示
     public List<TrackMonthly> findAllByTrackId2(String id) {
         Example example1 = new Example(TrackMonthly.class);

@@ -1,6 +1,7 @@
 package net.zlw.cloud.followAuditing.controller;
 
 import com.github.pagehelper.PageInfo;
+import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.DateUtil;
 import net.tec.cloud.common.web.MediaTypes;
@@ -42,10 +43,17 @@ public class TrackApplicationInfoController extends BaseController {
         return RestUtil.page(pageInfo);
     }
 
-    // 查看，编辑页面回显月报列表
+    //查看页面回显月报列表
     @RequestMapping(value = "/track/findAllByTrackId",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllByTrackId(@RequestParam(name = "id") String id){
         List<TrackMonthly> allByTrackId = trackApplicationInfoService.findAllByTrackId(id);
+        return RestUtil.success(allByTrackId);
+    }
+
+    //编辑页面回显月报列表
+    @RequestMapping(value = "/track/findAllByTrackId3",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findAllByTrackId3(@RequestParam(name = "id") String id){
+        List<TrackMonthly> allByTrackId = trackApplicationInfoService.findAllByTrackId3(id,getLoginUser());
         return RestUtil.success(allByTrackId);
     }
 
