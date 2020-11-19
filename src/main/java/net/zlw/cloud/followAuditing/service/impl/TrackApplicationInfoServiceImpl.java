@@ -524,12 +524,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         example1.createCriteria().andEqualTo("trackId", id);
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
 
-        List<AuditInfoVo> allAuditInfosByTrackId = this.findAllAuditInfosByTrackId(trackAuditInfo.getBaseProjectId());
-        if(allAuditInfosByTrackId.size()==0){
-            trackVo.setAuditWord("第"+(allAuditInfosByTrackId.size()+1)+"次月报");
-        }else{
-            trackVo.setAuditWord("第"+allAuditInfosByTrackId.size()+"次月报");
-        }
+        trackVo.setAuditWord("第"+trackMonthlies.size()+"次月报");
+
         trackVo.setTrackStatus(baseProject.getTrackStatus());
         trackVo.setBaseProject(baseProject);
         trackVo.setAuditInfo(trackAuditInfo);
@@ -567,19 +563,17 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 //        Example example2 = new Example(AuditInfo.class);
 //        example2.createCriteria().andEqualTo("baseProjectId",id);
 //        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
-
-        List<AuditInfoVo> allAuditInfosByTrackId = trackAuditInfoDao.findAllAuditInfosByTrackId(id);
-
-        Example example = new Example(TrackMonthly.class);
-        example.createCriteria().andEqualTo("trackId",id);
-        int count = trackMonthlyDao.selectCountByExample(example);
-        for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId) {
-            auditInfoVo.setAuditWord(count+"count");
+        Example example1 = new Example(TrackMonthly.class);
+        example1.createCriteria().andEqualTo("trackId",id);
+        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+        List<AuditInfoVo> allAuditInfosByTrackId = new ArrayList<>();
+        for (TrackMonthly trackMonthly : trackMonthlies) {
+            allAuditInfosByTrackId = trackAuditInfoDao.findAllAuditInfosByTrackId(trackMonthly.getId());
+            for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId) {
+                auditInfoVo.setAuditWord("第"+trackMonthly.getAuditCount()+"次月报");
+            }
         }
 
-//        for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId) {
-//            auditInfoVo.setAuditWord("第一次月报");
-//        }
         return allAuditInfosByTrackId;
     }
 
