@@ -336,9 +336,9 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "b.del_flag = '0' and " +
             "bt.del_flag = '0' and " +
             "c.del_flag = '0' and " +
-            "v.del_flag = '0' and " +
-            "bt.founder_id = #{id} and " +
-            "a.auditor_id = #{id} and " +
+            "v.del_flag = '0' and (" +
+            "bt.founder_id = #{id} or " +
+            "a.auditor_id = #{id} ) and " +
             "a.audit_result = '0' " +
             "order by " +
             "b.should_be asc, " +
