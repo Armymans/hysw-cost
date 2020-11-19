@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Transient;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,7 +31,7 @@ public class ReturnTrackVo {
     private String auditUnitNameId;
     private String ceaTotalMoney;
     private String aB;
-
+    @Transient
     private String currentHandler;
 
     private List<AuditInfoVo> auditInfoVoList;
