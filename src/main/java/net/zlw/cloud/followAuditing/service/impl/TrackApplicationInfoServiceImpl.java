@@ -108,6 +108,26 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             }else{
                 //普通员工则根据创建人查看
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
+                for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                    //审核信息为未审核状态得
+                    Example example = new Example(AuditInfo.class);
+                    example.createCriteria().andEqualTo("baseProjectId",returnTrackVo.getId())
+                            .andEqualTo("auditResult","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    if (auditInfo != null){
+                        if (auditInfo.getAuditorId() != null){
+                            //获得当前审核人
+                            Example example1 = new Example(MemberManage.class);
+                            example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                            MemberManage memberManage1 = memberManageDao.selectOneByExample(example1);
+                            if(memberManage1!=null){
+                                returnTrackVo.setCurrentHandler(memberManage1.getMemberName());
+                            }else{
+                                returnTrackVo.setCurrentHandler("暂未审核");
+                            }
+                        }
+                    }
+                }
                 pageInfo = new PageInfo<>(returnTrackVos);
             }
         }else{

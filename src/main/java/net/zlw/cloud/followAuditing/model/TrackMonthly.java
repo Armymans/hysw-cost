@@ -32,6 +32,8 @@ public class TrackMonthly implements Serializable {
     private String createTime;
     @Column(name = "update_time")
     private String updateTime;
+    @Column(name = "not_del")
+    private String notDel;
     @Transient
     private String projectNum;
     @Transient
