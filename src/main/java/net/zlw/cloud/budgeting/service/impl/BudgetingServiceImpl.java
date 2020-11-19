@@ -202,7 +202,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         Example.Criteria c = example1.createCriteria();
         c.andLike("type","ysxmxj%");
         c.andEqualTo("status","0");
-        c.andEqualTo("userId",loginUser.getId());
+        c.andEqualTo("platCode",loginUser.getId());
         List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
         for (FileInfo fileInfo : fileInfos) {
             //修改文件外键
