@@ -345,7 +345,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
             }
         }else{
-            baseProject.setBudgetStatus("2");
+
             projectDao.updateByPrimaryKeySelective(baseProject);
             budgetingDao.updateByPrimaryKeySelective(budgeting);
         }
