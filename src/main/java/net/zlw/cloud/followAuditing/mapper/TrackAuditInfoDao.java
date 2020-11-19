@@ -14,157 +14,159 @@ import java.util.List;
 @org.apache.ibatis.annotations.Mapper
 public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
     @Select(
-            "select\n" +
-                    "tai.id id,\n" +
-                    "b.cea_num ceaNum,\n" +
-                    "b.project_num projectNum,\n" +
-                    "b.project_name projectName,\n" +
-                    "( CASE b.track_status WHEN '1' THEN '待审核' WHEN '2' THEN '未提交' WHEN '3' THEN '进行中' WHEN '4' THEN '未通过' WHEN '5' THEN '已完成' END ) AS trackStatus,\n" +
-                    "( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,\n" +
-                    "b.construction_unit constructionUnit,\n" +
-                    "( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,\n" +
-                    "(\n" +
-                    "CASE\n" +
-                    "b.design_category\n" +
-                    "WHEN '1' THEN\n" +
-                    "'市政管道'\n" +
-                    "WHEN '2' THEN\n" +
-                    "'管网改造'\n" +
-                    "WHEN '3' THEN\n" +
-                    "'新建小区'\n" +
-                    "WHEN '4' THEN\n" +
-                    "'二次供水项目'\n" +
-                    "WHEN '5' THEN\n" +
-                    "'工商户'\n" +
-                    "WHEN '6' THEN\n" +
-                    "'居民装接水'\n" +
-                    "WHEN '7' THEN\n" +
-                    "'行政事业'\n" +
-                    "END\n" +
-                    ") AS designCategory,\n" +
-                    "( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType,\n" +
-                    "b.customer_name customerName,\n" +
-                    "b.water_address waterAddress,\n" +
-                    "b.a_b aB,\n" +
-                    "b.construction_organization constructionOrganization,\n" +
-                    "(select writter from track_monthly where track_id = tai.id limit 0,1) writter,\n" +
-                    "(select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) fillTime ,\n" +
-                    "tai.outsource outsource,\n" +
-                    "tai.audit_unit_name_id auditUnitNameId,\n" +
-                    "tai.cea_total_money ceaTotalMoney\n" +
-                    "from track_audit_info tai\n" +
-                    "LEFT JOIN base_project b on tai.base_project_id = b.id\n" +
-                    "LEFT JOIN track_application_info ta on ta.track_audit = tai.id\n" +
-                    "LEFT JOIN track_monthly tm on tm.track_id = tai.id\n" +
-                    "where\n" +
-                    "tai.`status` = 0 \n" +
-                    "and\n" +
-                    "b.del_flag = 0\n" +
-                    "and\n" +
-                    "(tai.founder_id = #{uid} or #{uid} = '' ) \n" +
-                    "and\n" +
-                    "(b.district = #{district} or #{district} = '' ) \n" +
-                    "and\n" +
-                    "(b.project_nature = #{projectNature} or #{projectNature} = '') \n" +
-                    "and\n" +
-                    "(b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '' ) \n" +
-                    "and\n" +
-                    "((select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) > #{startTime} or #{startTime} = '') \n" +
-                    "and\n" +
-                    "((select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) < #{endTIme} or #{endTIme} = '') \n" +
-                    "and\n" +
-                    "(b.design_category = #{designCategory} or #{designCategory} = '') \n" +
-                    "and\n" +
-                    "(b.construction_organization = #{constructionOrganization} or #{constructionOrganization} = '') \n" +
-                    "and\n" +
-                    "(b.track_status = #{trackStatus} or #{trackStatus} = '') \n" +
-                    "and\n" +
-                    "(\n" +
-                    "b.cea_num like concat('%',#{keyword},'%') or\n" +
-                    "b.project_num like concat('%',#{keyword},'%') or\n" +
-                    "b.project_name like concat ('%',#{keyword},'%') or\n" +
-                    "b.construction_unit like concat ('%',#{keyword},'%') or\n" +
-                    "b.customer_name like concat ('%',#{keyword},'%') or\n" +
-                    "tai.audit_unit_name_id like concat  ('%',#{keyword},'%') or\n" +
-                    "b.design_category like concat  ('%',#{keyword},'%') or\n" +
-                    "b.construction_organization like concat  ('%',#{keyword},'%')\n" +
+            "select  " +
+                    "tai.id id,  " +
+                    "tm.id tmId,  " +
+                    "b.cea_num ceaNum,  " +
+                    "b.project_num projectNum,  " +
+                    "b.project_name projectName,  " +
+                    "( CASE b.track_status WHEN '1' THEN '待审核' WHEN '2' THEN '未提交' WHEN '3' THEN '进行中' WHEN '4' THEN '未通过' WHEN '5' THEN '已完成' END ) AS trackStatus,  " +
+                    "( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,  " +
+                    "b.construction_unit constructionUnit,  " +
+                    "( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,  " +
+                    "(  " +
+                    "CASE  " +
+                    "b.design_category  " +
+                    "WHEN '1' THEN  " +
+                    "'市政管道'  " +
+                    "WHEN '2' THEN  " +
+                    "'管网改造'  " +
+                    "WHEN '3' THEN  " +
+                    "'新建小区'  " +
+                    "WHEN '4' THEN  " +
+                    "'二次供水项目'  " +
+                    "WHEN '5' THEN  " +
+                    "'工商户'  " +
+                    "WHEN '6' THEN  " +
+                    "'居民装接水'  " +
+                    "WHEN '7' THEN  " +
+                    "'行政事业'  " +
+                    "END  " +
+                    ") AS designCategory,  " +
+                    "( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType,  " +
+                    "b.customer_name customerName,  " +
+                    "b.water_address waterAddress,  " +
+                    "b.a_b aB,  " +
+                    "b.construction_organization constructionOrganization,  " +
+                    "(select writter from track_monthly where track_id = tai.id limit 0,1) writter,  " +
+                    "(select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) fillTime ,  " +
+                    "tai.outsource outsource,  " +
+                    "tai.audit_unit_name_id auditUnitNameId,  " +
+                    "tai.cea_total_money ceaTotalMoney  " +
+                    "from track_audit_info tai  " +
+                    "LEFT JOIN base_project b on tai.base_project_id = b.id  " +
+                    "LEFT JOIN track_application_info ta on ta.track_audit = tai.id  " +
+                    "LEFT JOIN track_monthly tm on tm.track_id = tai.id  " +
+                    "where  " +
+                    "tai.`status` = 0   " +
+                    "and  " +
+                    "b.del_flag = 0  " +
+                    "and  " +
+                    "(tai.founder_id = #{uid} or #{uid} = '' )   " +
+                    "and  " +
+                    "(b.district = #{district} or #{district} = '' )   " +
+                    "and  " +
+                    "(b.project_nature = #{projectNature} or #{projectNature} = '')   " +
+                    "and  " +
+                    "(b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '' )   " +
+                    "and  " +
+                    "((select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) > #{startTime} or #{startTime} = '')   " +
+                    "and  " +
+                    "((select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) < #{endTIme} or #{endTIme} = '')   " +
+                    "and  " +
+                    "(b.design_category = #{designCategory} or #{designCategory} = '')   " +
+                    "and  " +
+                    "(b.construction_organization = #{constructionOrganization} or #{constructionOrganization} = '')   " +
+                    "and  " +
+                    "(b.track_status = #{trackStatus} or #{trackStatus} = '')   " +
+                    "and  " +
+                    "(  " +
+                    "b.cea_num like concat('%',#{keyword},'%') or  " +
+                    "b.project_num like concat('%',#{keyword},'%') or  " +
+                    "b.project_name like concat ('%',#{keyword},'%') or  " +
+                    "b.construction_unit like concat ('%',#{keyword},'%') or  " +
+                    "b.customer_name like concat ('%',#{keyword},'%') or  " +
+                    "tai.audit_unit_name_id like concat  ('%',#{keyword},'%') or  " +
+                    "b.design_category like concat  ('%',#{keyword},'%') or  " +
+                    "b.construction_organization like concat  ('%',#{keyword},'%')  " +
                     ")"
     )
     List<ReturnTrackVo> selectTrackList(PageVo pageVo);
 
     @Select(
-            "select\n" +
-                    "tai.id id,\n" +
-                    "b.cea_num ceaNum,\n" +
-                    "b.project_num projectNum,\n" +
-                    "b.project_name projectName,\n" +
-                    "( CASE b.track_status WHEN '1' THEN '待审核' WHEN '2' THEN '未提交' WHEN '3' THEN '进行中' WHEN '4' THEN '未通过' WHEN '5' THEN '已完成' END ) AS trackStatus,\n" +
-                    "( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,\n" +
-                    "b.construction_unit constructionUnit,\n" +
-                    "( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,\n" +
-                    "(\n" +
-                    "  CASE\n" +
-                    "   b.design_category\n" +
-                    "   WHEN '1' THEN\n" +
-                    "   '市政管道'\n" +
-                    "   WHEN '2' THEN\n" +
-                    "   '管网改造'\n" +
-                    "   WHEN '3' THEN\n" +
-                    "   '新建小区'\n" +
-                    "   WHEN '4' THEN\n" +
-                    "   '二次供水项目'\n" +
-                    "   WHEN '5' THEN\n" +
-                    "   '工商户'\n" +
-                    "   WHEN '6' THEN\n" +
-                    "   '居民装接水'\n" +
-                    "   WHEN '7' THEN\n" +
-                    "   '行政事业'\n" +
-                    "  END\n" +
-                    "  ) AS designCategory,\n" +
-                    "( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType,\n" +
-                    "b.customer_name customerName,\n" +
-                    "b.water_address waterAddress,\n" +
-                    "b.a_b aB,\n" +
-                    "b.construction_organization constructionOrganization,\n" +
-                    "(select writter from track_monthly where track_id = tai.id limit 0,1) writter,\n" +
-                    "(select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) fillTime ,\n" +
-                    "tai.outsource outsource,\n" +
-                    "tai.audit_unit_name_id auditUnitNameId,\n" +
-                    "tai.cea_total_money ceaTotalMoney\n" +
-                    "from track_audit_info tai\n" +
-                    "LEFT JOIN base_project b on tai.base_project_id = b.id\n" +
-                    "LEFT JOIN track_application_info ta on ta.track_audit = tai.id\n" +
-                    "LEFT JOIN track_monthly tm on tm.track_id = tai.id\n" +
-                    "where\n" +
-                    "tai.`status` = \"0\" \n" +
-                    "and\n" +
-                    "b.del_flag = \"0\" \n" +
-                    "and\n" +
-                    "(b.track_status = #{trackStatus} or #{trackStatus} = '') \n" +
-                    "and\n" +
-                    "(b.district = #{district} or #{district} = '' ) \n" +
-                    "and\n" +
-                    "(b.project_nature = #{projectNature} or #{projectNature} = '') \n" +
-                    "and\n" +
-                    "(b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '' ) \n" +
-                    "and\n" +
-                    "((select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) > #{startTime} or #{startTime} = '') \n" +
-                    "and\n" +
-                    "((select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) < #{endTIme} or #{endTIme} = '') \n" +
-                    "and\n" +
-                    "(b.design_category = #{designCategory} or #{designCategory} = '') \n" +
-                    "and\n" +
-                    "(b.construction_organization = #{constructionOrganization} or #{constructionOrganization} = '') \n" +
-                    "and\n" +
-                    "(\n" +
-                    "b.cea_num like concat('%',#{keyword},'%') or\n" +
-                    "b.project_num like concat('%',#{keyword},'%') or\n" +
-                    "b.project_name like concat ('%',#{keyword},'%') or\n" +
-                    "b.construction_unit like concat ('%',#{keyword},'%') or\n" +
-                    "b.customer_name like concat ('%',#{keyword},'%') or\n" +
-                    "tai.audit_unit_name_id like concat  ('%',#{keyword},'%') or\n" +
-                    "b.design_category like concat  ('%',#{keyword},'%') or\n" +
-                    "b.construction_organization like concat  ('%',#{keyword},'%')\n" +
+            "select  " +
+                    "tai.id id,  " +
+                    "tm.id tmId,  " +
+                    "b.cea_num ceaNum,  " +
+                    "b.project_num projectNum,  " +
+                    "b.project_name projectName,  " +
+                    "( CASE b.track_status WHEN '1' THEN '待审核' WHEN '2' THEN '未提交' WHEN '3' THEN '进行中' WHEN '4' THEN '未通过' WHEN '5' THEN '已完成' END ) AS trackStatus,  " +
+                    "( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,  " +
+                    "b.construction_unit constructionUnit,  " +
+                    "( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,  " +
+                    "(  " +
+                    "  CASE  " +
+                    "   b.design_category  " +
+                    "   WHEN '1' THEN  " +
+                    "   '市政管道'  " +
+                    "   WHEN '2' THEN  " +
+                    "   '管网改造'  " +
+                    "   WHEN '3' THEN  " +
+                    "   '新建小区'  " +
+                    "   WHEN '4' THEN  " +
+                    "   '二次供水项目'  " +
+                    "   WHEN '5' THEN  " +
+                    "   '工商户'  " +
+                    "   WHEN '6' THEN  " +
+                    "   '居民装接水'  " +
+                    "   WHEN '7' THEN  " +
+                    "   '行政事业'  " +
+                    "  END  " +
+                    "  ) AS designCategory,  " +
+                    "( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType,  " +
+                    "b.customer_name customerName,  " +
+                    "b.water_address waterAddress,  " +
+                    "b.a_b aB,  " +
+                    "b.construction_organization constructionOrganization,  " +
+                    "(select writter from track_monthly where track_id = tai.id limit 0,1) writter,  " +
+                    "(select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) fillTime ,  " +
+                    "tai.outsource outsource,  " +
+                    "tai.audit_unit_name_id auditUnitNameId,  " +
+                    "tai.cea_total_money ceaTotalMoney  " +
+                    "from track_audit_info tai  " +
+                    "LEFT JOIN base_project b on tai.base_project_id = b.id  " +
+                    "LEFT JOIN track_application_info ta on ta.track_audit = tai.id  " +
+                    "LEFT JOIN track_monthly tm on tm.track_id = tai.id  " +
+                    "where  " +
+                    "tai.`status` = \"0\"   " +
+                    "and  " +
+                    "b.del_flag = \"0\"   " +
+                    "and  " +
+                    "(b.track_status = #{trackStatus} or #{trackStatus} = '')   " +
+                    "and  " +
+                    "(b.district = #{district} or #{district} = '' )   " +
+                    "and  " +
+                    "(b.project_nature = #{projectNature} or #{projectNature} = '')   " +
+                    "and  " +
+                    "(b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '' )   " +
+                    "and  " +
+                    "((select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) > #{startTime} or #{startTime} = '')   " +
+                    "and  " +
+                    "((select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) < #{endTIme} or #{endTIme} = '')   " +
+                    "and  " +
+                    "(b.design_category = #{designCategory} or #{designCategory} = '')   " +
+                    "and  " +
+                    "(b.construction_organization = #{constructionOrganization} or #{constructionOrganization} = '')   " +
+                    "and  " +
+                    "(  " +
+                    "b.cea_num like concat('%',#{keyword},'%') or  " +
+                    "b.project_num like concat('%',#{keyword},'%') or  " +
+                    "b.project_name like concat ('%',#{keyword},'%') or  " +
+                    "b.construction_unit like concat ('%',#{keyword},'%') or  " +
+                    "b.customer_name like concat ('%',#{keyword},'%') or  " +
+                    "tai.audit_unit_name_id like concat  ('%',#{keyword},'%') or  " +
+                    "b.design_category like concat  ('%',#{keyword},'%') or  " +
+                    "b.construction_organization like concat  ('%',#{keyword},'%')  " +
                     ")"
     )
     List<ReturnTrackVo> selectTrackList1(PageVo pageVo);

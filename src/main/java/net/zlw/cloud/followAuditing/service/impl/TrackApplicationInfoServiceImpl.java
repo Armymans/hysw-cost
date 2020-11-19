@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -88,7 +89,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                     //审核信息为未审核状态得
                     Example example = new Example(AuditInfo.class);
-                    example.createCriteria().andEqualTo("baseProjectId",returnTrackVo.getId())
+                    example.createCriteria().andEqualTo("baseProjectId",returnTrackVo.getTmId())
                             .andEqualTo("auditResult","0");
                     AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
                     if (auditInfo != null){
@@ -112,7 +113,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                     //审核信息为未审核状态得
                     Example example = new Example(AuditInfo.class);
-                    example.createCriteria().andEqualTo("baseProjectId",returnTrackVo.getId())
+                    example.createCriteria().andEqualTo("baseProjectId",returnTrackVo.getTmId())
                             .andEqualTo("auditResult","0");
                     AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
                     if (auditInfo != null){
@@ -254,12 +255,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 if(whzjh.equals(memberManage.getId())||wjzjh.equals(memberManage.getId())){
                     //如果为通过
                     if("1".equals(batchReviewVo.getAuditResult())){
+
+                        String s = trackMonthlyDao.selectByTrickId(trackAuditInfo.getId());
+
                         //创建一条新的审核信息
                         String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
                         AuditInfo newAuditInfo = new AuditInfo();
                         newAuditInfo.setId(auditInfouuid);
-                        newAuditInfo.setBaseProjectId(trackAuditInfo.getId());
-                        newAuditInfo.setAuditType("0");
+                        newAuditInfo.setBaseProjectId(s);
+                        newAuditInfo.setAuditType("4");
                         //审核结果 结果待审核
                         newAuditInfo.setAuditResult("0");
                         //根据项目创建人地区判断
