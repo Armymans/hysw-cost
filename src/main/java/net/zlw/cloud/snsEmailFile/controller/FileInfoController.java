@@ -138,7 +138,7 @@ public class FileInfoController extends BaseController {
         }
         Map<String, String> map = new HashMap<>();
         map.put("id",attachInfo.getId());
-        map.put("name",attachInfo.getName()+"."+attachInfo.getFileType());
+        map.put("name",attachInfo.getFileName()+"."+attachInfo.getFileType());
         return RestUtil.success(map);
     }
 

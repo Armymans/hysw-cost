@@ -44,9 +44,13 @@ public class CallForBids implements Serializable {
     @Column(name = "construction_unit")
     private String constructionUnit;
 
+    @Transient
     private String fileNameOfBid;
+    @Transient
     private String fileIdOfBid;
+    @Transient
     private String fileNameOfWin;
+    @Transient
     private String fileIdOfWin;
 
 
