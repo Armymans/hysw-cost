@@ -96,6 +96,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
             "select  " +
                     "DISTINCT tai.id id,  " +
                     "b.cea_num ceaNum,  " +
+                    "tai.founder_id founderId,  " +
                     "b.project_num projectNum,  " +
                     "b.project_name projectName,  " +
                     "( CASE b.track_status WHEN '1' THEN '待审核' WHEN '2' THEN '未提交' WHEN '3' THEN '进行中' WHEN '4' THEN '未通过' WHEN '5' THEN '已完成' END ) AS trackStatus,  " +

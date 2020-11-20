@@ -35,6 +35,10 @@ public class ReturnTrackVo {
     private String currentHandler;
     @Transient
     private String tmId;
+    @Transient
+    private String founderId;
+    @Transient
+    private String showEdit;
     private List<AuditInfoVo> auditInfoVoList;
 
     @Override

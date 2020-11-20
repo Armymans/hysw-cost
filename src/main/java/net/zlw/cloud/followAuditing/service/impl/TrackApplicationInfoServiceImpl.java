@@ -144,6 +144,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             //但是进行中的和已完成按钮除查看只有领导和创建人可操作
             if("3".equals(pageVo.getTrackStatus())||"5".equals(pageVo.getTrackStatus())){
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
+                for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                    if(returnTrackVo.getFounderId().equals(pageVo.getUid())){
+                        returnTrackVo.setShowEdit("1");
+                    }else{
+                        returnTrackVo.setShowEdit("0");
+                    }
+                }
                 pageInfo = new PageInfo<>(returnTrackVos);
             }else{
                 //全部，未提交和未通过谁创建谁看到
@@ -376,22 +383,6 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     public void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId) throws Exception {
         //todo userInfo.getCompanyId() userInfo.getId()
         String userInfoId = userInfo.getId();
-        String companyId = userInfo.getCompanyId();
-
-        //月报
-        Example example1 = new Example(TrackMonthly.class);
-        Example.Criteria criteria = example1.createCriteria();
-        // todo 待修改
-        criteria.andEqualTo("trackId", userInfoId);
-        criteria.andEqualTo("status", "0");
-        TrackMonthly trackMonthly1 = trackMonthlyDao.selectOneByExample(example1);
-        if(trackMonthly1==null){
-            throw new Exception("请上传月报");
-        }
-        trackMonthly1.setAuditCount("1");
-        trackMonthly1.setTrackId(trackVo.getAuditInfo().getId());
-        trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly1);
-
 
         Example example = new Example(BaseProject.class);
         example.createCriteria().andEqualTo("id", baseId);
@@ -419,13 +410,22 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             if (auditInfo.getTrackAuditBase() == null) {
                 auditInfo.setTrackAuditBase(new BigDecimal("0"));
             }
-
-            if (userInfo != null) {
-                trackVo.getAuditInfo().setFounderId(userInfoId);
-            }
             trackVo.getAuditInfo().setFounderId(userInfoId);
             trackVo.getAuditInfo().setStatus("0");
             trackAuditInfoDao.insertSelective(trackVo.getAuditInfo());
+
+            //月报
+            Example example1 = new Example(TrackMonthly.class);
+            Example.Criteria criteria = example1.createCriteria();
+            criteria.andEqualTo("trackId", userInfoId);
+            criteria.andEqualTo("status", "0");
+            TrackMonthly trackMonthly1 = trackMonthlyDao.selectOneByExample(example1);
+            if(trackMonthly1==null){
+                throw new Exception("请上传月报");
+            }
+            trackMonthly1.setAuditCount("1");
+            trackMonthly1.setTrackId(auditInfo.getId());
+            trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly1);
 
             // 上传文件，新建-申请信息，列表文件
             List<FileInfo> byFreignAndType = fileInfoMapper.findByFreignAndType(trackVo.getKey(), trackVo.getType());
@@ -459,6 +459,19 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             trackVo.getAuditInfo().setCreateTime(simpleDateFormat.format(new Date()));
             trackAuditInfoDao.insertSelective(trackVo.getAuditInfo());
+
+            //月报
+            Example example1 = new Example(TrackMonthly.class);
+            Example.Criteria criteria = example1.createCriteria();
+            criteria.andEqualTo("trackId", userInfoId);
+            criteria.andEqualTo("status", "0");
+            TrackMonthly trackMonthly1 = trackMonthlyDao.selectOneByExample(example1);
+            if(trackMonthly1==null){
+                throw new Exception("请上传月报");
+            }
+            trackMonthly1.setAuditCount("1");
+            trackMonthly1.setTrackId(trackVo.getAuditInfo().getId());
+            trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly1);
 
             //存入审核表
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfoId);
