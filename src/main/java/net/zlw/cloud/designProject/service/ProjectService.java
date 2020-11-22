@@ -20,11 +20,15 @@ import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1185,6 +1189,12 @@ public class ProjectService {
         projectMapper.deleteProject(designInfo.getBaseProjectId());
     }
 
+
+    @Autowired
+    private RemindSetMapper remindSetMapper;
+
+    @Autowired
+    private MessageService messageService;
     /**
      * 提交设计项目
      * @param projectVo
@@ -1207,8 +1217,8 @@ public class ProjectService {
         projectVo.getBaseProject().setId(projectuuid);
         projectVo.getBaseProject().setCreateTime(createTime);
         //todo loginUser.getId()
-        projectVo.getBaseProject().setFounderId(loginUser.getId());
-        projectVo.getBaseProject().setFounderCompanyId(loginUser.getCompanyId());
+//        projectVo.getBaseProject().setFounderId(loginUser.getId());
+//        projectVo.getBaseProject().setFounderCompanyId(loginUser.getCompanyId());
         projectVo.getBaseProject().setProjectFlow("1");
         projectVo.getBaseProject().setDelFlag("0");
 
@@ -1225,8 +1235,8 @@ public class ProjectService {
             auditInfo.setAuditorId(projectVo.getBaseProject().getReviewerId());
             auditInfo.setCreateTime(createTime);
             //todo   loginUser.getId()
-            auditInfo.setFounderId(loginUser.getId());
-            auditInfo.setCompanyId(loginUser.getCompanyId());
+//            auditInfo.setFounderId(loginUser.getId());
+//            auditInfo.setCompanyId(loginUser.getCompanyId());
             auditInfo.setStatus("0");
             auditInfo.setChangeFlag("1");
             auditInfoDao.insert(auditInfo);
@@ -1239,8 +1249,8 @@ public class ProjectService {
         projectVo.getDesignInfo().setId(DesignInfouuid);
         projectVo.getDesignInfo().setBaseProjectId(projectuuid);
         //todo   loginUser.getId()
-        projectVo.getDesignInfo().setFounderId(loginUser.getId());
-        projectVo.getDesignInfo().setCompanyId(loginUser.getCompanyId());
+//        projectVo.getDesignInfo().setFounderId(loginUser.getId());
+//        projectVo.getDesignInfo().setCompanyId(loginUser.getCompanyId());
         projectVo.getDesignInfo().setStatus("0");
         projectVo.getDesignInfo().setIsdeschange("0");
         projectVo.getDesignInfo().setCreateTime(createTime);
@@ -1252,8 +1262,8 @@ public class ProjectService {
             projectVo.getPackageCame().setId(packageCameuuId);
             projectVo.getPackageCame().setBassProjectId(DesignInfouuid);
             //todo   loginUser.getId()
-            projectVo.getPackageCame().setFounderId(loginUser.getId());
-            projectVo.getPackageCame().setCompanyId(loginUser.getCompanyId());
+//            projectVo.getPackageCame().setFounderId(loginUser.getId());
+//            projectVo.getPackageCame().setCompanyId(loginUser.getCompanyId());
             projectVo.getPackageCame().setStatus("0");
             projectVo.getPackageCame().setCreateTime(createTime);
             packageCameMapper.insert(projectVo.getPackageCame());
@@ -1272,8 +1282,8 @@ public class ProjectService {
             projectVo.getProjectExploration().setId(projectExplorationuuid);
             projectVo.getProjectExploration().setBaseProjectId(DesignInfouuid);
             //todo   loginUser.getId()
-            projectVo.getProjectExploration().setFounderId(loginUser.getId());
-            projectVo.getProjectExploration().setCompany_id(loginUser.getCompanyId());
+//            projectVo.getProjectExploration().setFounderId(loginUser.getId());
+//            projectVo.getProjectExploration().setCompany_id(loginUser.getCompanyId());
             projectVo.getProjectExploration().setStatus("0");
             projectExplorationMapper.insert(projectVo.getProjectExploration());
         }else{
@@ -1308,6 +1318,18 @@ public class ProjectService {
             fileInfo.setPlatCode(DesignInfouuid);
             fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
         }
+
+        MessageVo messageVo = new MessageVo();
+        String id = projectVo.getAuditInfo().getAuditorId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
+        //审核人名字
+        String name = memberManage.getMemberName();
+        messageVo.setId("A03");
+            messageVo.setUserId(loginUser.getId());
+        messageVo.setTitle("您有一个设计项目待审批！");
+        messageVo.setDetails(name+"您好！【"+loginUser.getUsername()+"】已将【所选项目名称】的设计项目提交给您，请审批！");
+        //调用消息Service
+        messageService.sendOrClose(messageVo);
     }
 
     public BaseProject BaseProjectByid(String id){
@@ -1418,6 +1440,7 @@ public class ProjectService {
         //todo loginUser.getId(); loginUser.getCompanyId();
         String loginUserId = loginUser.getId();
         String companyId = loginUser.getCompanyId();
+        String username = loginUser.getUsername();
         //BaseProject baseProject, DesignInfo designInfo, ProjectExploration projectExploration, PackageCame packageCame
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updateTime = simpleDateFormat.format(new Date());
@@ -1489,6 +1512,20 @@ public class ProjectService {
                     packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
                 }
         }
+
+        //消息通知
+        MessageVo messageVo = new MessageVo();
+        String projectName = projectVo.getBaseProject().getProjectName();
+        String id = projectVo.getAuditInfo().getAuditorId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
+        //审核人名字
+        String name = memberManage.getMemberName();
+        messageVo.setId("A04");
+        messageVo.setUserId(loginUserId);
+        messageVo.setTitle("您有一个设计项目待审批！");
+        messageVo.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的设计项目提交给您，请审批！");
+        //调用消息Service
+        messageService.sendOrClose(messageVo);
 //        if("3".equals(projectVo.getBaseProject().getDesginStatus())){
 //            //如果按钮状态为1 说明点击的是提交
 //            if("1".equals(projectVo.getBaseProject().getOrsubmit())){
@@ -1523,6 +1560,7 @@ public class ProjectService {
 //                }
 //            }
 //        }
+
     }
 
     @Resource

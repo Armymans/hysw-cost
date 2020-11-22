@@ -9,13 +9,11 @@ import net.zlw.cloud.followAuditing.model.vo.AuditInfoVo;
 import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
 import net.zlw.cloud.followAuditing.model.vo.TrackVo;
-import net.zlw.cloud.progressPayment.model.AuditInfo;
 
 import java.util.List;
 
 public interface TrackApplicationInfoService {
     PageInfo<ReturnTrackVo> selectTrackList(PageVo pageVo);
-
 
     void deleteById(String id);
 

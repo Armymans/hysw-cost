@@ -8,6 +8,7 @@ import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.snsEmailFile.util.Common;
 import net.zlw.cloud.snsEmailFile.util.FileOperationUtil;
 import net.zlw.cloud.warningDetails.model.MemberManage;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import tk.mybatis.mapper.entity.Example;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -71,6 +71,8 @@ public class FileInfoController extends BaseController {
     @Autowired
     private MemberManageDao memberManageDao;
 
+    @Autowired
+    private MessageService messageService;
     /**
      * 删除滞留文件列表
      * @return
@@ -525,5 +527,11 @@ public class FileInfoController extends BaseController {
             e.printStackTrace();
         }
     }
+
+//    @RequestMapping(value = "/message/sendOrClose", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+//    public Map<String, Object> sendOrClose(MessageVo messageVo){
+//            messageService.sendOrClose(messageVo);
+//            return RestUtil.success();
+//    }
 
 }

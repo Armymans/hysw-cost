@@ -14,13 +14,13 @@ public interface SettleAccountsService {
 
     void deleteAcmcounts(String id);
 
-    void updateAccount(String s);
+    void updateAccount(String s,UserInfo loginUser);
 
     void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser);
 
     BaseAccountsVo findAccountById(String id, UserInfo loginUser);
 
-    void updateAccountById(BaseAccountsVo baseAccountsVo);
+    void updateAccountById(BaseAccountsVo baseAccountsVo,UserInfo loginUser);
 
     void batchReview(BatchReviewVo batchReviewVo);
 }

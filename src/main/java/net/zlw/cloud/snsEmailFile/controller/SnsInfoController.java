@@ -3,7 +3,6 @@ package net.zlw.cloud.snsEmailFile.controller;
 import net.tec.cloud.common.controller.BaseController;
 import net.zlw.cloud.snsEmailFile.model.SnsInfo;
 import net.zlw.cloud.snsEmailFile.service.SnsInfoService;
-import net.zlw.cloud.snsEmailFile.util.SnsThread;
 import net.zlw.cloud.snsEmailFile.util.SnsUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ public class SnsInfoController extends BaseController {
      * @Date 22:46 2020/10/9
      **/
     @RequestMapping(value = "/sendCode", method = RequestMethod.POST)
-    public String sendCode(String phone ,String content,String business){
+    public void sendCode(String phone ,String content){
         try {
             boolean flag = SnsUtil.checkMobieNumber(phone);
             log.info("判断是手机号码校验手机格式是否正确："+flag);
@@ -58,11 +57,11 @@ public class SnsInfoController extends BaseController {
 //            t.start();
             }
 
-            return "T";
+//            return "T";
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+//        return null;
     }
 
 

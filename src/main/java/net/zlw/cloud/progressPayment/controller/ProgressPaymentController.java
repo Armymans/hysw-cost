@@ -1,9 +1,11 @@
 package net.zlw.cloud.progressPayment.controller;
 
 import com.github.pagehelper.PageInfo;
+import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,9 +63,9 @@ public class ProgressPaymentController  extends BaseController {
     //编辑
 //    @PostMapping("/updateProgress")
     @RequestMapping(value = "/progress/updateProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> updateProgress(BaseProjectVo baseProjectVo){
+    public Map<String,Object> updateProgress(BaseProjectVo baseProjectVo, UserInfo userInfo){
         try {
-            baseProjectService.updateProgress(baseProjectVo);
+            baseProjectService.updateProgress(baseProjectVo,userInfo);
             return RestUtil.success("修改成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,11 +87,81 @@ public class ProgressPaymentController  extends BaseController {
     @RequestMapping(value = "/progress/searchAllProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> searchAllProgress(PageVo pageVo){
         System.out.println(pageVo);
-        pageVo.setUid(getLoginUser().getId());
+//        pageVo.setUid(getLoginUser().getId());
         PageInfo<ProgressListVo> progressListVoPageInfo = baseProjectService.searchAllProgress(pageVo);
         return RestUtil.page(progressListVoPageInfo);
     }
 
+    @RequestMapping(value = "/progress/selectProgressPaymentStatus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectProgressPaymentStatus(PageVo pageVo){
+        Page page = new Page();
+        pageVo.setProgressStatus("");
+        PageInfo<ProgressListVo> pageInfo = baseProjectService.searchAllProgress(pageVo);
+        page.setData(pageInfo.getList());
+        page.setPageNum(pageInfo.getPageNum());
+        page.setPageSize(pageInfo.getPageSize());
+        page.setTotalCount(pageInfo.getTotal());
+
+        Page page1 = new Page();
+        pageVo.setProgressStatus("1");
+        PageInfo<ProgressListVo> pageInfo1 = baseProjectService.searchAllProgress(pageVo);
+        page1.setData(pageInfo1.getList());
+        page1.setPageNum(pageInfo1.getPageNum());
+        page1.setPageSize(pageInfo1.getPageSize());
+        page1.setTotalCount(pageInfo1.getTotal());
+
+        Page page2 = new Page();
+        pageVo.setProgressStatus("2");
+        PageInfo<ProgressListVo> pageInfo2 = baseProjectService.searchAllProgress(pageVo);
+        page2.setData(pageInfo2.getList());
+        page2.setPageNum(pageInfo2.getPageNum());
+        page2.setPageSize(pageInfo2.getPageSize());
+        page2.setTotalCount(pageInfo2.getTotal());
+
+        Page page3 = new Page();
+        pageVo.setProgressStatus("3");
+        PageInfo<ProgressListVo> pageInfo3 = baseProjectService.searchAllProgress(pageVo);
+        page3.setData(pageInfo.getList());
+        page3.setPageNum(pageInfo.getPageNum());
+        page3.setPageSize(pageInfo.getPageSize());
+        page3.setTotalCount(pageInfo.getTotal());
+
+        Page page4 = new Page();
+        pageVo.setProgressStatus("4");
+        PageInfo<ProgressListVo> pageInfo4 = baseProjectService.searchAllProgress(pageVo);
+        page4.setData(pageInfo4.getList());
+        page4.setPageNum(pageInfo4.getPageNum());
+        page4.setPageSize(pageInfo4.getPageSize());
+        page4.setTotalCount(pageInfo4.getTotal());
+
+        Page page5 = new Page();
+        pageVo.setProgressStatus("5");
+        PageInfo<ProgressListVo> pageInfo5 = baseProjectService.searchAllProgress(pageVo);
+        page5.setData(pageInfo5.getList());
+        page5.setPageNum(pageInfo5.getPageNum());
+        page5.setPageSize(pageInfo5.getPageSize());
+        page5.setTotalCount(pageInfo5.getTotal());
+
+        Page page6 = new Page();
+        pageVo.setProgressStatus("6");
+        PageInfo<ProgressListVo> pageInfo6 = baseProjectService.searchAllProgress(pageVo);
+        page6.setData(pageInfo6.getList());
+        page6.setPageNum(pageInfo6.getPageNum());
+        page6.setPageSize(pageInfo6.getPageSize());
+        page6.setTotalCount(pageInfo6.getTotal());
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("table1",page);
+        map.put("table2",page1);
+        map.put("table3",page2);
+        map.put("table4",page3);
+        map.put("table5",page4);
+        map.put("table6",page5);
+        map.put("table7",page6);
+
+        return RestUtil.success(map);
+
+    }
     //删除进度款
     @RequestMapping(value = "/progress/deleteProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteProgress(@RequestParam(name = "id") String id){

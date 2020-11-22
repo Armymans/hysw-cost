@@ -12,7 +12,7 @@ public interface BudgetingService {
 
     BudgetingVo selectBudgetingById(String id, UserInfo loginUser);
 
-    void updateBudgeting(BudgetingVo budgetingVo);
+    void updateBudgeting(BudgetingVo budgetingVo,UserInfo loginUser);
 
     void batchReview(BatchReviewVo batchReviewVo);
 

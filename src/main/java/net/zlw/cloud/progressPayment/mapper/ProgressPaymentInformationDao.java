@@ -2,7 +2,6 @@ package net.zlw.cloud.progressPayment.mapper;
 
 import net.zlw.cloud.designProject.model.CostVo2;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
-import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
 import net.zlw.cloud.progressPayment.model.vo.PageVo;
 import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
 import org.apache.ibatis.annotations.Param;
@@ -227,4 +226,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
                     "(s1.create_time<=#{endTime} or  #{endTime} = '')"
     )
     List<ProgressPaymentInformation> totalexpenditure(CostVo2 costVo2);
+
+    @Select("SELECT * FROM progress_payment_information WHERE del_flag NOT IN (0,1) and base_project_id =#{id}")
+    List<ProgressPaymentInformation> findAmount(@Param("id") String id);
 }

@@ -1,6 +1,7 @@
 package net.zlw.cloud.VisaChange.service;
 
 
+import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.VisaChange.model.vo.PageVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeListVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
@@ -13,11 +14,11 @@ public interface VisaChangeService {
 
      List<VisaChangeListVo> findAllVisa(PageVo visaChangeVo);
 
-     void addVisa(VisaChangeVo visaChangeVo,String id);
+     void addVisa(VisaChangeVo visaChangeVo, UserInfo loginUser);
 
-     void updateVisa(VisaChangeVo visaChangeVo, String id);
+     void updateVisa(VisaChangeVo visaChangeVo, UserInfo loginUser);
 
-     VisaChangeVo findVisaById(String baseId, String visaNum, String id);
+     VisaChangeVo findVisaById(String baseId, String visaNum, UserInfo loginUser);
 
      void batchReview(BatchReviewVo batchReviewVo, String id);
 

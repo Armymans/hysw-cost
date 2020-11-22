@@ -11,14 +11,18 @@ import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagem
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.*;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
+import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +53,8 @@ public class MaintenanceProjectInformationService {
     private MaintenanceProjectInformationMapper maintenanceProjectInformationMapper;
 
     @Resource
+    private MessageService messageService;
+    @Resource
     private ConstructionUnitManagementMapper constructionUnitManagementMapper;
 
     @Resource
@@ -69,6 +75,9 @@ public class MaintenanceProjectInformationService {
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
+
+    @Autowired
+    private BaseProjectDao baseProjectDao;
 
 
     /**
@@ -538,6 +547,17 @@ public class MaintenanceProjectInformationService {
             fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
         }
 
+        //消息站内通知
+        String username = userInfo.getUsername();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(maintenanceProjectInformation.getAuditorId());
+        //审核人名字
+        MessageVo messageVo = new MessageVo();
+        messageVo.setId("A21");
+        messageVo.setUserId(maintenanceProjectInformation.getLoginUserId());
+        messageVo.setTitle("您有一个检维修项目待审核！");
+        messageVo.setDetails(memberManage.getMemberName()+"您好！【"+username+"】已将【"+maintenanceProjectInformation.getMaintenanceItemName()+"】的签证/变更项目提交给您，请审批!");
+        //调用消息Service
+        messageService.sendOrClose(messageVo);
 
     }
 
@@ -869,6 +889,17 @@ public class MaintenanceProjectInformationService {
 //        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
 
         maintenanceProjectInformationMapper.updateByPrimaryKeySelective(information);
+        //消息站内通知
+        String username = userInfo.getUsername();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(maintenanceProjectInformationVo.getAuditorId());
+        //审核人名字
+        MessageVo messageVo = new MessageVo();
+        messageVo.setId("A22");
+        messageVo.setUserId(maintenanceProjectInformationVo.getLoginUserId());
+        messageVo.setTitle("您有一个检维修项目待审核！");
+        messageVo.setDetails(memberManage.getMemberName()+"您好！【"+username+"】已将【"+maintenanceProjectInformation.getMaintenanceItemName()+"】的签证/变更项目提交给您，请审批!");
+        //调用消息Service
+        messageService.sendOrClose(messageVo);
 
 
     }
@@ -942,8 +973,28 @@ public class MaintenanceProjectInformationService {
                 maintenanceVo.setAuditNumber("1");
             }
         }
-
-
+        //消息站内通知
+        String username = userInfo.getUsername();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(auditInfo.getBaseProjectId());
+        String projectName = baseProject.getProjectName();
+        //通过\未通过
+        if ("1".equals(auditInfo.getAuditResult())){
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A23");
+            messageVo.setUserId(auditInfo.getAuditorId());
+            messageVo.setTitle("您有一个检维修项目已通过！");
+            messageVo.setDetails(memberManage.getMemberName()+"您好！【"+username+"】提交的【"+projectName+"】项目已通过，请查看详情!");
+            messageService.sendOrClose(messageVo);
+        }else {
+            MessageVo messageVo1 = new MessageVo();
+            messageVo1.setId("A23");
+            messageVo1.setUserId(auditInfo.getAuditorId());
+            messageVo1.setTitle("您有一个检维修项目未通过！");
+            messageVo1.setDetails(username+"您好！【"+memberManage.getMemberName()+"】已将【"+projectName+"】的项目未通过，请查看详情!");
+            //调用消息Service
+            messageService.sendOrClose(messageVo1);
+        }
         return maintenanceVo;
     }
 

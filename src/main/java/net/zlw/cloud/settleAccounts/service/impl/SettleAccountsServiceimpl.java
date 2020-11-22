@@ -2,6 +2,7 @@ package net.zlw.cloud.settleAccounts.service.impl;
 
 
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
@@ -9,6 +10,8 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
+import net.zlw.cloud.remindSet.model.RemindSet;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
@@ -23,7 +26,9 @@ import net.zlw.cloud.settleAccounts.model.vo.PageVo;
 import net.zlw.cloud.settleAccounts.service.SettleAccountsService;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +68,13 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Autowired
     private FileInfoService fileInfoService;
 
+    @Autowired
+    private BudgetingDao budgetingDao;
+
+    @Autowired
+    private RemindSetMapper remindSetMapper;
+    @Autowired
+    private MessageService messageService;
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -89,54 +102,54 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         ArrayList<AccountsVo> returnList = new ArrayList<>();
         for (AccountsVo accountsVo : list) {
             //待审核
-            if (pageVo.getSettleAccountsStatus().equals("1")){
+            if (pageVo.getSettleAccountsStatus().equals("1")) {
                 Example example = new Example(AuditInfo.class);
-                example.createCriteria().andEqualTo("baseProjectId",accountsVo.getAccountId())
-                        .andEqualTo("auditResult","0");
+                example.createCriteria().andEqualTo("baseProjectId", accountsVo.getAccountId())
+                        .andEqualTo("auditResult", "0");
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                if (auditInfo!=null){
+                if (auditInfo != null) {
                     Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                    example1.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    if (memberManage !=null){
+                    if (memberManage != null) {
                         accountsVo.setCurrentHandler(memberManage.getMemberName());
                     }
                 }
 
-                if (loginUser.getId().equals(accountsVo.getFounderId()) || whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId()) || loginUser.getId().equals(auditInfo.getAuditorId())){
+                if (loginUser.getId().equals(accountsVo.getFounderId()) || whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId()) || loginUser.getId().equals(auditInfo.getAuditorId())) {
                     returnList.add(accountsVo);
                 }
             }
             //处理中
-            if (pageVo.getSettleAccountsStatus().equals("2")){
-                if (loginUser.getId().equals(accountsVo.getFounderId())){
+            if (pageVo.getSettleAccountsStatus().equals("2")) {
+                if (loginUser.getId().equals(accountsVo.getFounderId())) {
                     returnList.add(accountsVo);
                 }
             }
             //未通过
-            if (pageVo.getSettleAccountsStatus().equals("3")){
-                if (loginUser.getId().equals(accountsVo.getFounderId())){
+            if (pageVo.getSettleAccountsStatus().equals("3")) {
+                if (loginUser.getId().equals(accountsVo.getFounderId())) {
                     returnList.add(accountsVo);
                 }
             }
             //待确认
-            if (pageVo.getSettleAccountsStatus().equals("4")){
+            if (pageVo.getSettleAccountsStatus().equals("4")) {
                 returnList.add(accountsVo);
             }
             //已完成
-            if (pageVo.getSettleAccountsStatus().equals("5")){
+            if (pageVo.getSettleAccountsStatus().equals("5")) {
                 returnList.add(accountsVo);
             }
             //全部
-            if (pageVo.getSettleAccountsStatus().equals("") || pageVo.getSettleAccountsStatus().equals("0")){
-                if (loginUser.getId().equals(accountsVo.getFounderId())){
+            if (pageVo.getSettleAccountsStatus().equals("") || pageVo.getSettleAccountsStatus().equals("0")) {
+                if (loginUser.getId().equals(accountsVo.getFounderId())) {
                     returnList.add(accountsVo);
                 }
             }
         }
         ArrayList<AccountsVo> accountsVos = new ArrayList<>();
         for (AccountsVo accountsVo : returnList) {
-            if (! accountsVos.contains(accountsVo)){
+            if (!accountsVos.contains(accountsVo)) {
                 accountsVos.add(accountsVo);
             }
         }
@@ -175,7 +188,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     }
 
     @Override
-    public void updateAccount(String s) {
+    public void updateAccount(String s, UserInfo loginUser) {
         BaseProject baseProject = new BaseProject();
         baseProject.setId(s);
         baseProject.setSaWhetherAccount("0");
@@ -184,9 +197,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         //上家到账
         Example example = new Example(LastSettlementReview.class);
         Example.Criteria c = example.createCriteria();
-        c.andEqualTo("baseProjectId",s);
+        c.andEqualTo("baseProjectId", s);
         LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example);
-        if (lastSettlementReview!=null){
+        if (lastSettlementReview != null) {
             lastSettlementReview.setWhetherAccount("0");
             lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
         }
@@ -194,11 +207,89 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         //下家到账
         Example example1 = new Example(SettlementAuditInformation.class);
         Example.Criteria c2 = example1.createCriteria();
-        c2.andEqualTo("baseProjectId",s);
+        c2.andEqualTo("baseProjectId", s);
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
-        if (settlementAuditInformation!=null){
+        if (settlementAuditInformation != null) {
             settlementAuditInformation.setWhetherAccount("0");
             settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+        }
+        //消息通知
+        //项目名称
+        String projectName = baseProject.getProjectName();
+        //根据上家结算送审外键找到关联预算的信息
+        Example example2 = new Example(Budgeting.class);
+        example1.createCriteria().andEqualTo("baseProjectId", s);
+        Budgeting budgeting = budgetingDao.selectOneByExample(example2);
+        Example example3 = new Example(AuditInfo.class);
+        example1.createCriteria().andEqualTo("baseProjectId", s);
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example3);
+        String auditorId = auditInfo.getAuditorId();
+        //预算造价金额
+        BigDecimal amountCost = budgeting.getAmountCost();
+        //上家送审数
+        BigDecimal reviewNumber = lastSettlementReview.getReviewNumber();
+        //下家审定数
+        BigDecimal authorizedNumber = settlementAuditInformation.getAuthorizedNumber();
+        //如果送审数或者审定数超过造价金额的话
+        if (reviewNumber.compareTo(amountCost) == 1 || authorizedNumber.compareTo(amountCost) == 1) {
+            //whsjh 朱让宁
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(whsjh);
+            String name1 = memberManage.getMemberName();
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A01");
+            messageVo.setUserId(whsjh);
+
+            messageVo.setTitle("您有一个结算项目的结算金额超过造价金额！");
+            messageVo.setSnsContent(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo.setContent(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo.setDetails(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+            messageService.sendOrClose(messageVo);
+            // whsjm 刘永涛
+            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(whsjm);
+            String name2 = memberManage1.getMemberName();
+            MessageVo messageVo1 = new MessageVo();
+            messageVo1.setId("A01");
+            messageVo1.setUserId(whsjm);
+            messageVo1.setTitle("您有一个结算项目的结算金额超过造价金额！");
+            messageVo1.setSnsContent(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo1.setContent(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo1.setDetails(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+            messageService.sendOrClose(messageVo1);
+
+            // whzjh 罗均
+            MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(whzjh);
+            String name3 = memberManage2.getMemberName();
+            MessageVo messageVo2 = new MessageVo();
+            messageVo2.setId("A01");
+            messageVo2.setUserId(whzjh);
+            messageVo2.setTitle("您有一个结算项目的结算金额超过造价金额！");
+            messageVo2.setSnsContent(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo2.setContent(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo2.setDetails(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+            messageService.sendOrClose(messageVo2);
+
+            // whzjm 殷莉萍
+            MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(whzjm);
+            String name4 = memberManage3.getMemberName();
+            MessageVo messageVo3 = new MessageVo();
+            messageVo3.setId("A01");
+            messageVo3.setUserId(whzjm);
+            messageVo3.setTitle("您有一个结算项目的结算金额超过造价金额！");
+            messageVo3.setSnsContent(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo3.setContent(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo3.setDetails(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+            messageService.sendOrClose(messageVo2);
+
+        } else {
+            // 站内信
+            MessageVo messageVo4 = new MessageVo();
+            messageVo4.setId("A15");
+            // TODO 登录人id
+            messageVo4.setUserId(auditorId);
+            messageVo4.setTitle("您有一个结算项目待审批！");
+            messageVo4.setDetails(loginUser.getUsername() + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo4);
         }
     }
 
@@ -209,8 +300,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //添加上家送审
         System.out.println(baseAccountsVo);
-        if (baseAccountsVo.getSumbitNameUp() != null){
-            baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
+        if (baseAccountsVo.getSumbitNameUp() != null) {
+            baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-", ""));
             baseAccountsVo.getLastSettlementInfo().setBaseProjectId(baseProject.getId());
             baseAccountsVo.getLastSettlementInfo().setCreateTime(data);
             baseAccountsVo.getLastSettlementInfo().setState("0");
@@ -220,8 +311,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             settlementInfoMapper.insertSelective(baseAccountsVo.getLastSettlementInfo());
         }
         //添加勘察金额
-        if (baseAccountsVo.getInvestigationOfTheAmount() != null){
-            baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-",""));
+        if (baseAccountsVo.getInvestigationOfTheAmount() != null) {
+            baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-", ""));
             baseAccountsVo.getInvestigationOfTheAmount().setBaseProjectId(baseProject.getId());
             baseAccountsVo.getInvestigationOfTheAmount().setCreateTime(data);
             baseAccountsVo.getInvestigationOfTheAmount().setDelFlag("0");
@@ -230,14 +321,14 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
 
         //添加下家送审
-        if (baseAccountsVo.getSumbitMoneyDown() != null){
-            baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
+        if (baseAccountsVo.getSumbitMoneyDown() != null) {
+            baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-", ""));
             baseAccountsVo.getSettlementInfo().setBaseProjectId(baseProject.getId());
 
             baseAccountsVo.getSettlementInfo().setCreateTime(data);
-            if (baseAccountsVo.getLastSettlementInfo().getSumbitMoney() !=null){
+            if (baseAccountsVo.getLastSettlementInfo().getSumbitMoney() != null) {
                 baseAccountsVo.getSettlementInfo().setSumbitMoney(baseAccountsVo.getSumbitMoneyDown());
-            }else {
+            } else {
                 baseAccountsVo.getSettlementInfo().setSumbitMoney("0");
             }
             baseAccountsVo.getSettlementInfo().setSumbitName(baseAccountsVo.getSumbitNameDown());
@@ -248,7 +339,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
 
         //添加上家结算送审
-        baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-",""));
+        baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-", ""));
         baseAccountsVo.getLastSettlementReview().setCreateTime(data);
         baseAccountsVo.getLastSettlementReview().setDelFlag("0");
         baseAccountsVo.getLastSettlementReview().setBaseProjectId(baseProject.getId());
@@ -307,7 +398,81 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 fileInfoService.updateFileName2(fileInfo.getId(), baseAccountsVo.getLastSettlementReview().getId());
             }
         }
+        //消息通知
+        //项目名称
+        String projectName = baseProject.getProjectName();
+        //根据上家结算送审外键找到关联预算的信息
+        Example example1 = new Example(Budgeting.class);
+        example1.createCriteria().andEqualTo("baseProjectId", baseProject.getId());
+        Budgeting budgeting = budgetingDao.selectOneByExample(example);
+        //审核id
+        String auditId = baseAccountsVo.getAuditId();
+        //预算造价金额
+        BigDecimal amountCost = budgeting.getAmountCost();
+        //上家送审数
+        BigDecimal reviewNumber = baseAccountsVo.getLastSettlementReview().getReviewNumber();
+        //下家审定数
+        BigDecimal authorizedNumber = baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber();
+        //如果送审数或者审定数超过造价金额的话
+        if (reviewNumber.compareTo(amountCost) == 1 || authorizedNumber.compareTo(amountCost) == 1) {
+            //whsjh 朱让宁
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(whsjh);
+            String name1 = memberManage.getMemberName();
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A01");
+            messageVo.setUserId(whsjh);
 
+            messageVo.setTitle("您有一个结算项目的结算金额超过造价金额！");
+            messageVo.setSnsContent(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo.setContent(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo.setDetails(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+            messageService.sendOrClose(messageVo);
+            // whsjm 刘永涛
+            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(whsjm);
+            String name2 = memberManage1.getMemberName();
+            MessageVo messageVo1 = new MessageVo();
+            messageVo1.setId("A01");
+            messageVo1.setUserId(whsjm);
+            messageVo1.setTitle("您有一个结算项目的结算金额超过造价金额！");
+            messageVo1.setSnsContent(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo1.setContent(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo1.setDetails(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+            messageService.sendOrClose(messageVo1);
+
+            // whzjh 罗均
+            MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(whzjh);
+            String name3 = memberManage2.getMemberName();
+            MessageVo messageVo2 = new MessageVo();
+            messageVo2.setId("A01");
+            messageVo2.setUserId(whzjh);
+            messageVo2.setTitle("您有一个结算项目的结算金额超过造价金额！");
+            messageVo2.setSnsContent(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo2.setContent(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo2.setDetails(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+            messageService.sendOrClose(messageVo2);
+
+            // whzjm 殷莉萍
+            MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(whzjm);
+            String name4 = memberManage3.getMemberName();
+            MessageVo messageVo3 = new MessageVo();
+            messageVo3.setId("A01");
+            messageVo3.setUserId(whzjm);
+            messageVo3.setTitle("您有一个结算项目的结算金额超过造价金额！");
+            messageVo3.setSnsContent(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo3.setContent(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+            messageVo3.setDetails(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+            messageService.sendOrClose(messageVo2);
+
+        } else {
+            // 站内信
+            MessageVo messageVo4 = new MessageVo();
+            messageVo4.setId("A15");
+            messageVo4.setUserId(auditId);
+            messageVo4.setTitle("您有一个结算项目待审批！");
+            messageVo4.setDetails(loginUser.getUsername() + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo4);
+        }
     }
 
     @Override
@@ -360,21 +525,42 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         c4.andEqualTo("auditResult", "0");
         c4.andEqualTo("auditorId", loginUser.getId());
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example4);
-        if (auditInfo!=null){
+        if (auditInfo != null) {
             baseAccountsVo.setCheckAudit(auditInfo.getAuditType());
-            if (auditInfo.getAuditType().equals("0") || auditInfo.getAuditType().equals("1") || auditInfo.getAuditType().equals("4")){
+            if (auditInfo.getAuditType().equals("0") || auditInfo.getAuditType().equals("1") || auditInfo.getAuditType().equals("4")) {
                 baseAccountsVo.setShowHidden("1");
-            }else if(auditInfo.getAuditType().equals("2") || auditInfo.getAuditType().equals("3") || auditInfo.getAuditType().equals("5")){
+            } else if (auditInfo.getAuditType().equals("2") || auditInfo.getAuditType().equals("3") || auditInfo.getAuditType().equals("5")) {
                 baseAccountsVo.setShowHidden("2");
             }
         }
 //        System.err.println(auditInfo.getAuditType());
-
+        //消息站内通知
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+        String projectName = baseProject.getProjectName();
+        String id1 = loginUser.getId();
+        String username = loginUser.getUsername();
+        if ("1".equals(auditInfo.getAuditResult())) {
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A17");
+            messageVo.setUserId(id1);
+            messageVo.setTitle("您有一个结算项目审批已通过！");
+            messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的结算项目【" + memberManage.getMemberName() + "】已审批通过！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo);
+        } else {
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A17");
+            messageVo.setUserId(id1);
+            messageVo.setTitle("您有一个结算项目审批未通过！");
+            messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的结算项目【" + memberManage.getMemberName() + "】未通过，请查看详情！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo);
+        }
         return baseAccountsVo;
     }
 
     @Override
-    public void updateAccountById(BaseAccountsVo baseAccountsVo) {
+    public void updateAccountById(BaseAccountsVo baseAccountsVo,UserInfo loginUser) {
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //上家审核修改
         settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getLastSettlementInfo());
@@ -437,6 +623,17 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 }
             }
+            //消息站内通知
+            MessageVo messageVo = new MessageVo();
+            RemindSet remindSet = remindSetMapper.selectByPrimaryKey("16");
+            messageVo.setId(baseAccountsVo.getId());
+            messageVo.setUserId(loginUser.getId());
+            messageVo.setTitle("您有一个结算项目待审批！");
+            //TODO 待改
+            messageVo.setDetails("您有一个结算项目待审批！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo);
+
         }
 
     }

@@ -1,29 +1,27 @@
 package net.zlw.cloud.VisaChange.controller;
 
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
-import net.zlw.cloud.VisaChange.model.VisaChange;
-import net.zlw.cloud.VisaChange.model.vo.*;
-import net.zlw.cloud.common.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
-
+import net.zlw.cloud.VisaChange.model.vo.*;
 import net.zlw.cloud.VisaChange.service.VisaChangeService;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
-import net.zlw.cloud.progressPayment.model.AuditInfo;
-import net.zlw.cloud.progressPayment.model.BaseProject;
-import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
+import net.zlw.cloud.common.Page;
+import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
-import tk.mybatis.mapper.entity.Example;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /***
  * 签证变更
@@ -61,6 +59,7 @@ public class VisaChangeController extends BaseController {
 
 
     //查询所有
+
     @RequestMapping(value = "/visachange/findAllVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllVisa(PageVo pageVo){
         String id = getLoginUser().getId();
@@ -156,24 +155,43 @@ public class VisaChangeController extends BaseController {
         return RestUtil.success(list);
     }
 
+    @RequestMapping(value = "/visachange/selectVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectVisa(PageVo pageVo){
+        Page page = new Page();
+        pageVo.setStatus("");
+        Map<String, Object> allVisa = findAllVisa(pageVo);
+
+
+        return RestUtil.success();
+    }
+
+    /**
+        * @Author sjf
+        * @Description //签证变更 模糊搜索
+        * @Date 10:34 2020/11/22
+        * @Param
+        * @return
+     **/
+
     //新增签证变更
     @RequestMapping(value = "/visachange/addVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addVisa(VisaChangeVo visaChangeVo){
-        vcisService.addVisa(visaChangeVo,getLoginUser().getId());
+        vcisService.addVisa(visaChangeVo,getLoginUser());
+
         return RestUtil.success();
     }
 
     //根据id查询签证变更
     @RequestMapping(value = "/visachange/findVisaById",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findVisaById(@RequestParam(name = "baseId") String baseId,@RequestParam(name = "visaNum1") String visaNum){
-       VisaChangeVo visaChangeVo =  vcisService.findVisaById(baseId,visaNum,getLoginUser().getId());
+       VisaChangeVo visaChangeVo =  vcisService.findVisaById(baseId,visaNum,getLoginUser());
        return RestUtil.success(visaChangeVo);
     }
 
     //编辑
     @RequestMapping(value = "/visachange/updateVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateVisa(VisaChangeVo visaChangeVo){
-        vcisService.updateVisa(visaChangeVo,getLoginUser().getId());
+        vcisService.updateVisa(visaChangeVo,getLoginUser());
         return RestUtil.success();
     }
     //批量审核

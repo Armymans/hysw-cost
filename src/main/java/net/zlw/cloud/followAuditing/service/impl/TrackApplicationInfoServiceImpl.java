@@ -21,18 +21,19 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,6 +59,12 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     @Resource
     private BudgetingDao budgetingDao;
 
+    @Resource
+    private RemindSetMapper remindSetMapper;
+
+    @Resource
+    private MessageService messageService;
+
     @Autowired
     private FileInfoMapper fileInfoMapper;
 
@@ -81,8 +88,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         //待审核领导看所有，部门主管也看所有，员工自己创建的（无互审）
         if ("1".equals(pageVo.getTrackStatus())) {
             //如果当前用户等于芜湖吴江部门主管.部门经理则 展示所有待审核信息
-            if(wjzjh.equals(pageVo.getUid()) ||wjzjm.equals(pageVo.getUid()) ||whzjh.equals(pageVo.getUid())
-                    ||whzjm.equals(pageVo.getUid())){
+            if (wjzjh.equals(pageVo.getUid()) || wjzjm.equals(pageVo.getUid()) || whzjh.equals(pageVo.getUid())
+                    || whzjm.equals(pageVo.getUid())) {
                 //如果为部门领导查看所有
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
                 //需要赋值当前负责人
@@ -92,18 +99,18 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     for (TrackMonthly trackMonthly : trackMonthlies) {
                         //审核信息为未审核状态得
                         Example example = new Example(AuditInfo.class);
-                        example.createCriteria().andEqualTo("baseProjectId",trackMonthly.getId())
-                                .andEqualTo("auditResult","0");
+                        example.createCriteria().andEqualTo("baseProjectId", trackMonthly.getId())
+                                .andEqualTo("auditResult", "0");
                         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                        if (auditInfo != null){
-                            if (auditInfo.getAuditorId() != null){
+                        if (auditInfo != null) {
+                            if (auditInfo.getAuditorId() != null) {
                                 //获得当前审核人
                                 Example example1 = new Example(MemberManage.class);
-                                example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                                example1.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
                                 MemberManage memberManage1 = memberManageDao.selectOneByExample(example1);
-                                if(memberManage1!=null){
+                                if (memberManage1 != null) {
                                     returnTrackVo.setCurrentHandler(memberManage1.getMemberName());
-                                }else{
+                                } else {
                                     returnTrackVo.setCurrentHandler("暂未审核");
                                 }
                             }
@@ -111,7 +118,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     }
                 }
                 pageInfo = new PageInfo<>(returnTrackVos);
-            }else{
+            } else {
                 //普通员工则根据创建人查看
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
@@ -119,18 +126,18 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     for (TrackMonthly trackMonthly : trackMonthlies) {
                         //审核信息为未审核状态得
                         Example example = new Example(AuditInfo.class);
-                        example.createCriteria().andEqualTo("baseProjectId",trackMonthly.getId())
-                                .andEqualTo("auditResult","0");
+                        example.createCriteria().andEqualTo("baseProjectId", trackMonthly.getId())
+                                .andEqualTo("auditResult", "0");
                         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                        if (auditInfo != null){
-                            if (auditInfo.getAuditorId() != null){
+                        if (auditInfo != null) {
+                            if (auditInfo.getAuditorId() != null) {
                                 //获得当前审核人
                                 Example example1 = new Example(MemberManage.class);
-                                example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                                example1.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
                                 MemberManage memberManage1 = memberManageDao.selectOneByExample(example1);
-                                if(memberManage1!=null){
+                                if (memberManage1 != null) {
                                     returnTrackVo.setCurrentHandler(memberManage1.getMemberName());
-                                }else{
+                                } else {
                                     returnTrackVo.setCurrentHandler("暂未审核");
                                 }
                             }
@@ -139,20 +146,20 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 }
                 pageInfo = new PageInfo<>(returnTrackVos);
             }
-        }else{
+        } else {
             //进行中，已完成不分层级，都能看到
             //但是进行中的和已完成按钮除查看只有领导和创建人可操作
-            if("3".equals(pageVo.getTrackStatus())||"5".equals(pageVo.getTrackStatus())){
+            if ("3".equals(pageVo.getTrackStatus()) || "5".equals(pageVo.getTrackStatus())) {
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
-                    if(returnTrackVo.getFounderId().equals(pageVo.getUid())){
+                    if (returnTrackVo.getFounderId().equals(pageVo.getUid())) {
                         returnTrackVo.setShowEdit("1");
-                    }else{
+                    } else {
                         returnTrackVo.setShowEdit("0");
                     }
                 }
                 pageInfo = new PageInfo<>(returnTrackVos);
-            }else{
+            } else {
                 //全部，未提交和未通过谁创建谁看到
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                 pageInfo = new PageInfo<>(returnTrackVos);
@@ -223,7 +230,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         Example example1 = new Example(TrackMonthly.class);
         example1.createCriteria().andEqualTo("trackId", id);
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
-        if (trackMonthlies.size() >0) {
+        if (trackMonthlies.size() > 0) {
             for (TrackMonthly trackMonthly : trackMonthlies) {
                 trackMonthly.setStatus("1");
                 trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
@@ -232,10 +239,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     }
 
     @Override
-    public void batchReview(BatchReviewVo batchReviewVo,UserInfo userInfo) {
+    public void batchReview(BatchReviewVo batchReviewVo, UserInfo userInfo) {
         //获取当前用户id
         //todo userInfo.getId(); userInfo.getCompanyId();
-        String userId = userInfo.getId();;
+        String userId = userInfo.getId();
+        ;
         //获取当前公司id
         String companyId = userInfo.getCompanyId();
         //时间
@@ -246,13 +254,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(batchReviewVo.getBatchAll());
         AuditInfo auditInfo = new AuditInfo();
         TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(trackAuditInfo.getId());
-            //查询当前审核信息
-            Example example = new Example(AuditInfo.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("baseProjectId",trackMonthlyOld.getId()); //审核信息外键
-            criteria.andEqualTo("auditorId",userId); //审核人
-            criteria.andEqualTo("auditResult","0"); //审核状态
-            auditInfo = auditInfoDao.selectOneByExample(example);
+        //查询当前审核信息
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseProjectId", trackMonthlyOld.getId()); //审核信息外键
+        criteria.andEqualTo("auditorId", userId); //审核人
+        criteria.andEqualTo("auditResult", "0"); //审核状态
+        auditInfo = auditInfoDao.selectOneByExample(example);
 
 
         //基本信息
@@ -260,71 +268,71 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         //查询当前该项目归哪个地区负责(根据项目创建人的地区判断)
         MemberManage creater = memberManageDao.selectByPrimaryKey(trackAuditInfo.getFounderId());
         //说明当前用户可以进行审核
-        if(memberManage!=null){
-                //如果当前审核人是一级领导
-                if(whzjh.equals(memberManage.getId())||wjzjh.equals(memberManage.getId())){
-                    //如果为通过
-                    if("1".equals(batchReviewVo.getAuditResult())){
+        if (memberManage != null) {
+            //如果当前审核人是一级领导
+            if (whzjh.equals(memberManage.getId()) || wjzjh.equals(memberManage.getId())) {
+                //如果为通过
+                if ("1".equals(batchReviewVo.getAuditResult())) {
 
 //                        String s = trackMonthlyDao.selectByTrickId(trackAuditInfo.getId());
 
-                        //创建一条新的审核信息
-                        String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
-                        AuditInfo newAuditInfo = new AuditInfo();
-                        newAuditInfo.setId(auditInfouuid);
-                        newAuditInfo.setBaseProjectId(trackMonthlyOld.getId());
-                        newAuditInfo.setAuditType("4");
-                        //审核结果 结果待审核
-                        newAuditInfo.setAuditResult("0");
-                        //根据项目创建人地区判断
-                        if("1".equals(creater.getWorkType())){
-                            newAuditInfo.setAuditorId(whzjm);
-                        }else{
-                            newAuditInfo.setAuditorId(wjzjm);
-                        }
-                        newAuditInfo.setCreateTime(sim.format(new Date()));
-                        newAuditInfo.setFounderId(userId);
-                        //添加公司id
-                        newAuditInfo.setCompanyId(companyId);
-                        //状态正常
-                        newAuditInfo.setStatus("0");
-                        //将新的领导信息添加到审核表中
-                        auditInfoDao.insert(newAuditInfo);
-                        //将审核状态改为 待审核(一审)
-                        baseProject.setTrackStatus("1");
-                    }else{
-                        //将审核状态改为 未通过
-                        auditInfo.setAuditType("1");
-                        baseProject.setTrackStatus("4");
+                    //创建一条新的审核信息
+                    String auditInfouuid = UUID.randomUUID().toString().replaceAll("-", "");
+                    AuditInfo newAuditInfo = new AuditInfo();
+                    newAuditInfo.setId(auditInfouuid);
+                    newAuditInfo.setBaseProjectId(trackMonthlyOld.getId());
+                    newAuditInfo.setAuditType("4");
+                    //审核结果 结果待审核
+                    newAuditInfo.setAuditResult("0");
+                    //根据项目创建人地区判断
+                    if ("1".equals(creater.getWorkType())) {
+                        newAuditInfo.setAuditorId(whzjm);
+                    } else {
+                        newAuditInfo.setAuditorId(wjzjm);
                     }
-                    //修改之前的审核信息
-                    auditInfo.setAuditResult(batchReviewVo.getAuditResult());
-                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-                    auditInfo.setAuditTime(sim.format(new Date()));
-                    auditInfo.setUpdateTime(sim.format(new Date()));
-                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    newAuditInfo.setCreateTime(sim.format(new Date()));
+                    newAuditInfo.setFounderId(userId);
+                    //添加公司id
+                    newAuditInfo.setCompanyId(companyId);
+                    //状态正常
+                    newAuditInfo.setStatus("0");
+                    //将新的领导信息添加到审核表中
+                    auditInfoDao.insert(newAuditInfo);
+                    //将审核状态改为 待审核(一审)
+                    baseProject.setTrackStatus("1");
+                } else {
+                    //将审核状态改为 未通过
+                    auditInfo.setAuditType("1");
+                    baseProject.setTrackStatus("4");
                 }
-                //如果当前审核人是二级领导审核
-                if(whzjm.equals(memberManage.getId())||wjzjm.equals(memberManage.getId())){
-                    //如果为通过
-                    if("1".equals(batchReviewVo.getAuditResult())){
-                        //将审核状态改为 进行中(二审)
-                        baseProject.setTrackStatus("3");
-                        auditInfo.setAuditType("1");
-                    }else{
-                        //将审核状态改为 未通过
-                        baseProject.setTrackStatus("4");
-                        auditInfo.setAuditType("1");
-                    }
-                    //修改之前的审核信息
-                    auditInfo.setAuditResult(batchReviewVo.getAuditResult());
-                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-                    auditInfo.setAuditTime(sim.format(new Date()));
-                    auditInfo.setUpdateTime(sim.format(new Date()));
-                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                //修改之前的审核信息
+                auditInfo.setAuditResult(batchReviewVo.getAuditResult());
+                auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                auditInfo.setAuditTime(sim.format(new Date()));
+                auditInfo.setUpdateTime(sim.format(new Date()));
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                baseProjectDao.updateByPrimaryKeySelective(baseProject);
+            }
+            //如果当前审核人是二级领导审核
+            if (whzjm.equals(memberManage.getId()) || wjzjm.equals(memberManage.getId())) {
+                //如果为通过
+                if ("1".equals(batchReviewVo.getAuditResult())) {
+                    //将审核状态改为 进行中(二审)
+                    baseProject.setTrackStatus("3");
+                    auditInfo.setAuditType("1");
+                } else {
+                    //将审核状态改为 未通过
+                    baseProject.setTrackStatus("4");
+                    auditInfo.setAuditType("1");
                 }
+                //修改之前的审核信息
+                auditInfo.setAuditResult(batchReviewVo.getAuditResult());
+                auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                auditInfo.setAuditTime(sim.format(new Date()));
+                auditInfo.setUpdateTime(sim.format(new Date()));
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                baseProjectDao.updateByPrimaryKeySelective(baseProject);
+            }
         }
 //        String[] split = batchReviewVo.getBatchAll().split(",");
 //        if (split != null) {
@@ -420,7 +428,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             criteria.andEqualTo("trackId", userInfoId);
             criteria.andEqualTo("status", "0");
             TrackMonthly trackMonthly1 = trackMonthlyDao.selectOneByExample(example1);
-            if(trackMonthly1==null){
+            if (trackMonthly1 == null) {
                 throw new Exception("请上传月报");
             }
             trackMonthly1.setAuditCount("1");
@@ -466,12 +474,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             criteria.andEqualTo("trackId", userInfoId);
             criteria.andEqualTo("status", "0");
             TrackMonthly trackMonthly1 = trackMonthlyDao.selectOneByExample(example1);
-            if(trackMonthly1==null){
+            if (trackMonthly1 == null) {
                 throw new Exception("请上传月报");
             }
             trackMonthly1.setAuditCount("1");
             trackMonthly1.setTrackId(trackVo.getAuditInfo().getId());
             trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly1);
+            String id = userInfo.getId();
 
             //存入审核表
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfoId);
@@ -480,16 +489,31 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             auditInfo.setBaseProjectId(trackMonthly1.getId());
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("0");
+            auditInfo.setAuditorId(id);
             auditInfo.setStatus("0");
             auditInfo.setCreateTime(simpleDateFormat.format(new Date()));
             //判断当前项目创建人属于哪个地区 根据地区提交给相应领导
             //如果为芜湖
-            if("1".equals(memberManage.getWorkType())){
+            if ("1".equals(memberManage.getWorkType())) {
                 auditInfo.setAuditorId(whzjh);
-            }else{
+            } else {
                 auditInfo.setAuditorId(wjzjh);
             }
             auditInfoDao.insertSelective(auditInfo);
+
+
+            //消息站内通知
+            String username = userInfo.getUsername();
+            String projectName = trackVo.getBaseProject().getProjectName();
+            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+            //审核人名字
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A18");
+            messageVo.setUserId(auditInfo.getAuditorId());
+            messageVo.setTitle("您有一个跟踪审计项目待审核！");
+            messageVo.setDetails(memberManage1.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批!");
+            //调用消息Service
+            messageService.sendOrClose(messageVo);
 
 //            Exadep_adminmple example3 = new Example(MemberManage.class);
 //            example3.createCriteria().andEqualTo("status", "0").andEqualTo("depId", "2").andEqualTo("depAdmin", "1");
@@ -535,11 +559,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 //            }
 //        }
 
-
     }
 
     @Override
-    public TrackVo selectTrackById(String id,UserInfo userInfo) {
+    public TrackVo selectTrackById(String id, UserInfo userInfo) {
         TrackVo trackVo = new TrackVo();
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(id);
         BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(trackAuditInfo.getBaseProjectId());
@@ -553,18 +576,18 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         example1.createCriteria().andEqualTo("status", "0");
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         AuditInfo auditInfo = null;
-        trackVo.setAuditWord("第"+trackMonthlies.size()+"次月报");
+        trackVo.setAuditWord("第" + trackMonthlies.size() + "次月报");
         TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(id);
-            Example example2 = new Example(AuditInfo.class);
-            example2.createCriteria().andEqualTo("baseProjectId",trackMonthlyOld.getId())
-                    .andEqualTo("status","0")
-                    .andEqualTo("auditorId",userInfo.getId())
-                    .andEqualTo("auditResult","0");
-            auditInfo= auditInfoDao.selectOneByExample(example2);
+        Example example2 = new Example(AuditInfo.class);
+        example2.createCriteria().andEqualTo("baseProjectId", trackMonthlyOld.getId())
+                .andEqualTo("status", "0")
+                .andEqualTo("auditorId", userInfo.getId())
+                .andEqualTo("auditResult", "0");
+        auditInfo = auditInfoDao.selectOneByExample(example2);
 
-        if(auditInfo==null){
+        if (auditInfo == null) {
             trackVo.setAuditResult("0"); //不审核
-        }else{
+        } else {
             trackVo.setAuditResult("1");
         }
         trackVo.setTrackStatus(baseProject.getTrackStatus());
@@ -572,6 +595,28 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         trackVo.setAuditInfo(trackAuditInfo);
         trackVo.setTrackApplicationInfo(trackApplicationInfo);
         trackVo.setMonthlyList(trackMonthlies);
+
+        //消息站内通知
+        String username = userInfo.getUsername();
+        String projectName = trackVo.getBaseProject().getProjectName();
+        String id1 = userInfo.getId();
+        // 如果通过\未通过返回信息
+        if ("1".equals(trackVo.getAuditResult())){
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A20");
+            messageVo.setUserId(id1);
+            messageVo.setTitle("您有一个跟踪审计项目已通过！");
+            messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的跟踪审计项目【" + username + "】已审批通过");
+            messageService.sendOrClose(messageVo);
+        }else {
+            MessageVo messageVo1 = new MessageVo();
+            messageVo1.setId("A20");
+            messageVo1.setUserId(id1);
+            messageVo1.setTitle("您有一个跟踪审计项目未通过！");
+            messageVo1.setDetails(username + "您好！您提交的【" + projectName + "】的跟踪审计项目【" + username + "】未通过，请查看详情");
+            //调用消息Service
+            messageService.sendOrClose(messageVo1);
+        }
         return trackVo;
     }
 
@@ -587,7 +632,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         return trackMonthlies;
     }
 
-    public List<TrackMonthly> findAllByTrackId3(String id,UserInfo userInfo) {
+    public List<TrackMonthly> findAllByTrackId3(String id, UserInfo userInfo) {
         ArrayList<TrackMonthly> trackMonthlies1 = new ArrayList<>();
         Example example1 = new Example(TrackMonthly.class);
         Example.Criteria criteria = example1.createCriteria();
@@ -598,7 +643,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
         Example example2 = new Example(TrackMonthly.class);
         Example.Criteria criteria2 = example2.createCriteria();
-        criteria2.andEqualTo("trackId",userInfo.getId());
+        criteria2.andEqualTo("trackId", userInfo.getId());
         criteria2.andEqualTo("status", "0");
         List<TrackMonthly> trackMonthlies2 = trackMonthlyDao.selectByExample(example2);
         trackMonthlies1.addAll(trackMonthlies2);
@@ -623,13 +668,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 //        example2.createCriteria().andEqualTo("baseProjectId",id);
 //        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
         Example example1 = new Example(TrackMonthly.class);
-        example1.createCriteria().andEqualTo("trackId",id);
+        example1.createCriteria().andEqualTo("trackId", id);
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         List<AuditInfoVo> allAuditInfosByTrackId = new ArrayList<>();
         for (TrackMonthly trackMonthly : trackMonthlies) {
             List<AuditInfoVo> allAuditInfosByTrackId2 = trackAuditInfoDao.findAllAuditInfosByTrackId(trackMonthly.getId());
             for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId2) {
-                auditInfoVo.setAuditWord("第"+trackMonthly.getAuditCount()+"次月报");
+                auditInfoVo.setAuditWord("第" + trackMonthly.getAuditCount() + "次月报");
             }
             allAuditInfosByTrackId.addAll(allAuditInfosByTrackId2);
         }
@@ -654,7 +699,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     }
 
     @Override
-    public void updateTrack(TrackVo trackVo,UserInfo userInfo) throws Exception {
+    public void updateTrack(TrackVo trackVo, UserInfo userInfo) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         //如果点击得是保存
@@ -671,30 +716,30 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
             Example example = new Example(AuditInfo.class);
             Example.Criteria c = example.createCriteria();
-            c.andEqualTo("baseProjectId",trackVo.getAuditInfo().getId());
-            c.andEqualTo("auditResult","2"); //未通过
+            c.andEqualTo("baseProjectId", trackVo.getAuditInfo().getId());
+            c.andEqualTo("auditResult", "2"); //未通过
             AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
 
             //月报
             Example exa = new Example(TrackMonthly.class);
             Example.Criteria newMonthly = exa.createCriteria();
-            newMonthly.andEqualTo("trackId",trackVo.getAuditInfo().getId());
+            newMonthly.andEqualTo("trackId", trackVo.getAuditInfo().getId());
             newMonthly.andEqualTo("status", "0");
             List<TrackMonthly> trackMonthlyNew = trackMonthlyDao.selectByExample(exa);
             boolean booleans = true;
             for (TrackMonthly trackMonthly : trackMonthlyNew) {
                 Example newAudid = new Example(AuditInfo.class);
                 Example.Criteria newAudidc = newAudid.createCriteria();
-                newAudidc.andEqualTo("baseProjectId",trackMonthly.getId());
+                newAudidc.andEqualTo("baseProjectId", trackMonthly.getId());
                 List<AuditInfo> auditInfos = auditInfoDao.selectByExample(newAudid);
-                if (auditInfos.size()>0){
-                    booleans= false;
+                if (auditInfos.size() > 0) {
+                    booleans = false;
                 }
             }
 
 
-            if(auditInfo==null){ //未提交 进行中
-                if (booleans){ //未提交
+            if (auditInfo == null) { //未提交 进行中
+                if (booleans) { //未提交
                     //存入审核表
                     MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
                     AuditInfo auditInfo1 = new AuditInfo();
@@ -706,36 +751,50 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
                     //判断当前项目创建人属于哪个地区 根据地区提交给相应领导
                     //如果为芜湖
-                    if("1".equals(memberManage.getWorkType())){
+                    if ("1".equals(memberManage.getWorkType())) {
                         auditInfo1.setAuditorId(whzjh);
-                    }else{
+                    } else {
                         auditInfo1.setAuditorId(wjzjh);
                     }
                     auditInfoDao.insertSelective(auditInfo1);
-                }else{ //进行中
-                    TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(trackVo.getAuditInfo().getId());
-                        trackMonthlyOld.setAuditCount(trackMonthlyNew.size()+"");
-                        trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
 
-                        //存入审核表
-                        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
-                        AuditInfo auditInfo1 = new AuditInfo();
-                        auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
-                        auditInfo1.setBaseProjectId(trackMonthlyOld.getId());
-                        auditInfo1.setAuditResult("0");
-                        auditInfo1.setAuditType("0");
-                        auditInfo1.setStatus("0");
-                        auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
-                        //判断当前项目创建人属于哪个地区 根据地区提交给相应领导
-                        //如果为芜湖
-                        if("1".equals(memberManage.getWorkType())){
-                            auditInfo1.setAuditorId(whzjh);
-                        }else{
-                            auditInfo1.setAuditorId(wjzjh);
-                        }
-                        auditInfoDao.insertSelective(auditInfo1);
+                } else { //进行中
+                    TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(trackVo.getAuditInfo().getId());
+                    trackMonthlyOld.setAuditCount(trackMonthlyNew.size() + "");
+                    trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
+
+                    //存入审核表
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
+                    AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                    auditInfo1.setBaseProjectId(trackMonthlyOld.getId());
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditType("0");
+                    auditInfo1.setStatus("0");
+                    auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
+                    //判断当前项目创建人属于哪个地区 根据地区提交给相应领导
+                    //如果为芜湖
+                    if ("1".equals(memberManage.getWorkType())) {
+                        auditInfo1.setAuditorId(whzjh);
+                    } else {
+                        auditInfo1.setAuditorId(wjzjh);
+                    }
+                    auditInfoDao.insertSelective(auditInfo1);
+
+                    //消息站内通知
+                    String username = userInfo.getUsername();
+                    String projectName = trackVo.getBaseProject().getProjectName();
+                    MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo1.getAuditorId());
+                    //审核人名字
+                    MessageVo messageVo = new MessageVo();
+                    messageVo.setId("A19");
+                    messageVo.setUserId(auditInfo1.getAuditorId());
+                    messageVo.setTitle("您有一个跟踪审计项目待审核！");
+                    messageVo.setDetails(memberManage1.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批!");
+                    //调用消息Service
+                    messageService.sendOrClose(messageVo);
                 }
-            }else{
+            } else {
                 //未通过
                 //todo 更新月报信息
                 TrackMonthly trackMonthly = trackMonthlyDao.selectByPrimaryKey(auditInfo.getBaseProjectId());
@@ -744,7 +803,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
                 TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(trackVo.getAuditInfo().getId());
                 trackMonthlyOld.setTrackId(trackVo.getAuditInfo().getId());
-                trackMonthlyOld.setAuditCount(trackMonthlyNew.size()+1+"");
+                trackMonthlyOld.setAuditCount(trackMonthlyNew.size() + 1 + "");
                 trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
 
                 auditInfo.setAuditResult("0");
