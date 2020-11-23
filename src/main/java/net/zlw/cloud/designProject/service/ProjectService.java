@@ -824,9 +824,7 @@ public class ProjectService {
                             auditInfo2.setAuditType("1");
                             auditInfo2.setChangeFlag("1");
                         }
-                        //如果审核未通过，将时间和审核意见设置为null
-                        auditInfo2.setAuditTime(null);
-                        auditInfo2.setAuditOpinion(null);
+                        auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setAuditResult(auditInfo.getAuditResult());
                         auditInfo2.setUpdateTime(createTime);
                         baseProject.setDesginStatus("3");
@@ -1481,6 +1479,7 @@ public class ProjectService {
                         //如果是未通过 提交时 将审核信息改为待审核
                         auditInfo1.setAuditResult("0");
                         auditInfo1.setAuditOpinion(null);
+                        auditInfo1.setAuditTime(null);
                         //修改基本状态 未通过重新变为待审核
                         projectVo.getBaseProject().setDesginStatus("1");
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
