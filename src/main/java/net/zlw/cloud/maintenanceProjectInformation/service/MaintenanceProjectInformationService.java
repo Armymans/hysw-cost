@@ -1037,74 +1037,119 @@ public class MaintenanceProjectInformationService {
         investigationOfTheAmount.setId(ofTheAmount.getId());
         investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
 
-        // 审核信息
+
+        //新审核判断
 
         Example example2 = new Example(AuditInfo.class);
         Example.Criteria criteria1 = example2.createCriteria();
         criteria1.andEqualTo("baseProjectId", information.getId());
-
         List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
 
-        for (AuditInfo auditInfo : auditInfos) {
-            if ("2".equals(auditInfo.getAuditResult())) {
-
-                Example example3 = new Example(AuditInfo.class);
-                Example.Criteria criteria2 = example3.createCriteria();
-                criteria2.andEqualTo("baseProjectId", information.getId());
-
-                List<AuditInfo> auditInfos1 = auditInfoDao.selectByExample(example3);
-                for (AuditInfo info : auditInfos1) {
-                    if ("1".equals(info.getAuditType())) {
-                        auditInfoDao.deleteByPrimaryKey(info);
-                    }
-                    info.setBaseProjectId(information.getId());
-                    info.setAuditResult("0");
-
-                    info.setStatus("0");
-
-                    String updateDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
-
-                    info.setUpdateTime(updateDate);
-
-                    auditInfoDao.updateByPrimaryKeySelective(info);
-                }
-
-//                auditInfo.setAuditType("0");
-
+        //进行中判断 如果为空说明处理中提交
+        if(maintenanceProjectInformationVo.getAuditorId()!=null){
+            //如果当前审核人不为空 说明是处理中提交
+            //创建一条新的审核信息
+            AuditInfo auditInfo1 = new AuditInfo();
+            String s = UUID.randomUUID().toString().replaceAll("-", "");
+            String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+            auditInfo1.setId(s);
+            auditInfo1.setBaseProjectId(information.getId());
+            auditInfo1.setAuditResult("0");
+            //如果当前审核信息有多条 待确认提交
+            if(auditInfos.size()>0){
+                auditInfo1.setAuditType("2"); //变更一审
+            }else{
+                auditInfo1.setAuditType("0");
+            }
+            auditInfo1.setStatus("0");
+            auditInfo1.setAuditorId(maintenanceProjectInformationVo.getAuditorId()); // 审核人id
+            auditInfo1.setCreateTime(createDate);
+            auditInfoDao.insertSelective(auditInfo1);
+            information.setType("1");
+        }else{
+            //如果为空说明是未通过提交
+            //修改未通过的数据
+            Example example3 = new Example(AuditInfo.class);
+            Example.Criteria criteria2 = example3.createCriteria();
+            //查找到该条未通过的数据
+            criteria2.andEqualTo("baseProjectId", information.getId())
+                    .andEqualTo("auditResult","2");
+            AuditInfo auditInfo = auditInfoDao.selectOneByExample(example3);
+            if(auditInfo!=null){
+                //将审核状态改为待审核
+                auditInfo.setAuditResult("0");
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                 information.setType("1");
             }
         }
 
-        if (auditInfos.size() <= 0) {
-            AuditInfo auditInfo1 = new AuditInfo();
-
-            String s = UUID.randomUUID().toString().replaceAll("-", "");
-            auditInfo1.setId(s);
-            auditInfo1.setBaseProjectId(information.getId());
-
-            auditInfo1.setAuditResult("0");
-
-            auditInfo1.setAuditType("0");
-
-            auditInfo1.setStatus("0");
-
-            // 审核人id
-            auditInfo1.setAuditorId(maintenanceProjectInformationVo.getAuditorId());
-
-            String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
-
-            auditInfo1.setCreateTime(createDate);
-
-            auditInfoDao.insertSelective(auditInfo1);
-            information.setType("1");
-        }
+        maintenanceProjectInformationMapper.updateByPrimaryKeySelective(information);
+//        // 审核信息
+//
+//        Example example2 = new Example(AuditInfo.class);
+//        Example.Criteria criteria1 = example2.createCriteria();
+//        criteria1.andEqualTo("baseProjectId", information.getId());
+//
+//        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
+//
+//        for (AuditInfo auditInfo : auditInfos) {
+//            if ("2".equals(auditInfo.getAuditResult())) {
+//
+//                Example example3 = new Example(AuditInfo.class);
+//                Example.Criteria criteria2 = example3.createCriteria();
+//                criteria2.andEqualTo("baseProjectId", information.getId());
+//
+//                List<AuditInfo> auditInfos1 = auditInfoDao.selectByExample(example3);
+//                for (AuditInfo info : auditInfos1) {
+//                    if ("1".equals(info.getAuditType())) {
+//                        auditInfoDao.deleteByPrimaryKey(info);
+//                    }
+//                    info.setBaseProjectId(information.getId());
+//                    info.setAuditResult("0");
+//
+//                    info.setStatus("0");
+//
+//                    String updateDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+//
+//                    info.setUpdateTime(updateDate);
+//
+//                    auditInfoDao.updateByPrimaryKeySelective(info);
+//                }
+//
+////                auditInfo.setAuditType("0");
+//
+//                information.setType("1");
+//            }
+//        }
+//        //进行中状态下提交
+//        if (auditInfos.size() <= 0) {
+//            AuditInfo auditInfo1 = new AuditInfo();
+//
+//            String s = UUID.randomUUID().toString().replaceAll("-", "");
+//            auditInfo1.setId(s);
+//            auditInfo1.setBaseProjectId(information.getId());
+//
+//            auditInfo1.setAuditResult("0");
+//
+//            auditInfo1.setAuditType("0");
+//
+//            auditInfo1.setStatus("0");
+//
+//            // 审核人id
+//            auditInfo1.setAuditorId(maintenanceProjectInformationVo.getAuditorId());
+//
+//            String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+//
+//            auditInfo1.setCreateTime(createDate);
+//
+//            auditInfoDao.insertSelective(auditInfo1);
+//            information.setType("1");
+//        }
 
 
 //        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
 
-        maintenanceProjectInformationMapper.updateByPrimaryKeySelective(information);
-
-
+//        maintenanceProjectInformationMapper.updateByPrimaryKeySelective(information);
     }
 
     /**
