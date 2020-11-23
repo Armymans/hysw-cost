@@ -12,6 +12,7 @@ import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -222,6 +223,11 @@ public class BudgetingController extends BaseController {
         return RestUtil.success();
     }
 
+    @RequestMapping(value = "/budgeting/selectOneFile",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectOneByFileInfo(@RequestParam(name = "id") String id){
+        List<FileInfo> fileInfos = budgetingService.selectById(id);
+        return RestUtil.success(fileInfos);
+    }
 
 }
 
