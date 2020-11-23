@@ -197,7 +197,7 @@ public class VisaChangeController extends BaseController {
     //批量审核
     @RequestMapping(value = "/visachange/batchReview",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo){
-        vcisService.batchReview(batchReviewVo,getLoginUser().getId());
+        vcisService.batchReview(batchReviewVo,getLoginUser());
         return RestUtil.success();
     }
     //查询变更统计信息

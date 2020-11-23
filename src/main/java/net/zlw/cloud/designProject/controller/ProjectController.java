@@ -19,10 +19,8 @@ import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
-import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
-import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -1085,30 +1083,6 @@ public class ProjectController extends BaseController {
             projectVo.setAuditInfo(auditInfo);
         }else{
             projectVo.setAuditInfo(new AuditInfo());
-        }
-
-        //消息通知
-        MessageVo messageVo = new MessageVo();
-        String username = getLoginUser().getUsername();
-        String projectName = projectVo.getBaseProject().getProjectName();
-
-        AuditInfo auditInfo1 = projectVo.getAuditInfo();
-        String id1 = auditInfo1.getId();
-        MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo1.getAuditorId());
-        String name = memberManage.getMemberName();
-        if ("1".equals(auditInfo1.getAuditResult())){
-            messageVo.setId("A05");
-            messageVo.setUserId(getLoginUser().getId());
-            messageVo.setTitle("您有一个设计项目已通过！");
-            messageVo.setDetails(username+"您好！您提交的【"+projectName+"】的设计项目【"+name+"】已审批通过！");
-        }else {
-            MessageVo messageVo1 = new MessageVo();
-            messageVo1.setId("A05");
-            messageVo1.setUserId(id1);
-            messageVo1.setTitle("您有一个设计项目未通过！");
-            messageVo1.setDetails(username + "您好！您提交的【" + projectName + "】的设计项目【" + name + "】已未通过，请查看详情！");
-            //调用消息Service
-            messageService.sendOrClose(messageVo);
         }
         return RestUtil.success(projectVo);
 

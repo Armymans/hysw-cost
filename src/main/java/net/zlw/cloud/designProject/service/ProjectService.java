@@ -1074,6 +1074,25 @@ public class ProjectService {
                 }
             }
         }
+        //消息通知
+        String username = loginUser.getUsername();
+        String projectName = baseProject.getProjectName();
+        String name = memberManage.getMemberName();
+        if ("1".equals(auditInfo.getAuditResult())){
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A05");
+            messageVo.setUserId(loginUserId);
+            messageVo.setTitle("您有一个设计项目已通过！");
+            messageVo.setDetails(username+"您好！您提交的【"+projectName+"】的设计项目【"+name+"】已审批通过！");
+        }else {
+            MessageVo messageVo1 = new MessageVo();
+            messageVo1.setId("A05");
+            messageVo1.setUserId(loginUserId);
+            messageVo1.setTitle("您有一个设计项目未通过！");
+            messageVo1.setDetails(username + "您好！您提交的【" + projectName + "】的设计项目【" + name + "】已未通过，请查看详情！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo1);
+        }
 
 //        if(memberManage!=null){
 //            if("4".equals(memberManage.getMemberRoleId())&&"1".equals(memberManage.getDepAdmin())){

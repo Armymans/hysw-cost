@@ -22,5 +22,5 @@ public interface SettleAccountsService {
 
     void updateAccountById(BaseAccountsVo baseAccountsVo,UserInfo loginUser);
 
-    void batchReview(BatchReviewVo batchReviewVo);
+    void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser);
 }

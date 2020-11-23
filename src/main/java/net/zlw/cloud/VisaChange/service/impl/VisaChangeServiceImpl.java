@@ -391,37 +391,13 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChangeVo.setVisaChangeUp(new VisaChange());
             visaChangeVo.setVisaChangeDown(new VisaChange());
         }
-        //消息通知
-        String username = loginUser.getUsername();
-        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
-        String projectName = baseProject.getProjectName();
-        MemberManage memberManage = memberManageDao.selectByPrimaryKey(visaChangeVo.getAuditId());
-        Example example = new Example(AuditInfo.class);
-        example.createCriteria().andEqualTo("baseProjectId", baseId);
-        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-        String name = memberManage.getMemberName();
-        //通过\未通过返回信息
-        if ("1".equals(auditInfo.getAuditResult())) {
-            MessageVo messageVo = new MessageVo();
-            messageVo.setId("A14");
-            messageVo.setUserId(visaChangeVo.getAuditId());
-            messageVo.setTitle("您有一个签证变更项目已通过！");
-            messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
-            messageService.sendOrClose(messageVo);
-        } else {
-            MessageVo messageVo1 = new MessageVo();
-            messageVo1.setId("A14");
-            messageVo1.setUserId(loginUser.getId());
-            messageVo1.setTitle("您有一个签证变更项目未通过！");
-            messageVo1.setDetails(username + "您好！【" + name + "】已将【" + projectName + "】的签证/变更项目未通过，请查看详情！");
-            //调用消息Service
-            messageService.sendOrClose(messageVo1);
-        }
         return visaChangeVo;
     }
 
     @Override
-    public void batchReview(BatchReviewVo batchReviewVo, String id) {
+    public void batchReview(BatchReviewVo batchReviewVo, UserInfo loginUser) {
+        String id = loginUser.getId();
+        String username = loginUser.getUsername();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             Example example = new Example(VisaChange.class);
@@ -529,12 +505,34 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     baseProject.setVisaStatus("5");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 }
+                //审核通过发送消息
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+                //项目名称
+                String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getBaseProjectId()).getProjectName();
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId("A14");
+                messageVo.setUserId(auditInfo.getAuditorId());
+                messageVo.setTitle("您有一个签证变更项目已通过！");
+                messageVo.setDetails(memberManage.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
+                messageService.sendOrClose(messageVo);
             } else if (batchReviewVo.getAuditResult().equals("2")) {
                 auditInfo.setAuditResult("2");
                 auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                 auditInfo.setAuditTime(sim.format(new Date()));
                 auditInfo.setUpdateTime(sim.format(new Date()));
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                //项目名称
+                String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getBaseProjectId()).getProjectName();
+                //成员名称
+                String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
+                //如果不通过发送消息
+                MessageVo messageVo1 = new MessageVo();
+                messageVo1.setId("A14");
+                messageVo1.setUserId(auditInfo.getAuditorId());
+                messageVo1.setTitle("您有一个签证变更项目未通过！");
+                messageVo1.setDetails(username + "您好！【" + name + "】已将【" + projectName + "】的签证/变更项目未通过，请查看详情！");
+                //调用消息Service
+                messageService.sendOrClose(messageVo1);
             }
         }
     }

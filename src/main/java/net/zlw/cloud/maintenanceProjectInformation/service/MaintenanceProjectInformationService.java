@@ -14,7 +14,6 @@ import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
-import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
@@ -567,7 +566,9 @@ public class MaintenanceProjectInformationService {
      *
      * @param batchReviewVo
      */
-    public void batchReview(BatchReviewVo batchReviewVo) {
+    public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
+        String id = loginUser.getId();
+        String username = loginUser.getUsername();
         //获取批量审核的id
         String[] split = batchReviewVo.getBatchAll().split(",");
         if (split.length > 0) {
@@ -625,6 +626,16 @@ public class MaintenanceProjectInformationService {
                             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                             maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
                         }
+
+                        String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getAuditorId()).getProjectName();
+                        String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
+                        //通过一次发送一次
+                        MessageVo messageVo = new MessageVo();
+                        messageVo.setId("A23");
+                        messageVo.setUserId(id);
+                        messageVo.setTitle("您有一个检维修项目已通过！");
+                        messageVo.setDetails(name+"您好！【"+username+"】提交的【"+projectName+"】项目已通过，请查看详情!");
+                        messageService.sendOrClose(messageVo);
                     } else if (batchReviewVo.getAuditResult().equals("2")) {
                         auditInfo.setAuditResult("2");
                         auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
@@ -632,6 +643,16 @@ public class MaintenanceProjectInformationService {
                         auditInfo.setAuditTime(sdf.format(date));
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                         maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
+                        //未通过发送消息
+                        String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getAuditorId()).getProjectName();
+                        String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
+                        MessageVo messageVo1 = new MessageVo();
+                        messageVo1.setId("A23");
+                        messageVo1.setUserId(id);
+                        messageVo1.setTitle("您有一个检维修项目未通过！");
+                        messageVo1.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的项目未通过，请查看详情!");
+                        //调用消息Service
+                        messageService.sendOrClose(messageVo1);
                     }
                 }
             }
@@ -973,28 +994,7 @@ public class MaintenanceProjectInformationService {
                 maintenanceVo.setAuditNumber("1");
             }
         }
-        //消息站内通知
-        String username = userInfo.getUsername();
-        MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(auditInfo.getBaseProjectId());
-        String projectName = baseProject.getProjectName();
-        //通过\未通过
-        if ("1".equals(auditInfo.getAuditResult())){
-            MessageVo messageVo = new MessageVo();
-            messageVo.setId("A23");
-            messageVo.setUserId(auditInfo.getAuditorId());
-            messageVo.setTitle("您有一个检维修项目已通过！");
-            messageVo.setDetails(memberManage.getMemberName()+"您好！【"+username+"】提交的【"+projectName+"】项目已通过，请查看详情!");
-            messageService.sendOrClose(messageVo);
-        }else {
-            MessageVo messageVo1 = new MessageVo();
-            messageVo1.setId("A23");
-            messageVo1.setUserId(auditInfo.getAuditorId());
-            messageVo1.setTitle("您有一个检维修项目未通过！");
-            messageVo1.setDetails(username+"您好！【"+memberManage.getMemberName()+"】已将【"+projectName+"】的项目未通过，请查看详情!");
-            //调用消息Service
-            messageService.sendOrClose(messageVo1);
-        }
+
         return maintenanceVo;
     }
 

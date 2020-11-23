@@ -14,7 +14,7 @@ public interface BudgetingService {
 
     void updateBudgeting(BudgetingVo budgetingVo,UserInfo loginUser);
 
-    void batchReview(BatchReviewVo batchReviewVo);
+    void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser);
 
     void intoAccount(String s, String ids);
 

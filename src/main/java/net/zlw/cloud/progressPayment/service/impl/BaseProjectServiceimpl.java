@@ -419,31 +419,6 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 baseProjectVo.setAuditNumber("1");
             }
         }
-       //站内消息
-        String auditResult = baseProjectVo.getAuditInfo().getAuditResult();
-        MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-        //审核人
-        String name = memberManage.getMemberName();
-        //项目名称
-        String projectName = baseProjectVo.getProjectName();
-        //当前登录人
-        String username = userInfo.getUsername();
-        //当前登录人id
-        String id1 = userInfo.getId();
-        //如果审核通过\未通过发送站内消息
-        if ("1".equals(auditResult)){
-            MessageVo messageVo = new MessageVo();
-            messageVo.setId(id1);
-            messageVo.setTitle("您有一个进度款支付项目审批已通过！");
-            messageVo.setDetails(username+"您好！您提交的【"+projectName+"】的进度款支付项目【"+name+"】已审批通过！");
-            messageService.sendOrClose(messageVo);
-        }else {
-            MessageVo messageVo1 = new MessageVo();
-            messageVo1.setId(id1);
-            messageVo1.setTitle("您有一个进度款支付项目审批未通过！");
-            messageVo1.setDetails(username+"您好！您提交的【"+projectName+"】的进度款支付项目【"+name+"】未通过,请及时查看详情！");
-            messageService.sendOrClose(messageVo1);
-        }
         return baseProjectVo;
     }
 
@@ -716,7 +691,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
 
     @Override
-    public void batchReview(BatchReviewVo batchReviewVo) {
+    public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
+        //id
+        String id = loginUser.getId();
+        //姓名
+        String username = loginUser.getUsername();
         batchReviewVo.getBatchAll();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
@@ -766,19 +745,39 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                 }
+                //消息通知
+                //项目名称
+                String projectName = baseProject.getProjectName();
+                //通过审核人id查找成员姓名
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+                String name = memberManage.getMemberName();
+                //如果通过的话发送消息
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId(id);
+                messageVo.setTitle("您有一个进度款支付项目审批已通过！");
+                messageVo.setDetails(username+"您好！您提交的【"+projectName+"】的进度款支付项目【"+name+"】已审批通过！");
+                messageService.sendOrClose(messageVo);
+
             } else if (batchReviewVo.getAuditResult().equals("2")) {
                 auditInfo.setAuditResult("2");
                 auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                 Date date = new Date();
                 String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
                 auditInfo.setAuditTime(format);
-
                 baseProject.setProgressPaymentStatus("3");
-
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                //成员姓名
+                String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
+                //如果不通过发送消息
+                MessageVo messageVo1 = new MessageVo();
+                messageVo1.setId(id);
+                messageVo1.setTitle("您有一个进度款支付项目审批未通过！");
+                messageVo1.setDetails(username+"您好！您提交的【"+baseProject.getProjectName()+"】的进度款支付项目【"+name+"】未通过,请及时查看详情！");
+                messageService.sendOrClose(messageVo1);
             }
         }
+
     }
 
 

@@ -169,7 +169,7 @@ public class SettleAccountsController extends BaseController {
     //结算批量审核
     @RequestMapping(value = "/accounts/batchReview", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> batchReview(BatchReviewVo batchReviewVo) {
-        settleAccountsService.batchReview(batchReviewVo);
+        settleAccountsService.batchReview(batchReviewVo,getLoginUser());
         return RestUtil.success();
     }
 

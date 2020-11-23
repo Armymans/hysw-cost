@@ -27,7 +27,7 @@ public interface BaseProjectService {
 
     List<BaseProject> findAllBaseProject(pageVo pageVo);
 
-    void batchReview(BatchReviewVo batchReviewVo);
+    void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser);
 
     BaseProject findById(String id);
 

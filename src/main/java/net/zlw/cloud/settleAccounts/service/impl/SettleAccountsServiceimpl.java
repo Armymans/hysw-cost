@@ -11,7 +11,6 @@ import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
-import net.zlw.cloud.remindSet.model.RemindSet;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
@@ -623,24 +622,15 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 }
             }
-            //消息站内通知
-            MessageVo messageVo = new MessageVo();
-            RemindSet remindSet = remindSetMapper.selectByPrimaryKey("16");
-            messageVo.setId(baseAccountsVo.getId());
-            messageVo.setUserId(loginUser.getId());
-            messageVo.setTitle("您有一个结算项目待审批！");
-            //TODO 待改
-            messageVo.setDetails("您有一个结算项目待审批！");
-            //调用消息Service
-            messageService.sendOrClose(messageVo);
-
         }
 
     }
 
 
     @Override
-    public void batchReview(BatchReviewVo batchReviewVo) {
+    public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
+        String id = loginUser.getId();
+        String username = loginUser.getUsername();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             String audit = "";
@@ -853,7 +843,19 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     baseProject.setVisaStatus("6");
                     baseProject.setTrackStatus("5");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    //消息
+                    String projectName = baseProject.getProjectName();
+                    String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
+                    MessageVo messageVo = new MessageVo();
+                    messageVo.setId("A17");
+                    messageVo.setUserId(id);
+                    messageVo.setTitle("您有一个结算项目审批已通过！");
+                    messageVo.setDetails(username+"您好！您提交的【"+projectName+"】的进度款支付项目【"+name+"】已审批通过！");
+                    //调用消息Service
+                    messageService.sendOrClose(messageVo);
                 }
+
+
             }else if(batchReviewVo.getAuditResult().equals("2")){
                 auditInfo.setAuditResult("2");
                 auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
@@ -863,6 +865,17 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
                 baseProject.setSettleAccountsStatus("3");
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+                //未通过发送消息
+                String projectName = baseProject.getProjectName();
+                String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId("A17");
+                messageVo.setUserId(id);
+                messageVo.setTitle("您有一个进度款支付项目审批未通过！");
+                messageVo.setDetails(username+"您好！您提交的【"+projectName+"】的进度款支付项目【"+name+"】未通过,请及时查看详情！");
+                //调用消息Service
+                messageService.sendOrClose(messageVo);
             }
         }
     }

@@ -143,7 +143,7 @@ public class MaintenanceProjectInformationController extends BaseController {
      */
     @RequestMapping(value = "/maintenanceProjectInformation/batchReview", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> batchReview(BatchReviewVo batchReviewVo) {
-        maintenanceProjectInformationService.batchReview(batchReviewVo);
+        maintenanceProjectInformationService.batchReview(batchReviewVo,getLoginUser());
         return RestUtil.success("审核成功");
     }
 

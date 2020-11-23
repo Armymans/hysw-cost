@@ -171,7 +171,7 @@ public class ProgressPaymentController  extends BaseController {
     //进度款批量审核
     @RequestMapping(value = "/progress/batchReview",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo){
-        baseProjectService.batchReview(batchReviewVo);
+        baseProjectService.batchReview(batchReviewVo,getLoginUser());
         return RestUtil.success("审核完毕");
     }
 //    @RequestMapping(value = "/progress/oneBatchReview",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)

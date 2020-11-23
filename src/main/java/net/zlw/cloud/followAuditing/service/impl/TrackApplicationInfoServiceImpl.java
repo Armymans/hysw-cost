@@ -243,7 +243,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         //获取当前用户id
         //todo userInfo.getId(); userInfo.getCompanyId();
         String userId = userInfo.getId();
-        ;
+        String username = userInfo.getUsername();
         //获取当前公司id
         String companyId = userInfo.getCompanyId();
         //时间
@@ -300,10 +300,32 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     auditInfoDao.insert(newAuditInfo);
                     //将审核状态改为 待审核(一审)
                     baseProject.setTrackStatus("1");
+
+                    //项目名称
+                    String projectName = baseProject.getProjectName();
+                    //成员名称
+                    String name = memberManage.getMemberName();
+                    //发送消息
+                    MessageVo messageVo = new MessageVo();
+                    messageVo.setId("A20");
+                    messageVo.setUserId(userId);
+                    messageVo.setTitle("您有一个跟踪审计项目已通过！");
+                    messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的跟踪审计项目【" + name + "】已审批通过");
+                    messageService.sendOrClose(messageVo);
                 } else {
                     //将审核状态改为 未通过
                     auditInfo.setAuditType("1");
                     baseProject.setTrackStatus("4");
+                    //未通过发送消息
+                    String projectName = baseProject.getProjectName();
+                    String name = memberManage.getMemberName();
+                    MessageVo messageVo1 = new MessageVo();
+                    messageVo1.setId("A20");
+                    messageVo1.setUserId(userId);
+                    messageVo1.setTitle("您有一个跟踪审计项目未通过！");
+                    messageVo1.setDetails(username + "您好！您提交的【" + projectName + "】的跟踪审计项目【" + name + "】未通过，请查看详情");
+                    //调用消息Service
+                    messageService.sendOrClose(messageVo1);
                 }
                 //修改之前的审核信息
                 auditInfo.setAuditResult(batchReviewVo.getAuditResult());
@@ -595,28 +617,6 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         trackVo.setAuditInfo(trackAuditInfo);
         trackVo.setTrackApplicationInfo(trackApplicationInfo);
         trackVo.setMonthlyList(trackMonthlies);
-
-        //消息站内通知
-        String username = userInfo.getUsername();
-        String projectName = trackVo.getBaseProject().getProjectName();
-        String id1 = userInfo.getId();
-        // 如果通过\未通过返回信息
-        if ("1".equals(trackVo.getAuditResult())){
-            MessageVo messageVo = new MessageVo();
-            messageVo.setId("A20");
-            messageVo.setUserId(id1);
-            messageVo.setTitle("您有一个跟踪审计项目已通过！");
-            messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的跟踪审计项目【" + username + "】已审批通过");
-            messageService.sendOrClose(messageVo);
-        }else {
-            MessageVo messageVo1 = new MessageVo();
-            messageVo1.setId("A20");
-            messageVo1.setUserId(id1);
-            messageVo1.setTitle("您有一个跟踪审计项目未通过！");
-            messageVo1.setDetails(username + "您好！您提交的【" + projectName + "】的跟踪审计项目【" + username + "】未通过，请查看详情");
-            //调用消息Service
-            messageService.sendOrClose(messageVo1);
-        }
         return trackVo;
     }
 

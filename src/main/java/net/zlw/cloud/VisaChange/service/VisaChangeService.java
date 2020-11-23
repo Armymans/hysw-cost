@@ -20,7 +20,7 @@ public interface VisaChangeService {
 
      VisaChangeVo findVisaById(String baseId, String visaNum, UserInfo loginUser);
 
-     void batchReview(BatchReviewVo batchReviewVo, String id);
+     void batchReview(BatchReviewVo batchReviewVo, UserInfo loginUser);
 
      List<VisaChangeStatisticVo> findAllchangeStatistics(String baseId);
 
