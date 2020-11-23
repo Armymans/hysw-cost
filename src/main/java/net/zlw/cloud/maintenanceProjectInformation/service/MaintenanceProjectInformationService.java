@@ -115,7 +115,7 @@ public class MaintenanceProjectInformationService {
         //获得当前登入人
         //todo userInfo.getId();
         String userInfoId = userInfo.getId();;
-
+        pageRequest.setUid(userInfoId);
         //如果是待审核
         if("1".equals(pageRequest.getType())){
             //如果是部门经理或者部门领导查看列表则看所有
@@ -605,7 +605,7 @@ public class MaintenanceProjectInformationService {
      * @param batchReviewVo
      */
     public void batchReview(BatchReviewVo batchReviewVo,UserInfo userInfo) {
-        //todo userInfo.getId();
+        //todo userInfo.getId(); userInfo.getUsername(); userInfo.getCompanyId();
         String id = userInfo.getId();
         String username = userInfo.getUsername();
         String companyId = userInfo.getCompanyId();
@@ -638,7 +638,7 @@ public class MaintenanceProjectInformationService {
                 newAuditInfo.setId(auditInfouuid);
                 newAuditInfo.setBaseProjectId(maintenanceProjectInformation.getId());
                 //如果当前检维修项目为2次审核
-                if ("1".equals(auditInfo.getMaintenanceFlag())) {
+                if ("0".equals(auditInfo.getMaintenanceFlag())) {
                     //将当前状态为 变更三审
                     newAuditInfo.setMaintenanceFlag("0");
                     newAuditInfo.setAuditType("5");
@@ -670,11 +670,11 @@ public class MaintenanceProjectInformationService {
             if("0".equals(auditInfo.getMaintenanceFlag())){
                 //信息变为变更二审
                 auditInfo.setAuditType("3");
-                auditInfo.setChangeFlag("0");
+                auditInfo.setMaintenanceFlag("0");
             }else{
                 //信息变为二审
                 auditInfo.setAuditType("1");
-                auditInfo.setChangeFlag("0");
+                auditInfo.setMaintenanceFlag("1");
             }
             auditInfo.setAuditResult(batchReviewVo.getAuditResult());
             auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
@@ -694,8 +694,8 @@ public class MaintenanceProjectInformationService {
                     auditInfo.setAuditType("4");
                     auditInfo.setMaintenanceFlag("1");
                 }
-                auditInfo.setAuditResult(auditInfo.getAuditResult());
-                auditInfo.setAuditOpinion(auditInfo.getAuditOpinion());
+                auditInfo.setAuditResult(batchReviewVo.getAuditResult());
+                auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                 auditInfo.setUpdateTime(createTime);
                 auditInfo.setAuditTime(createTime);
                 auditInfo.setAuditTime(createTime);
