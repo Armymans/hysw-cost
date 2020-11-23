@@ -20,14 +20,14 @@ public interface BaseProjectService {
 
     BaseProjectVo seachProgressById(String id,UserInfo userInfo);
 
-    void updateProgress(BaseProjectVo baseProjectVo);
+    void updateProgress(BaseProjectVo baseProjectVo ,UserInfo loginUser);
     void updateProgressPayment(BaseProjectVo baseProjectVo);
 
     List<BaseProject> findBaseProject(String name);
 
     List<BaseProject> findAllBaseProject(pageVo pageVo);
 
-    void batchReview(BatchReviewVo batchReviewVo);
+    void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser);
 
     BaseProject findById(String id);
 

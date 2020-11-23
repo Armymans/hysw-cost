@@ -30,4 +30,7 @@ public interface ProgressPaymentTotalPaymentDao extends Mapper<ProgressPaymentTo
             "\tand \n" +
             "\tp.id = #{id} or #{id} = ''")
     List<ProgressPaymentTotalPaymentVo> findByProgressPaymentId(@Param("id") String id);
+
+
+
 }

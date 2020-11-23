@@ -7,6 +7,7 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
+import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,14 +56,14 @@ public class BudgetingController extends BaseController {
 //    @PutMapping("/updateBudgeting")
     @RequestMapping(value = "/budgeting/updateBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateBudgeting(BudgetingVo budgetingVo){
-        budgetingService.updateBudgeting(budgetingVo);
+        budgetingService.updateBudgeting(budgetingVo,getLoginUser());
         return RestUtil.success("修改成功");
     }
     //批量审核
 //    @PostMapping("/batchReview")
     @RequestMapping(value = "/budgeting/batchReview",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo){
-        budgetingService.batchReview(batchReviewVo);
+        budgetingService.batchReview(batchReviewVo,getLoginUser());
         return RestUtil.success("审核成功");
     }
 
@@ -70,7 +72,7 @@ public class BudgetingController extends BaseController {
     public Map<String,Object> intoAccount(@RequestParam(name = "ids") String ids){
 
         try {
-            budgetingService.intoAccount(ids,getLoginUser().getId());
+            budgetingService.intoAccount(ids,"user325");
         } catch (Exception e) {
             return RestUtil.error(e.getMessage());
         }
@@ -94,6 +96,76 @@ public class BudgetingController extends BaseController {
 
 
         return RestUtil.page(budgetingListVoPageInfo);
+    }
+
+    /**
+        * @Author sjf
+        * @Description //预算列表 模糊搜索
+        * @Date 9:41 2020/11/22
+        * @Param
+        * @return
+     **/
+    @RequestMapping(value = "/budgeting/selectByBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectByBudgeting(PageBVo pageBVo){
+        //全部
+        Page page = new Page();
+        pageBVo.setBudgetingStatus("");
+        List<BudgetingListVo> allBudgeting = budgetingService.findAllBudgeting(pageBVo, getLoginUser().getId());
+        PageInfo<BudgetingListVo> pageInfo = new PageInfo<>(allBudgeting);
+        page.setData(pageInfo.getList());
+        page.setPageNum(pageInfo.getPageNum());
+        page.setPageSize(pageInfo.getPageSize());
+        page.setTotalCount(pageInfo.getTotal());
+
+        //待审核
+        Page page1 = new Page();
+        pageBVo.setBudgetingStatus("1");
+        List<BudgetingListVo> allBudgeting1 = budgetingService.findAllBudgeting(pageBVo, getLoginUser().getId());
+        PageInfo<BudgetingListVo> pageInfo1 = new PageInfo<>(allBudgeting1);
+        page1.setData(pageInfo1.getList());
+        page1.setPageNum(pageInfo1.getPageNum());
+        page1.setPageSize(pageInfo1.getPageSize());
+        page1.setTotalCount(pageInfo1.getTotal());
+
+        //处理中
+        Page page2 = new Page();
+        pageBVo.setBudgetingStatus("2");
+        List<BudgetingListVo> allBudgeting2 = budgetingService.findAllBudgeting(pageBVo, getLoginUser().getId());
+        PageInfo<BudgetingListVo> pageInfo2 = new PageInfo<>(allBudgeting2);
+        page2.setData(pageInfo2.getList());
+        page2.setPageNum(pageInfo2.getPageNum());
+        page2.setPageSize(pageInfo2.getPageSize());
+        page2.setTotalCount(pageInfo2.getTotal());
+
+        //未通过
+        Page page3 = new Page();
+        pageBVo.setBudgetingStatus("3");
+        List<BudgetingListVo> allBudgeting3 = budgetingService.findAllBudgeting(pageBVo, getLoginUser().getId());
+        PageInfo<BudgetingListVo> pageInfo3 = new PageInfo<>(allBudgeting3);
+        page3.setData(pageInfo3.getList());
+        page3.setPageNum(pageInfo3.getPageNum());
+        page3.setPageSize(pageInfo3.getPageSize());
+        page3.setTotalCount(pageInfo3.getTotal());
+
+        //已完成
+        Page page4 = new Page();
+        pageBVo.setBudgetingStatus("4");
+        List<BudgetingListVo> allBudgeting4 = budgetingService.findAllBudgeting(pageBVo, getLoginUser().getId());
+        PageInfo<BudgetingListVo> pageInfo4 = new PageInfo<>(allBudgeting4);
+        page4.setData(pageInfo4.getList());
+        page4.setPageNum(pageInfo4.getPageNum());
+        page4.setPageSize(pageInfo4.getPageSize());
+        page4.setTotalCount(pageInfo4.getTotal());
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("table1",page);
+        map.put("table2",page1);
+        map.put("table3",page2);
+        map.put("table4",page3);
+        map.put("table5",page4);
+
+        return RestUtil.success(map);
+
     }
 
     //选择项目查看所有预算

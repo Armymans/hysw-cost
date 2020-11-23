@@ -14,11 +14,13 @@ import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.model.MessageNotification;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import net.zlw.cloud.snsEmailFile.service.MessageService;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +29,10 @@ import tk.mybatis.mapper.util.StringUtil;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
@@ -42,6 +47,11 @@ public class ProjectController extends BaseController {
     private ProjectService projectService;
     @Resource
     private FileInfoService fileInfoService;
+
+    @Resource
+    private MemberManageDao memberManageDao;
+    @Resource
+    private MessageService messageService;
 
     /**
      * 建设项目提交 _ 保存
@@ -371,6 +381,7 @@ public class ProjectController extends BaseController {
         }else{
             projectVo.setPackageCame(packageCame);
         }
+
 
         List<AuditInfo> auditInfos = projectService.auditInfoList(designInfo.getId());
         projectVo.setAuditInfos(auditInfos);
@@ -1073,8 +1084,8 @@ public class ProjectController extends BaseController {
         }else{
             projectVo.setAuditInfo(new AuditInfo());
         }
-
         return RestUtil.success(projectVo);
+
     }
 
     /**

@@ -44,6 +44,9 @@ public class AccountsVo {
     private String currentHandler;
     private List<AuditInfo> auditInfoList;
 
+    //回显待确认按钮
+    private String showConfirmed;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

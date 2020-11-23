@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseProjectVo {
+    public Object getCurrentPaymentInformation;
     //进度款id
     private String id;
     private String applicationNum;

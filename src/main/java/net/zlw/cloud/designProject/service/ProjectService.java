@@ -20,11 +20,15 @@ import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1070,6 +1074,27 @@ public class ProjectService {
                 }
             }
         }
+        //消息通知
+        String username = loginUser.getUsername();
+        String projectName = baseProject.getProjectName();
+        String name = memberManage.getMemberName();
+        if ("1".equals(auditInfo.getAuditResult())) {
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A05");
+            messageVo.setUserId(loginUserId);
+            messageVo.setTitle("您有一个设计项目已通过！");
+            messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的设计项目【" + name + "】已审批通过！");
+            messageService.sendOrClose(messageVo);
+        }
+        if ("2".equals(auditInfo.getAuditResult())){
+            MessageVo messageVo1 = new MessageVo();
+            messageVo1.setId("A05");
+            messageVo1.setUserId(loginUserId);
+            messageVo1.setTitle("您有一个设计项目未通过！");
+            messageVo1.setDetails(username + "您好！您提交的【" + projectName + "】的设计项目【" + name + "】已未通过，请查看详情！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo1);
+        }
 
 //        if(memberManage!=null){
 //            if("4".equals(memberManage.getMemberRoleId())&&"1".equals(memberManage.getDepAdmin())){
@@ -1185,6 +1210,12 @@ public class ProjectService {
         projectMapper.deleteProject(designInfo.getBaseProjectId());
     }
 
+
+    @Autowired
+    private RemindSetMapper remindSetMapper;
+
+    @Autowired
+    private MessageService messageService;
     /**
      * 提交设计项目
      * @param projectVo
@@ -1308,6 +1339,18 @@ public class ProjectService {
             fileInfo.setPlatCode(DesignInfouuid);
             fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
         }
+
+        MessageVo messageVo = new MessageVo();
+        String id = projectVo.getBaseProject().getReviewerId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
+        //审核人名字
+        String name = memberManage.getMemberName();
+        messageVo.setId("A03");
+            messageVo.setUserId(loginUser.getId());
+        messageVo.setTitle("您有一个设计项目待审批！");
+        messageVo.setDetails(name+"您好！【"+loginUser.getUsername()+"】已将【所选项目名称】的设计项目提交给您，请审批！");
+        //调用消息Service
+        messageService.sendOrClose(messageVo);
     }
 
     public BaseProject BaseProjectByid(String id){
@@ -1418,6 +1461,7 @@ public class ProjectService {
         //todo loginUser.getId(); loginUser.getCompanyId();
         String loginUserId = loginUser.getId();
         String companyId = loginUser.getCompanyId();
+        String username = loginUser.getUsername();
         //BaseProject baseProject, DesignInfo designInfo, ProjectExploration projectExploration, PackageCame packageCame
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updateTime = simpleDateFormat.format(new Date());
@@ -1489,6 +1533,20 @@ public class ProjectService {
                     packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
                 }
         }
+
+        //消息通知
+        MessageVo messageVo = new MessageVo();
+        String projectName = projectVo.getBaseProject().getProjectName();
+        String id = projectVo.getBaseProject().getReviewerId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
+        //审核人名字
+        String name = memberManage.getMemberName();
+        messageVo.setId("A04");
+        messageVo.setUserId(loginUserId);
+        messageVo.setTitle("您有一个设计项目待审批！");
+        messageVo.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的设计项目提交给您，请审批！");
+        //调用消息Service
+        messageService.sendOrClose(messageVo);
 //        if("3".equals(projectVo.getBaseProject().getDesginStatus())){
 //            //如果按钮状态为1 说明点击的是提交
 //            if("1".equals(projectVo.getBaseProject().getOrsubmit())){
@@ -1523,6 +1581,7 @@ public class ProjectService {
 //                }
 //            }
 //        }
+
     }
 
     @Resource

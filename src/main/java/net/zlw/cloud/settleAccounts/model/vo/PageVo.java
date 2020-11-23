@@ -13,4 +13,6 @@ public class PageVo {
     private String startTime;
     private String endTime;
     private String keyword;
+
+    private String userId;
 }

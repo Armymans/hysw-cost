@@ -82,6 +82,8 @@ public class MaintenanceProjectInformationService {
     @Value("${audit.wujiang.zaojia.costManager}")
     private String wjzjm; //吴江造价经理
 
+
+
     /**
      * 分页查询所有
      *
@@ -99,6 +101,7 @@ public class MaintenanceProjectInformationService {
         List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos1 = maintenanceProjectInformationMapper.selectAllByDelFlag1(pageRequest);
 
         PageInfo<MaintenanceProjectInformationReturnVo> projectInformationPageInfo = new PageInfo<>();
+
 
         //获得当前登入人
         String userInfoId = userInfo.getId();
@@ -161,31 +164,7 @@ public class MaintenanceProjectInformationService {
             projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
         }
 
-//        //如果是待审核，或者未通过，根据uid查找
-//        if ("1".equals(pageRequest.getType()) || "3".equals(pageRequest.getType())) {
-//
-//            //当前处理人
-//            for (MaintenanceProjectInformationReturnVo thisVo : maintenanceProjectInformationReturnVos) {
-//                Example example = new Example(AuditInfo.class);
-//                example.createCriteria().andEqualTo("baseProjectId", thisVo.getId());
-//                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-//                if (auditInfo != null){
-//                    if (auditInfo.getAuditorId() != null){
-//                        Example example1 = new Example(MemberManage.class);
-//                        example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
-//                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-//                        if (memberManage != null){
-//                            thisVo.setCurrentHandler(memberManage.getMemberName());
-//                        }
-//                    }
-//                }
-//
-//            }
-//        projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);
-//    }else {
-//        projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
-//    }
-//        System.out.println("list:"+projectInformationPageInfo.getList().toString());
+        System.out.println("list:"+projectInformationPageInfo.getList().toString());
         return projectInformationPageInfo;
 
 }
@@ -419,10 +398,9 @@ public class MaintenanceProjectInformationService {
         if (userInfo != null) {
             settlementAuditInformation.setFounderId(userInfo.getId());
             settlementAuditInformation.setFounderCompanyId(userInfo.getCompanyId());
+        } else {
+            settlementAuditInformation.setFounderId("user312");
         }
-//        else {
-//            settlementAuditInformation.setFounderId("user312");
-//        }
 
         settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
@@ -507,14 +485,12 @@ public class MaintenanceProjectInformationService {
             if (userInfo != null) {
                 auditInfo.setFounderId(userInfo.getId());
                 auditInfo.setCompanyId(userInfo.getCompanyId());
-            }else{
-                auditInfo.setFounderId("user312");
             }
+            auditInfo.setFounderId("user312");
             // 审核人id
             auditInfo.setAuditorId(maintenanceProjectInformation.getAuditorId());
             String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
             auditInfo.setCreateTime(createDate);
-            auditInfo.setMaintenanceFlag("1"); //当前为一次审核
             auditInfoDao.insertSelective(auditInfo);
         }
 //        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
@@ -619,225 +595,77 @@ public class MaintenanceProjectInformationService {
      *
      * @param batchReviewVo
      */
-    public void batchReview(BatchReviewVo batchReviewVo,UserInfo userInfo) {
+    public void batchReview(BatchReviewVo batchReviewVo) {
+        //获取批量审核的id
+        String[] split = batchReviewVo.getBatchAll().split(",");
+        if (split.length > 0) {
+            for (String s : split) {
+                if (StringUtil.isNotEmpty(s)) {
+                    Example example = new Example(AuditInfo.class);
+                    // auditResult = 0 , 未审批
+                    example.createCriteria().andEqualTo("baseProjectId", s).andEqualTo("auditResult", "0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
 
-        //获取当前登入人 与公司id
-        //todo userInfo.getId(); userInfo.getCompanyId();
-        String userInfoId = userInfo.getId();
-        String companyId = userInfo.getCompanyId();
+                    MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectById(s);
+                    // 未审核
+                    maintenanceProjectInformation.setType("1");
 
-        //查询当前审核信息(未审核信息)
-        Example example = new Example(AuditInfo.class);
-        example.createCriteria()
-                .andEqualTo("baseProjectId",batchReviewVo.getBatchAll())
-                .andEqualTo("auditResult","0");
-        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    // 判断更改状态
+                    if (batchReviewVo.getAuditResult().equals("1")) {
+                        // 0 一审
+                        if (auditInfo.getAuditType().equals("0")) {
+                            // 审核通过
+                            auditInfo.setAuditResult("1");
+                            //一级审批的意见，时间
+                            auditInfo.setAuditTime(sdf.format(date));
+                            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                            //修改审批状态
+                            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                            // 待确认
+                            maintenanceProjectInformation.setType("4");
 
-        //根据主键id查询当前项目
-        MaintenanceProjectInformation maintenanceProjectInformation =
-                maintenanceProjectInformationMapper.selectById(batchReviewVo.getBatchAll());
-
-        //根据当前用户创建人来判断走那个流程
-        MemberManage createMember = memberManageDao.selectByPrimaryKey(maintenanceProjectInformation.getFounderId());
-
-        //时间
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String createTime = simpleDateFormat.format(new Date());
-
-        if(userInfoId.equals(whzjh)||userInfoId.equals(wjzjh)){
-            //二审
-            if("1".equals(batchReviewVo.getAuditResult())){
-                //如果为通过
-                //创建一条三审审核信息
-                AuditInfo newAuditInfo = new AuditInfo();
-                String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
-                newAuditInfo.setId(auditInfouuid);
-                newAuditInfo.setBaseProjectId(maintenanceProjectInformation.getId());
-                //如果当前检维修项目为2次审核
-                if("1".equals(auditInfo.getMaintenanceFlag())){
-                    //将当前状态为 变更三审
-                    newAuditInfo.setMaintenanceFlag("0");
-                    newAuditInfo.setAuditType("5");
-                }else{
-                    //当前状态为三审
-                    newAuditInfo.setMaintenanceFlag("1");
-                    newAuditInfo.setAuditType("4");
-                }
-                //审核结果 结果待审核
-                newAuditInfo.setAuditResult("0");
-                //判断当前项目走那套流程
-                if("1".equals(createMember.getWorkType())){
-                    newAuditInfo.setAuditorId(whzjm);
-                }else{
-                    newAuditInfo.setAuditorId(wjzjm);
-                }
-                newAuditInfo.setCreateTime(createTime);
-                newAuditInfo.setAuditTime(createTime);
-                newAuditInfo.setFounderId(userInfoId);
-                newAuditInfo.setCompanyId(companyId);
-                newAuditInfo.setStatus("0");
-                maintenanceProjectInformation.setType("1"); //修改当前项目状态为 待审核
-                auditInfoDao.insert(newAuditInfo);
-            }else{
-                //如果未通过
-                maintenanceProjectInformation.setType("3"); //修改当前项目状态为 未通过
-            }
-            //修改之前的审核信息
-            if("0".equals(auditInfo.getMaintenanceFlag())){
-                //信息变为变更二审
-                auditInfo.setAuditType("3");
-                auditInfo.setChangeFlag("0");
-            }else{
-                //信息变为二审
-                auditInfo.setAuditType("1");
-                auditInfo.setChangeFlag("0");
-            }
-            auditInfo.setAuditResult(batchReviewVo.getAuditResult());
-            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-            auditInfo.setAuditTime(createTime);
-            auditInfo.setUpdateTime(createTime);
-            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-            maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
-
-        }else if(userInfoId.equals(whzjm)||userInfoId.equals(wjzjm)){
-            //三审
-            if("1".equals(batchReviewVo.getAuditResult())){
-                if("0".equals(auditInfo.getMaintenanceFlag())){
-                    //审核信息写入 变更三审
-                    auditInfo.setAuditType("5");
-                    auditInfo.setMaintenanceFlag("0");
-                }else{
-                    //审核信息写入 三审
-                    auditInfo.setAuditType("4");
-                    auditInfo.setMaintenanceFlag("1");
-                }
-                auditInfo.setAuditResult(auditInfo.getAuditResult());
-                auditInfo.setAuditOpinion(auditInfo.getAuditOpinion());
-                auditInfo.setUpdateTime(createTime);
-                auditInfo.setAuditTime(createTime);
-                auditInfo.setAuditTime(createTime);
-                if("0".equals(auditInfo.getMaintenanceFlag())){
-                    maintenanceProjectInformation.setType("5");
-                }else{
-                    maintenanceProjectInformation.setType("4");
-                }
-            }else{
-                maintenanceProjectInformation.setType("3");
-            }
-            maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
-            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-        }else{
-            //互审
-            if("1".equals(batchReviewVo.getAuditResult())){
-                //如果为通过
-                //创建一条二审审核信息
-                AuditInfo newAuditInfo = new AuditInfo();
-                String auditInfouuid = UUID.randomUUID().toString().replaceAll("-","");
-                newAuditInfo.setId(auditInfouuid);
-                newAuditInfo.setBaseProjectId(maintenanceProjectInformation.getId());
-                //如果当前检维修项目为2次审核
-                if("0".equals(auditInfo.getMaintenanceFlag())){
-                    //将当前状态为 变更二审
-                    newAuditInfo.setMaintenanceFlag("0");
-                    newAuditInfo.setAuditType("3");
-                }else{
-                    //当前状态为二审
-                    newAuditInfo.setMaintenanceFlag("1");
-                    newAuditInfo.setAuditType("1");
-                }
-                //审核结果 结果待审核
-                newAuditInfo.setAuditResult("0");
-                //判断当前项目走那套流程
-                if("1".equals(createMember.getWorkType())){
-                    newAuditInfo.setAuditorId(whzjh);
-                }else{
-                    newAuditInfo.setAuditorId(wjzjh);
-                }
-                newAuditInfo.setCreateTime(createTime);
-                newAuditInfo.setAuditTime(createTime);
-                newAuditInfo.setFounderId(userInfoId);
-                newAuditInfo.setCompanyId(companyId);
-                newAuditInfo.setStatus("0");
-                maintenanceProjectInformation.setType("1"); //修改当前项目状态为 待审核
-                auditInfoDao.insert(newAuditInfo);
-            }else{
-                //如果未通过
-                maintenanceProjectInformation.setType("3"); //修改当前项目状态为 未通过
-            }
-            //修改之前的审核信息
-            auditInfo.setAuditResult(batchReviewVo.getAuditResult());
-            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-            auditInfo.setAuditTime(createTime);
-            auditInfo.setUpdateTime(createTime);
-            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-            maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
-        }
-
-//        //获取批量审核的id
-//        String[] split = batchReviewVo.getBatchAll().split(",");
-//        if (split.length > 0) {
-//            for (String s : split) {
-//                if (StringUtil.isNotEmpty(s)) {
-//                    Example example = new Example(AuditInfo.class);
-//                    // auditResult = 0 , 未审批
-//                    example.createCriteria().andEqualTo("baseProjectId", s).andEqualTo("auditResult", "0");
-//                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-//                    MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectById(s);
-//                    //未审核
-//                    maintenanceProjectInformation.setType("1");
-//                    // 判断更改状态
-//                    if (batchReviewVo.getAuditResult().equals("1")) {
-//                        // 0 一审
-//                        if (auditInfo.getAuditType().equals("0")) {
-//                            // 审核通过
-//                            auditInfo.setAuditResult("1");
-//                            //一级审批的意见，时间
-//                            auditInfo.setAuditTime(sdf.format(date));
-//                            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-//                            //修改审批状态
-//                            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-//                            // 待确认
-//                            maintenanceProjectInformation.setType("4");
-//
-////                            auditInfo.setAuditTime(format);
-////                            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-//
-//                            maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
-//                            Date date = new Date();
-//                            String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
-//                            // 一审通过在审核表插入一条数据
-//                            AuditInfo auditInfo1 = new AuditInfo();
-//                            auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
-//                            auditInfo1.setBaseProjectId(s);
-//                            auditInfo1.setAuditResult("0");
-//                            auditInfo1.setAuditType("1");
-//                            auditInfo1.setCreateTime(format);
-//                            Example example1 = new Example(MemberManage.class);
-//                            example1.createCriteria().andEqualTo("status", "0").andEqualTo("depId", "2").andEqualTo("depAdmin", "1");
-//                            MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-//                            auditInfo1.setAuditorId(memberManage.getId());
-//                            auditInfoDao.insertSelective(auditInfo1);
-//                        } else if (auditInfo.getAuditType().equals("1")) {//二审
-//                            auditInfo.setAuditResult("1");
-//                            maintenanceProjectInformation.setType("5");
-//                            Date date = new Date();
-//                            String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
 //                            auditInfo.setAuditTime(format);
 //                            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-//                            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-//                            maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
-//                        }
-//                    } else if (batchReviewVo.getAuditResult().equals("2")) {
-//                        auditInfo.setAuditResult("2");
-//                        auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-//                        maintenanceProjectInformation.setType("3");
-//                        auditInfo.setAuditTime(sdf.format(date));
-//                        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-//                        maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
-//                    }
-//                }
-//            }
-//        }
+
+
+                            maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
+                            Date date = new Date();
+                            String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
+                            //                            一审通过在审核表插入一条数据
+                            AuditInfo auditInfo1 = new AuditInfo();
+                            auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                            auditInfo1.setBaseProjectId(s);
+                            auditInfo1.setAuditResult("0");
+                            auditInfo1.setAuditType("1");
+                            auditInfo1.setCreateTime(format);
+                            Example example1 = new Example(MemberManage.class);
+                            example1.createCriteria().andEqualTo("status", "0").andEqualTo("depId", "2").andEqualTo("depAdmin", "1");
+                            MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                            auditInfo1.setAuditorId(memberManage.getId());
+                            auditInfoDao.insertSelective(auditInfo1);
+                        } else if (auditInfo.getAuditType().equals("1")) {//二审
+                            auditInfo.setAuditResult("1");
+                            maintenanceProjectInformation.setType("5");
+                            Date date = new Date();
+                            String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
+                            auditInfo.setAuditTime(format);
+                            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                            maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
+                        }
+                    } else if (batchReviewVo.getAuditResult().equals("2")) {
+                        auditInfo.setAuditResult("2");
+                        auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                        maintenanceProjectInformation.setType("3");
+                        auditInfo.setAuditTime(sdf.format(date));
+                        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                        maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
+                    }
+                }
+            }
+        }
+
+
     }
 
     /**
