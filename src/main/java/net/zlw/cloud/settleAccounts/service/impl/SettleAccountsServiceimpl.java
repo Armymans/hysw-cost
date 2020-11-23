@@ -100,8 +100,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //        loginUser = new UserInfo("200101005",null,null,true);
         loginUser = new UserInfo("user320", null, null, true);
         pageVo.setUserId(loginUser.getId());
-        List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
-        ArrayList<AccountsVo> returnList = new ArrayList<>();
+//        List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
+//        ArrayList<AccountsVo> returnList = new ArrayList<>();
         //待审核
         if (pageVo.getSettleAccountsStatus().equals("1")){
             //待审核 领导

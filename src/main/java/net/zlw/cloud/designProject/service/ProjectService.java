@@ -1238,8 +1238,8 @@ public class ProjectService {
         projectVo.getBaseProject().setId(projectuuid);
         projectVo.getBaseProject().setCreateTime(createTime);
         //todo loginUser.getId()
-//        projectVo.getBaseProject().setFounderId(loginUser.getId());
-//        projectVo.getBaseProject().setFounderCompanyId(loginUser.getCompanyId());
+        projectVo.getBaseProject().setFounderId(loginUser.getId());
+        projectVo.getBaseProject().setFounderCompanyId(loginUser.getCompanyId());
         projectVo.getBaseProject().setProjectFlow("1");
         projectVo.getBaseProject().setDelFlag("0");
 
@@ -1256,8 +1256,8 @@ public class ProjectService {
             auditInfo.setAuditorId(projectVo.getBaseProject().getReviewerId());
             auditInfo.setCreateTime(createTime);
             //todo   loginUser.getId()
-//            auditInfo.setFounderId(loginUser.getId());
-//            auditInfo.setCompanyId(loginUser.getCompanyId());
+            auditInfo.setFounderId(loginUser.getId());
+            auditInfo.setCompanyId(loginUser.getCompanyId());
             auditInfo.setStatus("0");
             auditInfo.setChangeFlag("1");
             auditInfoDao.insert(auditInfo);
@@ -1270,8 +1270,8 @@ public class ProjectService {
         projectVo.getDesignInfo().setId(DesignInfouuid);
         projectVo.getDesignInfo().setBaseProjectId(projectuuid);
         //todo   loginUser.getId()
-//        projectVo.getDesignInfo().setFounderId(loginUser.getId());
-//        projectVo.getDesignInfo().setCompanyId(loginUser.getCompanyId());
+        projectVo.getDesignInfo().setFounderId(loginUser.getId());
+        projectVo.getDesignInfo().setCompanyId(loginUser.getCompanyId());
         projectVo.getDesignInfo().setStatus("0");
         projectVo.getDesignInfo().setIsdeschange("0");
         projectVo.getDesignInfo().setCreateTime(createTime);
@@ -1283,8 +1283,8 @@ public class ProjectService {
             projectVo.getPackageCame().setId(packageCameuuId);
             projectVo.getPackageCame().setBassProjectId(DesignInfouuid);
             //todo   loginUser.getId()
-//            projectVo.getPackageCame().setFounderId(loginUser.getId());
-//            projectVo.getPackageCame().setCompanyId(loginUser.getCompanyId());
+            projectVo.getPackageCame().setFounderId(loginUser.getId());
+            projectVo.getPackageCame().setCompanyId(loginUser.getCompanyId());
             projectVo.getPackageCame().setStatus("0");
             projectVo.getPackageCame().setCreateTime(createTime);
             packageCameMapper.insert(projectVo.getPackageCame());
@@ -1303,8 +1303,8 @@ public class ProjectService {
             projectVo.getProjectExploration().setId(projectExplorationuuid);
             projectVo.getProjectExploration().setBaseProjectId(DesignInfouuid);
             //todo   loginUser.getId()
-//            projectVo.getProjectExploration().setFounderId(loginUser.getId());
-//            projectVo.getProjectExploration().setCompany_id(loginUser.getCompanyId());
+            projectVo.getProjectExploration().setFounderId(loginUser.getId());
+            projectVo.getProjectExploration().setCompany_id(loginUser.getCompanyId());
             projectVo.getProjectExploration().setStatus("0");
             projectExplorationMapper.insert(projectVo.getProjectExploration());
         }else{
