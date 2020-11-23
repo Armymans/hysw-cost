@@ -11,6 +11,7 @@ import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagem
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.*;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
+import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
@@ -19,6 +20,8 @@ import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +74,12 @@ public class MaintenanceProjectInformationService {
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
+
+    @Autowired
+    private BaseProjectDao baseProjectDao;
+
+    @Resource
+    private MessageService messageService;
 
     @Value("${audit.wuhu.zaojia.costHead}")
     private String whzjh;  //芜湖造造价领导
@@ -595,7 +604,9 @@ public class MaintenanceProjectInformationService {
      *
      * @param batchReviewVo
      */
-    public void batchReview(BatchReviewVo batchReviewVo) {
+    public void batchReview(BatchReviewVo batchReviewVo,UserInfo userInfo) {
+        String id = userInfo.getId();
+        String username = userInfo.getUsername();
         //获取批量审核的id
         String[] split = batchReviewVo.getBatchAll().split(",");
         if (split.length > 0) {
@@ -653,13 +664,32 @@ public class MaintenanceProjectInformationService {
                             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                             maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
                         }
+                        String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getAuditorId()).getProjectName();
+                        String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
+                        //通过一次发送一次
+                        MessageVo messageVo = new MessageVo();
+                        messageVo.setId("A23");
+                        messageVo.setUserId(id);
+                        messageVo.setTitle("您有一个检维修项目已通过！");
+                        messageVo.setDetails(name+"您好！【"+username+"】提交的【"+projectName+"】项目已通过，请查看详情!");
+                        messageService.sendOrClose(messageVo);
                     } else if (batchReviewVo.getAuditResult().equals("2")) {
                         auditInfo.setAuditResult("2");
                         auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                         maintenanceProjectInformation.setType("3");
                         auditInfo.setAuditTime(sdf.format(date));
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                        maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
+                        maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);//未通过发送消息
+                        String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getAuditorId()).getProjectName();
+                        String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
+                        MessageVo messageVo1 = new MessageVo();
+                        messageVo1.setId("A23");
+                        messageVo1.setUserId(id);
+                        messageVo1.setTitle("您有一个检维修项目未通过！");
+                        messageVo1.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的项目未通过，请查看详情!");
+                        //调用消息Service
+                        messageService.sendOrClose(messageVo1);
+
                     }
                 }
             }
