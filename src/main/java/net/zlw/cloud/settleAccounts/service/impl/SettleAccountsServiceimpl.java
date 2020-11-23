@@ -98,7 +98,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
 //        loginUser = new UserInfo("200101005",null,null,true);
-        loginUser = new UserInfo("user320", null, null, true);
+//        loginUser = new UserInfo("user320", null, null, true);
         pageVo.setUserId(loginUser.getId());
 //        List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
 //        ArrayList<AccountsVo> returnList = new ArrayList<>();
@@ -362,19 +362,19 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser) {
-        loginUser = new UserInfo("user320",null,null,true);
+//        loginUser = new UserInfo("user320",null,null,true);
         String data = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         //判断bigdecimal
-        if (!baseAccountsVo.getSettlementInfo().getSumbitMoney().equals("")){
+        if (!"".equals(baseAccountsVo.getSettlementInfo().getSumbitMoney())){
             baseAccountsVo.getSettlementInfo().setSumbitMoney(baseAccountsVo.getSettlementInfo().getSumbitMoney());
         }else {
             baseAccountsVo.getSettlementInfo().setSumbitMoney(null);
         }
 
-        if (baseAccountsVo.getLastSettlementReview().getReviewNumber().equals("")){
+        if ("".equals(baseAccountsVo.getLastSettlementReview().getReviewNumber())){
             baseAccountsVo.getLastSettlementReview().setReviewNumber(null);
         }
-        if (baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber().equals("")){
+        if ("".equals(baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber())){
             baseAccountsVo.getSettlementAuditInformation().setAuthorizedNumber(null);
         }
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
@@ -448,8 +448,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getLastSettlementReview().setWhetherAccount("1");
         }
         if (baseProject.getAB().equals("1")){
-            lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
-            settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
+            if(baseAccountsVo.getLastSettlementReview().getId() != null) {
+                lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
+            }
+            if(baseAccountsVo.getSettlementAuditInformation().getId() != null){
+                settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
+            }
         }else if(baseProject.getAB().equals("2")){
             settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
         }
@@ -496,7 +500,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         //根据上家结算送审外键找到关联预算的信息
         Example example1 = new Example(Budgeting.class);
         example1.createCriteria().andEqualTo("baseProjectId", baseProject.getId());
-        Budgeting budgeting = budgetingDao.selectOneByExample(example);
+        Budgeting budgeting = budgetingDao.selectOneByExample(example1);
         //审核id
         String auditId = baseAccountsVo.getAuditId();
         //预算造价金额

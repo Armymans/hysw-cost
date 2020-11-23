@@ -30,7 +30,7 @@ public class SettleAccountsController extends BaseController {
     @RequestMapping(value = "/accounts/findAllAccounts",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllAccounts(PageVo pageVo){
         PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
-        List<AccountsVo> allAccounts = settleAccountsService.findAllAccounts(pageVo,null);
+        List<AccountsVo> allAccounts = settleAccountsService.findAllAccounts(pageVo,getLoginUser());
         PageInfo<AccountsVo> accountsVoPageInfo = new PageInfo<>(allAccounts);
         return RestUtil.page(accountsVoPageInfo);
     }
