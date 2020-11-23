@@ -13,6 +13,7 @@ import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
+import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
@@ -73,6 +74,9 @@ public class BudgetingServiceImpl implements BudgetingService {
     private FileInfoMapper fileInfoMapper;
     @Autowired
     private FileInfoService fileInfoService;
+
+    @Autowired
+    private DesignInfoMapper designInfoMapper;
 
     @Resource
     private TrackAuditInfoDao trackAuditInfoDao;
@@ -1011,6 +1015,20 @@ public class BudgetingServiceImpl implements BudgetingService {
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
     }
 
+    //预算新增所选项目回显附件
+    @Override
+    public List<FileInfo> selectById(String id) {
+
+        Example example = new Example(DesignInfo.class);
+        example.createCriteria().andEqualTo("baseProjectId",id);
+        DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
+        Example example1 = new Example(FileInfo.class);
+        example1.createCriteria().andEqualTo("platCode",designInfo.getId())
+                                 .andEqualTo("type","sjxmxjkhtgtz"); //设计图纸
+        List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
+        return fileInfos;
+    }
+
     @Override
     public UnionQueryVo unionQuery(String id, UserInfo loginUser) {
         UnionQueryVo unionQueryVo = new UnionQueryVo();
@@ -1104,4 +1122,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         return budgeting;
 
     }
+
+    //
+
 }

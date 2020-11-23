@@ -4,6 +4,7 @@ package net.zlw.cloud.budgeting.service;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 
 import java.util.List;
 
@@ -35,4 +36,7 @@ public interface BudgetingService {
     void deleteBudgetingFile(String id);
 
     void updateCEA(String baseId, String ceaNum);
+
+
+    List<FileInfo> selectById(String id);
 }
