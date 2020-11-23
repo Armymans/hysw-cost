@@ -50,4 +50,6 @@ public class AuditInfo implements Serializable {
     private String updateTime;
     @Column(name = "change_flag")
     private String changeFlag;
+    @Column(name = "maintenance_flag")
+    private String maintenanceFlag;
 }

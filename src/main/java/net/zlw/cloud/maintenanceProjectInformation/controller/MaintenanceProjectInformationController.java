@@ -1,6 +1,7 @@
 package net.zlw.cloud.maintenanceProjectInformation.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.util.StringUtil;
 import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.RestUtil;
@@ -69,7 +70,18 @@ public class MaintenanceProjectInformationController extends BaseController {
      */
     @RequestMapping(value = "/maintenanceProjectInformation/batchReview", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> batchReview(BatchReviewVo batchReviewVo) {
-        maintenanceProjectInformationService.batchReview(batchReviewVo);
+        String[] split = batchReviewVo.getBatchAll().split(",");
+        //切割字符串id
+        if (split.length > 0) {
+            for (String s : split) {
+                if (StringUtil.isNotEmpty(s)) {
+                    batchReviewVo.setBatchAll(s);
+                    maintenanceProjectInformationService.batchReview(batchReviewVo,getLoginUser());
+                }
+            }
+        }else{
+            return RestUtil.error("审核有误请联系管理员");
+        }
         return RestUtil.success("审核成功");
     }
 
