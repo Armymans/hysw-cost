@@ -63,7 +63,7 @@ public class TrackApplicationInfoController extends BaseController {
         page.setTotalCount(pageInfo.getTotal());
         //待审核
         Page page1 = new Page();
-        pageVo.setTrackStatus("2");
+        pageVo.setTrackStatus("1");
         PageInfo<ReturnTrackVo> pageInfo1 = trackApplicationInfoService.selectTrackList(pageVo);
         page1.setData(pageInfo1.getList());
         page1.setPageNum(pageInfo1.getPageNum());
