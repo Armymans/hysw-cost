@@ -98,48 +98,51 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
 //        loginUser = new UserInfo("200101005",null,null,true);
-//        loginUser = new UserInfo("user320", null, null, true);
+        loginUser = new UserInfo("user320", null, null, true);
         pageVo.setUserId(loginUser.getId());
 //        List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
 //        ArrayList<AccountsVo> returnList = new ArrayList<>();
         //待审核
-        if (pageVo.getSettleAccountsStatus().equals("1")){
+        if (pageVo.getSettleAccountsStatus().equals("1")) {
             //待审核 领导
-            if (whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId())){
-                List<AccountsVo> list1 =  baseProjectDao.findAllAccountsCheckLeader(pageVo);
+            if (whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId())) {
+                List<AccountsVo> list1 = baseProjectDao.findAllAccountsCheckLeader(pageVo);
                 for (AccountsVo accountsVo : list1) {
                     Example example = new Example(AuditInfo.class);
-                    example.createCriteria().andEqualTo("baseProjectId",accountsVo.getAccountId())
-                            .andEqualTo("auditResult","0");
+                    example.createCriteria().andEqualTo("baseProjectId", accountsVo.getAccountId())
+                            .andEqualTo("auditResult", "0");
                     AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                    if (auditInfo!=null){
+                    if (auditInfo != null) {
                         Example example1 = new Example(MemberManage.class);
-                        example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                        example1.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
                         MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                        if (memberManage !=null){
+                        if (memberManage != null) {
                             accountsVo.setCurrentHandler(memberManage.getMemberName());
                         }
                     }
                 }
                 return list1;
-                //待审核 普通员工
-            }else{
-                List<AccountsVo> list1 =  baseProjectDao.findAllAccountsCheckStaff(pageVo);
+            }
+            //待审核 普通员工
+            else {
+                List<AccountsVo> list1 = baseProjectDao.findAllAccountsCheckStaff(pageVo);
                 for (AccountsVo accountsVo : list1) {
                     Example example = new Example(AuditInfo.class);
-                    example.createCriteria().andEqualTo("baseProjectId",accountsVo.getAccountId())
-                            .andEqualTo("auditResult","0");
+                    example.createCriteria().andEqualTo("baseProjectId", accountsVo.getAccountId())
+                            .andEqualTo("auditResult", "0");
                     AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                    if (auditInfo!=null){
+                    if (auditInfo != null) {
                         Example example1 = new Example(MemberManage.class);
-                        example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                        example1.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
                         MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                        if (memberManage !=null){
+                        if (memberManage != null) {
                             accountsVo.setCurrentHandler(memberManage.getMemberName());
                         }
                     }
                 }
+                return list1;
             }
+        }
             //处理中
             if (pageVo.getSettleAccountsStatus().equals("2")){
                 List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
@@ -165,7 +168,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
                 return list1;
             }
-        }
+
 
 //        for (AccountsVo accountsVo : list) {
 //            //待审核
@@ -362,13 +365,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser) {
-//        loginUser = new UserInfo("user320",null,null,true);
+        loginUser = new UserInfo("user320",null,null,true);
         String data = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         //判断bigdecimal
-        if (!"".equals(baseAccountsVo.getSettlementInfo().getSumbitMoney())){
-            baseAccountsVo.getSettlementInfo().setSumbitMoney(baseAccountsVo.getSettlementInfo().getSumbitMoney());
-        }else {
-            baseAccountsVo.getSettlementInfo().setSumbitMoney(null);
+        if ("".equals(baseAccountsVo.getSettlementInfo().getSumbitMoney())){
+//            baseAccountsVo.getSettlementInfo().setSumbitMoney(null);
         }
 
         if ("".equals(baseAccountsVo.getLastSettlementReview().getReviewNumber())){
@@ -380,14 +381,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //添加上家送审
         System.out.println(baseAccountsVo);
-        if (baseAccountsVo.getSumbitNameUp() != null){
+        if (baseAccountsVo.getLastSettlementInfo().getSumbitName() != null && ! baseAccountsVo.getLastSettlementInfo().getSumbitName().equals("")){
             baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
             baseAccountsVo.getLastSettlementInfo().setBaseProjectId(baseProject.getId());
             baseAccountsVo.getLastSettlementInfo().setCreateTime(data);
             baseAccountsVo.getLastSettlementInfo().setState("0");
             baseAccountsVo.getLastSettlementInfo().setFouderId(loginUser.getId());
-            baseAccountsVo.getLastSettlementInfo().setRemark(baseAccountsVo.getRemarkUp());
-            baseAccountsVo.getLastSettlementInfo().setSumbitName(baseAccountsVo.getLastSettlementInfo().getSumbitName());
             baseAccountsVo.getLastSettlementInfo().setUpAndDown("1");
             settlementInfoMapper.insertSelective(baseAccountsVo.getLastSettlementInfo());
         }
@@ -402,18 +401,10 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
 
         //添加下家送审
-        if (baseAccountsVo.getSettlementInfo().getSumbitMoney() != null){
+        if (baseAccountsVo.getSettlementInfo().getSumbitMoney() != null && ! "".equals(baseAccountsVo.getSettlementInfo().getSumbitMoney())){
             baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
             baseAccountsVo.getSettlementInfo().setBaseProjectId(baseProject.getId());
-
             baseAccountsVo.getSettlementInfo().setCreateTime(data);
-            if (baseAccountsVo.getLastSettlementInfo().getSumbitMoney() != null) {
-                baseAccountsVo.getSettlementInfo().setSumbitMoney(baseAccountsVo.getSumbitMoneyDown());
-            } else {
-                baseAccountsVo.getSettlementInfo().setSumbitMoney("0");
-            }
-            baseAccountsVo.getSettlementInfo().setSumbitName(baseAccountsVo.getSumbitNameDown());
-            baseAccountsVo.getSettlementInfo().setRemark(baseAccountsVo.getRemarkDown());
             baseAccountsVo.getSettlementInfo().setState("0");
             baseAccountsVo.getSettlementInfo().setFouderId(loginUser.getId());
             baseAccountsVo.getSettlementInfo().setUpAndDown("2");
@@ -567,12 +558,13 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             messageVo4.setTitle("您有一个结算项目待审批！");
             messageVo4.setDetails(loginUser.getUsername() + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
             //调用消息Service
-            messageService.sendOrClose(messageVo4);
+//            messageService.sendOrClose(messageVo4);
         }
     }
 
     @Override
     public BaseAccountsVo findAccountById(String id, UserInfo loginUser) {
+        loginUser = new UserInfo("200610002",null,null,true);
         BaseAccountsVo baseAccountsVo = new BaseAccountsVo();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
         baseAccountsVo.setBaseProject(baseProject);
@@ -631,27 +623,27 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
 //        System.err.println(auditInfo.getAuditType());
         //消息站内通知
-        MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-        String projectName = baseProject.getProjectName();
-        String id1 = loginUser.getId();
-        String username = loginUser.getUsername();
-        if ("1".equals(auditInfo.getAuditResult())) {
-            MessageVo messageVo = new MessageVo();
-            messageVo.setId("A17");
-            messageVo.setUserId(id1);
-            messageVo.setTitle("您有一个结算项目审批已通过！");
-            messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的结算项目【" + memberManage.getMemberName() + "】已审批通过！");
-            //调用消息Service
-            messageService.sendOrClose(messageVo);
-        } else {
-            MessageVo messageVo = new MessageVo();
-            messageVo.setId("A17");
-            messageVo.setUserId(id1);
-            messageVo.setTitle("您有一个结算项目审批未通过！");
-            messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的结算项目【" + memberManage.getMemberName() + "】未通过，请查看详情！");
-            //调用消息Service
-            messageService.sendOrClose(messageVo);
-        }
+//        MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+//        String projectName = baseProject.getProjectName();
+//        String id1 = loginUser.getId();
+//        String username = loginUser.getUsername();
+//        if ("1".equals(auditInfo.getAuditResult())) {
+//            MessageVo messageVo = new MessageVo();
+//            messageVo.setId("A17");
+//            messageVo.setUserId(id1);
+//            messageVo.setTitle("您有一个结算项目审批已通过！");
+//            messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的结算项目【" + memberManage.getMemberName() + "】已审批通过！");
+//            //调用消息Service
+//            messageService.sendOrClose(messageVo);
+//        } else {
+//            MessageVo messageVo = new MessageVo();
+//            messageVo.setId("A17");
+//            messageVo.setUserId(id1);
+//            messageVo.setTitle("您有一个结算项目审批未通过！");
+//            messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的结算项目【" + memberManage.getMemberName() + "】未通过，请查看详情！");
+//            //调用消息Service
+//            messageService.sendOrClose(messageVo);
+//        }
         return baseAccountsVo;
     }
 
@@ -660,12 +652,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //上家审核修改
         settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getLastSettlementInfo());
-
         //判断decimal是否为空
-        if (baseAccountsVo.getSumbitMoneyDown() == null){
-            baseAccountsVo.setSumbitMoneyDown("0");
-        }
-        baseAccountsVo.getSettlementInfo().setSumbitMoney(baseAccountsVo.getSumbitMoneyDown());
         //下家审核修改
         settlementInfoMapper2.updateByPrimaryKeySelective( baseAccountsVo.getSettlementInfo());
         //勘察金额修改
@@ -726,8 +713,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
-        String id = loginUser.getId();
-        String username = loginUser.getUsername();
+        String id = "200101005";
+        String username = "造价业务员4";
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             String audit = "";
@@ -952,7 +939,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     messageService.sendOrClose(messageVo);
                     //若缺失上下家则进入处理中
                     BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(s);
-                    if (lastSettlementReview == null || settlementAuditInformation == null || baseProject1.getAB().equals("2")){
+                    if ((lastSettlementReview == null || settlementAuditInformation == null) && ! baseProject1.getAB().equals("2")){
                         BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
                         baseProject3.setSettleAccountsStatus("2");
                         baseProjectDao.updateByPrimaryKeySelective(baseProject3);
