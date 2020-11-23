@@ -1162,7 +1162,8 @@ public class MaintenanceProjectInformationService {
     public MaintenanceVo selectMaintenanceProjectInformationById(String id, String userId, UserInfo userInfo) {
 
         MaintenanceVo maintenanceVo = new MaintenanceVo();
-
+        //todo userInfo.getId();
+        String userInfoId = "200610002";
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectByPrimaryKey(id);
         if (information != null) {
             maintenanceVo.setMaintenanceProjectInformation(information);
@@ -1209,7 +1210,7 @@ public class MaintenanceProjectInformationService {
 //        criteria1.andEqualTo("auditType",'0');
         // 未审批
         criteria1.andEqualTo("auditResult", '0');
-        criteria1.andEqualTo("auditorId", userInfo.getId());
+        criteria1.andEqualTo("auditorId",userInfoId);
 
 
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditExample);
@@ -1218,7 +1219,7 @@ public class MaintenanceProjectInformationService {
             // 0 代表一审，未审批
             if ("0".equals(auditInfo.getAuditType())) {
                 maintenanceVo.setAuditNumber("0");
-            } else if ("0".equals(auditInfo.getAuditType())) {
+            }else{
                 maintenanceVo.setAuditNumber("1");
             }
         }
