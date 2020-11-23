@@ -27,10 +27,10 @@ public class SettleAccountsController extends BaseController {
 
     //查询所有结算
 //    @PostMapping("/findAllAccounts")
-    @RequestMapping(value = "/accounts/findAllAccounts", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> findAllAccounts(PageVo pageVo) {
-        PageHelper.startPage(pageVo.getPageNum(), 999);
-        List<AccountsVo> allAccounts = settleAccountsService.findAllAccounts(pageVo, getLoginUser());
+    @RequestMapping(value = "/accounts/findAllAccounts",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findAllAccounts(PageVo pageVo){
+        PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
+        List<AccountsVo> allAccounts = settleAccountsService.findAllAccounts(pageVo,null);
         PageInfo<AccountsVo> accountsVoPageInfo = new PageInfo<>(allAccounts);
         return RestUtil.page(accountsVoPageInfo);
     }

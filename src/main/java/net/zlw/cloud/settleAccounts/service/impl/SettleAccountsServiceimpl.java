@@ -11,6 +11,7 @@ import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
+import net.zlw.cloud.remindSet.model.RemindSet;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
@@ -97,62 +98,129 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
 //        loginUser = new UserInfo("200101005",null,null,true);
+        loginUser = new UserInfo("user320", null, null, true);
+        pageVo.setUserId(loginUser.getId());
         List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
         ArrayList<AccountsVo> returnList = new ArrayList<>();
-        for (AccountsVo accountsVo : list) {
-            //待审核
-            if (pageVo.getSettleAccountsStatus().equals("1")) {
-                Example example = new Example(AuditInfo.class);
-                example.createCriteria().andEqualTo("baseProjectId", accountsVo.getAccountId())
-                        .andEqualTo("auditResult", "0");
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                if (auditInfo != null) {
-                    Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
-                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    if (memberManage != null) {
-                        accountsVo.setCurrentHandler(memberManage.getMemberName());
+        //待审核
+        if (pageVo.getSettleAccountsStatus().equals("1")){
+            //待审核 领导
+            if (whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId())){
+                List<AccountsVo> list1 =  baseProjectDao.findAllAccountsCheckLeader(pageVo);
+                for (AccountsVo accountsVo : list1) {
+                    Example example = new Example(AuditInfo.class);
+                    example.createCriteria().andEqualTo("baseProjectId",accountsVo.getAccountId())
+                            .andEqualTo("auditResult","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    if (auditInfo!=null){
+                        Example example1 = new Example(MemberManage.class);
+                        example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        if (memberManage !=null){
+                            accountsVo.setCurrentHandler(memberManage.getMemberName());
+                        }
                     }
                 }
-
-                if (loginUser.getId().equals(accountsVo.getFounderId()) || whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId()) || loginUser.getId().equals(auditInfo.getAuditorId())) {
-                    returnList.add(accountsVo);
+                return list1;
+                //待审核 普通员工
+            }else{
+                List<AccountsVo> list1 =  baseProjectDao.findAllAccountsCheckStaff(pageVo);
+                for (AccountsVo accountsVo : list1) {
+                    Example example = new Example(AuditInfo.class);
+                    example.createCriteria().andEqualTo("baseProjectId",accountsVo.getAccountId())
+                            .andEqualTo("auditResult","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    if (auditInfo!=null){
+                        Example example1 = new Example(MemberManage.class);
+                        example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        if (memberManage !=null){
+                            accountsVo.setCurrentHandler(memberManage.getMemberName());
+                        }
+                    }
                 }
             }
             //处理中
-            if (pageVo.getSettleAccountsStatus().equals("2")) {
-                if (loginUser.getId().equals(accountsVo.getFounderId())) {
-                    returnList.add(accountsVo);
-                }
+            if (pageVo.getSettleAccountsStatus().equals("2")){
+                List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
+                return list1;
             }
             //未通过
-            if (pageVo.getSettleAccountsStatus().equals("3")) {
-                if (loginUser.getId().equals(accountsVo.getFounderId())) {
-                    returnList.add(accountsVo);
-                }
+            if (pageVo.getSettleAccountsStatus().equals("3")){
+                List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
+                return list1;
             }
             //待确认
-            if (pageVo.getSettleAccountsStatus().equals("4")) {
-                returnList.add(accountsVo);
+            if (pageVo.getSettleAccountsStatus().equals("4")){
+                List<AccountsVo> list1 = baseProjectDao.findAllAccountsSuccess(pageVo);
+                return list1;
             }
             //已完成
-            if (pageVo.getSettleAccountsStatus().equals("5")) {
-                returnList.add(accountsVo);
+            if (pageVo.getSettleAccountsStatus().equals("5")){
+                List<AccountsVo> list1 = baseProjectDao.findAllAccountsSuccess(pageVo);
+                return list1;
             }
             //全部
-            if (pageVo.getSettleAccountsStatus().equals("") || pageVo.getSettleAccountsStatus().equals("0")) {
-                if (loginUser.getId().equals(accountsVo.getFounderId())) {
-                    returnList.add(accountsVo);
-                }
+            if (pageVo.getSettleAccountsStatus().equals("") || pageVo.getSettleAccountsStatus().equals("0")){
+                List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
+                return list1;
             }
         }
-        ArrayList<AccountsVo> accountsVos = new ArrayList<>();
-        for (AccountsVo accountsVo : returnList) {
-            if (!accountsVos.contains(accountsVo)) {
-                accountsVos.add(accountsVo);
-            }
-        }
-        return accountsVos;
+
+//        for (AccountsVo accountsVo : list) {
+//            //待审核
+//            if (pageVo.getSettleAccountsStatus().equals("1")){
+//                Example example = new Example(AuditInfo.class);
+//                example.createCriteria().andEqualTo("baseProjectId",accountsVo.getAccountId())
+//                        .andEqualTo("auditResult","0");
+//                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+//                if (auditInfo!=null){
+//                    Example example1 = new Example(MemberManage.class);
+//                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+//                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+//                    if (memberManage !=null){
+//                        accountsVo.setCurrentHandler(memberManage.getMemberName());
+//                    }
+//                }
+//
+//                if (loginUser.getId().equals(accountsVo.getFounderId()) || whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId()) || loginUser.getId().equals(auditInfo.getAuditorId())){
+//                    returnList.add(accountsVo);
+//                }
+//            }
+//            //处理中
+//            if (pageVo.getSettleAccountsStatus().equals("2")){
+//                if (loginUser.getId().equals(accountsVo.getFounderId())){
+//                    returnList.add(accountsVo);
+//                }
+//            }
+//            //未通过
+//            if (pageVo.getSettleAccountsStatus().equals("3")){
+//                if (loginUser.getId().equals(accountsVo.getFounderId())){
+//                    returnList.add(accountsVo);
+//                }
+//            }
+//            //待确认
+//            if (pageVo.getSettleAccountsStatus().equals("4")){
+//                returnList.add(accountsVo);
+//            }
+//            //已完成
+//            if (pageVo.getSettleAccountsStatus().equals("5")){
+//                returnList.add(accountsVo);
+//            }
+//            //全部
+//            if (pageVo.getSettleAccountsStatus().equals("") || pageVo.getSettleAccountsStatus().equals("0")){
+//                if (loginUser.getId().equals(accountsVo.getFounderId())){
+//                    returnList.add(accountsVo);
+//                }
+//            }
+//        }
+//        ArrayList<AccountsVo> accountsVos = new ArrayList<>();
+//        for (AccountsVo accountsVo : returnList) {
+//            if (! accountsVos.contains(accountsVo)){
+//                accountsVos.add(accountsVo);
+//            }
+//        }
+        return new ArrayList<AccountsVo>();
     }
 
     @Override
@@ -294,24 +362,38 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser) {
-        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        System.err.println(baseAccountsVo.getInvestigationOfTheAmount());
+        loginUser = new UserInfo("user320",null,null,true);
+        String data = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        //判断bigdecimal
+        if (!baseAccountsVo.getSettlementInfo().getSumbitMoney().equals("")){
+            baseAccountsVo.getSettlementInfo().setSumbitMoney(baseAccountsVo.getSettlementInfo().getSumbitMoney());
+        }else {
+            baseAccountsVo.getSettlementInfo().setSumbitMoney(null);
+        }
+
+        if (baseAccountsVo.getLastSettlementReview().getReviewNumber().equals("")){
+            baseAccountsVo.getLastSettlementReview().setReviewNumber(null);
+        }
+        if (baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber().equals("")){
+            baseAccountsVo.getSettlementAuditInformation().setAuthorizedNumber(null);
+        }
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //添加上家送审
         System.out.println(baseAccountsVo);
-        if (baseAccountsVo.getSumbitNameUp() != null) {
-            baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-", ""));
+        if (baseAccountsVo.getSumbitNameUp() != null){
+            baseAccountsVo.getLastSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
             baseAccountsVo.getLastSettlementInfo().setBaseProjectId(baseProject.getId());
             baseAccountsVo.getLastSettlementInfo().setCreateTime(data);
             baseAccountsVo.getLastSettlementInfo().setState("0");
             baseAccountsVo.getLastSettlementInfo().setFouderId(loginUser.getId());
             baseAccountsVo.getLastSettlementInfo().setRemark(baseAccountsVo.getRemarkUp());
-            baseAccountsVo.getLastSettlementInfo().setSumbitName(baseAccountsVo.getSumbitNameUp());
+            baseAccountsVo.getLastSettlementInfo().setSumbitName(baseAccountsVo.getLastSettlementInfo().getSumbitName());
+            baseAccountsVo.getLastSettlementInfo().setUpAndDown("1");
             settlementInfoMapper.insertSelective(baseAccountsVo.getLastSettlementInfo());
         }
         //添加勘察金额
-        if (baseAccountsVo.getInvestigationOfTheAmount() != null) {
-            baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-", ""));
+        if (baseAccountsVo.getInvestigationOfTheAmount() != null){
+            baseAccountsVo.getInvestigationOfTheAmount().setId(UUID.randomUUID().toString().replace("-",""));
             baseAccountsVo.getInvestigationOfTheAmount().setBaseProjectId(baseProject.getId());
             baseAccountsVo.getInvestigationOfTheAmount().setCreateTime(data);
             baseAccountsVo.getInvestigationOfTheAmount().setDelFlag("0");
@@ -320,8 +402,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
 
         //添加下家送审
-        if (baseAccountsVo.getSumbitMoneyDown() != null) {
-            baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-", ""));
+        if (baseAccountsVo.getSettlementInfo().getSumbitMoney() != null){
+            baseAccountsVo.getSettlementInfo().setId(UUID.randomUUID().toString().replace("-",""));
             baseAccountsVo.getSettlementInfo().setBaseProjectId(baseProject.getId());
 
             baseAccountsVo.getSettlementInfo().setCreateTime(data);
@@ -334,21 +416,28 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getSettlementInfo().setRemark(baseAccountsVo.getRemarkDown());
             baseAccountsVo.getSettlementInfo().setState("0");
             baseAccountsVo.getSettlementInfo().setFouderId(loginUser.getId());
+            baseAccountsVo.getSettlementInfo().setUpAndDown("2");
             settlementInfoMapper2.insertSelective(baseAccountsVo.getSettlementInfo());
         }
 
         //添加上家结算送审
-        baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-", ""));
-        baseAccountsVo.getLastSettlementReview().setCreateTime(data);
-        baseAccountsVo.getLastSettlementReview().setDelFlag("0");
-        baseAccountsVo.getLastSettlementReview().setBaseProjectId(baseProject.getId());
-        baseAccountsVo.getLastSettlementReview().setFounderId(loginUser.getId());
-        //添加下家结算送审
-        baseAccountsVo.getSettlementAuditInformation().setId(UUID.randomUUID().toString().replace("-", ""));
-        baseAccountsVo.getSettlementAuditInformation().setCreateTime(data);
-        baseAccountsVo.getSettlementAuditInformation().setDelFlag("0");
-        baseAccountsVo.getSettlementAuditInformation().setBaseProjectId(baseProject.getId());
-        baseAccountsVo.getSettlementAuditInformation().setFounderId(loginUser.getId());
+        if (baseAccountsVo.getLastSettlementReview().getReviewNumber()!=null){
+
+            baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-",""));
+            baseAccountsVo.getLastSettlementReview().setCreateTime(data);
+            baseAccountsVo.getLastSettlementReview().setDelFlag("0");
+            baseAccountsVo.getLastSettlementReview().setBaseProjectId(baseProject.getId());
+            baseAccountsVo.getLastSettlementReview().setFounderId(loginUser.getId());
+        }
+
+        if (baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber()!=null){
+            //添加下家结算送审
+            baseAccountsVo.getSettlementAuditInformation().setId(UUID.randomUUID().toString().replace("-", ""));
+            baseAccountsVo.getSettlementAuditInformation().setCreateTime(data);
+            baseAccountsVo.getSettlementAuditInformation().setDelFlag("0");
+            baseAccountsVo.getSettlementAuditInformation().setBaseProjectId(baseProject.getId());
+            baseAccountsVo.getSettlementAuditInformation().setFounderId(loginUser.getId());
+        }
 
         if (baseAccountsVo.getLastSettlementReview().getId() != null) {
             baseAccountsVo.getSettlementAuditInformation().setAccountId(baseAccountsVo.getLastSettlementReview().getId());
@@ -358,14 +447,18 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getLastSettlementReview().setAccountId(baseAccountsVo.getSettlementAuditInformation().getId());
             baseAccountsVo.getLastSettlementReview().setWhetherAccount("1");
         }
-        lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
-        settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
+        if (baseProject.getAB().equals("1")){
+            lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
+            settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
+        }else if(baseProject.getAB().equals("2")){
+            settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
+        }
 
         if (baseAccountsVo.getAuditId() != null) {
-            //添加一审
+            //添加 一审
             AuditInfo auditInfo = new AuditInfo();
             auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
-            if (baseAccountsVo.getSettlementAuditInformation().getId() != null) {
+            if (baseProject.getAB().equals("2") || baseAccountsVo.getSettlementAuditInformation().getId() != null) {
                 auditInfo.setBaseProjectId(baseAccountsVo.getSettlementAuditInformation().getId());
             } else {
                 auditInfo.setBaseProjectId(baseAccountsVo.getLastSettlementReview().getId());
@@ -387,7 +480,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example.Criteria c = example.createCriteria();
         c.andLike("type", "jsxmxj%");
         c.andEqualTo("status", "0");
-        c.andEqualTo("userId", loginUser.getId());
+        c.andEqualTo("platCode", loginUser.getId());
         List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example);
         for (FileInfo fileInfo : fileInfos) {
             //修改文件外键
@@ -853,6 +946,21 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     messageVo.setDetails(username+"您好！您提交的【"+projectName+"】的进度款支付项目【"+name+"】已审批通过！");
                     //调用消息Service
                     messageService.sendOrClose(messageVo);
+                    //若缺失上下家则进入处理中
+                    BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(s);
+                    if (lastSettlementReview == null || settlementAuditInformation == null || baseProject1.getAB().equals("2")){
+                        BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
+                        baseProject3.setSettleAccountsStatus("2");
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject3);
+                        //否则则进入已完成
+                    }else{
+                        BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
+                        baseProject2.setSettleAccountsStatus("5");
+                        baseProject2.setProgressPaymentStatus("6");
+                        baseProject2.setVisaStatus("6");
+                        baseProject2.setTrackStatus("5");
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject2);
+                    }
                 }
 
 

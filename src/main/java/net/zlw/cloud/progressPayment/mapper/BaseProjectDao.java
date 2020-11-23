@@ -19,99 +19,99 @@ import java.util.List;
 @org.apache.ibatis.annotations.Mapper
 public interface BaseProjectDao extends Mapper<BaseProject> {
 
-    @Select("select\n" +
-            "b.id id,\n" +
+    @Select("select " +
+            "b.id id, " +
             "IFNULL(s.id,l.id) accountId , " +
-            "b.cea_num ceaNum,\n" +
-            "b.project_num projectNum,\n" +
-            "b.project_name projectName,\n" +
-            "(case b.settle_accounts_status\n" +
-            "\t\twhen '1' then '待审核'\n" +
-            "\t\twhen '2' then '处理中'\n" +
-            "\t\twhen '3' then '未通过'\n" +
-            "\t\twhen '4' then '待确认'\n" +
-            "\t\twhen '5' then '已完成'\n" +
-            "\t\tend\n" +
-            ") settleAccountsStatus,\n" +
-            "(case b.district\n" +
-            "\t\twhen '1' then '芜湖'\n" +
-            "\t\twhen '2' then '马鞍山'\n" +
-            "\t\twhen '3' then '江北'\n" +
-            "\t\twhen '4' then '吴江'\n" +
-            "\t\tend\n" +
-            ") district,\n" +
-            "b.water_address waterAddress,\n" +
-            "b.construction_unit constructionUnit,\n" +
-            "(case b.project_category\n" +
-            "\t\twhen '1' then '住宅区配套'\n" +
-            "\t\twhen '2' then '商业区配套'\n" +
-            "\t\twhen '3' then '工商区配套'\n" +
-            "\t\tend\n" +
-            ") projectCategory,\n" +
-            "(case b.project_nature\n" +
-            "\t\twhen '1' then '新建'\n" +
-            "\t\twhen '2' then '改造'\n" +
-            "\t\tend\n" +
-            ") projectNature,\n" +
-            "(case b.design_category\n" +
-            "\t\twhen '1' then '市政管道'\n" +
-            "\t\twhen '2' then '管网改造'\n" +
-            "\t\twhen '3' then '新建小区'\n" +
-            "\t\twhen '4' then '二次供水项目'\n" +
-            "\t\twhen '5' then '工商户'\n" +
-            "\t\twhen '6' then '居民装接水'\n" +
-            "\t\twhen '7' then '行政事业'\n" +
-            "\t\tend\n" +
-            ") designCategory,\n" +
-            "(case b.water_supply_type\n" +
-            "\t\twhen '1' then '直供水'\n" +
-            "\t\twhen '2' then '二次供水'\n" +
-            "\t\tend\n" +
-            ") waterSupplyType,\n" +
-            "b.customer_name customerName,\n" +
-            "IFNULL(s.prepare_people,l.prepare_people) preparePeople,\n" +
-            "bt.outsourcing outsourcing,\n" +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit,\n" +
-            "l.review_number lReviewNumber,\n" +
-            "si.sumbit_money sumbitMoney,\n" +
-            "s.authorized_number authorizedNumber,\n" +
-            "IFNULL(s.take_time,l.take_time) takeTime,\n" +
-            "IFNULL(s.compile_time,l.compile_time) compileTime,\n" +
-            "(case IFNULL(s.whether_account,l.whether_account)\n" +
-            "\t\twhen '0' then '到账'\n" +
-            "\t\twhen '1' then '未到账'\n" +
-            "\t\tend\n" +
-            ") whetherAccount,\n" +
-            "a.auditor_id auditorId,\n" +
-            "IFNULL(s.founder_id,l.founder_id) founderId \n" +
-            "from\n" +
-            "budgeting bt \n" +
-            "LEFT JOIN base_project b on bt.base_project_id = b.id \n" +
-            "LEFT JOIN last_settlement_review l on l.base_project_id = bt.base_project_id\n" +
-            "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id\n" +
-            "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id\n" +
+            "b.cea_num ceaNum, " +
+            "b.project_num projectNum, " +
+            "b.project_name projectName, " +
+            "(case b.settle_accounts_status " +
+            "    when '1' then '待审核' " +
+            "    when '2' then '处理中' " +
+            "    when '3' then '未通过' " +
+            "    when '4' then '待确认' " +
+            "    when '5' then '已完成' " +
+            "    end " +
+            ") settleAccountsStatus, " +
+            "(case b.district " +
+            "    when '1' then '芜湖' " +
+            "    when '2' then '马鞍山' " +
+            "    when '3' then '江北' " +
+            "    when '4' then '吴江' " +
+            "    end " +
+            ") district, " +
+            "b.water_address waterAddress, " +
+            "b.construction_unit constructionUnit, " +
+            "(case b.project_category " +
+            "    when '1' then '住宅区配套' " +
+            "    when '2' then '商业区配套' " +
+            "    when '3' then '工商区配套' " +
+            "    end " +
+            ") projectCategory, " +
+            "(case b.project_nature " +
+            "    when '1' then '新建' " +
+            "    when '2' then '改造' " +
+            "    end " +
+            ") projectNature, " +
+            "(case b.design_category " +
+            "    when '1' then '市政管道' " +
+            "    when '2' then '管网改造' " +
+            "    when '3' then '新建小区' " +
+            "    when '4' then '二次供水项目' " +
+            "    when '5' then '工商户' " +
+            "    when '6' then '居民装接水' " +
+            "    when '7' then '行政事业' " +
+            "    end " +
+            ") designCategory, " +
+            "(case b.water_supply_type " +
+            "    when '1' then '直供水' " +
+            "    when '2' then '二次供水' " +
+            "    end " +
+            ") waterSupplyType, " +
+            "b.customer_name customerName, " +
+            "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
+            "bt.outsourcing outsourcing, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "l.review_number lReviewNumber, " +
+            "si.sumbit_money sumbitMoney, " +
+            "s.authorized_number authorizedNumber, " +
+            "IFNULL(s.take_time,l.take_time) takeTime, " +
+            "IFNULL(s.compile_time,l.compile_time) compileTime, " +
+            "(case IFNULL(s.whether_account,l.whether_account) " +
+            "    when '0' then '到账' " +
+            "    when '1' then '未到账' " +
+            "    end " +
+            ") whetherAccount, " +
+            "a.auditor_id auditorId, " +
+            "IFNULL(s.founder_id,l.founder_id) founderId  " +
+            "from " +
+            "budgeting bt  " +
+            "LEFT JOIN base_project b on bt.base_project_id = b.id  " +
+            "LEFT JOIN last_settlement_review l on l.base_project_id = bt.base_project_id " +
+            "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id " +
+            "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id " +
             "LEFT JOIN audit_info a on a.base_project_id = IFNULL(s.id,l.id)" +
-            "where \n" +
-            "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and \n" +
-            "(b.district = #{district} or #{district} = '' ) and \n" +
-            "(b.project_nature = #{projectNature} or #{projectNature} = '') and \n" +
-            "(b.sa_whether_account = #{saWhetherAccount} or #{saWhetherAccount} = '') and \n" +
-            "(IFNULL(l.take_time,s.take_time) > #{startTime} or #{startTime} = '') and  \n" +
-            "(IFNULL(l.take_time,s.take_time) < #{endTime} or #{endTime} = '') and \n" +
-            "(IFNULL(l.compile_time,s.compile_time) > #{startTime} or #{startTime} = '') and \n" +
-            "(IFNULL(l.compile_time,s.compile_time) < #{endTime} or #{endTime} = '') and  \n" +
-            "(b.cea_num like concat('%',#{keyword},'%') or  \n" +
-            "b.project_num like concat('%',#{keyword},'%')  or \n" +
-            "b.project_name like concat ('%',#{keyword},'%') or  \n" +
-            "b.construction_unit like concat ('%',#{keyword},'%') or  \n" +
-            "b.customer_name like concat ('%',#{keyword},'%') or  \n" +
-            "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')) and \n" +
-            "bt.del_flag = '0' and \n" +
-            "b.del_flag = '0' and \n" +
+            "where  " +
+            "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
+            "(b.district = #{district} or #{district} = '' ) and  " +
+            "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
+            "(b.sa_whether_account = #{saWhetherAccount} or #{saWhetherAccount} = '') and  " +
+            "(IFNULL(s.take_time,l.take_time) > #{startTime} or #{startTime} = '') and   " +
+            "(IFNULL(s.take_time,l.take_time) < #{endTime} or #{endTime} = '') and  " +
+            "(IFNULL(s.compile_time,l.compile_time) > #{startTime} or #{startTime} = '') and  " +
+            "(IFNULL(s.compile_time,l.compile_time) < #{endTime} or #{endTime} = '') and   " +
+            "(b.cea_num like concat('%',#{keyword},'%') or   " +
+            "b.project_num like concat('%',#{keyword},'%')  or  " +
+            "b.project_name like concat ('%',#{keyword},'%') or   " +
+            "b.construction_unit like concat ('%',#{keyword},'%') or   " +
+            "b.customer_name like concat ('%',#{keyword},'%') or   " +
+            "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')) and  " +
+            "bt.del_flag = '0' and  " +
+            "b.del_flag = '0' and  " +
             "si.state = '0' and " +
             "l.del_flag = '0' and " +
             "s.del_flag = '0'" +
-            "ORDER BY si.create_time DESC  \n")
+            "ORDER BY si.create_time DESC   ")
     List<AccountsVo> findAllAccounts(PageVo pageVo);
 
 
@@ -119,48 +119,48 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
     net.zlw.cloud.clearProject.model.BaseProject fingById(@Param("id")String id);
 
 
-    @Select("SELECT \n" +
-            "s1.id, \n"+
-            "s1.should_be shouldBe,\n" +
-            "s1.cea_num ceaNum,\n" +
-            "s1.project_num projectNum,\n" +
-            "s1.project_name projectName,\n" +
-            "s1.district district,\n" +
-            "s1.water_address waterAddress,\n" +
-            "s1.construction_unit construction,\n" +
-            "s1.design_category designCategory,\n" +
-            "s1.water_supply_type waterSupplyType,\n" +
-            "s1.customer_name customerName,\n" +
-            "s2.budgeting_people budgetingPeople,\n" +
-            "s3.cost_together costTogether,\n" +
-            "s4.pricing_together pricingTogether,\n" +
-            "s2.amount_cost amountCost,\n" +
-            "s3.cost_total_amount costTotalAmount,\n" +
-            "s4.bidding_price_control biddingPriceControl\n" +
-            "FROM\n" +
-            "base_project s1 \n" +
-            "LEFT JOIN budgeting s2 ON s2.base_project_id = s1.id\n" +
-            "LEFT JOIN cost_preparation s3 ON s3.base_project_id = s1.id\n" +
-            "LEFT JOIN very_establishment s4 ON s4.base_project_id = s1.id\n" +
-            "WHERE 1=1\n" +
-            "AND\n" +
-            "s1.del_flag = 0\n" +
-            "AND\n" +
-            "s2.del_flag = 0\n" +
-            "AND\n" +
-            "s3.del_flag = 0\n" +
-            "AND \n" +
-            "s4.del_flag = 0\n" +
-            "AND\n" +
-            "(s1.district = #{district} OR #{district} ='')\n" +
-            "AND \n" +
-            "(s1.design_category = #{designCategory} OR #{designCategory} ='')\n" +
-            "AND \n" +
-            "(s1.water_supply_type = #{waterSupplyType} OR #{waterSupplyType} = '')\n" +
-            "AND(\n" +
-            "s1.cea_num LIKE CONCAT('%',#{keyWord},'%') OR\n" +
-            "s1.project_num LIKE CONCAT('%',#{keyWord},'%') OR\n" +
-            "s1.project_name LIKE CONCAT('%',#{keyWord},'%') \n" +
+    @Select("SELECT  " +
+            "s1.id,  "+
+            "s1.should_be shouldBe, " +
+            "s1.cea_num ceaNum, " +
+            "s1.project_num projectNum, " +
+            "s1.project_name projectName, " +
+            "s1.district district, " +
+            "s1.water_address waterAddress, " +
+            "s1.construction_unit construction, " +
+            "s1.design_category designCategory, " +
+            "s1.water_supply_type waterSupplyType, " +
+            "s1.customer_name customerName, " +
+            "s2.budgeting_people budgetingPeople, " +
+            "s3.cost_together costTogether, " +
+            "s4.pricing_together pricingTogether, " +
+            "s2.amount_cost amountCost, " +
+            "s3.cost_total_amount costTotalAmount, " +
+            "s4.bidding_price_control biddingPriceControl " +
+            "FROM " +
+            "base_project s1  " +
+            "LEFT JOIN budgeting s2 ON s2.base_project_id = s1.id " +
+            "LEFT JOIN cost_preparation s3 ON s3.base_project_id = s1.id " +
+            "LEFT JOIN very_establishment s4 ON s4.base_project_id = s1.id " +
+            "WHERE 1=1 " +
+            "AND " +
+            "s1.del_flag = 0 " +
+            "AND " +
+            "s2.del_flag = 0 " +
+            "AND " +
+            "s3.del_flag = 0 " +
+            "AND  " +
+            "s4.del_flag = 0 " +
+            "AND " +
+            "(s1.district = #{district} OR #{district} ='') " +
+            "AND  " +
+            "(s1.design_category = #{designCategory} OR #{designCategory} ='') " +
+            "AND  " +
+            "(s1.water_supply_type = #{waterSupplyType} OR #{waterSupplyType} = '') " +
+            "AND( " +
+            "s1.cea_num LIKE CONCAT('%',#{keyWord},'%') OR " +
+            "s1.project_num LIKE CONCAT('%',#{keyWord},'%') OR " +
+            "s1.project_name LIKE CONCAT('%',#{keyWord},'%')  " +
             ")")
     List<VisaBaseProjectVo> findByBaseProject(VisaBaseProjectVo visaBaseProjectVo);
 
@@ -172,65 +172,65 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "b.building_project_id = #{id}")
     List<BaseProject> findByBuildingProject(@Param("id") String id);
 
-    @Select("select\n" +
+    @Select("select " +
             "b.id id , " +
-            "(case b.should_be\n" +
-            "\twhen '0' then '是'\n" +
-            "\twhen '1' then '否'\n" +
-            "\tend\n" +
-            ") shouldBe ,\n" +
-            "b.cea_num ceaNum,\n" +
-            "b.project_num projectNum,\n" +
-            "b.project_name projectName,\n" +
-            "(case district \n" +
-            "\twhen '1' then '芜湖'\n" +
-            "\twhen '2' then '马鞍山'\n" +
-            "\twhen '3' then '江北'\n" +
-            "\twhen '4' then '吴江'\n" +
-            "\tend\n" +
-            ") district,\n" +
-            "b.water_address waterAddress,\n" +
-            "b.construction_unit constructionUnit,\n" +
-            "(case b.design_category\n" +
-            "\twhen '1' then '市政管道'\n" +
-            "\twhen '2' then '管网改造'\n" +
-            "\twhen '3' then '新建小区'\n" +
-            "\twhen '4' then '二次供水项目'\n" +
-            "\twhen '5' then '工商户'\n" +
-            "\twhen '6' then '居民装接水'\n" +
-            "\twhen '7' then '行政事业'\n" +
-            "\tend\n" +
-            ") designCategory,\n" +
-            "(case b.water_supply_type \n" +
-            "\twhen '1' then '直供水'\n" +
-            "\twhen '2' then '二次供水'\n" +
-            "\tend\n" +
-            ") waterSupplyType,\n" +
-            "b.customer_name customerName,\n" +
-            "d.designer designer,\n" +
-            "d.take_time takeTime,\n" +
-            "d.blueprint_start_time blueprintStartTime\n" +
-            "from design_info d \n" +
-            "LEFT JOIN base_project b on d.base_project_id = b.id\n" +
-            "where \n" +
-            "b.desgin_status = '4' and \n" +
-            "(select id from budgeting bt where bt.base_project_id = b.id and bt.del_flag = '0') is null and\n" +
-            "(b.district = #{district} or #{district} = '') and \n" +
-            "(b.design_category = #{designCategory} or #{designCategory} = '') and \n" +
-            "(b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '') and \n" +
-            "(\n" +
-            "b.cea_num like concat('%',#{keyword},'%') or\n" +
-            "b.project_num like concat('%',#{keyword},'%') or\n" +
-            "b.project_name like concat('%',#{keyword},'%') or \n" +
-            "b.construction_unit like concat('%',#{keyword},'%') or\n" +
-            "b.customer_name like concat ('%',#{keyword},'%')  \n" +
+            "(case b.should_be " +
+            "  when '0' then '是' " +
+            "  when '1' then '否' " +
+            "  end " +
+            ") shouldBe , " +
+            "b.cea_num ceaNum, " +
+            "b.project_num projectNum, " +
+            "b.project_name projectName, " +
+            "(case district  " +
+            "  when '1' then '芜湖' " +
+            "  when '2' then '马鞍山' " +
+            "  when '3' then '江北' " +
+            "  when '4' then '吴江' " +
+            "  end " +
+            ") district, " +
+            "b.water_address waterAddress, " +
+            "b.construction_unit constructionUnit, " +
+            "(case b.design_category " +
+            "  when '1' then '市政管道' " +
+            "  when '2' then '管网改造' " +
+            "  when '3' then '新建小区' " +
+            "  when '4' then '二次供水项目' " +
+            "  when '5' then '工商户' " +
+            "  when '6' then '居民装接水' " +
+            "  when '7' then '行政事业' " +
+            "  end " +
+            ") designCategory, " +
+            "(case b.water_supply_type  " +
+            "  when '1' then '直供水' " +
+            "  when '2' then '二次供水' " +
+            "  end " +
+            ") waterSupplyType, " +
+            "b.customer_name customerName, " +
+            "d.designer designer, " +
+            "d.take_time takeTime, " +
+            "d.blueprint_start_time blueprintStartTime " +
+            "from design_info d  " +
+            "LEFT JOIN base_project b on d.base_project_id = b.id " +
+            "where  " +
+            "b.desgin_status = '4' and  " +
+            "(select id from budgeting bt where bt.base_project_id = b.id and bt.del_flag = '0') is null and " +
+            "(b.district = #{district} or #{district} = '') and  " +
+            "(b.design_category = #{designCategory} or #{designCategory} = '') and  " +
+            "(b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '') and  " +
+            "( " +
+            "b.cea_num like concat('%',#{keyword},'%') or " +
+            "b.project_num like concat('%',#{keyword},'%') or " +
+            "b.project_name like concat('%',#{keyword},'%') or  " +
+            "b.construction_unit like concat('%',#{keyword},'%') or " +
+            "b.customer_name like concat ('%',#{keyword},'%')   " +
             ")")
     List<DesignInfo> findDesignAll(PageBVo pageBVo);
 
-    @Select("select * from base_project where \n" +
-            "(district = #{district} or #{district} = '--' or #{district} = '') and \n" +
-            "(create_time > #{statTime} or #{statTime} = '--' or #{statTime} = '') and \n" +
-            "(create_time < #{endTime} or #{endTime} = '--' or #{endTime} = '')\n" +
+    @Select("select * from base_project where  " +
+            "(district = #{district} or #{district} = '--' or #{district} = '') and  " +
+            "(create_time > #{statTime} or #{statTime} = '--' or #{statTime} = '') and  " +
+            "(create_time < #{endTime} or #{endTime} = '--' or #{endTime} = '') " +
             "order by create_time desc limit 0,5")
     List<BaseProject> findAllBaseProject(pageVo pageVo);
 
@@ -238,169 +238,559 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
     BaseProject findBaseProject(@Param("id") String id);
 
     @Select(
-            "SELECT\n" +
-                    "b.id id,\n" +
-                    "b.cea_num ceaNum,\n" +
-                    "b.budget_status budgetStatus,\n" +
-                    "b.project_num projectNum,\n" +
-                    "b.project_name projectName,\n" +
-                    "b.application_num applicationNum,\n" +
-                    "b.water_address waterAddress,\n" +
-                    "b.construction_unit constructionUnit,\n" +
-                    "b.contacts,\n" +
-                    "b.contact_number,\n" +
-                    "b.customer_name customerName,\n" +
-                    "b.customer_phone customerPhone,\n" +
-                    "b.this_declaration thisDeclaration,\n" +
-                    "b.agent,\n" +
-                    "b.agent_phone,\n" +
-                    "b.application_date applicationDate,\n" +
-                    "b.business_location businessLocation,\n" +
-                    "b.business_types businessTypes,\n" +
-                    "b.water_use waterUse,\n" +
-                    "b.fire_table_size fireTableSize,\n" +
-                    "b.classification_caliber classificationCaliber,\n" +
-                    "b.water_meter_diameter waterMeterDiameter,\n" +
-                    "b.site site,\n" +
-                    "b.system_number systemNumber,\n" +
-                    "b.proposer proposer,\n" +
-                    "b.application_number applicationNumber,\n" +
-                    "b.construction_organization constructionOrganization,\n" +
-                    "b.management_table managementTable,\n" +
-                    "(CASE \n" +
-                    "      b.a_b\n" +
-                    "  WHEN '1' THEN 'A' \n" +
-                    "  WHEN '2' THEN 'B' \n" +
-                    "  END \n" +
-                    "  ) ab,\n" +
-                    " (CASE \n" +
-                    "      b.subject \n" +
-                    "  WHEN '1' THEN '居民住户' \n" +
-                    "  WHEN '2' THEN '开发商' \n" +
-                    "  WHEN '3' THEN '政府事业' \n" +
-                    "  WHEN '4' THEN '工商户' \n" +
-                    "  WHEN '5' THEN '芜湖华衍' \n" +
-                    "  END \n" +
-                    "  ) subject,\n" +
-                    " ( \n" +
-                    "  CASE\n" +
-                    "      b.district \n" +
-                    "  WHEN '1' THEN '芜湖' \n" +
-                    "  WHEN '2' THEN '马鞍山' \n" +
-                    "  WHEN '3' THEN '江北' \n" +
-                    "  WHEN '4' THEN '吴江' \n" +
-                    "  END\n" +
-                    "  ) district,\n" +
-                    " ( \n" +
-                    " CASE \n" +
-                    "     b.project_category \n" +
-                    " WHEN '1' THEN '住宅区配套' \n" +
-                    " WHEN '2' THEN '商业区配套' \n" +
-                    " WHEN '3' THEN '工商区配套' \n" +
-                    " END ) projectCategory,\n" +
-                    " ( \n" +
-                    " CASE \n" +
-                    "     b.project_nature \n" +
-                    "   WHEN '1' THEN '新建' \n" +
-                    " WHEN '2' THEN '改造' \n" +
-                    " END \n" +
-                    " ) projectNature,\n" +
-                    " (\n" +
-                    " CASE\n" +
-                    " b.design_category \n" +
-                    " WHEN '1' THEN\n" +
-                    " '市政管道' \n" +
-                    " WHEN '2' THEN\n" +
-                    " '管网改造' \n" +
-                    " WHEN '3' THEN\n" +
-                    " '新建小区' \n" +
-                    " WHEN '4' THEN\n" +
-                    " '二次供水项目' \n" +
-                    " WHEN '5' THEN\n" +
-                    " '工商户' \n" +
-                    " WHEN '6' THEN\n" +
-                    " '居民装接水' \n" +
-                    " WHEN '7' THEN\n" +
-                    " '行政事业' \n" +
-                    " END \n" +
-                    " ) designCategory,\n" +
-                    " ( \n" +
-                    " CASE \n" +
-                    " b.water_supply_type \n" +
-                    " WHEN '1' THEN '直供水' \n" +
-                    " WHEN '2' THEN '二次供水' \n" +
-                    " END\n" +
-                    " )waterSupplyType\n" +
-                    " FROM base_project b \n" +
-                    " LEFT JOIN cost_unit_management c ON c.id = b.construction_organization\n" +
+            "SELECT " +
+                    "b.id id, " +
+                    "b.cea_num ceaNum, " +
+                    "b.budget_status budgetStatus, " +
+                    "b.project_num projectNum, " +
+                    "b.project_name projectName, " +
+                    "b.application_num applicationNum, " +
+                    "b.water_address waterAddress, " +
+                    "b.construction_unit constructionUnit, " +
+                    "b.contacts, " +
+                    "b.contact_number, " +
+                    "b.customer_name customerName, " +
+                    "b.customer_phone customerPhone, " +
+                    "b.this_declaration thisDeclaration, " +
+                    "b.agent, " +
+                    "b.agent_phone, " +
+                    "b.application_date applicationDate, " +
+                    "b.business_location businessLocation, " +
+                    "b.business_types businessTypes, " +
+                    "b.water_use waterUse, " +
+                    "b.fire_table_size fireTableSize, " +
+                    "b.classification_caliber classificationCaliber, " +
+                    "b.water_meter_diameter waterMeterDiameter, " +
+                    "b.site site, " +
+                    "b.system_number systemNumber, " +
+                    "b.proposer proposer, " +
+                    "b.application_number applicationNumber, " +
+                    "b.construction_organization constructionOrganization, " +
+                    "b.management_table managementTable, " +
+                    "(CASE  " +
+                    "      b.a_b " +
+                    "  WHEN '1' THEN 'A'  " +
+                    "  WHEN '2' THEN 'B'  " +
+                    "  END  " +
+                    "  ) ab, " +
+                    " (CASE  " +
+                    "      b.subject  " +
+                    "  WHEN '1' THEN '居民住户'  " +
+                    "  WHEN '2' THEN '开发商'  " +
+                    "  WHEN '3' THEN '政府事业'  " +
+                    "  WHEN '4' THEN '工商户'  " +
+                    "  WHEN '5' THEN '芜湖华衍'  " +
+                    "  END  " +
+                    "  ) subject, " +
+                    " (  " +
+                    "  CASE " +
+                    "      b.district  " +
+                    "  WHEN '1' THEN '芜湖'  " +
+                    "  WHEN '2' THEN '马鞍山'  " +
+                    "  WHEN '3' THEN '江北'  " +
+                    "  WHEN '4' THEN '吴江'  " +
+                    "  END " +
+                    "  ) district, " +
+                    " (  " +
+                    " CASE  " +
+                    "     b.project_category  " +
+                    " WHEN '1' THEN '住宅区配套'  " +
+                    " WHEN '2' THEN '商业区配套'  " +
+                    " WHEN '3' THEN '工商区配套'  " +
+                    " END ) projectCategory, " +
+                    " (  " +
+                    " CASE  " +
+                    "     b.project_nature  " +
+                    "   WHEN '1' THEN '新建'  " +
+                    " WHEN '2' THEN '改造'  " +
+                    " END  " +
+                    " ) projectNature, " +
+                    " ( " +
+                    " CASE " +
+                    " b.design_category  " +
+                    " WHEN '1' THEN " +
+                    " '市政管道'  " +
+                    " WHEN '2' THEN " +
+                    " '管网改造'  " +
+                    " WHEN '3' THEN " +
+                    " '新建小区'  " +
+                    " WHEN '4' THEN " +
+                    " '二次供水项目'  " +
+                    " WHEN '5' THEN " +
+                    " '工商户'  " +
+                    " WHEN '6' THEN " +
+                    " '居民装接水'  " +
+                    " WHEN '7' THEN " +
+                    " '行政事业'  " +
+                    " END  " +
+                    " ) designCategory, " +
+                    " (  " +
+                    " CASE  " +
+                    " b.water_supply_type  " +
+                    " WHEN '1' THEN '直供水'  " +
+                    " WHEN '2' THEN '二次供水'  " +
+                    " END " +
+                    " )waterSupplyType " +
+                    " FROM base_project b  " +
+                    " LEFT JOIN cost_unit_management c ON c.id = b.construction_organization " +
                     " WHERE b.del_flag = '0' AND b.id = #{id}"
     )
     BaseProject findBaseProjectId(@Param("id") String id);
 
-    @Select("SELECT\n" +
-            "\tb.id id,\n" +
-            "\tb.cea_num ceaNum,\n" +
-            "\tb.budget_status budgetStatus,\n" +
-            "\tb.project_num projectNum,\n" +
-            "\tb.project_name projectName,\n" +
-            "\tb.application_num applicationNum,\n" +
-            "\tb.water_address waterAddress,\n" +
-            "\tb.construction_unit constructionUnit,\n" +
-            "\tb.contacts,\n" +
-            "\tb.contact_number,\n" +
-            "\tb.customer_name customerName,\n" +
-            "\tb.customer_phone customerPhone,\n" +
-            "\tb.this_declaration thisDeclaration,\n" +
-            "\tb.agent,\n" +
-            "\tb.agent_phone,\n" +
-            "\tb.application_date applicationDate,\n" +
-            "\tb.business_location businessLocation,\n" +
-            "\tb.business_types businessTypes,\n" +
-            "\tb.water_use waterUse,\n" +
-            "\tb.fire_table_size fireTableSize,\n" +
-            "\tb.classification_caliber classificationCaliber,\n" +
-            "\tb.water_meter_diameter waterMeterDiameter,\n" +
-            "\tb.site site,\n" +
-            "\tb.track_status trackStatus,\n" +
-            "\tb.system_number systemNumber,\n" +
-            "\tb.proposer proposer,\n" +
-            "\tb.application_number applicationNumber,\n" +
-            "\tb.construction_organization constructionOrganization,\n" +
-            "\tb.management_table managementTable,\n" +
-            "\t( CASE b.a_b WHEN '1' THEN 'A' WHEN '2' THEN 'B' END ) ab,\n" +
-            "\t( CASE b.should_be WHEN '0' THEN '是' WHEN '1' THEN '否' END ) shouldBe,\n" +
-            "\t( CASE b.SUBJECT WHEN '1' THEN '居民住户' WHEN '2' THEN '开发商' WHEN '3' THEN '政府事业' WHEN '4' THEN '工商户' WHEN '5' THEN '芜湖华衍' END ) SUBJECT,\n" +
-            "\t( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) district,\n" +
-            "\t( CASE b.project_category WHEN '1' THEN '住宅区配套' WHEN '2' THEN '商业区配套' WHEN '3' THEN '工商区配套' END ) projectCategory,\n" +
-            "\t( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) projectNature,\n" +
-            "\t(\n" +
-            "\tCASE\n" +
-            "\t\t\tb.design_category \n" +
-            "\t\t\tWHEN '1' THEN\n" +
-            "\t\t\t'市政管道' \n" +
-            "\t\t\tWHEN '2' THEN\n" +
-            "\t\t\t'管网改造' \n" +
-            "\t\t\tWHEN '3' THEN\n" +
-            "\t\t\t'新建小区' \n" +
-            "\t\t\tWHEN '4' THEN\n" +
-            "\t\t\t'二次供水项目' \n" +
-            "\t\t\tWHEN '5' THEN\n" +
-            "\t\t\t'工商户' \n" +
-            "\t\t\tWHEN '6' THEN\n" +
-            "\t\t\t'居民装接水' \n" +
-            "\t\t\tWHEN '7' THEN\n" +
-            "\t\t\t'行政事业' \n" +
-            "\t\tEND \n" +
-            "\t\t) designCategory,\n" +
-            "\t\t( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) waterSupplyType \n" +
-            "\tFROM\n" +
-            "\t\tbase_project b \n" +
-            "\tWHERE\n" +
-            "\tb.del_flag = '0' \n" +
-            "\tAND b.id = #{id}")
+    @Select("SELECT " +
+            "  b.id id, " +
+            "  b.cea_num ceaNum, " +
+            "  b.budget_status budgetStatus, " +
+            "  b.project_num projectNum, " +
+            "  b.project_name projectName, " +
+            "  b.application_num applicationNum, " +
+            "  b.water_address waterAddress, " +
+            "  b.construction_unit constructionUnit, " +
+            "  b.contacts, " +
+            "  b.contact_number, " +
+            "  b.customer_name customerName, " +
+            "  b.customer_phone customerPhone, " +
+            "  b.this_declaration thisDeclaration, " +
+            "  b.agent, " +
+            "  b.agent_phone, " +
+            "  b.application_date applicationDate, " +
+            "  b.business_location businessLocation, " +
+            "  b.business_types businessTypes, " +
+            "  b.water_use waterUse, " +
+            "  b.fire_table_size fireTableSize, " +
+            "  b.classification_caliber classificationCaliber, " +
+            "  b.water_meter_diameter waterMeterDiameter, " +
+            "  b.site site, " +
+            "  b.track_status trackStatus, " +
+            "  b.system_number systemNumber, " +
+            "  b.proposer proposer, " +
+            "  b.application_number applicationNumber, " +
+            "  b.construction_organization constructionOrganization, " +
+            "  b.management_table managementTable, " +
+            "  ( CASE b.a_b WHEN '1' THEN 'A' WHEN '2' THEN 'B' END ) ab, " +
+            "  ( CASE b.should_be WHEN '0' THEN '是' WHEN '1' THEN '否' END ) shouldBe, " +
+            "  ( CASE b.SUBJECT WHEN '1' THEN '居民住户' WHEN '2' THEN '开发商' WHEN '3' THEN '政府事业' WHEN '4' THEN '工商户' WHEN '5' THEN '芜湖华衍' END ) SUBJECT, " +
+            "  ( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) district, " +
+            "  ( CASE b.project_category WHEN '1' THEN '住宅区配套' WHEN '2' THEN '商业区配套' WHEN '3' THEN '工商区配套' END ) projectCategory, " +
+            "  ( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) projectNature, " +
+            "  ( " +
+            "  CASE " +
+            "      b.design_category  " +
+            "      WHEN '1' THEN " +
+            "      '市政管道'  " +
+            "      WHEN '2' THEN " +
+            "      '管网改造'  " +
+            "      WHEN '3' THEN " +
+            "      '新建小区'  " +
+            "      WHEN '4' THEN " +
+            "      '二次供水项目'  " +
+            "      WHEN '5' THEN " +
+            "      '工商户'  " +
+            "      WHEN '6' THEN " +
+            "      '居民装接水'  " +
+            "      WHEN '7' THEN " +
+            "      '行政事业'  " +
+            "    END  " +
+            "    ) designCategory, " +
+            "    ( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) waterSupplyType  " +
+            "  FROM " +
+            "    base_project b  " +
+            "  WHERE " +
+            "  b.del_flag = '0'  " +
+            "  AND b.id = #{id}")
     BaseProject findTrackBaseProjectId(@Param("id") String id);
 
 
     @Select("SELECT * FROM base_project WHERE id = #{id}")
     BaseProject findIdByStatus(@Param("id")String id);
+
+    @Select("select " +
+            "distinct " +
+            "b.id id, " +
+            "IFNULL(s.id,l.id) accountId , " +
+            "b.cea_num ceaNum, " +
+            "b.project_num projectNum, " +
+            "b.project_name projectName, " +
+            "(case b.settle_accounts_status " +
+            "    when '1' then '待审核' " +
+            "    when '2' then '处理中' " +
+            "    when '3' then '未通过' " +
+            "    when '4' then '待确认' " +
+            "    when '5' then '已完成' " +
+            "    end " +
+            ") settleAccountsStatus, " +
+            "(case b.district " +
+            "    when '1' then '芜湖' " +
+            "    when '2' then '马鞍山' " +
+            "    when '3' then '江北' " +
+            "    when '4' then '吴江' " +
+            "    end " +
+            ") district, " +
+            "b.water_address waterAddress, " +
+            "b.construction_unit constructionUnit, " +
+            "(case b.project_category " +
+            "    when '1' then '住宅区配套' " +
+            "    when '2' then '商业区配套' " +
+            "    when '3' then '工商区配套' " +
+            "    end " +
+            ") projectCategory, " +
+            "(case b.project_nature " +
+            "    when '1' then '新建' " +
+            "    when '2' then '改造' " +
+            "    end " +
+            ") projectNature, " +
+            "(case b.design_category " +
+            "    when '1' then '市政管道' " +
+            "    when '2' then '管网改造' " +
+            "    when '3' then '新建小区' " +
+            "    when '4' then '二次供水项目' " +
+            "    when '5' then '工商户' " +
+            "    when '6' then '居民装接水' " +
+            "    when '7' then '行政事业' " +
+            "    end " +
+            ") designCategory, " +
+            "(case b.water_supply_type " +
+            "    when '1' then '直供水' " +
+            "    when '2' then '二次供水' " +
+            "    end " +
+            ") waterSupplyType, " +
+            "b.customer_name customerName, " +
+            "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
+            "bt.outsourcing outsourcing, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "l.review_number lReviewNumber, " +
+            "si.sumbit_money sumbitMoney, " +
+            "s.authorized_number authorizedNumber, " +
+            "IFNULL(s.take_time,l.take_time) takeTime, " +
+            "IFNULL(s.compile_time,l.compile_time) compileTime, " +
+            "(case IFNULL(s.whether_account,l.whether_account) " +
+            "    when '0' then '到账' " +
+            "    when '1' then '未到账' " +
+            "    end " +
+            ") whetherAccount, " +
+            "a.auditor_id auditorId, " +
+            "IFNULL(s.founder_id,l.founder_id) founderId  " +
+            "from " +
+            "budgeting bt  " +
+            "LEFT JOIN base_project b on bt.base_project_id = b.id  " +
+            "LEFT JOIN last_settlement_review l on l.base_project_id = bt.base_project_id " +
+            "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id " +
+            "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id " +
+            "LEFT JOIN audit_info a on a.base_project_id = IFNULL(s.id,l.id)" +
+            "where  " +
+            "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
+            "(b.district = #{district} or #{district} = '' ) and  " +
+            "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
+            "(b.sa_whether_account = #{saWhetherAccount} or #{saWhetherAccount} = '') and  " +
+            "(IFNULL(s.take_time,l.take_time) > #{startTime} or #{startTime} = '') and   " +
+            "(IFNULL(s.take_time,l.take_time) < #{endTime} or #{endTime} = '') and  " +
+            "(IFNULL(s.compile_time,l.compile_time) > #{startTime} or #{startTime} = '') and  " +
+            "(IFNULL(s.compile_time,l.compile_time) < #{endTime} or #{endTime} = '') and   " +
+            "(b.cea_num like concat('%',#{keyword},'%') or   " +
+            "b.project_num like concat('%',#{keyword},'%')  or  " +
+            "b.project_name like concat ('%',#{keyword},'%') or   " +
+            "b.construction_unit like concat ('%',#{keyword},'%') or   " +
+            "b.customer_name like concat ('%',#{keyword},'%') or   " +
+            "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')) and  " +
+            "bt.del_flag = '0' and  " +
+            "b.del_flag = '0' and  " +
+            "si.state = '0' and " +
+            "l.del_flag = '0' and " +
+            "s.del_flag = '0' and " +
+            "a.audit_result = '0'" +
+            "group by IFNULL(s.id,l.id)" +
+            "ORDER BY si.create_time DESC   ")
+    List<AccountsVo> findAllAccountsCheckLeader(PageVo pageVo);
+
+    @Select("select " +
+            "distinct " +
+            "b.id id, " +
+            "IFNULL(s.id,l.id) accountId , " +
+            "b.cea_num ceaNum, " +
+            "b.project_num projectNum, " +
+            "b.project_name projectName, " +
+            "(case b.settle_accounts_status " +
+            "    when '1' then '待审核' " +
+            "    when '2' then '处理中' " +
+            "    when '3' then '未通过' " +
+            "    when '4' then '待确认' " +
+            "    when '5' then '已完成' " +
+            "    end " +
+            ") settleAccountsStatus, " +
+            "(case b.district " +
+            "    when '1' then '芜湖' " +
+            "    when '2' then '马鞍山' " +
+            "    when '3' then '江北' " +
+            "    when '4' then '吴江' " +
+            "    end " +
+            ") district, " +
+            "b.water_address waterAddress, " +
+            "b.construction_unit constructionUnit, " +
+            "(case b.project_category " +
+            "    when '1' then '住宅区配套' " +
+            "    when '2' then '商业区配套' " +
+            "    when '3' then '工商区配套' " +
+            "    end " +
+            ") projectCategory, " +
+            "(case b.project_nature " +
+            "    when '1' then '新建' " +
+            "    when '2' then '改造' " +
+            "    end " +
+            ") projectNature, " +
+            "(case b.design_category " +
+            "    when '1' then '市政管道' " +
+            "    when '2' then '管网改造' " +
+            "    when '3' then '新建小区' " +
+            "    when '4' then '二次供水项目' " +
+            "    when '5' then '工商户' " +
+            "    when '6' then '居民装接水' " +
+            "    when '7' then '行政事业' " +
+            "    end " +
+            ") designCategory, " +
+            "(case b.water_supply_type " +
+            "    when '1' then '直供水' " +
+            "    when '2' then '二次供水' " +
+            "    end " +
+            ") waterSupplyType, " +
+            "b.customer_name customerName, " +
+            "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
+            "bt.outsourcing outsourcing, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "l.review_number lReviewNumber, " +
+            "si.sumbit_money sumbitMoney, " +
+            "s.authorized_number authorizedNumber, " +
+            "IFNULL(s.take_time,l.take_time) takeTime, " +
+            "IFNULL(s.compile_time,l.compile_time) compileTime, " +
+            "(case IFNULL(s.whether_account,l.whether_account) " +
+            "    when '0' then '到账' " +
+            "    when '1' then '未到账' " +
+            "    end " +
+            ") whetherAccount, " +
+            "a.auditor_id auditorId, " +
+            "IFNULL(s.founder_id,l.founder_id) founderId  " +
+            "from " +
+            "budgeting bt  " +
+            "LEFT JOIN base_project b on bt.base_project_id = b.id  " +
+            "LEFT JOIN last_settlement_review l on l.base_project_id = bt.base_project_id " +
+            "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id " +
+            "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id " +
+            "LEFT JOIN audit_info a on a.base_project_id = IFNULL(s.id,l.id)" +
+            "where  " +
+            "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
+            "(b.district = #{district} or #{district} = '' ) and  " +
+            "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
+            "(b.sa_whether_account = #{saWhetherAccount} or #{saWhetherAccount} = '') and  " +
+            "(IFNULL(s.take_time,l.take_time) > #{startTime} or #{startTime} = '') and   " +
+            "(IFNULL(s.take_time,l.take_time) < #{endTime} or #{endTime} = '') and  " +
+            "(IFNULL(s.compile_time,l.compile_time) > #{startTime} or #{startTime} = '') and  " +
+            "(IFNULL(s.compile_time,l.compile_time) < #{endTime} or #{endTime} = '') and   " +
+            "(b.cea_num like concat('%',#{keyword},'%') or   " +
+            "b.project_num like concat('%',#{keyword},'%')  or  " +
+            "b.project_name like concat ('%',#{keyword},'%') or   " +
+            "b.construction_unit like concat ('%',#{keyword},'%') or   " +
+            "b.customer_name like concat ('%',#{keyword},'%') or   " +
+            "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')) and  " +
+            "bt.del_flag = '0' and  " +
+            "b.del_flag = '0' and  " +
+            "si.state = '0' and " +
+            "l.del_flag = '0' and " +
+            "s.del_flag = '0' and " +
+            "a.audit_result = '0' and " +
+            "IFNULL(s.founder_id,l.founder_id) = #{userId} and " +
+            "a.auditor_id = #{userId}" +
+            "group by IFNULL(s.id,l.id)" +
+            "ORDER BY si.create_time DESC   ")
+    List<AccountsVo> findAllAccountsCheckStaff(PageVo pageVo);
+
+
+    @Select("select " +
+            "distinct " +
+            "b.id id, " +
+            "IFNULL(s.id,l.id) accountId , " +
+            "b.cea_num ceaNum, " +
+            "b.project_num projectNum, " +
+            "b.project_name projectName, " +
+            "(case b.settle_accounts_status " +
+            "    when '1' then '待审核' " +
+            "    when '2' then '处理中' " +
+            "    when '3' then '未通过' " +
+            "    when '4' then '待确认' " +
+            "    when '5' then '已完成' " +
+            "    end " +
+            ") settleAccountsStatus, " +
+            "(case b.district " +
+            "    when '1' then '芜湖' " +
+            "    when '2' then '马鞍山' " +
+            "    when '3' then '江北' " +
+            "    when '4' then '吴江' " +
+            "    end " +
+            ") district, " +
+            "b.water_address waterAddress, " +
+            "b.construction_unit constructionUnit, " +
+            "(case b.project_category " +
+            "    when '1' then '住宅区配套' " +
+            "    when '2' then '商业区配套' " +
+            "    when '3' then '工商区配套' " +
+            "    end " +
+            ") projectCategory, " +
+            "(case b.project_nature " +
+            "    when '1' then '新建' " +
+            "    when '2' then '改造' " +
+            "    end " +
+            ") projectNature, " +
+            "(case b.design_category " +
+            "    when '1' then '市政管道' " +
+            "    when '2' then '管网改造' " +
+            "    when '3' then '新建小区' " +
+            "    when '4' then '二次供水项目' " +
+            "    when '5' then '工商户' " +
+            "    when '6' then '居民装接水' " +
+            "    when '7' then '行政事业' " +
+            "    end " +
+            ") designCategory, " +
+            "(case b.water_supply_type " +
+            "    when '1' then '直供水' " +
+            "    when '2' then '二次供水' " +
+            "    end " +
+            ") waterSupplyType, " +
+            "b.customer_name customerName, " +
+            "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
+            "bt.outsourcing outsourcing, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "l.review_number lReviewNumber, " +
+            "si.sumbit_money sumbitMoney, " +
+            "s.authorized_number authorizedNumber, " +
+            "IFNULL(s.take_time,l.take_time) takeTime, " +
+            "IFNULL(s.compile_time,l.compile_time) compileTime, " +
+            "(case IFNULL(s.whether_account,l.whether_account) " +
+            "    when '0' then '到账' " +
+            "    when '1' then '未到账' " +
+            "    end " +
+            ") whetherAccount, " +
+            "IFNULL(s.founder_id,l.founder_id) founderId  " +
+            "from " +
+            "budgeting bt  " +
+            "LEFT JOIN base_project b on bt.base_project_id = b.id  " +
+            "LEFT JOIN last_settlement_review l on l.base_project_id = bt.base_project_id " +
+            "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id " +
+            "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id " +
+            "where  " +
+            "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
+            "(b.district = #{district} or #{district} = '' ) and  " +
+            "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
+            "(b.sa_whether_account = #{saWhetherAccount} or #{saWhetherAccount} = '') and  " +
+            "(IFNULL(s.take_time,l.take_time) > #{startTime} or #{startTime} = '') and   " +
+            "(IFNULL(s.take_time,l.take_time) < #{endTime} or #{endTime} = '') and  " +
+            "(IFNULL(s.compile_time,l.compile_time) > #{startTime} or #{startTime} = '') and  " +
+            "(IFNULL(s.compile_time,l.compile_time) < #{endTime} or #{endTime} = '') and   " +
+            "(b.cea_num like concat('%',#{keyword},'%') or   " +
+            "b.project_num like concat('%',#{keyword},'%')  or  " +
+            "b.project_name like concat ('%',#{keyword},'%') or   " +
+            "b.construction_unit like concat ('%',#{keyword},'%') or   " +
+            "b.customer_name like concat ('%',#{keyword},'%') or   " +
+            "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')) and  " +
+            "bt.del_flag = '0' and  " +
+            "b.del_flag = '0' and  " +
+            "si.state = '0' and " +
+            "l.del_flag = '0' and " +
+            "s.del_flag = '0' and " +
+            "IFNULL(s.founder_id,l.founder_id) = #{userId}" +
+            "group by IFNULL(s.id,l.id)" +
+            "ORDER BY si.create_time DESC  ")
+    List<AccountsVo> findAllAccountsProcessing(PageVo pageVo);
+
+    @Select("select " +
+            "distinct " +
+            "b.id id, " +
+            "IFNULL(s.id,l.id) accountId , " +
+            "b.cea_num ceaNum, " +
+            "b.project_num projectNum, " +
+            "b.project_name projectName, " +
+            "(case b.settle_accounts_status " +
+            "    when '1' then '待审核' " +
+            "    when '2' then '处理中' " +
+            "    when '3' then '未通过' " +
+            "    when '4' then '待确认' " +
+            "    when '5' then '已完成' " +
+            "    end " +
+            ") settleAccountsStatus, " +
+            "(case b.district " +
+            "    when '1' then '芜湖' " +
+            "    when '2' then '马鞍山' " +
+            "    when '3' then '江北' " +
+            "    when '4' then '吴江' " +
+            "    end " +
+            ") district, " +
+            "b.water_address waterAddress, " +
+            "b.construction_unit constructionUnit, " +
+            "(case b.project_category " +
+            "    when '1' then '住宅区配套' " +
+            "    when '2' then '商业区配套' " +
+            "    when '3' then '工商区配套' " +
+            "    end " +
+            ") projectCategory, " +
+            "(case b.project_nature " +
+            "    when '1' then '新建' " +
+            "    when '2' then '改造' " +
+            "    end " +
+            ") projectNature, " +
+            "(case b.design_category " +
+            "    when '1' then '市政管道' " +
+            "    when '2' then '管网改造' " +
+            "    when '3' then '新建小区' " +
+            "    when '4' then '二次供水项目' " +
+            "    when '5' then '工商户' " +
+            "    when '6' then '居民装接水' " +
+            "    when '7' then '行政事业' " +
+            "    end " +
+            ") designCategory, " +
+            "(case b.water_supply_type " +
+            "    when '1' then '直供水' " +
+            "    when '2' then '二次供水' " +
+            "    end " +
+            ") waterSupplyType, " +
+            "b.customer_name customerName, " +
+            "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
+            "bt.outsourcing outsourcing, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "l.review_number lReviewNumber, " +
+            "si.sumbit_money sumbitMoney, " +
+            "s.authorized_number authorizedNumber, " +
+            "IFNULL(s.take_time,l.take_time) takeTime, " +
+            "IFNULL(s.compile_time,l.compile_time) compileTime, " +
+            "(case IFNULL(s.whether_account,l.whether_account) " +
+            "    when '0' then '到账' " +
+            "    when '1' then '未到账' " +
+            "    end " +
+            ") whetherAccount, " +
+            "IFNULL(s.founder_id,l.founder_id) founderId  " +
+            "from " +
+            "budgeting bt  " +
+            "LEFT JOIN base_project b on bt.base_project_id = b.id  " +
+            "LEFT JOIN last_settlement_review l on l.base_project_id = bt.base_project_id " +
+            "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id " +
+            "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id " +
+            "where  " +
+            "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
+            "(b.district = #{district} or #{district} = '' ) and  " +
+            "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
+            "(b.sa_whether_account = #{saWhetherAccount} or #{saWhetherAccount} = '') and  " +
+            "(IFNULL(s.take_time,l.take_time) > #{startTime} or #{startTime} = '') and   " +
+            "(IFNULL(s.take_time,l.take_time) < #{endTime} or #{endTime} = '') and  " +
+            "(IFNULL(s.compile_time,l.compile_time) > #{startTime} or #{startTime} = '') and  " +
+            "(IFNULL(s.compile_time,l.compile_time) < #{endTime} or #{endTime} = '') and   " +
+            "(b.cea_num like concat('%',#{keyword},'%') or   " +
+            "b.project_num like concat('%',#{keyword},'%')  or  " +
+            "b.project_name like concat ('%',#{keyword},'%') or   " +
+            "b.construction_unit like concat ('%',#{keyword},'%') or   " +
+            "b.customer_name like concat ('%',#{keyword},'%') or   " +
+            "bt.name_of_cost_unit like concat  ('%',#{keyword},'%')) and  " +
+            "bt.del_flag = '0' and  " +
+            "b.del_flag = '0' and  " +
+            "si.state = '0' and " +
+            "l.del_flag = '0' and " +
+            "s.del_flag = '0' " +
+            "group by IFNULL(s.id,l.id)" +
+            "ORDER BY si.create_time DESC  ")
+    List<AccountsVo> findAllAccountsSuccess(PageVo pageVo);
 }

@@ -27,5 +27,7 @@ public class SettlementInfo {
     @Column(name = "company_id")
     private String companyId;
     private String state;
+    @Column(name = "up_and_down")
+    private String upAndDown;
 
 }

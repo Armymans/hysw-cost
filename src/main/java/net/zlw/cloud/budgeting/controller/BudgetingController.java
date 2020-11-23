@@ -72,7 +72,7 @@ public class BudgetingController extends BaseController {
     public Map<String,Object> intoAccount(@RequestParam(name = "ids") String ids){
 
         try {
-            budgetingService.intoAccount(ids,getLoginUser().getId());
+            budgetingService.intoAccount(ids,"user325");
         } catch (Exception e) {
             return RestUtil.error(e.getMessage());
         }
