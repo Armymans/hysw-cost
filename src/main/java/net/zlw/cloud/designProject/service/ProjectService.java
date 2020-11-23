@@ -1341,7 +1341,7 @@ public class ProjectService {
         }
 
         MessageVo messageVo = new MessageVo();
-        String id = projectVo.getAuditInfo().getAuditorId();
+        String id = projectVo.getBaseProject().getReviewerId();
         MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
         //审核人名字
         String name = memberManage.getMemberName();
@@ -1537,7 +1537,7 @@ public class ProjectService {
         //消息通知
         MessageVo messageVo = new MessageVo();
         String projectName = projectVo.getBaseProject().getProjectName();
-        String id = projectVo.getAuditInfo().getAuditorId();
+        String id = projectVo.getBaseProject().getReviewerId();
         MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
         //审核人名字
         String name = memberManage.getMemberName();
