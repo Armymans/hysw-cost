@@ -1,6 +1,5 @@
 package net.zlw.cloud.snsEmailFile.service;
 
-import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.index.mapper.MessageNotificationDao;
 import net.zlw.cloud.index.model.MessageNotification;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -57,7 +56,7 @@ public class MessageService {
     @Autowired
     private MemberManageDao memberManageDao;
 
-    public void sendOrClose(MessageVo messageVo, UserInfo loginUser) {
+    public void sendOrClose(MessageVo messageVo) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
 
@@ -83,7 +82,6 @@ public class MessageService {
             messageNotification.setTitle(messageVo.getTitle());
             messageNotification.setDetails(messageVo.getDetails());
             messageNotification.setAcceptId(memberManage.getId());
-            messageNotification.setFounderId(loginUser.getUsername());
             messageNotification.setCreateTime(data);
             messageNotification.setSubmitTime(data);
             messageNotification.setInformStatus("0");
