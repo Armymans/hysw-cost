@@ -156,7 +156,6 @@ public class BudgetingServiceImpl implements BudgetingService {
             budgetingDao.insertSelective(budgeting);
         }
 
-
         //勘探信息
         SurveyInformation surveyInformation = new SurveyInformation();
         surveyInformation.setId(UUID.randomUUID().toString().replace("-",""));
@@ -246,6 +245,9 @@ public class BudgetingServiceImpl implements BudgetingService {
         example.createCriteria().andEqualTo("budgetingId",id);
         SurveyInformation surveyInformation = surveyInformationDao.selectOneByExample(example);
 
+        //sql查询勘察信息期数
+        SurveyInformation surveyInformation1 = surveyInformationDao.selectByOne(id);
+
         BaseProject baseProject = projectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
 
         Example example1 = new Example(CostPreparation.class);
@@ -288,11 +290,11 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgetingVo.setAmountOutsourcing(budgeting.getAmountOutsourcing());
         budgetingVo.setReceiptTime(budgeting.getReceiptTime());
         budgetingVo.setBremarkes(budgeting.getRemarkes());
-        budgetingVo.setSurveyDate(surveyInformation.getSurveyDate());
-        budgetingVo.setInvestigationPersonnel(surveyInformation.getInvestigationPersonnel());
-        budgetingVo.setSurveyBriefly(surveyInformation.getSurveyBriefly());
-        budgetingVo.setPriceInformationName(surveyInformation.getPriceInformationName());
-        budgetingVo.setPriceInformationNper(surveyInformation.getPriceInformationNper());
+        budgetingVo.setSurveyDate(surveyInformation1.getSurveyDate());
+        budgetingVo.setInvestigationPersonnel(surveyInformation1.getInvestigationPersonnel());
+        budgetingVo.setSurveyBriefly(surveyInformation1.getSurveyBriefly());
+        budgetingVo.setPriceInformationName(surveyInformation1.getPriceInformationName());
+        budgetingVo.setPriceInformationNper(surveyInformation1.getPriceInformationNper());
         budgetingVo.setCostTotalAmount(costPreparation.getCostTotalAmount());
         budgetingVo.setCVatAmount(costPreparation.getVatAmount());
         budgetingVo.setTotalPackageMaterial(costPreparation.getTotalPackageMaterial());

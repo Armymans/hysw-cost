@@ -7,19 +7,17 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
-import net.zlw.cloud.budgeting.model.vo.PageBVo;
-import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationReturnVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.maintenanceProjectInformation.service.MaintenanceProjectInformationService;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -76,7 +74,7 @@ public class MaintenanceProjectInformationController extends BaseController {
             for (String s : split) {
                 if (StringUtil.isNotEmpty(s)) {
                     batchReviewVo.setBatchAll(s);
-                    maintenanceProjectInformationService.batchReview(batchReviewVo,getLoginUser());
+                    maintenanceProjectInformationService.batchReview(batchReviewVo);
                 }
             }
         }else{
