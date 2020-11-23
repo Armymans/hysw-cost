@@ -384,6 +384,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
             "SELECT\n" +
                     "s2.id,\n" +
                     "s2.base_project_id,\n" +
+                    "s2.founder_id,\n" +
                     "s1.should_be should_be,\n" +
                     "s1.cea_num,\n" +
                     "s1.merge_flag,\n" +
