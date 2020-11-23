@@ -79,7 +79,7 @@ public class MessageService {
                         emailInfo.setUserId(memberManage.getId());
                         emailInfo.setSubject(messageVo.getTitle());
                         emailInfo.setCreateTime(data);
-                        emailInfoController.sendEmailInterface("2364797787@qq.com", emailInfo.getSubject(), emailInfo.getContent());
+                        emailInfoController.sendEmailInterface("2364797787@qq.com", messageVo.getTitle(), messageVo.getContent());
                     }
                     //如果短信状态是通知
                     if ("1".equals(remindSet.getNoteMessage())) {
@@ -89,7 +89,7 @@ public class MessageService {
                         snsInfo.setContent(messageVo.getSnsContent());
                         snsInfo.setUserId(memberManage.getId());
                         snsInfo.setCreateTime(data);
-                        snsInfoController.sendCode("18255747151", "hhhhhhh");
+                        snsInfoController.sendCode("18255747151", messageVo.getSnsContent());
                     }
                     //如果站内状态是通知
                     if ("1".equals(remindSet.getMessage())) {
