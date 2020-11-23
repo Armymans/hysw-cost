@@ -427,19 +427,22 @@ public class BudgetingServiceImpl implements BudgetingService {
         veryEstablishmentDao.updateByPrimaryKeySelective(veryEstablishment);
 
         //消息通知
-        String username = loginUser.getUsername();
-        String projectName = baseProject.getProjectName();
-        String id1 = budgetingVo.getAuditInfo().getAuditorId();
-        //审核人名字
-        MemberManage memberManage = memberManageDao.selectByPrimaryKey(id1);
-        MessageVo messageVo = new MessageVo();
-        String name = memberManage.getMemberName();
-        messageVo.setId("A07");
-        messageVo.setUserId(id1);
-        messageVo.setTitle("您有一个预算项目待审批！");
-        messageVo.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的设计项目提交给您，请审批！");
-        //调用消息Service
-        messageService.sendOrClose(messageVo);
+        if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
+            String username = loginUser.getUsername();
+            String projectName = baseProject.getProjectName();
+            String id1 = budgetingVo.getAuditorId();
+            //审核人名字
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(id1);
+            MessageVo messageVo = new MessageVo();
+            String name = memberManage.getMemberName();
+            messageVo.setId("A07");
+            messageVo.setUserId(id1);
+            messageVo.setTitle("您有一个预算项目待审批！");
+            messageVo.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的设计项目提交给您，请审批！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo);
+        }
+
 
 
     }
