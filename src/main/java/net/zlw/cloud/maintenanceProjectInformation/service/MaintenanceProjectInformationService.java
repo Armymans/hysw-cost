@@ -595,7 +595,7 @@ public class MaintenanceProjectInformationService {
      *
      * @param batchReviewVo
      */
-    public void batchReview(BatchReviewVo batchReviewVo) {
+    public void batchReview(BatchReviewVo batchReviewVo,UserInfo userInfo) {
         //获取批量审核的id
         String[] split = batchReviewVo.getBatchAll().split(",");
         if (split.length > 0) {
