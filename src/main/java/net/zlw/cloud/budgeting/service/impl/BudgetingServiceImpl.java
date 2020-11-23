@@ -219,20 +219,22 @@ public class BudgetingServiceImpl implements BudgetingService {
         }
 
         //消息通知
-
         String username = loginUser.getUsername();
         MessageVo messageVo = new MessageVo();
         String projectName = baseProject.getProjectName();
-        String id1 = budgetingVo.getAuditInfo().getAuditorId();
-        MemberManage memberManage = memberManageDao.selectByPrimaryKey(id1);
-        //审核人名字
-        String name = memberManage.getMemberName();
-        messageVo.setId("A06");
-        messageVo.setUserId(id1);
-        messageVo.setTitle("您有一个设计项目待审批！");
-        messageVo.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的设计项目提交给您，请审批！");
-        //调用消息Service
-        messageService.sendOrClose(messageVo);
+        if(budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
+            String id1 = budgetingVo.getAuditorId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(id1);
+            //审核人名字
+            String name = memberManage.getMemberName();
+            messageVo.setId("A06");
+            messageVo.setUserId(id1);
+            messageVo.setTitle("您有一个设计项目待审批！");
+            messageVo.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的设计项目提交给您，请审批！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo);
+        }
+
 
     }
 
