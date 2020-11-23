@@ -113,7 +113,8 @@ public class MaintenanceProjectInformationService {
 
 
         //获得当前登入人
-        String userInfoId = userInfo.getId();
+        //todo userInfo.getId();
+        String userInfoId = userInfo.getId();;
 
         //如果是待审核
         if("1".equals(pageRequest.getType())){
@@ -161,21 +162,17 @@ public class MaintenanceProjectInformationService {
                 }
                 projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos0);
             }
+        }else{
+            //已完成
+            if("5".equals(pageRequest.getType())){
+                projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
+            }else{
+                //未通过 处理中 待确认 所有(根据创建人)
+                projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);
+            }
         }
-
-        //未通过 处理中 待确认
-        if("2".equals(pageRequest.getType())||"3".equals(pageRequest.getType())||"4".equals(pageRequest.getType())){
-            projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);
-        }
-
-        //已完成
-        if("5".equals(pageRequest.getType())){
-            projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
-        }
-
         System.out.println("list:"+projectInformationPageInfo.getList().toString());
         return projectInformationPageInfo;
-
 }
 
     /**
@@ -432,9 +429,10 @@ public class MaintenanceProjectInformationService {
         if (userInfo != null) {
             investigationOfTheAmount.setFounderId(userInfo.getId());
             investigationOfTheAmount.setFounderCompanyId(userInfo.getCompanyId());
-        } else {
-            investigationOfTheAmount.setFounderId("user312");
         }
+//        else {
+//            investigationOfTheAmount.setFounderId("user312");
+//        }
 
         investigationOfTheAmount.setMaintenanceProjectInformation(information.getId());
         // todo 待修改
@@ -495,11 +493,13 @@ public class MaintenanceProjectInformationService {
                 auditInfo.setFounderId(userInfo.getId());
                 auditInfo.setCompanyId(userInfo.getCompanyId());
             }
-            auditInfo.setFounderId("user312");
+//            auditInfo.setFounderId("user312");
+            auditInfo.setFounderId(userInfo.getId());
             // 审核人id
             auditInfo.setAuditorId(maintenanceProjectInformation.getAuditorId());
             String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
             auditInfo.setCreateTime(createDate);
+            auditInfo.setMaintenanceFlag("1"); //不是二次审核
             auditInfoDao.insertSelective(auditInfo);
         }
 //        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
@@ -705,7 +705,6 @@ public class MaintenanceProjectInformationService {
      * @param userInfo
      */
     public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo, UserInfo userInfo) {
-
 
         //修改时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

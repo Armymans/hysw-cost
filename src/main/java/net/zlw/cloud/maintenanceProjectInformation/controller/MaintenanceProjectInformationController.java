@@ -118,7 +118,8 @@ public class MaintenanceProjectInformationController extends BaseController {
 //
     @RequestMapping(value = "/maintenanceProjectInformation/findAllMaintenanceProjectInformation", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> findAllMaintenanceProjectInformation(PageRequest pageRequest) {
-        pageRequest.setUid(getLoginUser().getId());
+        // todo user319 getLoginUser().getId()
+//        pageRequest.setUid("user319");
         System.out.println("PageRequest:" + pageRequest);
         PageInfo<MaintenanceProjectInformationReturnVo> allMaintenanceProjectInformation = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, getLoginUser());
         return net.zlw.cloud.common.RestUtil.page(allMaintenanceProjectInformation);
