@@ -1078,6 +1078,7 @@ public class MaintenanceProjectInformationService {
             if(auditInfo!=null){
                 //将审核状态改为待审核
                 auditInfo.setAuditResult("0");
+                auditInfo.setAuditOpinion(null);
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                 information.setType("1");
             }

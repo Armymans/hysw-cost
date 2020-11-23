@@ -128,6 +128,8 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "WHERE\n" +
                     "( m.del_flag = '0' ) \n" +
                     "AND\n" +
+                    "(ai.audit_result = '0') \n" +
+                    "AND\n" +
                     "( m.founder_id = #{uid} or ai.auditor_id = #{uid}) \n" +
                     "AND (\n" +
                     "m.maintenance_item_type = #{maintenanceItemType} or #{maintenanceItemType} = '')\n" +
