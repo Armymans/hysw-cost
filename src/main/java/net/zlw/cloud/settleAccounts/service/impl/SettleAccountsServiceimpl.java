@@ -98,7 +98,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
 //        loginUser = new UserInfo("200101005",null,null,true);
-        loginUser = new UserInfo("user320", null, null, true);
+//        loginUser = new UserInfo("user320", null, null, true);
         pageVo.setUserId(loginUser.getId());
 //        List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
 //        ArrayList<AccountsVo> returnList = new ArrayList<>();
@@ -365,7 +365,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser) {
-        loginUser = new UserInfo("user320",null,null,true);
+//        loginUser = new UserInfo("user320",null,null,true);
         String data = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         //判断bigdecimal
         if ("".equals(baseAccountsVo.getSettlementInfo().getSumbitMoney())){
@@ -564,7 +564,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public BaseAccountsVo findAccountById(String id, UserInfo loginUser) {
-        loginUser = new UserInfo("200610002",null,null,true);
+//        loginUser = new UserInfo("200610002",null,null,true);
         BaseAccountsVo baseAccountsVo = new BaseAccountsVo();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
         baseAccountsVo.setBaseProject(baseProject);
@@ -713,8 +713,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
-        String id = "200101005";
-        String username = "造价业务员4";
+        String id = loginUser.getId();
+        String username = loginUser.getUsername();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             String audit = "";
