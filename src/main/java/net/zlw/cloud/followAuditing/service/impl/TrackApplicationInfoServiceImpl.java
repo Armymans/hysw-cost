@@ -209,14 +209,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
     // 删除审计月报
     public void deleteByIdTrackMonthly(String id) {
-//        TrackMonthly trackMonthly = trackMonthlyDao.selectByPrimaryKey(id);
-
-        //根据审计月报外键删除月报
-        Example example = new Example(TrackMonthly.class);
-        example.createCriteria().andEqualTo("trackId",id);
-        TrackMonthly trackMonthly = trackMonthlyDao.selectOneByExample(example);
+        TrackMonthly trackMonthly = trackMonthlyDao.selectByPrimaryKey(id);
         trackMonthly.setStatus("1");
-
         trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
     }
 
