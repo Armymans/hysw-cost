@@ -173,6 +173,11 @@ public class MaintenanceProjectInformationService {
                 projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
             }else{
                 //未通过 处理中 待确认 所有(根据创建人)
+                for (MaintenanceProjectInformationReturnVo vo : maintenanceProjectInformationReturnVos) {
+                    if(vo.getFounderId().equals(userInfoId)){
+                        vo.setFounderId("1");
+                    }
+                }
                 projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos);
             }
         }
