@@ -55,4 +55,8 @@ public interface BaseProjectService {
     List<AuditChekedVo> auditChangeDesginChek(String id);
 
     BaseProject findBaseProjectById(String id);
+
+    List<AuditChekedVo> auditMaintenanceChek(String id);
+
+    List<AuditChekedVo> auditAgainMaintenanceChek(String id);
 }
