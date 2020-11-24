@@ -654,6 +654,18 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         return trackMonthlies1;
     }
 
+    //新增删除月报
+    @Override
+    public void deleteMonthly(String id) {
+        Example example1 = new Example(TrackMonthly.class);
+        Example.Criteria criteria = example1.createCriteria();
+        criteria.andEqualTo("trackId", id);  //登录人id
+        criteria.andEqualTo("status", "0");
+        TrackMonthly trackMonthly = trackMonthlyDao.selectOneByExample(example1);
+        trackMonthly.setStatus("1");
+        trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
+    }
+
     // TODO 回显页面，新增页面月报显示
     public List<TrackMonthly> findAllByTrackId2(String id) {
         Example example1 = new Example(TrackMonthly.class);
