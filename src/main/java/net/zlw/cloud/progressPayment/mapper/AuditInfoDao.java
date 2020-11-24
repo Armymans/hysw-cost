@@ -136,7 +136,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "  when '2' then '互审'  " +
                     "  when '3' then '上级领导审核'  " +
                     "  when '4' then '总经理审核'  " +
-                    "\twhen '5' then '总经理审核'  " +
+                    "  when '5' then '总经理审核'  " +
                     "  end  " +
                     ") auditType,  " +
                     "(select member_name from member_manage where id = auditor_id)  auditor,  " +
@@ -147,7 +147,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "and " +
                     "maintenance_flag = '1' " +
                     "order by  " +
-                    "create_time asc"
+                    "create_time"
     )
     List<AuditChekedVo> auditMaintenanceChek(String id);
 
@@ -166,7 +166,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "  when '2' then '互审'   " +
                     "  when '3' then '上级领导审核'   " +
                     "  when '4' then '总经理审核'   " +
-                    "\twhen '5' then '总经理审核'   " +
+                    "  when '5' then '总经理审核'   " +
                     "  end   " +
                     ") auditType,   " +
                     "(select member_name from member_manage where id = auditor_id)  auditor,   " +
@@ -177,7 +177,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "and  " +
                     "maintenance_flag = '0'  " +
                     "order by   " +
-                    "create_time asc"
+                    "create_time"
     )
     List<AuditChekedVo> auditAgainMaintenanceChek(String id);
 }
