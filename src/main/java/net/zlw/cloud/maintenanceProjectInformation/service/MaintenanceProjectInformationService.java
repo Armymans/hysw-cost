@@ -694,19 +694,24 @@ public class MaintenanceProjectInformationService {
                     auditInfo.setAuditType("4");
                     auditInfo.setMaintenanceFlag("1");
                 }
-                auditInfo.setAuditResult(batchReviewVo.getAuditResult());
-                auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
-                auditInfo.setUpdateTime(createTime);
-                auditInfo.setAuditTime(createTime);
-                auditInfo.setAuditTime(createTime);
+
+                //判断当前项目是否未变更项目
                 if("0".equals(auditInfo.getMaintenanceFlag())){
+                    //如果是 说明已经流程结束
                     maintenanceProjectInformation.setType("5");
                 }else{
                     maintenanceProjectInformation.setType("4");
                 }
+
             }else{
+                //如果未通过
                 maintenanceProjectInformation.setType("3");
             }
+            auditInfo.setAuditResult(batchReviewVo.getAuditResult());
+            auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+            auditInfo.setUpdateTime(createTime);
+            auditInfo.setAuditTime(createTime);
+            auditInfo.setAuditTime(createTime);
             maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
         }else{
@@ -1055,11 +1060,13 @@ public class MaintenanceProjectInformationService {
             auditInfo1.setId(s);
             auditInfo1.setBaseProjectId(information.getId());
             auditInfo1.setAuditResult("0");
-            //如果当前审核信息有多条 待确认提交
-            if(auditInfos.size()>0){
+            //如果当前审核信息有三条说明审核流程一轮已完成
+            if(auditInfos.size()>=3){
                 auditInfo1.setAuditType("2"); //变更一审
+                auditInfo1.setMaintenanceFlag("0");
             }else{
                 auditInfo1.setAuditType("0");
+                auditInfo1.setMaintenanceFlag("1");
             }
             auditInfo1.setStatus("0");
             auditInfo1.setAuditorId(maintenanceProjectInformationVo.getAuditorId()); // 审核人id
@@ -1163,7 +1170,7 @@ public class MaintenanceProjectInformationService {
 
         MaintenanceVo maintenanceVo = new MaintenanceVo();
         //todo userInfo.getId();
-        String userInfoId = "200610002";
+        String userInfoId = userInfo.getId();
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectByPrimaryKey(id);
         if (information != null) {
             maintenanceVo.setMaintenanceProjectInformation(information);
