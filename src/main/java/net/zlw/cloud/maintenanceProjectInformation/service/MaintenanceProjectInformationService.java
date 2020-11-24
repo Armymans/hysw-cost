@@ -666,7 +666,6 @@ public class MaintenanceProjectInformationService {
                     newAuditInfo.setAuditorId(wjzjm);
                 }
                 newAuditInfo.setCreateTime(createTime);
-                newAuditInfo.setAuditTime(createTime);
                 newAuditInfo.setFounderId(id);
                 newAuditInfo.setCompanyId(companyId);
                 newAuditInfo.setStatus("0");
@@ -752,7 +751,6 @@ public class MaintenanceProjectInformationService {
                     newAuditInfo.setAuditorId(wjzjh);
                 }
                 newAuditInfo.setCreateTime(createTime);
-                newAuditInfo.setAuditTime(createTime);
                 newAuditInfo.setFounderId(id);
                 newAuditInfo.setCompanyId(companyId);
                 newAuditInfo.setStatus("0");
@@ -1079,6 +1077,8 @@ public class MaintenanceProjectInformationService {
                 auditInfo1.setMaintenanceFlag("1");
             }
             auditInfo1.setStatus("0");
+            auditInfo1.setAuditOpinion(null);
+            auditInfo1.setAuditTime(null);
             auditInfo1.setAuditorId(maintenanceProjectInformationVo.getAuditorId()); // 审核人id
             auditInfo1.setCreateTime(createDate);
             auditInfoDao.insertSelective(auditInfo1);
@@ -1096,6 +1096,7 @@ public class MaintenanceProjectInformationService {
                 //将审核状态改为待审核
                 auditInfo.setAuditResult("0");
                 auditInfo.setAuditOpinion(null);
+                auditInfo.setAuditTime(null);
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                 information.setType("1");
             }
@@ -1235,7 +1236,7 @@ public class MaintenanceProjectInformationService {
             maintenanceVo.setAuditAgainFlag("1");
             maintenanceVo.setAuditInfo(auditInfo);
             // 0 代表一审，未审批
-            if ("0".equals(auditInfo.getAuditType())) {
+            if ("0".equals(auditInfo.getAuditType()) || "1".equals(auditInfo.getAuditType()) || "4".equals(auditInfo.getAuditType())) {
                 maintenanceVo.setAuditNumber("0");
             }else{
                 maintenanceVo.setAuditNumber("1");
