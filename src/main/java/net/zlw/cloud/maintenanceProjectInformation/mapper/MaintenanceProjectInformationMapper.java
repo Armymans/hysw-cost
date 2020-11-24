@@ -185,7 +185,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "m.review_amount reviewAmount,\n" +
             "p.authorized_number contractAmount,\n" +
             "m.submit_time submitTime,\n" +
-            "p.compile_time compileTime \n" +
+            "p.compile_time compileTime,\n" +
             "m.founder_id founderId\n" +
             "FROM\n" +
             "maintenance_project_information m\n" +
