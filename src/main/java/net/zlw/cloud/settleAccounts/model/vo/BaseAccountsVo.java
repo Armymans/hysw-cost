@@ -14,6 +14,7 @@ import net.zlw.cloud.settleAccounts.model.SettlementInfo;
 @AllArgsConstructor
 public class BaseAccountsVo {
     private String id;
+    private String accountId;
     private BaseProject baseProject;
     private SettlementInfo lastSettlementInfo;
     private SettlementInfo settlementInfo;
