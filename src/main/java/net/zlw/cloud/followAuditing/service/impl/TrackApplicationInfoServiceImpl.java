@@ -669,8 +669,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         example.createCriteria().andEqualTo("userId",id)
                                 .andEqualTo("status","0");
         FileInfo fileInfo = fileInfoMapper.selectOneByExample(example);
-        fileInfo.setStatus("1");
-        fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        if (fileInfo != null){
+            fileInfo.setStatus("1");
+            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        }
     }
 
     // TODO 回显页面，新增页面月报显示
