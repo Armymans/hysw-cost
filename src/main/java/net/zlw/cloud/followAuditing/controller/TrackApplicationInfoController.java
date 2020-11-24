@@ -215,6 +215,12 @@ public class TrackApplicationInfoController extends BaseController {
         return RestUtil.success("新增成功");
     }
 
+//    新增删除审计月报
+    @RequestMapping(value = "/track/deleteTrackMonthly",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> deleteMonthly(){
+        trackApplicationInfoService.deleteMonthly(getLoginUser().getId());
+        return RestUtil.success("修改成功");
+    }
 
 
 

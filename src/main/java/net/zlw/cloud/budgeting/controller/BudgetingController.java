@@ -222,7 +222,7 @@ public class BudgetingController extends BaseController {
         budgetingService.updateCEA(baseId,ceaNum);
         return RestUtil.success();
     }
-
+    //回显设计图纸
     @RequestMapping(value = "/budgeting/selectOneFile",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectOneByFileInfo(@RequestParam(name = "id") String id){
         List<FileInfo> fileInfos = budgetingService.selectById(id);
