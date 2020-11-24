@@ -219,7 +219,7 @@ public class TrackApplicationInfoController extends BaseController {
     @RequestMapping(value = "/track/deleteTrackMonthly",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteMonthly(){
         trackApplicationInfoService.deleteMonthly(getLoginUser().getId());
-        return RestUtil.success("修改成功");
+        return RestUtil.success();
     }
 
 

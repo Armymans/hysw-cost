@@ -654,7 +654,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         return trackMonthlies1;
     }
 
-    //新增删除月报
+    //新增删除月报文件
     @Override
     public void deleteMonthly(String id) {
         //删除月报
@@ -670,7 +670,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                                 .andEqualTo("status","0");
         FileInfo fileInfo = fileInfoMapper.selectOneByExample(example);
         fileInfo.setStatus("1");
-        trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
+        fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
     }
 
     // TODO 回显页面，新增页面月报显示
