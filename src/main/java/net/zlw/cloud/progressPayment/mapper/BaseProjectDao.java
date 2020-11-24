@@ -596,8 +596,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "l.del_flag = '0' and " +
             "s.del_flag = '0' and " +
             "a.audit_result = '0' and " +
-            "IFNULL(s.founder_id,l.founder_id) = #{userId} and " +
-            "a.auditor_id = #{userId}" +
+            " ( IFNULL(s.founder_id,l.founder_id) = #{userId} or " +
+            "a.auditor_id = #{userId} )" +
             "group by IFNULL(s.id,l.id)" +
             "ORDER BY si.create_time DESC   ")
     List<AccountsVo> findAllAccountsCheckStaff(PageVo pageVo);

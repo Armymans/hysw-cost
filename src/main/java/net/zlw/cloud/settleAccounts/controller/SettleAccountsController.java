@@ -145,7 +145,7 @@ public class SettleAccountsController extends BaseController {
 //            System.err.println(baseAccountsVo.getSettlementAuditInformation());
 //            System.err.println(baseAccountsVo.getLastSettlementReview());
 //            System.err.println(baseAccountsVo.getInvestigationOfTheAmount());
-            settleAccountsService.addAccount(baseAccountsVo, null);
+            settleAccountsService.addAccount(baseAccountsVo, getLoginUser());
         } catch (Exception e) {
             e.printStackTrace();
             return RestUtil.error();

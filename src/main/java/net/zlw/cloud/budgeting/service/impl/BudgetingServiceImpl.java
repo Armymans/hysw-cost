@@ -370,6 +370,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
                 for (AuditInfo info : auditInfos) {
                     if (info.getAuditResult().equals("2")){
+                        budgetingVo.setAuditorId(info.getAuditorId());
                         info.setAuditResult("0");
                         info.setAuditOpinion("");
                         info.setAuditTime("");
