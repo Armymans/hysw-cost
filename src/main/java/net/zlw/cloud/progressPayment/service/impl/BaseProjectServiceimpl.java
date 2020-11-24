@@ -836,6 +836,16 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
+    public List<AuditChekedVo> auditMaintenanceChek(String id) {
+        return auditInfoDao.auditMaintenanceChek(id);
+    }
+
+    @Override
+    public List<AuditChekedVo> auditAgainMaintenanceChek(String id) {
+        return auditInfoDao.auditAgainMaintenanceChek(id);
+    }
+
+    @Override
     public NumberVo NumberItems() {
         NumberVo numberVo = new NumberVo();
         int i = baseProjectDao.selectCountByExample(null);

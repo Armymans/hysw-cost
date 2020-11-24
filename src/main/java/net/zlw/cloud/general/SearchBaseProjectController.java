@@ -97,4 +97,26 @@ public class SearchBaseProjectController {
         List<AuditChekedVo> list = baseProjectService.auditChangeDesginChek(id);
         return RestUtil.success(list);
     }
+
+    /**
+     * 检维修审核卡片
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/review/auditMaintenanceChek",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> auditMaintenanceChek(@RequestParam(name = "id") String id){
+        List<AuditChekedVo> list = baseProjectService.auditMaintenanceChek(id);
+        return RestUtil.success(list);
+    }
+
+    /**
+     * 检维修确认审核卡片
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/review/auditAgainMaintenanceChek",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> auditAgainMaintenanceChek(@RequestParam(name = "id") String id){
+        List<AuditChekedVo> list = baseProjectService.auditAgainMaintenanceChek(id);
+        return RestUtil.success(list);
+    }
 }

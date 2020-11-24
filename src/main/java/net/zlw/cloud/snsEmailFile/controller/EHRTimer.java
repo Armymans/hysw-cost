@@ -285,6 +285,7 @@ public class EHRTimer implements InitializingBean {
                     mkyUser.setPhone(memberManage.getPhone());
                     mkyUser.setStatus("1");
                     mkyUser.setDelFlag("0");
+                    mkyUser.setJobId(memberManage.getWorkType());
                     MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(mkyUser.getId());
                     if (mkyUser1 != null) {
                         mkyUserMapper.updateByPrimaryKeySelective(mkyUser);

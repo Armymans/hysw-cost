@@ -120,4 +120,64 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "update audit_info set `status` = '1' where id=#{id}"
     )
     void deleteChangeOld(@Param("id") String id);
+
+    @Select(
+            "select " +
+                    "IFNULL(audit_time,'-') auditTime,  " +
+                    "(case audit_result  " +
+                    "  when '0' then '待审核'  " +
+                    "  when '1' then '已通过'  " +
+                    "  when '2' then '未通过'  " +
+                    "  end  " +
+                    ") auditResult, " +
+                    "(case audit_type  " +
+                    "  when '0' then '互审'  " +
+                    "  when '1' then '上级领导审核'  " +
+                    "  when '2' then '互审'  " +
+                    "  when '3' then '上级领导审核'  " +
+                    "  when '4' then '总经理审核'  " +
+                    "\twhen '5' then '总经理审核'  " +
+                    "  end  " +
+                    ") auditType,  " +
+                    "(select member_name from member_manage where id = auditor_id)  auditor,  " +
+                    "IFNULL(audit_opinion,'-') auditOpinion  " +
+                    "from audit_info " +
+                    "where " +
+                    "base_project_id = #{id} " +
+                    "and " +
+                    "maintenance_flag = '1' " +
+                    "order by  " +
+                    "create_time asc"
+    )
+    List<AuditChekedVo> auditMaintenanceChek(String id);
+
+    @Select(
+            "select  " +
+                    "IFNULL(audit_time,'-') auditTime,   " +
+                    "(case audit_result   " +
+                    "  when '0' then '待审核'   " +
+                    "  when '1' then '已通过'   " +
+                    "  when '2' then '未通过'   " +
+                    "  end   " +
+                    ") auditResult,  " +
+                    "(case audit_type   " +
+                    "  when '0' then '互审'   " +
+                    "  when '1' then '上级领导审核'   " +
+                    "  when '2' then '互审'   " +
+                    "  when '3' then '上级领导审核'   " +
+                    "  when '4' then '总经理审核'   " +
+                    "\twhen '5' then '总经理审核'   " +
+                    "  end   " +
+                    ") auditType,   " +
+                    "(select member_name from member_manage where id = auditor_id)  auditor,   " +
+                    "IFNULL(audit_opinion,'-') auditOpinion   " +
+                    "from audit_info  " +
+                    "where  " +
+                    "base_project_id = #{id}  " +
+                    "and  " +
+                    "maintenance_flag = '0'  " +
+                    "order by   " +
+                    "create_time asc"
+    )
+    List<AuditChekedVo> auditAgainMaintenanceChek(String id);
 }
