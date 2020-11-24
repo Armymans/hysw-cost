@@ -1232,6 +1232,7 @@ public class MaintenanceProjectInformationService {
 
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditExample);
         if (auditInfo != null) {
+            maintenanceVo.setAuditAgainFlag("1");
             maintenanceVo.setAuditInfo(auditInfo);
             // 0 代表一审，未审批
             if ("0".equals(auditInfo.getAuditType())) {
@@ -1239,6 +1240,7 @@ public class MaintenanceProjectInformationService {
             }else{
                 maintenanceVo.setAuditNumber("1");
             }
+
         }
 
 

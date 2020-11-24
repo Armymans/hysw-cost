@@ -31,4 +31,6 @@ public class MaintenanceVo {
     private String auditType;
     private String auditNumber;
 
+    private String auditAgainFlag;
+
 }
