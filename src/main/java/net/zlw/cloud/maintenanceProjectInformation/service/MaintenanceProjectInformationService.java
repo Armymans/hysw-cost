@@ -100,6 +100,11 @@ public class MaintenanceProjectInformationService {
      * @return
      */
     public PageInfo<MaintenanceProjectInformationReturnVo> findAllMaintenanceProjectInformation(PageRequest pageRequest, UserInfo userInfo) {
+        //获得当前登入人
+        //todo userInfo.getId();
+        String userInfoId = userInfo.getId();;
+        pageRequest.setUid(userInfoId);
+
         //设置分页助手
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
         //查看当前创建人
@@ -111,11 +116,6 @@ public class MaintenanceProjectInformationService {
 
         PageInfo<MaintenanceProjectInformationReturnVo> projectInformationPageInfo = new PageInfo<>();
 
-
-        //获得当前登入人
-        //todo userInfo.getId();
-        String userInfoId = userInfo.getId();;
-        pageRequest.setUid(userInfoId);
         //如果是待审核
         if("1".equals(pageRequest.getType())){
             //如果是部门经理或者部门领导查看列表则看所有
