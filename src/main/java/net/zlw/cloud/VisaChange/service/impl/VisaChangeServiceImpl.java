@@ -668,7 +668,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Override
     public void updateVisa(VisaChangeVo visaChangeVo, UserInfo loginUser) {
-        String id = loginUser.getId();
+//        String id = loginUser.getId();
+        String id = "user320";
         //进行中编辑
         if (visaChangeVo.getVisaNum() != null && visaChangeVo.getVisaNum().equals("1")) {
             VisaApplyChangeInformation visaApplyChangeInformationUp = visaChangeVo.getVisaApplyChangeInformationUp();
@@ -943,21 +944,25 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
 
         }
+        if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")){
+//            String username = loginUser.getUsername();
+            String username = "造价业务员三";
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
+            String projectName = baseProject.getProjectName();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(visaChangeVo.getAuditId());
+            //审核人名字
+            String name = memberManage.getMemberName();
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A13");
+            messageVo.setUserId(visaChangeVo.getAuditId());
+            messageVo.setTitle("您有一个签证变更项目待审核！");
+            messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo);
 
-        String username = loginUser.getUsername();
-        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
-        String projectName = baseProject.getProjectName();
-        MemberManage memberManage = memberManageDao.selectByPrimaryKey(visaChangeVo.getAuditId());
-        //审核人名字
-        String name = memberManage.getMemberName();
-        MessageVo messageVo = new MessageVo();
-        messageVo.setId("A13");
-        messageVo.setUserId(visaChangeVo.getAuditId());
-        messageVo.setTitle("您有一个签证变更项目待审核！");
-        messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
-        //调用消息Service
-        messageService.sendOrClose(messageVo);
+        }
 
+//
 
     }
 }

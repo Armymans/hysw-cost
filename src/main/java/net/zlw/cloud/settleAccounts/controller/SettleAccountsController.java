@@ -139,7 +139,13 @@ public class SettleAccountsController extends BaseController {
     @RequestMapping(value = "/accounts/addAccount", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> addAccount(BaseAccountsVo baseAccountsVo) {
         try {
-            settleAccountsService.addAccount(baseAccountsVo, getLoginUser());
+//            System.err.println(baseAccountsVo.getSettlementInfo());
+//            System.err.println(baseAccountsVo.getLastSettlementInfo());
+//            System.err.println("******************");
+//            System.err.println(baseAccountsVo.getSettlementAuditInformation());
+//            System.err.println(baseAccountsVo.getLastSettlementReview());
+//            System.err.println(baseAccountsVo.getInvestigationOfTheAmount());
+            settleAccountsService.addAccount(baseAccountsVo, null);
         } catch (Exception e) {
             e.printStackTrace();
             return RestUtil.error();
