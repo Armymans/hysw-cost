@@ -1052,7 +1052,6 @@ public class BudgetingServiceImpl implements BudgetingService {
         Budgeting budgeting1 = budgetingDao.selectOneByExample(example1);
         BudgetingVo budgeting = selectBudgetingById(budgeting1.getId(), loginUser);
         unionQueryVo.setBudgeting(budgeting);
-
         return unionQueryVo;
     }
 
