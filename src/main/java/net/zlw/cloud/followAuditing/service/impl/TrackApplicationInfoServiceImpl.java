@@ -663,8 +663,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         criteria.andEqualTo("trackId", id)  //登录人id
                 .andEqualTo("status", "0");
         TrackMonthly trackMonthly = trackMonthlyDao.selectOneByExample(example1);
-        trackMonthly.setStatus("1");
-        trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
+        if (trackMonthly != null){
+            trackMonthly.setStatus("1");
+            trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
+        }
         //删除文件
         Example example = new Example(FileInfo.class);
         example.createCriteria().andEqualTo("userId",id)
