@@ -668,7 +668,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         //删除文件
         Example example = new Example(FileInfo.class);
         example.createCriteria().andEqualTo("userId",id)
-                                .andEqualTo("status","0");
+                                .andEqualTo("status","0")
+                                .andEqualTo("type","gzsjxjsqxx");
         FileInfo fileInfo = fileInfoMapper.selectOneByExample(example);
         if (fileInfo != null){
             fileInfo.setStatus("1");
