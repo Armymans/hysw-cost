@@ -165,6 +165,11 @@ public class MaintenanceProjectInformationService {
         }else{
             //已完成
             if("5".equals(pageRequest.getType())){
+                for (MaintenanceProjectInformationReturnVo vo : maintenanceProjectInformationReturnVos1) {
+                    if(vo.getFounderId().equals(userInfoId)){
+                        vo.setFounderId("1");
+                    }
+                }
                 projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
             }else{
                 //未通过 处理中 待确认 所有(根据创建人)

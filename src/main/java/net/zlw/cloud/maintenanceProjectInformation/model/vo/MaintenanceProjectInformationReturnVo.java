@@ -35,7 +35,7 @@ public class MaintenanceProjectInformationReturnVo {
     private String contractAmount;
     private String projectAddress;
     private String compileTime;
-
+    private String founderId;
     private String currentHandler;
 
     private List<AuditInfo> auditInfoList;
