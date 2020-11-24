@@ -209,8 +209,14 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
     // 删除审计月报
     public void deleteByIdTrackMonthly(String id) {
-        TrackMonthly trackMonthly = trackMonthlyDao.selectByPrimaryKey(id);
+//        TrackMonthly trackMonthly = trackMonthlyDao.selectByPrimaryKey(id);
+
+        //根据审计月报外键删除月报
+        Example example = new Example(TrackMonthly.class);
+        example.createCriteria().andEqualTo("trackId",id);
+        TrackMonthly trackMonthly = trackMonthlyDao.selectOneByExample(example);
         trackMonthly.setStatus("1");
+
         trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
     }
 
@@ -624,10 +630,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     public List<TrackMonthly> findAllByTrackId(String id) {
         Example example1 = new Example(TrackMonthly.class);
         Example.Criteria criteria = example1.createCriteria();
-
         criteria.andEqualTo("trackId", id);
         criteria.andEqualTo("status", "0");
-
+        //根据创建时间排序
+        example1.orderBy("createTime").desc();
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         return trackMonthlies;
     }
@@ -638,6 +644,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         Example.Criteria criteria = example1.createCriteria();
         criteria.andEqualTo("trackId", id);
         criteria.andEqualTo("status", "0");
+        //根据创建时间排序
+        example1.orderBy("createTime").desc();
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         trackMonthlies1.addAll(trackMonthlies);
 
@@ -645,6 +653,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         Example.Criteria criteria2 = example2.createCriteria();
         criteria2.andEqualTo("trackId", userInfo.getId());
         criteria2.andEqualTo("status", "0");
+        //根据创建时间排序
+        example1.orderBy("createTime").desc();
         List<TrackMonthly> trackMonthlies2 = trackMonthlyDao.selectByExample(example2);
         trackMonthlies1.addAll(trackMonthlies2);
         return trackMonthlies1;
