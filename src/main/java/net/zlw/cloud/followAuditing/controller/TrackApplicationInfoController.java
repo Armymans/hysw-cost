@@ -217,8 +217,8 @@ public class TrackApplicationInfoController extends BaseController {
 
 //    新增删除审计月报
     @RequestMapping(value = "/track/deleteTrackMonthly",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> deleteMonthly(){
-        trackApplicationInfoService.deleteMonthly(getLoginUser().getId());
+    public Map<String,Object> deleteMonthly(@RequestParam(name = "id") String id){
+        trackApplicationInfoService.deleteMonthly(id);
         return RestUtil.success("修改成功");
     }
 
