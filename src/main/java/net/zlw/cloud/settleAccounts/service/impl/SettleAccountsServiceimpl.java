@@ -151,7 +151,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             }
             //待确认
             if (pageVo.getSettleAccountsStatus().equals("4")){
-                List<AccountsVo> list1 = baseProjectDao.findAllAccountsSuccess(pageVo);
+                List<AccountsVo> list1 = baseProjectDao.findAllAccountsSuccess2(pageVo);
                 for (AccountsVo accountsVo : list1) {
                     if (loginUser.getId().equals(accountsVo.getFounderId())){
                         accountsVo.setShowConfirmed("1");
