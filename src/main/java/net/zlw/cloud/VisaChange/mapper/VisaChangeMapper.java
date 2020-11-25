@@ -291,7 +291,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
     List<VisaChangeListVo> findAllVisaCheckStaff(PageVo pageVo);
 
     @Select("\t\tselect \n" +
-            "             distinct IFNULL(v.id,v2.id) id,\n" +
+            "             distinct IFNULL(v2.id,v.id) id,\n" +
             "            v.up_and_down_mark upAndDownMark, \n" +
             "            v.base_project_id baseProjectId,\n" +
             "            b.cea_num ceaNum, \n" +
