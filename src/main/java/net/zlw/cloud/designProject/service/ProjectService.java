@@ -1242,7 +1242,8 @@ public class ProjectService {
         //查询当前设计人 是否存在
         String designer = projectVo.getDesignInfo().getDesigner();
         Example example = new Example(DesignInfo.class);
-        example.createCriteria().andEqualTo("designer",designer);
+        //去空格
+        example.createCriteria().andEqualTo("designer",designer.replace(" ",""));
         List<MemberManage> memberManages = memberManageDao.selectByExample(example);
         //如果出现重名 则只取第一个人
         MemberManage designerFirst = memberManages.get(0);
