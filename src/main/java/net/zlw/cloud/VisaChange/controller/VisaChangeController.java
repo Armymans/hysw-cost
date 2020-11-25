@@ -65,7 +65,7 @@ public class VisaChangeController extends BaseController {
     @RequestMapping(value = "/visachange/findAllVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllVisa(PageVo pageVo){
         String id = getLoginUser().getId();
-//        String id = "200610002";
+//        String id = "user309";
         pageVo.setUserId(id);
         //TODO id测试写死
         PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
