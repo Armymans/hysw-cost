@@ -26,6 +26,7 @@ public class ProjectVo {
     private String desginStatus;
     private DesignChangeInfo designChangeInfo; //设计变更
     private List<DesignChangeInfo> DesignChangeInfos;
+    private String designChangeCountFlag; //设计变更次数标记
     private String type1;
     private String type2;
     private String type3;

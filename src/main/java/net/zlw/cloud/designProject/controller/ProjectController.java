@@ -703,6 +703,13 @@ public class ProjectController extends BaseController {
             projectVo.setDesignChangeInfo(new DesignChangeInfo());
         }
 
+        //设计变更累计
+        List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(id);
+        if(designChangeInfos.size()>0){
+             projectVo.setDesignChangeCountFlag("0");  //说明之前进行过审计变更
+        }else{
+             projectVo.setDesignChangeCountFlag("1");
+        }
 //        //审核信息回显 根据当前用户判断
 //        AuditInfo auditInfo = projectService.auditInfoByYes(getLoginUser(),designInfo.getId());
 //        if(auditInfo!=null){
