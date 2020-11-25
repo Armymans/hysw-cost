@@ -13,4 +13,6 @@ public class PageVo {
     private String keyword;
     private String status;
 
+    private String userId;
+
 }

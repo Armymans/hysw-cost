@@ -25,6 +25,7 @@ import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -45,7 +46,6 @@ import java.util.UUID;
 public class VisaChangeServiceImpl implements VisaChangeService {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
 
     @Resource
     private VisaChangeMapper visaChangeMapper;
@@ -77,104 +77,184 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     @Resource
     private MkyUserMapper mkyUserMapper;
 
+    @Value("${audit.wujiang.sheji.designHead}")
+    private String wjsjh;
+    @Value("${audit.wujiang.sheji.designManager}")
+    private String wjsjm;
+    @Value("${audit.wujiang.zaojia.costHead}")
+    private String wjzjh;
+    @Value("${audit.wujiang.zaojia.costManager}")
+    private String wjzjm;
+
+    @Value("${audit.wuhu.sheji.designHead}")
+    private String whsjh;
+    @Value("${audit.wuhu.sheji.designManager}")
+    private String whsjm;
+    @Value("${audit.wuhu.zaojia.costHead}")
+    private String whzjh;
+    @Value("${audit.wuhu.zaojia.costManager}")
+    private String whzjm;
+
     private SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
 
 
     @Override
     public List<VisaChangeListVo> findAllVisa(PageVo pageVo) {
         List<VisaChangeListVo> list = visaChangeMapper.findAllVisa(pageVo);
-        ArrayList<VisaChangeListVo> visaChangeReturnVos = new ArrayList<>();
 
-        ArrayList<VisaChangeListVo> upList = new ArrayList<>();
-        ArrayList<VisaChangeListVo> downList = new ArrayList<>();
-
-        for (VisaChangeListVo visaChangeListVo : list) {
-            if (visaChangeListVo.getUpAndDownMark().equals("0")) {
-                upList.add(visaChangeListVo);
-            }
-            if (visaChangeListVo.getUpAndDownMark().equals("1")) {
-                downList.add(visaChangeListVo);
-            }
-        }
-        if (downList != null && downList.size() != 0) {
-            for (VisaChangeListVo visaChangeListVo : downList) {
-                VisaChange visaChange = visaChangeMapper.selectByPrimaryKey(visaChangeListVo.getId());
-                visaChangeListVo.setContractAmountXia(new BigDecimal(visaChange.getContractAmount()));
-                visaChangeListVo.setProportionContractXia(visaChange.getProportionContract());
-                visaChangeListVo.setCurrentXia(visaChange.getAmountVisaChange() + "");
-                visaChangeListVo.setCreateTime(visaChange.getCompletionTime());
-                visaChangeListVo.setCompileTime(visaChange.getCompileTime());
-                visaChangeListVo.setFounderId(visaChange.getCreatorId());
-                visaChangeReturnVos.add(visaChangeListVo);
+        //待审核
+        if (pageVo.getStatus().equals("1")){
+            //领导
+            if ( pageVo.getUserId().equals(whzjh) || pageVo.getUserId().equals(whzjm) || pageVo.getUserId().equals(wjzjh)){
+                List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaCheckLeader(pageVo);
+                return list1;
+                //普通员工
+            }else {
+                List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaCheckStaff(pageVo);
+                return list1;
             }
         }
-        if (upList != null && upList.size() != 0) {
-            for (VisaChangeListVo visaChangeListVo : upList) {
-                VisaChange visaChange = visaChangeMapper.selectByPrimaryKey(visaChangeListVo.getId());
-                if (visaChangeReturnVos != null && visaChangeReturnVos.size() != 0) {
-                    for (VisaChangeListVo visaChangeReturnVo : visaChangeReturnVos) {
-                        if (visaChangeReturnVo.getBaseProjectId().equals(visaChangeListVo.getBaseProjectId())) {
-                            visaChangeReturnVo.setContractAmountShang(new BigDecimal(visaChange.getContractAmount()));
-                            visaChangeReturnVo.setProportionContractShang(visaChange.getProportionContract());
-                            visaChangeReturnVo.setCurrentShang(visaChange.getAmountVisaChange() + "");
-                            visaChangeReturnVo.setCreateTime(visaChange.getCompletionTime());
-                            visaChangeReturnVo.setCompileTime(visaChange.getCompileTime());
-                            visaChangeReturnVo.setFounderId(visaChange.getCreatorId());
-                            break;
-                        }
-                    }
-                }
-                visaChangeListVo.setContractAmountShang(new BigDecimal(visaChange.getContractAmount()));
-                visaChangeListVo.setProportionContractShang(visaChange.getProportionContract());
-                visaChangeListVo.setCurrentShang(visaChange.getAmountVisaChange() + "");
-                visaChangeListVo.setCreateTime(visaChange.getCompletionTime());
-                visaChangeListVo.setCompileTime(visaChange.getCompileTime());
-                visaChangeListVo.setFounderId(visaChange.getCreatorId());
-//                    visaChangeReturnVos.add(visaChangeListVo);
-            }
+        //处理中
+        if (pageVo.getStatus().equals("2")){
+            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
+            return list1;
         }
+        //未通过
+        if (pageVo.getStatus().equals("3")){
+            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
+            return list1;
+        }
+        //待确认
+        if (pageVo.getStatus().equals("4")){
+            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
+            return list1;
+        }
+        //进行中
+        if (pageVo.getStatus().equals("5")){
+            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaSuccess(pageVo);
+            return list1;
+        }
+        //已完成
+        if (pageVo.getStatus().equals("6")){
+            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaSuccess(pageVo);
+            return list1;
+        }
+        //全部
+        if (pageVo.getStatus().equals("") || pageVo.getStatus() == null) {
+            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
+            for (VisaChangeListVo visaChangeListVo : list1) {
 
-
-        for (VisaChangeListVo visaChangeReturnVo : visaChangeReturnVos) {
-            for (VisaChangeListVo visaChangeListVo : list) {
-                Example example = new Example(VisaChange.class);
-                Example.Criteria c = example.createCriteria();
-                c.andEqualTo("baseProjectId", visaChangeListVo.getBaseProjectId());
-                c.andEqualTo("state", "0");
-                List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
-                VisaChange visaChange = null;
-                if (visaChanges.size() == 1) {
-                    visaChange = visaChanges.get(0);
-                } else if (visaChanges.size() == 2) {
-                    for (VisaChange change : visaChanges) {
-                        if (change.getUpAndDownMark().equals("1")) {
-                            visaChange = change;
-                        }
-                    }
-                }
-                if (visaChange != null) {
                     Example example1 = new Example(AuditInfo.class);
                     Example.Criteria c2 = example1.createCriteria();
-                    c2.andEqualTo("baseProjectId", visaChange.getId());
+                    c2.andEqualTo("baseProjectId", visaChangeListVo.getId());
                     c2.andEqualTo("status", "0");
                     c2.andEqualTo("auditType", "4");
                     c2.andEqualTo("auditResult", "1");
                     AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
 
-
-                    if (auditInfo == null && !visaChangeReturnVo.getStatus().equals("进行中")) {
-                        visaChangeReturnVo.setShowUpdate("2");
-                    } else if (visaChangeReturnVo.getStatus().equals("进行中")) {
-                        visaChangeReturnVo.setShowUpdate("3");
-                    } else if (auditInfo == null && visaChangeReturnVo.getStatus().equals("处理中")) {
-                        visaChangeReturnVo.setShowUpdate("1");
+                    if (auditInfo == null && visaChangeListVo.getStatus().equals("处理中")){
+                        visaChangeListVo.setShowUpdate("1");
+                    }else if(auditInfo != null && !visaChangeListVo.getStatus().equals("进行中")){
+                        visaChangeListVo.setShowUpdate("2");
+                    }else if(visaChangeListVo.getStatus().equals("进行中")){
+                        visaChangeListVo.setShowUpdate("3");
                     }
-                }
+                return list1;
             }
         }
 
 
-        return visaChangeReturnVos;
+
+
+
+////        for (VisaChangeListVo visaChangeListVo : list) {
+////            if (visaChangeListVo.getUpAndDownMark().equals("0")) {
+////                upList.add(visaChangeListVo);
+////            }
+////            if (visaChangeListVo.getUpAndDownMark().equals("1")) {
+////                downList.add(visaChangeListVo);
+////            }
+////        }
+////        if (downList != null && downList.size() != 0) {
+////            for (VisaChangeListVo visaChangeListVo : downList) {
+////                VisaChange visaChange = visaChangeMapper.selectByPrimaryKey(visaChangeListVo.getId());
+////                visaChangeListVo.setContractAmountXia(new BigDecimal(visaChange.getContractAmount()));
+////                visaChangeListVo.setProportionContractXia(visaChange.getProportionContract());
+////                visaChangeListVo.setCurrentXia(visaChange.getAmountVisaChange() + "");
+////                visaChangeListVo.setCreateTime(visaChange.getCompletionTime());
+////                visaChangeListVo.setCompileTime(visaChange.getCompileTime());
+////                visaChangeListVo.setFounderId(visaChange.getCreatorId());
+////                visaChangeReturnVos.add(visaChangeListVo);
+////            }
+////        }
+////        if (upList != null && upList.size() != 0) {
+////            for (VisaChangeListVo visaChangeListVo : upList) {
+////                VisaChange visaChange = visaChangeMapper.selectByPrimaryKey(visaChangeListVo.getId());
+////                if (visaChangeReturnVos != null && visaChangeReturnVos.size() != 0) {
+////                    for (VisaChangeListVo visaChangeReturnVo : visaChangeReturnVos) {
+////                        if (visaChangeReturnVo.getBaseProjectId().equals(visaChangeListVo.getBaseProjectId())) {
+////                            visaChangeReturnVo.setContractAmountShang(new BigDecimal(visaChange.getContractAmount()));
+////                            visaChangeReturnVo.setProportionContractShang(visaChange.getProportionContract());
+////                            visaChangeReturnVo.setCurrentShang(visaChange.getAmountVisaChange() + "");
+////                            visaChangeReturnVo.setCreateTime(visaChange.getCompletionTime());
+////                            visaChangeReturnVo.setCompileTime(visaChange.getCompileTime());
+////                            visaChangeReturnVo.setFounderId(visaChange.getCreatorId());
+////                            break;
+////                        }
+////                    }
+////                }
+////                visaChangeListVo.setContractAmountShang(new BigDecimal(visaChange.getContractAmount()));
+////                visaChangeListVo.setProportionContractShang(visaChange.getProportionContract());
+////                visaChangeListVo.setCurrentShang(visaChange.getAmountVisaChange() + "");
+////                visaChangeListVo.setCreateTime(visaChange.getCompletionTime());
+////                visaChangeListVo.setCompileTime(visaChange.getCompileTime());
+////                visaChangeListVo.setFounderId(visaChange.getCreatorId());
+//////                    visaChangeReturnVos.add(visaChangeListVo);
+////            }
+////        }
+////
+////
+////        for (VisaChangeListVo visaChangeReturnVo : visaChangeReturnVos) {
+////            for (VisaChangeListVo visaChangeListVo : list) {
+////                Example example = new Example(VisaChange.class);
+////                Example.Criteria c = example.createCriteria();
+////                c.andEqualTo("baseProjectId", visaChangeListVo.getBaseProjectId());
+////                c.andEqualTo("state", "0");
+////                List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
+////                VisaChange visaChange = null;
+////                if (visaChanges.size() == 1) {
+////                    visaChange = visaChanges.get(0);
+////                } else if (visaChanges.size() == 2) {
+////                    for (VisaChange change : visaChanges) {
+////                        if (change.getUpAndDownMark().equals("1")) {
+////                            visaChange = change;
+////                        }
+////                    }
+////                }
+//                if (visaChange != null) {
+//                    Example example1 = new Example(AuditInfo.class);
+//                    Example.Criteria c2 = example1.createCriteria();
+//                    c2.andEqualTo("baseProjectId", visaChange.getId());
+//                    c2.andEqualTo("status", "0");
+//                    c2.andEqualTo("auditType", "4");
+//                    c2.andEqualTo("auditResult", "1");
+//                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
+//
+//
+//
+//                    if (auditInfo != null && !visaChangeReturnVo.getStatus().equals("进行中")) {
+//                        visaChangeReturnVo.setShowUpdate("2");
+//                    } else if (visaChangeReturnVo.getStatus().equals("进行中")) {
+//                        visaChangeReturnVo.setShowUpdate("3");
+//                    } else if (auditInfo == null && visaChangeReturnVo.getStatus().equals("处理中")) {
+//                        visaChangeReturnVo.setShowUpdate("1");
+//                    }
+//                }
+//            }
+//        }
+
+
+        return new ArrayList<VisaChangeListVo>();
     }
 
     @Override
