@@ -30,6 +30,7 @@ import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -152,6 +153,7 @@ public class ProjectService {
                 designInfos = designInfoMapper.designProjectSelect(pageVo);
             }
             for (DesignInfo thisDesign : designInfos) {
+                //获取当前待审核信息
                 Example example = new Example(AuditInfo.class);
                 example.createCriteria().andEqualTo("baseProjectId",thisDesign.getId())
                                         .andEqualTo("auditResult","0");
@@ -170,12 +172,23 @@ public class ProjectService {
                     }
                 }
             }
+            //集合填值
             if(designInfos.size()>0){
                 for (DesignInfo designInfo : designInfos) {
                     //展示设计变更时间 如果为空展示 /
                     if(designInfo.getDesignChangeTime()==null || designInfo.getDesignChangeTime().equals("")){
                         designInfo.setDesignChangeTime("/");
                     }
+
+                    //根据设计人id 查询
+                    MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+                    //将id替换成姓名
+                    if(memberManage1!=null){
+                        designInfo.setDesigner(memberManage1.getMemberName());
+                    }else{
+                        designInfo.setDesigner("-");
+                    }
+
                     //根据地区判断相应的设计费 应付金额 实付金额
                     //如果为安徽
                     if(designInfo.getDistrict()!=null){
@@ -232,6 +245,16 @@ public class ProjectService {
                         if(designInfo.getDesignChangeTime()==null || designInfo.getDesignChangeTime().equals("")){
                             designInfo.setDesignChangeTime("/");
                         }
+
+                        //根据设计人id 查询
+                        MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+                        //将id替换成姓名
+                        if(memberManage1!=null){
+                            designInfo.setDesigner(memberManage1.getMemberName());
+                        }else{
+                            designInfo.setDesigner("-");
+                        }
+
                         //根据地区判断相应的设计费 应付金额 实付金额
                         //如果为安徽
                         if(designInfo.getDistrict()!=null){
@@ -285,6 +308,16 @@ public class ProjectService {
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             if(designInfos.size()>0){
                 for (DesignInfo designInfo : designInfos) {
+
+                    //根据设计人id 查询
+                    MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+                    //将id替换成姓名
+                    if(memberManage1!=null){
+                        designInfo.setDesigner(memberManage1.getMemberName());
+                    }else{
+                        designInfo.setDesigner("-");
+                    }
+
                     //判断当前项目是否为设计变更项目 如果是返回一个状态
                     Example changeExample = new Example(AuditInfo.class);
                     changeExample.createCriteria()
@@ -352,6 +385,15 @@ public class ProjectService {
                     //展示设计变更时间 如果为空展示 /
                     if(designInfo.getDesignChangeTime()==null || designInfo.getDesignChangeTime().equals("")){
                         designInfo.setDesignChangeTime("/");
+                    }
+
+                    //根据设计人id 查询
+                    MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+                    //将id替换成姓名
+                    if(memberManage1!=null){
+                        designInfo.setDesigner(memberManage1.getMemberName());
+                    }else{
+                        designInfo.setDesigner("-");
                     }
 
                     //归属按钮展示
@@ -426,6 +468,16 @@ public class ProjectService {
                 if(designInfo.getDesignChangeTime()==null || designInfo.getDesignChangeTime().equals("")){
                     designInfo.setDesignChangeTime("/");
                 }
+
+                //根据设计人id 查询
+                MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+                //将id替换成姓名
+                if(memberManage1!=null){
+                    designInfo.setDesigner(memberManage1.getMemberName());
+                }else{
+                    designInfo.setDesigner("-");
+                }
+
                 //根据地区判断相应的设计费 应付金额 实付金额
                 //如果为安徽
                 if(designInfo.getDistrict()!=null){
@@ -1490,6 +1542,21 @@ public class ProjectService {
         if (list!=null && list.size()!=0){
             throw new RuntimeException("项目编号或项目名称重复");
         }
+
+        //查询当前设计人 是否存在
+        String designer = projectVo.getDesignInfo().getDesigner();
+        Example designerExample = new Example(DesignInfo.class);
+        //去空格
+        designerExample.createCriteria().andEqualTo("designer",designer.replace(" ",""));
+        List<MemberManage> memberManages = memberManageDao.selectByExample(designerExample);
+        //如果出现重名 则只取第一个人
+        MemberManage designerFirst = memberManages.get(0);
+        if(designerFirst!=null){
+            projectVo.getDesignInfo().setDesigner(designerFirst.getId());
+        }else{
+            throw new RuntimeException("设计人不存在,请重新填写");
+        }
+
         //方便测试
         //todo loginUser.getId(); loginUser.getCompanyId();
         String loginUserId = loginUser.getId();
