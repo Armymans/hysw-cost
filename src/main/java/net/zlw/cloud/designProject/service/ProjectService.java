@@ -1238,6 +1238,20 @@ public class ProjectService {
         if (list!=null && list.size()!=0){
             throw new RuntimeException("项目编号或项目名称重复");
         }
+
+        //查询当前设计人 是否存在
+        String designer = projectVo.getDesignInfo().getDesigner();
+        Example example = new Example(DesignInfo.class);
+        example.createCriteria().andEqualTo("designer",designer);
+        List<MemberManage> memberManages = memberManageDao.selectByExample(example);
+        //如果出现重名 则只取第一个人
+        MemberManage designerFirst = memberManages.get(0);
+        if(designerFirst!=null){
+            projectVo.getDesignInfo().setDesigner(designerFirst.getId());
+        }else{
+            throw new RuntimeException("设计人不存在,请重新填写");
+        }
+
         //baseProject, designInfo, packageCame, projectExploration
         String projectuuid = UUID.randomUUID().toString().replaceAll("-", "");
         String DesignInfouuid = UUID.randomUUID().toString().replaceAll("-", "");
@@ -1624,7 +1638,7 @@ public class ProjectService {
 
         //根据设计表id 查询数据取出代收金额
         c.andEqualTo("baseProjectId",anhuiMoneyinfo.getBaseProjectId());
-        if(anhuiMoneyinfo.getPayTerm() == "1"){
+        if("1".equals(anhuiMoneyinfo.getPayTerm())){
             //获取应收金额
             BigDecimal officialReceipts = anhuiMoneyinfo.getOfficialReceipts();
             AnhuiMoneyinfo anhuiMoneyinfo1 = anhuiMoneyinfoMapper.selectOneByExample(example);
@@ -1690,7 +1704,7 @@ public class ProjectService {
         wujiangMoneyInfo.setStatus("0");
         wujiangMoneyInfo.setCreateTime(simpleDateFormat.format(new Date()));
 
-        if(wujiangMoneyInfo.getPayTerm() == "1"){
+        if("1".equals(wujiangMoneyInfo.getPayTerm())){
             //获取应收金额
             BigDecimal officialReceipts = wujiangMoneyInfo.getOfficialReceipts();
             WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
