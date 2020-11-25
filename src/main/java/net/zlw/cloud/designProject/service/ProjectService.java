@@ -1732,12 +1732,14 @@ public class ProjectService {
         Example example = new Example(AnhuiMoneyinfo.class);
         example.createCriteria().andEqualTo("baseProjectId",id);
         AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
-        String[] split = anhuiMoneyinfo.getCollectionMoney().split(",");
-        Integer count = 0;
-        for (CollectionMoney collectionMony : collectionMonies) {
-            for (String money : split) {
-                collectionMony.setId("第"+count+1+"次收款");
-                collectionMony.setMoney(money);
+        if(anhuiMoneyinfo!=null){
+            String[] split = anhuiMoneyinfo.getCollectionMoney().split(",");
+            Integer count = 0;
+            for (CollectionMoney collectionMony : collectionMonies) {
+                for (String money : split) {
+                    collectionMony.setId("第"+count+1+"次收款");
+                    collectionMony.setMoney(money);
+                }
             }
         }
         return collectionMonies;
@@ -1753,12 +1755,14 @@ public class ProjectService {
         Example example = new Example(WujiangMoneyInfo.class);
         example.createCriteria().andEqualTo("baseProjectId",id);
         WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(example);
-        String[] split = wujiangMoneyInfo.getCollectionMoney().split(",");
-        Integer count = 0;
-        for (CollectionMoney collectionMony : collectionMonies) {
-            for (String money : split) {
-                collectionMony.setId("第"+count+1+"次收款");
-                collectionMony.setMoney(money);
+        if(wujiangMoneyInfo!=null){
+            String[] split = wujiangMoneyInfo.getCollectionMoney().split(",");
+            Integer count = 0;
+            for (CollectionMoney collectionMony : collectionMonies) {
+                for (String money : split) {
+                    collectionMony.setId("第"+count+1+"次收款");
+                    collectionMony.setMoney(money);
+                }
             }
         }
         return collectionMonies;
