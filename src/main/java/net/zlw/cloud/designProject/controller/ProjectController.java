@@ -1097,8 +1097,16 @@ public class ProjectController extends BaseController {
         }else{
             projectVo.setAuditInfo(new AuditInfo());
         }
-        return RestUtil.success(projectVo);
 
+        //设计变更累计
+        List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(id);
+        if(designChangeInfos.size()>0){
+            projectVo.setDesignChangeCountFlag("0");  //说明之前进行过设计变更
+        }else{
+            projectVo.setDesignChangeCountFlag("1");
+        }
+
+        return RestUtil.success(projectVo);
     }
 
     /**
