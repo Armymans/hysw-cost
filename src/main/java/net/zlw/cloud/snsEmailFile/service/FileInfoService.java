@@ -74,6 +74,11 @@ public class FileInfoService {
     public List<FileInfo> findByFreignAndType(String key, String type) {
         return fileInfoMapper.findByFreignAndType(key,type);
     }
+
+    public List<FileInfo> findByFreignAndTypeDesginCount(String key, String type) {
+        return fileInfoMapper.findByFreignAndTypeDesginCount(key,type);
+    }
+
     public List<FileInfo> findByFreignAndType2(String key, String type) {
 
         return fileInfoMapper.findByFreignAndType2(key,type);

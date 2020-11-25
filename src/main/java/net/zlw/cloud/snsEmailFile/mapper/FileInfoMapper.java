@@ -27,6 +27,16 @@ public interface FileInfoMapper extends Mapper<FileInfo> {
     List<FileInfo> findByFreignAndType(@Param("key") String key,@Param("type") String type);
 
     @Select("SELECT " +
+            " fi.* , " +
+            " mm.member_name userName " +
+            "FROM " +
+            " file_info fi " +
+            " left join member_manage mm on mm.id = fi.user_id " +
+            "WHERE " +
+            "fi.type = #{type} and fi.plat_code = #{key}")
+    List<FileInfo> findByFreignAndTypeDesginCount(@Param("key") String key,@Param("type") String type);
+
+    @Select("SELECT " +
             " fi.* " +
             "FROM " +
             " file_info fi " +

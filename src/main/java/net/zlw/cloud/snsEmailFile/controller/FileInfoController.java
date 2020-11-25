@@ -259,6 +259,18 @@ public class FileInfoController extends BaseController {
     }
 
     /**
+     * 展示设计变更审核累计文件列表(不根据状态查询)
+     * @param key
+     * @param type
+     * @return
+     */
+    @RequestMapping(value = "/findByFreignAndTypeDesginCount", method = RequestMethod.POST)
+    public Map<String, Object> findByFreignAndTypeDesginCount(String key, String type) {
+        List<FileInfo> fileInfoList = fileInfoService.findByFreignAndTypeDesginCount(key, type);
+        return RestUtil.success(fileInfoList);
+    }
+
+    /**
      * @Author Armyman
      * @Description //查询文件
      * @Date 14:00 2020/10/10

@@ -1886,6 +1886,14 @@ public class ProjectService {
             //添加一条设计变更信息
             designChangeInfoMapper.insert(projectVo.getDesignChangeInfo());
 
+            //添加前 将之前的设计变更信息变为不可用
+            List<FileInfo> byFreignAndTypeOld =
+                    fileInfoMapper.findByFreignAndType(projectVo.getDesignInfo().getId(), projectVo.getType1());
+            for (FileInfo fileInfo : byFreignAndTypeOld) {
+                fileInfo.setStatus("1"); //设置为不可用
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
+
             //添加设计变更文件
             List<FileInfo> byFreignAndType1 = fileInfoMapper.findByFreignAndType(projectVo.getKey(), projectVo.getType1());
             for (FileInfo fileInfo : byFreignAndType1) {
