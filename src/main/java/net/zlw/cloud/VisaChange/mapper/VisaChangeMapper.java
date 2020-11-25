@@ -169,7 +169,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "     where    " +
             "     v.up_and_down_mark = '0' and   " +
             "     v2.up_and_down_mark = '1' and   " +
-            "     a.audit_result = '0'  " +
+            "     a.audit_result = '0' and  " +
             "     (b.district = #{district} or #{district} = '') and    " +
             "     (b.project_nature = #{projectNature} or #{projectNature} = '') and    " +
             "     (v.create_time >= #{startTime} or #{startTime} = '') and    " +
