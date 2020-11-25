@@ -11,15 +11,8 @@ import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
-import net.zlw.cloud.remindSet.model.RemindSet;
-import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
-import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
-import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
-import net.zlw.cloud.settleAccounts.mapper.SettlementInfoMapper;
-import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
-import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
-import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
-import net.zlw.cloud.settleAccounts.model.SettlementInfo;
+import net.zlw.cloud.settleAccounts.mapper.*;
+import net.zlw.cloud.settleAccounts.model.*;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
@@ -47,6 +40,9 @@ import java.util.UUID;
 @Service
 @Transactional
 public class SettleAccountsServiceimpl implements SettleAccountsService {
+
+    @Resource
+    private OtherInfoMapper otherInfoMapper;
     @Resource
     private BaseProjectDao baseProjectDao;
     @Resource
@@ -381,7 +377,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Override
     public void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser) {
 //        loginUser = new UserInfo("user320",null,null,true);
-        String data = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         //判断bigdecimal
         if ("".equals(baseAccountsVo.getSettlementInfo().getSumbitMoney())){
 //            baseAccountsVo.getSettlementInfo().setSumbitMoney(null);
@@ -394,6 +390,20 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getSettlementAuditInformation().setAuthorizedNumber(null);
         }
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
+        //其他信息表
+        // TODO 前台json未转换待改
+      /*  List<OtherInfo> otherInfos = baseAccountsVo.getComs();
+        if (otherInfos.size() > 0){
+            for (OtherInfo thisInfo : otherInfos) {
+                OtherInfo otherInfo = new OtherInfo();
+                otherInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                otherInfo.setSerialNumber(thisInfo.getSerialNumber());
+                otherInfo.setNum(thisInfo.getNum());
+                otherInfo.setForeignKey(baseProject.getId());
+                otherInfo.setCreateTime(data);
+                otherInfoMapper.insertSelective(otherInfo);
+            }
+        }*/
         //添加上家送审
         System.out.println(baseAccountsVo);
         if (baseAccountsVo.getLastSettlementInfo().getSumbitName() != null && ! baseAccountsVo.getLastSettlementInfo().getSumbitName().equals("")){
@@ -585,6 +595,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         BaseAccountsVo baseAccountsVo = new BaseAccountsVo();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
         baseAccountsVo.setBaseProject(baseProject);
+
 
         Example example = new Example(InvestigationOfTheAmount.class);
         Example.Criteria c = example.createCriteria();
