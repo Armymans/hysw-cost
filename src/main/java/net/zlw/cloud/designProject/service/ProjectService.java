@@ -1734,12 +1734,13 @@ public class ProjectService {
         AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
         if(anhuiMoneyinfo!=null){
             String[] split = anhuiMoneyinfo.getCollectionMoney().split(",");
-            Integer count = 0;
-            for (CollectionMoney collectionMony : collectionMonies) {
-                for (String money : split) {
-                    collectionMony.setId("第"+count+1+"次收款");
-                    collectionMony.setMoney(money);
-                }
+            Integer count = 1;
+            CollectionMoney collectionMoney = new CollectionMoney();
+            for (String money : split) {
+                collectionMoney.setId("第"+(count)+"次收款");
+                collectionMoney.setMoney(money);
+                collectionMonies.add(collectionMoney);
+                count++;
             }
         }
         return collectionMonies;
@@ -1757,12 +1758,13 @@ public class ProjectService {
         WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(example);
         if(wujiangMoneyInfo!=null){
             String[] split = wujiangMoneyInfo.getCollectionMoney().split(",");
-            Integer count = 0;
-            for (CollectionMoney collectionMony : collectionMonies) {
-                for (String money : split) {
-                    collectionMony.setId("第"+count+1+"次收款");
-                    collectionMony.setMoney(money);
-                }
+            Integer count = 1;
+            CollectionMoney collectionMoney = new CollectionMoney();
+            for (String money : split) {
+                collectionMoney.setId("第"+(count)+"次收款");
+                collectionMoney.setMoney(money);
+                collectionMonies.add(collectionMoney);
+                count++;
             }
         }
         return collectionMonies;
