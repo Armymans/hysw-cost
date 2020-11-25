@@ -425,6 +425,51 @@ public class ProjectController extends BaseController {
     }
 
     /**
+     * 安徽信息回显
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/anhuiMoneyInfoSelect", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> anhuiMoneyInfoSelect(String id) {
+        AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfoSelect(id);
+        return RestUtil.success(anhuiMoneyinfo);
+    }
+
+    /**
+     * 吴江信息回显
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/wujiangMoneyInfoSelect", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> wujiangMoneyInfoSelect(String id) {
+        WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfoSelect(id);
+        return RestUtil.success(wujiangMoneyInfo);
+    }
+
+    /**
+     * 安徽代收列表
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/anhuiCollectionMoney", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> anhuiCollectionMoney(String id) {
+        List<CollectionMoney> collectionMonies = projectService.anhuiCollectionMoney(id);
+        return RestUtil.success(collectionMonies);
+    }
+
+    /**
+     * 吴江代收列表
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/wujiangCollectionMoney", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> wujiangCollectionMoney(String id) {
+        List<CollectionMoney> collectionMonies = projectService.wujiangCollectionMoney(id);
+        return RestUtil.success(collectionMonies);
+    }
+
+
+    /**
      * 添加吴江信息
      *
      * @param wujiangMoneyInfo

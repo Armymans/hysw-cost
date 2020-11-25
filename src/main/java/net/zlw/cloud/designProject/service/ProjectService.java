@@ -30,7 +30,6 @@ import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -1691,6 +1690,80 @@ public class ProjectService {
 
     @Resource
     private ProjectSumService projectSumService;
+
+    /**
+     * 安徽信息回显
+     * @param id
+     * @return
+     */
+    public AnhuiMoneyinfo anhuiMoneyInfoSelect(String id){
+        Example example = new Example(AnhuiMoneyinfo.class);
+        example.createCriteria().andEqualTo("baseProjectId",id);
+        AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
+        if (anhuiMoneyinfo!=null){
+            return anhuiMoneyinfo;
+        }else{
+            return new AnhuiMoneyinfo();
+        }
+    }
+
+    /**
+     * 吴江信息回显
+     * @param id
+     * @return
+     */
+    public WujiangMoneyInfo wujiangMoneyInfoSelect(String id){
+        Example example = new Example(WujiangMoneyInfo.class);
+        example.createCriteria().andEqualTo("baseProjectId",id);
+        WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(example);
+        if(wujiangMoneyInfo!=null){
+            return wujiangMoneyInfo;
+        }else{
+            return new WujiangMoneyInfo();
+        }
+    }
+
+    /**
+     * 安徽代收列表
+     * @return
+     */
+    public List<CollectionMoney> anhuiCollectionMoney(String id){
+        ArrayList<CollectionMoney> collectionMonies = new ArrayList<>();
+        Example example = new Example(AnhuiMoneyinfo.class);
+        example.createCriteria().andEqualTo("baseProjectId",id);
+        AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
+        String[] split = anhuiMoneyinfo.getCollectionMoney().split(",");
+        Integer count = 0;
+        for (CollectionMoney collectionMony : collectionMonies) {
+            for (String money : split) {
+                collectionMony.setId(count+1);
+                collectionMony.setMoney(money);
+            }
+        }
+        return collectionMonies;
+    }
+
+    /**
+     * 吴江代收列表
+     * @param id
+     * @return
+     */
+    public List<CollectionMoney> wujiangCollectionMoney(String id){
+        ArrayList<CollectionMoney> collectionMonies = new ArrayList<>();
+        Example example = new Example(WujiangMoneyInfo.class);
+        example.createCriteria().andEqualTo("baseProjectId",id);
+        WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(example);
+        String[] split = wujiangMoneyInfo.getCollectionMoney().split(",");
+        Integer count = 0;
+        for (CollectionMoney collectionMony : collectionMonies) {
+            for (String money : split) {
+                collectionMony.setId(count+1);
+                collectionMony.setMoney(money);
+            }
+        }
+        return collectionMonies;
+    }
+
     /**
      * 添加安徽信息
      * @param anhuiMoneyinfo
