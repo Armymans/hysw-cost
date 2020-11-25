@@ -132,6 +132,13 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         //进行中
         if (pageVo.getStatus().equals("5")){
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaSuccess(pageVo);
+            for (VisaChangeListVo visaChangeListVo : list1) {
+                if (visaChangeListVo.getFounderId().equals(pageVo.getUserId())){
+                    visaChangeListVo.setShowUnderway("1");
+                }else{
+                    visaChangeListVo.setShowUnderway("2");
+                }
+            }
             return list1;
         }
         //已完成
@@ -158,6 +165,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                         visaChangeListVo.setShowUpdate("2");
                     }else if(visaChangeListVo.getStatus().equals("进行中")){
                         visaChangeListVo.setShowUpdate("3");
+                        if (visaChangeListVo.getFounderId().equals(pageVo.getUserId())){
+                            visaChangeListVo.setShowUnderway("1");
+                        }else{
+                            visaChangeListVo.setShowUnderway("2");
+                        }
                     }
                 return list1;
             }
@@ -482,8 +494,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Override
     public void batchReview(BatchReviewVo batchReviewVo, UserInfo loginUser) {
-        String id = "user320";
-        String username = "造价业务员3";
+        String id = loginUser.getId();
+        String username = loginUser.getUsername();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             Example example = new Example(VisaChange.class);
@@ -789,8 +801,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Override
     public void updateVisa(VisaChangeVo visaChangeVo, UserInfo loginUser) {
-//        String id = loginUser.getId();
-        String id = "user320";
+        String id = loginUser.getId();
+//        String id = "user320";
         //进行中编辑
         if (visaChangeVo.getVisaNum() != null && visaChangeVo.getVisaNum().equals("1")) {
             VisaApplyChangeInformation visaApplyChangeInformationUp = visaChangeVo.getVisaApplyChangeInformationUp();
