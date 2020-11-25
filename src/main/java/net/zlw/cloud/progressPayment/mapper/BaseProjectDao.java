@@ -9,8 +9,6 @@ import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
 
@@ -497,7 +495,9 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "si.state = '0' and " +
             "l.del_flag = '0' and " +
             "s.del_flag = '0' and " +
-            "a.audit_result = '0'" +
+            "a.audit_result = '0' and " +
+            " ( IFNULL(s.founder_id,l.founder_id) = #{userId} or " +
+            "a.auditor_id = #{userId} )" +
             "group by IFNULL(s.id,l.id)" +
             "ORDER BY si.create_time DESC   ")
     List<AccountsVo> findAllAccountsCheckLeader(PageVo pageVo);

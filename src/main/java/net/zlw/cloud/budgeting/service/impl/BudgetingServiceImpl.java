@@ -1025,7 +1025,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
         Example example1 = new Example(FileInfo.class);
         example1.createCriteria().andEqualTo("platCode",designInfo.getId())
-                                 .andEqualTo("type","sjxmxjkhtgtz"); //设计图纸
+                                 .andEqualTo("type","sjxmxjsjxx"); //设计图纸
         List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
         return fileInfos;
     }
