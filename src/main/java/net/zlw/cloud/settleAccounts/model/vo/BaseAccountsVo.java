@@ -23,6 +23,7 @@ public class BaseAccountsVo {
     private SettlementAuditInformation settlementAuditInformation;
     private InvestigationOfTheAmount investigationOfTheAmount;
     private Json coms;
+    private String json;
 
     private String auditId;
     private String auditNumber;

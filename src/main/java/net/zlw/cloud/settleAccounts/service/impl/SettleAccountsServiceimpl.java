@@ -614,13 +614,19 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example.Criteria c1 = example1.createCriteria();
         c1.andEqualTo("baseProjectId", baseProject.getId());
         List<SettlementInfo> settlementInfos = settlementInfoMapper.selectByExample(example1);
-        for (SettlementInfo settlementInfo : settlementInfos) {
-            if (settlementInfo.getSumbitMoney() != null) {
-                baseAccountsVo.setSettlementInfo(settlementInfo);
-            } else {
-                baseAccountsVo.setLastSettlementInfo(settlementInfo);
+        if (settlementInfos.size()>0){
+            for (SettlementInfo settlementInfo : settlementInfos) {
+                if (settlementInfo.getSumbitMoney() != null) {
+                    baseAccountsVo.setSettlementInfo(settlementInfo);
+                } else {
+                    baseAccountsVo.setLastSettlementInfo(settlementInfo);
+                }
             }
+        }else {
+            SettlementInfo settlementInfo = new SettlementInfo();
+            baseAccountsVo.setSettlementInfo(settlementInfo);
         }
+
 
         Example example2 = new Example(LastSettlementReview.class);
         Example.Criteria c2 = example2.createCriteria();
@@ -655,6 +661,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 baseAccountsVo.setShowHidden("2");
             }
         }
+
 //        System.err.println(auditInfo.getAuditType());
         //消息站内通知
 //        MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
@@ -696,6 +703,39 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         //下家送审修改
         settlementAuditInformationDao.updateByPrimaryKeySelective(baseAccountsVo.getSettlementAuditInformation());
 
+
+        // 回显消息
+        String json = "[";
+        Example example1 = new Example(OtherInfo.class);
+        example1.createCriteria().andEqualTo("foreignKey",baseProject.getId())
+                                 .andEqualTo("status","0");
+        List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(example1);
+        for (int i = 0; i < otherInfos.size(); i++) {
+            json += "{" +
+                    "\"serialNumber\" : \""+otherInfos.get(i).getSerialNumber()+"\"," +
+                    "\"num\": \""+otherInfos.get(i).getNum()+"\","+
+                    "},";
+        }
+        json+="]";
+        baseAccountsVo.setJson(json);
+
+        String json1 = baseAccountsVo.getJson();
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        List<OtherInfo> otherInfos1 = JSONObject.parseArray(json1, OtherInfo.class);
+        if (otherInfos.size() > 0){
+            for (OtherInfo thisInfo : otherInfos1) {
+                OtherInfo otherInfo1 = new OtherInfo();
+                otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                otherInfo1.setForeignKey(baseProject.getId());
+                otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                otherInfo1.setNum(thisInfo.getNum());
+                otherInfo1.setCreateTime(data);
+                otherInfo1.setStatus("0");
+                otherInfo1.setFoundId(loginUser.getId());
+                otherInfo1.setFounderCompany(loginUser.getCompanyId());
+                otherInfoMapper.updateByPrimaryKeySelective(otherInfo1);
+            }
+        }
         //保存
         if (baseAccountsVo.getAuditNumber() == null || baseAccountsVo.getAuditNumber().equals("0")) {
             return;
