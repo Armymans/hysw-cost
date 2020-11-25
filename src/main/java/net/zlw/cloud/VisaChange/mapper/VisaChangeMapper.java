@@ -165,7 +165,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "     LEFT JOIN budgeting bt on v.base_project_id = bt.base_project_id    " +
             "     LEFT JOIN visa_apply_change_information vv on vv.base_project_id  = v.base_project_id   " +
             "     left join visa_change_information v2 on b.id = v2.base_project_id   " +
-            "     LEFT JOIN audit_info a on a.base_project_id = IFNULL(v.id,v2.id)  " +
+            "     LEFT JOIN audit_info a on a.base_project_id = IFNULL(v2.id,v.id)  " +
             "     where    " +
             "     v.up_and_down_mark = '0' and   " +
             "     v2.up_and_down_mark = '1' and   " +
