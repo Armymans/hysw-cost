@@ -100,7 +100,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Override
     public List<VisaChangeListVo> findAllVisa(PageVo pageVo) {
-        List<VisaChangeListVo> list = visaChangeMapper.findAllVisa(pageVo);
+//        List<VisaChangeListVo> list = visaChangeMapper.findAllVisa(pageVo);
 
         //待审核
         if (pageVo.getStatus().equals("1")){
@@ -476,8 +476,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Override
     public void batchReview(BatchReviewVo batchReviewVo, UserInfo loginUser) {
-        String id = loginUser.getId();
-        String username = loginUser.getUsername();
+        String id = "user320";
+        String username = "造价业务员3";
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             Example example = new Example(VisaChange.class);
@@ -518,12 +518,20 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setBaseProjectId(visaChange.getId());
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("1");
-                    Example example2 = new Example(MkyUser.class);
-                    Example.Criteria c3 = example2.createCriteria();
-                    c3.andEqualTo("roleId", "role7615");
-                    c3.andEqualTo("delFlag", "0");
-                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
-                    auditInfo1.setAuditorId(mkyUser.getId());
+//                    Example example2 = new Example(MkyUser.class);
+//                    Example.Criteria c3 = example2.createCriteria();
+//                    c3.andEqualTo("roleId", "role7615");
+//                    c3.andEqualTo("delFlag", "0");
+//                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
+                    Example example2 = new Example(MemberManage.class);
+                    Example.Criteria criteria = example2.createCriteria();
+                    criteria.andEqualTo("id",visaChange.getCreatorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example2);
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjh);
+                    }else if(memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjh);
+                    }
                     auditInfo1.setFounderId(id);
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
@@ -534,12 +542,21 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setBaseProjectId(visaChange.getId());
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("4");
-                    Example example2 = new Example(MkyUser.class);
-                    Example.Criteria c3 = example2.createCriteria();
-                    c3.andEqualTo("roleId", "role7614");
-                    c3.andEqualTo("delFlag", "0");
-                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
-                    auditInfo1.setAuditorId(mkyUser.getId());
+//                    Example example2 = new Example(MkyUser.class);
+//                    Example.Criteria c3 = example2.createCriteria();
+//                    c3.andEqualTo("roleId", "role7614");
+//                    c3.andEqualTo("delFlag", "0");
+//                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
+//                    auditInfo1.setAuditorId(mkyUser.getId());
+                    Example example2 = new Example(MemberManage.class);
+                    Example.Criteria criteria = example2.createCriteria();
+                    criteria.andEqualTo("id",visaChange.getCreatorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example2);
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjm);
+                    }else if(memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjm);
+                    }
                     auditInfo1.setFounderId(id);
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
@@ -554,12 +571,21 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setBaseProjectId(visaChange.getId());
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("3");
-                    Example example2 = new Example(MkyUser.class);
-                    Example.Criteria c3 = example2.createCriteria();
-                    c3.andEqualTo("roleId", "role7615");
-                    c3.andEqualTo("delFlag", "0");
-                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
-                    auditInfo1.setAuditorId(mkyUser.getId());
+//                    Example example2 = new Example(MkyUser.class);
+//                    Example.Criteria c3 = example2.createCriteria();
+//                    c3.andEqualTo("roleId", "role7615");
+//                    c3.andEqualTo("delFlag", "0");
+//                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
+//                    auditInfo1.setAuditorId(mkyUser.getId());
+                    Example example2 = new Example(MemberManage.class);
+                    Example.Criteria criteria = example2.createCriteria();
+                    criteria.andEqualTo("id",visaChange.getCreatorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example2);
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjh);
+                    }else if(memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjh);
+                    }
                     auditInfo1.setFounderId(id);
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
@@ -570,12 +596,21 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setBaseProjectId(visaChange.getId());
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("5");
-                    Example example2 = new Example(MkyUser.class);
-                    Example.Criteria c3 = example2.createCriteria();
-                    c3.andEqualTo("roleId", "role7614");
-                    c3.andEqualTo("delFlag", "0");
-                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
-                    auditInfo1.setAuditorId(mkyUser.getId());
+//                    Example example2 = new Example(MkyUser.class);
+//                    Example.Criteria c3 = example2.createCriteria();
+//                    c3.andEqualTo("roleId", "role7614");
+//                    c3.andEqualTo("delFlag", "0");
+//                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
+//                    auditInfo1.setAuditorId(mkyUser.getId());
+                    Example example2 = new Example(MemberManage.class);
+                    Example.Criteria criteria = example2.createCriteria();
+                    criteria.andEqualTo("id",visaChange.getCreatorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example2);
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjm);
+                    }else if(memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjm);
+                    }
                     auditInfo1.setFounderId(id);
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
@@ -585,34 +620,34 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     baseProject.setVisaStatus("5");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 }
-                //审核通过发送消息
-                MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-                //项目名称
-                String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getBaseProjectId()).getProjectName();
-                MessageVo messageVo = new MessageVo();
-                messageVo.setId("A14");
-                messageVo.setUserId(auditInfo.getAuditorId());
-                messageVo.setTitle("您有一个签证变更项目已通过！");
-                messageVo.setDetails(memberManage.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
-                messageService.sendOrClose(messageVo);
+//                //审核通过发送消息
+//                MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+//                //项目名称
+//                String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getBaseProjectId()).getProjectName();
+//                MessageVo messageVo = new MessageVo();
+//                messageVo.setId("A14");
+//                messageVo.setUserId(auditInfo.getAuditorId());
+//                messageVo.setTitle("您有一个签证变更项目已通过！");
+//                messageVo.setDetails(memberManage.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
+//                messageService.sendOrClose(messageVo);
             } else if (batchReviewVo.getAuditResult().equals("2")) {
                 auditInfo.setAuditResult("2");
                 auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                 auditInfo.setAuditTime(sim.format(new Date()));
                 auditInfo.setUpdateTime(sim.format(new Date()));
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                //项目名称
-                String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getBaseProjectId()).getProjectName();
-                //成员名称
-                String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
-                //如果不通过发送消息
-                MessageVo messageVo1 = new MessageVo();
-                messageVo1.setId("A14");
-                messageVo1.setUserId(auditInfo.getAuditorId());
-                messageVo1.setTitle("您有一个签证变更项目未通过！");
-                messageVo1.setDetails(username + "您好！【" + name + "】已将【" + projectName + "】的签证/变更项目未通过，请查看详情！");
-                //调用消息Service
-                messageService.sendOrClose(messageVo1);
+//                //项目名称
+//                String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getBaseProjectId()).getProjectName();
+//                //成员名称
+//                String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
+//                //如果不通过发送消息
+//                MessageVo messageVo1 = new MessageVo();
+//                messageVo1.setId("A14");
+//                messageVo1.setUserId(auditInfo.getAuditorId());
+//                messageVo1.setTitle("您有一个签证变更项目未通过！");
+//                messageVo1.setDetails(username + "您好！【" + name + "】已将【" + projectName + "】的签证/变更项目未通过，请查看详情！");
+//                //调用消息Service
+//                messageService.sendOrClose(messageVo1);
             }
         }
     }
@@ -826,7 +861,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 //                visaChangeDown.setCumulativeChangeAmount(visaChangeDown.getAmountVisaChange());
             visaChangeMapper.insertSelective(visaChangeDown);
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
-//            baseProject1.setVisaStatus("2");
+            baseProject1.setVisaStatus("2");
             if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")) {
                 baseProject1.setVisaStatus("1");
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());

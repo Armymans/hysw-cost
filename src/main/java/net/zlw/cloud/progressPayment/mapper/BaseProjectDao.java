@@ -495,8 +495,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "si.state = '0' and " +
             "l.del_flag = '0' and " +
             "s.del_flag = '0' and " +
-            "a.audit_result = '0' and " +
-            " ( IFNULL(s.founder_id,l.founder_id) = #{userId})" +
+            "a.audit_result = '0'" +
             "group by IFNULL(s.id,l.id)" +
             "ORDER BY si.create_time DESC   ")
     List<AccountsVo> findAllAccountsCheckLeader(PageVo pageVo);
@@ -788,7 +787,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "b.del_flag = '0' and  " +
             "si.state = '0' and " +
             "l.del_flag = '0' and " +
-            "s.del_flag = '0' " +
+            "s.del_flag = '0' and " +
+            "( IFNULL(s.founder_id,l.founder_id) = #{userId} )" +
             "group by IFNULL(s.id,l.id)" +
             "ORDER BY si.create_time DESC  ")
     List<AccountsVo> findAllAccountsSuccess(PageVo pageVo);
