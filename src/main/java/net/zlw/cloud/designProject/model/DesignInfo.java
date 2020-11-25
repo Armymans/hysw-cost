@@ -175,4 +175,7 @@ public class DesignInfo{
 
     @Transient
     private String ascriptionFlag; //归属标识
+
+    @Transient
+    private String desChangeFlag; //是否设计变更 0:是 1:否
 }

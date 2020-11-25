@@ -285,6 +285,19 @@ public class ProjectService {
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             if(designInfos.size()>0){
                 for (DesignInfo designInfo : designInfos) {
+                    //判断当前项目是否为设计变更项目 如果是返回一个状态
+                    Example changeExample = new Example(AuditInfo.class);
+                    changeExample.createCriteria()
+                            .andEqualTo("baseProjectId",designInfo.getId())
+                            .andEqualTo("auditResult","2")
+                            .andEqualTo("changeFlag","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(changeExample);
+                    if(auditInfo!=null){
+                        //如果是变更项目返回一个状态
+                        designInfo.setDesChangeFlag("1");
+                    }else{
+                        designInfo.setDesChangeFlag("0");
+                    }
                     //展示设计变更时间 如果为空展示 /
                     if(designInfo.getDesignChangeTime()==null || designInfo.getDesignChangeTime().equals("")){
                         designInfo.setDesignChangeTime("/");
