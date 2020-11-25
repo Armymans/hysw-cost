@@ -272,7 +272,10 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     @Override
     public void addVisa(VisaChangeVo visaChangeVo, UserInfo loginUser) {
         String id = loginUser.getId();
+//        String id = "user309";
         String username = loginUser.getUsername();
+//        String username = "造价业务员3";
+
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
         VisaApplyChangeInformation visaApplyChangeInformationUp = null;
         VisaApplyChangeInformation visaApplyChangeInformationDown = null;
@@ -307,11 +310,14 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
 
                 visaChangeUp = visaChangeVo.getVisaChangeUp();
-            if (visaChangeUp.getAmountVisaChange().equals("")){
+            if ("".equals(visaChangeUp.getAmountVisaChange())){
                 visaChangeUp.setAmountVisaChange(null);
             }
-            if (visaChangeUp.getContractAmount().equals("")){
+            if ("".equals(visaChangeUp.getContractAmount())){
                 visaChangeUp.setContractAmount(null);
+            }
+            if ("".equals(visaChangeUp.getOutsourcingAmount())){
+                visaChangeUp.setOutsourcingAmount(null);
             }
                 visaChangeUp.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeUp.setCreateTime(sim.format(new Date()));
@@ -332,10 +338,12 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeMapper.insertSelective(visaChangeUp);
 
                 visaChangeDown = visaChangeVo.getVisaChangeDown();
-            if (visaChangeDown.getAmountVisaChange().equals("")){
+
+
+            if ("".equals(visaChangeDown.getAmountVisaChange())){
                 visaChangeDown.setAmountVisaChange(null);
             }
-            if (visaChangeDown.getContractAmount().equals("")){
+            if ("".equals(visaChangeDown.getContractAmount())){
                 visaChangeDown.setContractAmount(null);
             }
                 visaChangeDown.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -354,11 +362,13 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     }
                     visaChangeDown.setCumulativeChangeAmount(visaChangeDown.getAmountVisaChange());
                 }
+                if (visaChangeDown.getOutsourcingAmount().equals("")){
+                    visaChangeDown.setOutsourcingAmount(null);
+                }
                 visaChangeMapper.insertSelective(visaChangeDown);
 
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
             baseProject1.setVisaStatus("2");
-
 
             if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")) {
                 baseProject1.setVisaStatus("1");
@@ -393,7 +403,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaApplyChangeInformationMapper.insertSelective(visaApplyChangeInformationDown);
             }
 
-            if (visaChangeVo.getVisaChangeDown().getAmountVisaChange() != null && !visaChangeVo.getVisaChangeDown().getAmountVisaChange().equals("")) {
                 visaChangeDown = visaChangeVo.getVisaChangeDown();
                 visaChangeDown.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeDown.setCreateTime(sim.format(new Date()));
@@ -411,8 +420,17 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     }
                     visaChangeDown.setCumulativeChangeAmount(visaChangeDown.getAmountVisaChange());
                 }
-                visaChangeMapper.insertSelective(visaChangeDown);
+            if ("".equals(visaChangeDown.getAmountVisaChange())){
+                visaChangeDown.setAmountVisaChange(null);
             }
+            if ("".equals(visaChangeDown.getContractAmount())){
+                visaChangeDown.setContractAmount(null);
+            }
+            if ("".equals(visaChangeDown.getOutsourcingAmount())){
+                visaChangeDown.setOutsourcingAmount(null);
+            }
+                visaChangeMapper.insertSelective(visaChangeDown);
+
 
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
             baseProject1.setVisaStatus("2");
@@ -861,12 +879,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
             BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
                 VisaChange visaChangeUp = visaChangeVo.getVisaChangeUp();
-                if (visaChangeUp.getAmountVisaChange().equals("")){
-                    visaChangeUp.setAmountVisaChange(null);
-                }
-            if (visaChangeUp.getContractAmount().equals("")){
+            if ("".equals(visaChangeUp.getAmountVisaChange())){
+                visaChangeUp.setAmountVisaChange(null);
+            }
+            if ("".equals(visaChangeUp.getContractAmount())){
                 visaChangeUp.setContractAmount(null);
-                }
+            }
+            if ("".equals(visaChangeUp.getOutsourcingAmount())){
+                visaChangeUp.setOutsourcingAmount(null);
+            }
                 visaChangeUp.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeUp.setCreateTime(sim.format(new Date()));
                 visaChangeUp.setCreatorId(id);
@@ -884,11 +905,14 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeMapper.insertSelective(visaChangeUp);
 
                 VisaChange visaChangeDown = visaChangeVo.getVisaChangeDown();
-            if (visaChangeDown.getAmountVisaChange().equals("")){
+            if ("".equals(visaChangeDown.getAmountVisaChange())){
                 visaChangeDown.setAmountVisaChange(null);
             }
-            if (visaChangeDown.getContractAmount().equals("")){
+            if ("".equals(visaChangeDown.getContractAmount())){
                 visaChangeDown.setContractAmount(null);
+            }
+            if ("".equals(visaChangeDown.getOutsourcingAmount())){
+                visaChangeDown.setOutsourcingAmount(null);
             }
                 visaChangeDown.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeDown.setCreateTime(sim.format(new Date()));
@@ -963,6 +987,16 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             c2.andEqualTo("upAndDownMark", "0");
             VisaChange visaChange = visaChangeMapper.selectOneByExample(example2);
             visaChangeUp.setId(visaChange.getId());
+
+            if ("".equals(visaChangeUp.getAmountVisaChange())){
+                visaChangeUp.setAmountVisaChange(null);
+            }
+            if ("".equals(visaChangeUp.getContractAmount())){
+                visaChangeUp.setContractAmount(null);
+            }
+            if ("".equals(visaChangeUp.getOutsourcingAmount())){
+                visaChangeUp.setOutsourcingAmount(null);
+            }
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeUp);
 
 
@@ -974,6 +1008,16 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             c3.andEqualTo("upAndDownMark", "1");
             VisaChange visaChange2 = visaChangeMapper.selectOneByExample(example3);
             visaChangeDown.setId(visaChange2.getId());
+
+            if ("".equals(visaChangeDown.getAmountVisaChange())){
+                visaChangeDown.setAmountVisaChange(null);
+            }
+            if ("".equals(visaChangeDown.getContractAmount())){
+                visaChangeDown.setContractAmount(null);
+            }
+            if ("".equals(visaChangeDown.getOutsourcingAmount())){
+                visaChangeDown.setOutsourcingAmount(null);
+            }
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeDown);
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
 //            baseProject1.setVisaStatus("2");
@@ -1001,12 +1045,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             baseProjectDao.updateByPrimaryKeySelective(baseProject1);
             //普通编辑
         } else if (visaChangeVo.getVisaNum() != null && visaChangeVo.getVisaNum().equals("3")) {
-            System.err.println(visaChangeVo);
-            System.err.println(visaChangeVo);
-            System.err.println(visaChangeVo);
-            System.err.println(visaChangeVo);
-            System.err.println(visaChangeVo);
-            System.err.println(visaChangeVo);
+
 
 
             VisaApplyChangeInformation visaApplyChangeInformationUp = visaChangeVo.getVisaApplyChangeInformationUp();
@@ -1038,6 +1077,16 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             c2.andEqualTo("upAndDownMark", "0");
             VisaChange visaChange = visaChangeMapper.selectOneByExample(example2);
             visaChangeUp.setId(visaChange.getId());
+
+            if ("".equals(visaChangeUp.getAmountVisaChange())){
+                visaChangeUp.setAmountVisaChange(null);
+            }
+            if ("".equals(visaChangeUp.getContractAmount())){
+                visaChangeUp.setContractAmount(null);
+            }
+            if ("".equals(visaChangeUp.getOutsourcingAmount())){
+                visaChangeUp.setOutsourcingAmount(null);
+            }
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeUp);
 
 
@@ -1049,6 +1098,17 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             c3.andEqualTo("upAndDownMark", "1");
             VisaChange visaChange2 = visaChangeMapper.selectOneByExample(example3);
             visaChangeDown.setId(visaChange2.getId());
+
+            if ("".equals(visaChangeDown.getAmountVisaChange())){
+                visaChangeDown.setAmountVisaChange(null);
+            }
+            if ("".equals(visaChangeDown.getContractAmount())){
+                visaChangeDown.setContractAmount(null);
+            }
+            if ("".equals(visaChangeDown.getOutsourcingAmount())){
+                visaChangeDown.setOutsourcingAmount(null);
+            }
+
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeDown);
 
 
