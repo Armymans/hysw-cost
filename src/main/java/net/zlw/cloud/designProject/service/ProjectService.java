@@ -1421,17 +1421,19 @@ public class ProjectService {
             fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
         }
 
-        MessageVo messageVo = new MessageVo();
-        String id = projectVo.getBaseProject().getReviewerId();
-        MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
-        //审核人名字
-        String name = memberManage.getMemberName();
-        messageVo.setId("A03");
+        if(projectVo.getBaseProject().getReviewerId()!=null){
+            MessageVo messageVo = new MessageVo();
+            String id = projectVo.getBaseProject().getReviewerId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
+            //审核人名字
+            String name = memberManage.getMemberName();
+            messageVo.setId("A03");
             messageVo.setUserId(loginUser.getId());
-        messageVo.setTitle("您有一个设计项目待审批！");
-        messageVo.setDetails(name+"您好！【"+loginUser.getUsername()+"】已将【所选项目名称】的设计项目提交给您，请审批！");
-        //调用消息Service
-        messageService.sendOrClose(messageVo);
+            messageVo.setTitle("您有一个设计项目待审批！");
+            messageVo.setDetails(name+"您好！【"+loginUser.getUsername()+"】已将【所选项目名称】的设计项目提交给您，请审批！");
+            //调用消息Service
+            messageService.sendOrClose(messageVo);
+        }
     }
 
     public BaseProject BaseProjectByid(String id){
