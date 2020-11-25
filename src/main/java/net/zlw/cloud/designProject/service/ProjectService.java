@@ -1736,7 +1736,7 @@ public class ProjectService {
         Integer count = 0;
         for (CollectionMoney collectionMony : collectionMonies) {
             for (String money : split) {
-                collectionMony.setId(count+1);
+                collectionMony.setId("第"+count+1+"次收款");
                 collectionMony.setMoney(money);
             }
         }
@@ -1757,7 +1757,7 @@ public class ProjectService {
         Integer count = 0;
         for (CollectionMoney collectionMony : collectionMonies) {
             for (String money : split) {
-                collectionMony.setId(count+1);
+                collectionMony.setId("第"+count+1+"次收款");
                 collectionMony.setMoney(money);
             }
         }
