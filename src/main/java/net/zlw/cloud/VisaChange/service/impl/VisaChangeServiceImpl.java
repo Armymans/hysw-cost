@@ -300,6 +300,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeUp.setCreateTime(sim.format(new Date()));
                 visaChangeUp.setCreatorId(id);
                 visaChangeUp.setState("0");
+                visaChangeUp.setChangeNum(1);
+                visaChangeUp.setCumulativeChangeAmount(visaChangeVo.getVisaChangeUp().getAmountVisaChange());
                 visaChangeUp.setBaseProjectId(visaChangeVo.getBaseId());
 //                visaChangeUp.setApplyChangeInfoId(visaApplyChangeInformationUp.getId());
                 visaChangeUp.setUpAndDownMark("0");
@@ -319,6 +321,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeDown.setCreateTime(sim.format(new Date()));
                 visaChangeDown.setCreatorId(id);
                 visaChangeDown.setState("0");
+                visaChangeDown.setChangeNum(1);
+                visaChangeDown.setCumulativeChangeAmount(visaChangeVo.getVisaChangeDown().getAmountVisaChange());
                 visaChangeDown.setBaseProjectId(visaChangeVo.getBaseId());
 //                visaChangeDown.setApplyChangeInfoId(visaApplyChangeInformationDown.getId());
                 visaChangeDown.setUpAndDownMark("1");
@@ -375,6 +379,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeDown.setCreatorId(id);
                 visaChangeDown.setState("0");
                 visaChangeDown.setBaseProjectId(visaChangeVo.getBaseId());
+                visaChangeDown.setChangeNum(1);
+                visaChangeDown.setCumulativeChangeAmount(visaChangeVo.getVisaChangeDown().getAmountVisaChange());
                 visaChangeDown.setApplyChangeInfoId(visaApplyChangeInformationDown.getId());
                 visaChangeDown.setUpAndDownMark("1");
                 if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")) {
@@ -818,11 +824,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             BigDecimal bigDecimal1 = new BigDecimal(0);
             for (VisaChange visaChange : visaChanges) {
                 if (visaChange.getUpAndDownMark().equals("0")) {
-                    upNum = visaChange.getChangeNum();
-                    bigDecimal = visaChange.getCumulativeChangeAmount();
+                    if (visaChange.getChangeNum()!=null){
+                        upNum = visaChange.getChangeNum();
+                        bigDecimal = visaChange.getCumulativeChangeAmount();
+                    }
                 } else if (visaChange.getUpAndDownMark().equals("1")) {
-                    downNum = visaChange.getChangeNum();
-                    bigDecimal1 = visaChange.getCumulativeChangeAmount();
+                    if (visaChange.getChangeNum()!=null){
+                        downNum = visaChange.getChangeNum();
+                        bigDecimal1 = visaChange.getCumulativeChangeAmount();
+                    }
                 }
                 visaChange.setState("2");
                 visaChangeMapper.updateByPrimaryKeySelective(visaChange);
