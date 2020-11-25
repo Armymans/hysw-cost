@@ -730,8 +730,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
-        String id = "user320";
-        String username = "造价业务员3";
+        String id = loginUser.getId();
+        String username = loginUser.getUsername();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             String audit = "";

@@ -1,6 +1,8 @@
 package net.zlw.cloud.VisaChange.controller;
 
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.VisaChange.model.vo.*;
@@ -63,96 +65,15 @@ public class VisaChangeController extends BaseController {
     @RequestMapping(value = "/visachange/findAllVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllVisa(PageVo pageVo){
         String id = getLoginUser().getId();
-//        String id = "user310";
+//        String id = "user309";
+        pageVo.setUserId(id);
         //TODO id测试写死
+        PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
         List<VisaChangeListVo> list =  vcisService.findAllVisa(pageVo);
-        if (pageVo.getStatus()!=null && pageVo.getStatus().equals("1")){
-            for (int i = 0; i < list.size(); i++) {
-                if (!list.get(i).getStatus().equals("待审核")){
-                    list.remove(list.get(i));
-                    i--;
-                    continue;
-                }
-                if (id.equals(wjsjh) || id.equals(wjsjm) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(whsjh) || id.equals(whsjm) || id.equals(whzjh) || id.equals(whzjm) ){
-
-                }else{
-
-                    if (!list.get(i).getFounderId().equals(id)){
-                        list.remove(list.get(i));
-                        i--;
-                    }
-                }
-            }
-        }
-        if (pageVo.getStatus()!=null && pageVo.getStatus().equals("2")){
-            for (int i = 0; i < list.size(); i++) {
-                if (!list.get(i).getStatus().equals("处理中") || !list.get(i).getFounderId().equals(id)){
-                    list.remove(list.get(i));
-                    i--;
-                }
-
-            }
-        }
-        if (pageVo.getStatus()!=null && pageVo.getStatus().equals("3")){
-            for (int i = 0; i < list.size(); i++) {
-                if (!list.get(i).getStatus().equals("未通过") || !list.get(i).getFounderId().equals(id)){
-                    list.remove(list.get(i));
-                    i--;
-                }
-
-            }
-        }
-        if (pageVo.getStatus()!=null && pageVo.getStatus().equals("4")){
-            for (int i = 0; i < list.size(); i++) {
-                if (!list.get(i).getStatus().equals("待确认") || !list.get(i).getFounderId().equals(id)){
-                    list.remove(list.get(i));
-                    i--;
-                }
-
-            }
-        }
-        if (pageVo.getStatus()!=null && pageVo.getStatus().equals("5")){
-            for (int i = 0; i < list.size(); i++) {
-                if (!list.get(i).getStatus().equals("进行中")){
-                    list.remove(list.get(i));
-                    i--;
-                }
-            }
-        }
-        if (pageVo.getStatus()!=null && pageVo.getStatus().equals("6")){
-            for (int i = 0; i < list.size(); i++) {
-                if (!list.get(i).getStatus().equals("已完成")){
-                    list.remove(list.get(i));
-                    i--;
-                }
-            }
-        }
-        if (pageVo.getStatus()!=null && pageVo.getStatus().equals("0")){
-            for (int i = 0; i < list.size(); i++) {
-                if (!list.get(i).getFounderId().equals(id)) {
-                    list.remove(list.get(i));
-                    i--;
-                }
-            }
-        }
-        for (VisaChangeListVo visaChangeListVo : list) {
-            String baseProjectId = visaChangeListVo.getBaseProjectId();
-            Map<String, Object> allchangeStatistics = findAllchangeStatistics(baseProjectId);
-            VisaReturnStatistic data = (VisaReturnStatistic) allchangeStatistics.get("data");
-            if (data.getTotalVisaChangeUpAmount()==null){
-                visaChangeListVo.setAmountVisaChangeAddShang("0");
-            }else{
-                visaChangeListVo.setAmountVisaChangeAddShang(data.getTotalVisaChangeUpAmount()+"");
-            }
-            if (data.getTotalVisaChangeDownAmount()==null){
-                visaChangeListVo.setAmountVisaChangeAddXia("0");
-            }else{
-                visaChangeListVo.setAmountVisaChangeAddXia(data.getTotalVisaChangeDownAmount()+"");
-            }
-        }
+        PageInfo<VisaChangeListVo> visaChangeListVoPageInfo = new PageInfo<>(list);
 
 
-        return RestUtil.success(list);
+        return RestUtil.page(visaChangeListVoPageInfo);
     }
 
     @RequestMapping(value = "/visachange/selectVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
