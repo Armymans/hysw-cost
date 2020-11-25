@@ -1293,14 +1293,14 @@ public class ProjectService {
 
         //查询当前设计人 是否存在
         String designer = projectVo.getDesignInfo().getDesigner();
-        Example example = new Example(DesignInfo.class);
+        Example example = new Example(MemberManage.class);
         //去空格
-        example.createCriteria().andEqualTo("designer",designer.replace(" ",""));
+        example.createCriteria().andEqualTo("memberName",designer.replace(" ",""));
         List<MemberManage> memberManages = memberManageDao.selectByExample(example);
         //如果出现重名 则只取第一个人
-        MemberManage designerFirst = memberManages.get(0);
-        if(designerFirst!=null){
-            projectVo.getDesignInfo().setDesigner(designerFirst.getId());
+        MemberManage memberManagesFirst = memberManages.get(0);
+        if(memberManagesFirst!=null){
+            projectVo.getDesignInfo().setDesigner(memberManagesFirst.getId());
         }else{
             throw new RuntimeException("设计人不存在,请重新填写");
         }
@@ -1545,9 +1545,9 @@ public class ProjectService {
 
         //查询当前设计人 是否存在
         String designer = projectVo.getDesignInfo().getDesigner();
-        Example designerExample = new Example(DesignInfo.class);
+        Example designerExample = new Example(MemberManage.class);
         //去空格
-        designerExample.createCriteria().andEqualTo("designer",designer.replace(" ",""));
+        designerExample.createCriteria().andEqualTo("memberName",designer.replace(" ",""));
         List<MemberManage> memberManages = memberManageDao.selectByExample(designerExample);
         //如果出现重名 则只取第一个人
         MemberManage designerFirst = memberManages.get(0);
