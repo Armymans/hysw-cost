@@ -698,7 +698,12 @@ public class ProjectController extends BaseController {
         //设计变更信息
         DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
         if(designChangeInfo!=null){
-            projectVo.setDesignChangeInfo(designChangeInfo);
+            //如果当前状态为已完成 则不展示数据
+            if("4".equals(baseProject.getDesginStatus())){
+                projectVo.setDesignChangeInfo(new DesignChangeInfo());
+            }else{
+                projectVo.setDesignChangeInfo(designChangeInfo);
+            }
         }else{
             projectVo.setDesignChangeInfo(new DesignChangeInfo());
         }
@@ -706,10 +711,11 @@ public class ProjectController extends BaseController {
         //设计变更累计
         List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(id);
         if(designChangeInfos.size()>0){
-             projectVo.setDesignChangeCountFlag("0");  //说明之前进行过审计变更
+            projectVo.setDesignChangeCountFlag("0");  //说明之前进行过设计变更
         }else{
-             projectVo.setDesignChangeCountFlag("1");
+            projectVo.setDesignChangeCountFlag("1");
         }
+
 //        //审核信息回显 根据当前用户判断
 //        AuditInfo auditInfo = projectService.auditInfoByYes(getLoginUser(),designInfo.getId());
 //        if(auditInfo!=null){

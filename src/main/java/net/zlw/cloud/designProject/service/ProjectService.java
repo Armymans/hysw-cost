@@ -1434,6 +1434,11 @@ public class ProjectService {
         return designInfoMapper.selectByPrimaryKey(id);
     }
 
+    /**
+     * 查询设计变更次数
+     * @param id
+     * @return
+     */
     public List<DesignChangeInfo> designChangeInfosByid(String id){
         Example example = new Example(DesignChangeInfo.class);
         example.setOrderByClause("design_change_time desc");
