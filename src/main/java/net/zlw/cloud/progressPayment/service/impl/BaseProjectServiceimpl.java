@@ -806,9 +806,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         BaseProject baseProject = new BaseProject();
         if (budgeting != null) {
             String baseProjectId = budgeting.getBaseProjectId();
-            baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
+            baseProject = baseProjectDao.findTrackBaseProjectId(baseProjectId);
         } else {
-            baseProject = baseProjectDao.selectByPrimaryKey(id);
+            baseProject = baseProjectDao.findTrackBaseProjectId(id);
         }
         if (baseProject != null) {
             ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(baseProject.getConstructionUnit());

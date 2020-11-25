@@ -1019,14 +1019,22 @@ public class BudgetingServiceImpl implements BudgetingService {
     //预算新增所选项目回显附件
     @Override
     public List<FileInfo> selectById(String id) {
-
         Example example = new Example(DesignInfo.class);
         example.createCriteria().andEqualTo("baseProjectId",id);
         DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
         Example example1 = new Example(FileInfo.class);
         example1.createCriteria().andEqualTo("platCode",designInfo.getId())
-                                 .andEqualTo("type","sjxmxjkhtgtz"); //设计图纸
+                                 .andEqualTo("type","sjxmxjsjxx"); //设计图纸
         List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
+        //根据用户id查出用户名称
+        if (fileInfos != null){
+            for (FileInfo thisFile : fileInfos) {
+                Example example2 = new Example(MemberManage.class);
+                example2.createCriteria().andEqualTo("userId",thisFile.getUserId());
+                MemberManage memberManage = memberManageDao.selectOneByExample(example2);
+                thisFile.setUserName(memberManage.getMemberName());
+            }
+        }
         return fileInfos;
     }
 
