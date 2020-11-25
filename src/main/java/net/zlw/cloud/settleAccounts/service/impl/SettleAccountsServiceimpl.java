@@ -1,6 +1,7 @@
 package net.zlw.cloud.settleAccounts.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.model.Budgeting;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import springfox.documentation.spring.web.json.Json;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -391,19 +393,23 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //其他信息表
-        // TODO 前台json未转换待改
-      /*  List<OtherInfo> otherInfos = baseAccountsVo.getComs();
+        Json coms = baseAccountsVo.getComs();
+        String json = coms.value();
+        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
         if (otherInfos.size() > 0){
             for (OtherInfo thisInfo : otherInfos) {
-                OtherInfo otherInfo = new OtherInfo();
-                otherInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                otherInfo.setSerialNumber(thisInfo.getSerialNumber());
-                otherInfo.setNum(thisInfo.getNum());
-                otherInfo.setForeignKey(baseProject.getId());
-                otherInfo.setCreateTime(data);
-                otherInfoMapper.insertSelective(otherInfo);
+                OtherInfo otherInfo1 = new OtherInfo();
+                otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                otherInfo1.setForeignKey(baseProject.getId());
+                otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                otherInfo1.setNum(thisInfo.getNum());
+                otherInfo1.setCreateTime(data);
+                otherInfo1.setStatus("0");
+                otherInfo1.setFoundId(loginUser.getId());
+                otherInfo1.setFounderCompany(loginUser.getCompanyId());
+                otherInfoMapper.insertSelective(otherInfo1);
             }
-        }*/
+        }
         //添加上家送审
         System.out.println(baseAccountsVo);
         if (baseAccountsVo.getLastSettlementInfo().getSumbitName() != null && ! baseAccountsVo.getLastSettlementInfo().getSumbitName().equals("")){

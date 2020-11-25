@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.zlw.cloud.progressPayment.model.BaseProject;
-import net.zlw.cloud.settleAccounts.model.*;
-
-import java.util.List;
+import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
+import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
+import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
+import net.zlw.cloud.settleAccounts.model.SettlementInfo;
+import springfox.documentation.spring.web.json.Json;
 
 @Data
 @NoArgsConstructor
@@ -20,7 +22,7 @@ public class BaseAccountsVo {
     private LastSettlementReview lastSettlementReview;
     private SettlementAuditInformation settlementAuditInformation;
     private InvestigationOfTheAmount investigationOfTheAmount;
-    private List<OtherInfo> coms;
+    private Json coms;
 
     private String auditId;
     private String auditNumber;
