@@ -1042,75 +1042,114 @@ public class ProjectSumController extends BaseController {
         List<OneCensus> oneCensuses = projectSumService.censusList2(costVo2);
         String censusList = "[{\"companyName\":\"市政管道\"," +
                 "\"imageAmmount\": [";
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList +=
-                    "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
-                            "\"truckAmmount\": \"" + oneCensus.getMunicipalPipeline()+"\"},";
+
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList +=
+                        "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                                "\"truckAmmount\": \"" + oneCensus.getMunicipalPipeline()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList +="{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"管网改造\"," +
                         "\"imageAmmount\": [" ;
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getNetworkReconstruction()+"\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getNetworkReconstruction()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList +="{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"新建小区\"," +
                         "\"imageAmmount\": [" ;
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList +=
-                    "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                            "\"truckAmmount\": \"" + oneCensus.getNewCommunity()+"\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList +=
+                        "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                                "\"truckAmmount\": \"" + oneCensus.getNewCommunity()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else {
+            censusList +="{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"二次供水改造项目\"," +
                         "\"imageAmmount\": [" ;
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList +=
-                    "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                            "\"truckAmmount\": \"" + oneCensus.getSecondaryWater()+"\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList +=
+                        "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                                "\"truckAmmount\": \"" + oneCensus.getSecondaryWater()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList +="{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"工商户\"," +
                         "\"imageAmmount\": [" ;
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getCommercialHouseholds()+"\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getCommercialHouseholds()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList +="{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"居民装接水\"," +
                         "\"imageAmmount\": [" ;
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getWaterResidents()+"\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getWaterResidents()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList +="{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\": \"行政事业\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getAdministration()+"\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getAdministration()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList +="{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
         censusList +=  "]}]";
+
         JSONArray json = JSON.parseArray(censusList);
         return RestUtil.showJsonSuccess(json);
     }
@@ -1133,6 +1172,7 @@ public class ProjectSumController extends BaseController {
 //        同比上月
         Integer lastmonth = projectSumService.censusList2lastMonthCount(costVo2);
         Integer monthRast = projectSumService.prjectCensusRast(month, lastmonth);
+
         map.put("monthRast",monthRast);
         map.put("yearRast",yearRast);
         map.put("year",year);
