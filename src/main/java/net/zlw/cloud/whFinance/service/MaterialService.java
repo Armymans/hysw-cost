@@ -1,12 +1,12 @@
 package net.zlw.cloud.whFinance.service;
 
 
-import javafx.scene.paint.Material;
 import net.zlw.cloud.whFinance.dao.MaterialDao;
 import net.zlw.cloud.whFinance.domain.Materie;
 import net.zlw.cloud.whFinance.domain.vo.MaterieVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -43,5 +43,32 @@ public class MaterialService {
             materialDao.insertSelective(materie);
         }
 
+    }
+
+    public List<Materie> selectAll(String key) {
+        Example example = new Example(Materie.class);
+        example.createCriteria().andLike("materialCode","%"+key+"%")
+                                .andLike("specificationsModels","%"+key+"%")
+                                .andEqualTo("status","0");
+        List<Materie> materieList = materialDao.selectByExample(example);
+        return materieList;
+    }
+
+    public void addMaterie(Materie materie) {
+        materialDao.insertSelective(materie);
+    }
+
+    public Materie findOneMaterie(String id) {
+        return materialDao.selectByPrimaryKey(id);
+    }
+
+    public void updateMaterie(Materie materie) {
+        materialDao.updateByPrimaryKeySelective(materie);
+    }
+
+    public void deleteMaterie(String id) {
+        Materie materie = materialDao.selectByPrimaryKey(id);
+        materie.setStatus("1");
+        materialDao.updateByPrimaryKeySelective(materie);
     }
 }
