@@ -138,10 +138,16 @@ public class VisaChangeController extends BaseController {
             if (visaChangeStatisticVo.getVisaChangeDownAmount()!=null){
                 downAmount = downAmount.add(visaChangeStatisticVo.getVisaChangeDownAmount());
             }
-            if (visaChangeStatisticVo.getVisaChangeUpProportionContract()!=null){
+            if (visaChangeStatisticVo.getVisaChangeUpProportionContract()!=null && !"".equals(visaChangeStatisticVo.getVisaChangeUpProportionContract())){
                 upPro+=Double.parseDouble(visaChangeStatisticVo.getVisaChangeUpProportionContract());
             }
-            if (visaChangeStatisticVo.getVisaChangeDownProportionContract()!=null){
+            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
+            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
+            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
+            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
+            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
+            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
+            if (visaChangeStatisticVo.getVisaChangeDownProportionContract()!=null && !"".equals(visaChangeStatisticVo.getVisaChangeDownProportionContract())){
                 downPro+=Double.parseDouble(visaChangeStatisticVo.getVisaChangeDownProportionContract());
             }
         }

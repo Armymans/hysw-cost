@@ -16,6 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+/**
+    * @Author sjf
+    * @Description // 芜湖物料
+    * @Date 18:41 2020/11/26
+    * @Param
+    * @return
+ **/
 @RestController
 public class MaterialController {
 

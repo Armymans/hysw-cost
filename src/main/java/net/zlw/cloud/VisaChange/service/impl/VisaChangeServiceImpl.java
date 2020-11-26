@@ -21,8 +21,10 @@ import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,6 +78,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Resource
     private MkyUserMapper mkyUserMapper;
+
+    @Resource
+    private FileInfoService fileInfoService;
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -161,7 +166,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
                     if (auditInfo == null && visaChangeListVo.getStatus().equals("处理中")){
                         visaChangeListVo.setShowUpdate("1");
-                    }else if(auditInfo != null && !visaChangeListVo.getStatus().equals("进行中")){
+                    }else if(auditInfo != null && visaChangeListVo.getStatus().equals("待确认")){
                         visaChangeListVo.setShowUpdate("2");
                     }else if(visaChangeListVo.getStatus().equals("进行中")){
                         visaChangeListVo.setShowUpdate("3");
@@ -276,6 +281,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         String username = loginUser.getUsername();
 //        String username = "造价业务员3";
 
+
+
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
         VisaApplyChangeInformation visaApplyChangeInformationUp = null;
         VisaApplyChangeInformation visaApplyChangeInformationDown = null;
@@ -330,9 +337,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeUp.setUpAndDownMark("0");
                 if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")) {
                     visaChangeUp.setChangeNum(1);
-                    if (visaChangeUp.getAmountVisaChange() == null) {
-                        visaChangeUp.setAmountVisaChange(new BigDecimal(0));
-                    }
                     visaChangeUp.setCumulativeChangeAmount(visaChangeUp.getAmountVisaChange());
                 }
                 visaChangeMapper.insertSelective(visaChangeUp);
@@ -357,9 +361,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeDown.setUpAndDownMark("1");
                 if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")) {
                     visaChangeDown.setChangeNum(1);
-                    if (visaChangeDown.getAmountVisaChange() == null) {
-                        visaChangeDown.setAmountVisaChange(new BigDecimal(0));
-                    }
                     visaChangeDown.setCumulativeChangeAmount(visaChangeDown.getAmountVisaChange());
                 }
                 if (visaChangeDown.getOutsourcingAmount().equals("")){
@@ -386,6 +387,22 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setStatus("0");
                 auditInfo.setCreateTime(sim.format(new Date()));
                 auditInfoDao.insertSelective(auditInfo);
+            }
+
+            //修改文件外键
+            Example example1 = new Example(FileInfo.class);
+            Example.Criteria c = example1.createCriteria();
+            c.andLike("type","qzbgxmxj%");
+            c.andEqualTo("status","0");
+            c.andEqualTo("platCode",loginUser.getId());
+            List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
+            for (FileInfo fileInfo : fileInfos) {
+                //修改文件外键
+                if (visaChangeVo.getVisaChangeUp().getId()!=null){
+                    fileInfoService.updateFileName2(fileInfo.getId(),visaChangeVo.getVisaChangeUp().getId());
+                }else if(visaChangeVo.getVisaChangeDown().getId()!=null){
+                    fileInfoService.updateFileName2(fileInfo.getId(),visaChangeVo.getVisaChangeDown().getId());
+                }
             }
             baseProjectDao.updateByPrimaryKeySelective(baseProject1);
 
@@ -415,9 +432,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeDown.setUpAndDownMark("1");
                 if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")) {
                     visaChangeDown.setChangeNum(1);
-                    if (visaChangeDown.getAmountVisaChange() == null) {
-                        visaChangeDown.setAmountVisaChange(new BigDecimal(0));
-                    }
                     visaChangeDown.setCumulativeChangeAmount(visaChangeDown.getAmountVisaChange());
                 }
             if ("".equals(visaChangeDown.getAmountVisaChange())){
@@ -450,6 +464,18 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setStatus("0");
                 auditInfo.setCreateTime(sim.format(new Date()));
                 auditInfoDao.insertSelective(auditInfo);
+            }
+            Example example1 = new Example(FileInfo.class);
+            Example.Criteria c = example1.createCriteria();
+            c.andLike("type","qzbgxmxj%");
+            c.andEqualTo("status","0");
+            c.andEqualTo("platCode",loginUser.getId());
+            List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
+            for (FileInfo fileInfo : fileInfos) {
+                //修改文件外键
+                 if(visaChangeVo.getVisaChangeDown().getId()!=null){
+                    fileInfoService.updateFileName2(fileInfo.getId(),visaChangeVo.getVisaChangeDown().getId());
+                }
             }
             baseProjectDao.updateByPrimaryKeySelective(baseProject1);
             //消息通知
@@ -828,8 +854,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Override
     public void updateVisa(VisaChangeVo visaChangeVo, UserInfo loginUser) {
-//        String id = loginUser.getId();
-        String id = "user309";
+        String id = loginUser.getId();
+//        String id = "user309";
         //进行中编辑
         if (visaChangeVo.getVisaNum() != null && visaChangeVo.getVisaNum().equals("1")) {
             VisaApplyChangeInformation visaApplyChangeInformationUp = visaChangeVo.getVisaApplyChangeInformationUp();
@@ -897,7 +923,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeUp.setUpAndDownMark("0");
                 visaChangeUp.setChangeNum(upNum + 1);
                 if (visaChangeUp.getAmountVisaChange() == null) {
-                    visaChangeUp.setAmountVisaChange(new BigDecimal(0));
+                    visaChangeUp.setAmountVisaChange(null);
                 }
                 visaChangeUp.setCumulativeChangeAmount(bigDecimal.add(visaChangeUp.getAmountVisaChange()));
 //                visaChangeUp.setCumulativeChangeAmount(visaChangeUp.getAmountVisaChange());
@@ -922,9 +948,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeDown.setApplyChangeInfoId(visaApplyChangeInformationDown.getId());
                 visaChangeDown.setUpAndDownMark("1");
                 visaChangeDown.setChangeNum(downNum + 1);
-                if (visaChangeDown.getAmountVisaChange() == null) {
-                    visaChangeDown.setAmountVisaChange(new BigDecimal(0));
-                }
                 visaChangeDown.setCumulativeChangeAmount(bigDecimal1.add(visaChangeDown.getAmountVisaChange()));
 //                visaChangeDown.setCumulativeChangeAmount(visaChangeDown.getAmountVisaChange());
                 visaChangeMapper.insertSelective(visaChangeDown);
