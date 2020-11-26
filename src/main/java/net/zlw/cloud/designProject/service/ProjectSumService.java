@@ -817,11 +817,7 @@ public class ProjectSumService {
 
     public Integer prjectCensusRast(Integer A,Integer B){
         //A今年(月) B上年(年)
-        //同比上月增长率=(本月-上月)/上月，同比上年增长率=(本年-上年)/上年
-        if(B==0){
-            return 100;
-        }
-        return (A-B)/B*100;
+        return A-B;
     }
 
     /**
