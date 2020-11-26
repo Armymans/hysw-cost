@@ -166,7 +166,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
                     if (auditInfo == null && visaChangeListVo.getStatus().equals("处理中")){
                         visaChangeListVo.setShowUpdate("1");
-                    }else if(auditInfo != null && !visaChangeListVo.getStatus().equals("进行中")){
+                    }else if(auditInfo != null && visaChangeListVo.getStatus().equals("待确认")){
                         visaChangeListVo.setShowUpdate("2");
                     }else if(visaChangeListVo.getStatus().equals("进行中")){
                         visaChangeListVo.setShowUpdate("3");
