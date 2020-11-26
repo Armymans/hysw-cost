@@ -103,107 +103,162 @@ public class MaintenanceProjectInformationSumController extends BaseController {
     @RequestMapping(value = "/maintenanceProjectInformationSum/statisticalFigure",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> statisticalFigure(String projectAddress,String startDate,String endDate){
         List<StatisticalFigureVo> allMaintenanceProjectInformation = maintenanceProjectInformationService.statisticalFigure(projectAddress,startDate,endDate, getLoginUser());
+
         String censusList = "[{\"companyName\":\"道路恢复工程\"," +
                 "\"imageAmmount\": [";
-        for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
-            censusList +=
-                    "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
-                            "\"truckAmmount\": \"" + oneCensus.getParam1()+"\"},";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList +=
+                        "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                                "\"truckAmmount\": \"" + oneCensus.getParam1()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList += "{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"表位改造\"," +
                         "\"imageAmmount\": [" ;
-        for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getParam2()+"\"},";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getParam2()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList += "{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"故障换表\"," +
                         "\"imageAmmount\": [" ;
-        for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
-            censusList +=
-                    "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                            "\"truckAmmount\": \"" + oneCensus.getParam3()+"\"},";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList +=
+                        "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                                "\"truckAmmount\": \"" + oneCensus.getParam3()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList += "{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"水表周检换表\"," +
                         "\"imageAmmount\": [" ;
-        for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
-            censusList +=
-                    "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                            "\"truckAmmount\": \"" + oneCensus.getParam4()+"\"},";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList +=
+                        "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                                "\"truckAmmount\": \"" + oneCensus.getParam4()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList += "{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"DN300以上管道抢维修\"," +
                         "\"imageAmmount\": [" ;
-        for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getParam5()+"\"},";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getParam5()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList += "{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"DN300以下管道抢维修\"," +
                         "\"imageAmmount\": [" ;
-        for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getParam6()+"\"},";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getParam6()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else {
+            censusList += "{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\": \"设备维修购置\"," +
                         "\"imageAmmount\": [";
-        for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getParam7()+"\"},";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getParam7()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else {
+            censusList += "{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\": \"房屋修缮\"," +
                         "\"imageAmmount\": [";
-        for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getParam8()+"\"},";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getParam8()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList += "{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\": \"绿化种植\"," +
                         "\"imageAmmount\": [";
-        for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getParam9()+"\"},";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getParam9()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList += "{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
+
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\": \"装饰及装修\"," +
                         "\"imageAmmount\": [";
-        for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
-            censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getParam10()+"\"},";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getParam10()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            censusList += "{}";
         }
-        censusList = censusList.substring(0,censusList.length() -1);
         censusList +=  "]}]";
+
         JSONArray json = JSON.parseArray(censusList);
         return RestUtil.success(json);
     }
