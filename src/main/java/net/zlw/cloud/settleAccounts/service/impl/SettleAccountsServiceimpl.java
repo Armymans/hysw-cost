@@ -619,6 +619,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             for (SettlementInfo settlementInfo : settlementInfos) {
                 if (settlementInfo.getSumbitMoney() != null) {
                     baseAccountsVo.setSettlementInfo(settlementInfo);
+                    SettlementInfo settlementInfo1 = new SettlementInfo();
+                    baseAccountsVo.setLastSettlementInfo(settlementInfo1);
                 } else {
                     baseAccountsVo.setLastSettlementInfo(settlementInfo);
                     SettlementInfo settlementInfo1 = new SettlementInfo();
