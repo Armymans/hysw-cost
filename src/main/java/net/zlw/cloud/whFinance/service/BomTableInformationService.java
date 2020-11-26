@@ -5,7 +5,7 @@ import net.zlw.cloud.excel.dao.BomTable1Dao;
 import net.zlw.cloud.excel.dao.BomTableInfomationDao;
 import net.zlw.cloud.excel.model.BomTable;
 import net.zlw.cloud.excel.model.BomTableInfomation;
-import net.zlw.cloud.whFinance.dao.BomTableImfomationAllDao;
+import net.zlw.cloud.whFinance.mapper.BomTableImfomationAllDao;
 
 import net.zlw.cloud.whFinance.domain.BomTableInfomationAll;
 import net.zlw.cloud.whFinance.domain.vo.BomTableVo;

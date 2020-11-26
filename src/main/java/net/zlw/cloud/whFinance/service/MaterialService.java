@@ -1,15 +1,17 @@
 package net.zlw.cloud.whFinance.service;
 
 
-import net.zlw.cloud.whFinance.dao.MaterialDao;
+import com.github.pagehelper.PageHelper;
+import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.whFinance.domain.Materie;
 import net.zlw.cloud.whFinance.domain.vo.MaterieVo;
-import org.springframework.beans.factory.annotation.Autowired;
+import net.zlw.cloud.whFinance.mapper.MaterialMapper;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 /***
  * 芜湖物料
@@ -18,8 +20,10 @@ import java.util.List;
 @Transactional
 public class MaterialService {
 
-    @Autowired
-    private MaterialDao materialDao;
+    @Resource
+    private MaterialMapper materialMapper;
+
+
 
 
     public void getMaterialservice(MaterieVo materieVo, String Account){
@@ -38,37 +42,38 @@ public class MaterialService {
                 materie.setSpecificationsModels(thisMateriers.getSpecificationsModels());
                 materie.setUnit(thisMateriers.getUnit());
                 materie.setUpdateTime(thisMateriers.getUpdateTime());
-                materie.setStatus("0");
+                materie.setDelFlag("0");
             }
-            materialDao.insertSelective(materie);
+            materialMapper.insertSelective(materie);
         }
 
     }
 
-    public List<Materie> selectAll(String key) {
-        Example example = new Example(Materie.class);
-        example.createCriteria().andLike("materialCode","%"+key+"%")
-                                .andLike("specificationsModels","%"+key+"%")
-                                .andEqualTo("status","0");
-        List<Materie> materieList = materialDao.selectByExample(example);
+    public List<Materie> selectAll(PageRequest pageRequest) {
+        PageHelper.startPage(pageRequest.getPageNum(),pageRequest.getPageSize());
+        List<Materie> materieList = materialMapper.findAllMaterie(pageRequest.getKeyWord());
         return materieList;
     }
 
     public void addMaterie(Materie materie) {
-        materialDao.insertSelective(materie);
+        materie.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        materie.setDelFlag("0");
+        materialMapper.insertSelective(materie);
     }
 
     public Materie findOneMaterie(String id) {
-        return materialDao.selectByPrimaryKey(id);
+        Materie materie = materialMapper.selectByPrimaryKey(id);
+        return materie;
+
     }
 
     public void updateMaterie(Materie materie) {
-        materialDao.updateByPrimaryKeySelective(materie);
+        materialMapper.updateByPrimaryKeySelective(materie);
     }
 
     public void deleteMaterie(String id) {
-        Materie materie = materialDao.selectByPrimaryKey(id);
-        materie.setStatus("1");
-        materialDao.updateByPrimaryKeySelective(materie);
+        Materie materie = materialMapper.selectByPrimaryKey(id);
+            materie.setDelFlag("1");
+            materialMapper.updateByPrimaryKeySelective(materie);
     }
 }
