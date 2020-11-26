@@ -667,6 +667,20 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             }
         }
 
+        // 回显消息
+        String json = "[";
+        Example examples = new Example(OtherInfo.class);
+        examples.createCriteria().andEqualTo("foreignKey",baseProject.getId())
+                .andEqualTo("status","0");
+        List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(examples);
+        for (int i = 0; i < otherInfos.size(); i++) {
+            json += "{" +
+                    "\"serialNumber\" : \""+otherInfos.get(i).getSerialNumber()+"\"," +
+                    "\"num\": \""+otherInfos.get(i).getNum()+"\","+
+                    "},";
+        }
+        json+="]";
+        baseAccountsVo.setJson(json);
 //        System.err.println(auditInfo.getAuditType());
         //消息站内通知
 //        MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
@@ -707,28 +721,13 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         lastSettlementReviewDao.updateByPrimaryKeySelective(baseAccountsVo.getLastSettlementReview());
         //下家送审修改
         settlementAuditInformationDao.updateByPrimaryKeySelective(baseAccountsVo.getSettlementAuditInformation());
-
-
-        // 回显消息
-        String json = "[";
-        Example example1 = new Example(OtherInfo.class);
-        example1.createCriteria().andEqualTo("foreignKey",baseProject.getId())
-                                 .andEqualTo("status","0");
-        List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(example1);
-        for (int i = 0; i < otherInfos.size(); i++) {
-            json += "{" +
-                    "\"serialNumber\" : \""+otherInfos.get(i).getSerialNumber()+"\"," +
-                    "\"num\": \""+otherInfos.get(i).getNum()+"\","+
-                    "},";
-        }
-        json+="]";
-        baseAccountsVo.setJson(json);
-
-        String json1 = baseAccountsVo.getJson();
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        List<OtherInfo> otherInfos1 = JSONObject.parseArray(json1, OtherInfo.class);
+        // json转换
+        Json coms = baseAccountsVo.getComs();
+        String json = coms.value();
+        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
         if (otherInfos.size() > 0){
-            for (OtherInfo thisInfo : otherInfos1) {
+            for (OtherInfo thisInfo : otherInfos) {
                 OtherInfo otherInfo1 = new OtherInfo();
                 otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
                 otherInfo1.setForeignKey(baseProject.getId());
