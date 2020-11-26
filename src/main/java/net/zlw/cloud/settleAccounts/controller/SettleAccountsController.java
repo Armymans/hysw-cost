@@ -8,6 +8,7 @@ import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.settleAccounts.model.OtherInfo;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
@@ -177,6 +178,13 @@ public class SettleAccountsController extends BaseController {
     public Map<String, Object> batchReview(BatchReviewVo batchReviewVo) {
         settleAccountsService.batchReview(batchReviewVo,getLoginUser());
         return RestUtil.success();
+    }
+
+    //其他信息查看
+    @RequestMapping(value = "/otherInfo/selectInfoList", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> selectInfoList(String baseId) {
+        List<OtherInfo> otherInfos = settleAccountsService.selectInfoList(baseId);
+        return RestUtil.success(otherInfos);
     }
 
 }

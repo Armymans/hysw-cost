@@ -382,7 +382,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         //判断bigdecimal
         if ("".equals(baseAccountsVo.getSettlementInfo().getSumbitMoney())){
-//            baseAccountsVo.getSettlementInfo().setSumbitMoney(null);
+            baseAccountsVo.getSettlementInfo().setSumbitMoney("0");
         }
 
         if ("".equals(baseAccountsVo.getLastSettlementReview().getReviewNumber())){
@@ -405,6 +405,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 otherInfo1.setNum(thisInfo.getNum());
                 otherInfo1.setCreateTime(data);
                 otherInfo1.setStatus("0");
+
                 otherInfo1.setFoundId(loginUser.getId());
                 otherInfo1.setFounderCompany(loginUser.getCompanyId());
                 otherInfoMapper.insertSelective(otherInfo1);
@@ -620,6 +621,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     baseAccountsVo.setSettlementInfo(settlementInfo);
                 } else {
                     baseAccountsVo.setLastSettlementInfo(settlementInfo);
+                    SettlementInfo settlementInfo1 = new SettlementInfo();
+                    baseAccountsVo.setSettlementInfo(settlementInfo1);
                 }
             }
         }else {
@@ -651,7 +654,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         c4.andEqualTo("baseProjectId", baseAccountsVo.getId());
         c4.andEqualTo("status", "0");
         c4.andEqualTo("auditResult", "0");
-        c4.andEqualTo("auditorId", loginUser.getId());
+//        c4.andEqualTo("auditorId", loginUser.getId());
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example4);
         if (auditInfo != null) {
             baseAccountsVo.setCheckAudit(auditInfo.getAuditType());
@@ -1051,5 +1054,13 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 messageService.sendOrClose(messageVo);
             }
         }
+    }
+
+    @Override
+    public List<OtherInfo> selectInfoList(String baseId) {
+        Example example = new Example(OtherInfo.class);
+        example.createCriteria().andEqualTo("foreignKey",baseId);
+        List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(baseId);
+        return otherInfos;
     }
 }

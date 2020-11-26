@@ -3,6 +3,7 @@ package net.zlw.cloud.settleAccounts.service;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 
+import net.zlw.cloud.settleAccounts.model.OtherInfo;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
@@ -23,4 +24,6 @@ public interface SettleAccountsService {
     void updateAccountById(BaseAccountsVo baseAccountsVo,UserInfo loginUser);
 
     void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser);
+
+    List<OtherInfo> selectInfoList(String baseId);
 }
