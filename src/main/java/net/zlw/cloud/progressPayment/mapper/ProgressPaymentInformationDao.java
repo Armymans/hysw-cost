@@ -284,7 +284,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " (p.receiving_time < #{endTime} or #{endTime} = '') and  " +
   " (p.compile_time > #{startTime} or #{startTime} = '') and  " +
   " (p.compile_time < #{endTime} or #{endTime} = '') and  " +
-  "      a.audit_result = '0' " +
+  "      a.audit_result = '0' and  " +
   " ( " +
   " b.cea_num like concat('%',#{keyword},'%') or  " +
   " b.project_num like concat('%',#{keyword},'%') or  " +

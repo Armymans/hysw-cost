@@ -774,10 +774,13 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Override
     public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
+        loginUser = new UserInfo("user320",null,null,true);
         //id
-        String id = loginUser.getId();
+//        String id = loginUser.getId();
+        String id = "user320";
         //姓名
-        String username = loginUser.getUsername();
+        String username = "zaojia3";
+//        String username = loginUser.getUsername();
 
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
@@ -813,7 +816,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
                     Example example1 = new Example(MemberManage.class);
                     Example.Criteria cc = example1.createCriteria();
-                    cc.andEqualTo("id",progressPaymentInformation.getId());
+                    cc.andEqualTo("id",progressPaymentInformation.getFounderId());
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                     //1芜湖
                     if (memberManage.getWorkType().equals("1")){
@@ -845,7 +848,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
                     Example example1 = new Example(MemberManage.class);
                     Example.Criteria cc = example1.createCriteria();
-                    cc.andEqualTo("id",progressPaymentInformation.getId());
+                     cc.andEqualTo("id",progressPaymentInformation.getFounderId());
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                     //1芜湖
                     if (memberManage.getWorkType().equals("1")){
@@ -884,7 +887,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
                     Example example1 = new Example(MemberManage.class);
                     Example.Criteria cc = example1.createCriteria();
-                    cc.andEqualTo("id",progressPaymentInformation.getId());
+                     cc.andEqualTo("id",progressPaymentInformation.getFounderId());
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                     //1芜湖
                     if (memberManage.getWorkType().equals("1")){
@@ -916,7 +919,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
                     Example example1 = new Example(MemberManage.class);
                     Example.Criteria cc = example1.createCriteria();
-                    cc.andEqualTo("id",progressPaymentInformation.getId());
+                     cc.andEqualTo("id",progressPaymentInformation.getFounderId());
                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                     //1芜湖
                     if (memberManage.getWorkType().equals("1")){
@@ -935,19 +938,19 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     baseProject.setProgressPaymentStatus("5");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 }
-                //消息通知
-                //项目名称
-                String projectName = baseProject.getProjectName();
-                //通过审核人id查找成员姓名
-                MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-                String name = memberManage.getMemberName();
-                //如果通过的话发送消息
-                MessageVo messageVo = new MessageVo();
-                messageVo.setId(id);
-                messageVo.setTitle("您有一个进度款支付项目审批已通过！");
-                messageVo.setDetails(username+"您好！您提交的【"+projectName+"】的进度款支付项目【"+name+"】已审批通过！");
-                messageService.sendOrClose(messageVo);
-
+//                //消息通知
+//                //项目名称
+//                String projectName = baseProject.getProjectName();
+//                //通过审核人id查找成员姓名
+//                MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+//                String name = memberManage.getMemberName();
+//                //如果通过的话发送消息
+//                MessageVo messageVo = new MessageVo();
+//                messageVo.setId(id);
+//                messageVo.setTitle("您有一个进度款支付项目审批已通过！");
+//                messageVo.setDetails(username+"您好！您提交的【"+projectName+"】的进度款支付项目【"+name+"】已审批通过！");
+//                messageService.sendOrClose(messageVo);
+//
             } else if (batchReviewVo.getAuditResult().equals("2")) {
                 auditInfo.setAuditResult("2");
                 auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
@@ -957,14 +960,14 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 baseProject.setProgressPaymentStatus("3");
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                //成员姓名
-                String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
-                //如果不通过发送消息
-                MessageVo messageVo1 = new MessageVo();
-                messageVo1.setId(id);
-                messageVo1.setTitle("您有一个进度款支付项目审批未通过！");
-                messageVo1.setDetails(username+"您好！您提交的【"+baseProject.getProjectName()+"】的进度款支付项目【"+name+"】未通过,请及时查看详情！");
-                messageService.sendOrClose(messageVo1);
+//                //成员姓名
+//                String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
+//                //如果不通过发送消息
+//                MessageVo messageVo1 = new MessageVo();
+//                messageVo1.setId(id);
+//                messageVo1.setTitle("您有一个进度款支付项目审批未通过！");
+//                messageVo1.setDetails(username+"您好！您提交的【"+baseProject.getProjectName()+"】的进度款支付项目【"+name+"】未通过,请及时查看详情！");
+//                messageService.sendOrClose(messageVo1);
             }
         }
 
