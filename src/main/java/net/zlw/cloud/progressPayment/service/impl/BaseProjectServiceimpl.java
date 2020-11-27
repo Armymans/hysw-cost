@@ -774,13 +774,13 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Override
     public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
-        loginUser = new UserInfo("user320",null,null,true);
+//        loginUser = new UserInfo("user320",null,null,true);
         //id
-//        String id = loginUser.getId();
-        String id = "user320";
+        String id = loginUser.getId();
+//        String id = "user320";
         //姓名
-        String username = "zaojia3";
-//        String username = loginUser.getUsername();
+//        String username = "zaojia3";
+        String username = loginUser.getUsername();
 
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
