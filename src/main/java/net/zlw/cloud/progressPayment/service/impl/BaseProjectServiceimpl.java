@@ -135,7 +135,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         if (baseProject != null && !baseProject.equals("")) {
             if (baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")) {
-                paymentInformation.setChangeNum(1);
+//                paymentInformation.setChangeNum(1);
 
                 project.setProgressPaymentStatus("1");
                 project.setProjectFlow(project.getProjectFlow() + ",4");
@@ -166,9 +166,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
 
             payment.setId(UUID.randomUUID().toString());
-            payment.setTotalPaymentAmount(baseProject.getTotalPaymentAmount());
-            payment.setCumulativeNumberPayment(baseProject.getCumulativeNumberPayment());
-            payment.setAccumulativePaymentProportion(baseProject.getAccumulativePaymentProportion());
+            payment.setTotalPaymentAmount(baseProject.getCurrentPaymentInformation());
+            payment.setCumulativeNumberPayment(new BigDecimal(baseProject.getCumulativePaymentTimes()));
+            payment.setAccumulativePaymentProportion(baseProject.getCurrentPaymentRatio());
             payment.setProgressPaymentId(paymentInformation.getId());
             payment.setBaseProjectId(project.getId());
             payment.setCreateTime(format);
@@ -465,9 +465,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo.setCreateTime(format);
                     auditInfoDao.insertSelective(auditInfo);
 
-                    if (paymentInformation.getChangeNum() == null || paymentInformation.getChangeNum().equals("")){
-                        paymentInformation.setChangeNum(1);
-                    }
+
                     progressPaymentInformationDao.updateByPrimaryKeySelective(paymentInformation);
 
 
@@ -520,8 +518,6 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     progressPaymentInformationDao.updateByPrimaryKeySelective(progressPaymentInformation1);
 
 
-
-
                     ProgressPaymentInformation progressPaymentInformation = new ProgressPaymentInformation();
                     progressPaymentInformation.setId(UUID.randomUUID().toString().replace("-",""));
                     progressPaymentInformation.setCurrentPaymentInformation(baseProject.getCurrentPaymentInformation());
@@ -543,7 +539,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     progressPaymentInformation.setCreateTime(format);
                     progressPaymentInformation.setFounderId(loginUser.getId());
                     progressPaymentInformation.setDelFlag("0");
-                    progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
+//                    progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
                     progressPaymentInformationDao.insertSelective(progressPaymentInformation);
 
 
@@ -567,7 +563,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo.setCreateTime(format);
                     auditInfoDao.insertSelective(auditInfo);
 
-                    project.setProgressPaymentStatus("1");;
+                    project.setProgressPaymentStatus("1");
                     baseProjectDao.updateByPrimaryKeySelective(project);
                     return;
                 }
@@ -601,7 +597,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 progressPaymentInformation.setCreateTime(format);
                 progressPaymentInformation.setFounderId(loginUser.getId());
                 progressPaymentInformation.setDelFlag("0");
-                progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
+//                progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
                 progressPaymentInformationDao.insertSelective(progressPaymentInformation);
 
 
