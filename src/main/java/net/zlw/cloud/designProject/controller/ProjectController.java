@@ -420,7 +420,11 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/disproject/anhuiMoneyInfoAdd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> anhuiMoneyInfoAdd(AnhuiMoneyinfo anhuiMoneyinfo) {
-        projectService.anhuiMoneyInfoAdd(anhuiMoneyinfo, getLoginUser());
+        try {
+            projectService.anhuiMoneyInfoAdd(anhuiMoneyinfo, getLoginUser());
+        } catch (Exception e) {
+            RestUtil.error(e.getMessage());
+        }
         return RestUtil.success();
     }
 
@@ -476,7 +480,11 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/disproject/wujiangMoneyInfoAdd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> wujiangMoneyInfoAdd(WujiangMoneyInfo wujiangMoneyInfo) {
-        projectService.wujiangMoneyInfoAdd(wujiangMoneyInfo, getLoginUser());
+        try {
+            projectService.wujiangMoneyInfoAdd(wujiangMoneyInfo, getLoginUser());
+        } catch (Exception e) {
+            RestUtil.error(e.getMessage());
+        }
         return RestUtil.success();
     }
 
