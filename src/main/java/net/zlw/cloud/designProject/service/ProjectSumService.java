@@ -11,6 +11,7 @@ import net.zlw.cloud.designProject.mapper.*;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
+import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
@@ -2071,6 +2072,7 @@ public class ProjectSumService {
     }
 
     public List<OneCensus4> MemberAchievementsCensus2(CostVo2 costVo2){
+        //如果是设计
         if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
             List<OneCensus4> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus2(costVo2);
             return oneCensus2s;
@@ -2091,5 +2093,21 @@ public class ProjectSumService {
         c.andEqualTo("memberRoleId","6");
         List<MemberManage> memberManages = memberManageDao.selectByExample(example);
         return memberManages;
+    }
+
+    /**
+     * 造价绩效饼状图
+     * @param costVo2
+     * @return
+     */
+    public PerformanceDistributionChart findBTAll2(CostVo2 costVo2) {
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            PerformanceDistributionChart btAll2 = achievementsInfoMapper.findBTAll2(costVo2);
+            return btAll2;
+        }else{
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            PerformanceDistributionChart btAll2 = achievementsInfoMapper.findBTAll2(costVo21);
+            return btAll2;
+        }
     }
 }
