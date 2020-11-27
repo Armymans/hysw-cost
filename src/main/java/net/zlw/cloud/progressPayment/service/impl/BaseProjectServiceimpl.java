@@ -1157,16 +1157,43 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
-    public ProgressPaymentTotalPayment findTotal(String baseId) {
+    public TotalVo findTotal(String baseId) {
         TotalVo totalVo = new TotalVo();
 
-        Example example = new Example(ProgressPaymentTotalPayment.class);
+        Example example = new Example(ProgressPaymentInformation.class);
         Example.Criteria c = example.createCriteria();
+        c.andEqualTo("delFlag","2");
         c.andEqualTo("baseProjectId",baseId);
-        c.andEqualTo("delFlag","0");
-        ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example);
+        List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+        if (! baseProject.getProgressPaymentStatus().equals("2")){
+            Example example1 = new Example(ProgressPaymentInformation.class);
+            Example.Criteria c2 = example1.createCriteria();
+            c2.andEqualTo("baseProjectId",baseId);
+            c2.andEqualTo("delFlag","0");
+            ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectOneByExample(example1);
+            progressPaymentInformations.add(progressPaymentInformation);
+        }
 
-        return progressPaymentTotalPayment;
+        BigDecimal bigDecimal = new BigDecimal(0);
+        BigDecimal bigDecimal1 = new BigDecimal(0);
+        Double pro = 0.00;
+        for (ProgressPaymentInformation progressPaymentInformation : progressPaymentInformations) {
+           if (progressPaymentInformation.getCurrentPaymentInformation()!=null){
+               bigDecimal = bigDecimal.add(progressPaymentInformation.getCurrentPaymentInformation());
+           }
+           if (progressPaymentInformation.getCumulativePaymentTimes()!=null){
+               bigDecimal1 = bigDecimal1.add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes()));
+           }
+           if (progressPaymentInformation.getCurrentPaymentRatio()!=null){
+               pro+=Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio());
+           }
+        }
+        totalVo.setTotalPaymentAmount(bigDecimal);
+        totalVo.setCumulativeNumberPayment(bigDecimal1);
+        totalVo.setAccumulativePaymentProportion(pro+"");
+
+        return totalVo;
     }
 
     @Override

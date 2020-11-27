@@ -1,4 +1,4 @@
-package net.zlw.cloud.whFinance.dao;
+package net.zlw.cloud.whFinance.mapper;
 
 import net.zlw.cloud.whFinance.domain.BomTableInfomationAll;
 import tk.mybatis.mapper.common.Mapper;

@@ -209,7 +209,7 @@ public class ProgressPaymentController  extends BaseController {
     //查询进度款累计
     @RequestMapping(value = "/progress/findTotal",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findTotal(@RequestParam(name = "baseId") String baseId){
-        ProgressPaymentTotalPayment list = baseProjectService.findTotal(baseId);
+        TotalVo list = baseProjectService.findTotal(baseId);
         return RestUtil.success(list);
     }
 }
