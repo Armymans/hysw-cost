@@ -324,7 +324,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
 
         Example example = new Example(ApplicationInformation.class);
-        example.createCriteria().andEqualTo("progressPaymentId", id).andEqualTo("delFlag","0");
+        example.createCriteria().andEqualTo("baseProjectId", baseProject.getId()).andEqualTo("delFlag","0");
         ApplicationInformation applicationInformation = applicationInformationDao.selectOneByExample(example);
 
         Example example1 = new Example(ProgressPaymentTotalPayment.class);
@@ -633,7 +633,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             information.setRemarkes(baseProject.getRemarkes());
             Example example = new Example(ApplicationInformation.class);
             Example.Criteria c1 = example.createCriteria();
-                    c1.andEqualTo("progressPaymentId", baseProject.getId());
+                    c1.andEqualTo("baseProjectId",project.getId());
                     c1.andEqualTo("delFlag","0");
             ApplicationInformation applicationInformation = applicationInformationDao.selectOneByExample(example);
             information.setId(applicationInformation.getId());
