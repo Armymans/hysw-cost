@@ -296,6 +296,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
      */
     @Override
     public BaseProjectVo seachProgressById(String id, UserInfo userInfo, String visaNum) {
+
+//        userInfo = new UserInfo("user309",null,null,true);
+
         /*
         * //项目基本信息
         BaseProject project = new BaseProject();
@@ -337,6 +340,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
 
         baseProjectVo.setId(id);
+        baseProjectVo.setProgressPaymentStatus(baseProject.getProgressPaymentStatus());
         baseProjectVo.setManagementTable(baseProject.getManagementTable()); //后加的 管理表字段
         baseProjectVo.setProjectNum(baseProject.getProjectNum());
         baseProjectVo.setProjectName(baseProject.getProjectName());
