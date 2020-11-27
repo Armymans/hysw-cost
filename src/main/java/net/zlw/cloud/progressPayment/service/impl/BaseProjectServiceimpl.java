@@ -641,15 +641,15 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 //                progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
 //                progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
 
-                auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
-                auditInfo.setBaseProjectId(progressPaymentInformation.getId());
-                auditInfo.setAuditResult("0");
-                auditInfo.setAuditType("0");
-                auditInfo.setAuditorId(baseProject.getAuditorId());
-                auditInfo.setFounderId(loginUser.getId());
-                auditInfo.setStatus("0");
-                auditInfo.setCreateTime(format);
-                auditInfoDao.insertSelective(auditInfo);
+//                auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+//                auditInfo.setBaseProjectId(progressPaymentInformation.getId());
+//                auditInfo.setAuditResult("0");
+//                auditInfo.setAuditType("0");
+//                auditInfo.setAuditorId(baseProject.getAuditorId());
+//                auditInfo.setFounderId(loginUser.getId());
+//                auditInfo.setStatus("0");
+//                auditInfo.setCreateTime(format);
+//                auditInfoDao.insertSelective(auditInfo);
 
                 project.setProgressPaymentStatus("2");;
                 baseProjectDao.updateByPrimaryKeySelective(project);
