@@ -507,7 +507,15 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example.Criteria c = example.createCriteria();
         c.andLike("type", "jsxmxj%");
         c.andEqualTo("status", "0");
-        c.andEqualTo("platCode", loginUser.getId());
+
+
+        if (baseProject.getAB().equals("2") || baseAccountsVo.getSettlementAuditInformation().getId() != null) {
+            c.andEqualTo("platCode", baseProject.getId());
+        } else {
+            c.andEqualTo("platCode", baseProject.getId());
+        }
+
+
         List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example);
         for (FileInfo fileInfo : fileInfos) {
             //修改文件外键
