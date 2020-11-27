@@ -440,6 +440,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     //修改进度款
     @Override
     public void updateProgress(BaseProjectVo baseProject, UserInfo loginUser) {
+//        loginUser = new UserInfo("user309",null,null,true);
 
         if (baseProject.getAmountOutsourcing().equals("")){
             baseProject.setAmountOutsourcing(null);
@@ -560,9 +561,22 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     c.andEqualTo("baseProjectId",project.getId());
                     c.andEqualTo("delFlag","0");
                     ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example);
-                    progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(progressPaymentInformation.getCurrentPaymentInformation()));
-                    progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes())));
-                    progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
+                    if (progressPaymentTotalPayment.getTotalPaymentAmount()==null){
+                        progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentInformation.getCurrentPaymentInformation());
+                    }else{
+                        progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(progressPaymentInformation.getCurrentPaymentInformation()));
+
+                    }
+                    if (progressPaymentTotalPayment.getCumulativeNumberPayment()==null){
+                        progressPaymentTotalPayment.setCumulativeNumberPayment(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes()));
+                    }else {
+                        progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes())));
+                    }
+                    if (progressPaymentTotalPayment.getAccumulativePaymentProportion()==null){
+                        progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
+                    }else{
+                        progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
+                    }
                     progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
 
                     auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
