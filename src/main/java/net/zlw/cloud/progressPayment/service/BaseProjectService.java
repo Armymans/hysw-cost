@@ -61,5 +61,5 @@ public interface BaseProjectService {
 
     List<ProgressPaymentInformation> findTotalList(String baseId);
 
-    ProgressPaymentTotalPayment findTotal(String baseId);
+    TotalVo findTotal(String baseId);
 }
