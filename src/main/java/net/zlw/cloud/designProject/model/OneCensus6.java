@@ -9,6 +9,7 @@ public class OneCensus6 {
     private String yearTime;
     private String monthTime;
     private BigDecimal desginAchievements;
+    private BigDecimal desginAchievements2;
 
     private Integer budgetStatus;
     private Integer progressPaymentStatus;

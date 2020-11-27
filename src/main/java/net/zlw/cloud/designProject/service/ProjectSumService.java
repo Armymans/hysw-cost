@@ -1436,13 +1436,14 @@ public class ProjectSumService {
      * @return
      */
     public BigDecimal desiginCensusRast(BigDecimal A,BigDecimal B){
-        if(A.compareTo(new BigDecimal(0)) == 0){
-            A = new BigDecimal(1);
-        }
+        //A今年 b上年
+//        if(A.compareTo(new BigDecimal(0)) == 0){
+//            A = new BigDecimal(1);
+//        }
         BigDecimal subtract = A.subtract(B);
-        BigDecimal divide = subtract.divide(A,2,BigDecimal.ROUND_HALF_UP);
-        BigDecimal multiply = divide.multiply(new BigDecimal(100));
-        return multiply;
+//        BigDecimal divide = subtract.divide(A,2,BigDecimal.ROUND_HALF_UP);
+//        BigDecimal multiply = divide.multiply(new BigDecimal(100));
+        return subtract;
     }
 
     /**
