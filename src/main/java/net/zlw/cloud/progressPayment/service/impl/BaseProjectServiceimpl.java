@@ -1171,8 +1171,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             Example.Criteria c2 = example1.createCriteria();
             c2.andEqualTo("baseProjectId",baseId);
             c2.andEqualTo("delFlag","0");
+
             ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectOneByExample(example1);
-            progressPaymentInformations.add(progressPaymentInformation);
+            if (progressPaymentInformation!=null){
+                progressPaymentInformations.add(progressPaymentInformation);
+            }
         }
 
         BigDecimal bigDecimal = new BigDecimal(0);
