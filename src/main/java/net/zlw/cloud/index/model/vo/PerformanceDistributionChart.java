@@ -23,5 +23,6 @@ public class PerformanceDistributionChart {
     private BigDecimal upsubmitAchievements;
     private BigDecimal downsubmitAchievements;
     private BigDecimal truckAchievements;
+    private BigDecimal total; //总数
 
 }
