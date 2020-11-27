@@ -1104,67 +1104,74 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     OneCensus5 desiginoutsource(CostVo2 costVo2);
 
     @Select(
-                "\tSELECT  " +
-                        "\tYEAR(s1.create_time) yearTime,  " +
-                        "\tMONTH(s1.create_time) monthTime,  " +
-                        "\tSUM(IFNULL(s2.desgin_achievements,0)) desginAchievements  " +
-                        "\tFROM  " +
-                        "\tbase_project s1 LEFT JOIN achievements_info s2 ON s1.id = s2.base_project_id  " +
-                        "\twhere  " +
-                        "\t(s1.district = #{district} or #{district} = '')  " +
-                        "\tand  " +
-                        "\ts1.create_time >= #{startTime}  " +
-                        "\tand  " +
-                        "\t(s1.create_time <= #{endTime} or #{endTime} = '')  " +
-                        "\tand  " +
-                        "\ts1.del_flag = '0'  " +
-                        "\tGROUP BY  " +
-                        "\tYEAR(s1.create_time),  " +
-                        "\tMONTH(s1.create_time)"
+                "SELECT  " +
+                        "YEAR(create_time) yearTime,  " +
+                        "MONTH(create_time) monthTime,  " +
+                        "IFNULL(SUM(actual_amount),0) desginAchievements,  " +
+                        "IFNULL(SUM(accrued_amount),0) desginAchievements2  " +
+                        "FROM  " +
+                        "employee_achievements_info  " +
+                        "WHERE  " +
+                        "del_flag = '0'  " +
+                        "and  " +
+                        "achievements_type = '1'  " +
+                        "and  " +
+                        "(district = #{district} or #{district} = '')  " +
+                        "and  " +
+                        "create_time >= #{startTime}  " +
+                        "and  " +
+                        "(create_time <= #{endTime} or #{endTime} = '')  " +
+                        "GROUP BY  " +
+                        "YEAR(create_time),  " +
+                        "MONTH(create_time)"
     )
     List<OneCensus6> desiginAchievementsCensus(CostVo2 costVo2);
 
     @Select(
-            "\tSELECT  " +
-                    "\tYEAR(s1.create_time) yearTime,  " +
-                    "\tMONTH(s1.create_time) monthTime,  " +
-                    "\tSUM(IFNULL(s2.desgin_achievements,0)) desginAchievements  " +
-                    "\tFROM  " +
-                    "\tbase_project s1 LEFT JOIN achievements_info s2 ON s1.id = s2.base_project_id  " +
-                    "\twhere  " +
-                    "\ts2.member_id = #{id}  " +
-                    "\tand  " +
-                    "\t(s1.district = #{district} or #{district} = '')  " +
-                    "\tand  " +
-                    "\ts1.create_time >= #{startTime}  " +
-                    "\tand  " +
-                    "\t(s1.create_time <= #{endTime} or #{endTime} = '')  " +
-                    "\tand  " +
-                    "\ts1.del_flag = '0'  " +
-                    "\tGROUP BY  " +
-                    "\tYEAR(s1.create_time),  " +
-                    "\tMONTH(s1.create_time)"
+            "SELECT  " +
+                    "YEAR(create_time) yearTime,  " +
+                    "MONTH(create_time) monthTime,  " +
+                    "SUM(IFNULL(actual_amount,0)) desginAchievements  " +
+                    "FROM  " +
+                    "employee_achievements_info  " +
+                    "WHERE  " +
+                    "del_flag = '0'  " +
+                    "and  " +
+                    "achievements_type = '1'  " +
+                    "and  " +
+                    "member_id = #{id}  " +
+                    "and  " +
+                    "(district = #{district} or #{district} = '')  " +
+                    "and  " +
+                    "create_time >= #{startTime}  " +
+                    "and  " +
+                    "(create_time <= #{endTime} or #{endTime} = '')  " +
+                    "GROUP BY  " +
+                    "YEAR(create_time),  " +
+                    "MONTH(create_time)"
     )
     List<OneCensus6> desiginAchievementsOneCensus(CostVo2 costVo2);
 
     @Select(
-            "\tSELECT  " +
-                    "\tYEAR(s1.create_time) yearTime,  " +
-                    "\tSUM(IFNULL(s2.desgin_achievements,0)) desginAchievements  " +
-                    "\tFROM  " +
-                    "\tbase_project s1 LEFT JOIN achievements_info s2 ON s1.id = s2.base_project_id  " +
-                    "\twhere  " +
-                    "\ts2.member_id = #{id}  " +
-                    "\tand  " +
-                    "\t(s1.district = #{district} or #{district} = '')  " +
-                    "\tand  " +
-                    "\ts1.create_time >= #{startTime}  " +
-                    "\tand  " +
-                    "\t(s1.create_time <= #{endTime} or #{endTime} = '')  " +
-                    "\tand  " +
-                    "\ts1.del_flag = '0'  " +
-                    "\tGROUP BY  " +
-                    "\tYEAR(s1.create_time)"
+            "SELECT   " +
+                    "YEAR(create_time) yearTime,   " +
+                    "SUM(IFNULL(actual_amount,0)) desginAchievements   " +
+                    "FROM   " +
+                    "employee_achievements_info   " +
+                    "WHERE   " +
+                    "del_flag = '0'   " +
+                    "and   " +
+                    "achievements_type = '1'   " +
+                    "and   " +
+                    "member_id = #{id}   " +
+                    "and   " +
+                    "(district = #{district} or #{district} = '')   " +
+                    "and   " +
+                    "create_time >= #{startTime}   " +
+                    "and   " +
+                    "(create_time <= #{endTime} or #{endTime} = '')   " +
+                    "GROUP BY   " +
+                    "YEAR(create_time)"
     )
     List<OneCensus6> desiginAchievementsOneCensus2(CostVo2 costVo2);
 

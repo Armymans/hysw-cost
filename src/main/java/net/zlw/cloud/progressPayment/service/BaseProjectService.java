@@ -6,10 +6,9 @@ import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
-import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
-import net.zlw.cloud.progressPayment.model.vo.PageVo;
-import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
-import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
+import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
+import net.zlw.cloud.progressPayment.model.ProgressPaymentTotalPayment;
+import net.zlw.cloud.progressPayment.model.vo.*;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public interface BaseProjectService {
 
     void addProgress(BaseProjectVo baseProject, UserInfo loginUser);
 
-    BaseProjectVo seachProgressById(String id,UserInfo userInfo);
+    BaseProjectVo seachProgressById(String id, UserInfo userInfo, String visaNum);
 
     void updateProgress(BaseProjectVo baseProjectVo ,UserInfo loginUser);
     void updateProgressPayment(BaseProjectVo baseProjectVo);
@@ -59,4 +58,8 @@ public interface BaseProjectService {
     List<AuditChekedVo> auditMaintenanceChek(String id);
 
     List<AuditChekedVo> auditAgainMaintenanceChek(String id);
+
+    List<ProgressPaymentInformation> findTotalList(String baseId);
+
+    ProgressPaymentTotalPayment findTotal(String baseId);
 }

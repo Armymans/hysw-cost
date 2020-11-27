@@ -8,6 +8,7 @@ import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectSumService;
+import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.statisticAnalysis.model.StatisticAnalysis;
 import net.zlw.cloud.statisticAnalysis.service.StatusticAnalysisService;
@@ -1347,7 +1348,7 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
-        @RequestMapping(value = "/api/projectCount/desiginAchievementsCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/api/projectCount/desiginAchievementsCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginAchievementsCensus(CostVo2 costVo2){
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsCensus(costVo2);
         String json =
@@ -1363,12 +1364,46 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json += "{}";
+            json += "{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
         json += "]}]";
         JSONArray objects = JSON.parseArray(json);
         return RestUtil.success(objects);
     }
+
+    /**
+     * 造价绩效统计图(员工绩效复用)
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/findBTAll2",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findBTAll2(CostVo2 costVo2){
+        PerformanceDistributionChart performanceDistributionChart = projectSumService.findBTAll2(costVo2);
+        String aa = "[{value1:"+performanceDistributionChart.getBudgetAchievements()
+                +",name1:'预算编制'},{value1:"+performanceDistributionChart.getUpsubmitAchievements()
+                +",name1:'上家结算送审'},{value1:"+performanceDistributionChart.getDownsubmitAchievements()
+                +",name1:'下家结算审核'},{value1:"+performanceDistributionChart.getTruckAchievements()
+                +",name1:'跟踪审计'}]";
+        JSONArray objects = JSONArray.parseArray(aa);
+        return RestUtil.success(objects);
+    }
+
+    /**
+     * 造价绩效总额
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/findBTAll2Count",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findBTAll2Count(CostVo2 costVo2){
+        //获取造价绩效绩效总数
+        PerformanceDistributionChart performanceDistributionChart = projectSumService.findBTAll2(costVo2);
+        ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
+        map.put("total",performanceDistributionChart.getTotal());
+        return RestUtil.success(map);
+    }
+
 
     /**
      * 设计绩效 发放总数
@@ -1407,23 +1442,33 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json += "{}";
+            json += "{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
         json += "]}]";
         JSONArray objects = JSON.parseArray(json);
+
+        //造价统计图
+        PerformanceDistributionChart performanceDistributionChart = projectSumService.findBTAll2(costVo2);
+        String aa = "[{value1:"+performanceDistributionChart.getBudgetAchievements()
+                +",name1:'预算编制'},{value1:"+performanceDistributionChart.getUpsubmitAchievements()
+                +",name1:'上家结算送审'},{value1:"+performanceDistributionChart.getDownsubmitAchievements()
+                +",name1:'下家结算审核'},{value1:"+performanceDistributionChart.getTruckAchievements()
+                +",name1:'跟踪审计'}]";
+        JSONArray objects2 = JSONArray.parseArray(aa);
+
+        //造价绩效发放总额
+        BigDecimal year2 = performanceDistributionChart.getTotal();
+
         //设计统计图发放总额
         BigDecimal bigDecimal2 = projectSumService.desiginYearAchievements(costVo2);
-        //造价统计图
-        JSONArray pieChart = statusticAnalysisService.findYear(costVo2).getPieChart();
-        //造价绩效发放总额
-        StatisticAnalysis year = statusticAnalysisService.findYear(costVo2);
-        BigDecimal bigDecimal = new BigDecimal(year.getCurrentYearPaymentPerformance());
-        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
 
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
         map.put("objects1",objects);
         map.put("year1",bigDecimal2);
-        map.put("objects2",pieChart);
-        map.put("year2",bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
+        map.put("objects2",objects2);
+        map.put("year2",year2.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
         return RestUtil.success(map);
     }
 //    /**
@@ -1444,7 +1489,9 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/desiginLastMonthAchievementsRast",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginLastMonthAchievementsRast(CostVo2 costVo2){
+        //这月
         BigDecimal month = projectSumService.desiginMonthAchievements(costVo2);
+        //上月
         BigDecimal lastmonth = projectSumService.desiginLastMonthAchievements(costVo2);
         BigDecimal bigDecimal = projectSumService.desiginCensusRast(month, lastmonth);
         ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
@@ -1486,8 +1533,11 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList +="{}";
+            censusList +="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
+
         censusList +=
                 "]" +
                         "}, {" +
@@ -1495,20 +1545,24 @@ public class ProjectSumController extends BaseController {
                         "\"imageAmmount\": [" ;
         if(oneCensus6s.size()>0){
             for (OneCensus6 oneCensus6 : oneCensus6s) {
-                censusList += "{\"time\": \""+oneCensus6.getYearTime()+"-"+oneCensus6.getMonthTime()+"\"," +
-                        "\"truckAmmount\": \"" + oneCensus6.getDesginAchievements().multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP)+"\"},";
+                censusList +=
+                        "{\"time\": \""+oneCensus6.getYearTime()+"-"+oneCensus6.getMonthTime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus6.getDesginAchievements2() +"\"},";
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList +="{}";
+            censusList +="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
+
         censusList += "]}]";
         JSONArray objects = JSON.parseArray(censusList);
         return RestUtil.success(objects);
     }
 
     /**
-     * 个人月度计提统计
+     * 个人月度计提统计 设计
      * @param costVo2
      * @return
      */
@@ -1516,7 +1570,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCensus(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user312");
+            costVo2.setId("user333");
         }
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsOneCensus(costVo2);
         String json =
@@ -1533,7 +1587,9 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{}";
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
         json += "]}]";
         JSONArray objects = JSON.parseArray(json);
@@ -1549,7 +1605,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCount(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user312");
+            costVo2.setId("user333");
         }
         BigDecimal bigDecimal = projectSumService.desiginAchievementsOneCount(costVo2);
         ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
@@ -1566,7 +1622,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCountRast(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user312");
+            costVo2.setId("user333");
         }
         BigDecimal mouth = projectSumService.desiginAchievementsOneCount(costVo2);
         BigDecimal lastmouth = projectSumService.desiginLastAchievementsOneCount(costVo2);
@@ -1585,7 +1641,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCensus2(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user312");
+            costVo2.setId("user333");
         }
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsOneCensus2(costVo2);
 
@@ -1602,7 +1658,9 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{}";
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
         json += "]}]";
         JSONArray objects = JSON.parseArray(json);
@@ -1618,7 +1676,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCount2(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user312");
+            costVo2.setId("user333");
         }
         BigDecimal bigDecimal = projectSumService.desiginAchievementsOneCount2(costVo2);
         ConcurrentHashMap<String, BigDecimal> map = new ConcurrentHashMap<>();
@@ -1635,7 +1693,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginAchievementsOneCountRast2(CostVo2 costVo2){
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
-            costVo2.setId("user312");
+            costVo2.setId("user333");
         }
         BigDecimal mouth = projectSumService.desiginAchievementsOneCount2(costVo2);
         BigDecimal lastmouth = projectSumService.desiginLastAchievementsOneCount2(costVo2);
@@ -1939,7 +1997,9 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{}";
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
         json += "]}]";
         JSONArray objects = JSON.parseArray(json);
@@ -2029,12 +2089,14 @@ public class ProjectSumController extends BaseController {
         if(oneCensus4s.size()>0){
             for (OneCensus4 oneCensus2 : oneCensus4s) {
                 censusList +=
-                        "{\"time\": \"" + oneCensus2.getMemberName() + "\"," +
+                        "{\"time\": \"" +oneCensus2.getYearTime()+"-"+oneCensus2.getMonthTime()+ "\"," +
                                 "\"truckAmmount\": \"" + oneCensus2.getTotal()+"\"},";
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{}";
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList +=
@@ -2044,12 +2106,14 @@ public class ProjectSumController extends BaseController {
                         "\"imageAmmount\": [" ;
         if(oneCensus4s.size()>0){
             for (OneCensus4 oneCensus2 : oneCensus4s) {
-                censusList += "{\"time\": \""+oneCensus2.getMemberName()+"\"," +
-                        "\"truckAmmount\": \"" + oneCensus2.getTotal().multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP)+"\"},";
+                censusList += "{\"time\": \""+oneCensus2.getYearTime()+"-"+oneCensus2.getMonthTime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus2.getTotal2()+"\"},";
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{}";
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList +=
@@ -2059,12 +2123,14 @@ public class ProjectSumController extends BaseController {
                         "\"imageAmmount\": [" ;
         if(oneCensus4s.size()>0){
             for (OneCensus4 oneCensus2 : oneCensus4s) {
-                censusList += "{\"time\": \""+oneCensus2.getMemberName()+"\"," +
-                        "\"truckAmmount\": \"" + oneCensus2.getTotal().subtract(oneCensus2.getTotal().multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP))+"\"},";
+                censusList += "{\"time\": \""+oneCensus2.getYearTime()+"-"+oneCensus2.getMonthTime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus2.getTotal3()+"\"},";
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{}";
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList += "]}]";
@@ -2084,9 +2150,9 @@ public class ProjectSumController extends BaseController {
         BigDecimal total3 = new BigDecimal(0);
         List<OneCensus4> oneCensus4s = projectSumService.MemberAchievementsCensus2(costVo2);
         for (OneCensus4 oneCensus4 : oneCensus4s) {
-            total1 = oneCensus4.getTotal().add(total1);
-            total2 = total1.multiply(new BigDecimal(0.8));
-            total3 = total1.subtract(total2);
+            total1 = oneCensus4.getTotal();
+            total2 = oneCensus4.getTotal2();
+            total3 = oneCensus4.getTotal3();
         }
         ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
         map.put("total1",total1.setScale(2,BigDecimal.ROUND_HALF_UP));
@@ -2108,12 +2174,14 @@ public class ProjectSumController extends BaseController {
         if(oneCensus4s.size()>0){
             for (OneCensus4 oneCensus2 : oneCensus4s) {
                 censusList +=
-                        "{\"time\": \"" + oneCensus2.getMemberName() + "\"," +
+                        "{\"time\": \"" +oneCensus2.getYearTime()+"-"+oneCensus2.getMonthTime()+ "\"," +
                                 "\"truckAmmount\": \"" + oneCensus2.getTotal()+"\"},";
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{}";
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList +=
@@ -2123,12 +2191,14 @@ public class ProjectSumController extends BaseController {
                         "\"imageAmmount\": [" ;
         if(oneCensus4s.size()>0){
             for (OneCensus4 oneCensus2 : oneCensus4s) {
-                censusList += "{\"time\": \""+oneCensus2.getMemberName()+"\"," +
-                        "\"truckAmmount\": \"" + oneCensus2.getTotal().multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP)+"\"},";
+                censusList += "{\"time\": \""+oneCensus2.getYearTime()+"-"+oneCensus2.getMonthTime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus2.getTotal2()+"\"},";
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{}";
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList +=
@@ -2138,12 +2208,14 @@ public class ProjectSumController extends BaseController {
                         "\"imageAmmount\": [" ;
         if(oneCensus4s.size()>0){
             for (OneCensus4 oneCensus2 : oneCensus4s) {
-                censusList += "{\"time\": \""+oneCensus2.getMemberName()+"\"," +
-                        "\"truckAmmount\": \"" + oneCensus2.getTotal().subtract(oneCensus2.getTotal().multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP))+"\"},";
+                censusList += "{\"time\": \""+oneCensus2.getYearTime()+"-"+oneCensus2.getMonthTime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus2.getTotal().subtract(oneCensus2.getTotal3())+"\"},";
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{}";
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList += "]}]";
@@ -2154,9 +2226,9 @@ public class ProjectSumController extends BaseController {
         BigDecimal total3 = new BigDecimal(0);
 
         for (OneCensus4 oneCensus4 : oneCensus4s) {
-            total1 = oneCensus4.getTotal().add(total1);
-            total2 = total1.multiply(new BigDecimal(0.8));
-            total3 = total1.subtract(total2);
+            total1 = oneCensus4.getTotal();
+            total2 = oneCensus4.getTotal2();
+            total3 = oneCensus4.getTotal3();
         }
         ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
         map.put("total1",total1.setScale(2,BigDecimal.ROUND_HALF_UP));

@@ -14,4 +14,6 @@ public class OneCensus4 {
     private BigDecimal subtractTheNumber;
     private String memberName;
     private BigDecimal total;
+    private BigDecimal total2;
+    private BigDecimal total3;
 }
