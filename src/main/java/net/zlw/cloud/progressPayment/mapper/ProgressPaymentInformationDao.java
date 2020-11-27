@@ -303,6 +303,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " p.id id, " +
   " b.id baseId, " +
   " b.cea_num ceaNum, " +
+  " p.founder_id founderId," +
   " b.project_num projectNum, " +
   " b.project_name projectName, " +
   " ( CASE b.progress_payment_status WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '进行中' WHEN '6' THEN '已完成' END )as  progressPaymentStatus, " +
@@ -449,6 +450,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " p.id id, " +
   " b.id baseId, " +
   " b.cea_num ceaNum, " +
+  " p.founder_id founderId," +
   " b.project_num projectNum, " +
   " b.project_name projectName, " +
   " ( CASE b.progress_payment_status WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '进行中' WHEN '6' THEN '已完成' END )as  progressPaymentStatus, " +
