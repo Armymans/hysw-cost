@@ -3,6 +3,7 @@ package net.zlw.cloud.progressPayment.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.designProject.model.Budgeting;
@@ -12,10 +13,7 @@ import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManage
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.*;
 import net.zlw.cloud.progressPayment.model.*;
-import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
-import net.zlw.cloud.progressPayment.model.vo.PageVo;
-import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
-import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
+import net.zlw.cloud.progressPayment.model.vo.*;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
@@ -133,10 +131,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
         paymentInformation.setCreateTime(format);
-        progressPaymentInformationDao.insert(paymentInformation);
+
 
         if (baseProject != null && !baseProject.equals("")) {
             if (baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")) {
+                paymentInformation.setChangeNum(1);
+
                 project.setProgressPaymentStatus("1");
                 project.setProjectFlow(project.getProjectFlow() + ",4");
                 baseProjectDao.updateByPrimaryKeySelective(project);
@@ -153,6 +153,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 project.setProjectFlow(project.getProjectFlow() + ",4");
                 baseProjectDao.updateByPrimaryKeySelective(project);
             }
+            progressPaymentInformationDao.insertSelective(paymentInformation);
 
             information.setRemarkes(baseProject.getRemarkes());
             information.setBaseProjectId(project.getId());
@@ -464,6 +465,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo.setCreateTime(format);
                     auditInfoDao.insertSelective(auditInfo);
 
+                    if (paymentInformation.getChangeNum() == null || paymentInformation.getChangeNum().equals("")){
+                        paymentInformation.setChangeNum(1);
+                    }
+                    progressPaymentInformationDao.updateByPrimaryKeySelective(paymentInformation);
+
 
                     Example example = new Example(ProgressPaymentTotalPayment.class);
                     Example.Criteria c = example.createCriteria();
@@ -514,6 +520,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     progressPaymentInformationDao.updateByPrimaryKeySelective(progressPaymentInformation1);
 
 
+
+
                     ProgressPaymentInformation progressPaymentInformation = new ProgressPaymentInformation();
                     progressPaymentInformation.setId(UUID.randomUUID().toString().replace("-",""));
                     progressPaymentInformation.setCurrentPaymentInformation(baseProject.getCurrentPaymentInformation());
@@ -535,6 +543,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     progressPaymentInformation.setCreateTime(format);
                     progressPaymentInformation.setFounderId(loginUser.getId());
                     progressPaymentInformation.setDelFlag("0");
+                    progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
                     progressPaymentInformationDao.insertSelective(progressPaymentInformation);
 
 
@@ -557,8 +566,68 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo.setStatus("0");
                     auditInfo.setCreateTime(format);
                     auditInfoDao.insertSelective(auditInfo);
+
+                    project.setProgressPaymentStatus("1");;
+                    baseProjectDao.updateByPrimaryKeySelective(project);
                     return;
                 }
+            }else if(project.getProgressPaymentStatus().equals("5")){
+
+                ProgressPaymentInformation progressPaymentInformation1 = progressPaymentInformationDao.selectByPrimaryKey(baseProject.getId());
+                progressPaymentInformation1.setDelFlag("2");
+                progressPaymentInformationDao.updateByPrimaryKeySelective(progressPaymentInformation1);
+
+
+
+
+                ProgressPaymentInformation progressPaymentInformation = new ProgressPaymentInformation();
+                progressPaymentInformation.setId(UUID.randomUUID().toString().replace("-",""));
+                progressPaymentInformation.setCurrentPaymentInformation(baseProject.getCurrentPaymentInformation());
+                progressPaymentInformation.setCumulativePaymentTimes(baseProject.getCumulativePaymentTimes());
+                progressPaymentInformation.setCurrentPaymentRatio(baseProject.getCurrentPaymentRatio());
+                progressPaymentInformation.setCurrentPeriodAccording(baseProject.getCurrentPeriodAccording());
+                progressPaymentInformation.setContractAmount(baseProject.getContractAmount());
+                progressPaymentInformation.setProjectType(baseProject.getProjectType());
+                progressPaymentInformation.setReceivingTime(baseProject.getReceivingTime());
+                progressPaymentInformation.setCompileTime(baseProject.getCompileTime());
+                progressPaymentInformation.setOutsourcing(baseProject.getOutsourcing());
+                progressPaymentInformation.setNameOfCostUnit(baseProject.getNameOfCostUnit());
+                progressPaymentInformation.setContact(baseProject.getContact());
+                progressPaymentInformation.setContactPhone(baseProject.getContactPhone());
+                progressPaymentInformation.setAmountOutsourcing(baseProject.getAmountOutsourcing());
+                progressPaymentInformation.setSituation(baseProject.getSituation());
+                progressPaymentInformation.setRemarkes(baseProject.getRemarkes());
+                progressPaymentInformation.setBaseProjectId(project.getId());
+                progressPaymentInformation.setCreateTime(format);
+                progressPaymentInformation.setFounderId(loginUser.getId());
+                progressPaymentInformation.setDelFlag("0");
+                progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
+                progressPaymentInformationDao.insertSelective(progressPaymentInformation);
+
+
+//                Example example = new Example(ProgressPaymentTotalPayment.class);
+//                Example.Criteria c = example.createCriteria();
+//                c.andEqualTo("baseProjectId",project.getId());
+//                c.andEqualTo("delFlag","0");
+//                ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example);
+//                progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(progressPaymentInformation.getCurrentPaymentInformation()));
+//                progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes())));
+//                progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
+//                progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
+
+                auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                auditInfo.setBaseProjectId(progressPaymentInformation.getId());
+                auditInfo.setAuditResult("0");
+                auditInfo.setAuditType("0");
+                auditInfo.setAuditorId(baseProject.getAuditorId());
+                auditInfo.setFounderId(loginUser.getId());
+                auditInfo.setStatus("0");
+                auditInfo.setCreateTime(format);
+                auditInfoDao.insertSelective(auditInfo);
+
+                project.setProgressPaymentStatus("2");;
+                baseProjectDao.updateByPrimaryKeySelective(project);
+                return;
             }
 
             information.setRemarkes(baseProject.getRemarkes());
@@ -1036,6 +1105,46 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public List<AuditChekedVo> auditAgainMaintenanceChek(String id) {
         return auditInfoDao.auditAgainMaintenanceChek(id);
+    }
+
+    @Override
+    public List<ProgressPaymentInformation> findTotalList(String baseId) {
+        Example example = new Example(ProgressPaymentInformation.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("delFlag","2");
+        c.andEqualTo("baseProjectId",baseId);
+        List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+        if (! baseProject.getProgressPaymentStatus().equals("2")){
+            Example example1 = new Example(ProgressPaymentInformation.class);
+            Example.Criteria c2 = example1.createCriteria();
+            c2.andEqualTo("baseProjectId",baseId);
+            c2.andEqualTo("delFlag","0");
+            ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectOneByExample(example1);
+            progressPaymentInformations.add(progressPaymentInformation);
+        }
+        for (ProgressPaymentInformation progressPaymentInformation : progressPaymentInformations) {
+            if (progressPaymentInformation.getProjectType().equals("1")){
+                progressPaymentInformation.setProjectType("合同内进度款支付");
+            }else if(progressPaymentInformation.getProjectType().equals("2")){
+                progressPaymentInformation.setProjectType("合同外进度款支付");
+            }
+        }
+
+        return progressPaymentInformations;
+    }
+
+    @Override
+    public ProgressPaymentTotalPayment findTotal(String baseId) {
+        TotalVo totalVo = new TotalVo();
+
+        Example example = new Example(ProgressPaymentTotalPayment.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",baseId);
+        c.andEqualTo("delFlag","0");
+        ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example);
+
+        return progressPaymentTotalPayment;
     }
 
     @Override

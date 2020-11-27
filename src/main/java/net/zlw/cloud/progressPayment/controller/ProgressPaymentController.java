@@ -8,10 +8,9 @@ import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.general.model.AuditChekedVo;
-import net.zlw.cloud.progressPayment.model.vo.BaseProjectVo;
-import net.zlw.cloud.progressPayment.model.vo.PageVo;
-import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
-import net.zlw.cloud.progressPayment.model.vo.ProgressPaymentTotalPaymentVo;
+import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
+import net.zlw.cloud.progressPayment.model.ProgressPaymentTotalPayment;
+import net.zlw.cloud.progressPayment.model.vo.*;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.progressPayment.service.ProgressPaymentTotalPaymentService;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -199,5 +198,18 @@ public class ProgressPaymentController  extends BaseController {
     public Map<String,Object> auditChek(@RequestParam(name = "id") String id){
         List<AuditChekedVo> auditChekedVos = baseProjectService.auditChek(id);
         return RestUtil.success(auditChekedVos);
+    }
+
+    //查询进度款累计列表
+    @RequestMapping(value = "/progress/findTotalList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findTotalList(@RequestParam(name = "baseId") String baseId){
+      List<ProgressPaymentInformation> list = baseProjectService.findTotalList(baseId);
+      return RestUtil.success(list);
+    }
+    //查询进度款累计
+    @RequestMapping(value = "/progress/findTotal",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findTotal(@RequestParam(name = "baseId") String baseId){
+        ProgressPaymentTotalPayment list = baseProjectService.findTotal(baseId);
+        return RestUtil.success(list);
     }
 }
