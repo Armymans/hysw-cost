@@ -31,7 +31,7 @@ public class OtherInfo {
     private String serialNumber;
     @Column(name = "foreign_key")
     private String foreignKey;
-    @Column(name = "id")
+    @Column(name = "found_id")
     private String foundId;
     @Column(name = "founder_company")
     private String founderCompany;
