@@ -39,5 +39,8 @@ public class ProgressListVo {
     //当前处理人
     private String currentHandler;
 
+    private String showUpdate;
+    private String founderId;
+
     private List<AuditInfo> auditInfos;
 }

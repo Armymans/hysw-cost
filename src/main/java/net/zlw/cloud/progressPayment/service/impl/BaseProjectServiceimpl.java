@@ -94,6 +94,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public void addProgress(BaseProjectVo baseProject, UserInfo loginUser) {
 
+//        loginUser = new UserInfo("user309",null,null,true);
 
 //        Budgeting budgeting = budgetingMapper.selectByPrimaryKey(baseProject.getId());
 
@@ -109,7 +110,6 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         //审核表
         AuditInfo auditInfo = new AuditInfo();
         //成员管理
-
 
         paymentInformation.setCurrentPaymentInformation(baseProject.getCurrentPaymentInformation());
         paymentInformation.setCumulativePaymentTimes(baseProject.getCumulativePaymentTimes());
@@ -128,8 +128,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         paymentInformation.setRemarkes(baseProject.getRemarkes());
         paymentInformation.setBaseProjectId(project.getId());
         paymentInformation.setId(UUID.randomUUID().toString().replace("-", ""));
-//        paymentInformation.setFounderId(loginUser.getId());
-        paymentInformation.setDelFlag("2");
+        paymentInformation.setFounderId(loginUser.getId());
+        paymentInformation.setDelFlag("0");
 
         String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
         paymentInformation.setCreateTime(format);
@@ -147,7 +147,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 auditInfo.setAuditType("0");
                 auditInfo.setStatus("0");
                 auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
-                auditInfoDao.insert(auditInfo);
+                auditInfoDao.insertSelective(auditInfo);
             } else {
                 project.setProgressPaymentStatus("2");
                 project.setProjectFlow(project.getProjectFlow() + ",4");
@@ -159,18 +159,30 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             information.setId(UUID.randomUUID().toString());
             information.setProgressPaymentId(paymentInformation.getId());
             information.setDelFlag("0");
+            information.setCreateTime(format);
+            information.setFounderId(loginUser.getId());
+            applicationInformationDao.insertSelective(information);
 
-            applicationInformationDao.insert(information);
 
-
+            payment.setId(UUID.randomUUID().toString());
             payment.setTotalPaymentAmount(baseProject.getTotalPaymentAmount());
             payment.setCumulativeNumberPayment(baseProject.getCumulativeNumberPayment());
             payment.setAccumulativePaymentProportion(baseProject.getAccumulativePaymentProportion());
-            payment.setBaseProjectId(project.getId());
             payment.setProgressPaymentId(paymentInformation.getId());
+            payment.setBaseProjectId(project.getId());
+            payment.setCreateTime(format);
+            payment.setFounderId(loginUser.getId());
             payment.setDelFlag("0");
-            payment.setId(UUID.randomUUID().toString());
-            progressPaymentTotalPaymentDao.insert(payment);
+
+            progressPaymentTotalPaymentDao.insertSelective(payment);
+
+
+
+
+
+
+
+
 
 
             // 上传文件，新建-申请信息，列表文件
@@ -193,17 +205,13 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             String projectName = baseProject.getProjectName();//项目名称
             BigDecimal totalMoney = new BigDecimal(0);
             //根据id找到累积进度款支付的信息
-            List<ProgressPaymentInformation> amount = progressPaymentInformationDao.findAmount(project.getId());
-            //根据id找到基本信息表的信息
-            BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(project.getId());
-            //判断如果基本信息表里的进度款支付状态不是处理中的话就累加
-            if (baseProject1 != null) {
-                if (baseProject1.getProgressPaymentStatus() != "2") {
-                    //迭代累加
-                    for (ProgressPaymentInformation thisAmount : amount) {
-                        totalMoney = totalMoney.add(thisAmount.getCurrentPaymentInformation());
-                    }
-                }
+//            List<ProgressPaymentInformation> amount = progressPaymentInformationDao.findAmount(project.getId());
+//            //根据id找到基本信息表的信息
+//            BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(project.getId());
+
+
+
+            //站内信
                 BigDecimal contractAmount = paymentInformation.getContractAmount();//合同金额
 //                if (totalMoney != null && "".equals(totalMoney) || contractAmount != null && "".equals(contractAmount)) {
                     BigDecimal qi = new BigDecimal("0.7");
@@ -264,25 +272,25 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         messageService.sendOrClose(messageVo2);
                     }
                 } else {
-                    // 站内信
-                    MessageVo messageVo4 = new MessageVo();
-                    messageVo4.setId("A09");
-                    messageVo4.setUserId(auditorId);
-                    messageVo4.setTitle("您有一个进度款项目待审批！");
-                    messageVo4.setDetails(loginUser.getUsername()+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                    //调用消息Service
-                    messageService.sendOrClose(messageVo4);
+//                    // 站内信
+//                    MessageVo messageVo4 = new MessageVo();
+//                    messageVo4.setId("A09");
+//                    messageVo4.setUserId(auditorId);
+//                    messageVo4.setTitle("您有一个进度款项目待审批！");
+//                    messageVo4.setDetails(loginUser.getUsername()+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+//                    //调用消息Service
+//                    messageService.sendOrClose(messageVo4);
                 }
             }
 
-        }
+
 //    }
 
     /**
      * 根据id查询进度款信息
      */
     @Override
-    public BaseProjectVo seachProgressById(String id, UserInfo userInfo) {
+    public BaseProjectVo seachProgressById(String id, UserInfo userInfo, String visaNum) {
         /*
         * //项目基本信息
         BaseProject project = new BaseProject();
@@ -315,11 +323,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
 
         Example example = new Example(ApplicationInformation.class);
-        example.createCriteria().andEqualTo("progressPaymentId", id);
+        example.createCriteria().andEqualTo("progressPaymentId", id).andEqualTo("delFlag","0");
         ApplicationInformation applicationInformation = applicationInformationDao.selectOneByExample(example);
 
         Example example1 = new Example(ProgressPaymentTotalPayment.class);
-        example1.createCriteria().andEqualTo("progressPaymentId", id);
+        example1.createCriteria().andEqualTo("progressPaymentId", id).andEqualTo("delFlag","0");
         ProgressPaymentTotalPayment totalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example1);
 
 
@@ -361,35 +369,29 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         baseProjectVo.setRemarkes(applicationInformation.getRemarkes());
 
+        if (visaNum.equals("1")){
+            baseProjectVo.setCurrentPaymentInformation(paymentInformation.getCurrentPaymentInformation());
+            baseProjectVo.setCumulativePaymentTimes(paymentInformation.getCumulativePaymentTimes());
+            baseProjectVo.setCurrentPaymentRatio(paymentInformation.getCurrentPaymentRatio());
+            baseProjectVo.setCurrentPeriodAccording(paymentInformation.getCurrentPeriodAccording());
+            baseProjectVo.setContractAmount(paymentInformation.getContractAmount());
+            baseProjectVo.setProjectType(paymentInformation.getProjectType());
+            baseProjectVo.setReceivingTime(paymentInformation.getReceivingTime());
+            baseProjectVo.setCompileTime(paymentInformation.getCompileTime());
+            baseProjectVo.setOutsourcing(paymentInformation.getOutsourcing());
+            baseProjectVo.setNameOfCostUnit(paymentInformation.getNameOfCostUnit());
+            baseProjectVo.setContact(paymentInformation.getContact());
+            baseProjectVo.setContactPhone(paymentInformation.getContactPhone());
+            baseProjectVo.setAmountOutsourcing(paymentInformation.getAmountOutsourcing());
+            baseProjectVo.setSituation(paymentInformation.getSituation());
+            baseProjectVo.setRemarkes1(paymentInformation.getRemarkes());
+        }
 
-        baseProjectVo.setTotalPaymentAmount(totalPayment.getTotalPaymentAmount());
-        baseProjectVo.setCumulativeNumberPayment(totalPayment.getCumulativeNumberPayment());
-        baseProjectVo.setAccumulativePaymentProportion(totalPayment.getAccumulativePaymentProportion());
-
-
-        baseProjectVo.setCurrentPaymentInformation(paymentInformation.getCurrentPaymentInformation());
-        baseProjectVo.setCumulativePaymentTimes(paymentInformation.getCumulativePaymentTimes());
-        baseProjectVo.setCurrentPaymentRatio(paymentInformation.getCurrentPaymentRatio());
-        baseProjectVo.setCurrentPeriodAccording(paymentInformation.getCurrentPeriodAccording());
-        baseProjectVo.setContractAmount(paymentInformation.getContractAmount());
-        baseProjectVo.setProjectType(paymentInformation.getProjectType());
-        baseProjectVo.setReceivingTime(paymentInformation.getReceivingTime());
-        baseProjectVo.setCompileTime(paymentInformation.getCompileTime());
-        baseProjectVo.setOutsourcing(paymentInformation.getOutsourcing());
-        baseProjectVo.setNameOfCostUnit(paymentInformation.getNameOfCostUnit());
-        baseProjectVo.setContact(paymentInformation.getContact());
-        baseProjectVo.setContactPhone(paymentInformation.getContactPhone());
-        baseProjectVo.setAmountOutsourcing(paymentInformation.getAmountOutsourcing());
-        baseProjectVo.setSituation(paymentInformation.getSituation());
-        baseProjectVo.setRemarkes(paymentInformation.getRemarkes());
-        // TODO  审核信息
-        baseProjectVo.setAuditInfos(auditInfos);
-
-        Example example2 = new Example(AuditInfo.class);
-        Example.Criteria criteria1 = example2.createCriteria();
-        criteria1.andEqualTo("baseProjectId", id);
-
-        List<AuditInfo> auditInfos1 = auditInfoDao.selectByExample(example2);
+//        Example example2 = new Example(AuditInfo.class);
+//        Example.Criteria criteria1 = example2.createCriteria();
+//        criteria1.andEqualTo("baseProjectId", id);
+//
+//        List<AuditInfo> auditInfos1 = auditInfoDao.selectByExample(example2);
 
 //        for (AuditInfo auditInfo : auditInfos1) {
 //            if("0".equals(auditInfo.getAuditResult()) && ("0".equals(auditInfo.getAuditType()))){
@@ -410,15 +412,23 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         criteria2.andEqualTo("auditorId", userInfo.getId());
 
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditInfoExample);
-        if (auditInfo != null) {
-            baseProjectVo.setAuditInfo(auditInfo);
-            // 0 代表一审，未审批
-            if ("0".equals(auditInfo.getAuditType())) {
-                baseProjectVo.setAuditNumber("0");
-            } else if ("1".equals(auditInfo.getAuditType())) {
+
+        if (auditInfo!=null){
+            if (auditInfo.getAuditType().equals("0") || auditInfo.getAuditType().equals("1") ||auditInfo.getAuditType().equals("4")){
                 baseProjectVo.setAuditNumber("1");
+            }else if(auditInfo.getAuditType().equals("2") || auditInfo.getAuditType().equals("3") ||auditInfo.getAuditType().equals("5")){
+                baseProjectVo.setAuditNumber("2");
             }
         }
+//        if (auditInfo != null) {
+//            baseProjectVo.setAuditInfo(auditInfo);
+//            // 0 代表一审，未审批
+//            if ("0".equals(auditInfo.getAuditType())) {
+//                baseProjectVo.setAuditNumber("0");
+//            } else if ("1".equals(auditInfo.getAuditType())) {
+//                baseProjectVo.setAuditNumber("1");
+//            }
+//        }
         return baseProjectVo;
     }
 
@@ -438,61 +448,130 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         //审核表
         AuditInfo auditInfo = new AuditInfo();
 
-
+        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+        String format = sim.format(new Date());
         if (baseProject != null && !baseProject.equals("")) {
             if (baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")) {
-                if (baseProject.getAuditNumber().equals("1")) {
-                    project.setAuditNumber("1");
-                    baseProjectDao.updateByPrimaryKey(project);
+                //处理中
+                if(project.getProgressPaymentStatus().equals("2")){
+                    auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
                     auditInfo.setBaseProjectId(baseProject.getId());
                     auditInfo.setAuditResult("0");
-                    auditInfo.setAuditorId(baseProject.getAuditorId());
-                    auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
-                    auditInfo.setAuditType("1");
-                    auditInfoDao.insert(auditInfo);
-                } else if (baseProject.getAuditNumber().equals("2")) {
-                    Example example = new Example(AuditInfo.class);
-                    example.createCriteria().andEqualTo("baseProjectId", baseProject.getId());
-                    List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
-                    for (AuditInfo info : auditInfos) {
-                        if (info.getAuditResult().equals("0")) {
-                            info.setAuditResult("1");
-                            auditInfoDao.updateByPrimaryKeySelective(info);
-                            break;
-                        }
-                    }
-                } else if (baseProject.getAuditNumber().equals("0")) {// 如果是 0，代表处理中状态
-                    project.setProgressPaymentStatus("1");
-                    project.setProjectFlow(project.getProjectFlow() + ",4");
-                    baseProjectDao.updateByPrimaryKeySelective(project);
-                    auditInfo.setBaseProjectId(paymentInformation.getId());
-                    auditInfo.setAuditResult("0");
-                    auditInfo.setAuditorId(baseProject.getAuditorId());
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
-                    String format = simpleDateFormat.format(new Date());
-                    auditInfo.setCreateTime(format);
                     auditInfo.setAuditType("0");
+                    auditInfo.setAuditorId(baseProject.getAuditorId());
+                    auditInfo.setFounderId(loginUser.getId());
                     auditInfo.setStatus("0");
-                    auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
-                    auditInfoDao.insert(auditInfo);
+                    auditInfo.setCreateTime(format);
+                    auditInfoDao.insertSelective(auditInfo);
+
+
+                    Example example = new Example(ProgressPaymentTotalPayment.class);
+                    Example.Criteria c = example.createCriteria();
+                    c.andEqualTo("baseProjectId",project.getId());
+                    c.andEqualTo("delFlag","0");
+                    ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example);
+                    progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(baseProject.getCurrentPaymentInformation()));
+                    progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(baseProject.getCumulativePaymentTimes())));
+                    progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(baseProject.getCurrentPaymentRatio())+"");
+                    progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
+
+                    project.setProgressPaymentStatus("1");;
+                    baseProjectDao.updateByPrimaryKeySelective(project);
+                    //待确认
+                }else if(project.getProgressPaymentStatus().equals("4")){
+                    auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    auditInfo.setBaseProjectId(baseProject.getId());
+                    auditInfo.setAuditResult("0");
+                    auditInfo.setAuditType("2");
+                    auditInfo.setAuditorId(baseProject.getAuditorId());
+                    auditInfo.setFounderId(loginUser.getId());
+                    auditInfo.setStatus("0");
+                    auditInfo.setCreateTime(format);
+                    auditInfoDao.insertSelective(auditInfo);
+
+                    project.setProgressPaymentStatus("1");;
+                    baseProjectDao.updateByPrimaryKeySelective(project);
+                    //未通过
+                }else if(project.getProgressPaymentStatus().equals("3")){
+                    Example example = new Example(AuditInfo.class);
+                    Example.Criteria c = example.createCriteria();
+                    c.andEqualTo("baseProjectId",baseProject.getId());
+                    c.andEqualTo("status","0");
+                    c.andEqualTo("auditResult","2");
+                    AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example);
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditOpinion("");
+                    auditInfo1.setAuditTime("");
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
+
+                    project.setProgressPaymentStatus("1");;
+                    baseProjectDao.updateByPrimaryKeySelective(project);
+                    //进行中
+                }else if(project.getProgressPaymentStatus().equals("5")){
+
+                    ProgressPaymentInformation progressPaymentInformation1 = progressPaymentInformationDao.selectByPrimaryKey(baseProject.getId());
+                    progressPaymentInformation1.setDelFlag("2");
+                    progressPaymentInformationDao.updateByPrimaryKeySelective(progressPaymentInformation1);
+
+
+                    ProgressPaymentInformation progressPaymentInformation = new ProgressPaymentInformation();
+                    progressPaymentInformation.setId(UUID.randomUUID().toString().replace("-",""));
+                    progressPaymentInformation.setCurrentPaymentInformation(baseProject.getCurrentPaymentInformation());
+                    progressPaymentInformation.setCumulativePaymentTimes(baseProject.getCumulativePaymentTimes());
+                    progressPaymentInformation.setCurrentPaymentRatio(baseProject.getCurrentPaymentRatio());
+                    progressPaymentInformation.setCurrentPeriodAccording(baseProject.getCurrentPeriodAccording());
+                    progressPaymentInformation.setContractAmount(baseProject.getContractAmount());
+                    progressPaymentInformation.setProjectType(baseProject.getProjectType());
+                    progressPaymentInformation.setReceivingTime(baseProject.getReceivingTime());
+                    progressPaymentInformation.setCompileTime(baseProject.getCompileTime());
+                    progressPaymentInformation.setOutsourcing(baseProject.getOutsourcing());
+                    progressPaymentInformation.setNameOfCostUnit(baseProject.getNameOfCostUnit());
+                    progressPaymentInformation.setContact(baseProject.getContact());
+                    progressPaymentInformation.setContactPhone(baseProject.getContactPhone());
+                    progressPaymentInformation.setAmountOutsourcing(baseProject.getAmountOutsourcing());
+                    progressPaymentInformation.setSituation(baseProject.getSituation());
+                    progressPaymentInformation.setRemarkes(baseProject.getRemarkes());
+                    progressPaymentInformation.setBaseProjectId(project.getId());
+                    progressPaymentInformation.setCreateTime(format);
+                    progressPaymentInformation.setFounderId(loginUser.getId());
+                    progressPaymentInformation.setDelFlag("0");
+                    progressPaymentInformationDao.insertSelective(progressPaymentInformation);
+
+
+                    Example example = new Example(ProgressPaymentTotalPayment.class);
+                    Example.Criteria c = example.createCriteria();
+                    c.andEqualTo("baseProjectId",project.getId());
+                    c.andEqualTo("delFlag","0");
+                    ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example);
+                    progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(progressPaymentInformation.getCurrentPaymentInformation()));
+                    progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes())));
+                    progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
+                    progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
+
+                    auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    auditInfo.setBaseProjectId(progressPaymentInformation.getId());
+                    auditInfo.setAuditResult("0");
+                    auditInfo.setAuditType("0");
+                    auditInfo.setAuditorId(baseProject.getAuditorId());
+                    auditInfo.setFounderId(loginUser.getId());
+                    auditInfo.setStatus("0");
+                    auditInfo.setCreateTime(format);
+                    auditInfoDao.insertSelective(auditInfo);
+                    return;
                 }
-            } else {
-                project.setProgressPaymentStatus("2");
-                baseProjectDao.updateByPrimaryKeySelective(project);
             }
 
             information.setRemarkes(baseProject.getRemarkes());
             Example example = new Example(ApplicationInformation.class);
-            example.createCriteria().andEqualTo("progressPaymentId", paymentInformation.getId());
-            applicationInformationDao.updateByExampleSelective(information, example);
+            Example.Criteria c1 = example.createCriteria();
+                    c1.andEqualTo("progressPaymentId", baseProject.getId());
+                    c1.andEqualTo("delFlag","0");
+            ApplicationInformation applicationInformation = applicationInformationDao.selectOneByExample(example);
+            information.setId(applicationInformation.getId());
+            applicationInformationDao.updateByPrimaryKeySelective(information);
+//            applicationInformationDao.updateByExampleSelective(information, example);
 
 
-            payment.setTotalPaymentAmount(baseProject.getTotalPaymentAmount());
-            payment.setCumulativeNumberPayment(baseProject.getCumulativeNumberPayment());
-            payment.setAccumulativePaymentProportion(baseProject.getAccumulativePaymentProportion());
-            Example example1 = new Example(ProgressPaymentTotalPayment.class);
-            example1.createCriteria().andEqualTo("progressPaymentId", paymentInformation.getId());
-            progressPaymentTotalPaymentDao.updateByExampleSelective(payment, example1);
 
             paymentInformation.setCurrentPaymentInformation(baseProject.getCurrentPaymentInformation());
             paymentInformation.setCumulativePaymentTimes(baseProject.getCumulativePaymentTimes());
@@ -510,8 +589,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             paymentInformation.setSituation(baseProject.getSituation());
             paymentInformation.setRemarkes(baseProject.getRemarkes());
             Example example3 = new Example(ProgressPaymentInformation.class);
-            example3.createCriteria().andEqualTo("progressPaymentId", paymentInformation.getId());
-            progressPaymentInformationDao.updateByExampleSelective(paymentInformation, example3);
+            example3.createCriteria().andEqualTo("id", baseProject.getId()).andEqualTo("delFlag","0");
+            ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectOneByExample(example3);
+            paymentInformation.setId(progressPaymentInformation.getId());
+            progressPaymentInformationDao.updateByPrimaryKeySelective(paymentInformation);
+//            progressPaymentInformationDao.updateByExampleSelective(paymentInformation, example3);
 
             // 本期进度款支付信息列表文件
             List<FileInfo> freignAndType = fileInfoMapper.findByFreignAndType(baseProject.getKey(), baseProject.getType1());
@@ -530,70 +612,70 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             //合同金额
             BigDecimal contractAmount = baseProject.getContractAmount();
             //如果累计支付金额大于合同金额的70%就发邮件和短信给大佬
-            if (totalAmount.compareTo(contractAmount) == 1) {
-                //whsjh 朱让宁
-                MemberManage memberManage = memberManageDao.selectByPrimaryKey(whsjh);
-                String name1 = memberManage.getMemberName();
-                MessageVo messageVo = new MessageVo();
-                messageVo.setId("A02");
-                messageVo.setUserId(whsjh);
-                messageVo.setReceiver(auditorId);
-                messageVo.setTitle("您有一个进度款支付项目已超额！");
-                messageVo.setSnsContent(name1 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                messageVo.setContent(name1 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                messageVo.setDetails(name1 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                messageService.sendOrClose(messageVo);
-                // whsjm 刘永涛
-                MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(whsjm);
-                String name2 = memberManage1.getMemberName();
-                MessageVo messageVo1 = new MessageVo();
-                messageVo1.setId("A02");
-                messageVo1.setUserId(whsjm);
-                messageVo1.setReceiver(auditorId);
-                messageVo1.setTitle("您有一个进度款支付项目已超额");
-                messageVo1.setSnsContent(name2 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                messageVo1.setContent(name2 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                messageVo1.setDetails(name2 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                messageService.sendOrClose(messageVo1);
-
-                // whzjh 罗均
-                MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(whzjh);
-                String name3 = memberManage2.getMemberName();
-                MessageVo messageVo2 = new MessageVo();
-                messageVo2.setId("A02");
-                messageVo2.setUserId(whzjh);
-                messageVo2.setReceiver(auditorId);
-                messageVo2.setPhone(auditorId);
-                messageVo2.setTitle("您有一个进度款支付项目已超额");
-                messageVo2.setSnsContent(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                messageVo2.setContent(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                messageVo2.setDetails(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                messageService.sendOrClose(messageVo2);
-
-                // whzjm 殷莉萍
-                MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(whzjm);
-                String name4 = memberManage3.getMemberName();
-                MessageVo messageVo3 = new MessageVo();
-                messageVo3.setId("A02");
-                messageVo3.setUserId(whzjm);
-                messageVo3.setReceiver(auditorId);
-                messageVo3.setPhone(auditorId);
-                messageVo3.setTitle("您有一个进度款支付项目已超额");
-                messageVo3.setSnsContent(name4 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                messageVo3.setContent(name4 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                messageVo3.setDetails(name4 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                messageService.sendOrClose(messageVo2);
-
-            } else {
-                // 站内信
-                MessageVo messageVo4 = new MessageVo();
-                messageVo4.setId("A10");
-                messageVo4.setUserId(auditorId);
-                messageVo4.setTitle("您有一个进度款项目待审批！");
-                messageVo4.setDetails(loginUser.getUsername() + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                //调用消息Service
-                messageService.sendOrClose(messageVo4);
-            }
+//            if (totalAmount.compareTo(contractAmount) == 1) {
+//                //whsjh 朱让宁
+//                MemberManage memberManage = memberManageDao.selectByPrimaryKey(whsjh);
+//                String name1 = memberManage.getMemberName();
+//                MessageVo messageVo = new MessageVo();
+//                messageVo.setId("A02");
+//                messageVo.setUserId(whsjh);
+//                messageVo.setReceiver(auditorId);
+//                messageVo.setTitle("您有一个进度款支付项目已超额！");
+//                messageVo.setSnsContent(name1 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+//                messageVo.setContent(name1 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+//                messageVo.setDetails(name1 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+////                messageService.sendOrClose(messageVo);
+//                // whsjm 刘永涛
+//                MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(whsjm);
+//                String name2 = memberManage1.getMemberName();
+//                MessageVo messageVo1 = new MessageVo();
+//                messageVo1.setId("A02");
+//                messageVo1.setUserId(whsjm);
+//                messageVo1.setReceiver(auditorId);
+//                messageVo1.setTitle("您有一个进度款支付项目已超额");
+//                messageVo1.setSnsContent(name2 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+//                messageVo1.setContent(name2 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+//                messageVo1.setDetails(name2 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+//                messageService.sendOrClose(messageVo1);
+//
+//                // whzjh 罗均
+//                MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(whzjh);
+//                String name3 = memberManage2.getMemberName();
+//                MessageVo messageVo2 = new MessageVo();
+//                messageVo2.setId("A02");
+//                messageVo2.setUserId(whzjh);
+//                messageVo2.setReceiver(auditorId);
+//                messageVo2.setPhone(auditorId);
+//                messageVo2.setTitle("您有一个进度款支付项目已超额");
+//                messageVo2.setSnsContent(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+//                messageVo2.setContent(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+//                messageVo2.setDetails(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+//                messageService.sendOrClose(messageVo2);
+//
+//                // whzjm 殷莉萍
+//                MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(whzjm);
+//                String name4 = memberManage3.getMemberName();
+//                MessageVo messageVo3 = new MessageVo();
+//                messageVo3.setId("A02");
+//                messageVo3.setUserId(whzjm);
+//                messageVo3.setReceiver(auditorId);
+//                messageVo3.setPhone(auditorId);
+//                messageVo3.setTitle("您有一个进度款支付项目已超额");
+//                messageVo3.setSnsContent(name4 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+//                messageVo3.setContent(name4 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+//                messageVo3.setDetails(name4 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+//                messageService.sendOrClose(messageVo2);
+//
+//            } else {
+//                // 站内信
+//                MessageVo messageVo4 = new MessageVo();
+//                messageVo4.setId("A10");
+//                messageVo4.setUserId(auditorId);
+//                messageVo4.setTitle("您有一个进度款项目待审批！");
+//                messageVo4.setDetails(loginUser.getUsername() + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+//                //调用消息Service
+//                messageService.sendOrClose(messageVo4);
+//            }
         }
     }
 
@@ -696,7 +778,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         String id = loginUser.getId();
         //姓名
         String username = loginUser.getUsername();
-        batchReviewVo.getBatchAll();
+
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             Example example = new Example(AuditInfo.class);
@@ -722,15 +804,24 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo1.setBaseProjectId(s);
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("1");
+                    auditInfo1.setFounderId(loginUser.getId());
+                    auditInfo1.setCreateTime(format);
+                    auditInfo1.setStatus("0");
 
-                    baseProject.setProgressPaymentStatus("4");
-                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
-                    Example example3 = new Example(MemberManage.class);
-                    example3.createCriteria().andEqualTo("status", "0").andEqualTo("depId", "2").andEqualTo("depAdmin", "1");
-                    MemberManage memberManage = memberManageDao.selectOneByExample(example3);
 
-                    auditInfo1.setAuditorId(memberManage.getId());
+
+                    Example example1 = new Example(MemberManage.class);
+                    Example.Criteria cc = example1.createCriteria();
+                    cc.andEqualTo("id",progressPaymentInformation.getId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    //1芜湖
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjh);
+                        //吴江
+                    }else if (memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjh);
+                    }
 
                     auditInfoDao.insertSelective(auditInfo1);
                 } else if (auditInfo.getAuditType().equals("1")) {
@@ -739,11 +830,110 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
                     auditInfo.setAuditTime(format);
                     auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
+                    AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                    auditInfo1.setBaseProjectId(s);
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditType("4");
+                    auditInfo1.setFounderId(loginUser.getId());
+                    auditInfo1.setCreateTime(format);
+                    auditInfo1.setStatus("0");
+
+
+
+                    Example example1 = new Example(MemberManage.class);
+                    Example.Criteria cc = example1.createCriteria();
+                    cc.andEqualTo("id",progressPaymentInformation.getId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    //1芜湖
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjm);
+                        //吴江
+                    }else if (memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjm);
+                    }
+
+                    auditInfoDao.insertSelective(auditInfo1);
+                }else if(auditInfo.getAuditType().equals("4")){
+                    auditInfo.setAuditResult("1");
+                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
+                    baseProject.setProgressPaymentStatus("4");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                }else if(auditInfo.getAuditType().equals("2")){
+                    auditInfo.setAuditResult("1");
+                    Date date = new Date();
+                    String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
+                    auditInfo.setAuditTime(format);
+                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                    AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                    auditInfo1.setBaseProjectId(s);
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditType("3");
+                    auditInfo1.setFounderId(loginUser.getId());
+                    auditInfo1.setCreateTime(format);
+                    auditInfo1.setStatus("0");
+
+
+
+
+                    Example example1 = new Example(MemberManage.class);
+                    Example.Criteria cc = example1.createCriteria();
+                    cc.andEqualTo("id",progressPaymentInformation.getId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    //1芜湖
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjh);
+                        //吴江
+                    }else if (memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjh);
+                    }
+
+                    auditInfoDao.insertSelective(auditInfo1);
+                }else if(auditInfo.getAuditType().equals("3")){
+                    auditInfo.setAuditResult("1");
+                    Date date = new Date();
+                    String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
+                    auditInfo.setAuditTime(format);
+                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
+                    AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                    auditInfo1.setBaseProjectId(s);
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditType("5");
+                    auditInfo1.setFounderId(loginUser.getId());
+                    auditInfo1.setCreateTime(format);
+                    auditInfo1.setStatus("0");
+
+
+
+                    Example example1 = new Example(MemberManage.class);
+                    Example.Criteria cc = example1.createCriteria();
+                    cc.andEqualTo("id",progressPaymentInformation.getId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    //1芜湖
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjm);
+                        //吴江
+                    }else if (memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjm);
+                    }
+
+                    auditInfoDao.insertSelective(auditInfo1);
+                }else if(auditInfo.getAuditType().equals("5")){
+                    auditInfo.setAuditResult("1");
+                    auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
+                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 
                     baseProject.setProgressPaymentStatus("5");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
-
-                    auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                 }
                 //消息通知
                 //项目名称
@@ -976,40 +1166,92 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Override
     public PageInfo<ProgressListVo> searchAllProgress(PageVo pageVo) {
-        // 设置分页助手
-        PageHelper.startPage(pageVo.getPageNum(), pageVo.getPageSize());
-        List<ProgressListVo> progressListVos = progressPaymentInformationDao.searchAllProgress(pageVo);
-        List<ProgressListVo> progressListVos1 = progressPaymentInformationDao.searchAllProgress1(pageVo);
-
-        PageInfo<ProgressListVo> progressListVoPageInfo = new PageInfo<>();
-
-        // 全部状态
-        if ("".equals(pageVo.getProgressStatus())) {
-            progressListVoPageInfo = new PageInfo<>(progressListVos1);
-        } else if ("1".equals(pageVo.getProgressStatus()) || "3".equals(pageVo.getProgressStatus())) {
-            //当前处理人
-            for (ProgressListVo thisPro : progressListVos) {
-                Example example1 = new Example(AuditInfo.class);
-                example1.createCriteria().andEqualTo("baseProjectId", thisPro.getId())
-                        .andEqualTo("auditResult", "0");
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
-                if (auditInfo != null) {
-                    if (auditInfo.getAuditorId() != null) {
-                        Example example = new Example(MemberManage.class);
-                        example.createCriteria().andEqualTo("id", auditInfo.getAuditorId());
-                        MemberManage memberManage = memberManageDao.selectOneByExample(example);
-                        if (memberManage != null) {
-                            thisPro.setCurrentHandler(memberManage.getMemberName());
-                        }
+//       searchAllProgress
+        //待审核领导
+        if (pageVo.getProgressStatus().equals("1")){
+            if (pageVo.getUid().equals(whzjh) || pageVo.getUid().equals(whzjm) || pageVo.getUid().equals(wjzjh)){
+                List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressLeader(pageVo);
+                for (ProgressListVo progressListVo : list) {
+                    Example example = new Example(AuditInfo.class);
+                    example.createCriteria().andEqualTo("baseProjectId",progressListVo.getId())
+                            .andEqualTo("auditResult","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    Example example1 = new Example(MemberManage.class);
+                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    if (memberManage !=null){
+                        progressListVo.setCurrentHandler(memberManage.getMemberName());
+                    }
+                }
+                return new PageInfo<ProgressListVo>(list);
+                //普通员工
+            }else {
+                List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressStaff(pageVo);
+                for (ProgressListVo progressListVo : list) {
+                    Example example = new Example(AuditInfo.class);
+                    example.createCriteria().andEqualTo("baseProjectId",progressListVo.getId())
+                            .andEqualTo("auditResult","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    Example example1 = new Example(MemberManage.class);
+                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    if (memberManage !=null){
+                        progressListVo.setCurrentHandler(memberManage.getMemberName());
+                    }
+                }
+                return new PageInfo<ProgressListVo>(list);
+            }
+        }
+        //处理中
+        if (pageVo.getProgressStatus().equals("2")){
+            List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
+            return new PageInfo<ProgressListVo>(list);
+        }
+        //未通过
+        if (pageVo.getProgressStatus().equals("3")){
+            List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
+            return new PageInfo<ProgressListVo>(list);
+        }
+        //待确认
+        if (pageVo.getProgressStatus().equals("4")){
+            List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
+            return new PageInfo<ProgressListVo>(list);
+        }
+        //进行中
+        if (pageVo.getProgressStatus().equals("5")){
+            List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressSueecss(pageVo);
+            for (ProgressListVo progressListVo : list) {
+                if(progressListVo.getProgressPaymentStatus().equals("进行中")){
+                    if (progressListVo.getFounderId().equals(pageVo.getUid())){
+                        progressListVo.setShowUpdate("3");
                     }
                 }
             }
-            progressListVoPageInfo = new PageInfo<>(progressListVos);
-        } else {
-            progressListVoPageInfo = new PageInfo<>(progressListVos1);
+            return new PageInfo<ProgressListVo>(list);
+        }
+        //已完成
+        if (pageVo.getProgressStatus().equals("6")){
+            List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressSueecss(pageVo);
+            return new PageInfo<ProgressListVo>(list);
+        }
+        //全部
+        if (pageVo.getProgressStatus().equals("") || pageVo.getProgressStatus() == null){
+            List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
+            for (ProgressListVo progressListVo : list) {
+                if (progressListVo.getProgressPaymentStatus().equals("处理中")){
+                    progressListVo.setShowUpdate("1");
+                }else if (progressListVo.getProgressPaymentStatus().equals("待确认")){
+                    progressListVo.setShowUpdate("2");
+                }else if(progressListVo.getProgressPaymentStatus().equals("进行中")){
+                    if (progressListVo.getFounderId().equals(pageVo.getUid())){
+                        progressListVo.setShowUpdate("3");
+                    }
+                }
+            }
+            return new PageInfo<ProgressListVo>(list);
         }
 
-        return progressListVoPageInfo;
+        return new PageInfo<ProgressListVo>();
     }
 
 
