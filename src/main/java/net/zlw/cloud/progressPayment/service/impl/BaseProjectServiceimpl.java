@@ -92,6 +92,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public void addProgress(BaseProjectVo baseProject, UserInfo loginUser) {
 
+        if (baseProject.getAmountOutsourcing().equals("")){
+            baseProject.setAmountOutsourcing(null);
+        }
+
 //        loginUser = new UserInfo("user309",null,null,true);
 
 //        Budgeting budgeting = budgetingMapper.selectByPrimaryKey(baseProject.getId());
@@ -436,6 +440,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     //修改进度款
     @Override
     public void updateProgress(BaseProjectVo baseProject, UserInfo loginUser) {
+
+        if (baseProject.getAmountOutsourcing().equals("")){
+            baseProject.setAmountOutsourcing(null);
+        }
+
         //项目基本信息
         Example example2 = new Example(BaseProject.class);
         example2.createCriteria().andEqualTo("projectNum", baseProject.getProjectNum());
@@ -455,6 +464,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             if (baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")) {
                 //处理中
                 if(project.getProgressPaymentStatus().equals("2")){
+
+
+
                     auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
                     auditInfo.setBaseProjectId(baseProject.getId());
                     auditInfo.setAuditResult("0");
