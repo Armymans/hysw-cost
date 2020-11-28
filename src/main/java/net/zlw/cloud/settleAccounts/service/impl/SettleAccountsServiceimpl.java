@@ -96,7 +96,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
 //        loginUser = new UserInfo("200101005",null,null,true);
-//        loginUser = new UserInfo("user320", null, null, true);
+//        loginUser = new UserInfo("200101005", null, null, true);
         pageVo.setUserId(loginUser.getId());
 //        List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
 //        ArrayList<AccountsVo> returnList = new ArrayList<>();
@@ -600,7 +600,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public BaseAccountsVo findAccountById(String id, UserInfo loginUser) {
-//        loginUser = new UserInfo("200610002",null,null,true);
+//        loginUser = new UserInfo("200101005",null,null,true);
         BaseAccountsVo baseAccountsVo = new BaseAccountsVo();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
         baseAccountsVo.setBaseProject(baseProject);
@@ -621,13 +621,19 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             for (SettlementInfo settlementInfo : settlementInfos) {
                 if (settlementInfo.getSumbitMoney() != null) {
                     baseAccountsVo.setSettlementInfo(settlementInfo);
-                    SettlementInfo settlementInfo1 = new SettlementInfo();
-                    baseAccountsVo.setLastSettlementInfo(settlementInfo1);
+
                 } else {
                     baseAccountsVo.setLastSettlementInfo(settlementInfo);
-                    SettlementInfo settlementInfo1 = new SettlementInfo();
-                    baseAccountsVo.setSettlementInfo(settlementInfo1);
+
                 }
+            }
+            if (baseAccountsVo.getLastSettlementInfo()==null){
+                SettlementInfo settlementInfo1 = new SettlementInfo();
+                baseAccountsVo.setLastSettlementInfo(settlementInfo1);
+            }
+            if (baseAccountsVo.getSettlementInfo()==null){
+                SettlementInfo settlementInfo1 = new SettlementInfo();
+                baseAccountsVo.setSettlementInfo(settlementInfo1);
             }
         }else {
             SettlementInfo settlementInfo = new SettlementInfo();
@@ -648,7 +654,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         c3.andEqualTo("delFlag", "0");
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example3);
         baseAccountsVo.setSettlementAuditInformation(settlementAuditInformation);
-        if (settlementAuditInformation.getId() != null) {
+        if (settlementAuditInformation!=null && settlementAuditInformation.getId() != null) {
             baseAccountsVo.setId(settlementAuditInformation.getId());
         } else {
             baseAccountsVo.setId(lastSettlementReview.getId());
@@ -706,6 +712,13 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //            //调用消息Service
 //            messageService.sendOrClose(messageVo);
 //        }
+
+        if (baseAccountsVo.getLastSettlementReview()==null){
+            baseAccountsVo.setLastSettlementReview(new LastSettlementReview());
+        }
+        if (baseAccountsVo.getSettlementAuditInformation()==null){
+            baseAccountsVo.setSettlementAuditInformation(new SettlementAuditInformation());
+        }
         return baseAccountsVo;
     }
 

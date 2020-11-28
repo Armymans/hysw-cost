@@ -493,8 +493,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "bt.del_flag = '0' and  " +
             "b.del_flag = '0' and  " +
             "si.state = '0' and " +
-            "l.del_flag = '0' and " +
-            "s.del_flag = '0' and " +
+            "IFNULL(l.del_flag,'0') = '0' and " +
+            "IFNULL(s.del_flag,'0') = '0' and " +
             "a.audit_result = '0'" +
             "group by IFNULL(s.id,l.id)" +
             "ORDER BY si.create_time DESC   ")
@@ -591,8 +591,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "bt.del_flag = '0' and  " +
             "b.del_flag = '0' and  " +
             "si.state = '0' and " +
-            "l.del_flag = '0' and " +
-            "s.del_flag = '0' and " +
+            "IFNULL(l.del_flag,'0') = '0' and " +
+            "IFNULL(s.del_flag,'0') = '0' and " +
             "a.audit_result = '0' and " +
             " ( IFNULL(s.founder_id,l.founder_id) = #{userId} or " +
             "a.auditor_id = #{userId} )" +
@@ -690,8 +690,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "bt.del_flag = '0' and  " +
             "b.del_flag = '0' and  " +
             "si.state = '0' and " +
-            "l.del_flag = '0' and " +
-            "s.del_flag = '0' and " +
+            "IFNULL(l.del_flag,'0') = '0' and " +
+            "IFNULL(s.del_flag,'0') = '0' and " +
             "IFNULL(s.founder_id,l.founder_id) = #{userId}" +
             "group by IFNULL(s.id,l.id)" +
             "ORDER BY si.create_time DESC  ")
@@ -786,8 +786,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "bt.del_flag = '0' and  " +
             "b.del_flag = '0' and  " +
             "si.state = '0' and " +
-            "l.del_flag = '0' and " +
-            "s.del_flag = '0'" +
+            "IFNULL(l.del_flag,'0') = '0' and " +
+            "IFNULL(s.del_flag,'0') = '0' and " +
             "group by IFNULL(s.id,l.id)" +
             "ORDER BY si.create_time DESC  ")
     List<AccountsVo> findAllAccountsSuccess(PageVo pageVo);
@@ -882,8 +882,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "bt.del_flag = '0' and  " +
             "b.del_flag = '0' and  " +
             "si.state = '0' and " +
-            "l.del_flag = '0' and " +
-            "s.del_flag = '0' and " +
+            "IFNULL(l.del_flag,'0') = '0' and " +
+            "IFNULL(s.del_flag,'0') = '0' and " +
             "( IFNULL(s.founder_id,l.founder_id) = #{userId} )" +
             "group by IFNULL(s.id,l.id)" +
             "ORDER BY si.create_time DESC  ")
