@@ -787,7 +787,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "b.del_flag = '0' and  " +
             "si.state = '0' and " +
             "IFNULL(l.del_flag,'0') = '0' and " +
-            "IFNULL(s.del_flag,'0') = '0' and " +
+            "IFNULL(s.del_flag,'0') = '0' " +
             "group by IFNULL(s.id,l.id)" +
             "ORDER BY si.create_time DESC  ")
     List<AccountsVo> findAllAccountsSuccess(PageVo pageVo);

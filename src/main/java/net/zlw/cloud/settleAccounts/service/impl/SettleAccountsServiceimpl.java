@@ -460,6 +460,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getSettlementAuditInformation().setDelFlag("0");
             baseAccountsVo.getSettlementAuditInformation().setBaseProjectId(baseProject.getId());
             baseAccountsVo.getSettlementAuditInformation().setFounderId(loginUser.getId());
+
         }
 
         if (baseAccountsVo.getLastSettlementReview().getId() != null) {
@@ -722,10 +723,36 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         return baseAccountsVo;
     }
 
+
     @Override
     public void updateAccountById(BaseAccountsVo baseAccountsVo,UserInfo loginUser) {
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //上家审核修改
+        if (baseProject.getAB().equals("1")){
+            LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectByPrimaryKey(baseAccountsVo.getLastSettlementReview().getId());
+            SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectByPrimaryKey(baseAccountsVo.getSettlementAuditInformation().getId());
+            if (lastSettlementReview==null){
+                baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-",""));
+                baseAccountsVo.getLastSettlementReview().setCreateTime(data);
+                baseAccountsVo.getLastSettlementReview().setDelFlag("0");
+                baseAccountsVo.getLastSettlementReview().setBaseProjectId(baseProject.getId());
+                baseAccountsVo.getLastSettlementReview().setFounderId(loginUser.getId());
+                baseAccountsVo.getLastSettlementReview().setAccountId(baseAccountsVo.getSettlementAuditInformation().getId());
+                baseAccountsVo.getLastSettlementReview().setWhetherAccount("1");
+                lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
+            }
+            if (settlementAuditInformation==null){
+                baseAccountsVo.getSettlementAuditInformation().setId(UUID.randomUUID().toString().replace("-", ""));
+                baseAccountsVo.getSettlementAuditInformation().setCreateTime(data);
+                baseAccountsVo.getSettlementAuditInformation().setDelFlag("0");
+                baseAccountsVo.getSettlementAuditInformation().setBaseProjectId(baseProject.getId());
+                baseAccountsVo.getSettlementAuditInformation().setFounderId(loginUser.getId());
+                baseAccountsVo.getSettlementAuditInformation().setAccountId(baseAccountsVo.getLastSettlementReview().getId());
+                baseAccountsVo.getSettlementAuditInformation().setWhetherAccount("1");
+                settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
+            }
+        }
         settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getLastSettlementInfo());
         //判断decimal是否为空
         //下家审核修改
@@ -736,25 +763,24 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         lastSettlementReviewDao.updateByPrimaryKeySelective(baseAccountsVo.getLastSettlementReview());
         //下家送审修改
         settlementAuditInformationDao.updateByPrimaryKeySelective(baseAccountsVo.getSettlementAuditInformation());
-        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         // json转换
         Json coms = baseAccountsVo.getComs();
         String json = coms.value();
-        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
-        if (otherInfos.size() > 0){
-            for (OtherInfo thisInfo : otherInfos) {
-                OtherInfo otherInfo1 = new OtherInfo();
-                otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                otherInfo1.setForeignKey(baseProject.getId());
-                otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
-                otherInfo1.setNum(thisInfo.getNum());
-                otherInfo1.setCreateTime(data);
-                otherInfo1.setStatus("0");
-                otherInfo1.setFoundId(loginUser.getId());
-                otherInfo1.setFounderCompany(loginUser.getCompanyId());
-                otherInfoMapper.updateByPrimaryKeySelective(otherInfo1);
-            }
-        }
+//        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+//        if (otherInfos.size() > 0){
+//            for (OtherInfo thisInfo : otherInfos) {
+//                OtherInfo otherInfo1 = new OtherInfo();
+//                otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+//                otherInfo1.setForeignKey(baseProject.getId());
+//                otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+//                otherInfo1.setNum(thisInfo.getNum());
+//                otherInfo1.setCreateTime(data);
+//                otherInfo1.setStatus("0");
+//                otherInfo1.setFoundId(loginUser.getId());
+//                otherInfo1.setFounderCompany(loginUser.getCompanyId());
+//                otherInfoMapper.updateByPrimaryKeySelective(otherInfo1);
+//            }
+//        }
         //保存
         if (baseAccountsVo.getAuditNumber() == null || baseAccountsVo.getAuditNumber().equals("0")) {
             return;
@@ -785,9 +811,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         } else if (baseAccountsVo.getAuditNumber().equals("2")) {
             Example example = new Example(AuditInfo.class);
             Example.Criteria criteria = example.createCriteria();
-            if (baseAccountsVo.getSettlementAuditInformation().getId() != null) {
+            if (baseAccountsVo.getSettlementAuditInformation().getId() != null && ! baseAccountsVo.getSettlementAuditInformation().getId().equals("")) {
                 criteria.andEqualTo("baseProjectId", baseAccountsVo.getSettlementAuditInformation().getId());
-            } else if (baseAccountsVo.getLastSettlementReview().getId() != null) {
+            } else if (baseAccountsVo.getLastSettlementReview().getId() != null && ! baseAccountsVo.getLastSettlementReview().getId().equals("")) {
                 criteria.andEqualTo("baseProjectId", baseAccountsVo.getLastSettlementReview().getId());
             }
             List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
