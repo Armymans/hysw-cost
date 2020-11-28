@@ -111,6 +111,9 @@ public class ProjectService {
     @Resource
     private FileInfoMapper fileInfoMapper;
 
+    @Resource
+    private OutSourceMapper outSourceMapper;
+
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
     @Value("${audit.wujiang.sheji.designManager}")
@@ -910,6 +913,7 @@ public class ProjectService {
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
                     }
                 } else if (memberManage.getId().equals(whsjm)) {
+                    String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     //说明是部门经理审核 三审
                     //如果为通过 则从待审核状态变为已完成 如果为未通过则状态改为未通过
                     if ("1".equals(auditInfo.getAuditResult())) {
@@ -931,6 +935,28 @@ public class ProjectService {
                         auditInfo2.setAuditTime(createTime);
                         projectMapper.updateByPrimaryKeySelective(baseProject);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
+
+                        // 加入委外信息表
+                        OutSource outSource = new OutSource();
+                        outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                        // 如果有委外金额就加入委外信息表
+                        if ("0".equals(designInfo.getOutsource())){
+                            outSource.setOutMoney(designInfo.getOutsourceMoney().toString());
+                        }else {
+                            outSource.setOutMoney("0");
+                        }
+                        outSource.setDistrict(baseProject.getDistrict());
+                        outSource.setDept("1"); //1.设计 2.造价
+                        outSource.setDelFlag("0"); //0.正常 1.删除
+                        outSource.setOutType("1"); // 设计委外金额
+                        outSource.setBaseProjectId(baseProject.getId()); //基本信息表外键
+                        outSource.setProjectNum(designInfo.getId()); //设计信息外键
+                        outSource.setCreateTime(data);
+                        outSource.setUpdateTime(data);
+                        outSource.setFounderId(designInfo.getFounderId()); //项目创建人
+                        outSource.setFounderCompanyId(designInfo.getCompanyId()); //公司
+                        outSourceMapper.insertSelective(outSource);
+
                     } else if ("2".equals(auditInfo.getAuditResult())) {
                         //如果领导选择通过 审核类型改为三审(4) 同时该项目负责人变为部门经理 同时项目状态变为未通过
                         //如果当前项目为设计变更项目
@@ -1052,6 +1078,26 @@ public class ProjectService {
                         baseProject.setDesginStatus("4");
                         projectMapper.updateByPrimaryKeySelective(baseProject);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
+                        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                        OutSource outSource = new OutSource();
+                        outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                        if ("0".equals(designInfo.getOutsource())){
+                            outSource.setOutMoney(designInfo.getOutsourceMoney().toString());
+                        }else{
+                            outSource.setOutMoney("0");
+                        }
+                        outSource.setDistrict(baseProject.getDistrict());
+                        outSource.setDept("1"); //1.设计 2.造价
+                        outSource.setDelFlag("0"); //0.正常 1.删除
+                        outSource.setOutType("1"); // 设计委外金额
+                        outSource.setBaseProjectId(baseProject.getId()); //基本信息表外键
+                        outSource.setProjectNum(designInfo.getId()); //设计信息外键
+                        outSource.setCreateTime(data);
+                        outSource.setUpdateTime(data);
+                        outSource.setFounderId(designInfo.getFounderId()); //项目创建人
+                        outSource.setFounderCompanyId(designInfo.getCompanyId()); //公司
+                        outSourceMapper.insertSelective(outSource);
+
                     } else if ("2".equals(auditInfo.getAuditResult())) {
                         //如果当前项目为设计变更项目
                         if ("0".equals(auditInfo2.getChangeFlag())) {

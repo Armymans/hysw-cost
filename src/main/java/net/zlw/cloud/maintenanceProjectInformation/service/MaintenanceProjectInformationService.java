@@ -26,10 +26,8 @@ import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.util.StringUtil;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -692,6 +690,7 @@ public class MaintenanceProjectInformationService {
             auditInfoDao.updateByPrimaryKeySelective(auditInfo);
             maintenanceProjectInformationMapper.updateByPrimaryKeySelective(maintenanceProjectInformation);
         }else if(id.equals(whzjm)||id.equals(wjzjm)){
+            String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             //三审
             if("1".equals(batchReviewVo.getAuditResult())){
                 if("0".equals(auditInfo.getMaintenanceFlag())){
@@ -711,7 +710,25 @@ public class MaintenanceProjectInformationService {
                 }else{
                     maintenanceProjectInformation.setType("4");
                 }
-
+                // TODO 待测试
+               /* Example example1 = new Example(SettlementAuditInformation.class);
+                example1.createCriteria().andEqualTo("baseProjectId",maintenanceProjectInformation.getId());
+                SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
+                OutSource outSource = new OutSource();
+                outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                if ("1".equals(settlementAuditInformation.getOutsourcing())){
+                    outSource.setOutMoney(settlementAuditInformation.getAmountOutsourcing().toString());
+                }else {
+                    outSource.setOutMoney("0");
+                }
+                outSource.setDept("2"); //1.设计 2.造价
+                outSource.setDelFlag("0"); //0.正常 1.删除
+                outSource.setOutType("7"); // 检维修委外金额
+                outSource.setProjectNum(maintenanceProjectInformation.getId()); //跟踪审计信息外键
+                outSource.setCreateTime(data);
+                outSource.setUpdateTime(data);
+                outSource.setFounderId(maintenanceProjectInformation.getFounderId()); //项目创建人
+                outSource.setFounderCompanyId(maintenanceProjectInformation.getFounderCompanyId()); //公司*/
             }else{
                 //如果未通过
                 maintenanceProjectInformation.setType("3");

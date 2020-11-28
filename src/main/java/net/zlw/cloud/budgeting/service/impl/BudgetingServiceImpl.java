@@ -14,7 +14,12 @@ import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
+import net.zlw.cloud.designProject.mapper.EmployeeAchievementsInfoMapper;
+import net.zlw.cloud.designProject.mapper.OutSourceMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
+import net.zlw.cloud.designProject.model.OutSource;
+import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.mapper.MessageNotificationDao;
@@ -41,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +56,9 @@ import java.util.UUID;
 @Service
 @Transactional
 public class BudgetingServiceImpl implements BudgetingService {
+
+    @Resource
+    private OutSourceMapper outSourceMapper;
     @Resource
     private BudgetingDao budgetingDao;
     @Resource
@@ -74,7 +83,11 @@ public class BudgetingServiceImpl implements BudgetingService {
     private FileInfoMapper fileInfoMapper;
     @Autowired
     private FileInfoService fileInfoService;
+    @Resource
+    private ProjectSumService projectSumService;
 
+    @Resource
+    private EmployeeAchievementsInfoMapper employeeAchievementsInfoMapper;
     @Autowired
     private DesignInfoMapper designInfoMapper;
 
@@ -457,9 +470,9 @@ public class BudgetingServiceImpl implements BudgetingService {
     @Override
     public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
         //登录人id
-        String id = loginUser.getId();
+//        String id = loginUser.getId();
         //登录人名字
-        String username = loginUser.getUsername();
+//        String username = loginUser.getUsername();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             Example example = new Example(AuditInfo.class);
@@ -508,17 +521,6 @@ public class BudgetingServiceImpl implements BudgetingService {
                         twoBatch.setCreateTime(sim.format(new Date()));
                         //二审添加
                         auditInfoDao.insertSelective(twoBatch);
-                        //获取成员姓名
-                        MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-                        //如果通过发送消息
-                        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
-                        MessageVo messageVo = new MessageVo();
-                        messageVo.setId("A08");
-                        messageVo.setUserId(id);
-                        messageVo.setTitle("您有一个预算项目审批已通过！");
-                        messageVo.setDetails(username + "您好！您提交的【" + baseProject.getProjectName() + "】的预算项目【" + memberManage1.getMemberName() + "】已审批通过！");
-                        //调用消息Service
-                        messageService.sendOrClose(messageVo);
                         break;
                         //二审通过
                     }else if(auditInfo.getAuditResult().equals("0") && auditInfo.getAuditType().equals("1")){
@@ -571,6 +573,36 @@ public class BudgetingServiceImpl implements BudgetingService {
                         //设置为已完成
                         baseProject.setBudgetStatus("4");
                         baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                        // 加入委外信息
+                        OutSource outSource = new OutSource();
+                        outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                        if ("1".equals(budgeting.getOutsourcing())){
+                            outSource.setOutMoney(budgeting.getAmountOutsourcing().toString());
+                        }else {
+                            outSource.setOutMoney("0");
+                        }
+                        outSource.setDistrict(baseProject.getDistrict());
+                        outSource.setDept("2"); //1.设计 2.造价
+                        outSource.setDelFlag("0"); //0.正常 1.删除
+                        outSource.setOutType("2"); // 预算委外金额
+                        outSource.setBaseProjectId(baseProject.getId()); //基本信息表外键
+                        outSource.setProjectNum(budgeting.getId()); //设计信息外键
+                        outSource.setCreateTime(sim.format(new Date()));
+                        outSource.setUpdateTime(sim.format(new Date()));
+                        outSource.setFounderId(budgeting.getFounderId()); //项目创建人
+                        outSource.setFounderCompanyId(budgeting.getFounderCompanyId()); //公司
+                        outSourceMapper.insertSelective(outSource);
+
+                        //获取成员姓名
+                        MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+                      /*  //如果通过发送消息
+                        MessageVo messageVo = new MessageVo();
+                        messageVo.setId("A08");
+//                        messageVo.setUserId(id);
+                        messageVo.setTitle("您有一个预算项目审批已通过！");
+                        messageVo.setDetails(username + "您好！您提交的【" + baseProject.getProjectName() + "】的预算项目【" + memberManage1.getMemberName() + "】已审批通过！");
+                        //调用消息Service
+                        messageService.sendOrClose(messageVo);*/
                     }
                 //未通过
                 }else if (batchReviewVo.getAuditResult().equals("2")){
@@ -588,7 +620,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                         baseProject.setBudgetStatus("3");
                         baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
-                        //如果未通过发送消息
+                       /* //如果未通过发送消息
                         MessageVo messageVo1 = new MessageVo();
                         //审核人名字
                         messageVo1.setId("A08");
@@ -596,7 +628,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                         messageVo1.setTitle("您有一个预算项目审批未通过！");
                         messageVo1.setDetails(username + "您好！您提交的【" + baseProject.getProjectName() + "】的预算项目未通过，请查看详情！");
                         //调用消息Service
-                        messageService.sendOrClose(messageVo1);
+                        messageService.sendOrClose(messageVo1);*/
                     }
                 }
             }
@@ -605,12 +637,104 @@ public class BudgetingServiceImpl implements BudgetingService {
 
     @Override
     public void intoAccount(String s1, String ids) {
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         String[] split = s1.split(",");
         for (String s : split) {
             Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
             String founderId = budgeting.getFounderId();
             if (founderId.equals(ids) || ids.equals(whzjh) || ids.equals(whzjm) || ids.equals(wjzjh)){
                 System.err.println("xxxxxxx");
+                //TODO start
+                //根据预算外键查询基本信息
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+                //绩效表
+                EmployeeAchievementsInfo achievementsInfo = new EmployeeAchievementsInfo();
+                //总金额
+                BigDecimal total6 = new BigDecimal(0);
+                Example example = new Example(VeryEstablishment.class);
+                example.createCriteria().andEqualTo("budgetingId",budgeting.getId());
+                //招标控制价
+                VeryEstablishment veryEstablishment = veryEstablishmentDao.selectOneByExample(example);
+                // 如果是安徽
+
+                if(!"4".equals(baseProject.getDistrict())){
+                    //预算编制造价咨询金额
+                    Double money = projectSumService.anhuiBudgetingMoney(budgeting.getAmountCost());
+                    money = (double)Math.round(money*100)/100;
+                    Double money1 = projectSumService.anhuiBudgetingMoney(veryEstablishment.getBiddingPriceControl());//                        total3 = total3.add(new BigDecimal(money1));
+                    money1 = (double)Math.round(money1*100)/100;
+                    //预算编制咨询费计算基数
+                    Double aDouble = projectSumService.BudgetingBase(money, money1);
+                    aDouble = (double)Math.round(aDouble*100)/100;
+                    //计算基数和
+                    //预算编制技提
+                    Double aDouble1 = projectSumService.technicalImprovement(aDouble);
+                    aDouble1 = (double)Math.round(aDouble1*100)/100;
+                    //计提和
+                    total6 = total6.add(new BigDecimal(aDouble1));
+                    //实际计提金额 取两位小数四舍五入
+                    achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    BigDecimal actualAmount = total6.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
+                    achievementsInfo.setActualAmount(actualAmount);
+                    // 应收
+                    achievementsInfo.setAccruedAmount(total6);
+                    //余额
+                    BigDecimal balance = total6.subtract(actualAmount);
+                    achievementsInfo.setBalance(balance);
+                    // 员工绩效
+                    achievementsInfo.setMemberId(budgeting.getBudgetingPeople()); // 设计人
+                    achievementsInfo.setCreateTime(data);
+                    achievementsInfo.setUpdateTime(data);
+                    achievementsInfo.setFounderId(budgeting.getFounderId());
+                    achievementsInfo.setFounderCompanyId(budgeting.getFounderCompanyId());
+                    achievementsInfo.setDelFlag("0");
+                    achievementsInfo.setDistrict(baseProject.getDistrict());
+                    achievementsInfo.setDept("2"); //造价
+                    achievementsInfo.setAchievementsType("2"); //预算编制
+                    achievementsInfo.setBaseProjectId(baseProject.getId());
+                    achievementsInfo.setProjectNum(budgeting.getId());
+                    achievementsInfo.setOverFlag("0");
+                    employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                    //吴江
+                }else{
+                    //预算编制造价咨询金额
+                    Double money = projectSumService.wujiangBudgetingMoney(budgeting.getAmountCost());
+                    money = (double)Math.round(money*100)/100;
+                    //预算编制标底咨询金额
+                    Double money1 = projectSumService.wujiangBudgetingMoney(veryEstablishment.getBiddingPriceControl());
+                    money1 = (double)Math.round(money1*100)/100;
+                    //预算编制咨询费计算基数
+                    Double aDouble = projectSumService.BudgetingBase(money, money1);
+                    aDouble = (double)Math.round(aDouble*100)/100;
+                    //预算编制技提
+                    Double aDouble1 = projectSumService.technicalImprovement(aDouble);
+                    aDouble1 = (double)Math.round(aDouble1*100)/100;
+                    //计提和
+                    total6 = total6.add(new BigDecimal(aDouble1));
+                    BigDecimal actualAmount = total6.multiply(new BigDecimal(0.8));
+                    achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    //实际计提金额
+                    achievementsInfo.setActualAmount(actualAmount);
+                    BigDecimal accruedAmount = total6.subtract(actualAmount);
+                    //余额
+                    BigDecimal balance = total6.subtract(accruedAmount);
+                    achievementsInfo.setBalance(balance);
+                    // 员工绩效
+                    achievementsInfo.setMemberId(budgeting.getBudgetingPeople()); // 设计人
+                    achievementsInfo.setCreateTime(data);
+                    achievementsInfo.setUpdateTime(data);
+                    achievementsInfo.setFounderId(budgeting.getFounderId());
+                    achievementsInfo.setFounderCompanyId(budgeting.getFounderCompanyId());
+                    achievementsInfo.setDelFlag("0");
+                    achievementsInfo.setDistrict(baseProject.getDistrict());
+                    achievementsInfo.setDept("2"); //造价
+                    achievementsInfo.setAchievementsType("2"); //预算编制
+                    achievementsInfo.setBaseProjectId(baseProject.getId());
+                    achievementsInfo.setProjectNum(budgeting.getId());
+                    achievementsInfo.setOverFlag("0");
+                    employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                }
+                //TODO end
             }else{
                 throw new RuntimeException("您没有权限进行此操作,请联系编制人或领导进行操作");
             }

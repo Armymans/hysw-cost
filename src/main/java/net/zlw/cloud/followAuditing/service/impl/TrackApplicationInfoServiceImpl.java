@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.designProject.mapper.OutSourceMapper;
+import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.followAuditing.mapper.TrackApplicationInfoDao;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.mapper.TrackMonthlyDao;
@@ -44,6 +46,8 @@ import java.util.UUID;
 @Service
 @Transactional
 public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoService {
+    @Resource
+    private OutSourceMapper outSourceMapper;
     @Resource
     private TrackApplicationInfoDao trackApplicationInfoDao;
     @Resource
@@ -300,32 +304,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     auditInfoDao.insert(newAuditInfo);
                     //将审核状态改为 待审核(一审)
                     baseProject.setTrackStatus("1");
-
-                    //项目名称
-                    String projectName = baseProject.getProjectName();
-                    //成员名称
-                    String name = memberManage.getMemberName();
-                    //发送消息
-                    MessageVo messageVo = new MessageVo();
-                    messageVo.setId("A20");
-                    messageVo.setUserId(userId);
-                    messageVo.setTitle("您有一个跟踪审计项目已通过！");
-                    messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的跟踪审计项目【" + name + "】已审批通过");
-                    messageService.sendOrClose(messageVo);
                 } else {
                     //将审核状态改为 未通过
                     auditInfo.setAuditType("1");
                     baseProject.setTrackStatus("4");
-                    //未通过发送消息
-                    String projectName = baseProject.getProjectName();
-                    String name = memberManage.getMemberName();
-                    MessageVo messageVo1 = new MessageVo();
-                    messageVo1.setId("A20");
-                    messageVo1.setUserId(userId);
-                    messageVo1.setTitle("您有一个跟踪审计项目未通过！");
-                    messageVo1.setDetails(username + "您好！您提交的【" + projectName + "】的跟踪审计项目【" + name + "】未通过，请查看详情");
-                    //调用消息Service
-                    messageService.sendOrClose(messageVo1);
                 }
                 //修改之前的审核信息
                 auditInfo.setAuditResult(batchReviewVo.getAuditResult());
@@ -337,11 +319,43 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             }
             //如果当前审核人是二级领导审核
             if (whzjm.equals(memberManage.getId()) || wjzjm.equals(memberManage.getId())) {
+                String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                 //如果为通过
                 if ("1".equals(batchReviewVo.getAuditResult())) {
                     //将审核状态改为 进行中(二审)
                     baseProject.setTrackStatus("3");
                     auditInfo.setAuditType("1");
+
+                    // 加入委外金额
+                    OutSource outSource = new OutSource();
+                    outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    if ("0".equals(trackAuditInfo.getOutsource())){
+                        outSource.setOutMoney(trackAuditInfo.getOutsourceMoney().toString());
+                    }else {
+                        outSource.setOutMoney("0");
+                    }
+                    outSource.setDistrict(baseProject.getDistrict());
+                    outSource.setDept("2"); //1.设计 2.造价
+                    outSource.setDelFlag("0"); //0.正常 1.删除
+                    outSource.setOutType("5"); // 预算委外金额
+                    outSource.setBaseProjectId(baseProject.getId()); //基本信息表外键
+                    outSource.setProjectNum(trackAuditInfo.getId()); //跟踪审计信息外键
+                    outSource.setCreateTime(data);
+                    outSource.setUpdateTime(data);
+                    outSource.setFounderId(trackAuditInfo.getFounderId()); //项目创建人
+                    outSource.setFounderCompanyId(trackAuditInfo.getCompanyId()); //公司
+                    outSourceMapper.insertSelective(outSource);
+                    //项目名称
+                    String projectName = baseProject.getProjectName();
+                    //成员名称
+                    String name = memberManage.getMemberName();
+                    //发送消息
+                    MessageVo messageVo = new MessageVo();
+                    messageVo.setId("A20");
+                    messageVo.setUserId(userId);
+                    messageVo.setTitle("您有一个跟踪审计项目已通过！");
+                    messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的跟踪审计项目【" + name + "】已审批通过");
+                    messageService.sendOrClose(messageVo);
                 } else {
                     //将审核状态改为 未通过
                     baseProject.setTrackStatus("4");
