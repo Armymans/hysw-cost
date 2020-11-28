@@ -1691,10 +1691,10 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/desiginAchievementsOneCountRast2",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginAchievementsOneCountRast2(CostVo2 costVo2){
-        if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
-        }else{
-            costVo2.setId("user333");
-        }
+//        if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
+//        }else{
+//            costVo2.setId("user333");
+//        }
         BigDecimal mouth = projectSumService.desiginAchievementsOneCount2(costVo2);
         BigDecimal lastmouth = projectSumService.desiginLastAchievementsOneCount2(costVo2);
         BigDecimal bigDecimal = projectSumService.desiginCensusRast(mouth, lastmouth);
