@@ -790,9 +790,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             AuditInfo auditInfo = new AuditInfo();
             auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
             if (baseAccountsVo.getSettlementAuditInformation().getId() != null) {
-                auditInfo.setBaseProjectId(baseAccountsVo.getLastSettlementReview().getId());
-            } else {
                 auditInfo.setBaseProjectId(baseAccountsVo.getSettlementAuditInformation().getId());
+            } else {
+                auditInfo.setBaseProjectId(baseAccountsVo.getLastSettlementReview().getId());
             }
             auditInfo.setAuditResult("0");
             if (baseProject.getSettleAccountsStatus().equals("2")){
