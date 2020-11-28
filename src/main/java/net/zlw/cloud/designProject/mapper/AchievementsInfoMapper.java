@@ -8,6 +8,7 @@ import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.statisticAnalysis.model.PerformanPeople;
 import net.zlw.cloud.statisticAnalysis.model.PerformanceAccrualAndSummaryList;
+import net.zlw.cloud.statisticAnalysis.model.ReturnEmployeePerformance;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
 
@@ -202,28 +203,28 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
     List<OneCensus2> MemberAchievementsCensus(CostVo2 costVo2);
 
     @Select(
-            "SELECT \n" +
-                    "YEAR(create_time) yearTime,\n" +
-                    "MONTH(create_time) monthTime,\n" +
-                    "SUM(accrued_amount) total,\n" +
-                    "SUM(actual_amount) total2,\n" +
-                    "SUM(balance) total3\n" +
-                    "FROM\n" +
-                    "employee_achievements_info\n" +
-                    "WHERE\n" +
-                    "del_flag = '0'\n" +
-                    "and\n" +
-                    "(achievements_type = #{id} or #{id} = '') \n" +
-                    "and\n" +
-                    "(achievements_type != #{id2} or #{id2} = '')\n" +
-                    "and\n" +
-                    "(district = #{district} or #{district} = '') \n" +
-                    "and\n" +
-                    "create_time >= #{startTime}\n" +
-                    "and\n" +
-                    "(create_time <= #{endTime} or  #{endTime} = '')\n" +
-                    "GROUP BY\n" +
-                    "YEAR(create_time),\n" +
+            "SELECT  " +
+                    "YEAR(create_time) yearTime, " +
+                    "MONTH(create_time) monthTime, " +
+                    "SUM(accrued_amount) total, " +
+                    "SUM(actual_amount) total2, " +
+                    "SUM(balance) total3 " +
+                    "FROM " +
+                    "employee_achievements_info " +
+                    "WHERE " +
+                    "del_flag = '0' " +
+                    "and " +
+                    "(achievements_type = #{id} or #{id} = '')  " +
+                    "and " +
+                    "(achievements_type != #{id2} or #{id2} = '') " +
+                    "and " +
+                    "(district = #{district} or #{district} = '')  " +
+                    "and " +
+                    "create_time >= #{startTime} " +
+                    "and " +
+                    "(create_time <= #{endTime} or  #{endTime} = '') " +
+                    "GROUP BY " +
+                    "YEAR(create_time), " +
                     "MONTH(create_time)"
     )
     List<OneCensus4> MemberAchievementsCensus2(CostVo2 costVo2);
@@ -291,4 +292,118 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
                     "(create_time <= #{endTime} or  #{endTime} = '')"
     )
     PerformanceDistributionChart findBTAll2(CostVo2 costVo2);
+    
+    @Select(
+            "SELECT " +
+                    "YEAR(create_time) YearTime, " +
+                    "MONTH(create_time) MonthTime, " +
+                    "SUM(IFNULL(actual_amount,0)) PerformanceProvision " +
+                    "FROM " +
+                    "employee_achievements_info " +
+                    "WHERE " +
+                    "del_flag = '0' " +
+                    "and " +
+                    "achievements_type != '1' " +
+                    "and " +
+                    "(district = #{district} or #{district} = '') " +
+                    "and " +
+                    "(create_time >= #{statTime} or #{statTime} = '') " +
+                    "and " +
+                    "(create_time <= #{endTime} or #{endTime} = '') " +
+                    "GROUP BY " +
+                    "YEAR(create_time), " +
+                    "MONTH(create_time)"
+    )
+    List<PerformanceDistributionChart> newPicture(pageVo pageVo);
+
+    @Select(
+            "SELECT " +
+                    "IFNULL(sum(case when achievements_type != '1' then IFNULL(actual_amount,0) end ),0) total,  " +
+                    "IFNULL(sum(case when achievements_type = '2' then IFNULL(actual_amount,0) end ),0) budgetAchievements,  " +
+                    "IFNULL(sum(case when achievements_type = '3' then IFNULL(actual_amount,0) end ),0) upsubmitAchievements,  " +
+                    "IFNULL(sum(case when achievements_type = '4' then IFNULL(actual_amount,0) end ),0) downsubmitAchievements,  " +
+                    "IFNULL(sum(case when achievements_type = '5' then IFNULL(actual_amount,0) end ),0) truckAchievements  " +
+                    "FROM  " +
+                    "employee_achievements_info  " +
+                    "WHERE  " +
+                    "del_flag = '0'  " +
+                    "and  " +
+                    "(district = #{district} or #{district} = '')  " +
+                    "and  " +
+                    "create_time >= #{statTime}  " +
+                    "and  " +
+                    "(create_time <= #{endTime} or  #{endTime} = '')"
+    )
+    PerformanceDistributionChart newPieChar(pageVo pageVo);
+
+    @Select(
+            "SELECT " +
+                    "s2.member_name memberName, " +
+                    "SUM(IFNULL(s1.actual_amount,0)) PerformanceProvision, " +
+                    "SUM(IFNULL(s1.accrued_amount,0)) IssuedDuringMmonth  " +
+                    "FROM " +
+                    "employee_achievements_info s1 LEFT JOIN  " +
+                    "member_manage s2 on s1.member_id = s2.id " +
+                    "WHERE " +
+                    "s1.del_flag = '0' " +
+                    "AND " +
+                    "s1.dept = '2' " +
+                    "AND " +
+                    "(district = #{district} or #{district} = '') " +
+                    "AND " +
+                    "create_time >= #{statTime}  " +
+                    "AND " +
+                    "(create_time <= #{endTime} or  #{endTime} = '') " +
+                    "GROUP BY " +
+                    "s1.member_id"
+    )
+    List<PerformanceDistributionChart> newPerformaPnceAccrualAndSummary(pageVo pageVo);
+
+    @Select(
+            "SELECT  " +
+                    "YEAR(create_time) YearTime,  " +
+                    "MONTH(create_time) MonthTime,  " +
+                    "SUM(IFNULL(actual_amount,0)) PerformanceProvision  " +
+                    "FROM  " +
+                    "employee_achievements_info  " +
+                    "WHERE  " +
+                    "del_flag = '0'  " +
+                    "and  " +
+                    "achievements_type != '1'  " +
+                    "and " +
+                    "(member_id = #{memberId} or #{memberId} = '') " +
+                    "and  " +
+                    "(district = #{district} or #{district} = '')  " +
+                    "and  " +
+                    "(create_time >= #{statTime} or #{statTime} = '')  " +
+                    "and  " +
+                    "(create_time <= #{endTime} or #{endTime} = '')  " +
+                    "GROUP BY  " +
+                    "YEAR(create_time),  " +
+                    "MONTH(create_time)"
+    )
+    List<PerformanceDistributionChart> newEmployeePerformanceAnalysis(pageVo pageVo);
+
+    @Select(
+            "SELECT \n" +
+                    "s2.member_name memberName, \n" +
+                    "SUM(IFNULL(s1.actual_amount,0)) PerformanceProvision, \n" +
+                    "SUM(IFNULL(s1.accrued_amount,0)) IssuedDuringMmonth  \n" +
+                    "FROM \n" +
+                    "employee_achievements_info s1 LEFT JOIN  \n" +
+                    "member_manage s2 on s1.member_id = s2.id \n" +
+                    "WHERE \n" +
+                    "s1.del_flag = '0' \n" +
+                    "AND \n" +
+                    "(s1.dept = #{department} or #{department} = '')\n" +
+                    "AND \n" +
+                    "(district = #{district} or #{district} = '') \n" +
+                    "AND \n" +
+                    "create_time >= #{statTime}  \n" +
+                    "AND \n" +
+                    "(create_time <= #{endTime} or  #{endTime} = '') \n" +
+                    "GROUP BY \n" +
+                    "s1.member_id"
+    )
+    List<PerformanceDistributionChart> newFindAllPerformanceDistributionChart(pageVo pageVo);
 }

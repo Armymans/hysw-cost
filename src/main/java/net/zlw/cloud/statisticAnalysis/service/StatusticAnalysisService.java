@@ -21,10 +21,8 @@ import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,18 +43,22 @@ public class StatusticAnalysisService {
     private ProjectMapper projectMapper;
 
     public StatisticAnalysis findAnalysis(pageVo pageVo) {
-        List<PerformanceDistributionChart> cost = achievementsInfoMapper.findCostPerformanceChart(pageVo);
-
         System.err.println(pageVo);
+        //
+        List<PerformanceDistributionChart> cost = achievementsInfoMapper.findCostPerformanceChart(pageVo);
+        //
+        ArrayList<PerformanceDistributionChart> thisYearChart = new ArrayList<>();
+
         //本月发放
         Double thisMonthPerform = 0.00;
         //本年发放
         Double thisYearPerform = 0.00;
-        ArrayList<PerformanceDistributionChart> thisYearChart = new ArrayList<>();
         //上月发放
         Double lastMonthPerform = 0.00;
         //上年发放
         Double lastYearPerform = 0.00;
+
+
         Calendar cal = Calendar.getInstance();
         //本月
         int thisMonth = cal.get(Calendar.MONTH)+1;
@@ -66,6 +68,8 @@ public class StatusticAnalysisService {
         int lastMonth = cal.get(Calendar.MONTH);
         //上年
         int lastYear = cal.get(Calendar.YEAR)-1;
+
+
         for (PerformanceDistributionChart performanceDistributionChart : cost) {
             //本年
             System.out.println(performanceDistributionChart);
@@ -381,5 +385,272 @@ public class StatusticAnalysisService {
         }
         return oneCensus10s;
 
+    }
+
+    /**
+     * 获取上个月
+     * @param pageVo
+     * @return
+     */
+    public pageVo lastMonth(pageVo pageVo){
+        //获取上个月第一天
+        SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar first=Calendar.getInstance();
+        first.add(Calendar.MONTH, -1);
+        first.set(Calendar.DAY_OF_MONTH, 1);
+        //上个月第一天
+        String fristDay = format.format(first.getTime());
+        //获取上个月的最后一天
+        SimpleDateFormat sf=new SimpleDateFormat("yyyy-MM-dd");
+        Calendar last =Calendar.getInstance();
+        int month=last.get(Calendar.MONTH);
+        last.set(Calendar.MONTH, month-1);
+        last.set(Calendar.DAY_OF_MONTH, last.getActualMaximum(last.DAY_OF_MONTH));
+        //上个月最后一天
+        String lastDay = sf.format(last.getTime());
+        //开始时间结束时间
+        pageVo.setStatTime(fristDay);
+        pageVo.setEndTime(lastDay);
+        return pageVo;
+    }
+
+    /**
+     * 获取上一年
+     * @param pageVo
+     * @return
+     */
+    public pageVo lastYear(pageVo pageVo){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        pageVo.setStatTime(year-1+"-01-01");
+        pageVo.setEndTime(year-1+"-12-31");
+        return pageVo;
+    }
+
+    /**
+     * 当前年份
+     * @param pageVo
+     * @return
+     */
+    public pageVo NowYear(pageVo pageVo){
+        LocalDateTime now = LocalDateTime.now();
+        int year = now.getYear();
+        pageVo.setStatTime(year+"-01-01");
+        pageVo.setEndTime(year+"-12-31");
+        return pageVo;
+    }
+
+    /**
+     * 当前月份
+     * @param pageVo
+     * @return
+     */
+    public pageVo NowMonth(pageVo pageVo){
+        SimpleDateFormat sf=new SimpleDateFormat("dd");
+        Calendar now = Calendar.getInstance();
+        //当前年
+        String year = String.valueOf(now.get(Calendar.YEAR));
+        //当前月
+        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //当前月最后一天
+        //设置日期为本月最大日期
+        now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
+        String day = sf.format(now.getTime());
+        //开始时间 结束时间
+        pageVo.setStatTime(year+"-"+month+"-"+"01");
+        pageVo.setEndTime(year+"-"+month+"-"+day);
+        return pageVo;
+    }
+
+    /**
+     * 新造价绩效统计图 折
+     * @param pageVo
+     * @return
+     */
+    public JSONArray newPicture(pageVo pageVo) {
+        List<PerformanceDistributionChart> performanceDistributionCharts = new ArrayList<>();
+        if (pageVo.getStatTime()==null || pageVo.getStatTime().equals("") && pageVo.getEndTime() == null || pageVo.getEndTime().equals("")){
+            //如果未输入时间默认展示今年的数据
+            performanceDistributionCharts = achievementsInfoMapper.newPicture(this.NowYear(pageVo));
+        }else{
+            performanceDistributionCharts = achievementsInfoMapper.newPicture(pageVo);
+        }
+        //json拼接
+        String json =
+                "[{" +
+                        "\"companyName\": \"绩效发放数据\"," +
+                        "\"imageAmmount\": [";
+        if(performanceDistributionCharts.size()>0){
+            for (PerformanceDistributionChart chart : performanceDistributionCharts) {
+                json +=
+                        "{\"time\": \""+chart.getYearTime()+"-"+chart.getMonthTime()+"\"," +
+                                "\"truckAmmount\": \""+chart.getPerformanceProvision()+"\"" +
+                                "},";
+            }
+            json = json.substring(0,json.length()-1);
+        }else{
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
+        }
+        json += "]}]";
+        JSONArray objects = JSON.parseArray(json);
+        return objects;
+    }
+
+    /**
+     * 新造价绩效统计图 饼
+     * @param pageVo
+     * @return
+     */
+    public JSONArray newPieChar(pageVo pageVo) {
+        PerformanceDistributionChart performanceDistributionChart = new PerformanceDistributionChart();
+        if (pageVo.getStatTime()==null || pageVo.getStatTime().equals("") && pageVo.getEndTime() == null || pageVo.getEndTime().equals("")){
+            performanceDistributionChart = achievementsInfoMapper.newPieChar(this.NowYear(pageVo));
+        }else{
+            performanceDistributionChart = achievementsInfoMapper.newPieChar(pageVo);
+        }
+        String json = "[{value1:"+performanceDistributionChart.getBudgetAchievements()+",name1:'预算编制'}," +
+                "{value1:"+performanceDistributionChart.getUpsubmitAchievements()+",name1:'上家结算送审'}," +
+                "{value1:"+performanceDistributionChart.getDownsubmitAchievements()+",name1:'下家结算审核'}," +
+                "{value1:"+performanceDistributionChart.getTruckAchievements()+",name1:'跟踪审计'}]";
+        JSONArray objects = JSONArray.parseArray(json);
+        return objects;
+    }
+
+    /**
+     * 新绩效计提汇总
+      * @param pageVo
+     * @return
+     */
+    public JSONArray newPerformaPnceAccrualAndSummary(pageVo pageVo) {
+        //如果为删选默认展示本月
+        List<PerformanceDistributionChart> performanceDistributionCharts = new ArrayList<>();
+        if(pageVo.getStatTime()==null || pageVo.getStatTime().equals("") && pageVo.getEndTime() == null || pageVo.getEndTime().equals("")){
+            performanceDistributionCharts = achievementsInfoMapper.newPerformaPnceAccrualAndSummary(this.NowMonth(pageVo));
+        }else{
+            performanceDistributionCharts = achievementsInfoMapper.newPerformaPnceAccrualAndSummary(pageVo);
+        }
+
+        String json = "[{\n" +
+                "\t\"companyName\": \"绩效计提\",\n" +
+                "\t\"imageAmmount\": [";
+        if(performanceDistributionCharts.size()>0){
+            for (PerformanceDistributionChart performanceDistributionChart : performanceDistributionCharts) {
+                json+="{\n" +
+                        "\t\t\"time\": \""+performanceDistributionChart.getMemberName()+"\",\n" +
+                        "\t\t\"truckAmmount\": \""+performanceDistributionChart.getPerformanceProvision()+"\"\n" +
+                        "\t}, ";
+            }
+            json = json.substring(0,json.length() -1);
+        }else{
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
+        }
+
+        json+="]\n" +
+                "}, {\n" +
+                "\t\"companyName\": \"当月发放\",\n" +
+                "\t\"imageAmmount\": [";
+        if(performanceDistributionCharts.size()>0){
+            for (PerformanceDistributionChart performanceDistributionChart : performanceDistributionCharts) {
+                json+="{\n" +
+                        "\t\t\"time\": \""+performanceDistributionChart.getMemberName()+"\",\n" +
+                        "\t\t\"truckAmmount\": \""+performanceDistributionChart.getIssuedDuringMmonth()+"\"\n" +
+                        "\t}, ";
+            }
+            json = json.substring(0,json.length() -1);
+        }else{
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
+        }
+
+        json+="]\n" +
+                "}]";
+        JSONArray objects = JSONArray.parseArray(json);
+
+        return objects;
+    }
+
+    /**
+     * 新员工绩效分析
+     * @param pageVo
+     * @return
+     */
+    public JSONArray newEmployeePerformanceAnalysis(pageVo pageVo) {
+        List<PerformanceDistributionChart> returnEmployeePerformances = new ArrayList<>();
+        if(pageVo.getStatTime()==null || pageVo.getStatTime().equals("") && pageVo.getEndTime() == null || pageVo.getEndTime().equals("")){
+            returnEmployeePerformances = achievementsInfoMapper.newEmployeePerformanceAnalysis(this.NowYear(pageVo));
+        }else{
+            returnEmployeePerformances = achievementsInfoMapper.newEmployeePerformanceAnalysis(pageVo);
+        }
+
+        String returnPicture = "[{\n" +
+                "\t\"companyName\": \"绩效计提\",\n" +
+                "\t\"imageAmmount\": [";
+        if(returnEmployeePerformances.size()>0){
+            for (PerformanceDistributionChart returnEmployeePerformance : returnEmployeePerformances) {
+                returnPicture+="{\n" +
+                        "\t\t\"time\": \""+returnEmployeePerformance.getMonthTime()+"月\",\n" +
+                        "\t\t\"truckAmmount\": \""+returnEmployeePerformance.getPerformanceProvision()+"\"\n" +
+                        "\t}, ";
+            }
+            returnPicture = returnPicture.substring(0,returnPicture.length()-1);
+        }else {
+            returnPicture+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
+        }
+        returnPicture += "]\n" +
+                "}]";
+        JSONArray objects = JSON.parseArray(returnPicture);
+        return objects;
+    }
+
+    public Map<String,Object> newFindFAnalysis(pageVo pageVo) {
+        //本月发放绩效(计提)
+        BigDecimal nowSum1 = new BigDecimal(0);
+        //上月发放绩效(计提)
+        BigDecimal lastSum1 = new BigDecimal(0);
+        //本年发放绩效
+        BigDecimal nowSum2 = new BigDecimal(0);
+        //上年发放绩效
+        BigDecimal lastSum2 = new BigDecimal(0);
+
+
+        //本月 - 上月
+        List<PerformanceDistributionChart> now1 = achievementsInfoMapper.newPicture(this.NowMonth(pageVo));
+        if(now1.size()>0){
+            nowSum1 = now1.get(0).getPerformanceProvision();
+        }
+        List<PerformanceDistributionChart> last1 = achievementsInfoMapper.newPicture(this.lastMonth(pageVo));
+        if(last1.size()>0){
+            lastSum1 = last1.get(0).getPerformanceProvision();
+        }
+        //同比上月
+        BigDecimal Sum1_2 = nowSum1.subtract(lastSum1);
+
+        //本年 - 上年
+        List<PerformanceDistributionChart> now2 = achievementsInfoMapper.newPicture(this.NowYear(pageVo));
+        if(now2.size()>0){
+            nowSum2 = now2.get(0).getPerformanceProvision();
+        }
+        List<PerformanceDistributionChart> last2 = achievementsInfoMapper.newPicture(this.lastYear(pageVo));
+        if(last2.size()>0){
+            lastSum2 = last2.get(0).getPerformanceProvision();
+        }
+        //同比上年
+        BigDecimal Sum2_3 = nowSum2.subtract(lastSum2);
+
+        //本年
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("nowSum1",nowSum1);
+        map.put("Sum1_2",Sum1_2);
+        map.put("nowSum2",nowSum2);
+        map.put("Sum2_3",Sum2_3);
+
+        return map;
     }
 }

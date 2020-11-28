@@ -889,4 +889,114 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "ORDER BY si.create_time DESC  ")
     List<AccountsVo> findAllAccountsSuccess2(PageVo pageVo);
 
+    @Select(
+            "SELECT\n" +
+                    "COUNT(*)\n" +
+                    "FROM\n" +
+                    "base_project\n" +
+                    "WHERE\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "AND\n" +
+                    "create_time >= #{statTime}\n" +
+                    "AND\n" +
+                    "(create_time <= #{endTime} or #{endTime} = '')"
+    )
+    Integer selectProjectCount(pageVo pageVo);
+
+    @Select(
+            "SELECT\n" +
+                    "IFNULL(SUM(IFNULL(out_money,0)),0)\n" +
+                    "FROM\n" +
+                    "out_source\n" +
+                    "WHERE\n" +
+                    "dept = '2'\n" +
+                    "AND\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "AND\n" +
+                    "create_time >= #{statTime}\n" +
+                    "AND\n" +
+                    "(create_time <= #{endTime} or #{endTime} = '')"
+    )
+    Double selectOutMoney(pageVo pageVo);
+
+    @Select(
+            "SELECT\n" +
+                    "IFNULL(SUM(IFNULL(accrued_amount,0)),0)\n" +
+                    "FROM\n" +
+                    "employee_achievements_info\n" +
+                    "WHERE\n" +
+                    "dept = '2'\n" +
+                    "AND\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "AND\n" +
+                    "create_time >= #{statTime}\n" +
+                    "AND\n" +
+                    "(create_time <= #{endTime} or #{endTime} = '')"
+    )
+    Double selectAchievements(pageVo pageVo);
+
+    @Select(
+            "SELECT\n" +
+                    "IFNULL(SUM(IFNULL(in_money,0)),0)\n" +
+                    "FROM\n" +
+                    "in_come\n" +
+                    "WHERE\n" +
+                    "dept = '2'\n" +
+                    "AND\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "AND\n" +
+                    "create_time >= #{statTime}\n" +
+                    "AND\n" +
+                    "(create_time <= #{endTime} or #{endTime} = '')"
+    )
+    Double selectIncome(pageVo pageVo);
+
+    @Select(
+            "SELECT\n" +
+                    "IFNULL(SUM(IFNULL(in_money,0)),0)\n" +
+                    "FROM\n" +
+                    "in_come\n" +
+                    "WHERE\n" +
+                    "dept = '1'\n" +
+                    "AND\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "AND\n" +
+                    "create_time >= #{statTime}\n" +
+                    "AND\n" +
+                    "(create_time <= #{endTime} or #{endTime} = '')"
+    )
+    Double selectIncome2(pageVo pageVo);
+
+    @Select(
+            "SELECT\n" +
+                    "IFNULL(SUM(IFNULL(out_money,0)),0)\n" +
+                    "FROM\n" +
+                    "out_source\n" +
+                    "WHERE\n" +
+                    "dept = '1'\n" +
+                    "AND\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "AND\n" +
+                    "create_time >= #{statTime}\n" +
+                    "AND\n" +
+                    "(create_time <= #{endTime} or #{endTime} = '')"
+    )
+    Double selectOutMoney2(pageVo pageVo);
+
+
+    @Select(
+            "SELECT\n" +
+                    "IFNULL(SUM(IFNULL(accrued_amount,0)),0)\n" +
+                    "FROM\n" +
+                    "employee_achievements_info\n" +
+                    "WHERE\n" +
+                    "dept = '1'\n" +
+                    "AND\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "AND\n" +
+                    "create_time >= #{statTime}\n" +
+                    "AND\n" +
+                    "(create_time <= #{endTime} or #{endTime} = '')"
+    )
+    Double selectAchievements2(pageVo pageVo);
 }

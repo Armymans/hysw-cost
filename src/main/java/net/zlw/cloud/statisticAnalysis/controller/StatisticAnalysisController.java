@@ -7,6 +7,7 @@ import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
 import net.zlw.cloud.designProject.service.ProjectSumService;
+import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.statisticAnalysis.model.*;
 import net.zlw.cloud.statisticAnalysis.service.StatusticAnalysisService;
@@ -30,52 +31,80 @@ public class StatisticAnalysisController {
     private ProjectSumService projectSumService;
 
     //造价绩效统计
+
+    /**
+     * 本月绩效数额 与 相比上月
+     * @param pageVo
+     * @return
+     */
     @RequestMapping(value = "/statisticAnalysis/findAnalysis",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAnalysis(pageVo pageVo){
-        StatisticAnalysis analysis = statusticAnalysisService.findAnalysis(pageVo);
-        return RestUtil.success(analysis);
+//        StatisticAnalysis analysis = statusticAnalysisService.findAnalysis(pageVo);
+        Map<String, Object> stringObjectMap = statusticAnalysisService.newFindFAnalysis(pageVo);
+        return RestUtil.success(stringObjectMap);
     }
-    //折现
+
+    /**
+     * 新造价绩效统计 (折线统计图)
+     * @param pageVo
+     * @return
+     */
     @RequestMapping(value = "/statisticAnalysis/picture1",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> picture1(pageVo pageVo){
-        JSONArray objects = statusticAnalysisService.picture1(pageVo);
-        return RestUtil.success(objects);
-
+        //新绩效统计
+        JSONArray objects1 = statusticAnalysisService.newPicture(pageVo);
+        return RestUtil.success(objects1);
     }
-    //饼状
+
+    /**
+     * 新造价绩效统计 (饼状统计图)
+     * @param pageVo
+     * @return
+     */
     @RequestMapping(value = "/statisticAnalysis/pieChar",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> pieChar(pageVo pageVo){
-        JSONArray objects = statusticAnalysisService.pieChar(pageVo);
-        return RestUtil.success(objects);
+//        JSONArray objects = statusticAnalysisService.pieChar(pageVo);
+        JSONArray objects1 = statusticAnalysisService.newPieChar(pageVo);
+        return RestUtil.success(objects1);
     }
-    // 造价绩效统计，搜索
+
+    /**
+     * 新造价绩效统计，搜索
+     * @param pageVo
+     * @return
+     */
     @RequestMapping(value = "/statisticAnalysis/findStatisticAnalysis",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAnalysis1(pageVo pageVo){
         //折线
-        JSONArray objects = statusticAnalysisService.picture1(pageVo);
+        JSONArray objects1 = statusticAnalysisService.newPicture(pageVo);
         //饼状
-        JSONArray objects1 = statusticAnalysisService.pieChar(pageVo);
+        JSONArray objects2 = statusticAnalysisService.newPieChar(pageVo);
+//        //折线
+//        JSONArray objects = statusticAnalysisService.picture1(pageVo);
+//        //饼状
+//        JSONArray objects1 = statusticAnalysisService.pieChar(pageVo);
 
         HashMap<String, Object> map = new HashMap<>();
-        map.put("data11",objects);
-        map.put("data12",objects1);
+        map.put("data11",objects1);
+        map.put("data12",objects2);
         return RestUtil.success(map);
     }
-    //绩效计提汇总
+
+    /**
+     * 新绩效计提汇总
+     * @param pageVo
+     * @return
+     */
     @RequestMapping(value = "/statisticAnalysis/performanceAccrualAndSummary",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> PerformanceAccrualAndSummary(pageVo pageVo){
-       String summary =  statusticAnalysisService.performanceAccrualAndSummary(pageVo);
-       return RestUtil.success(JSONArray.parseArray(summary));
+//       String summary =  statusticAnalysisService.performanceAccrualAndSummary(pageVo);
+        JSONArray objects = statusticAnalysisService.newPerformaPnceAccrualAndSummary(pageVo);
+        return RestUtil.success(objects);
     }
-    //绩效计提汇总-列表数据
-    @RequestMapping(value = "/statisticAnalysis/performanceAccrualAndSummaryList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> performanceAccrualAndSummaryList(pageVo pageVo){
-        PerformanceAccrualAndSummaryList performanceAccrualAndSummaryList = statusticAnalysisService.performanceAccrualAndSummaryList(pageVo);
-        return RestUtil.success(performanceAccrualAndSummaryList);
-    }
+
     //员工绩效分析
     @RequestMapping(value = "/statisticAnalysis/EmployeePerformanceAnalysis",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-     public Map<String,Object> EmployeePerformanceAnalysis(EmployeeVo employeeVo){
+    public Map<String,Object> EmployeePerformanceAnalysis(EmployeeVo employeeVo){
         ReturnEmployeePerformance employeePerformance =  statusticAnalysisService.EmployeePerformanceAnalysis(employeeVo);
         if (employeePerformance.getComparedMonthProjectNum()!=null){
             double v = (double) Math.round((employeePerformance.getComparedMonthProjectNum()) * 100) / 100;
@@ -85,14 +114,27 @@ public class StatisticAnalysisController {
             double v = (double) Math.round((employeePerformance.getComparedMonthAchievemen()) * 100) / 100;
             employeePerformance.setComparedMonthAchievemen(v);
         }
-       return RestUtil.success(employeePerformance);
+        return RestUtil.success(employeePerformance);
     }
+
+    //绩效计提汇总-列表数据
+    @RequestMapping(value = "/statisticAnalysis/performanceAccrualAndSummaryList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> performanceAccrualAndSummaryList(pageVo pageVo){
+        PerformanceAccrualAndSummaryList performanceAccrualAndSummaryList = statusticAnalysisService.performanceAccrualAndSummaryList(pageVo);
+        return RestUtil.success(performanceAccrualAndSummaryList);
+    }
+
+    /**
+     * 新员工绩效分析
+     * @return
+     */
     @RequestMapping(value = "/statisticAnalysis/EmployeePerformanceAnalysisPicture",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> EmployeePerformanceAnalysisPicture(){
-        Map<String, Object> stringObjectMap = EmployeePerformanceAnalysis(new EmployeeVo("","","","",""));
-        ReturnEmployeePerformance data = (ReturnEmployeePerformance)stringObjectMap.get("data");
-        JSONArray picture = data.getPicture();
-        return RestUtil.success(picture);
+    public Map<String,Object> EmployeePerformanceAnalysisPicture(pageVo pageVo){
+//        Map<String, Object> stringObjectMap = EmployeePerformanceAnalysis(new EmployeeVo("","","","",""));
+//        ReturnEmployeePerformance data = (ReturnEmployeePerformance)stringObjectMap.get("data");
+//        JSONArray picture = data.getPicture();
+        JSONArray objects = statusticAnalysisService.newEmployeePerformanceAnalysis(pageVo);
+        return RestUtil.success(objects);
     }
 
     //员工绩效分析列表
@@ -289,6 +331,11 @@ public class StatisticAnalysisController {
         return RestUtil.success(settlementAuditInformations);
     }
 
+    /**
+     * 跟踪审计列表
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/statisticAnalysis/trackList",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> trackList(EmployeeVo costVo2){
         List<Budgeting> budgetings = projectSumService.EmployeetrackList(costVo2);

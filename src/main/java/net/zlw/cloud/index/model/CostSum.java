@@ -8,4 +8,5 @@ public class CostSum {
     private Double GeneralIncome;
     private Double OutsourcingSpending;
     private Double OperatingIncome;
+    private Double Achievements;
 }

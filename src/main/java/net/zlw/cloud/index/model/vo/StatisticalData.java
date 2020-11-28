@@ -6,7 +6,15 @@ import net.zlw.cloud.index.model.DesignSum;
 
 @Data
 public class StatisticalData {
-    private DesignSum designSum = new DesignSum();
-    private CostSum costSum = new CostSum();
+    private Integer NumberProjects;
+    private Double GeneralIncome;
+    private Double OutsourcingSpending;
+    private Double OperatingIncome;
+    private Double Achievements;
 
+    private Integer NumberProjects2;
+    private Double GeneralIncome2;
+    private Double OutsourcingSpending2;
+    private Double OperatingIncome2;
+    private Double Achievements2;
 }

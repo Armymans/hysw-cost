@@ -50,8 +50,7 @@ public class projectOverviewController extends BaseController {
 //    @GetMapping("/findMessage")
     @RequestMapping(value = "/projectOverview/findMessage",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findMessage(){
-        List<MessageNotification> message = messageNotificationService.findMessage();
-
+        List<MessageNotification> message = messageNotificationService.findMessage(getLoginUser());
         return RestUtil.success(message);
     }
     //造价部门和设计部门模块数量
@@ -82,11 +81,7 @@ public class projectOverviewController extends BaseController {
     //绩效发放统计图
     @RequestMapping(value = "/projectOverview/PerformanceDistributionChart",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findPerformanceDistributionChart(pageVo pageVo){
-        String id = pageVo.getDepartment();
-        if(id==null||id.equals("")){
-            id = "0";
-        }
-        String performanceDistributionChart = messageNotificationService.findPerformanceDistributionChart(pageVo, id);
+        String performanceDistributionChart = messageNotificationService.findPerformanceDistributionChart(pageVo);
         JSONArray objects = JSON.parseArray(performanceDistributionChart);
         return RestUtil.success(objects);
     }
