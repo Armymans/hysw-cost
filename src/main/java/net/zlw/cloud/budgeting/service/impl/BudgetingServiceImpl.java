@@ -15,8 +15,10 @@ import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
 import net.zlw.cloud.designProject.mapper.EmployeeAchievementsInfoMapper;
+import net.zlw.cloud.designProject.mapper.OutSourceMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
+import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
@@ -54,6 +56,9 @@ import java.util.UUID;
 @Service
 @Transactional
 public class BudgetingServiceImpl implements BudgetingService {
+
+    @Resource
+    private OutSourceMapper outSourceMapper;
     @Resource
     private BudgetingDao budgetingDao;
     @Resource
@@ -465,9 +470,9 @@ public class BudgetingServiceImpl implements BudgetingService {
     @Override
     public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
         //登录人id
-        String id = loginUser.getId();
+//        String id = loginUser.getId();
         //登录人名字
-        String username = loginUser.getUsername();
+//        String username = loginUser.getUsername();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             Example example = new Example(AuditInfo.class);
@@ -516,17 +521,6 @@ public class BudgetingServiceImpl implements BudgetingService {
                         twoBatch.setCreateTime(sim.format(new Date()));
                         //二审添加
                         auditInfoDao.insertSelective(twoBatch);
-                        //获取成员姓名
-                        MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-                        //如果通过发送消息
-                        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
-                        MessageVo messageVo = new MessageVo();
-                        messageVo.setId("A08");
-                        messageVo.setUserId(id);
-                        messageVo.setTitle("您有一个预算项目审批已通过！");
-                        messageVo.setDetails(username + "您好！您提交的【" + baseProject.getProjectName() + "】的预算项目【" + memberManage1.getMemberName() + "】已审批通过！");
-                        //调用消息Service
-                        messageService.sendOrClose(messageVo);
                         break;
                         //二审通过
                     }else if(auditInfo.getAuditResult().equals("0") && auditInfo.getAuditType().equals("1")){
@@ -579,6 +573,36 @@ public class BudgetingServiceImpl implements BudgetingService {
                         //设置为已完成
                         baseProject.setBudgetStatus("4");
                         baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                        // 加入委外信息
+                        OutSource outSource = new OutSource();
+                        outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                        if ("1".equals(budgeting.getOutsourcing())){
+                            outSource.setOutMoney(budgeting.getAmountOutsourcing().toString());
+                        }else {
+                            outSource.setOutMoney("0");
+                        }
+                        outSource.setDistrict(baseProject.getDistrict());
+                        outSource.setDept("2"); //1.设计 2.造价
+                        outSource.setDelFlag("0"); //0.正常 1.删除
+                        outSource.setOutType("2"); // 预算委外金额
+                        outSource.setBaseProjectId(baseProject.getId()); //基本信息表外键
+                        outSource.setProjectNum(budgeting.getId()); //设计信息外键
+                        outSource.setCreateTime(sim.format(new Date()));
+                        outSource.setUpdateTime(sim.format(new Date()));
+                        outSource.setFounderId(budgeting.getFounderId()); //项目创建人
+                        outSource.setFounderCompanyId(budgeting.getFounderCompanyId()); //公司
+                        outSourceMapper.insertSelective(outSource);
+
+                        //获取成员姓名
+                        MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+                      /*  //如果通过发送消息
+                        MessageVo messageVo = new MessageVo();
+                        messageVo.setId("A08");
+//                        messageVo.setUserId(id);
+                        messageVo.setTitle("您有一个预算项目审批已通过！");
+                        messageVo.setDetails(username + "您好！您提交的【" + baseProject.getProjectName() + "】的预算项目【" + memberManage1.getMemberName() + "】已审批通过！");
+                        //调用消息Service
+                        messageService.sendOrClose(messageVo);*/
                     }
                 //未通过
                 }else if (batchReviewVo.getAuditResult().equals("2")){
@@ -596,7 +620,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                         baseProject.setBudgetStatus("3");
                         baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
-                        //如果未通过发送消息
+                       /* //如果未通过发送消息
                         MessageVo messageVo1 = new MessageVo();
                         //审核人名字
                         messageVo1.setId("A08");
@@ -604,7 +628,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                         messageVo1.setTitle("您有一个预算项目审批未通过！");
                         messageVo1.setDetails(username + "您好！您提交的【" + baseProject.getProjectName() + "】的预算项目未通过，请查看详情！");
                         //调用消息Service
-                        messageService.sendOrClose(messageVo1);
+                        messageService.sendOrClose(messageVo1);*/
                     }
                 }
             }

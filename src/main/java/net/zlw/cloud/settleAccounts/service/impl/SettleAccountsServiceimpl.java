@@ -6,6 +6,11 @@ import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.designProject.mapper.EmployeeAchievementsInfoMapper;
+import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
+import net.zlw.cloud.designProject.service.ProjectSumService;
+import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
+import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -42,7 +47,12 @@ import java.util.UUID;
 @Service
 @Transactional
 public class SettleAccountsServiceimpl implements SettleAccountsService {
-
+    @Resource
+    private TrackAuditInfoDao trackAuditInfoDao;
+    @Resource
+    private EmployeeAchievementsInfoMapper employeeAchievementsInfoMapper;
+    @Resource
+    private ProjectSumService projectSumService;
     @Resource
     private OtherInfoMapper otherInfoMapper;
     @Resource
@@ -272,108 +282,256 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Override
     public void updateAccount(String s, UserInfo loginUser) {
-        BaseProject baseProject = new BaseProject();
-        baseProject.setId(s);
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+//        BaseProject baseProject = new BaseProject();
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
+//        baseProject.setId(s);
         baseProject.setSaWhetherAccount("0");
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
-
         //上家到账
         Example example = new Example(LastSettlementReview.class);
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("baseProjectId", s);
         LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example);
         if (lastSettlementReview != null) {
+            // 绩效计算
+            EmployeeAchievementsInfo achievementsInfo = new EmployeeAchievementsInfo();
+            //计提和
+            BigDecimal total3 = new BigDecimal(0);
+            // 如果是安徽
+            if(!"4".equals(baseProject.getDistrict())){
+                Double money = projectSumService.anhuiLastSettlementReviewChargeMoney(lastSettlementReview.getReviewNumber());
+                //咨询费
+                money = (double)Math.round(money*100)/100;
+                //计提
+                Double aDouble1 = projectSumService.technicalImprovement(money);
+                aDouble1 = (double)Math.round(aDouble1*100)/100;
+                total3 = total3.add(new BigDecimal(aDouble1));
+                //实际计提 保留两位小数四舍五入
+                BigDecimal actualAmount = total3.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
+                //余额
+                BigDecimal balance = total3.subtract(actualAmount);
+                achievementsInfo.setAccruedAmount(total3);
+                achievementsInfo.setActualAmount(actualAmount);
+                achievementsInfo.setBalance(balance);
+                achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                achievementsInfo.setMemberId(lastSettlementReview.getPreparePeople()); //编制人
+                achievementsInfo.setCreateTime(data);
+                achievementsInfo.setUpdateTime(data);
+                achievementsInfo.setFounderId(lastSettlementReview.getFounderId());
+                achievementsInfo.setFounderCompanyId(lastSettlementReview.getFounderCompanyId());
+                achievementsInfo.setDelFlag("0");
+                achievementsInfo.setDistrict(baseProject.getDistrict());
+                achievementsInfo.setDept("2"); // 造价
+                achievementsInfo.setAchievementsType("3"); //上家送审绩效
+                achievementsInfo.setBaseProjectId(baseProject.getId());
+                achievementsInfo.setProjectNum(lastSettlementReview.getId());
+                achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
+                employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                //如果是吴江
+            }else{
+                //咨询费
+                Double money = projectSumService.wujiangLastSettlementReviewChargeMoney(lastSettlementReview.getReviewNumber());
+                money = (double)Math.round(money*100)/100;
+                //计提
+                Double aDouble1 = projectSumService.technicalImprovement(money);
+                aDouble1 = (double)Math.round(aDouble1*100)/100;
+                total3 = total3.add(new BigDecimal(aDouble1));
+
+                //实际计提 保留两位小数四舍五入
+                BigDecimal actualAmount = total3.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
+                //余额
+                BigDecimal balance = total3.subtract(actualAmount);
+                achievementsInfo.setAccruedAmount(total3);
+                achievementsInfo.setActualAmount(actualAmount);
+                achievementsInfo.setBalance(balance);
+                achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                achievementsInfo.setMemberId(lastSettlementReview.getPreparePeople()); //编制人
+                achievementsInfo.setCreateTime(data);
+                achievementsInfo.setUpdateTime(data);
+                achievementsInfo.setFounderId(lastSettlementReview.getFounderId());
+                achievementsInfo.setFounderCompanyId(lastSettlementReview.getFounderCompanyId());
+                achievementsInfo.setDelFlag("0");
+                achievementsInfo.setDistrict(baseProject.getDistrict());
+                achievementsInfo.setDept("2"); // 造价
+                achievementsInfo.setAchievementsType("3"); //上家送审绩效
+                achievementsInfo.setBaseProjectId(baseProject.getId());
+                achievementsInfo.setProjectNum(lastSettlementReview.getId());
+                achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
+                employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+            }
             lastSettlementReview.setWhetherAccount("0");
             lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
         }
-
         //下家到账
         Example example1 = new Example(SettlementAuditInformation.class);
         Example.Criteria c2 = example1.createCriteria();
         c2.andEqualTo("baseProjectId", s);
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
         if (settlementAuditInformation != null) {
+            //计算计提
+            //计提和
+            BigDecimal total7 = new BigDecimal(0);
+            Example example2 = new Example(SettlementInfo.class);
+            //查找结算送审信息
+            example2.createCriteria().andEqualTo("baseProjectId",baseProject.getId())
+                                     .andEqualTo("upAndDown","2");
+            SettlementInfo settlementInfo = settlementInfoMapper.selectOneByExample(example2);
+            EmployeeAchievementsInfo achievementsInfo = new EmployeeAchievementsInfo();
+            // 送审金额
+            String sumbitMoney = settlementInfo.getSumbitMoney();
+            if(!"4".equals(baseProject.getDistrict())){
+                    //计算基本费
+                    Double money = projectSumService.anhuiSettlementAuditInformationChargeBase(new BigDecimal(sumbitMoney));
+                    money = (double)Math.round(money*100)/100;
+                    //计算核检费
+                    Double money1 = projectSumService.anhuiSubtractTheNumberMoney(settlementAuditInformation.getSubtractTheNumber());
+                    money1 = (double)Math.round(money1*100)/100;
+                    //计算咨询费计算基数
+                    Double money2 = projectSumService.anhuiSettlementAuditInformationChargeMoney(money, money1);
+                    //计提
+                    Double aDouble = projectSumService.settlementAuditImprovement(money, money1, money2);
+                    aDouble = (double)Math.round(aDouble*100)/100;
+                    total7 = total7.add(new BigDecimal(aDouble));
+                    //实际计提 保留两位小数四舍五入
+                    BigDecimal actualAmount = total7.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
+                    //余额
+                    BigDecimal balance = total7.subtract(actualAmount);
+                    achievementsInfo.setAccruedAmount(total7);
+                    achievementsInfo.setActualAmount(actualAmount);
+                    achievementsInfo.setBalance(balance);
+                    achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    achievementsInfo.setMemberId(settlementAuditInformation.getPreparePeople()); //编制人
+                    achievementsInfo.setCreateTime(data);
+                    achievementsInfo.setUpdateTime(data);
+                    achievementsInfo.setFounderId(settlementAuditInformation.getFounderId());
+                    achievementsInfo.setFounderCompanyId(settlementAuditInformation.getFounderCompanyId());
+                    achievementsInfo.setDelFlag("0");
+                    achievementsInfo.setDistrict(baseProject.getDistrict());
+                    achievementsInfo.setDept("2"); // 造价
+                    achievementsInfo.setAchievementsType("4"); //下家送审绩效
+                    achievementsInfo.setBaseProjectId(baseProject.getId());
+                    achievementsInfo.setProjectNum(settlementAuditInformation.getId());
+                    achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
+                    employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                }else{
+                    //计算基本费
+                    Double money = projectSumService.wujiangSettlementAuditInformationChargeBase(new BigDecimal(sumbitMoney));
+                    money = (double)Math.round(money*100)/100;
+                    //计算核检费
+                    Double money1 = projectSumService.wujiangSubtractTheNumberMoney(settlementAuditInformation.getSubtractTheNumber());
+                    money1 = (double)Math.round(money1*100)/100;
+                    //计算咨询费计算基数
+                    Double money2 = projectSumService.anhuiSettlementAuditInformationChargeMoney(money, money1);
+                    //计提
+                    Double aDouble = projectSumService.settlementAuditImprovement(money, money1, money2);
+                    aDouble = (double)Math.round(aDouble*100)/100;
+                    total7 = total7.add(new BigDecimal(aDouble));
+                    //实际计提 保留两位小数四舍五入
+                    BigDecimal actualAmount = total7.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
+                    //余额
+                    BigDecimal balance = total7.subtract(actualAmount);
+
+                    achievementsInfo.setAccruedAmount(total7);
+                    achievementsInfo.setActualAmount(actualAmount);
+                    achievementsInfo.setBalance(balance);
+                    achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    achievementsInfo.setMemberId(lastSettlementReview.getPreparePeople()); //编制人
+                    achievementsInfo.setCreateTime(data);
+                    achievementsInfo.setUpdateTime(data);
+                    achievementsInfo.setFounderId(lastSettlementReview.getFounderId());
+                    achievementsInfo.setFounderCompanyId(lastSettlementReview.getFounderCompanyId());
+                    achievementsInfo.setDelFlag("0");
+                    achievementsInfo.setDistrict(baseProject.getDistrict());
+                    achievementsInfo.setDept("2"); // 造价
+                    achievementsInfo.setAchievementsType("4"); //下家送审绩效
+                    achievementsInfo.setBaseProjectId(baseProject.getId());
+                    achievementsInfo.setProjectNum(lastSettlementReview.getId());
+                    achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
+                    employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                }
             settlementAuditInformation.setWhetherAccount("0");
             settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
         }
         //消息通知
         //项目名称
-        String projectName = baseProject.getProjectName();
-        //根据上家结算送审外键找到关联预算的信息
-        Example example2 = new Example(Budgeting.class);
-        example1.createCriteria().andEqualTo("baseProjectId", s);
-        Budgeting budgeting = budgetingDao.selectOneByExample(example2);
-        Example example3 = new Example(AuditInfo.class);
-        example1.createCriteria().andEqualTo("baseProjectId", s);
-        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example3);
-        String auditorId = auditInfo.getAuditorId();
-        //预算造价金额
-        BigDecimal amountCost = budgeting.getAmountCost();
-        //上家送审数
-        BigDecimal reviewNumber = lastSettlementReview.getReviewNumber();
-        //下家审定数
-        BigDecimal authorizedNumber = settlementAuditInformation.getAuthorizedNumber();
-        //如果送审数或者审定数超过造价金额的话
-        if (reviewNumber.compareTo(amountCost) == 1 || authorizedNumber.compareTo(amountCost) == 1) {
-            //whsjh 朱让宁
-            MemberManage memberManage = memberManageDao.selectByPrimaryKey(whsjh);
-            String name1 = memberManage.getMemberName();
-            MessageVo messageVo = new MessageVo();
-            messageVo.setId("A01");
-            messageVo.setUserId(whsjh);
-
-            messageVo.setTitle("您有一个结算项目的结算金额超过造价金额！");
-            messageVo.setSnsContent(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-            messageVo.setContent(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-            messageVo.setDetails(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
-            messageService.sendOrClose(messageVo);
-            // whsjm 刘永涛
-            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(whsjm);
-            String name2 = memberManage1.getMemberName();
-            MessageVo messageVo1 = new MessageVo();
-            messageVo1.setId("A01");
-            messageVo1.setUserId(whsjm);
-            messageVo1.setTitle("您有一个结算项目的结算金额超过造价金额！");
-            messageVo1.setSnsContent(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-            messageVo1.setContent(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-            messageVo1.setDetails(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
-            messageService.sendOrClose(messageVo1);
-
-            // whzjh 罗均
-            MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(whzjh);
-            String name3 = memberManage2.getMemberName();
-            MessageVo messageVo2 = new MessageVo();
-            messageVo2.setId("A01");
-            messageVo2.setUserId(whzjh);
-            messageVo2.setTitle("您有一个结算项目的结算金额超过造价金额！");
-            messageVo2.setSnsContent(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-            messageVo2.setContent(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-            messageVo2.setDetails(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
-            messageService.sendOrClose(messageVo2);
-
-            // whzjm 殷莉萍
-            MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(whzjm);
-            String name4 = memberManage3.getMemberName();
-            MessageVo messageVo3 = new MessageVo();
-            messageVo3.setId("A01");
-            messageVo3.setUserId(whzjm);
-            messageVo3.setTitle("您有一个结算项目的结算金额超过造价金额！");
-            messageVo3.setSnsContent(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-            messageVo3.setContent(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-            messageVo3.setDetails(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
-            messageService.sendOrClose(messageVo2);
-
-        } else {
-            // 站内信
-            MessageVo messageVo4 = new MessageVo();
-            messageVo4.setId("A15");
-            // TODO 登录人id
-            messageVo4.setUserId(auditorId);
-            messageVo4.setTitle("您有一个结算项目待审批！");
-            messageVo4.setDetails(loginUser.getUsername() + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-            //调用消息Service
-            messageService.sendOrClose(messageVo4);
-        }
+        // TODO 消息怎么在到账的方法里
+//        String projectName = baseProject.getProjectName();
+//        //根据上家结算送审外键找到关联预算的信息
+//        Example example2 = new Example(Budgeting.class);
+//        example1.createCriteria().andEqualTo("baseProjectId", s);
+//        Budgeting budgeting = budgetingDao.selectOneByExample(example2);
+//        Example example3 = new Example(AuditInfo.class);
+//        example1.createCriteria().andEqualTo("baseProjectId", s);
+//        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example3);
+//        String auditorId = auditInfo.getAuditorId();
+//        //预算造价金额
+//        BigDecimal amountCost = budgeting.getAmountCost();
+//        //上家送审数
+//        BigDecimal reviewNumber = lastSettlementReview.getReviewNumber();
+//        //下家审定数
+//        BigDecimal authorizedNumber = settlementAuditInformation.getAuthorizedNumber();
+//        //如果送审数或者审定数超过造价金额的话
+//        if (reviewNumber.compareTo(amountCost) == 1 || authorizedNumber.compareTo(amountCost) == 1) {
+//            //whsjh 朱让宁
+//            MemberManage memberManage = memberManageDao.selectByPrimaryKey(whsjh);
+//            String name1 = memberManage.getMemberName();
+//            MessageVo messageVo = new MessageVo();
+//            messageVo.setId("A01");
+//            messageVo.setUserId(whsjh);
+//
+//            messageVo.setTitle("您有一个结算项目的结算金额超过造价金额！");
+//            messageVo.setSnsContent(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//            messageVo.setContent(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//            messageVo.setDetails(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+//            messageService.sendOrClose(messageVo);
+//            // whsjm 刘永涛
+//            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(whsjm);
+//            String name2 = memberManage1.getMemberName();
+//            MessageVo messageVo1 = new MessageVo();
+//            messageVo1.setId("A01");
+//            messageVo1.setUserId(whsjm);
+//            messageVo1.setTitle("您有一个结算项目的结算金额超过造价金额！");
+//            messageVo1.setSnsContent(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//            messageVo1.setContent(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//            messageVo1.setDetails(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+//            messageService.sendOrClose(messageVo1);
+//
+//            // whzjh 罗均
+//            MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(whzjh);
+//            String name3 = memberManage2.getMemberName();
+//            MessageVo messageVo2 = new MessageVo();
+//            messageVo2.setId("A01");
+//            messageVo2.setUserId(whzjh);
+//            messageVo2.setTitle("您有一个结算项目的结算金额超过造价金额！");
+//            messageVo2.setSnsContent(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//            messageVo2.setContent(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//            messageVo2.setDetails(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+//            messageService.sendOrClose(messageVo2);
+//
+//            // whzjm 殷莉萍
+//            MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(whzjm);
+//            String name4 = memberManage3.getMemberName();
+//            MessageVo messageVo3 = new MessageVo();
+//            messageVo3.setId("A01");
+//            messageVo3.setUserId(whzjm);
+//            messageVo3.setTitle("您有一个结算项目的结算金额超过造价金额！");
+//            messageVo3.setSnsContent(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//            messageVo3.setContent(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//            messageVo3.setDetails(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
+//            messageService.sendOrClose(messageVo2);
+//
+//        } else {
+//            // 站内信
+//            MessageVo messageVo4 = new MessageVo();
+//            messageVo4.setId("A15");
+//            // TODO 登录人id
+//            messageVo4.setUserId(auditorId);
+//            messageVo4.setTitle("您有一个结算项目待审批！");
+//            messageVo4.setDetails(loginUser.getUsername() + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+//            //调用消息Service
+//            messageService.sendOrClose(messageVo4);
+//        }
     }
 
     @Override
@@ -950,6 +1108,74 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
                     baseProject.setSettleAccountsStatus("4");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    //预算
+                    Example example1 = new Example(Budgeting.class);
+                    example1.createCriteria().andEqualTo("baseProjectId",baseProject.getId());
+                    Example example4 = new Example(TrackAuditInfo.class);
+                    example4.createCriteria().andEqualTo("baseProjectId",baseProject.getId());
+                    TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectOneByExample(example4);
+                    EmployeeAchievementsInfo achievementsInfo = new EmployeeAchievementsInfo();
+                    BigDecimal trackAuditBase = trackAuditInfo.getTrackAuditBase();
+                    double track = trackAuditBase.doubleValue();
+                    //计价基数
+                    //计提和
+                    BigDecimal total5= new BigDecimal(0);
+                        if(!"4".equals(baseProject.getDistrict())){
+                            Double aDouble = projectSumService.trackImprovement(track);
+                            aDouble = (double)Math.round(aDouble*100)/100;
+                            total5 = total5.add(new BigDecimal(aDouble));
+                            //实际计提
+                            BigDecimal actualAmount = total5.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);;
+                            //余额
+                            BigDecimal balance = total5.subtract(actualAmount);
+                            // 员工绩效
+//                            achievementsInfo.setMemberId(trackAuditInfo.getp()); 跟踪审计没有编制人
+                            achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                            achievementsInfo.setCreateTime(format);
+                            achievementsInfo.setUpdateTime(format);
+                            achievementsInfo.setFounderId(trackAuditInfo.getFounderId());
+                            achievementsInfo.setFounderCompanyId(trackAuditInfo.getCompanyId());
+                            achievementsInfo.setDelFlag("0");
+                            achievementsInfo.setDistrict(baseProject.getDistrict());
+                            achievementsInfo.setDept("2"); //造价
+                            achievementsInfo.setAccruedAmount(total5);
+                            achievementsInfo.setActualAmount(actualAmount);
+                            achievementsInfo.setBalance(balance);
+                            achievementsInfo.setAchievementsType("5"); //跟踪审计
+                            achievementsInfo.setBaseProjectId(baseProject.getId());
+                            achievementsInfo.setProjectNum(trackAuditInfo.getId());
+                            achievementsInfo.setOverFlag("0");
+                            employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                        }else{
+//                            Double money = projectSumService.wujiangTrackChargeBaseRate(amountCost);
+                            Double aDouble = projectSumService.trackImprovement(track);
+                            aDouble = (double)Math.round(aDouble*100)/100;
+                            total5 = total5.add(new BigDecimal(aDouble));
+                            //实际计提 2位 四舍五入
+                            BigDecimal actualAmount = total5.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);;
+                            //余额
+                            BigDecimal balance = total5.subtract(actualAmount);
+                            // 员工绩效
+//                            achievementsInfo.setMemberId(trackAuditInfo.getp()); 跟踪审计没有编制人
+                            achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                            achievementsInfo.setCreateTime(format);
+                            achievementsInfo.setUpdateTime(format);
+                            achievementsInfo.setFounderId(trackAuditInfo.getFounderId());
+                            achievementsInfo.setFounderCompanyId(trackAuditInfo.getCompanyId());
+                            achievementsInfo.setDelFlag("0");
+                            achievementsInfo.setDistrict(baseProject.getDistrict());
+                            achievementsInfo.setDept("2"); //造价
+                            achievementsInfo.setAccruedAmount(total5);
+                            achievementsInfo.setActualAmount(actualAmount);
+                            achievementsInfo.setBalance(balance);
+                            achievementsInfo.setAchievementsType("5"); //跟踪审计
+                            achievementsInfo.setBaseProjectId(baseProject.getId());
+                            achievementsInfo.setProjectNum(trackAuditInfo.getId());
+                            achievementsInfo.setOverFlag("0");
+                            employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                        }
+
+
                     //待确认一审
                 }else if(auditInfo.getAuditType().equals("2")){
                     auditInfo.setAuditResult("1");
