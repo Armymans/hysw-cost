@@ -137,58 +137,81 @@ public interface BudgetingDao extends Mapper<Budgeting> {
     net.zlw.cloud.clearProject.model.Budgeting findById(@Param("id") String id);
 
 
-    @Select("select " +
-            "DISTINCT  " +
-            "bt.id id, " +
-            "b.id baseId, " +
-            "b.should_be shouldBe, " +
-            "b.cea_num ceaNum, " +
-            "b.project_num projectNum, " +
-            "b.project_name projectName, " +
-            "b.budget_status budgetStatus, " +
-            "b.district district, " +
-            "b.water_address waterAddress, " +
-            "b.construction_unit constructionUnit, " +
-            "b.project_nature projectNature, " +
-            "b.design_category designCategory, " +
-            "b.water_supply_type waterSupplyType, " +
-            "b.customer_name customerName, " +
-            "bt.budgeting_people budgetingPeople, " +
-            "c.cost_together costTogether, " +
-            "v.pricing_together pricingTogether, " +
-            "bt.outsourcing outsourcing, " +
-            "bt.name_of_cost_unit nameOfCostUnit, " +
-            "bt.amount_cost amountCost, " +
-            "c.cost_total_amount costTotalAmount, " +
-            "v.bidding_price_control biddingPriceControl, " +
-            "bt.receipt_time receiptTime, " +
-            "bt.budgeting_time budgetingTime, " +
-            "c.receiving_time receivingTime, " +
-            "c.cost_preparation_time costPreparationTime, " +
-            "v.receiving_time veryReceivingTime, " +
-            "v.establishment_time establishmentTime " +
-            "from  " +
-            "budgeting bt  " +
-            "LEFT JOIN base_project b on bt.base_project_id = b.id " +
-            "LEFT JOIN cost_preparation c on bt.id = c.budgeting_id " +
-            "LEFT JOIN very_establishment v on bt.id = v.budgeting_id " +
-            "LEFT JOIN audit_info a on bt.id = a.base_project_id " +
-            "where  " +
-            "(b.district = #{district} or #{district} = '') and  " +
-            "(b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '') and  " +
-            "(b.design_category = #{designCategory} or #{designCategory} = '') and  " +
-            "( " +
-            "b.cea_num like concat('%',#{keyword},'%') or " +
-            "b.project_num like concat('%',#{keyword},'%') or " +
-            "b.project_name like concat('%',#{keyword},'%') or  " +
-            "b.construction_unit like concat('%',#{keyword},'%') or " +
-            "b.customer_name like concat ('%',#{keyword},'%') or  " +
-            "bt.name_of_cost_unit like concat  ('%',#{keyword},'%') " +
-            ") and " +
-            "b.del_flag = '0' and " +
-            "b.budget_status = '4' and " +
-            "bt.del_flag = '0'  " +
-            "order by b.should_be asc")
+    @Select("select   " +
+            "            DISTINCT    " +
+            "            bt.id id,   " +
+            "            b.id baseId,     " +
+            "            b.cea_num ceaNum,   " +
+            "            b.project_num projectNum,   " +
+            "            b.project_name projectName,   " +
+            "            b.budget_status budgetStatus,      " +
+            "            b.water_address waterAddress,   " +
+            "            b.construction_unit constructionUnit,   " +
+            "            b.customer_name customerName,   " +
+            "            bt.budgeting_people budgetingPeople,   " +
+            "            c.cost_together costTogether,   " +
+            "            v.pricing_together pricingTogether,   " +
+            "            bt.outsourcing outsourcing,   " +
+            "            bt.name_of_cost_unit nameOfCostUnit,   " +
+            "            bt.amount_cost amountCost,   " +
+            "            c.cost_total_amount costTotalAmount,   " +
+            "            v.bidding_price_control biddingPriceControl,   " +
+            "            bt.receipt_time receiptTime,   " +
+            "            bt.budgeting_time budgetingTime,   " +
+            "            c.receiving_time receivingTime,   " +
+            "            c.cost_preparation_time costPreparationTime,   " +
+            "            v.receiving_time veryReceivingTime,   " +
+            "            v.establishment_time establishmentTime,  " +
+            "            (CASE b.water_supply_type      " +
+            "            WHEN '1' THEN '直供水'  " +
+            "            WHEN '2' THEN '二次供水'  " +
+            "            END)waterSupplyType,  " +
+            "            (CASE b.should_be  " +
+            "            WHEN '0' THEN '是'  " +
+            "            WHEN '1' THEN '否'  " +
+            "            END)shouldBe,  " +
+            "            (CASE b.project_nature      " +
+            "            WHEN '1' THEN '新建'  " +
+            "            WHEN '2' THEN '改造'  " +
+            "            END)projectNature,  " +
+            "            (CASE b.district   " +
+            "            WHEN '1' THEN '芜湖'  " +
+            "            WHEN '2' THEN '马鞍山'  " +
+            "            WHEN '3' THEN '江北'  " +
+            "            WHEN '4' THEN '吴江'  " +
+            "            END)district,  " +
+            "            (CASE b.design_category      " +
+            "            WHEN '1' THEN '市政管道'  " +
+            "            WHEN '2' THEN '管网改造'  " +
+            "            WHEN '3' THEN '新建小区'  " +
+            "            WHEN '4' THEN '二次供水项目'  " +
+            "            WHEN '5' THEN '工商户'  " +
+            "            WHEN '6' THEN '居民装接水'  " +
+            "            WHEN '7' THEN '行政事业'  " +
+            "            END)designCategory  " +
+            "            from    " +
+            "            budgeting bt    " +
+            "            LEFT JOIN base_project b on bt.base_project_id = b.id   " +
+            "            LEFT JOIN cost_preparation c on bt.id = c.budgeting_id   " +
+            "            LEFT JOIN very_establishment v on bt.id = v.budgeting_id   " +
+            "            LEFT JOIN audit_info a on bt.id = a.base_project_id   " +
+            "            where " +
+            "              (1=1)  " +
+            "            (b.district = #{district} or #{district} = '') and    " +
+            "            (b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '') and    " +
+            "            (b.design_category = #{designCategory} or #{designCategory} = '') and    " +
+            "            (   " +
+            "            b.cea_num like concat('%',#{keyword},'%') or   " +
+            "            b.project_num like concat('%',#{keyword},'%') or   " +
+            "            b.project_name like concat('%',#{keyword},'%') or    " +
+            "            b.construction_unit like concat('%',#{keyword},'%') or   " +
+            "            b.customer_name like concat ('%',#{keyword},'%') or    " +
+            "            bt.name_of_cost_unit like concat  ('%',#{keyword},'%')   " +
+            "            ) and   " +
+            "            b.del_flag = '0' and   " +
+            "            b.budget_status = '4' and   " +
+            "            bt.del_flag = '0'    " +
+            "            order by b.should_be asc")
     List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo);
 
     @Select("SELECT * FROM budgeting WHERE id = #{id}")
