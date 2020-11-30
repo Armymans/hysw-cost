@@ -4,11 +4,7 @@ package net.zlw.cloud.VisaChange.mapper;
 import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.VisaChange.model.vo.PageVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeListVo;
-import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
-import net.zlw.cloud.designProject.model.CostVo2;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
@@ -102,6 +98,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "     v.base_project_id baseProjectId,  " +
             "     b.cea_num ceaNum,   " +
             "     b.project_num projectNum,   " +
+            "     b.project_name projectName,  "+
             "     (case b.visa_status   " +
             "      when '1' then '待审核'   " +
             "      when '2' then '处理中'   " +
@@ -198,6 +195,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            v.base_project_id baseProjectId, " +
             "            b.cea_num ceaNum,  " +
             "            b.project_num projectNum,  " +
+            "            b.project_name projectName,  " +
             "            (case b.visa_status  " +
             "             when '1' then '待审核'  " +
             "             when '2' then '处理中'  " +
