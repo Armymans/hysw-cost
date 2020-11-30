@@ -322,7 +322,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         if (baseProject.getAB().equals("1")) {
             //如果不存在申请人字段则判断上家申请不存在
 
-            if (visaChangeVo.getVisaApplyChangeInformationUp().getApplicantName() != null && !visaChangeVo.getVisaApplyChangeInformationUp().getApplicantName().equals("")) {
+
                 visaApplyChangeInformationUp = visaChangeVo.getVisaApplyChangeInformationUp();
                 visaApplyChangeInformationUp.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaApplyChangeInformationUp.setCreateTime(sim.format(new Date()));
@@ -331,10 +331,10 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaApplyChangeInformationUp.setBaseProjectId(visaChangeVo.getBaseId());
                 visaApplyChangeInformationUp.setUpAndDownMark("0");
                 visaApplyChangeInformationMapper.insertSelective(visaApplyChangeInformationUp);
-            }
+
 
             //如果不存在送审金额字段则判断下家申请不存在
-            if (visaChangeVo.getVisaApplyChangeInformationDown().getSubmitMoney() != null && !visaChangeVo.getVisaApplyChangeInformationDown().getSubmitMoney().equals("")) {
+
                 visaApplyChangeInformationDown = visaChangeVo.getVisaApplyChangeInformationDown();
                 visaApplyChangeInformationDown.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaApplyChangeInformationDown.setCreateTime(sim.format(new Date()));
@@ -344,7 +344,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaApplyChangeInformationDown.setUpAndDownMark("1");
                 visaApplyChangeInformationMapper.insertSelective(visaApplyChangeInformationDown);
 
-            }
+
 
                 visaChangeUp = visaChangeVo.getVisaChangeUp();
             if ("".equals(visaChangeUp.getAmountVisaChange())){
