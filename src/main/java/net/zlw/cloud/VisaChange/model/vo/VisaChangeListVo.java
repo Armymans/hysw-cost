@@ -2,11 +2,8 @@ package net.zlw.cloud.VisaChange.model.vo;
 
 
 import lombok.Data;
-import net.zlw.cloud.progressPayment.model.AuditInfo;
-import net.zlw.cloud.progressPayment.model.BaseProject;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 public class VisaChangeListVo {
