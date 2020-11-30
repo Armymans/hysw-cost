@@ -356,7 +356,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeUp.getOutsourcingAmount())){
                 visaChangeUp.setOutsourcingAmount(null);
             }
-            if (Double.parseDouble(visaChangeUp.getProportionContract())<60){
+            if (visaChangeUp.getProportionContract().length()<60){
                 visaChangeUp.setProportionContract(null);
             }
                 visaChangeUp.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -998,8 +998,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeDown.getOutsourcingAmount())){
                 visaChangeDown.setOutsourcingAmount(null);
             }
-            if (Double.parseDouble(visaChangeDown.getProportionContract())<60){
+            if (visaChangeDown.getProportionContract().length()<60){
                 visaChangeDown.setProportionContract(null);
+            }
+            if("".equals(visaChangeDown.getAmountVisaChange()) || visaChangeDown.getAmountVisaChange() == null){
+                visaChangeDown.setAmountVisaChange(new BigDecimal(0));
             }
                 visaChangeDown.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeDown.setCreateTime(sim.format(new Date()));
@@ -1009,6 +1012,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeDown.setApplyChangeInfoId(visaApplyChangeInformationDown.getId());
                 visaChangeDown.setUpAndDownMark("1");
                 visaChangeDown.setChangeNum(downNum + 1);
+
                 visaChangeDown.setCumulativeChangeAmount(bigDecimal1.add(visaChangeDown.getAmountVisaChange()));
 //                visaChangeDown.setCumulativeChangeAmount(visaChangeDown.getAmountVisaChange());
                 visaChangeMapper.insertSelective(visaChangeDown);

@@ -551,22 +551,24 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //其他信息表
-        Json coms = baseAccountsVo.getComs();
-        String json = coms.value();
-        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
-        if (otherInfos.size() > 0){
-            for (OtherInfo thisInfo : otherInfos) {
-                OtherInfo otherInfo1 = new OtherInfo();
-                otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                otherInfo1.setForeignKey(baseProject.getId());
-                otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
-                otherInfo1.setNum(thisInfo.getNum());
-                otherInfo1.setCreateTime(data);
-                otherInfo1.setStatus("0");
+        if (!"".equals(baseAccountsVo.getComs()) && baseAccountsVo.getComs() != null){
+            Json coms = baseAccountsVo.getComs();
+            String json = coms.value();
+            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            if (otherInfos.size() > 0){
+                for (OtherInfo thisInfo : otherInfos) {
+                    OtherInfo otherInfo1 = new OtherInfo();
+                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    otherInfo1.setForeignKey(baseProject.getId());
+                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                    otherInfo1.setNum(thisInfo.getNum());
+                    otherInfo1.setCreateTime(data);
+                    otherInfo1.setStatus("0");
 
-                otherInfo1.setFoundId(loginUser.getId());
-                otherInfo1.setFounderCompany(loginUser.getCompanyId());
-                otherInfoMapper.insertSelective(otherInfo1);
+                    otherInfo1.setFoundId(loginUser.getId());
+                    otherInfo1.setFounderCompany(loginUser.getCompanyId());
+                    otherInfoMapper.insertSelective(otherInfo1);
+                }
             }
         }
         //添加上家送审
