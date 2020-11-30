@@ -118,12 +118,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
                             .andEqualTo("auditResult","0");
                     AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                    Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
-                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    if (memberManage !=null){
-                        budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+                    if(auditInfo!=null){
+                        Example example1 = new Example(MemberManage.class);
+                        example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        if (memberManage !=null){
+                            budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+                        }
                     }
+
                 }
                 return list1;
                 //普通员工
@@ -134,12 +137,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
                             .andEqualTo("auditResult","0");
                     AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                    Example example1 = new Example(MemberManage.class);
-                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
-                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    if (memberManage !=null){
-                        budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+                    if (auditInfo!=null){
+                        Example example1 = new Example(MemberManage.class);
+                        example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        if (memberManage !=null){
+                            budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+                        }
                     }
+
                 }
                 return list1;
             }
