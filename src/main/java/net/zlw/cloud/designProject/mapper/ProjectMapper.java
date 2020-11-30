@@ -399,49 +399,49 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     String settleAccountsCount(@Param("id") String id,@Param("district") String district);
 
     @Select(
-            "select\n" +
-                    "year(s1.create_time) yeartime,\n" +
-                    "count(budget_status) budget,\n" +
-                    "count(track_status) track,\n" +
-                    "count(visa_status) visa,\n" +
-                    "count(progress_payment_status) progresspayment,\n" +
-                    "count(settle_accounts_status) settleaccounts\n" +
-                    "from\n" +
-                    "base_project s1\n" +
-                    "where\n" +
-                    "del_flag = '0'\n" +
-                    "and\n" +
-                    "create_time>= #{startTime}\n" +
-                    "and \n" +
-                    "(create_time<= #{endTime} or  #{endTime} = '') \n" +
-                    "and\n" +
-                    "(district = #{district} or #{district} = '')\n" +
-                    "group by \n" +
+            "select " +
+                    "year(s1.create_time) yeartime, " +
+                    "count(budget_status) budget, " +
+                    "count(track_status) track, " +
+                    "count(visa_status) visa, " +
+                    "count(progress_payment_status) progresspayment, " +
+                    "count(settle_accounts_status) settleaccounts " +
+                    "from " +
+                    "base_project s1 " +
+                    "where " +
+                    "del_flag = '0' " +
+                    "and " +
+                    "create_time>= #{startTime} " +
+                    "and  " +
+                    "(create_time<= #{endTime} or  #{endTime} = '')  " +
+                    "and " +
+                    "(district = #{district} or #{district} = '') " +
+                    "group by  " +
                     "year(s1.create_time)"
     )
     OneCensus2 costCensus(CostVo2 costVo2);
 
     @Select(
-            "select \n" +
-                    "year(bp.create_time) yeartime, \n" +
-                    "month(bp.create_time) monthTime , \n" +
-                    "count(budget_status) budget, \n" +
-                    "count(track_status) track, \n" +
-                    "count(visa_status) visa, \n" +
-                    "count(progress_payment_status) progresspayment, \n" +
-                    "count(settle_accounts_status) settleaccounts \n" +
-                    "from \n" +
-                    "base_project bp \n" +
-                    "where \n" +
-                    "del_flag = '0' \n" +
-                    "and \n" +
-                    "create_time>= #{startTime}\n" +
-                    "and  \n" +
-                    "(create_time<= #{endTime} or  #{endTime} = '')  \n" +
-                    "and \n" +
-                    "(district = #{district} or #{district} = '') \n" +
-                    "group by \n" +
-                    "year(bp.create_time), \n" +
+            "select  " +
+                    "year(bp.create_time) yeartime,  " +
+                    "month(bp.create_time) monthTime ,  " +
+                    "count(budget_status) budget,  " +
+                    "count(track_status) track,  " +
+                    "count(visa_status) visa,  " +
+                    "count(progress_payment_status) progresspayment,  " +
+                    "count(settle_accounts_status) settleaccounts  " +
+                    "from  " +
+                    "base_project bp  " +
+                    "where  " +
+                    "del_flag = '0'  " +
+                    "and  " +
+                    "create_time>= #{startTime} " +
+                    "and   " +
+                    "(create_time<= #{endTime} or  #{endTime} = '')   " +
+                    "and  " +
+                    "(district = #{district} or #{district} = '')  " +
+                    "group by  " +
+                    "year(bp.create_time),  " +
                     "month(bp.create_time)  "
     )
     List<OneCensus2> costCensusList(CostVo2 costVo2);
@@ -1357,53 +1357,44 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     OneCensus7 costTaskNoOutsourcingCount(CostVo2 costVo2);
 
     @Select(
-            "SELECT  " +
-                    "s2.member_name memberName,  " +
-                    "s1.desgin_achievements desginAchievements,  " +
-                    "(s1.desgin_achievements*0.8)  desginAchievements2,  " +
-                    "(s1.desgin_achievements-(s1.desgin_achievements*0.8)) balance  " +
-                    "FROM  " +
-                    "achievements_info s1,  " +
-                    "member_manage s2,  " +
-                    "base_project s3  " +
-                    "WHERE  " +
-                    "s1.member_id = s2.id  " +
-                    "and  " +
-                    "s3.id = s1.base_project_id  " +
-                    "and  " +
-                    "s1.desgin_achievements IS NOT NULL  " +
-                    "and  " +
-                    "(s3.district = #{district} or #{district} = '')  " +
-                    "and  " +
-                    "s3.create_time >= #{startTime}  " +
-                    "and  " +
-                    "(s3.create_time <= #{endTime} or #{endTime} = '')"
+            "SELECT " +
+                    "s2.member_name memberName, " +
+                    "SUM(IFNULL(s1.accrued_amount,0)) desginAchievements, " +
+                    "SUM(IFNULL(s1.actual_amount,0)) desginAchievements2, " +
+                    "SUM(IFNULL(s1.balance,0)) balance " +
+                    "FROM " +
+                    "employee_achievements_info s1, " +
+                    "member_manage s2 " +
+                    "WHERE " +
+                    "s1.member_id = s2.id " +
+                    "and " +
+                    "s1.dept = '1' " +
+                    "GROUP BY " +
+                    "member_name"
     )
     List<OneCensus8> DesginAchievementsList(CostVo2 costVo2);
     @Select(
-            "SELECT  " +
-                    "s1.id,  " +
-                    "s1.project_name projectName,  " +
-                    "s1.district,  " +
-                    "s1.a_b aB,  " +
-                    "s2.take_time takeTime,  " +
-                    "s2.blueprint_start_time blueprintStartTime,  " +
-                    "s3.amount_cost amountCost,  " +
-                    "s4.desgin_achievements desginAchievements,  " +
-                    "(s4.desgin_achievements*0.8) desginAchievements2  " +
-                    "FROM  " +
-                    "base_project s1 LEFT JOIN design_info s2 ON s1.id = s2.base_project_id  " +
-                    "LEFT JOIN budgeting s3 ON s1.id = s3.base_project_id   " +
-                    "LEFT JOIN achievements_info s4 ON s1.id = s4.base_project_id  " +
-                    "WHERE  " +
-                    "s1.desgin_status = '4'  " +
-                    "and  " +
-                    "s4.member_id = #{id}  " +
-                    "and  " +
-                    "(s1.district = #{district} or #{district} = '')  " +
-                    "and  " +
-                    "s1.create_time >= #{startTime}  " +
-                    "and  " +
+            "SELECT\n" +
+                    "s1.id,\n" +
+                    "s1.project_name projectName,\n" +
+                    "s1.district,\n" +
+                    "s1.a_b aB,\n" +
+                    "s2.take_time takeTime,\n" +
+                    "s2.blueprint_start_time blueprintStartTime,\n" +
+                    "s3.amount_cost amountCost,\n" +
+                    "s4.accrued_amount desginAchievements,\n" +
+                    "s4.actual_amount desginAchievements2\n" +
+                    "FROM\n" +
+                    "base_project s1 LEFT JOIN design_info s2 ON s1.id = s2.base_project_id\n" +
+                    "LEFT JOIN budgeting s3 ON s1.id = s3.base_project_id \n" +
+                    "LEFT JOIN employee_achievements_info s4 ON s1.id = s4.base_project_id\n" +
+                    "WHERE\n" +
+                    "s1.desgin_status = '4'\n" +
+                    "and\n" +
+                    "(s1.district = #{district} or #{district} = '')\n" +
+                    "and\n" +
+                    "s1.create_time >= #{startTime}\n" +
+                    "and\n" +
                     "(s1.create_time <= #{endTime} or  #{endTime} = '')"
     )
     List<OneCensus9> DesginMonthAchievementsList(CostVo2 costVo2);

@@ -1827,7 +1827,7 @@ public class ProjectSumService {
      * @return
      */
     public List<OneCensus8> DesginAchievementsList(CostVo2 costVo2){
-            if(costVo2.getStartTime()!=null&&"".equals(costVo2.getStartTime())&&costVo2.getEndTime()!=null
+            if(costVo2.getStartTime()!=null&&"".equals(costVo2.getStartTime())||costVo2.getEndTime()!=null
                     &&"".equals(costVo2.getEndTime())){
                 List<OneCensus8> oneCensus8s = projectMapper.DesginAchievementsList(costVo2);
                 return oneCensus8s;

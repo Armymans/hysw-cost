@@ -2686,12 +2686,13 @@ public class ProjectService {
     }
 
     public List<MessageNotification> messageList(UserInfo userInfo) {
-        Example example = new Example(MessageNotification.class);
-        Example.Criteria c = example.createCriteria();
-        //todo userInfo.getId()
-        c.andEqualTo("acceptId", userInfo.getId());
-        List<MessageNotification> messageNotifications = messageNotificationDao.selectByExample(example);
-        return messageNotifications;
+//        Example example = new Example(MessageNotification.class);
+//        Example.Criteria c = example.createCriteria();
+//        //todo userInfo.getId()
+//        c.andEqualTo("acceptId", userInfo.getId());
+//        List<MessageNotification> messageNotifications = messageNotificationDao.selectByExample(example);
+        List<MessageNotification> message = messageNotificationDao.findMessage(userInfo.getId());
+        return message;
     }
 
     public List<OneCensus> OneCensusList(CostVo2 costVo2) {
