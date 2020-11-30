@@ -1154,7 +1154,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         if (fileInfos != null){
             for (FileInfo thisFile : fileInfos) {
                 Example example2 = new Example(MemberManage.class);
-                example2.createCriteria().andEqualTo("userId",thisFile.getUserId());
+                example2.createCriteria().andEqualTo("id",thisFile.getUserId());
                 MemberManage memberManage = memberManageDao.selectOneByExample(example2);
                 thisFile.setUserName(memberManage.getMemberName());
             }
