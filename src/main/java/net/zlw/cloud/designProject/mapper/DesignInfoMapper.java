@@ -553,4 +553,41 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     ")"
     )
     List<DesignInfo> desginCensusListByDesigner(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "count(*)\n" +
+                    "FROM\n" +
+                    "design_info s1 \n" +
+                    "LEFT JOIN audit_info s2 ON s1.id = s2.base_project_id\n" +
+                    "WHERE\n" +
+                    "s1.`status` = '0'\n" +
+                    "and\n" +
+                    "s2.`status` = '0'\n" +
+                    "and\n" +
+                    "s2.audit_result = '0'\n" +
+                    "and\n" +
+                    "s2.change_flag = '1'\n" +
+                    "and\n" +
+                    "(s2.auditor_id = #{id} or #{id} = '')"
+    )
+    Integer designReviewedCount(String id);
+    @Select(
+            "SELECT\n" +
+                    "count(*)\n" +
+                    "FROM\n" +
+                    "design_info s1 \n" +
+                    "LEFT JOIN audit_info s2 ON s1.id = s2.base_project_id\n" +
+                    "WHERE\n" +
+                    "s1.`status` = '0'\n" +
+                    "and\n" +
+                    "s2.`status` = '0'\n" +
+                    "and\n" +
+                    "s2.audit_result = '0'\n" +
+                    "and\n" +
+                    "s2.change_flag = '0'\n" +
+                    "and\n" +
+                    "(s2.auditor_id = #{id} or #{id} = '')"
+    )
+    Integer designChangeReviewedCount(String id);
 }

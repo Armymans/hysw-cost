@@ -3,6 +3,7 @@ package net.zlw.cloud.designProject.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageInfo;
+import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.CostPreparation;
@@ -23,6 +24,7 @@ import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.util.StringUtil;
 
@@ -1335,9 +1337,27 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/disproject/messageList", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> messageList() {
-        //todo
         List<MessageNotification> messageNotifications = projectService.messageList(getLoginUser());
         return RestUtil.success(messageNotifications);
+    }
+
+    /**
+     * 员工首页-设计部门 设计项目代办任务
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/designReviewedCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> designReviewedCount() {
+        Integer integer = projectService.designReviewedCount(getLoginUser());
+        return RestUtil.success(integer);
+    }
+    /**
+     * 员工首页-设计部门 设计变更项目代办任务
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/designChangeReviewedCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> designChangeReviewedCount() {
+        Integer integer = projectService.designChangeReviewedCount(getLoginUser());
+        return RestUtil.success(integer);
     }
 
     /**
@@ -1348,77 +1368,135 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/disproject/censusList", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> censusList(CostVo2 costVo2) {
         //todo getLoginUser().getId()
+        String userId = getLoginUser().getId();
+        //将当前用户填入
+        if(userId!=null){
+            costVo2.setId(userId);
+        }
         List<OneCensus> oneCensuses = projectService.OneCensusList(costVo2);
+
         String censusList = "[{\"companyName\":\"市政管道\"," +
                 "\"imageAmmount\": [";
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList +=
-                    "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
-                            "\"truckAmmount\": \"" + oneCensus.getMunicipalPipeline() + "\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList +=
+                        "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                                "\"truckAmmount\": \"" + oneCensus.getMunicipalPipeline() + "\"},";
+            }
+            censusList = censusList.substring(0, censusList.length() - 1);
+        }else{
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        censusList = censusList.substring(0, censusList.length() - 1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"管网改造\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList += "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getNetworkReconstruction() + "\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList += "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getNetworkReconstruction() + "\"},";
+            }
+            censusList = censusList.substring(0, censusList.length() - 1);
+        }else{
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        censusList = censusList.substring(0, censusList.length() - 1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"新建小区\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList +=
-                    "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
-                            "\"truckAmmount\": \"" + oneCensus.getNewCommunity() + "\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList +=
+                        "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                                "\"truckAmmount\": \"" + oneCensus.getNewCommunity() + "\"},";
+            }
+            censusList = censusList.substring(0, censusList.length() - 1);
+        }else{
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        censusList = censusList.substring(0, censusList.length() - 1);
+
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"二次供水改造项目\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList +=
-                    "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
-                            "\"truckAmmount\": \"" + oneCensus.getSecondaryWater() + "\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList +=
+                        "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                                "\"truckAmmount\": \"" + oneCensus.getSecondaryWater() + "\"},";
+            }
+            censusList = censusList.substring(0, censusList.length() - 1);
+        }else{
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        censusList = censusList.substring(0, censusList.length() - 1);
+
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"工商户\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList += "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getCommercialHouseholds() + "\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList += "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getCommercialHouseholds() + "\"},";
+            }
+            censusList = censusList.substring(0, censusList.length() - 1);
+        }else{
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        censusList = censusList.substring(0, censusList.length() - 1);
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"居民装接水\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList += "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getWaterResidents() + "\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList += "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getWaterResidents() + "\"},";
+            }
+            censusList = censusList.substring(0, censusList.length() - 1);
+        }else{
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        censusList = censusList.substring(0, censusList.length() - 1);
+
+
         censusList +=
                 "]" +
                         "}, {" +
                         "\"companyName\": \"行政事业\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus oneCensus : oneCensuses) {
-            censusList += "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
-                    "\"truckAmmount\": \"" + oneCensus.getAdministration() + "\"},";
+        if(oneCensuses.size()>0){
+            for (OneCensus oneCensus : oneCensuses) {
+                censusList += "{\"time\": \"" + oneCensus.getYeartime() + "-" + oneCensus.getMonthtime() + "\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getAdministration() + "\"},";
+            }
+            censusList = censusList.substring(0, censusList.length() - 1);
+        }else{
+            censusList+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        censusList = censusList.substring(0, censusList.length() - 1);
+
         censusList += "]}]";
         JSONArray json = JSON.parseArray(censusList);
         return RestUtil.showJsonSuccess(json);
@@ -1432,7 +1510,7 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/disproject/individualList", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> individualList(IndividualVo individualVo) {
 //      TODO  getLoginUser().getId()
-        individualVo.setId("user282");
+        individualVo.setId(getLoginUser().getId());
         PageInfo<BaseProject> projects = projectService.individualList(individualVo);
         for (BaseProject project : projects.getList()) {
             DesignInfo designInfo = projectService.designInfoByid(project.getId());
@@ -1444,13 +1522,30 @@ public class ProjectController extends BaseController {
                     project.setDesMoney(anhuiMoneyinfo.getOfficialReceipts());
                     //应计提金额
                     BigDecimal bigDecimal = projectService.accruedAmount(anhuiMoneyinfo.getOfficialReceipts());
-                    project.setAccrualMoney(bigDecimal.doubleValue());
+                    if(bigDecimal!=null){
+                        project.setAccrualMoney(bigDecimal.doubleValue());
+                    }else{
+                        project.setAccrualMoney(0.0);
+                    }
                     //建议金额
                     BigDecimal bigDecimal1 = projectService.proposedAmount(bigDecimal);
-                    project.setAdviseMoney(bigDecimal1.doubleValue());
+                    if(bigDecimal1!=null){
+                        project.setAdviseMoney(bigDecimal1.doubleValue());
+                    }else{
+                        project.setAdviseMoney(0.0);
+                    }
                     // 余额
                     BigDecimal surplus = projectService.surplus(bigDecimal, bigDecimal1);
-                    project.setSurplus(surplus.doubleValue());
+                    if(surplus!=null){
+                        project.setSurplus(surplus.doubleValue());
+                    }else{
+                        project.setSurplus(0.0);
+                    }
+                }else{
+                    project.setDesMoney(new BigDecimal(0));
+                    project.setAccrualMoney(0.0);
+                    project.setAdviseMoney(0.0);
+                    project.setSurplus(0.0);
                 }
             } else {
                 //设计费（吴江）
@@ -1459,19 +1554,45 @@ public class ProjectController extends BaseController {
                     project.setDesMoney(wujiangMoneyInfo.getOfficialReceipts());
                     //应计提金额
                     BigDecimal bigDecimal = projectService.accruedAmount(wujiangMoneyInfo.getOfficialReceipts());
-                    project.setAccrualMoney(bigDecimal.doubleValue());
+                    if(bigDecimal!=null){
+                        project.setAccrualMoney(bigDecimal.doubleValue());
+                    }else{
+                        project.setAccrualMoney(0.0);
+                    }
+
                     //建议金额
                     BigDecimal bigDecimal1 = projectService.proposedAmount(bigDecimal);
-                    project.setAdviseMoney(bigDecimal1.doubleValue());
+                    if(bigDecimal1!=null){
+                        project.setAdviseMoney(bigDecimal1.doubleValue());
+                    }else{
+                        project.setAdviseMoney(0.0);
+                    }
+
                     // 余额
                     BigDecimal surplus = projectService.surplus(bigDecimal, bigDecimal1);
-                    project.setSurplus(surplus.doubleValue());
+                    if(surplus!=null){
+                        project.setSurplus(surplus.doubleValue());
+                    }else{
+                        project.setSurplus(0.0);
+                    }
+                }else{
+                    project.setDesMoney(new BigDecimal(0));
+                    project.setAccrualMoney(0.0);
+                    project.setAdviseMoney(0.0);
+                    project.setSurplus(0.0);
                 }
             }
             //造价费用
             Budgeting budgeting = projectService.budgetingByid(project.getId());
-            project.setAmountCost(budgeting.getAmountCost());
-            //应技提金额
+            if(budgeting!=null){
+                if(budgeting.getAmountCost()!=null){
+                    project.setAmountCost(budgeting.getAmountCost());
+                }else{
+                    project.setAmountCost(new BigDecimal(0));
+                }
+            }else{
+                project.setAmountCost(new BigDecimal(0));
+            }
         }
         return RestUtil.page(projects);
     }
@@ -1741,9 +1862,13 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/costproject/yearDesCount", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> yearDesCount(CostVo2 costVo2) {
-        String sysYear = projectService.getSysYear();
-        costVo2.setYear(sysYear);
-        Integer integer = projectService.yearDesCount(costVo2);
+        //todo getLoginUser().getId();
+        String id = getLoginUser().getId();
+        costVo2.setId(id);
+        //获取当前月
+        CostVo2 costVo21 = projectService.NowMonth(costVo2);
+        //根据当前月 求和
+        Integer integer = projectService.yearDesCount(costVo21);
         Map<String, Integer> stringIntegerMap = new HashMap<>();
         stringIntegerMap.put("count",integer);
         return RestUtil.success(stringIntegerMap);
@@ -1757,11 +1882,13 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/costproject/mounthDesCount", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> mounthDesCount(CostVo2 costVo2) {
-        String sysYear = projectService.getSysYear();
-        int sysMouth = projectService.getSysMouth();
-        costVo2.setYear(sysYear);
-        costVo2.setMonth(sysMouth + "");
-        Integer integer = projectService.mouthDesCount(costVo2);
+        //todo getLoginUser().getId();
+        String id = getLoginUser().getId();
+        costVo2.setId(id);
+        //获取当前年的时间
+        CostVo2 costVo21 = projectService.NowYear(costVo2);
+        //得到当前年的总数
+        Integer integer = projectService.yearDesCount(costVo21);
         HashMap<String, Integer> stringIntegerHashMap = new HashMap<>();
         stringIntegerHashMap.put("count",integer);
         return RestUtil.success(stringIntegerHashMap);

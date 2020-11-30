@@ -16,6 +16,7 @@ import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.mapper.MessageNotificationDao;
 import net.zlw.cloud.index.model.MessageNotification;
+import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
@@ -2160,20 +2161,22 @@ public class ProjectService {
             Double total = 0.0;
             //获取代收金额记录
             String collectionMoney = wujiangMoneyInfo1.getCollectionMoney();
-            String[] split = collectionMoney.split(",");
-            ArrayList<PayItem> strings = new ArrayList<>();
-            for (int i = 0; i < split.length; i++) {
-                PayItem payItem = new PayItem();
-                payItem.setNum("第" + (i + 1) + "次收款");
-                payItem.setSize(split[i] + "元");
-                strings.add(payItem);
-                total += Double.parseDouble(split[i]);
+            if(collectionMoney!=null){
+                String[] split = collectionMoney.split(",");
+                ArrayList<PayItem> strings = new ArrayList<>();
+                for (int i = 0; i < split.length; i++) {
+                    PayItem payItem = new PayItem();
+                    payItem.setNum("第" + (i + 1) + "次收款");
+                    payItem.setSize(split[i] + "元");
+                    strings.add(payItem);
+                    total += Double.parseDouble(split[i]);
+                }
+                //将数组返回
+                wujiangMoneyInfo1.setStrings(strings);
+                //将总金额返回
+                wujiangMoneyInfo1.setTotalMoney(new BigDecimal(total));
+                return wujiangMoneyInfo1;
             }
-            //将数组返回
-            wujiangMoneyInfo1.setStrings(strings);
-            //将总金额返回
-            wujiangMoneyInfo1.setTotalMoney(new BigDecimal(total));
-            return wujiangMoneyInfo1;
         }
         return null;
     }
@@ -2194,20 +2197,22 @@ public class ProjectService {
             Double total = 0.0;
             //获取代收金额记录
             String collectionMoney = anhuiMoneyinfo1.getCollectionMoney();
-            String[] split = collectionMoney.split(",");
-            ArrayList<PayItem> strings = new ArrayList<>();
-            for (int i = 0; i < split.length; i++) {
-                PayItem payItem = new PayItem();
-                payItem.setNum("第"+ (i+1) +"次收款");
-                payItem.setSize(split[i]+"元");
-                strings.add(payItem);
-                total+= Double.parseDouble(split[i]);
+            if(collectionMoney!=null){
+                String[] split = collectionMoney.split(",");
+                ArrayList<PayItem> strings = new ArrayList<>();
+                for (int i = 0; i < split.length; i++) {
+                    PayItem payItem = new PayItem();
+                    payItem.setNum("第"+ (i+1) +"次收款");
+                    payItem.setSize(split[i]+"元");
+                    strings.add(payItem);
+                    total+= Double.parseDouble(split[i]);
+                }
+                //将数组返回
+                anhuiMoneyinfo1.setStrings(strings);
+                //将总金额返回
+                anhuiMoneyinfo1.setTotalMoney(new BigDecimal(total));
+                return anhuiMoneyinfo1;
             }
-            //将数组返回
-            anhuiMoneyinfo1.setStrings(strings);
-            //将总金额返回
-            anhuiMoneyinfo1.setTotalMoney(new BigDecimal(total));
-            return anhuiMoneyinfo1;
         }
         return null;
     }
@@ -2690,7 +2695,16 @@ public class ProjectService {
     }
 
     public List<OneCensus> OneCensusList(CostVo2 costVo2) {
-        List<OneCensus> oneCensuses = projectMapper.censusList(costVo2);
+        List<OneCensus> oneCensuses = new ArrayList<>();
+        //如果筛选时间为空
+        if(costVo2.getStartTime()==null || costVo2.getStartTime().equals("")
+                && costVo2.getEndTime() == null || costVo2.getEndTime().equals("")){
+            //默认展示今年的
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            oneCensuses = projectMapper.censusList(costVo21);
+        }else{
+            oneCensuses = projectMapper.censusList(costVo2);
+        }
         return oneCensuses;
     }
 
@@ -3052,5 +3066,15 @@ public class ProjectService {
         criteria.andEqualTo("auditResult", "0");
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
         return auditInfo;
+    }
+
+    public Integer designReviewedCount(UserInfo loginUser) {
+        String id = loginUser.getId();
+        return designInfoMapper.designReviewedCount(id);
+    }
+
+    public Integer designChangeReviewedCount(UserInfo loginUser) {
+        String id = loginUser.getId();
+        return designInfoMapper.designChangeReviewedCount(id);
     }
 }

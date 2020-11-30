@@ -227,8 +227,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "SELECT " +
-                    "year(bp.create_time) yeartime, " +
-                    "month(bp.create_time) monthtime, " +
+                    "year(s2.create_time) yeartime, " +
+                    "month(s2.create_time) monthtime, " +
                     "SUM(design_category = 1) AS municipalPipeline, " +
                     "SUM(design_category = 2) AS networkReconstruction, " +
                     "SUM(design_category = 3) AS newCommunity, " +
@@ -237,47 +237,50 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "SUM(design_category = 6) AS waterResidents, " +
                     "SUM(design_category = 7) AS administration " +
                     "FROM " +
-                    "base_project bp " +
-                    "where " +
-                    "founder_id = #{id} " +
-                    "and " +
-                    "(district = #{district} or #{district} = '') " +
-                    "and " +
-                    "create_time>= #{startTime} " +
-                    "and  " +
-                    "(create_time<= #{endTime} or  #{endTime} = '')  " +
-                    "and " +
-                    "del_flag = '0' " +
-                    "group by year(bp.create_time), " +
-                    "month(bp.create_time) " +
-                    "HAVING " +
-                    "(yeartime = #{year} or #{year} = '') " +
-                    "and " +
-                    "(monthtime = #{month} or #{month} = '')"
-    )
-    List<OneCensus> censusList(CostVo2 costVo2);
-
-    @Select(
-            "SELECT " +
-                    "s1.id, " +
-                    "s1.project_num, " +
-                    "s1.project_name, " +
-                    "s1.district, " +
-                    "s2.blueprint_start_time " +
-                    "FROM " +
                     "base_project s1, " +
                     "design_info s2 " +
                     "where " +
                     "s1.id = s2.base_project_id " +
                     "and " +
-                    "s1.founder_id = #{id} " +
+                    "s1.del_flag = '0' " +
+                    "and " +
+                    "s2.`status` = '0' " +
+                    "and " +
+                    "(s2.founder_id = #{id} or #{id} = '') " +
                     "and " +
                     "(district = #{district} or #{district} = '') " +
                     "and " +
-                    "blueprint_start_time>= #{startTime} " +
+                    "s2.create_time>= #{startTime} " +
                     "and  " +
-                    "(blueprint_start_time<= #{endTime} or  #{endTime} = '') and " +
-                    "s1.del_flag = '0'"
+                    "(s2.create_time<= #{endTime} or  #{endTime} = '')  " +
+                    "group by  " +
+                    "year(s2.create_time), " +
+                    "month(s2.create_time)"
+    )
+    List<OneCensus> censusList(CostVo2 costVo2);
+
+    @Select(
+            "SELECT   " +
+                    "s1.id,   " +
+                    "s1.project_num,   " +
+                    "s1.project_name,   " +
+                    "s1.district,   " +
+                    "s2.blueprint_start_time   " +
+                    "FROM   " +
+                    "base_project s1,   " +
+                    "design_info s2   " +
+                    "where   " +
+                    "s1.id = s2.base_project_id   " +
+                    "and   " +
+                    "s1.del_flag = '0'  " +
+                    "and   " +
+                    "(s1.founder_id = #{id} or #{id} = '')  " +
+                    "and   " +
+                    "(district = #{district} or #{district} = '')   " +
+                    "and   " +
+                    "blueprint_start_time>= #{startTime}   " +
+                    "and    " +
+                    "(blueprint_start_time<= #{endTime} or  #{endTime} = '') "
     )
     List<BaseProject> individualList(IndividualVo individualVo);
 
