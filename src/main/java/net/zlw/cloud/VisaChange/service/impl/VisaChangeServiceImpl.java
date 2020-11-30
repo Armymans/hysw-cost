@@ -889,6 +889,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     }
 
     @Override
+    public List<MemberManage> costOfPersonnel() {
+        Example example = new Example(MemberManage.class);
+        example.createCriteria().andEqualTo("deptId","2")
+                                .andEqualTo("status","0");
+        List<MemberManage> memberManages = memberManageDao.selectByExample(example);
+        return memberManages;
+    }
+
+    @Override
     public void updateVisa(VisaChangeVo visaChangeVo, UserInfo loginUser) {
         String id = loginUser.getId();
 //        String id = "user309";

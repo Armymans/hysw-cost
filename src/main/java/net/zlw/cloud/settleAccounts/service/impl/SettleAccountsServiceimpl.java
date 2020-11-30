@@ -1117,9 +1117,10 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     EmployeeAchievementsInfo achievementsInfo = new EmployeeAchievementsInfo();
                     BigDecimal trackAuditBase = trackAuditInfo.getTrackAuditBase();
                     double track = trackAuditBase.doubleValue();
-                    //计价基数
-                    //计提和
-                    BigDecimal total5= new BigDecimal(0);
+                    if (trackAuditInfo != null){
+                        //计价基数
+                        //计提和
+                        BigDecimal total5= new BigDecimal(0);
                         if(!"4".equals(baseProject.getDistrict())){
                             Double aDouble = projectSumService.trackImprovement(track);
                             aDouble = (double)Math.round(aDouble*100)/100;
@@ -1174,8 +1175,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                             achievementsInfo.setOverFlag("0");
                             employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
                         }
-
-
+                    }
                     //待确认一审
                 }else if(auditInfo.getAuditType().equals("2")){
                     auditInfo.setAuditResult("1");

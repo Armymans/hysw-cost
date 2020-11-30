@@ -12,6 +12,7 @@ import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
+import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -192,6 +193,13 @@ public class VisaChangeController extends BaseController {
     public Map<String,Object> deleteVisa(@RequestParam(name = "baseId") String baseId){
         vcisService.deleteVisa(baseId);
         return RestUtil.success();
+    }
+
+    // 编制人回显造价部人员
+    @RequestMapping(value = "/public/costOfPersonnel",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> costOfPersonnel(@RequestParam(name = "baseId") String baseId){
+        List<MemberManage> memberManageNames = vcisService.costOfPersonnel();
+        return RestUtil.success(memberManageNames);
     }
 
 

@@ -7,6 +7,7 @@ import net.zlw.cloud.VisaChange.model.vo.VisaChangeListVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.warningDetails.model.MemberManage;
 
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface VisaChangeService {
      String showHiddenCard(String id, String baseId);
 
      void deleteVisa(String baseId);
+
+     List<MemberManage> costOfPersonnel();
 }
