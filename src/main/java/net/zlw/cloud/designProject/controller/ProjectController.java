@@ -3,7 +3,6 @@ package net.zlw.cloud.designProject.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageInfo;
-import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.CostPreparation;
@@ -25,7 +24,6 @@ import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
@@ -1153,20 +1151,20 @@ public class ProjectController extends BaseController {
         }
 
         //审核信息回显 根据当前用户判断
-//        AuditInfo auditInfo = projectService.auditInfoByYes(getLoginUser(),designInfo.getId());
-//        if(auditInfo!=null){
-//            projectVo.setAuditInfo(auditInfo);
-//        }else{
-//            projectVo.setAuditInfo(new AuditInfo());
-//        }
+        AuditInfo auditInfo = projectService.auditInfoByYes(getLoginUser(),designInfo.getId());
+        if(auditInfo!=null){
+            projectVo.setAuditInfo(auditInfo);
+        }else{
+            projectVo.setAuditInfo(new AuditInfo());
+        }
 
-//        //设计变更累计
-//        List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(id);
-//        if(designChangeInfos.size()>0){
-//            projectVo.setDesignChangeCountFlag("0");  //说明之前进行过设计变更
-//        }else{
-//            projectVo.setDesignChangeCountFlag("1");
-//        }
+        //设计变更累计
+        List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(id);
+        if(designChangeInfos.size()>0){
+            projectVo.setDesignChangeCountFlag("0");  //说明之前进行过设计变更
+        }else{
+            projectVo.setDesignChangeCountFlag("1");
+        }
 
         return RestUtil.success(projectVo);
     }
