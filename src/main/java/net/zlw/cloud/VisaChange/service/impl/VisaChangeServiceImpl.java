@@ -126,7 +126,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                             budgetingListVo.setCurrentHandler(memberManage.getMemberName());
                         }
                     }
-
                 }
                 return list1;
                 //普通员工

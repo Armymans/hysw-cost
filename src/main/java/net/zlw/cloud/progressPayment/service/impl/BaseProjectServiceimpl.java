@@ -132,6 +132,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         paymentInformation.setId(UUID.randomUUID().toString().replace("-", ""));
         paymentInformation.setFounderId(loginUser.getId());
         paymentInformation.setDelFlag("0");
+        paymentInformation.setChangeNum(1);
 
         String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
         paymentInformation.setCreateTime(format);
@@ -556,7 +557,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     progressPaymentInformation.setCreateTime(format);
                     progressPaymentInformation.setFounderId(loginUser.getId());
                     progressPaymentInformation.setDelFlag("0");
-//                    progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
+                    progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
                     progressPaymentInformationDao.insertSelective(progressPaymentInformation);
 
 
@@ -862,7 +863,6 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         Example example4 = new Example(ProgressPaymentInformation.class);
         example4.createCriteria().andEqualTo("progressPaymentId", paymentInformation.getId());
         progressPaymentInformationDao.updateByExampleSelective(paymentInformation, example4);
-
 
     }
 
@@ -1193,7 +1193,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                bigDecimal1 = bigDecimal1.add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes()));
            }
            if (progressPaymentInformation.getCurrentPaymentRatio()!=null){
-               pro+=Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio());
+               if (pro<=Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())){
+                   pro=Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio());
+               }
            }
         }
         totalVo.setTotalPaymentAmount(bigDecimal);

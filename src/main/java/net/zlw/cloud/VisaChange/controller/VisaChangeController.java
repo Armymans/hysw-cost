@@ -58,8 +58,6 @@ public class VisaChangeController extends BaseController {
     @Resource
     private MkyUserMapper mkyUserMapper;
 
-
-
     //查询所有
 
     @RequestMapping(value = "/visachange/findAllVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
