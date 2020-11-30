@@ -62,4 +62,6 @@ public interface BaseProjectService {
     List<ProgressPaymentInformation> findTotalList(String baseId);
 
     TotalVo findTotal(String baseId);
+
+    List<AuditChekedVo> auditChekAccount();
 }

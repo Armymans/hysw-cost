@@ -75,6 +75,13 @@ public class SearchBaseProjectController {
         List<AuditChekedVo> list = baseProjectService.auditChek(id);
         return RestUtil.success(list);
     }
+    //结算审核卡片
+    @RequestMapping(value = "/review/auditChekAccount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> auditChekAccount(@RequestParam(name = "id") String id){
+       List<AuditChekedVo> list = baseProjectService.auditChekAccount();
+       return RestUtil.success(list);
+    }
+    //
 
     /**
      * 设计审核卡片

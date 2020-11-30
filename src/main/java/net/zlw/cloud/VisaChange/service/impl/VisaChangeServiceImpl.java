@@ -12,6 +12,7 @@ import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.VisaChange.service.VisaChangeService;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.budgeting.model.vo.BudgetingListVo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -112,10 +113,35 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             //领导
             if ( pageVo.getUserId().equals(whzjh) || pageVo.getUserId().equals(whzjm) || pageVo.getUserId().equals(wjzjh)){
                 List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaCheckLeader(pageVo);
+
+                for (VisaChangeListVo budgetingListVo : list1) {
+                    Example example = new Example(AuditInfo.class);
+                    example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
+                            .andEqualTo("auditResult","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    Example example1 = new Example(MemberManage.class);
+                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    if (memberManage !=null){
+                        budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+                    }
+                }
                 return list1;
                 //普通员工
             }else {
                 List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaCheckStaff(pageVo);
+                for (VisaChangeListVo budgetingListVo : list1) {
+                    Example example = new Example(AuditInfo.class);
+                    example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
+                            .andEqualTo("auditResult","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    Example example1 = new Example(MemberManage.class);
+                    example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    if (memberManage !=null){
+                        budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+                    }
+                }
                 return list1;
             }
         }
@@ -707,6 +733,12 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setAuditTime(sim.format(new Date()));
                 auditInfo.setUpdateTime(sim.format(new Date()));
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
+
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+                baseProject.setVisaStatus("3");
+                baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
 //                //项目名称
 //                String projectName = baseProjectDao.selectByPrimaryKey(auditInfo.getBaseProjectId()).getProjectName();
 //                //成员名称
@@ -1162,27 +1194,80 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             //未通过提交
         } else if (visaChangeVo.getVisaNum() != null && visaChangeVo.getVisaNum().equals("4")) {
             VisaApplyChangeInformation visaApplyChangeInformationUp = visaChangeVo.getVisaApplyChangeInformationUp();
+            Example example = new Example(VisaApplyChangeInformation.class);
+            Example.Criteria c = example.createCriteria();
+            c.andEqualTo("baseProjectId", visaChangeVo.getBaseId());
+            c.andEqualTo("state", "0");
+            c.andEqualTo("upAndDownMark", "0");
+            VisaApplyChangeInformation visaApplyChangeInformation = visaApplyChangeInformationMapper.selectOneByExample(example);
+            visaApplyChangeInformationUp.setId(visaApplyChangeInformation.getId());
             visaApplyChangeInformationMapper.updateByPrimaryKeySelective(visaApplyChangeInformationUp);
+
             VisaApplyChangeInformation visaApplyChangeInformationDown = visaChangeVo.getVisaApplyChangeInformationDown();
+            Example example1 = new Example(VisaApplyChangeInformation.class);
+            Example.Criteria c1 = example1.createCriteria();
+            c1.andEqualTo("baseProjectId", visaChangeVo.getBaseId());
+            c1.andEqualTo("state", "0");
+            c1.andEqualTo("upAndDownMark", "1");
+            VisaApplyChangeInformation visaApplyChangeInformation1 = visaApplyChangeInformationMapper.selectOneByExample(example1);
+            visaApplyChangeInformationDown.setId(visaApplyChangeInformation1.getId());
             visaApplyChangeInformationMapper.updateByPrimaryKeySelective(visaApplyChangeInformationDown);
+
+
             VisaChange visaChangeUp = visaChangeVo.getVisaChangeUp();
+            Example example2 = new Example(VisaChange.class);
+            Example.Criteria c2 = example2.createCriteria();
+            c2.andEqualTo("baseProjectId", visaChangeVo.getBaseId());
+            c2.andEqualTo("state", "0");
+            c2.andEqualTo("upAndDownMark", "0");
+            VisaChange visaChange = visaChangeMapper.selectOneByExample(example2);
+            visaChangeUp.setId(visaChange.getId());
+
+            if ("".equals(visaChangeUp.getAmountVisaChange())){
+                visaChangeUp.setAmountVisaChange(null);
+            }
+            if ("".equals(visaChangeUp.getContractAmount())){
+                visaChangeUp.setContractAmount(null);
+            }
+            if ("".equals(visaChangeUp.getOutsourcingAmount())){
+                visaChangeUp.setOutsourcingAmount(null);
+            }
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeUp);
+
+
             VisaChange visaChangeDown = visaChangeVo.getVisaChangeDown();
+            Example example3 = new Example(VisaChange.class);
+            Example.Criteria c3 = example3.createCriteria();
+            c3.andEqualTo("baseProjectId", visaChangeVo.getBaseId());
+            c3.andEqualTo("state", "0");
+            c3.andEqualTo("upAndDownMark", "1");
+            VisaChange visaChange2 = visaChangeMapper.selectOneByExample(example3);
+            visaChangeDown.setId(visaChange2.getId());
+
+            if ("".equals(visaChangeDown.getAmountVisaChange())){
+                visaChangeDown.setAmountVisaChange(null);
+            }
+            if ("".equals(visaChangeDown.getContractAmount())){
+                visaChangeDown.setContractAmount(null);
+            }
+            if ("".equals(visaChangeDown.getOutsourcingAmount())){
+                visaChangeDown.setOutsourcingAmount(null);
+            }
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeDown);
-            BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
-            baseProject1.setVisaStatus("1");
 
             if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")) {
-                Example example = new Example(AuditInfo.class);
-                Example.Criteria c = example.createCriteria();
+                BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
+                baseProject1.setVisaStatus("1");
+                Example example4 = new Example(AuditInfo.class);
+                Example.Criteria c4 = example.createCriteria();
                 if (visaChangeDown.getId() != null && !visaChangeDown.equals("")) {
-                    c.andEqualTo("baseProjectId", visaChangeDown.getId());
+                    c4.andEqualTo("baseProjectId", visaChangeDown.getId());
                 } else if (visaChangeUp.getId() != null && !visaChangeUp.getId().equals("")) {
-                    c.andEqualTo("baseProjectId", visaChangeUp.getId());
+                    c4.andEqualTo("baseProjectId", visaChangeUp.getId());
                 }
-                c.andEqualTo("status", "0");
-                c.andEqualTo("auditResult", "2");
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                c4.andEqualTo("status", "0");
+                c4.andEqualTo("auditResult", "2");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example4);
                 auditInfo.setAuditResult("0");
                 auditInfo.setAuditOpinion("");
                 auditInfo.setAuditTime("");

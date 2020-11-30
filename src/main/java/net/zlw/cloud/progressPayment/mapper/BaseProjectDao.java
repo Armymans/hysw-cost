@@ -476,6 +476,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id " +
             "LEFT JOIN audit_info a on a.base_project_id = IFNULL(s.id,l.id)" +
             "where  " +
+            " si.up_and_down = '2' and " +
             "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
             "(b.district = #{district} or #{district} = '' ) and  " +
             "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
@@ -574,6 +575,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id " +
             "LEFT JOIN audit_info a on a.base_project_id = IFNULL(s.id,l.id)" +
             "where  " +
+            " si.up_and_down = '2' and " +
             "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
             "(b.district = #{district} or #{district} = '' ) and  " +
             "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
@@ -672,7 +674,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "LEFT JOIN last_settlement_review l on l.base_project_id = bt.base_project_id " +
             "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id " +
             "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id " +
-            "where  " +
+            " where  " +
+            " si.up_and_down = '2' and " +
             "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
             "(b.district = #{district} or #{district} = '' ) and  " +
             "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
@@ -769,6 +772,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id " +
             "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id " +
             "where  " +
+            " si.up_and_down = '2' and " +
             "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
             "(b.district = #{district} or #{district} = '' ) and  " +
             "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
@@ -865,6 +869,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id " +
             "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id " +
             "where  " +
+            " si.up_and_down = '2' and " +
             "(b.settle_accounts_status = #{settleAccountsStatus} or #{settleAccountsStatus} = '' ) and  " +
             "(b.district = #{district} or #{district} = '' ) and  " +
             "(b.project_nature = #{projectNature} or #{projectNature} = '') and  " +

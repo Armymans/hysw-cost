@@ -1204,6 +1204,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
+    public List<AuditChekedVo> auditChekAccount() {
+
+        return null;
+    }
+
+    @Override
     public NumberVo NumberItems() {
         NumberVo numberVo = new NumberVo();
         int i = baseProjectDao.selectCountByExample(null);
