@@ -1184,7 +1184,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         BigDecimal bigDecimal = new BigDecimal(0);
         BigDecimal bigDecimal1 = new BigDecimal(0);
-        Double pro = 0.00;
+        int pro = 0;
         for (ProgressPaymentInformation progressPaymentInformation : progressPaymentInformations) {
            if (progressPaymentInformation.getCurrentPaymentInformation()!=null){
                bigDecimal = bigDecimal.add(progressPaymentInformation.getCurrentPaymentInformation());
@@ -1193,8 +1193,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                bigDecimal1 = bigDecimal1.add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes()));
            }
            if (progressPaymentInformation.getCurrentPaymentRatio()!=null){
-               if (pro<=Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())){
-                   pro=Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio());
+               if (pro<=progressPaymentInformation.getChangeNum()){
+                   pro = progressPaymentInformation.getChangeNum();
                }
            }
         }
