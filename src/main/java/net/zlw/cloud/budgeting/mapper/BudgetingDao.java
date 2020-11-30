@@ -196,7 +196,6 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "            LEFT JOIN very_establishment v on bt.id = v.budgeting_id   " +
             "            LEFT JOIN audit_info a on bt.id = a.base_project_id   " +
             "            where " +
-            "              (1=1)  " +
             "            (b.district = #{district} or #{district} = '') and    " +
             "            (b.water_supply_type = #{waterSupplyType} or #{waterSupplyType} = '') and    " +
             "            (b.design_category = #{designCategory} or #{designCategory} = '') and    " +
