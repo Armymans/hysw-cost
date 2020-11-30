@@ -350,11 +350,14 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeUp.getAmountVisaChange())){
                 visaChangeUp.setAmountVisaChange(null);
             }
-            if ("".equals(visaChangeUp.getContractAmount())){
+            if ("".equals(visaChangeUp.getContractAmount()) ){
                 visaChangeUp.setContractAmount(null);
             }
             if ("".equals(visaChangeUp.getOutsourcingAmount())){
                 visaChangeUp.setOutsourcingAmount(null);
+            }
+            if (Double.parseDouble(visaChangeUp.getProportionContract())<60){
+                visaChangeUp.setProportionContract(null);
             }
                 visaChangeUp.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeUp.setCreateTime(sim.format(new Date()));
@@ -379,6 +382,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
             if ("".equals(visaChangeDown.getContractAmount())){
                 visaChangeDown.setContractAmount(null);
+            }
+            if (Double.parseDouble(visaChangeDown.getProportionContract())<60){
+                visaChangeUp.setProportionContract(null);
             }
                 visaChangeDown.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeDown.setCreateTime(sim.format(new Date()));
@@ -473,6 +479,10 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeDown.getOutsourcingAmount())){
                 visaChangeDown.setOutsourcingAmount(null);
             }
+            if (Double.parseDouble(visaChangeDown.getProportionContract())<60){
+                visaChangeDown.setProportionContract(null);
+            }
+
                 visaChangeMapper.insertSelective(visaChangeDown);
 
 
@@ -959,6 +969,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeUp.getOutsourcingAmount())){
                 visaChangeUp.setOutsourcingAmount(null);
             }
+            if (Double.parseDouble(visaChangeUp.getProportionContract())<60){
+                visaChangeUp.setProportionContract(null);
+            }
                 visaChangeUp.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeUp.setCreateTime(sim.format(new Date()));
                 visaChangeUp.setCreatorId(id);
@@ -984,6 +997,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
             if ("".equals(visaChangeDown.getOutsourcingAmount())){
                 visaChangeDown.setOutsourcingAmount(null);
+            }
+            if (Double.parseDouble(visaChangeDown.getProportionContract())<60){
+                visaChangeDown.setProportionContract(null);
             }
                 visaChangeDown.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeDown.setCreateTime(sim.format(new Date()));
@@ -1065,6 +1081,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeUp.getOutsourcingAmount())){
                 visaChangeUp.setOutsourcingAmount(null);
             }
+            if (Double.parseDouble(visaChangeUp.getProportionContract())<60){
+                visaChangeUp.setProportionContract(null);
+            }
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeUp);
 
 
@@ -1085,6 +1104,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
             if ("".equals(visaChangeDown.getOutsourcingAmount())){
                 visaChangeDown.setOutsourcingAmount(null);
+            }
+            if (Double.parseDouble(visaChangeDown.getProportionContract())<60){
+                visaChangeDown.setProportionContract(null);
             }
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeDown);
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
@@ -1155,6 +1177,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeUp.getOutsourcingAmount())){
                 visaChangeUp.setOutsourcingAmount(null);
             }
+            if (Double.parseDouble(visaChangeUp.getProportionContract())<60){
+                visaChangeUp.setProportionContract(null);
+            }
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeUp);
 
 
@@ -1175,6 +1200,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
             if ("".equals(visaChangeDown.getOutsourcingAmount())){
                 visaChangeDown.setOutsourcingAmount(null);
+            }
+            if (Double.parseDouble(visaChangeDown.getProportionContract())<60){
+                visaChangeDown.setProportionContract(null);
             }
 
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeDown);
@@ -1245,6 +1273,10 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeUp.getOutsourcingAmount())){
                 visaChangeUp.setOutsourcingAmount(null);
             }
+            if (Double.parseDouble(visaChangeUp.getProportionContract())<60){
+                visaChangeUp.setProportionContract(null);
+            }
+
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeUp);
 
 
@@ -1265,6 +1297,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
             if ("".equals(visaChangeDown.getOutsourcingAmount())){
                 visaChangeDown.setOutsourcingAmount(null);
+            }
+            if (Double.parseDouble(visaChangeDown.getProportionContract())<60){
+                visaChangeDown.setProportionContract(null);
             }
             visaChangeMapper.updateByPrimaryKeySelective(visaChangeDown);
 
