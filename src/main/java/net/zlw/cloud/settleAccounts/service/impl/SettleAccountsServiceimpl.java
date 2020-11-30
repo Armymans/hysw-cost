@@ -1114,10 +1114,10 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     Example example4 = new Example(TrackAuditInfo.class);
                     example4.createCriteria().andEqualTo("baseProjectId",baseProject.getId());
                     TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectOneByExample(example4);
-                    EmployeeAchievementsInfo achievementsInfo = new EmployeeAchievementsInfo();
-                    BigDecimal trackAuditBase = trackAuditInfo.getTrackAuditBase();
-                    double track = trackAuditBase.doubleValue();
                     if (trackAuditInfo != null){
+                        EmployeeAchievementsInfo achievementsInfo = new EmployeeAchievementsInfo();
+                        BigDecimal trackAuditBase = trackAuditInfo.getTrackAuditBase();
+                        double track = trackAuditBase.doubleValue();
                         //计价基数
                         //计提和
                         BigDecimal total5= new BigDecimal(0);
