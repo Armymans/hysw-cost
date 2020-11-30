@@ -22,10 +22,12 @@ import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
+import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
 
 import javax.annotation.Resource;
@@ -924,6 +926,11 @@ public class ProjectController extends BaseController {
             DesignInfo designInfo1 = projectService.designInfoByid(baseProject.getId());
             designInfo = designInfo1;
         }
+        //设计人改成名字
+        Example example = new Example(MemberManage.class);
+        example.createCriteria().andEqualTo("id",designInfo.getDesigner());
+        MemberManage memberManage = memberManageDao.selectOneByExample(example);
+        designInfo.setDesigner(memberManage.getMemberName());
         projectVo.setDesignInfo(designInfo);
         //根据设计信息查找基本信息
         BaseProject baseProject = projectService.BaseProjectByid(designInfo.getBaseProjectId());
@@ -1146,20 +1153,20 @@ public class ProjectController extends BaseController {
         }
 
         //审核信息回显 根据当前用户判断
-        AuditInfo auditInfo = projectService.auditInfoByYes(getLoginUser(),designInfo.getId());
-        if(auditInfo!=null){
-            projectVo.setAuditInfo(auditInfo);
-        }else{
-            projectVo.setAuditInfo(new AuditInfo());
-        }
+//        AuditInfo auditInfo = projectService.auditInfoByYes(getLoginUser(),designInfo.getId());
+//        if(auditInfo!=null){
+//            projectVo.setAuditInfo(auditInfo);
+//        }else{
+//            projectVo.setAuditInfo(new AuditInfo());
+//        }
 
-        //设计变更累计
-        List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(id);
-        if(designChangeInfos.size()>0){
-            projectVo.setDesignChangeCountFlag("0");  //说明之前进行过设计变更
-        }else{
-            projectVo.setDesignChangeCountFlag("1");
-        }
+//        //设计变更累计
+//        List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(id);
+//        if(designChangeInfos.size()>0){
+//            projectVo.setDesignChangeCountFlag("0");  //说明之前进行过设计变更
+//        }else{
+//            projectVo.setDesignChangeCountFlag("1");
+//        }
 
         return RestUtil.success(projectVo);
     }
