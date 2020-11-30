@@ -1259,7 +1259,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
                 baseProject1.setVisaStatus("1");
                 Example example4 = new Example(AuditInfo.class);
-                Example.Criteria c4 = example.createCriteria();
+                Example.Criteria c4 = example4.createCriteria();
                 if (visaChangeDown.getId() != null && !visaChangeDown.equals("")) {
                     c4.andEqualTo("baseProjectId", visaChangeDown.getId());
                 } else if (visaChangeUp.getId() != null && !visaChangeUp.getId().equals("")) {
@@ -1272,24 +1272,28 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setAuditOpinion("");
                 auditInfo.setAuditTime("");
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
+                baseProject.setVisaStatus("1");
+                baseProjectDao.updateByPrimaryKeySelective(baseProject);
             }
 
         }
         if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")){
-//            String username = loginUser.getUsername();
-            String username = "造价业务员三";
-            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
-            String projectName = baseProject.getProjectName();
-            MemberManage memberManage = memberManageDao.selectByPrimaryKey(visaChangeVo.getAuditId());
-            //审核人名字
-            String name = memberManage.getMemberName();
-            MessageVo messageVo = new MessageVo();
-            messageVo.setId("A13");
-            messageVo.setUserId(visaChangeVo.getAuditId());
-            messageVo.setTitle("您有一个签证变更项目待审核！");
-            messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
-            //调用消息Service
-            messageService.sendOrClose(messageVo);
+////            String username = loginUser.getUsername();
+//            String username = "造价业务员三";
+//            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
+//            String projectName = baseProject.getProjectName();
+//            MemberManage memberManage = memberManageDao.selectByPrimaryKey(visaChangeVo.getAuditId());
+//            //审核人名字
+//            String name = memberManage.getMemberName();
+//            MessageVo messageVo = new MessageVo();
+//            messageVo.setId("A13");
+//            messageVo.setUserId(visaChangeVo.getAuditId());
+//            messageVo.setTitle("您有一个签证变更项目待审核！");
+//            messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
+//            //调用消息Service
+//            messageService.sendOrClose(messageVo);
 
         }
 

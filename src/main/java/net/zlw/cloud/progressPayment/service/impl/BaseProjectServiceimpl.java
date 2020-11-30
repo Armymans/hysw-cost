@@ -1356,6 +1356,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     if (memberManage !=null){
                         progressListVo.setCurrentHandler(memberManage.getMemberName());
                     }
+                    TotalVo total = findTotal(progressListVo.getBaseId());
+                    progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
+                    progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
+                    progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
                 }
                 return new PageInfo<ProgressListVo>(list);
                 //普通员工
