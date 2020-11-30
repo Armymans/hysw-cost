@@ -26,7 +26,7 @@ public interface LastSettlementReviewMapper extends Mapper<LastSettlementReview>
                     "where\n" +
                     "s1.id = s2.base_project_id\n" +
                     "and\n" +
-                    "s2.founder_id = #{id}\n" +
+                    "(s2.founder_id = #{id} or #{id} = '')\n" +
                     "and\n" +
                     "compile_time>=#{startTime}\n" +
                     "and\n" +

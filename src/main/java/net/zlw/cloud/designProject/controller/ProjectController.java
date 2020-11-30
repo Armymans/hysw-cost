@@ -24,6 +24,7 @@ import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
@@ -1738,11 +1739,12 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/costproject/costSelectByid", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> costSelectByid(@RequestParam(name = "district") String district) {
         //todo getLoginUser().getId();
-        String budgetingCount = projectService.budgetingCount("user282", district);
-        String settleAccountsCount = projectService.settleAccountsCount("user282", district);
-        String progressPaymentInformationCount = projectService.progressPaymentInformationCount("user282", district);
-        String visaApplyChangeInformationCount = projectService.visaApplyChangeInformationCount("user282", district);
-        String trackAuditInfoCount = projectService.trackAuditInfoCount("user282", district);
+        String userId = "";
+        String budgetingCount = projectService.budgetingCount(userId, district);
+        String settleAccountsCount = projectService.settleAccountsCount(userId, district);
+        String progressPaymentInformationCount = projectService.progressPaymentInformationCount(userId, district);
+        String visaApplyChangeInformationCount = projectService.visaApplyChangeInformationCount(userId, district);
+        String trackAuditInfoCount = projectService.trackAuditInfoCount(userId, district);
         CostVo costVo = new CostVo();
         costVo.setBudgetingCount(budgetingCount);
         costVo.setSettleAccountsCount(settleAccountsCount);
@@ -1780,12 +1782,19 @@ public class ProjectController extends BaseController {
                 "[{" +
                         "\"companyName\": \"造价任务\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus2 oneCensus2 : oneCensus2s) {
-            json2 +=
-                    "{\"time\": \"" + oneCensus2.getYeartime() + "-" + oneCensus2.getMonthTime() + "\"," +
-                            "\"truckAmmount\": \"" + oneCensus2.getTotal() + "\"" +
-                            "},";
+        if(oneCensus2s.size()>0){
+            for (OneCensus2 oneCensus2 : oneCensus2s) {
+                json2 +=
+                        "{\"time\": \"" + oneCensus2.getYeartime() + "-" + oneCensus2.getMonthTime() + "\"," +
+                                "\"truckAmmount\": \"" + oneCensus2.getTotal() + "\"" +
+                                "},";
+            }
+        }else{
+            json2+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
+
         json2 = json2.substring(0, json2.length() - 1);
         json2 += "]}]";
         JSONArray objects2 = JSON.parseArray(json2);
@@ -1795,6 +1804,15 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/costproject/costCensusAndSearch", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> costCensusAndSearch(CostVo2 costVo2) {
         OneCensus2 oneCensus2 = projectService.costCensus(costVo2);
+        if(oneCensus2==null){
+            OneCensus2 oneCensus =new OneCensus2();
+            oneCensus.setBudget(0);
+            oneCensus.setSettleaccounts(0);
+            oneCensus.setProgresspayment(0);
+            oneCensus.setVisa(0);
+            oneCensus.setTrack(0);
+            oneCensus2 = oneCensus;
+        }
         String josn =
                 "[" +
                         "{\"value1\":" + oneCensus2.getBudget() + ",\"name1\":\"预算编制\"}," +
@@ -1810,13 +1828,19 @@ public class ProjectController extends BaseController {
                 "[{" +
                         "\"companyName\": \"造价任务\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus2 oneCensus21 : oneCensus2s) {
-            json2 +=
-                    "{\"time\": \"" + oneCensus21.getYeartime() + "-" + oneCensus21.getMonthTime() + "\"," +
-                            "\"truckAmmount\": \"" + oneCensus21.getTotal() + "\"" +
-                            "},";
+        if(oneCensus2s.size()>0){
+            for (OneCensus2 oneCensus21 : oneCensus2s) {
+                json2 +=
+                        "{\"time\": \"" + oneCensus21.getYeartime() + "-" + oneCensus21.getMonthTime() + "\"," +
+                                "\"truckAmmount\": \"" + oneCensus21.getTotal() + "\"" +
+                                "},";
+            }
+            json2 = json2.substring(0, json2.length() - 1);
+        }else{
+            json2+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        json2 = json2.substring(0, json2.length() - 1);
         json2 += "]}]";
         JSONArray objects2 = JSON.parseArray(json2);
 
@@ -1834,11 +1858,8 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/costproject/mounthTaskCount", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> mounthTaskCount(CostVo2 costVo2) {
-        String sysYear = projectService.getSysYear();
-        String sysMouth = projectService.getSysMouth() + "";
-        costVo2.setYear(sysYear);
-        costVo2.setMonth(sysMouth);
-        List<OneCensus2> oneCensus2s = projectService.costCensusList(costVo2);
+        CostVo2 costVo21 = projectService.NowMonth(costVo2);
+        List<OneCensus2> oneCensus2s = projectService.costCensusList(costVo21);
         OneCensus2 census2 = oneCensus2s.get(0);
         ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
         map.put("total",census2.getTotal());

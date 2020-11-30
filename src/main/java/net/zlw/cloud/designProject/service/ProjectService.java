@@ -2689,7 +2689,7 @@ public class ProjectService {
         Example example = new Example(MessageNotification.class);
         Example.Criteria c = example.createCriteria();
         //todo userInfo.getId()
-        c.andEqualTo("acceptId", "1212");
+        c.andEqualTo("acceptId", userInfo.getId());
         List<MessageNotification> messageNotifications = messageNotificationDao.selectByExample(example);
         return messageNotifications;
     }
@@ -2927,7 +2927,7 @@ public class ProjectService {
      */
     public OneCensus2 costCensus(CostVo2 costVo2) {
         //todo getid
-        costVo2.setId("ceshi01");
+//        costVo2.setId(userInfo.getId());
         if (costVo2.getStartTime() != null && !"".equals(costVo2.getStartTime())) {
             OneCensus2 oneCensus2 = projectMapper.costCensus(costVo2);
             return oneCensus2;
@@ -2945,7 +2945,7 @@ public class ProjectService {
      * @return
      */
     public List<OneCensus2> costCensusList(CostVo2 costVo2) {
-        costVo2.setId("ceshi01");
+        //todo getLoginUser().getId()
         List<OneCensus2> oneCensus2s = null;
         if (costVo2.getStartTime() != null && !"".equals(costVo2.getStartTime())) {
             oneCensus2s = projectMapper.costCensusList(costVo2);
@@ -2966,8 +2966,6 @@ public class ProjectService {
     }
 
     public Integer yearTaskCount(CostVo2 costVo2) {
-        //todo getid
-        costVo2.setId("ceshi01");
         CostVo2 costVo21 = this.NowYear(costVo2);
         OneCensus2 oneCensus2 = projectMapper.costCensus(costVo2);
         Integer budget = oneCensus2.getBudget();

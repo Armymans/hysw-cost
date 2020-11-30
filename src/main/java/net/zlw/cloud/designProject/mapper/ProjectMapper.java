@@ -286,137 +286,163 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "select  " +
-                    "count(budget_status) " +
-                    "from " +
-                    "base_project " +
-                    "where " +
-                    "budget_status != '4' " +
-                    "and " +
-                    "founder_id = #{id} " +
-                    "and " +
-                    "del_flag = '0'" +
-                    "and " +
+                    "IFNULL(count(*) ,0)  " +
+                    "from   " +
+                    "budgeting s1 LEFT JOIN audit_info s2 ON s1.id = s2.base_project_id  " +
+                    "LEFT JOIN base_project s3 ON s1.base_project_id = s3.id  " +
+                    "where   " +
+                    "s2.audit_result = '0'   " +
+                    "and   " +
+                    "s1.del_flag = '0'  " +
+                    "and   " +
+                    "(s2.auditor_id = #{id} or #{id} = '')  " +
+                    "and   " +
                     "(district = #{district} or  #{district} = '')"
     )
     String budgetingCount(@Param("id") String id,@Param("district") String district);
 
     @Select(
-            "select  " +
-                    "count(progress_payment_status) " +
-                    "from " +
-                    "base_project " +
-                    "where " +
-                    "progress_payment_status != '6' " +
-                    "and " +
-                    "founder_id = #{id} " +
-                    "and " +
-                    "del_flag = '0'" +
-                    "and " +
+            "select   " +
+                    "IFNULL(count(*),0)  " +
+                    "from   " +
+                    "progress_payment_information s1 LEFT JOIN base_project s2 ON s1.base_project_id = s2.id  " +
+                    "LEFT JOIN audit_info s3 ON s1.id = s3.base_project_id  " +
+                    "where  " +
+                    "s1.del_flag = '0'  " +
+                    "and  " +
+                    "s3.audit_result = '0'  " +
+                    "and  " +
+                    "(s3.auditor_id = '' or '' = '')  " +
+                    "and  " +
                     "(district = #{district} or  #{district} = '')"
     )
     String progressPaymentInformationCount(@Param("id") String id,@Param("district") String district);
 
     @Select(
             "select  " +
-                    "count(visa_status) " +
-                    "from " +
-                    "base_project " +
-                    "where " +
-                    "visa_status != '6' " +
-                    "and " +
-                    "founder_id =  #{id} " +
-                    "and " +
-                    "del_flag = '0'" +
-                    "and " +
-                    "(district = #{district} or  #{district} = '')"
+                    " IFNULL(COUNT(DISTINCT b.id),0)  " +
+                    " from   " +
+                    " base_project b   " +
+                    " LEFT JOIN visa_change_information v on b.id = v.base_project_id   " +
+                    " LEFT JOIN visa_apply_change_information vv on vv.base_project_id  = v.base_project_id  " +
+                    " LEFT JOIN visa_change_information v2 on b.id = v2.base_project_id  " +
+                    " LEFT JOIN audit_info a on a.base_project_id = IFNULL(v2.id,v.id)   " +
+                    " where   " +
+                    " b.del_flag = '0'  " +
+                    " and  " +
+                    " v.state = '0'  " +
+                    " and  " +
+                    " vv.state = '0'  " +
+                    " and  " +
+                    " v2.state = '0'  " +
+                    " and  " +
+                    " v.up_and_down_mark = '0'   " +
+                    " and  " +
+                    " v2.up_and_down_mark = '1'   " +
+                    " and  " +
+                    " a.audit_result = '0'   " +
+                    " and   " +
+                    " (a.auditor_id = #{id} or #{id} = '')   " +
+                    " and  " +
+                    " (b.district = #{district} or #{district} = '') "
     )
     String visaApplyChangeInformationCount(@Param("id") String id,@Param("district") String district);
 
     @Select(
             "select  " +
-                    "count(track_status) " +
-                    "from " +
-                    "base_project " +
-                    "where " +
-                    "track_status != '5' " +
-                    "and " +
-                    "founder_id = #{id} " +
-                    "and " +
-                    "del_flag = '0'" +
-                    "and " +
-                    "(district = #{district} or  #{district} = '')"
+                    "count(track_status)  " +
+                    "from  " +
+                    "base_project s1 LEFT JOIN track_audit_info s2 ON s1.id = s2.base_project_id  " +
+                    "LEFT JOIN audit_info s3 ON s1.id = s3.base_project_id  " +
+                    "where  " +
+                    "s1.del_flag = '0'  " +
+                    "and  " +
+                    "s2.`status` = '0'  " +
+                    "and  " +
+                    "s3.audit_result = '0'  " +
+                    "and  " +
+                    "(s3.auditor_id = #{id} or #{id} = '')  " +
+                    "and  " +
+                    "(district = #{district} or #{district} = '')"
     )
     String trackAuditInfoCount(@Param("id") String id,@Param("district") String district);
 
     @Select(
             "select  " +
-                    "count(settle_accounts_status) " +
-                    "from " +
-                    "base_project " +
-                    "where " +
-                    "settle_accounts_status != '5' " +
-                    "and " +
-                    "founder_id = #{id} " +
-                    "and " +
-                    "del_flag = '0'" +
-                    "and " +
-                    "(district = #{district} or  #{district} = '')"
+                    "COUNT(*)  " +
+                    "from  " +
+                    "budgeting bt   " +
+                    "LEFT JOIN base_project b on bt.base_project_id = b.id   " +
+                    "LEFT JOIN last_settlement_review l on l.base_project_id = bt.base_project_id  " +
+                    "LEFT JOIN settlement_audit_information s on s.base_project_id = bt.base_project_id  " +
+                    "LEFT JOIN settlement_info si on si.base_project_id = bt.base_project_id  " +
+                    "LEFT JOIN audit_info a on a.base_project_id = IFNULL(s.id,l.id)  " +
+                    "where   " +
+                    " si.up_and_down = '2'   " +
+                    "and   " +
+                    "bt.del_flag = '0'   " +
+                    "and   " +
+                    "b.del_flag = '0'   " +
+                    "and   " +
+                    "si.state = '0'   " +
+                    "and  " +
+                    "IFNULL(l.del_flag,'0') = '0'   " +
+                    "and  " +
+                    "IFNULL(s.del_flag,'0') = '0'   " +
+                    "and  " +
+                    "a.audit_result = '0'   " +
+                    "and  " +
+                    "(a.auditor_id = #{id} or a.auditor_id = #{id})  " +
+                    " and  " +
+                    "(b.district = #{district} or #{district} = '' ) "
     )
     String settleAccountsCount(@Param("id") String id,@Param("district") String district);
 
     @Select(
-            "select  " +
-                    "year(s1.create_time) yeartime,  " +
-                    "count(budget_status) budget,  " +
-                    "count(track_status) track,  " +
-                    "count(visa_status) visa,  " +
-                    "count(progress_payment_status) progresspayment,  " +
-                    "count(settle_accounts_status) settleaccounts  " +
-                    "from  " +
-                    "base_project s1  " +
-                    "where  " +
-                    "founder_id = #{id}  " +
-                    "and  " +
-                    "(district = #{district} or #{district} = '')  " +
-                    "and  " +
-                        "create_time>= #{startTime}  " +
-                    "and   " +
-                    "(create_time<= #{endTime} or  #{endTime} = '')   " +
-                    "and  " +
-                    "del_flag = '0'  " +
-                    "group by year(s1.create_time)  " +
-                    "HAVING  " +
-                    "(yeartime = #{year} or #{year} = '')"
+            "select\n" +
+                    "year(s1.create_time) yeartime,\n" +
+                    "count(budget_status) budget,\n" +
+                    "count(track_status) track,\n" +
+                    "count(visa_status) visa,\n" +
+                    "count(progress_payment_status) progresspayment,\n" +
+                    "count(settle_accounts_status) settleaccounts\n" +
+                    "from\n" +
+                    "base_project s1\n" +
+                    "where\n" +
+                    "del_flag = '0'\n" +
+                    "and\n" +
+                    "create_time>= #{startTime}\n" +
+                    "and \n" +
+                    "(create_time<= #{endTime} or  #{endTime} = '') \n" +
+                    "and\n" +
+                    "(district = #{district} or #{district} = '')\n" +
+                    "group by \n" +
+                    "year(s1.create_time)"
     )
     OneCensus2 costCensus(CostVo2 costVo2);
 
     @Select(
-            "select " +
-                    "year(bp.create_time) yeartime, " +
-                    "month(bp.create_time) monthTime , " +
-                    "count(budget_status) budget, " +
-                    "count(track_status) track, " +
-                    "count(visa_status) visa, " +
-                    "count(progress_payment_status) progresspayment, " +
-                    "count(settle_accounts_status) settleaccounts " +
-                    "from " +
-                    "base_project bp " +
-                    " where " +
-                    " founder_id = #{id} " +
-                    " and " +
-                    " (district = #{district} or #{district} = '') " +
-                    " and " +
-                    " create_time>= #{startTime} " +
-                    " and  " +
-                    " (create_time<= #{endTime} or  #{endTime} = '')  " +
-                    " and " +
-                    "del_flag = '0' " +
-                    "group by year(bp.create_time), " +
-                    "month(bp.create_time)  " +
-                    "HAVING " +
-                    " (yeartime = #{year} or #{year} = '') " +
-                    " and " +
-                    " (monthTime = #{month} or #{month} = '')"
+            "select \n" +
+                    "year(bp.create_time) yeartime, \n" +
+                    "month(bp.create_time) monthTime , \n" +
+                    "count(budget_status) budget, \n" +
+                    "count(track_status) track, \n" +
+                    "count(visa_status) visa, \n" +
+                    "count(progress_payment_status) progresspayment, \n" +
+                    "count(settle_accounts_status) settleaccounts \n" +
+                    "from \n" +
+                    "base_project bp \n" +
+                    "where \n" +
+                    "del_flag = '0' \n" +
+                    "and \n" +
+                    "create_time>= #{startTime}\n" +
+                    "and  \n" +
+                    "(create_time<= #{endTime} or  #{endTime} = '')  \n" +
+                    "and \n" +
+                    "(district = #{district} or #{district} = '') \n" +
+                    "group by \n" +
+                    "year(bp.create_time), \n" +
+                    "month(bp.create_time)  "
     )
     List<OneCensus2> costCensusList(CostVo2 costVo2);
 
