@@ -192,6 +192,8 @@ public class BaseProject{
     @Transient
     private BigDecimal advMoney; //绩效
     @Transient
+    private BigDecimal inCome; //收入
+    @Transient
     private BigDecimal costTotalAmount;  //成本总金额
     @Transient
     private BigDecimal biddingPriceControl;  //招标控制价

@@ -11,22 +11,23 @@ import java.util.List;
 public interface WujiangMoneyInfoMapper extends Mapper<WujiangMoneyInfo> {
     @Select(
             "SELECT\n" +
-                    "official_receipts\n" +
+                    "IFNULL(SUM(IFNULL(official_receipts,0)),0) wujiangMoney\n" +
                     "from\n" +
                     "wujiang_money_info s1,\n" +
-                    "base_project s2,\n" +
-                    "design_info s3\n" +
+                    "design_info s2,\n" +
+                    "base_project s3\n" +
                     "where\n" +
-                    "s1.base_project_id = s3.id\n" +
-                    "and\n" +
-                    "s2.id = s3.base_project_id\n" +
-                    "and\n" +
-                    "(s2.district=#{district} or  #{district}  = '')\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "AND\n" +
+                    "s3.id = s2.base_project_id\n" +
+                    "AND\n" +
+                    "(s3.district= #{district} or  #{district}  = '')\n" +
                     "and\n" +
                     "s1.create_time>=#{startTime}\n" +
                     "and\n" +
                     "(s1.create_time<=#{endTime} or  #{endTime} = '')"
     )
-    List<WujiangMoneyInfo> totalRevenue(CostVo2 costVo2);
+    Double totalRevenue(CostVo2 costVo2);
+//    List<WujiangMoneyInfo> totalRevenue(CostVo2 costVo2);
 
 }

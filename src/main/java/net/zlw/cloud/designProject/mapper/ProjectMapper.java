@@ -575,55 +575,52 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "SELECT " +
-                    "YEAR(s2.create_time) yeartime, " +
-                    "sum(design_category = 1) municipalPipeline, " +
-                    "sum(design_category = 2) networkReconstruction, " +
-                    "sum(design_category = 3) newCommunity, " +
-                    "sum(design_category = 4) secondaryWater, " +
-                    "sum(design_category = 5) commercialHouseholds, " +
-                    "sum(design_category = 6) waterResidents, " +
-                    "sum(design_category = 7) administration " +
+                    "IFNULL(YEAR(s2.create_time),'-') yeartime, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '1' THEN in_money END),0) municipalPipeline, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '2' THEN in_money END),0) networkReconstruction, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '3' THEN in_money END),0) newCommunity, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '4' THEN in_money END),0) secondaryWater, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '5' THEN in_money END),0) commercialHouseholds, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '6' THEN in_money END),0) waterResidents, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '7' THEN in_money END),0) administration " +
                     "FROM  " +
-                    "income_info s1, " +
+                    "in_come s1, " +
                     "base_project s2 " +
-                    "where " +
+                    "WHERE " +
                     "s1.base_project_id = s2.id " +
+                    "AND " +
+                    "s2.del_flag = '0' " +
+                    "AND " +
+                    "s1.del_flag = '0' " +
                     "and " +
                     "(s2.district = #{district} or #{district} = '') " +
                     "and " +
-                    "s2.create_time >= #{startTime} " +
+                    "s1.create_time >= #{startTime} " +
                     "and " +
-                    "(s2.create_time <= #{endTime} or #{endTime} = '') " +
-                    "and " +
-                    "s2.del_flag = '0' " +
-                    "GROUP BY " +
-                    "YEAR(s2.create_time) " +
-                    "HAVING " +
-                    "(yeartime = #{year} or #{year} = '')"
+                    "(s1.create_time <= #{endTime} or #{endTime} = '')"
     )
     OneCensus projectIncomeCensus(CostVo2 costVo2);
     @Select(
             "SELECT " +
-                    "sum(design_category = 1) municipalPipeline, " +
-                    "sum(design_category = 2) networkReconstruction, " +
-                    "sum(design_category = 3) newCommunity, " +
-                    "sum(design_category = 4) secondaryWater, " +
-                    "sum(design_category = 5) commercialHouseholds, " +
-                    "sum(design_category = 6) waterResidents, " +
-                    "sum(design_category = 7) administration " +
-                    "FROM " +
-                    "base_project s1 LEFT JOIN design_info s2 ON s1.id = s2.base_project_id " +
-                    "LEFT JOIN budgeting s3 on s1.id = s3.base_project_id " +
-                    "LEFT JOIN progress_payment_information s4 ON s1.id = s4.base_project_id " +
-                    "LEFT JOIN visa_change_information s5 ON s1.id = s5.base_project_id " +
-                    "LEFT JOIN last_settlement_review s6 ON s1.id = s6.base_project_id " +
-                    "LEFT JOIN settlement_audit_information s7 ON s1.id = s7.base_project_id " +
-                    "LEFT JOIN track_audit_info s8 ON s1.id = s8.base_project_id " +
-                    "LEFT JOIN achievements_info s9 ON s1.id = s9.base_project_id " +
-                    "where " +
+                    "IFNULL(YEAR(s2.create_time),'-') yeartime, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '2' THEN out_money END),0) municipalPipeline, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '2' THEN out_money END),0) networkReconstruction, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '3' THEN out_money END),0) newCommunity, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '4' THEN out_money END),0) secondaryWater, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '5' THEN out_money END),0) commercialHouseholds, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '6' THEN out_money END),0) waterResidents, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '7' THEN out_money END),0) administration " +
+                    "FROM  " +
+                    "out_source s1, " +
+                    "base_project s2 " +
+                    "WHERE " +
+                    "s1.base_project_id = s2.id " +
+                    "AND " +
+                    "s2.del_flag = '0' " +
+                    "AND " +
                     "s1.del_flag = '0' " +
                     "and " +
-                    "(s1.district = #{district} or #{district} = '') " +
+                    "(s2.district = #{district} or #{district} = '') " +
                     "and " +
                     "s1.create_time >= #{startTime} " +
                     "and " +
@@ -633,35 +630,47 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "SELECT " +
-                    "YEAR(s1.create_time) yearTime, " +
-                    "MONTH(s1.create_time) monthTime, " +
-                    "sum( " +
-                    "IFNULL(s2.outsource_money,0)+ " +
-                    "IFNULL(s3.amount_outsourcing,0)+ " +
-                    "IFNULL(s4.amount_outsourcing,0)+ " +
-                    "IFNULL(s5.outsourcing_amount,0)+ " +
-                    "IFNULL(s6.amount_outsourcing,0)+ " +
-                    "IFNULL(s7.amount_outsourcing,0)+ " +
-                    "IFNULL(s8.outsource_money,0) " +
-                    ") outMoney, " +
-                    "sum( " +
-                    "IFNULL(s9.desgin_achievements,0)+ " +
-                    "IFNULL(s9.budget_achievements,0)+ " +
-                    "IFNULL(s9.upsubmit_achievements,0)+ " +
-                    "IFNULL(s9.downsubmit_achievements,0)+ " +
-                    "IFNULL(s9.truck_achievements,0) " +
-                    ") advMoney " +
-                    "FROM " +
-                    "base_project s1 LEFT JOIN design_info s2 ON s1.id = s2.base_project_id " +
-                    "LEFT JOIN budgeting s3 on s1.id = s3.base_project_id " +
-                    "LEFT JOIN progress_payment_information s4 ON s1.id = s4.base_project_id " +
-                    "LEFT JOIN visa_change_information s5 ON s1.id = s5.base_project_id " +
-                    "LEFT JOIN last_settlement_review s6 ON s1.id = s6.base_project_id " +
-                    "LEFT JOIN settlement_audit_information s7 ON s1.id = s7.base_project_id " +
-                    "LEFT JOIN track_audit_info s8 ON s1.id = s8.base_project_id " +
-                    "LEFT JOIN achievements_info s9 ON s1.id = s9.base_project_id " +
-                    "where " +
+                    "IFNULL(YEAR(s2.create_time),'-') yeartime, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '2' THEN accrued_amount END),0) municipalPipeline, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '2' THEN accrued_amount END),0) networkReconstruction, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '3' THEN accrued_amount END),0) newCommunity, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '4' THEN accrued_amount END),0) secondaryWater, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '5' THEN accrued_amount END),0) commercialHouseholds, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '6' THEN accrued_amount END),0) waterResidents, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '7' THEN accrued_amount END),0) administration " +
+                    "FROM  " +
+                    "employee_achievements_info s1, " +
+                    "base_project s2 " +
+                    "WHERE " +
+                    "s1.base_project_id = s2.id " +
+                    "AND " +
+                    "s2.del_flag = '0' " +
+                    "AND " +
                     "s1.del_flag = '0' " +
+                    "and " +
+                    "(s2.district = #{district} or #{district} = '') " +
+                    "and " +
+                    "s1.create_time >= #{startTime} " +
+                    "and " +
+                    "(s1.create_time <= #{endTime} or #{endTime} = '')"
+    )
+    OneCensus projectExpenditureCensus2(CostVo2 costVo2);
+
+    @Select(
+            "SELECT " +
+                    "YEAR(s2.create_time) yearTime, " +
+                    "MONTH(s2.create_time) monthTime, " +
+                    "SUM(s2.out_money) outMoney, " +
+                    "SUM(s3.accrued_amount) advMoney " +
+                    "FROM " +
+                    "base_project s1 LEFT JOIN out_source s2 ON s1.id = s2.base_project_id " +
+                    "LEFT JOIN employee_achievements_info s3 ON s1.id = s3.base_project_id " +
+                    "WHERE " +
+                    "s1.del_flag = '0' " +
+                    "AND " +
+                    "s2.del_flag = '0' " +
+                    "AND " +
+                    "s3.del_flag = '0' " +
                     "and " +
                     "(s1.district = #{district} or #{district} = '') " +
                     "and " +
@@ -669,8 +678,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and " +
                     "(s1.create_time <= #{endTime} or #{endTime} = '') " +
                     "GROUP BY " +
-                    "YEAR(s1.create_time), " +
-                    "MONTH(s1.create_time)"
+                    "YEAR(s2.create_time), " +
+                    "MONTH(s2.create_time)"
     )
     List<OneCensus3> expenditureAnalysis(CostVo2 costVo2);
 
@@ -681,51 +690,32 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "s1.project_name, " +
                     "( CASE s1.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,  " +
                     "(  " +
-                    "\tCASE  " +
-                    "\t\t\ts1.design_category   " +
-                    "\t\t\tWHEN '1' THEN  " +
-                    "\t\t\t'市政管道'   " +
-                    "\t\t\tWHEN '2' THEN  " +
-                    "\t\t\t'管网改造'   " +
-                    "\t\t\tWHEN '3' THEN  " +
-                    "\t\t\t'新建小区'   " +
-                    "\t\t\tWHEN '4' THEN  " +
-                    "\t\t\t'二次供水项目'   " +
-                    "\t\t\tWHEN '5' THEN  " +
-                    "\t\t\t'工商户'   " +
-                    "\t\t\tWHEN '6' THEN  " +
-                    "\t\t\t'居民装接水'   " +
-                    "\t\t\tWHEN '7' THEN  " +
-                    "\t\t\t'行政事业'   " +
-                    "\t\tEND   " +
-                    "\t\t) AS designCategory,  " +
-                    "s6.review_number, " +
-                    "s7.authorized_number, " +
-                    "sum( " +
-                    "IFNULL(s2.outsource_money,0)+ " +
-                    "IFNULL(s3.amount_outsourcing,0)+ " +
-                    "IFNULL(s4.amount_outsourcing,0)+ " +
-                    "IFNULL(s5.outsourcing_amount,0)+ " +
-                    "IFNULL(s6.amount_outsourcing,0)+ " +
-                    "IFNULL(s7.amount_outsourcing,0)+ " +
-                    "IFNULL(s8.outsource_money,0) " +
-                    ") outMoney, " +
-                    "sum( " +
-                    "IFNULL(s9.desgin_achievements,0)+ " +
-                    "IFNULL(s9.budget_achievements,0)+ " +
-                    "IFNULL(s9.upsubmit_achievements,0)+ " +
-                    "IFNULL(s9.downsubmit_achievements,0)+ " +
-                    "IFNULL(s9.truck_achievements,0) " +
-                    ") advMoney " +
+                    "CASE  " +
+                    "s1.design_category   " +
+                    "WHEN '1' THEN  " +
+                    "'市政管道'   " +
+                    "WHEN '2' THEN  " +
+                    "'管网改造'   " +
+                    "WHEN '3' THEN  " +
+                    "'新建小区'   " +
+                    "WHEN '4' THEN  " +
+                    "'二次供水项目'   " +
+                    "WHEN '5' THEN  " +
+                    "'工商户'   " +
+                    "WHEN '6' THEN  " +
+                    "'居民装接水'   " +
+                    "WHEN '7' THEN  " +
+                    "'行政事业'   " +
+                    "END   " +
+                    ") AS designCategory,  " +
+                    "sum(IFNULL(s2.in_money,0)) inCome, " +
+                    "sum(IFNULL(s3.actual_amount,0)) advMoney, " +
+                    "sum(IFNULL(s4.out_money,0)) outMoney " +
                     "from " +
-                    "base_project s1 LEFT JOIN design_info s2 ON s1.id = s2.base_project_id " +
-                    "LEFT JOIN budgeting s3 on s1.id = s3.base_project_id " +
-                    "LEFT JOIN progress_payment_information s4 ON s1.id = s4.base_project_id " +
-                    "LEFT JOIN visa_change_information s5 ON s1.id = s5.base_project_id " +
-                    "LEFT JOIN last_settlement_review s6 ON s1.id = s6.base_project_id " +
-                    "LEFT JOIN settlement_audit_information s7 ON s1.id = s7.base_project_id " +
-                    "LEFT JOIN track_audit_info s8 ON s1.id = s8.base_project_id " +
-                    "LEFT JOIN achievements_info s9 ON s1.id = s9.base_project_id " +
+                    "base_project s1  " +
+                    "LEFT JOIN in_come s2 ON s1.id = s2.base_project_id " +
+                    "LEFT JOIN employee_achievements_info s3 ON s1.id = s3.base_project_id " +
+                    "LEFT JOIN out_source s4 ON s1.id = s4.base_project_id " +
                     "where " +
                     "s1.del_flag = '0' " +
                     "and " +
@@ -735,10 +725,10 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and " +
                     "(s1.create_time <= #{endTime} or #{endTime} = '') " +
                     " and " +
-                    "(" +
+                    "( " +
                     "s1.cea_num like concat('%',#{keyword},'%') or  " +
                     "s1.project_name like concat('%',#{keyword},'%') " +
-                    ")" +
+                    ") " +
                     "GROUP BY " +
                     "s1.id "
     )
@@ -1374,27 +1364,27 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     )
     List<OneCensus8> DesginAchievementsList(CostVo2 costVo2);
     @Select(
-            "SELECT\n" +
-                    "s1.id,\n" +
-                    "s1.project_name projectName,\n" +
-                    "s1.district,\n" +
-                    "s1.a_b aB,\n" +
-                    "s2.take_time takeTime,\n" +
-                    "s2.blueprint_start_time blueprintStartTime,\n" +
-                    "s3.amount_cost amountCost,\n" +
-                    "s4.accrued_amount desginAchievements,\n" +
-                    "s4.actual_amount desginAchievements2\n" +
-                    "FROM\n" +
-                    "base_project s1 LEFT JOIN design_info s2 ON s1.id = s2.base_project_id\n" +
-                    "LEFT JOIN budgeting s3 ON s1.id = s3.base_project_id \n" +
-                    "LEFT JOIN employee_achievements_info s4 ON s1.id = s4.base_project_id\n" +
-                    "WHERE\n" +
-                    "s1.desgin_status = '4'\n" +
-                    "and\n" +
-                    "(s1.district = #{district} or #{district} = '')\n" +
-                    "and\n" +
-                    "s1.create_time >= #{startTime}\n" +
-                    "and\n" +
+            "SELECT " +
+                    "s1.id, " +
+                    "s1.project_name projectName, " +
+                    "s1.district, " +
+                    "s1.a_b aB, " +
+                    "s2.take_time takeTime, " +
+                    "s2.blueprint_start_time blueprintStartTime, " +
+                    "s3.amount_cost amountCost, " +
+                    "s4.accrued_amount desginAchievements, " +
+                    "s4.actual_amount desginAchievements2 " +
+                    "FROM " +
+                    "base_project s1 LEFT JOIN design_info s2 ON s1.id = s2.base_project_id " +
+                    "LEFT JOIN budgeting s3 ON s1.id = s3.base_project_id  " +
+                    "LEFT JOIN employee_achievements_info s4 ON s1.id = s4.base_project_id " +
+                    "WHERE " +
+                    "s1.desgin_status = '4' " +
+                    "and " +
+                    "(s1.district = #{district} or #{district} = '') " +
+                    "and " +
+                    "s1.create_time >= #{startTime} " +
+                    "and " +
                     "(s1.create_time <= #{endTime} or  #{endTime} = '')"
     )
     List<OneCensus9> DesginMonthAchievementsList(CostVo2 costVo2);

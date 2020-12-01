@@ -71,6 +71,29 @@ public class projectOverviewController extends BaseController {
         List<ModuleNumber> moduleNumbers = projectOverviewService.moduleNumber(allBaseProject);
         return RestUtil.success(moduleNumbers);
     }
+
+    /**
+     * 项目统计卡片 模块数量
+     * @param pageVo
+     * @return
+     */
+    @RequestMapping(value = "/projectOverview/moduleNumber2",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> moduleNumber2(pageVo pageVo){
+
+        if (pageVo.getDistrict().equals("芜湖")){
+            pageVo.setDistrict("1");
+        }else if(pageVo.getDistrict().equals("马鞍山")){
+            pageVo.setDistrict("2");
+        }else if(pageVo.getDistrict().equals("江北")){
+            pageVo.setDistrict("3");
+        }else if(pageVo.getDistrict().equals("吴江")){
+            pageVo.setDistrict("4");
+        }
+
+        List<BaseProject> allBaseProject = baseProjectService.findAllBaseProject(pageVo);
+        List<ModuleNumber> moduleNumbers = projectOverviewService.moduleNumber2(allBaseProject);
+        return RestUtil.success(moduleNumbers);
+    }
     //造价部门和设计部门统计数据
 //    @GetMapping("/findStatisticalData")/projectOverview/findStatisticalData
     @RequestMapping(value = "/projectOverview/findStatisticalData",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)

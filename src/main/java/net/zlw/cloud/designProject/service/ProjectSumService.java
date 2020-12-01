@@ -564,110 +564,104 @@ public class ProjectSumService {
      * @param costVo2
      * @return
      */
-    public BigDecimal totalRevenue(CostVo2 costVo2){
-        if(costVo2.getStartTime()==null&&costVo2.getEndTime()==null){
-            SimpleDateFormat format = new SimpleDateFormat("yyyy");
-            String year = format.format(new Date());
-            costVo2.setStartTime(year+"-01-01");
-            costVo2.setEndTime(year+"-12-30");
+    public Double totalRevenue(CostVo2 costVo2){
+        //如果没有筛选时间 默认展示今年
+        if(costVo2.getStartTime()==null&&"".equals(costVo2.getStartTime()) ||
+               "".equals(costVo2.getEndTime())&&costVo2.getEndTime()==null){
+            costVo2 = this.NowYear(costVo2);
         }
-        List<IncomeInfo> incomeInfos = incomeInfoMapper.totalRevenue(costVo2);
-        BigDecimal total = new BigDecimal(0);
-        for (IncomeInfo incomeInfo : incomeInfos) {
-            if (incomeInfo.getBudgetMoney()!=null){
-                total = total.add(incomeInfo.getBudgetMoney());
-            }
-            if (incomeInfo.getUpsubmitMoney()!=null){
-                total = total.add(incomeInfo.getUpsubmitMoney());
-            }
-            if (incomeInfo.getDownsubmitMoney()!=null){
-                total = total.add(incomeInfo.getDownsubmitMoney());
-            }
-            if (incomeInfo.getTruckMoney()!=null){
-                total = total.add(incomeInfo.getTruckMoney());
-            }
-        }
-        List<WujiangMoneyInfo> wujiangMoneyInfos = wujiangMoneyInfoMapper.totalRevenue(costVo2);
-        for (WujiangMoneyInfo wujiangMoneyInfo : wujiangMoneyInfos) {
-            if(wujiangMoneyInfo.getOfficialReceipts()!=null){
-                total = total.add(wujiangMoneyInfo.getOfficialReceipts());
-            }
-        }
-        List<AnhuiMoneyinfo> anhuiMoneyinfos = anhuiMoneyinfoMapper.totalRevenue(costVo2);
-        for (AnhuiMoneyinfo anhuiMoneyinfo : anhuiMoneyinfos) {
-            if(anhuiMoneyinfo.getOfficialReceipts()!=null){
-                total = total.add(anhuiMoneyinfo.getOfficialReceipts());
-            }
-        }
-        return total;
+        //总收入
+        Double totalRevenue = incomeInfoMapper.newTotalRevenue(costVo2);
+
+        return totalRevenue;
+//        List<IncomeInfo> incomeInfos = incomeInfoMapper.totalRevenue(costVo2);
+//        BigDecimal total = new BigDecimal(0);
+//        for (IncomeInfo incomeInfo : incomeInfos) {
+//            if (incomeInfo.getBudgetMoney()!=null){
+//                total = total.add(incomeInfo.getBudgetMoney());
+//            }
+//            if (incomeInfo.getUpsubmitMoney()!=null){
+//                total = total.add(incomeInfo.getUpsubmitMoney());
+//            }
+//            if (incomeInfo.getDownsubmitMoney()!=null){
+//                total = total.add(incomeInfo.getDownsubmitMoney());
+//            }
+//            if (incomeInfo.getTruckMoney()!=null){
+//                total = total.add(incomeInfo.getTruckMoney());
+//            }
+//        }
+//        return total;
     }
     /**
      * 总支出
      */
-    public BigDecimal totalexpenditure(CostVo2 costVo2){
-        if(costVo2.getStartTime()==null&&costVo2.getEndTime()==null){
-            SimpleDateFormat format = new SimpleDateFormat("yyyy");
-            String year = format.format(new Date());
-            costVo2.setStartTime(year+"-01-01");
-            costVo2.setEndTime(year+"-12-30");
+    public Double totalexpenditure(CostVo2 costVo2){
+        if(costVo2.getStartTime()==null&&"".equals(costVo2.getStartTime()) ||
+                "".equals(costVo2.getEndTime())&&costVo2.getEndTime()==null){
+            costVo2 = this.NowYear(costVo2);
         }
+        //委外金额
+        Double totalexpenditure = incomeInfoMapper.newTotalexpenditure(costVo2);
 
+        //员工绩效
+        Double Totalexpenditure2 = achievementsInfoMapper.newTotalexpenditure2(costVo2);
 
-        List<DesignInfo> totalexpenditure = designInfoMapper.totalexpenditure(costVo2);
-        BigDecimal total = new BigDecimal(0);
-        for (DesignInfo designInfo : totalexpenditure) {
-            if(designInfo!=null){
-                total = total.add(designInfo.getOutsourceMoney());
-            }
-        }
-        List<Budgeting> totalexpenditure1 = budgetingMapper.totalexpenditure(costVo2);
-        for (Budgeting budgeting : totalexpenditure1) {
-            if(budgeting!=null){
-                total = total.add(budgeting.getAmountOutsourcing());
-            }
-        }
-        List<ProgressPaymentInformation> totalexpenditure2 = progressPaymentInformationDao.totalexpenditure(costVo2);
-        for (ProgressPaymentInformation progressPaymentInformation : totalexpenditure2) {
-            if(progressPaymentInformation!=null){
-                total = total.add(progressPaymentInformation.getAmountOutsourcing());
-            }
-        }
-//        List<VisaChange> totalexpenditure3 = visaChangeMapper.totalexpenditure(costVo2);
-//        for (VisaChange visaChange : totalexpenditure3) {
-//            if(visaChange!=null){
-//                total = total.add(new BigDecimal(visaChange.getOutsourcingAmount()));
+        return totalexpenditure+Totalexpenditure2;
+//        List<DesignInfo> totalexpenditure = designInfoMapper.totalexpenditure(costVo2);
+//        BigDecimal total = new BigDecimal(0);
+//        for (DesignInfo designInfo : totalexpenditure) {
+//            if(designInfo!=null){
+//                total = total.add(designInfo.getOutsourceMoney());
 //            }
 //        }
-        List<LastSettlementReview> totalexpenditure4 = lastSettlementReviewMapper.totalexpenditure(costVo2);
-        for (LastSettlementReview lastSettlementReview : totalexpenditure4) {
-            if(lastSettlementReview!=null){
-                total = total.add(lastSettlementReview.getAmountOutsourcing());
-            }
-        }
-        List<SettlementAuditInformation> totalexpenditure5 = settlementAuditInformationMapper.totalexpenditure(costVo2);
-        for (SettlementAuditInformation settlementAuditInformation : totalexpenditure5) {
-            if(settlementAuditInformation!=null){
-                total = total.add(settlementAuditInformation.getAmountOutsourcing());
-            }
-        }
-        List<TrackAuditInfo> totalexpenditure6 = trackAuditInfoDao.totalexpenditure(costVo2);
-        for (TrackAuditInfo trackAuditInfo : totalexpenditure6) {
-            if(trackAuditInfo!=null){
-                total = total.add(trackAuditInfo.getOutsourceMoney());
-            }
-        }
-
-        List<AchievementsInfo> totalexpenditure7 = achievementsInfoMapper.totalexpenditure(costVo2);
-        for (AchievementsInfo achievementsInfo : totalexpenditure7) {
-            if(achievementsInfo!=null){
-                total = total.add(new BigDecimal(achievementsInfo.getDesginAchievements()));
-                total = total.add(new BigDecimal(achievementsInfo.getBudgetAchievements()));
-                total = total.add(new BigDecimal(achievementsInfo.getUpsubmitAchievements()));
-                total = total.add(new BigDecimal(achievementsInfo.getDownsubmitAchievements()));
-                total = total.add(new BigDecimal(achievementsInfo.getTruckAchievements()));
-            }
-        }
-        return total;
+//        List<Budgeting> totalexpenditure1 = budgetingMapper.totalexpenditure(costVo2);
+//        for (Budgeting budgeting : totalexpenditure1) {
+//            if(budgeting!=null){
+//                total = total.add(budgeting.getAmountOutsourcing());
+//            }
+//        }
+//        List<ProgressPaymentInformation> totalexpenditure2 = progressPaymentInformationDao.totalexpenditure(costVo2);
+//        for (ProgressPaymentInformation progressPaymentInformation : totalexpenditure2) {
+//            if(progressPaymentInformation!=null){
+//                total = total.add(progressPaymentInformation.getAmountOutsourcing());
+//            }
+//        }
+////        List<VisaChange> totalexpenditure3 = visaChangeMapper.totalexpenditure(costVo2);
+////        for (VisaChange visaChange : totalexpenditure3) {
+////            if(visaChange!=null){
+////                total = total.add(new BigDecimal(visaChange.getOutsourcingAmount()));
+////            }
+////        }
+//        List<LastSettlementReview> totalexpenditure4 = lastSettlementReviewMapper.totalexpenditure(costVo2);
+//        for (LastSettlementReview lastSettlementReview : totalexpenditure4) {
+//            if(lastSettlementReview!=null){
+//                total = total.add(lastSettlementReview.getAmountOutsourcing());
+//            }
+//        }
+//        List<SettlementAuditInformation> totalexpenditure5 = settlementAuditInformationMapper.totalexpenditure(costVo2);
+//        for (SettlementAuditInformation settlementAuditInformation : totalexpenditure5) {
+//            if(settlementAuditInformation!=null){
+//                total = total.add(settlementAuditInformation.getAmountOutsourcing());
+//            }
+//        }
+//        List<TrackAuditInfo> totalexpenditure6 = trackAuditInfoDao.totalexpenditure(costVo2);
+//        for (TrackAuditInfo trackAuditInfo : totalexpenditure6) {
+//            if(trackAuditInfo!=null){
+//                total = total.add(trackAuditInfo.getOutsourceMoney());
+//            }
+//        }
+//
+//        List<AchievementsInfo> totalexpenditure7 = achievementsInfoMapper.totalexpenditure(costVo2);
+//        for (AchievementsInfo achievementsInfo : totalexpenditure7) {
+//            if(achievementsInfo!=null){
+//                total = total.add(new BigDecimal(achievementsInfo.getDesginAchievements()));
+//                total = total.add(new BigDecimal(achievementsInfo.getBudgetAchievements()));
+//                total = total.add(new BigDecimal(achievementsInfo.getUpsubmitAchievements()));
+//                total = total.add(new BigDecimal(achievementsInfo.getDownsubmitAchievements()));
+//                total = total.add(new BigDecimal(achievementsInfo.getTruckAchievements()));
+//            }
+//        }
+//        return total;
     }
 
     /**
@@ -827,14 +821,12 @@ public class ProjectSumService {
      * @return
      */
     public OneCensus projectIncomeCensus(CostVo2 costVo2){
-        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())
+                ||costVo2.getEndTime()!=null&&!"".equals(costVo2.getEndTime())){
             OneCensus oneCensus = projectMapper.projectIncomeCensus(costVo2);
             return oneCensus;
         }else{
-            LocalDateTime now = LocalDateTime.now();
-            int year = now.getYear();
-            costVo2.setYear(year+"");
-            OneCensus oneCensus = projectMapper.projectIncomeCensus(costVo2);
+            OneCensus oneCensus = projectMapper.projectIncomeCensus(this.NowYear(costVo2));
             return oneCensus;
         }
     }
@@ -845,17 +837,32 @@ public class ProjectSumService {
      * @return
      */
     public OneCensus projectExpenditureCensus(CostVo2 costVo2) {
-        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
-            OneCensus oneCensus = projectMapper.projectExpenditureCensus(costVo2);
-            return oneCensus;
-        }else{
-            LocalDateTime now = LocalDateTime.now();
-            int year = now.getYear();
-            costVo2.setStartTime(year + "-01-01");
-            costVo2.setEndTime(year + "-12-31");
-            OneCensus oneCensus = projectMapper.projectExpenditureCensus(costVo2);
-            return oneCensus;
+        //如果筛选时间为空 则根据当前年查询
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())
+                ||costVo2.getEndTime()!=null&&!"".equals(costVo2.getEndTime())){
+            costVo2 = this.NowYear(costVo2);
         }
+        //委外金额
+        OneCensus oneCensus = projectMapper.projectExpenditureCensus(costVo2);
+        //员工绩效
+        OneCensus oneCensus2 = projectMapper.projectExpenditureCensus2(costVo2);
+        //累计一起就是总支出
+
+        //市政管道
+        oneCensus.setMunicipalPipeline(oneCensus.getMunicipalPipeline()+oneCensus2.getMunicipalPipeline());
+        //管网改造
+        oneCensus.setNetworkReconstruction(oneCensus.getNetworkReconstruction()+oneCensus2.getNetworkReconstruction());
+        //新建小区
+        oneCensus.setNewCommunity(oneCensus.getNewCommunity()+oneCensus2.getNewCommunity());
+        //二次供水项目
+        oneCensus.setSecondaryWater(oneCensus.getSecondaryWater()+oneCensus2.getSecondaryWater());
+        //工商户
+        oneCensus.setCommercialHouseholds(oneCensus.getCommercialHouseholds()+oneCensus2.getCommercialHouseholds());
+        //居民装接水
+        oneCensus.setWaterResidents(oneCensus.getWaterResidents()+oneCensus2.getWaterResidents());
+        //行政事业
+        oneCensus.setAdministration(oneCensus.getAdministration()+oneCensus2.getAdministration());
+        return oneCensus;
     }
 
     /**
@@ -868,31 +875,22 @@ public class ProjectSumService {
             List<OneCensus3> oneCensus3s = projectMapper.expenditureAnalysis(costVo2);
             return oneCensus3s;
         }else{
-            LocalDateTime now = LocalDateTime.now();
-            int year = now.getYear();
-            costVo2.setStartTime(year + "-01-01");
-            costVo2.setEndTime(year + "-12-31");
-            List<OneCensus3> oneCensus3s = projectMapper.expenditureAnalysis(costVo2);
+            List<OneCensus3> oneCensus3s = projectMapper.expenditureAnalysis(NowYear(costVo2));
             return oneCensus3s;
         }
     }
 
     public PageInfo<BaseProject> BaseProjectExpenditureList(CostVo2 costVo2) {
 
-        //        设置分页助手
+        //设置分页助手
         PageHelper.startPage(costVo2.getPageNum(), costVo2.getPageSize());
-
-        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())
+                ||costVo2.getEndTime()!=null&&!"".equals(costVo2.getEndTime())){
             List<BaseProject> baseProjects = projectMapper.BaseProjectExpenditureList(costVo2);
-
             PageInfo<BaseProject> projectPageInfo = new PageInfo<>(baseProjects);
             return projectPageInfo;
         }else{
-            LocalDateTime now = LocalDateTime.now();
-            int year = now.getYear();
-            costVo2.setStartTime(year + "-01-01");
-            costVo2.setEndTime(year + "-12-31");
-            List<BaseProject> baseProjects = projectMapper.BaseProjectExpenditureList(costVo2);
+            List<BaseProject> baseProjects = projectMapper.BaseProjectExpenditureList(this.NowYear(costVo2));
             PageInfo<BaseProject> projectPageInfo = new PageInfo<>(baseProjects);
             return projectPageInfo;
         }
@@ -922,7 +920,9 @@ public class ProjectSumService {
             for (BaseProject baseProject : baseProjects) {
                 List<VisaChange> visaChanges = this.visaChangesById(baseProject.getId());
                 for (VisaChange visaChange : visaChanges) {
-                    total += visaChange.getAmountVisaChange().doubleValue();
+                    if(visaChange.getAmountVisaChange()!=null){
+                        total += visaChange.getAmountVisaChange().doubleValue();
+                    }
                 }
                 baseProject.setVisaMoney(new BigDecimal(total));
             }

@@ -14,6 +14,7 @@ import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -115,6 +116,45 @@ public class ProjectOverviewService {
             }
             if (baseProject.getProjectFlow()!=null){
                 moduleNumber.setProjectFlow(baseProject.getProjectFlow());
+            }
+            moduleNumbers.add(moduleNumber);
+        }
+        return moduleNumbers;
+    }
+
+    public List<ModuleNumber> moduleNumber2(List<BaseProject> allBaseProject) {
+        ArrayList<ModuleNumber> moduleNumbers = new ArrayList<>();
+        for (BaseProject baseProject : allBaseProject) {
+            ModuleNumber moduleNumber = new ModuleNumber();
+            moduleNumber.setBaseProject(baseProject);
+            //新进度阶段
+            String newflow = "";
+            //如果当前造价流程不为空
+            if (baseProject.getProjectFlow()!=null){
+                String[] strings = baseProject.getProjectFlow().split(",");
+                for (String s : strings) {
+                    //如果当前项目 设计完成 则记录为 2
+                    if (baseProject.getDesginStatus().equals("4")){
+                        newflow = newflow+"2";
+                    }
+                    //如果当前项目处于预算编制
+                    if(s.equals("2")){
+                        newflow = newflow + ",3";
+                    }
+                    //如果当前项目处于进度款支付
+                    if(s.equals("4")){
+                        newflow = newflow + ",4";
+                    }
+                    //如果当前项目签证变更
+                    if(s.equals("5")){
+                        newflow = newflow + ",5";
+                    }
+                    //如果当前项目结算编制
+                    if(s.equals("6")){
+                        newflow = newflow + ",6";
+                    }
+                }
+                moduleNumber.setProjectFlow(newflow);
             }
             moduleNumbers.add(moduleNumber);
         }

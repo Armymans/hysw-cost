@@ -84,8 +84,7 @@ public class ProjectSumController extends BaseController {
 
         ProjectNumber projectNumber = new ProjectNumber();
         projectNumber.setTotal(integer);
-        projectNumber.setWithAuditCount(integer1);
-        projectNumber.setConductCount(integer2);
+        projectNumber.setConductCount(integer2+integer1);
         projectNumber.setCompleteCount(integer3);
 
         return RestUtil.success(projectNumber);
@@ -521,52 +520,43 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/totalRevenue",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> totalRevenue(CostVo2 costVo2){
-        BigDecimal bigDecimal = projectSumService.totalRevenue(costVo2);
-        double value = bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-
+        //总收入
+        Double value1 = projectSumService.totalRevenue(costVo2);
         // 总支出
-        BigDecimal bigDecimal1 = projectSumService.totalexpenditure(costVo2);
-        double v = bigDecimal1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-
+        Double value2 = projectSumService.totalexpenditure(costVo2);
         // 总利润
-        BigDecimal bigDecimal3 = projectSumService.totalRevenue(costVo2);
-        BigDecimal bigDecimal2 = projectSumService.totalexpenditure(costVo2);
-        BigDecimal subtract = bigDecimal3.subtract(bigDecimal2);
-        double value1 = subtract.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        Double value1_2 = value1 - value2;
 
-        Expenditure expenditure = new Expenditure();
-
-        expenditure.setTotalRevenue(value);
-        expenditure.setTotalexpenditure(v);
-        expenditure.setTotalprofit(value1);
-
-
-        return RestUtil.success(expenditure);
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("value1",(double) Math.round(value1 * 100) / 100);
+        map.put("value2",(double) Math.round(value2 * 100) / 100);
+        map.put("value1_2",(double) Math.round(value1_2 * 100) / 100);
+        return RestUtil.success(map);
     }
     /**
      * 企业总收支 总支出
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/totalexpenditure",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> totalexpenditure(CostVo2 costVo2){
-        BigDecimal bigDecimal = projectSumService.totalexpenditure(costVo2);
-        bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
-        return RestUtil.success(bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
-    }
+//    @RequestMapping(value = "/api/projectCount/totalexpenditure",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object> totalexpenditure(CostVo2 costVo2){
+//        BigDecimal bigDecimal = projectSumService.totalexpenditure(costVo2);
+//        bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
+//        return RestUtil.success(bigDecimal.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
+//    }
 
     /**
      * 企业总收支 总利润
      * @param costVo2
      * @return
      */
-    @RequestMapping(value = "/api/projectCount/totalprofit",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object>totalprofit(CostVo2 costVo2){
-        BigDecimal bigDecimal1 = projectSumService.totalRevenue(costVo2);
-        BigDecimal bigDecimal2 = projectSumService.totalexpenditure(costVo2);
-        BigDecimal subtract = bigDecimal1.subtract(bigDecimal2);
-        return RestUtil.success(subtract.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
-    }
+//    @RequestMapping(value = "/api/projectCount/totalprofit",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+//    public Map<String,Object>totalprofit(CostVo2 costVo2){
+//        BigDecimal bigDecimal1 = projectSumService.totalRevenue(costVo2);
+//        BigDecimal bigDecimal2 = projectSumService.totalexpenditure(costVo2);
+//        BigDecimal subtract = bigDecimal1.subtract(bigDecimal2);
+//        return RestUtil.success(subtract.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue());
+//    }
 
 
 
@@ -593,13 +583,19 @@ public class ProjectSumController extends BaseController {
                 "[{" +
                         "\"companyName\": \"项目数量\"," +
                         "\"imageAmmount\": [";
-        for (CostVo3 costVo3 : costVo3s) {
-            json +=
-                    "{\"time\": \""+costVo3.getYearTime()+"-"+costVo3.getMonthTime()+"\"," +
-                            "\"truckAmmount\": \""+costVo3.getTotal()+"\"" +
-                            "},";
+        if(costVo3s.size()>0){
+            for (CostVo3 costVo3 : costVo3s) {
+                json +=
+                        "{\"time\": \""+costVo3.getYearTime()+"-"+costVo3.getMonthTime()+"\"," +
+                                "\"truckAmmount\": \""+costVo3.getTotal()+"\"" +
+                                "},";
+            }
+            json = json.substring(0,json.length()-1);
+        }else{
+            json += "{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        json = json.substring(0,json.length()-1);
         json += "]}]";
         JSONArray objects = JSON.parseArray(json);
         return RestUtil.success(objects);
@@ -744,6 +740,8 @@ public class ProjectSumController extends BaseController {
                             "]";
         }
         JSONArray objects = JSON.parseArray(josn);
+
+
         // 总支出构成
         OneCensus oneCensus1 = projectSumService.projectExpenditureCensus(costVo2);
         String josn1 = "";
@@ -762,8 +760,8 @@ public class ProjectSumController extends BaseController {
         JSONArray objects1 = JSON.parseArray(josn1);
 
         HashMap<String, Object> map = new HashMap<>();
-        map.put("data11",objects);
-        map.put("data12",objects1);
+        map.put("objects",objects);
+        map.put("objects1",objects1);
 
         return RestUtil.success(map);
     }
@@ -780,24 +778,38 @@ public class ProjectSumController extends BaseController {
                 "[{" +
                         "\"companyName\": \"员工绩效\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus3 oneCensus3 : oneCensus3s) {
-            json +=
-                    "{\"time\": \""+oneCensus3.getYearTime()+"-"+oneCensus3.getMonthTime()+"\"," +
-                            "\"truckAmmount\": \""+oneCensus3.getAdvMoney()+"\"" +
-                            "},";
+        if(oneCensus3s.size()>0){
+            for (OneCensus3 oneCensus3 : oneCensus3s) {
+                json +=
+                        "{\"time\": \""+oneCensus3.getYearTime()+"-"+oneCensus3.getMonthTime()+"\"," +
+                                "\"truckAmmount\": \""+oneCensus3.getAdvMoney()+"\"" +
+                                "},";
+            }
+            json = json.substring(0,json.length()-1);
+        }else{
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        json = json.substring(0,json.length()-1);
+
 
         json +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"委外支出\"," +
                         "\"imageAmmount\": [" ;
-        for (OneCensus3 oneCensus3 : oneCensus3s) {
-            json += "{\"time\": \""+oneCensus3.getYearTime()+"-"+oneCensus3.getMonthTime()+"\"," +
-                    "\"truckAmmount\": \"" + oneCensus3.getOutMoney()+"\"},";
+        if(oneCensus3s.size()>0){
+            for (OneCensus3 oneCensus3 : oneCensus3s) {
+                json += "{\"time\": \""+oneCensus3.getYearTime()+"-"+oneCensus3.getMonthTime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus3.getOutMoney()+"\"},";
+            }
+            json = json.substring(0,json.length() -1);
+        }else{
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        json = json.substring(0,json.length() -1);
+
         json += "]}]";
         JSONArray objects = JSON.parseArray(json);
         return RestUtil.success(objects);

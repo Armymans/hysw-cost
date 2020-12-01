@@ -406,4 +406,21 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
                     "s1.member_id"
     )
     List<PerformanceDistributionChart> newFindAllPerformanceDistributionChart(pageVo pageVo);
+
+    @Select(
+            "SELECT\n" +
+                    "IFNULL(SUM(IFNULL(accrued_amount,0)),0)\n" +
+                    "FROM\n" +
+                    "employee_achievements_info s1,\n" +
+                    "base_project s2\n" +
+                    "WHERE\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "AND\n" +
+                    "(s2.district= #{district} or  #{district}  = '')\n" +
+                    "AND\n" +
+                    "s1.create_time>=#{startTime}\n" +
+                    "AND\n" +
+                    "(s1.create_time<=#{endTime} or  #{endTime} = '')"
+    )
+    Double newTotalexpenditure2(CostVo2 costVo2);
 }
