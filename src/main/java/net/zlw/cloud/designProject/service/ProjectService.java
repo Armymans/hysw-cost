@@ -1651,9 +1651,10 @@ public class ProjectService {
                     AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example);
                     //如果是未通过 提交时 将审核信息改为待审核
                     auditInfo1.setAuditResult("0");
-                    auditInfo1.setAuditOpinion(null);
-                    auditInfo1.setAuditTime(null);
+                    auditInfo1.setAuditOpinion("");
+                    auditInfo1.setAuditTime("");
                     //修改基本状态 未通过重新变为待审核
+                    projectVo.getBaseProject().setReviewerId(auditInfo1.getAuditorId());
                     projectVo.getBaseProject().setDesginStatus("1");
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
                 }
