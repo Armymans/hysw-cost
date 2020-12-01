@@ -149,7 +149,7 @@ public class SettleAccountsController extends BaseController {
             settleAccountsService.addAccount(baseAccountsVo, getLoginUser());
         } catch (Exception e) {
             e.printStackTrace();
-            return RestUtil.error();
+            return RestUtil.error(e.getMessage());
         }
         return RestUtil.success();
     }

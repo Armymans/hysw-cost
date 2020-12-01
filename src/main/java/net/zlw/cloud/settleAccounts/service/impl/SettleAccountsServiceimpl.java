@@ -537,17 +537,22 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Override
     public void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser) {
 //        loginUser = new UserInfo("user320",null,null,true);
+
+
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         //判断bigdecimal
         if ("".equals(baseAccountsVo.getSettlementInfo().getSumbitMoney())){
             baseAccountsVo.getSettlementInfo().setSumbitMoney("0");
+
         }
 
         if ("".equals(baseAccountsVo.getLastSettlementReview().getReviewNumber())){
             baseAccountsVo.getLastSettlementReview().setReviewNumber(null);
+            throw new RuntimeException("请填写上家信息");
         }
         if ("".equals(baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber())){
             baseAccountsVo.getSettlementAuditInformation().setAuthorizedNumber(null);
+            throw new RuntimeException("请填写下家信息");
         }
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //其他信息表
