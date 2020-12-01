@@ -84,7 +84,7 @@ public class ProjectSumController extends BaseController {
 
         ProjectNumber projectNumber = new ProjectNumber();
         projectNumber.setTotal(integer);
-        projectNumber.setConductCount(integer2+integer1);
+        projectNumber.setConductCount(integer2);
         projectNumber.setCompleteCount(integer3);
 
         return RestUtil.success(projectNumber);

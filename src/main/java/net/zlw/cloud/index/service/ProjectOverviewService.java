@@ -132,11 +132,11 @@ public class ProjectOverviewService {
             //如果当前造价流程不为空
             if (baseProject.getProjectFlow()!=null){
                 String[] strings = baseProject.getProjectFlow().split(",");
+                //如果当前项目 设计完成 则记录为 2
+                if (baseProject.getDesginStatus().equals("4")){
+                    newflow = newflow+"2";
+                }
                 for (String s : strings) {
-                    //如果当前项目 设计完成 则记录为 2
-                    if (baseProject.getDesginStatus().equals("4")){
-                        newflow = newflow+"2";
-                    }
                     //如果当前项目处于预算编制
                     if(s.equals("2")){
                         newflow = newflow + ",3";

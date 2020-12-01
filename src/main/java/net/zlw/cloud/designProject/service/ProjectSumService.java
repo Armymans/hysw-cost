@@ -137,7 +137,7 @@ public class ProjectSumService {
     }
 
     /**
-     * 进行中项目
+     * 已完成
      * @return
      */
     public Integer completeCount(CostVo2 costVo2){
