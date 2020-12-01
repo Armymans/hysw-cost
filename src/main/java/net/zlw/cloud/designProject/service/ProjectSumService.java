@@ -1,24 +1,20 @@
 package net.zlw.cloud.designProject.service;
 
 
-import com.alibaba.druid.sql.visitor.functions.Now;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
 import net.zlw.cloud.VisaChange.model.VisaChange;
-import net.zlw.cloud.clearProject.model.ClearProject;
 import net.zlw.cloud.designProject.mapper.*;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
-import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.statisticAnalysis.model.EmployeeVo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -26,7 +22,10 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProjectSumService {
@@ -1254,6 +1253,11 @@ public class ProjectSumService {
                 if(anhuiMoneyinfo!=null){
                     designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                 }
+                // 设计人名字
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+                if (memberManage != null){
+                    designInfo.setDesigner(memberManage.getMemberName());
+                }
                 //如果为吴江
             }else{
                 Example wujiang = new Example(WujiangMoneyInfo.class);
@@ -1261,6 +1265,11 @@ public class ProjectSumService {
                 c2.andEqualTo("baseProjectId",designInfo.getId());
                 WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                 if(wujiangMoneyInfo!=null){designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());}
+                // 设计人名字
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+                if (memberManage != null){
+                    designInfo.setDesigner(memberManage.getMemberName());
+                }
             }
             //获取预算表中的造价金额
             Example example = new Example(Budgeting.class);
