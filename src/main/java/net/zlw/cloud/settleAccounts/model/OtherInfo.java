@@ -3,6 +3,7 @@ package net.zlw.cloud.settleAccounts.model;
 import lombok.Data;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -23,6 +24,7 @@ public class OtherInfo {
             `create_time`       '创建时间',
             `update_time`       '修改时间',
             `status`            '0删除1正常',*/
+    @Id
     @Column(name = "id")
     private String id;
     @Column(name = "num")
