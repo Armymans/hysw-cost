@@ -21,7 +21,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
 
     @Select(
             "SELECT " +
-                    "m.id id, " +
+                    " distinct m.id id, " +
                     "m.maintenance_item_id maintenanceItemId, " +
                     "m.maintenance_item_name maintenanceItemName, " +
                     "( " +
@@ -84,7 +84,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
 
     @Select(
             "SELECT " +
-                    "m.id id, " +
+                    "distinct m.id id, " +
                     "m.maintenance_item_id maintenanceItemId, " +
                     "m.maintenance_item_name maintenanceItemName, " +
                     "( " +
@@ -149,7 +149,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
     List<MaintenanceProjectInformationReturnVo> selectAllByDelFlag0(PageRequest pageRequest);
 
     @Select("SELECT " +
-            "m.id id, " +
+            "distinct m.id id, " +
             "m.maintenance_item_id maintenanceItemId, " +
             "m.maintenance_item_name maintenanceItemName, " +
             "( " +
