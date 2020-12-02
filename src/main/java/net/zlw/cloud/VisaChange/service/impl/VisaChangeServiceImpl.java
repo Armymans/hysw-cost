@@ -489,7 +489,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
             baseProject1.setVisaStatus("2");
-            baseProject1.setProjectFlow(baseProject1.getProjectFlow()+",5");
+
             if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")) {
                 baseProject1.setVisaStatus("1");
                 AuditInfo auditInfo = new AuditInfo();

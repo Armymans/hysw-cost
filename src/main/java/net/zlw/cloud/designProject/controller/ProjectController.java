@@ -1633,6 +1633,7 @@ public class ProjectController extends BaseController {
         projectVo3.setBaseProject(baseProject);
         //设计信息
         DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
+        projectVo3.setDesignInfo(designInfo);
         if(designInfo == null){
 
             if (designInfo.getDesignChangeTime() != null){
@@ -1730,6 +1731,7 @@ public class ProjectController extends BaseController {
         }
         //预算编制
         Budgeting budgeting = projectService.budgetingByid(baseProject.getId());
+        projectVo3.setBudgeting(budgeting);
         if(budgeting != null){
             projectVo3.setBudgeting(budgeting);
             //造价金额
