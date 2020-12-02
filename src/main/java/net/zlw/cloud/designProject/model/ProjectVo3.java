@@ -4,12 +4,8 @@ import lombok.Data;
 import net.zlw.cloud.budgeting.model.CostPreparation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
-import net.zlw.cloud.progressPayment.model.ProgressPaymentTotalPayment;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
-
-import java.util.List;
-import java.util.Set;
 @Data
 public class ProjectVo3 {
     private BaseProject baseProject; //基本信息
@@ -41,4 +37,6 @@ public class ProjectVo3 {
     private String amountVisaChangeSum;
     private String contractAmount;
     private String changeCount;
+    // 查看上下家显隐状态
+    private Integer wori;
 }

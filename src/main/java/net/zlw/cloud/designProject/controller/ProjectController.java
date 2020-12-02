@@ -1877,6 +1877,10 @@ public class ProjectController extends BaseController {
             }
             projectVo3.setLastSettlementReview(lastSettlementReview);
         }
+        // 如果上下家其中一个有值的话就返回1 给低代码做显隐判断
+        if (projectVo3.getLastSettlementReview() != null || projectVo3.getSettlementAuditInformation() != null ){
+            projectVo3.setWori(1);
+        }
         return RestUtil.success(projectVo3);
     }
 
