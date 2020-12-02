@@ -64,4 +64,6 @@ public interface BaseProjectService {
     TotalVo findTotal(String baseId);
 
     List<AuditChekedVo> auditChekAccount();
+
+    List<AuditChekedVo> findcheckAll(String num, String id);
 }

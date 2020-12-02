@@ -212,4 +212,10 @@ public class ProgressPaymentController  extends BaseController {
         TotalVo list = baseProjectService.findTotal(baseId);
         return RestUtil.success(list);
     }
+    //查询审核信息圆球
+    @RequestMapping(value = "/progress/findcheckAll",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findcheckAll(@RequestParam(name = "num") String num,@RequestParam(name = "id") String id){
+        List<AuditChekedVo> list = baseProjectService.findcheckAll(num,id);
+        return RestUtil.success(list);
+    }
 }

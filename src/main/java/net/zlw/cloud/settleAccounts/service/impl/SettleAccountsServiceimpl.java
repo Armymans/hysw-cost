@@ -543,7 +543,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         //判断bigdecimal
         if ("".equals(baseAccountsVo.getSettlementInfo().getSumbitMoney())){
             baseAccountsVo.getSettlementInfo().setSumbitMoney("0");
-
         }
 
         if ("".equals(baseAccountsVo.getLastSettlementReview().getReviewNumber())){

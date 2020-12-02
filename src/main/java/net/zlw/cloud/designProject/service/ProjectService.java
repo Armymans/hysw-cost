@@ -1633,8 +1633,12 @@ public class ProjectService {
         //方便测试
         //todo loginUser.getId(); loginUser.getCompanyId();
         String loginUserId = loginUser.getId();
+//        String loginUserId = "user309";
         String companyId = loginUser.getCompanyId();
+//        String companyId = "com";
         String username = loginUser.getUsername();
+//        String username = "集团领导";
+
         //BaseProject baseProject, DesignInfo designInfo, ProjectExploration projectExploration, PackageCame packageCame
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updateTime = simpleDateFormat.format(new Date());
@@ -1715,13 +1719,13 @@ public class ProjectService {
         String id = projectVo.getBaseProject().getReviewerId();
         MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
         //审核人名字
-        String name = memberManage.getMemberName();
-        messageVo.setId("A04");
-        messageVo.setUserId(loginUserId);
-        messageVo.setTitle("您有一个设计项目待审批！");
-        messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的设计项目提交给您，请审批！");
-        //调用消息Service
-        messageService.sendOrClose(messageVo);
+//        String name = memberManage.getMemberName();
+//        messageVo.setId("A04");
+//        messageVo.setUserId(loginUserId);
+//        messageVo.setTitle("您有一个设计项目待审批！");
+//        messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的设计项目提交给您，请审批！");
+//        //调用消息Service
+//        messageService.sendOrClose(messageVo);
 //        if("3".equals(projectVo.getBaseProject().getDesginStatus())){
 //            //如果按钮状态为1 说明点击的是提交
 //            if("1".equals(projectVo.getBaseProject().getOrsubmit())){

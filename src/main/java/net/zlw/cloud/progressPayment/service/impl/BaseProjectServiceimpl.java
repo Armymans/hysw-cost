@@ -1212,6 +1212,32 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
+    public List<AuditChekedVo> findcheckAll(String num, String id) {
+        List<AuditChekedVo> auditChekedVos = auditChek(id);
+        if ("1".equals(num)){
+            for (int i = 0; i < auditChekedVos.size(); i++) {
+                if (auditChekedVos.get(i).getAuditType().equals("0") || auditChekedVos.get(i).getAuditType().equals("1") || auditChekedVos.get(i).getAuditType().equals("4")){
+
+                }else{
+                    auditChekedVos.remove(i);
+                    i--;
+                }
+            }
+        }
+        if ("2".equals(num)){
+            for (int i = 0; i < auditChekedVos.size(); i++) {
+                if (auditChekedVos.get(i).getAuditType().equals("0") || auditChekedVos.get(i).getAuditType().equals("1") || auditChekedVos.get(i).getAuditType().equals("4")){
+                    auditChekedVos.remove(i);
+                    i--;
+                }else{
+
+                }
+            }
+        }
+        return auditChekedVos;
+    }
+
+    @Override
     public NumberVo NumberItems() {
         NumberVo numberVo = new NumberVo();
         int i = baseProjectDao.selectCountByExample(null);
