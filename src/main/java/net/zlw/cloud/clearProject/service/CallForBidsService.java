@@ -40,6 +40,7 @@ public class CallForBidsService{
         if(pageVo.getKeyWord() != null && !"".equals(pageVo.getKeyWord())){
             criteria.andLike("bidProjectName","%"+pageVo.getKeyWord()+"%");
         }
+        criteria.andIsNull("clearProjectId");
 
         List<CallForBids> callForBids = callForBidsMapper.selectByExample(example);
 

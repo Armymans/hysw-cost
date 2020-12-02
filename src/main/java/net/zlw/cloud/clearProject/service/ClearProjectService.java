@@ -13,7 +13,10 @@ import net.zlw.cloud.designProject.model.Budgeting;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -45,6 +48,9 @@ public class ClearProjectService {
     @Resource
     private CallForBidsMapper callForBidsMapper;
 
+    @Autowired
+    private MemberManageDao memberManageDao;
+
     /**
      * 新增--确定
      */
@@ -60,8 +66,13 @@ public class ClearProjectService {
         ClearProject clearProject = new ClearProject();
         String uuId = UUID.randomUUID().toString().replaceAll("-", "");
         clearProject.setId(uuId);
-        clearProject.setProjectNum(callForBids.getBidProjectNum());
-        clearProject.setProjectName(callForBids.getBidProjectName());
+        if(callForBids != null){
+            clearProject.setProjectNum(callForBids.getBidProjectNum());
+            clearProject.setProjectName(callForBids.getBidProjectName());
+        }else{
+            clearProject.setProjectNum(clearProjectVo.getProjectNum());
+            clearProject.setProjectName(clearProjectVo.getProjectName());
+        }
         clearProject.setBudgetingId(budgeting.getId());
 //        创建人id
         clearProject.setFounderId(userInfo.getId());
@@ -74,10 +85,16 @@ public class ClearProjectService {
         String createTime = simpleDateFormat.format(new Date());
 
         clearProject.setCreateTime(createTime);
-
-        callForBids.setClearProjectId(clearProject.getId());
-        callForBids.setConstructionUnit(baseProject.getConstructionUnit());
-        callForBids.setBidProjectAddress(baseProject.getWaterAddress());
+        if(callForBids != null){
+            callForBids.setClearProjectId(clearProject.getId());
+            callForBids.setConstructionUnit(baseProject.getConstructionUnit());
+//            callForBids.setBidProjectAddress(baseProject.getWaterAddress());
+        }else{
+            callForBids = new CallForBids();
+            callForBids.setClearProjectId(clearProject.getId());
+            callForBids.setConstructionUnit(baseProject.getConstructionUnit());
+//            callForBids.setBidProjectAddress(baseProject.getWaterAddress());
+        }
         callForBidsMapper.updateByPrimaryKeySelective(callForBids);
         //添加到数据库
         clearProjectMapper.insertSelective(clearProject);
@@ -147,10 +164,11 @@ public class ClearProjectService {
     public PageInfo<ClearProject> findAll(PageRequest pageRequest, UserInfo loginUser) {
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
         List<ClearProject> allClearProject = clearProjectMapper.findAllClearProject(pageRequest);
-        if (loginUser != null){
+        if (allClearProject != null){
             for (ClearProject clearProject : allClearProject) {
-                clearProject.setFounderId(loginUser.getId());
-                clearProject.setFounderName(loginUser.getUsername());
+                clearProject.setFounderId(clearProject.getFounderId());
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(clearProject.getFounderId());
+                clearProject.setFounderName(memberManage.getMemberName());
             }
         }
         PageInfo<ClearProject> pageInfo = new PageInfo<>(allClearProject);

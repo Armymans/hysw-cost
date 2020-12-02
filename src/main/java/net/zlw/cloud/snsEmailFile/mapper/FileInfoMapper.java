@@ -71,7 +71,7 @@ public interface FileInfoMapper extends Mapper<FileInfo> {
     void updateStatus(@Param("foundId") String foundId);
 
     @Select("SELECT " +
-            " fi.* , " +
+            " fi.* " +
             "FROM " +
             " file_info fi " +
             "WHERE " +

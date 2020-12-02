@@ -1026,14 +1026,6 @@ public class BudgetingServiceImpl implements BudgetingService {
             }
         }else if(sid!=null && sid.equals("6")){
             List<BudgetingListVo> clearProjectAll = budgetingDao.findClearProjectAll(pageBVo);
-            System.err.println(clearProjectAll);
-            System.err.println(clearProjectAll);
-            System.err.println(clearProjectAll);
-            System.err.println(clearProjectAll);
-            System.err.println(clearProjectAll);
-            System.err.println(clearProjectAll);
-            System.err.println(clearProjectAll);
-            System.err.println(clearProjectAll);
             return clearProjectAll;
 
         }

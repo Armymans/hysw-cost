@@ -231,8 +231,8 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "             LEFT JOIN base_project b on bt.base_project_id = b.id" +
             "             where " +
             "             b.del_flag = '0' and   " +
-            "             b.budget_status = '4' and " +
-            "             bt.clear_status != '1' and " +
+            "             b.budget_status = '4' and (" +
+            "             bt.clear_status != '1' or bt.clear_status is null ) and" +
             "             bt.del_flag = '0' and (" +
             "             b.project_name like concat ('%',#{keyword},'%') or " +
             "             b.project_num like concat ('%',#{keyword},'%') " +
@@ -251,8 +251,8 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "  bt.id = #{id}  " +
             "  and  " +
             "  b.del_flag = '0' and    " +
-            "  b.budget_status = '4' and  " +
-            "  bt.clear_status != '1' and  " +
+            "  b.budget_status = '4' and ( " +
+            "  bt.clear_status != '1' or bt.clear_status is null) and" +
             "  bt.del_flag = '0' ")
     Budgeting findBudgeting(@Param("id") String id);
 
