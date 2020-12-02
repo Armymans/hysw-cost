@@ -788,6 +788,11 @@ public class ProjectController extends BaseController {
 //            projectVo.setAuditInfo(new AuditInfo());
 //        }
 
+        Example example1 = new Example(MemberManage.class);
+        example1.createCriteria().andEqualTo("id",projectVo.getDesignInfo().getDesigner());
+        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+        projectVo.getDesignInfo().setDesigner(memberManage.getMemberName());
+
         return RestUtil.success(projectVo);
     }
 
