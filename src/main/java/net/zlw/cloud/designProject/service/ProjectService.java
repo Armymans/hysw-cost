@@ -3081,4 +3081,8 @@ public class ProjectService {
         String id = loginUser.getId();
         return designInfoMapper.designChangeReviewedCount(id);
     }
+
+    public String findDesignUnit(String designUnit) {
+        return designInfoMapper.findDesignUnit(designUnit);
+    }
 }

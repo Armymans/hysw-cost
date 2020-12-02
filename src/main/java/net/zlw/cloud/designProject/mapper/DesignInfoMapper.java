@@ -590,4 +590,13 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "(s2.auditor_id = #{id} or #{id} = '')"
     )
     Integer designChangeReviewedCount(String id);
+
+    @Select("SELECT\n" +
+            "design_unit_name  designUnitName\n" +
+            "FROM\n" +
+            "\t`design_unit_management` \n" +
+            "WHERE\n" +
+            "\tdel_flag = '0' and \n" +
+            "\tid = #{id}")
+    String findDesignUnit( @Param("id") String designUnit);
 }

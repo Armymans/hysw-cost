@@ -10,6 +10,7 @@ import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.designProject.mapper.ProjectMapper;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
@@ -1175,6 +1176,9 @@ public class ProjectController extends BaseController {
             projectVo.setDesignChangeCountFlag("1");
         }
 
+        String designUnit = projectVo.getDesignInfo().getDesignUnit();
+       String desiUnit =  projectService.findDesignUnit(designUnit);
+        projectVo.getDesignInfo().setDesignUnit(desiUnit);
         return RestUtil.success(projectVo);
     }
 
