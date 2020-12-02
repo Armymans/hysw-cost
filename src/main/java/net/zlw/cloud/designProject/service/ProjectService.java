@@ -1687,6 +1687,7 @@ public class ProjectService {
                     auditInfo.setBaseProjectId(projectVo.getDesignInfo().getId()); //外键
                     auditInfo.setAuditType("0"); //状态为一审
                     auditInfo.setAuditResult("0"); //待审核
+                    auditInfo.setChangeFlag("1");
                     auditInfo.setAuditorId(projectVo.getBaseProject().getReviewerId()); //审核人
                     auditInfo.setCreateTime(updateTime); //创建时间
                     auditInfo.setFounderId(loginUserId); //创建人
