@@ -66,7 +66,7 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
     @Select("SELECT * FROM building_project WHERE (building_project_name = #{name} OR  building_project_code = #{code}) AND id != #{id} ")
     List<BuildingProject> findNameAndCodeAndId(@Param("id") String id, @Param("name") String name ,@Param("code") String code);
 
-    @Update("UPDATE building_project SET `status`= '1' WHERE id = #{id}")
+    @Update("UPDATE building_project SET del_flag= '1' WHERE id = #{id}")
     void deleteBuilding(@Param("id") String id);
 
     @Select("select * from building_project where id = #{id}")
