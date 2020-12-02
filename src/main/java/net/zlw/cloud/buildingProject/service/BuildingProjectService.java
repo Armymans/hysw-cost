@@ -106,7 +106,7 @@ public class BuildingProjectService {
                 throw new RuntimeException("已有关联项目，无法删除");
             }else {
                 buildingProject.setDelFlag("1");
-                buildingProjectMapper.updateByPrimaryKey(buildingProject);
+                buildingProjectMapper.deleteBuilding(id);
             }
     }
 }
