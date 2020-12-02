@@ -1004,4 +1004,6 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
                     "(create_time <= #{endTime} or #{endTime} = '')"
     )
     Double selectAchievements2(pageVo pageVo);
+    @Select("SELECT * FROM base_project WHERE id = #{id}")
+    BaseProject findById(@Param("id") String id);
 }

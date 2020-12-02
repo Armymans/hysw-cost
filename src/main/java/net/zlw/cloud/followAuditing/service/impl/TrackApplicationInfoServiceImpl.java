@@ -352,6 +352,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     //发送消息
                     MessageVo messageVo = new MessageVo();
                     messageVo.setId("A20");
+                    messageVo.setType("1"); // 通知
                     messageVo.setUserId(userId);
                     messageVo.setTitle("您有一个跟踪审计项目已通过！");
                     messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的跟踪审计项目【" + name + "】已审批通过");
@@ -540,13 +541,14 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
             //消息站内通知
             String username = userInfo.getUsername();
-            String projectName = trackVo.getBaseProject().getProjectName();
+            String projectName = baseProject.getProjectName();
             MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
             //审核人名字
             MessageVo messageVo = new MessageVo();
             messageVo.setId("A18");
             messageVo.setUserId(auditInfo.getAuditorId());
             messageVo.setTitle("您有一个跟踪审计项目待审核！");
+            messageVo.setType("1"); // 通知
             messageVo.setDetails(memberManage1.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批!");
             //调用消息Service
             messageService.sendOrClose(messageVo);
@@ -826,11 +828,12 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
                     //消息站内通知
                     String username = userInfo.getUsername();
-                    String projectName = trackVo.getBaseProject().getProjectName();
+                    String projectName = baseProject.getProjectName();
                     MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo1.getAuditorId());
                     //审核人名字
                     MessageVo messageVo = new MessageVo();
                     messageVo.setId("A19");
+                    messageVo.setType("1"); // 通知
                     messageVo.setUserId(auditInfo1.getAuditorId());
                     messageVo.setTitle("您有一个跟踪审计项目待审核！");
                     messageVo.setDetails(memberManage1.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批!");

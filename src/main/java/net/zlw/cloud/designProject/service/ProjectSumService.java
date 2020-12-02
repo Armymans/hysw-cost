@@ -8,11 +8,9 @@ import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.designProject.mapper.*;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
-import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
-import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.statisticAnalysis.model.EmployeeVo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.stereotype.Service;
@@ -1292,6 +1290,11 @@ public class ProjectSumService {
      * @return
      */
     public PageInfo<DesignInfo> desginCensusListByDesigner(CostVo2 costVo2){
+        // 把成员id传给VO 查找集合
+        Example example1 = new Example(MemberManage.class);
+        example1.createCriteria().andEqualTo("memberName",costVo2.getDesigner());
+        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+        costVo2.setDesigner(memberManage.getId());
         PageHelper.startPage(costVo2.getPageNum(),costVo2.getPageSize());
         List<DesignInfo> designInfos = designInfoMapper.desginCensusListByDesigner(costVo2);
         for (DesignInfo designInfo : designInfos) {
@@ -1302,6 +1305,18 @@ public class ProjectSumService {
                 AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                 if(anhuiMoneyinfo!=null){
                     designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                }else {
+                    designInfo.setDisMoney(new BigDecimal(0));
+                }
+                if (designInfo.getDesignUnit() != null && !"".equals(designInfo.getDesignUnit())){
+                    designInfo.setDesignUnit(designInfo.getDesignUnit());
+                }else {
+                    designInfo.setDesignUnit("-");
+                }
+                if (designInfo.getBlueprintStartTime() != null && !"".equals(designInfo.getBlueprintStartTime())){
+                    designInfo.setBlueprintStartTime(designInfo.getBlueprintStartTime());
+                }else {
+                    designInfo.setBlueprintStartTime("-");
                 }
                 //如果为吴江
             }else{
@@ -1309,7 +1324,21 @@ public class ProjectSumService {
                 Example.Criteria c2 = wujiang.createCriteria();
                 c2.andEqualTo("baseProjectId",designInfo.getId());
                 WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
-                if(wujiangMoneyInfo!=null){designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());}
+                if(wujiangMoneyInfo!=null){
+                    designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
+                }else {
+                    designInfo.setDisMoney(new BigDecimal(0));
+                }
+                if (designInfo.getDesignUnit() != null && !"".equals(designInfo.getDesignUnit())){
+                    designInfo.setDesignUnit(designInfo.getDesignUnit());
+                }else {
+                    designInfo.setDesignUnit("-");
+                }
+                if (designInfo.getBlueprintStartTime() != null && !"".equals(designInfo.getBlueprintStartTime())){
+                    designInfo.setBlueprintStartTime(designInfo.getBlueprintStartTime());
+                }else {
+                    designInfo.setBlueprintStartTime("-");
+                }
             }
             //获取预算表中的造价金额
             Example example = new Example(Budgeting.class);

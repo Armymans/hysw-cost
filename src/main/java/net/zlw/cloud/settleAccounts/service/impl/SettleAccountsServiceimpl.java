@@ -455,7 +455,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
         //消息通知
         //项目名称
-        // TODO 消息怎么在到账的方法里
 //        String projectName = baseProject.getProjectName();
 //        //根据上家结算送审外键找到关联预算的信息
 //        Example example2 = new Example(Budgeting.class);
@@ -662,9 +661,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             auditInfo.setCreateTime(data);
             auditInfoDao.insertSelective(auditInfo);
             baseProject.setSettleAccountsStatus("1");
+            baseProject.setProjectFlow(baseProject.getProjectFlow()+",6");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
         } else {
             baseProject.setSettleAccountsStatus("2");
+            baseProject.setProjectFlow(baseProject.getProjectFlow()+",6");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
         }
 

@@ -10,7 +10,6 @@ import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
-import net.zlw.cloud.designProject.mapper.ProjectMapper;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
@@ -25,7 +24,6 @@ import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
@@ -1628,6 +1626,7 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/costproject/selectByBaseprojectId", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> projectSelect(String id) {
+
         //基本数据信息
         ProjectVo3 projectVo3 = new ProjectVo3();
         BaseProject baseProject = projectService.BaseProjectByid(id);
@@ -1635,8 +1634,34 @@ public class ProjectController extends BaseController {
         //设计信息
         DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
         if(designInfo == null){
+
+            if (designInfo.getDesignChangeTime() != null){
+                projectVo3.getDesignInfo().setDesignChangeTime(designInfo.getDesignChangeTime());
+            }else {
+                projectVo3.getDesignInfo().setDesignChangeTime("-");
+            }
             projectVo3.setDesignChangeInfo(new DesignChangeInfo());
         }else{
+            Example example = new Example(MemberManage.class);
+            example.createCriteria().andEqualTo("id",designInfo.getDesigner());
+            MemberManage memberManage = memberManageDao.selectOneByExample(example);
+            if (designInfo.getDesigner() != null){
+                projectVo3.getDesignInfo().setDesigner(memberManage.getMemberName());
+            }else {
+                projectVo3.getDesignInfo().setDesigner("-");
+            }
+            //正式出图时间
+            if (designInfo.getBlueprintCountersignTime() != null){
+                projectVo3.getDesignInfo().setBlueprintCountersignTime(designInfo.getBlueprintCountersignTime());
+            }else {
+                projectVo3.getDesignInfo().setBlueprintCountersignTime("-");
+            }
+            //设计单位名称
+            if (designInfo.getDesignUnit() != null){
+                projectVo3.getDesignInfo().setDesignUnit(designInfo.getDesignUnit());
+            }else {
+                projectVo3.getDesignInfo().setDesignUnit("-");
+            }
             projectVo3.setDesignInfo(designInfo);
         }
         //根据地区判断相应的设计费 应付金额 实付金额
@@ -1669,6 +1694,16 @@ public class ProjectController extends BaseController {
         if(projectExploration==null){
             projectVo3.setProjectExploration(new ProjectExploration());
         }else{
+            if (projectExploration.getScout() != null && !"".equals(projectExploration.getScout())){
+                projectVo3.getProjectExploration().setScout(projectExploration.getScout());
+            }else {
+                projectVo3.getProjectExploration().setScout("-");
+            }
+            if (projectExploration.getScout() != null && !"".equals(projectExploration.getScout())){
+                projectVo3.getProjectExploration().setExplorationTime(projectExploration.getExplorationTime());
+            }else {
+                projectVo3.getProjectExploration().setExplorationTime("-");
+            }
             projectVo3.setProjectExploration(projectExploration);}
         //方案会审
         PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());

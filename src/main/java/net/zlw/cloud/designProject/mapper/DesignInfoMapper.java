@@ -512,46 +512,60 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
     )
     List<DesignInfo> desginCensusList(CostVo2 costVo2);
 
-    @Select(
-            "SELECT\n" +
-                    "s1.id,\n" +
-                    "s1.cea_num,\n" +
-                    "s1.merge_flag,\n" +
-                    "s1.project_num,\n" +
-                    "s1.project_name,\n" +
-                    "s1.design_category,\n" +
-                    "s1.construction_unit,\n" +
-                    "s1.district,\n" +
-                    "s2.blueprint_start_time,\n" +
-                    "s2.designer,\n" +
-                    "s2.outsource,\n" +
-                    "s2.design_unit\n" +
-                    "FROM\n" +
-                    "base_project s1,\n" +
-                    "design_info s2 \n" +
-                    "where\n" +
-                    "s1.id = s2.base_project_id\n" +
-                    "and\n" +
-                    "s2.designer = #{designer}\n" +
-                    "and\n" +
-                    "(s1.district = #{district} or #{district} = '')\n" +
-                    "and\n" +
-                    "(s1.design_category = #{designCategory} or #{designCategory} = '')\n" +
-                    "and\n" +
-                    "s2.blueprint_start_time >= #{startTime}\n" +
-                    "and\n" +
-                    "(s2.blueprint_start_time <= #{endTime} or #{endTime} = '')\n" +
-                    "and\n" +
-                    "s1.del_flag = '0'\n" +
-                    "and\n" +
-                    "(\n" +
-                    "s1.cea_num like CONCAT('%',#{keyword},'%') or\n" +
-                    "s1.project_num like CONCAT('%',#{keyword},'%') or\n" +
-                    "s1.project_name like CONCAT('%',#{keyword},'%') or\n" +
-                    "s1.district like CONCAT('%',#{keyword},'%') or\n" +
-                    "s2.designer like CONCAT('%',#{keyword},'%') \n" +
-                    ")"
-    )
+    @Select("SELECT  " +
+            "    s1.id,  " +
+            "    s1.cea_num,  " +
+            "    s1.merge_flag,  " +
+            "    s1.project_num,  " +
+            "    s1.project_name,   " +
+            "    s1.construction_unit,  " +
+            "    s2.blueprint_start_time,  " +
+            "    s2.designer,   " +
+            "    s2.design_unit,  " +
+            "    (CASE s1.design_category  " +
+            "     WHEN '1' THEN '市政管道'  " +
+            "     WHEN '2' THEN '管网改造'  " +
+            "     WHEN '3' THEN '新建小区'  " +
+            "     WHEN '4' THEN '二次供水项目'  " +
+            "     WHEN '5' THEN '工商户'  " +
+            "     WHEN '6' THEN '居民装接水'  " +
+            "     WHEN '7' THEN '行政事业'  " +
+            "     END) designCategory,  " +
+            "    (CASE s1.district  " +
+            "     WHEN '1' THEN '芜湖'  " +
+            "     WHEN '2' THEN '马鞍山'  " +
+            "     WHEN '3' THEN '江北'  " +
+            "     WHEN '4' THEN '吴江'  " +
+            "   END) district,  " +
+            "    (CASE s2.outsource  " +
+            "     WHEN '0' THEN '是'  " +
+            "     WHEN '1' THEN '否'  " +
+            "   END) outsource  " +
+            "    FROM  " +
+            "    base_project s1,  " +
+            "    design_info s2   " +
+            "    where              " +
+            "    s1.id = s2.base_project_id  " +
+            "    and  " +
+            "    s2.designer = #{designer}  " +
+            "    and  " +
+            "    (s1.district = #{district} or #{district} = '')  " +
+            "    and  " +
+            "    (s1.design_category = #{designCategory} or #{designCategory} = '')  " +
+            "    and  " +
+            "    s2.blueprint_start_time >= #{startTime}  " +
+            "    and  " +
+            "    (s2.blueprint_start_time <= #{endTime} or #{endTime} = '')  " +
+            "    and  " +
+            "    s1.del_flag = '0'  " +
+            "    and  " +
+            "    (  " +
+            "    s1.cea_num like CONCAT('%',#{keyword},'%') or  " +
+            "    s1.project_num like CONCAT('%',#{keyword},'%') or  " +
+            "    s1.project_name like CONCAT('%',#{keyword},'%') or  " +
+            "    s1.district like CONCAT('%',#{keyword},'%') or  " +
+            "    s2.designer like CONCAT('%',#{keyword},'%')   " +
+            "    )")
     List<DesignInfo> desginCensusListByDesigner(CostVo2 costVo2);
 
     @Select(

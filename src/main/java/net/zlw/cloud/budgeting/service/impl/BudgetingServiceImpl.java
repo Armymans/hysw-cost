@@ -164,6 +164,23 @@ public class BudgetingServiceImpl implements BudgetingService {
             auditInfo.setStatus("0");
             auditInfo.setAuditorId(budgetingVo.getAuditorId() );
             auditInfoDao.insertSelective(auditInfo);
+
+            //消息通知
+            String username = loginUser.getUsername();
+            MessageVo messageVo = new MessageVo();
+            String projectName = baseProject.getProjectName();
+                String id1 = budgetingVo.getAuditorId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(id1);
+                //审核人名字
+                String name = memberManage.getMemberName();
+                messageVo.setId("A06");
+                messageVo.setUserId(id1);
+                messageVo.setType("1"); // 1 通知
+                messageVo.setTitle("您有一个设计项目待审批！");
+                messageVo.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的设计项目提交给您，请审批！");
+                //调用消息Service
+                messageService.sendOrClose(messageVo);
+
             //保存
         }else{
             //修改预算状态为处理中
@@ -234,22 +251,6 @@ public class BudgetingServiceImpl implements BudgetingService {
             fileInfoService.updateFileName2(fileInfo.getId(),budgeting.getId());
         }
 
-        //消息通知
-        String username = loginUser.getUsername();
-        MessageVo messageVo = new MessageVo();
-        String projectName = baseProject.getProjectName();
-        if(budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
-            String id1 = budgetingVo.getAuditorId();
-            MemberManage memberManage = memberManageDao.selectByPrimaryKey(id1);
-            //审核人名字
-            String name = memberManage.getMemberName();
-            messageVo.setId("A06");
-            messageVo.setUserId(id1);
-            messageVo.setTitle("您有一个设计项目待审批！");
-            messageVo.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的设计项目提交给您，请审批！");
-            //调用消息Service
-            messageService.sendOrClose(messageVo);
-        }
 
 
     }
@@ -457,6 +458,7 @@ public class BudgetingServiceImpl implements BudgetingService {
             String name = memberManage.getMemberName();
             messageVo.setId("A07");
             messageVo.setUserId(id1);
+            messageVo.setType("1"); // 提醒
             messageVo.setTitle("您有一个预算项目待审批！");
             messageVo.setDetails(name+"您好！【"+username+"】已将【"+projectName+"】的设计项目提交给您，请审批！");
             //调用消息Service
@@ -470,9 +472,9 @@ public class BudgetingServiceImpl implements BudgetingService {
     @Override
     public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
         //登录人id
-//        String id = loginUser.getId();
+        String id = loginUser.getId();
         //登录人名字
-//        String username = loginUser.getUsername();
+        String username = loginUser.getUsername();
         String[] split = batchReviewVo.getBatchAll().split(",");
         for (String s : split) {
             Example example = new Example(AuditInfo.class);
@@ -595,14 +597,15 @@ public class BudgetingServiceImpl implements BudgetingService {
 
                         //获取成员姓名
                         MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-                      /*  //如果通过发送消息
+                        //如果通过发送消息
                         MessageVo messageVo = new MessageVo();
                         messageVo.setId("A08");
-//                        messageVo.setUserId(id);
+                        messageVo.setUserId(id);
+                        messageVo.setType("1"); // 通知
                         messageVo.setTitle("您有一个预算项目审批已通过！");
                         messageVo.setDetails(username + "您好！您提交的【" + baseProject.getProjectName() + "】的预算项目【" + memberManage1.getMemberName() + "】已审批通过！");
                         //调用消息Service
-                        messageService.sendOrClose(messageVo);*/
+                        messageService.sendOrClose(messageVo);
                     }
                 //未通过
                 }else if (batchReviewVo.getAuditResult().equals("2")){
@@ -620,15 +623,16 @@ public class BudgetingServiceImpl implements BudgetingService {
                         baseProject.setBudgetStatus("3");
                         baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
-                       /* //如果未通过发送消息
+                        //如果未通过发送消息
                         MessageVo messageVo1 = new MessageVo();
                         //审核人名字
                         messageVo1.setId("A08");
                         messageVo1.setUserId(id);
+                        messageVo1.setType("1"); // 通知
                         messageVo1.setTitle("您有一个预算项目审批未通过！");
                         messageVo1.setDetails(username + "您好！您提交的【" + baseProject.getProjectName() + "】的预算项目未通过，请查看详情！");
                         //调用消息Service
-                        messageService.sendOrClose(messageVo1);*/
+                        messageService.sendOrClose(messageVo1);
                     }
                 }
             }

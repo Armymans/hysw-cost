@@ -87,6 +87,7 @@ public class MessageService {
             messageNotification.setSubmitTime(data);
             messageNotification.setInformStatus("0");
             messageNotification.setStatus("0");
+            messageNotification.setInformType(messageVo.getType());
             messageNotificationDao.insertSelective(messageNotification);
         }
     }

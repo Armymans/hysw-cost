@@ -3,7 +3,6 @@ package net.zlw.cloud.progressPayment.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
-import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.designProject.model.Budgeting;
@@ -153,6 +152,15 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 auditInfo.setStatus("0");
                 auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
                 auditInfoDao.insertSelective(auditInfo);
+                // 站内信
+                MessageVo messageVo4 = new MessageVo();
+                messageVo4.setId("A09");
+                messageVo4.setType("1"); //通知
+                messageVo4.setUserId(auditInfo.getAuditorId());
+                messageVo4.setTitle("您有一个进度款项目待审批！");
+                messageVo4.setDetails(loginUser.getUsername()+"您好！您提交的【" + baseProject.getProjectName() + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+                //调用消息Service
+                messageService.sendOrClose(messageVo4);
             } else {
                 project.setProgressPaymentStatus("2");
                 project.setProjectFlow(project.getProjectFlow() + ",4");
@@ -230,6 +238,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         MessageVo messageVo = new MessageVo();
                         messageVo.setId("A02");
                         messageVo.setUserId(whsjh);
+                        messageVo.setType("3"); //風險
                         messageVo.setReceiver(auditorId);
                         messageVo.setTitle("您有一个进度款支付项目已超额！");
                         messageVo.setSnsContent(name1+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
@@ -242,7 +251,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         MessageVo messageVo1 = new MessageVo();
                         messageVo1.setId("A02");
                         messageVo1.setUserId(whsjm);
+                        messageVo1.setType("3"); //風險
                         messageVo1.setReceiver(auditorId);
+                        messageVo1.setType("3"); // 风险
                         messageVo1.setTitle("您有一个进度款支付项目已超额");
                         messageVo1.setSnsContent(name2+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
                         messageVo1.setContent(name2+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
@@ -255,8 +266,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         MessageVo messageVo2 = new MessageVo();
                         messageVo2.setId("A02");
                         messageVo2.setUserId(whzjh);
+                        messageVo2.setType("3"); //風險
                         messageVo2.setReceiver(auditorId);
                         messageVo2.setPhone(auditorId);
+                        messageVo2.setType("3"); // 风险
                         messageVo2.setTitle("您有一个进度款支付项目已超额");
                         messageVo2.setSnsContent(name3+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
                         messageVo2.setContent(name3+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
@@ -268,6 +281,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         String name4 = memberManage3.getMemberName();
                         MessageVo messageVo3 = new MessageVo();
                         messageVo3.setId("A02");
+                        messageVo3.setType("3"); //風險
                         messageVo3.setUserId(whzjm);
                         messageVo3.setReceiver(auditorId);
                         messageVo3.setPhone(auditorId);
@@ -277,16 +291,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         messageVo3.setDetails(name4+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
                         messageService.sendOrClose(messageVo2);
                     }
-                } else {
-//                    // 站内信
-//                    MessageVo messageVo4 = new MessageVo();
-//                    messageVo4.setId("A09");
-//                    messageVo4.setUserId(auditorId);
-//                    messageVo4.setTitle("您有一个进度款项目待审批！");
-//                    messageVo4.setDetails(loginUser.getUsername()+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-//                    //调用消息Service
-//                    messageService.sendOrClose(messageVo4);
                 }
+
+
             }
 
 
@@ -707,7 +714,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             BigDecimal totalAmount = baseProject.getCurrentPaymentInformation();
             //合同金额
             BigDecimal contractAmount = baseProject.getContractAmount();
-            //如果累计支付金额大于合同金额的70%就发邮件和短信给大佬
+            //如果累计支付金额大于合同金额的70%就发邮件和短信
 //            if (totalAmount.compareTo(contractAmount) == 1) {
 //                //whsjh 朱让宁
 //                MemberManage memberManage = memberManageDao.selectByPrimaryKey(whsjh);

@@ -19,5 +19,6 @@ public class MessageVo {
     private String userId; //用户id
     private String phone; //手机号
     private String snsContent; //短信内容
+    private String type; // 2通知3风险
 
 }
