@@ -105,7 +105,7 @@ public class BuildingProjectService {
             if ("1".equals(buildingProject.getMergeFlag())){
                 throw new RuntimeException("已有关联项目，无法删除");
             }else {
-                buildingProject.setStatus("1");
+                buildingProject.setDelFlag("1");
                 buildingProjectMapper.updateByPrimaryKey(buildingProject);
             }
     }

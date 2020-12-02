@@ -85,8 +85,8 @@ public class BuildingProject {
     @Column(name = "company_id")
     private String companyId;
 
-    @Column(name = "status")
-    private String status;
+    @Column(name = "del_flag")
+    private String delFlag;
 
     @Column(name = "create_time")
     private String createTime;

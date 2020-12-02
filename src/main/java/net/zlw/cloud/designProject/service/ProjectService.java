@@ -3042,7 +3042,7 @@ public class ProjectService {
         } else {
             buildingProject.setId(uuid);
             //完成状态
-            buildingProject.setStatus("0");
+            buildingProject.setDelFlag("0");
             buildingProject.setMergeFlag("2");
             buildingProject.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             buildingProjectMapper.insertSelective(buildingProject);

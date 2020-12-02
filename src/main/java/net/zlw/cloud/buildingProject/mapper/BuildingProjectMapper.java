@@ -69,6 +69,6 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
     @Update("UPDATE building_project SET `status`= '1' WHERE id = #{id}")
     void deleteBuilding(@Param("id") String id);
 
-    @Select("select merge_flag from building_project where id = #{id}")
+    @Select("select * from building_project where id = #{id}")
     BuildingProject selectOneBuilding(@Param("id") String id);
 }
