@@ -1692,6 +1692,7 @@ public class ProjectController extends BaseController {
         }
         //项目探勘
         ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
+        projectVo3.setProjectExploration(projectExploration);
         if(projectExploration==null){
             projectVo3.setProjectExploration(new ProjectExploration());
         }else{
@@ -1711,6 +1712,7 @@ public class ProjectController extends BaseController {
             projectVo3.setProjectExploration(projectExploration);}
         //方案会审
         PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
+        projectVo3.setPackageCame(packageCame);
         if(packageCame==null){
             projectVo3.setPackageCame(new PackageCame());
         }else{
@@ -1733,7 +1735,7 @@ public class ProjectController extends BaseController {
         Budgeting budgeting = projectService.budgetingByid(baseProject.getId());
         projectVo3.setBudgeting(budgeting);
         if(budgeting != null){
-            projectVo3.setBudgeting(budgeting);
+
             //造价金额
             if (budgeting.getAmountCost() != null && !"".equals(budgeting.getAmountCost())){
                 budgeting.setAmountCost(budgeting.getAmountCost());
@@ -1759,9 +1761,10 @@ public class ProjectController extends BaseController {
             }else {
                 budgeting.setAddedTaxAmount("0");
             }
-
+            projectVo3.setBudgeting(budgeting);
             //成本编制
             CostPreparation costPreparation = projectService.costPreparationById(budgeting.getId());
+            projectVo3.setCostPreparation(costPreparation);
             if(costPreparation==null){
                 projectVo3.setCostPreparation(new CostPreparation());
             }else{
@@ -1792,6 +1795,7 @@ public class ProjectController extends BaseController {
                 if (veryEstablishment.getEstablishmentTime() == null){
                     veryEstablishment.setEstablishmentTime("-");
                 }
+                projectVo3.setVeryEstablishment(veryEstablishment);
             }
         }else{
             Budgeting budgeting2 = new Budgeting();
