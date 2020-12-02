@@ -80,5 +80,11 @@ public class ClearProjectVo {
      */
     private String budgetingId;
 
+    private String bidProjectName;
+
+    private String bidWinner;
+
+    private String bidMoney;
+
 
 }

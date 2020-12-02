@@ -24,6 +24,7 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -66,13 +67,8 @@ public class ClearProjectService {
         ClearProject clearProject = new ClearProject();
         String uuId = UUID.randomUUID().toString().replaceAll("-", "");
         clearProject.setId(uuId);
-        if(callForBids != null){
-            clearProject.setProjectNum(callForBids.getBidProjectNum());
-            clearProject.setProjectName(callForBids.getBidProjectName());
-        }else{
-            clearProject.setProjectNum(clearProjectVo.getProjectNum());
-            clearProject.setProjectName(clearProjectVo.getProjectName());
-        }
+        clearProject.setProjectNum(clearProjectVo.getProjectNum());
+        clearProject.setProjectName(clearProjectVo.getProjectName());
         clearProject.setBudgetingId(budgeting.getId());
 //        创建人id
         clearProject.setFounderId(userInfo.getId());
@@ -87,15 +83,25 @@ public class ClearProjectService {
         clearProject.setCreateTime(createTime);
         if(callForBids != null){
             callForBids.setClearProjectId(clearProject.getId());
-            callForBids.setConstructionUnit(baseProject.getConstructionUnit());
-//            callForBids.setBidProjectAddress(baseProject.getWaterAddress());
+//            callForBids.setConstructionUnit(baseProject.getConstructionUnit());
+            callForBids.setBidProjectAddress(baseProject.getWaterAddress());
+            callForBidsMapper.updateByPrimaryKeySelective(callForBids);
         }else{
             callForBids = new CallForBids();
+            callForBids.setId(UUID.randomUUID().toString().replace("-",""));
+            callForBids.setBidProjectName(clearProjectVo.getBidProjectName());
+            callForBids.setBidWinner(clearProjectVo.getBidWinner());
+            callForBids.setBidMoney(clearProjectVo.getBidMoney());
+            callForBids.setTenderer(clearProjectVo.getTenderer());
+            callForBids.setProcuratorialAgency(clearProjectVo.getProcuratorialAgency());
             callForBids.setClearProjectId(clearProject.getId());
+            callForBids.setStatus("0");
             callForBids.setConstructionUnit(baseProject.getConstructionUnit());
-//            callForBids.setBidProjectAddress(baseProject.getWaterAddress());
+            callForBids.setBidProjectAddress(baseProject.getWaterAddress());
+            callForBidsMapper.insert(callForBids);
         }
-        callForBidsMapper.updateByPrimaryKeySelective(callForBids);
+        budgeting.setClearStatus("1");
+        budgetingMapper.updateByPrimaryKeySelective(budgeting);
         //添加到数据库
         clearProjectMapper.insertSelective(clearProject);
     }
@@ -108,57 +114,28 @@ public class ClearProjectService {
      * @param userInfo
      * @return
      */
-//    public List<ClearProject> findAllClearProject(PageRequest pageRequest,UserInfo userInfo){
     public PageInfo<ClearProject> findAllClearProject(PageRequest pageRequest, UserInfo userInfo) {
         //        设置分页助手
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
-
-
         Example example = new Example(ClearProject.class);
-
         Example.Criteria criteria = example.createCriteria();
-
         criteria.andEqualTo("delFlag", "0");
-
-
         // 查询条件，内容
         if (pageRequest.getKeyWord() != null && (!"".equals(pageRequest.getKeyWord()))) {
             criteria.andLike("projectName", "%" + pageRequest.getKeyWord() + "%");
         }
-
         List<ClearProject> clearProjects = clearProjectMapper.selectByExample(example);
-
         for (ClearProject clearProject : clearProjects) {
-
-
-            if (clearProject.getBudgetingId() != null) {
-//                Budgeting budgeting = budgetingMapper.findById(clearProject.getBudgetingId());
-//
-//                BaseProject baseProject = baseProjectMapper.fingById(budgeting.getBaseProjectId());
-//
-//                clearProject.setProjectAddress(baseProject.getDistrict());
-                CallForBids callForBids = callForBidsMapper.selectByPrimaryKey(clearProject.getBudgetingId());
-
-            }
-
             // 清标人
             if (userInfo != null) {
-                String userId = userInfo.getId();
-
                 clearProject.setFounderName(userInfo.getUsername());
             } else {
                 //TODO 待修改
                 clearProject.setFounderName("123");
             }
-
-
         }
-
         PageInfo<ClearProject> projectPageInfo = new PageInfo<>(clearProjects);
-
         return projectPageInfo;
-//        return projectPageInfo.getList();
-
     }
 
     public PageInfo<ClearProject> findAll(PageRequest pageRequest, UserInfo loginUser) {
@@ -182,6 +159,11 @@ public class ClearProjectService {
      * @param id
      */
     public void deleteClearProject(String id) {
+        ClearProject clearProject = clearProjectMapper.selectByPrimaryKey(id);
+        Budgeting budgeting = budgetingMapper.selectByPrimaryKey(clearProject.getBudgetingId());
+        budgeting.setClearStatus("0");
+        budgetingMapper.updateByPrimaryKeySelective(budgeting);
+        callForBidsMapper.updateByClearProjectId(id);
         clearProjectMapper.deleteClearProject(id);
     }
 

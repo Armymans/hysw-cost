@@ -61,6 +61,9 @@ public class Budgeting{
     @Column(name = "whether_account")
     private String whetherAccount;
 
+    @Column(name = "clear_status")
+    private String clearStatus;
+
     @Transient
     private String monthTime;
     @Transient
