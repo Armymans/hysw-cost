@@ -1245,8 +1245,7 @@ public class MaintenanceProjectInformationService {
 
         MaintenanceVo maintenanceVo = new MaintenanceVo();
         //todo userInfo.getId();
-//        String userInfoId = userInfo.getId();
-        String userInfoId = "user324";
+        String userInfoId = userInfo.getId();
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain(id);
         if (information != null) {
             maintenanceVo.setMaintenanceProjectInformation(information);

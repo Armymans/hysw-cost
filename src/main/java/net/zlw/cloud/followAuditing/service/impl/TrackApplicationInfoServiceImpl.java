@@ -570,6 +570,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
         trackVo.getTrackApplicationInfo().setId(UUID.randomUUID().toString().replace("-", ""));
         trackVo.getTrackApplicationInfo().setTrackAudit(trackVo.getAuditInfo().getId());
+        trackVo.getTrackApplicationInfo().setState("0");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        trackVo.getTrackApplicationInfo().setCreateTime(simpleDateFormat.format(new Date()));
+
         trackApplicationInfoDao.insertSelective(trackVo.getTrackApplicationInfo());
 
 //        List<TrackMonthly> monthlyList = trackVo.getMonthlyList();
@@ -714,6 +718,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 //        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
         Example example1 = new Example(TrackMonthly.class);
         example1.createCriteria().andEqualTo("trackId", id);
+        example1.orderBy("createTime").desc(); // 时间排序
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         List<AuditInfoVo> allAuditInfosByTrackId = new ArrayList<>();
         for (TrackMonthly trackMonthly : trackMonthlies) {

@@ -196,7 +196,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
             "            member_manage m  " +
             "            WHERE " +
             "            a.auditor_id = m.id " +
-            "      and a.status= '0' " +
+            "            and a.status= '0' " +
             "            and  " +
             "             (a.base_project_id = #{id} or #{id} = '')")
     List<AuditInfoVo> findAllAuditInfosByTrackId(@Param("id") String id);
