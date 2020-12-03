@@ -19,6 +19,7 @@ import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
@@ -2080,4 +2081,18 @@ public class ProjectController extends BaseController {
         stringIntegerHashMap.put("count",integer);
         return RestUtil.success(stringIntegerHashMap);
     }
+    //查询当前处理人设计
+    @RequestMapping(value = "/api/costproject/findCurrentDesign", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findCurrent(){
+        List<MkyUser> list =  projectService.findCurrent(getLoginUser().getId());
+        return RestUtil.success(list);
+    }
+    //查询当前处理人造价
+    @RequestMapping(value = "/api/costproject/findCurrentCost", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findCurrentCost(){
+       List<MkyUser> list =  projectService.findCurrentCost(getLoginUser().getId());
+       return RestUtil.success(list);
+    }
+
+
 }

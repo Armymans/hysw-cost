@@ -647,7 +647,6 @@ public class BudgetingServiceImpl implements BudgetingService {
             Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
             String founderId = budgeting.getFounderId();
             if (founderId.equals(ids) || ids.equals(whzjh) || ids.equals(whzjm) || ids.equals(wjzjh)){
-                System.err.println("xxxxxxx");
                 //TODO start
                 //根据预算外键查询基本信息
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
