@@ -189,7 +189,6 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "WHERE   " +
             "del_flag = '0'   " +
             "and ( role_id = 'role7618' or role_id = 'role7616' or role_id = 'role7636' or role_id = 'role7637')   " +
-            "and id != #{userId}  " +
             "and job_id = (select job_id from mky_user where id = #{userId})  ")
     List<MkyUser> findCurrent(@Param("userId") String id);
 
@@ -202,7 +201,6 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "WHERE " +
             "del_flag = '0'   " +
             "and ( role_id = 'role7617' or role_id = 'role7635' or role_id = 'role7639')   " +
-            "and id != #{userId} " +
             "and ( job_id = (select job_id from mky_user where id = #{userId} ) or job_id is null)   " +
             " ")
     List<MkyUser> findCurrentCost(@Param("userId") String id);
