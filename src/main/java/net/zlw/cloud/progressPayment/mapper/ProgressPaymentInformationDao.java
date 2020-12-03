@@ -224,7 +224,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
     )
     List<ProgressPaymentInformation> totalexpenditure(CostVo2 costVo2);
 
-    @Select("SELECT * FROM progress_payment_information WHERE del_flag NOT IN (0,1) and base_project_id =#{id}")
+    @Select("SELECT current_payment_Information currentPaymentInformation FROM progress_payment_information WHERE base_project_id = #{id}")
     List<ProgressPaymentInformation> findAmount(@Param("id") String id);
 
     @Select("SELECT " +

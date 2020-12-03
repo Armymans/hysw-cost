@@ -2,6 +2,7 @@ package net.zlw.cloud.progressPayment.mapper;
 
 import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -180,4 +181,27 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "create_time"
     )
     List<AuditChekedVo> auditAgainMaintenanceChek(String id);
+
+    @Select("SELECT   " +
+            "id  id,   " +
+            "user_name userName " +
+            "FROM mky_user   " +
+            "WHERE   " +
+            "del_flag = '0'   " +
+            "and ( role_id = 'role7618' or role_id = 'role7616' or role_id = 'role7636' or role_id = 'role7637')   " +
+            "and job_id = (select job_id from mky_user where id = #{userId})  ")
+    List<MkyUser> findCurrent(@Param("userId") String id);
+
+
+    @Select("SELECT " +
+            "id  id, " +
+            "user_name userName, " +
+            "job_id " +
+            "FROM mky_user   " +
+            "WHERE " +
+            "del_flag = '0'   " +
+            "and ( role_id = 'role7617' or role_id = 'role7635' or role_id = 'role7639')   " +
+            "and ( job_id = (select job_id from mky_user where id = #{userId} ) or job_id is null)   " +
+            " ")
+    List<MkyUser> findCurrentCost(@Param("userId") String id);
 }

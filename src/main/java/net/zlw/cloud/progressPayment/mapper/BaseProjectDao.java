@@ -655,7 +655,11 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ") waterSupplyType, " +
             "b.customer_name customerName, " +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
-            "bt.outsourcing outsourcing, " +
+            "(case bt.outsourcing  " +
+            "        when '1' then '是' " +
+            "        when '2' then '否' " +
+            "        end" +
+            "      ) outsourcing , " +
             "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
@@ -895,112 +899,112 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
     List<AccountsVo> findAllAccountsSuccess2(PageVo pageVo);
 
     @Select(
-            "SELECT\n" +
-                    "COUNT(*)\n" +
-                    "FROM\n" +
-                    "base_project\n" +
-                    "WHERE\n" +
-                    "(district = #{district} or #{district} = '')\n" +
-                    "AND\n" +
-                    "create_time >= #{statTime}\n" +
-                    "AND\n" +
+            "SELECT " +
+                    "COUNT(*) " +
+                    "FROM " +
+                    "base_project " +
+                    "WHERE " +
+                    "(district = #{district} or #{district} = '') " +
+                    "AND " +
+                    "create_time >= #{statTime} " +
+                    "AND " +
                     "(create_time <= #{endTime} or #{endTime} = '')"
     )
     Integer selectProjectCount(pageVo pageVo);
 
     @Select(
-            "SELECT\n" +
-                    "IFNULL(SUM(IFNULL(out_money,0)),0)\n" +
-                    "FROM\n" +
-                    "out_source\n" +
-                    "WHERE\n" +
-                    "dept = '2'\n" +
-                    "AND\n" +
-                    "(district = #{district} or #{district} = '')\n" +
-                    "AND\n" +
-                    "create_time >= #{statTime}\n" +
-                    "AND\n" +
+            "SELECT " +
+                    "IFNULL(SUM(IFNULL(out_money,0)),0) " +
+                    "FROM " +
+                    "out_source " +
+                    "WHERE " +
+                    "dept = '2' " +
+                    "AND " +
+                    "(district = #{district} or #{district} = '') " +
+                    "AND " +
+                    "create_time >= #{statTime} " +
+                    "AND " +
                     "(create_time <= #{endTime} or #{endTime} = '')"
     )
     Double selectOutMoney(pageVo pageVo);
 
     @Select(
-            "SELECT\n" +
-                    "IFNULL(SUM(IFNULL(accrued_amount,0)),0)\n" +
-                    "FROM\n" +
-                    "employee_achievements_info\n" +
-                    "WHERE\n" +
-                    "dept = '2'\n" +
-                    "AND\n" +
-                    "(district = #{district} or #{district} = '')\n" +
-                    "AND\n" +
-                    "create_time >= #{statTime}\n" +
-                    "AND\n" +
+            "SELECT " +
+                    "IFNULL(SUM(IFNULL(accrued_amount,0)),0) " +
+                    "FROM " +
+                    "employee_achievements_info " +
+                    "WHERE " +
+                    "dept = '2' " +
+                    "AND " +
+                    "(district = #{district} or #{district} = '') " +
+                    "AND " +
+                    "create_time >= #{statTime} " +
+                    "AND " +
                     "(create_time <= #{endTime} or #{endTime} = '')"
     )
     Double selectAchievements(pageVo pageVo);
 
     @Select(
-            "SELECT\n" +
-                    "IFNULL(SUM(IFNULL(in_money,0)),0)\n" +
-                    "FROM\n" +
-                    "in_come\n" +
-                    "WHERE\n" +
-                    "dept = '2'\n" +
-                    "AND\n" +
-                    "(district = #{district} or #{district} = '')\n" +
-                    "AND\n" +
-                    "create_time >= #{statTime}\n" +
-                    "AND\n" +
+            "SELECT " +
+                    "IFNULL(SUM(IFNULL(in_money,0)),0) " +
+                    "FROM " +
+                    "in_come " +
+                    "WHERE " +
+                    "dept = '2' " +
+                    "AND " +
+                    "(district = #{district} or #{district} = '') " +
+                    "AND " +
+                    "create_time >= #{statTime} " +
+                    "AND " +
                     "(create_time <= #{endTime} or #{endTime} = '')"
     )
     Double selectIncome(pageVo pageVo);
 
     @Select(
-            "SELECT\n" +
-                    "IFNULL(SUM(IFNULL(in_money,0)),0)\n" +
-                    "FROM\n" +
-                    "in_come\n" +
-                    "WHERE\n" +
-                    "dept = '1'\n" +
-                    "AND\n" +
-                    "(district = #{district} or #{district} = '')\n" +
-                    "AND\n" +
-                    "create_time >= #{statTime}\n" +
-                    "AND\n" +
+            "SELECT " +
+                    "IFNULL(SUM(IFNULL(in_money,0)),0) " +
+                    "FROM " +
+                    "in_come " +
+                    "WHERE " +
+                    "dept = '1' " +
+                    "AND " +
+                    "(district = #{district} or #{district} = '') " +
+                    "AND " +
+                    "create_time >= #{statTime} " +
+                    "AND " +
                     "(create_time <= #{endTime} or #{endTime} = '')"
     )
     Double selectIncome2(pageVo pageVo);
 
     @Select(
-            "SELECT\n" +
-                    "IFNULL(SUM(IFNULL(out_money,0)),0)\n" +
-                    "FROM\n" +
-                    "out_source\n" +
-                    "WHERE\n" +
-                    "dept = '1'\n" +
-                    "AND\n" +
-                    "(district = #{district} or #{district} = '')\n" +
-                    "AND\n" +
-                    "create_time >= #{statTime}\n" +
-                    "AND\n" +
+            "SELECT " +
+                    "IFNULL(SUM(IFNULL(out_money,0)),0) " +
+                    "FROM " +
+                    "out_source " +
+                    "WHERE " +
+                    "dept = '1' " +
+                    "AND " +
+                    "(district = #{district} or #{district} = '') " +
+                    "AND " +
+                    "create_time >= #{statTime} " +
+                    "AND " +
                     "(create_time <= #{endTime} or #{endTime} = '')"
     )
     Double selectOutMoney2(pageVo pageVo);
 
 
     @Select(
-            "SELECT\n" +
-                    "IFNULL(SUM(IFNULL(accrued_amount,0)),0)\n" +
-                    "FROM\n" +
-                    "employee_achievements_info\n" +
-                    "WHERE\n" +
-                    "dept = '1'\n" +
-                    "AND\n" +
-                    "(district = #{district} or #{district} = '')\n" +
-                    "AND\n" +
-                    "create_time >= #{statTime}\n" +
-                    "AND\n" +
+            "SELECT " +
+                    "IFNULL(SUM(IFNULL(accrued_amount,0)),0) " +
+                    "FROM " +
+                    "employee_achievements_info " +
+                    "WHERE " +
+                    "dept = '1' " +
+                    "AND " +
+                    "(district = #{district} or #{district} = '') " +
+                    "AND " +
+                    "create_time >= #{statTime} " +
+                    "AND " +
                     "(create_time <= #{endTime} or #{endTime} = '')"
     )
     Double selectAchievements2(pageVo pageVo);

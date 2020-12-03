@@ -118,6 +118,23 @@ public interface BudgetingMapper extends Mapper<Budgeting> {
                     "(s1.create_time<=#{endTime} or  #{endTime} = '')"
     )
     List<Budgeting> totalexpenditure(CostVo2 costVo2);
-
+    
+    @Select("SELECT    " +
+            " b.id,   " +
+            " b.amount_cost amountCost,   " +
+            " b.budgeting_people budgetingPeople,   " +
+            " b.budgeting_time budgetingTime,   " +
+            " b.added_tax_amount addedTaxAmount,   " +
+            " b.outsourcing outsourcing,   " +
+            " b.amount_outsourcing amountOutsourcing,   " +
+            " b.del_flag delFlag," +
+            " c.cost_unit_name costUnitName   " +
+            "FROM budgeting b   " +
+            "LEFT JOIN cost_unit_management c ON b.name_of_cost_unit = c.id   " +
+            "WHERE    " +
+            "b.del_flag = '0'   " +
+            "AND    " +
+            "b.base_project_id = #{id}")
+    Budgeting selectOneBudgeting(@Param("id") String id);
 
 }

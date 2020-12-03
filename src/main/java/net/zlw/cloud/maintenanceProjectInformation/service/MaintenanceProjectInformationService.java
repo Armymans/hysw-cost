@@ -1,5 +1,6 @@
 package net.zlw.cloud.maintenanceProjectInformation.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
@@ -15,8 +16,10 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
+import net.zlw.cloud.settleAccounts.mapper.OtherInfoMapper;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
+import net.zlw.cloud.settleAccounts.model.OtherInfo;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
@@ -27,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import springfox.documentation.spring.web.json.Json;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -75,6 +79,9 @@ public class MaintenanceProjectInformationService {
 
     @Autowired
     private BaseProjectDao baseProjectDao;
+
+    @Autowired
+    private OtherInfoMapper otherInfoMapper;
 
     @Resource
     private MessageService messageService;
@@ -305,6 +312,29 @@ public class MaintenanceProjectInformationService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = simpleDateFormat.format(new Date());
 
+        // 其他信息
+        //其他信息表
+        if (!"".equals(maintenanceProjectInformation.getComs()) && maintenanceProjectInformation.getComs() != null){
+            Json coms = maintenanceProjectInformation.getComs();
+            String json = coms.value();
+            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            if (otherInfos.size() > 0){
+                for (OtherInfo thisInfo : otherInfos) {
+                    OtherInfo otherInfo1 = new OtherInfo();
+                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    otherInfo1.setForeignKey(maintenanceProjectInformation.getId());
+                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                    otherInfo1.setNum(thisInfo.getNum());
+                    otherInfo1.setCreateTime(createTime);
+                    otherInfo1.setStatus("0");
+//                    otherInfo1.setFoundId(userInfo.getId());
+//                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfoMapper.insertSelective(otherInfo1);
+                }
+            }
+        }
+
+
         //检维修对象
         MaintenanceProjectInformation information = new MaintenanceProjectInformation();
 
@@ -416,6 +446,12 @@ public class MaintenanceProjectInformationService {
             settlementAuditInformation.setFounderId("user312");
         }
 
+        // 计算核减率
+        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
+        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
+        // 核减数 / 送审金额 * 100 = 核减率
+        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
+        settlementAuditInformation.setSubtractRate(subtractRate);
         settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
 
@@ -1010,6 +1046,12 @@ public class MaintenanceProjectInformationService {
         SettlementAuditInformation selectOneByExample = settlementAuditInformationDao.selectOneByExample(example);
 
         settlementAuditInformation.setId(selectOneByExample.getId());
+        // 计算核减率
+        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
+        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
+        // 核减数 / 送审金额 * 100 = 核减率
+        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
+        settlementAuditInformation.setSubtractRate(subtractRate);
 
 
         settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
@@ -1141,7 +1183,7 @@ public class MaintenanceProjectInformationService {
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                 information.setType("1");
             }
-            //通过发消息
+            //未通过发消息
             String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
             //检维修名字
             String maintenanceItemName = maintenanceProjectInformation.getMaintenanceItemName();
@@ -1149,8 +1191,8 @@ public class MaintenanceProjectInformationService {
             messageVo.setId("A22");
             messageVo.setUserId(auditInfo.getAuditorId());
             messageVo.setType("1"); // 通知
-            messageVo.setTitle("您有一个检维修项目已通过！");
-            messageVo.setDetails(name+"您好！【"+userInfo.getUsername()+"】提交的【"+maintenanceItemName+"】项目已通过，请查看详情!");
+            messageVo.setTitle("您有一个检维修项目未通过！");
+            messageVo.setDetails(userInfo.getUsername()+"您好！您提交的【"+maintenanceItemName+"】项目【"+name+"】审核未通过，请及时查看详情!");
             messageService.sendOrClose(messageVo);
         }
 
@@ -1234,7 +1276,7 @@ public class MaintenanceProjectInformationService {
         MaintenanceVo maintenanceVo = new MaintenanceVo();
         //todo userInfo.getId();
         String userInfoId = userInfo.getId();
-        MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectByPrimaryKey(id);
+        MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain(id);
         if (information != null) {
             maintenanceVo.setMaintenanceProjectInformation(information);
         } else {
@@ -1310,6 +1352,28 @@ public class MaintenanceProjectInformationService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = simpleDateFormat.format(new Date());
 
+
+        // 其他信息
+        //其他信息表
+        if (!"".equals(maintenanceProjectInformation.getComs()) && maintenanceProjectInformation.getComs() != null){
+            Json coms = maintenanceProjectInformation.getComs();
+            String json = coms.value();
+            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            if (otherInfos.size() > 0){
+                for (OtherInfo thisInfo : otherInfos) {
+                    OtherInfo otherInfo1 = new OtherInfo();
+                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    otherInfo1.setForeignKey(maintenanceProjectInformation.getId());
+                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                    otherInfo1.setNum(thisInfo.getNum());
+                    otherInfo1.setCreateTime(createTime);
+                    otherInfo1.setStatus("0");
+//                    otherInfo1.setFoundId(userInfo.getId());
+//                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfoMapper.insertSelective(otherInfo1);
+                }
+            }
+        }
         //检维修对象
         MaintenanceProjectInformation information = new MaintenanceProjectInformation();
         information.setId(id);
@@ -1407,8 +1471,12 @@ public class MaintenanceProjectInformationService {
         settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
         settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
 
-        settlementAuditInformation.setFounderId(userInfo.getId());
-        settlementAuditInformation.setFounderCompanyId(userInfo.getCompanyId());
+        // 计算核减率
+        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
+        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
+        // 核减数 / 送审金额 * 100 = 核减率
+        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
+        settlementAuditInformation.setSubtractRate(subtractRate);
         settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
 

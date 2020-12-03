@@ -202,8 +202,7 @@ public class MaintenanceProjectInformationController extends BaseController {
     }
 
     /**
-     * 编辑--提交
-     * 提交：把数据保存到数据库，得到一个审核人 id
+     * 修改
      *
      * @param maintenanceProjectInformationVo
      */

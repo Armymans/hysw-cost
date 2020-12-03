@@ -283,4 +283,53 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "del_flag = '0' " +
             "AND date_format(create_time ,'%Y' ) = #{year}")
     Integer yearCount(String year);
+    
+    @Select("SELECT  " +
+            "  m.id,  " +
+            "  m.maintenance_item_id maintenanceItemId,  " +
+            "  maintenance_item_name maintenanceItemName,  " +
+            "  (  " +
+            "  CASE  " +
+            "  m.maintenance_item_type   " +
+            "  WHEN '0' THEN  " +
+            "  '道路恢复工程'   " +
+            "  WHEN '1' THEN  " +
+            "  '表位改造'   " +
+            "  WHEN '2' THEN  " +
+            "  '故障换表'   " +
+            "  WHEN '3' THEN  " +
+            "  '水表周检换表'   " +
+            "  WHEN '4' THEN  " +
+            "  'DN300以上管道抢维修'   " +
+            "  WHEN '5' THEN  " +
+            "  'DN300以下管道抢维修'   " +
+            "  WHEN '6' THEN  " +
+            "  '设备维修购置'   " +
+            "  WHEN '7' THEN  " +
+            "  '房屋修缮'   " +
+            "  WHEN '8' THEN  " +
+            "  '绿化种植'   " +
+            "  WHEN '9' THEN  " +
+            "  '装饰及装修'   " +
+            "  END   " +
+            "  ) maintenanceItemType,  " +
+            "  m.submitted_department submittedDepartment,  " +
+            "  m.submit_time submitTime,  " +
+            "  m.prepare_people preparePeople,  " +
+            "  m.project_address projectAddress,  " +
+            "  m.review_amount reviewAmount,  " +
+            "  m.customer_name customerName,  " +
+            "  m.remarkes remarkes,  " +
+            "  m.create_time createTime,  " +
+            "  m.update_time updateTime,  " +
+            "  c.construction_unit_name constructionUnitName,  " +
+            "  m.del_flag delFlag,  " +
+            "  m.type,  " +
+            "  type   " +
+            "  FROM  " +
+            "  maintenance_project_information m  " +
+            "  LEFT JOIN construction_unit_management c ON m.construction_unit_id = c.id   " +
+            "  WHERE  " +
+            "  m.id = #{id}")
+    MaintenanceProjectInformation selectIdByMain(@Param("id") String id);
 }

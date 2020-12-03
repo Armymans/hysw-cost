@@ -25,6 +25,7 @@ import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
@@ -1583,6 +1584,10 @@ public class ProjectService {
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("designInfoId", id);
         List<DesignChangeInfo> designChangeInfos = designChangeInfoMapper.selectByExample(example);
+
+        DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
+
+
         return designChangeInfos;
     }
 
@@ -3102,5 +3107,15 @@ public class ProjectService {
 
     public String findDesignUnit(String designUnit) {
         return designInfoMapper.findDesignUnit(designUnit);
+    }
+
+    public List<MkyUser> findCurrent(String id) {
+      List<MkyUser> list =  auditInfoDao.findCurrent(id);
+        System.err.println(list);
+      return list;
+    }
+
+    public List<MkyUser> findCurrentCost(String id) {
+      return   auditInfoDao.findCurrentCost(id);
     }
 }

@@ -56,6 +56,9 @@ public class SettlementAuditInformation implements Serializable {
     private String accountId;
     @Column(name = "whether_account")
     private String whetherAccount;
+    //核减率
+    @Column(name = "subtractRate")
+    private BigDecimal subtractRate;
 
 
 }

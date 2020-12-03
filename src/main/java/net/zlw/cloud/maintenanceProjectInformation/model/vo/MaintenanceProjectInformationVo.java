@@ -1,16 +1,10 @@
 package net.zlw.cloud.maintenanceProjectInformation.model.vo;
 
 import lombok.Data;
-import net.zlw.cloud.budgeting.model.SurveyInformation;
-import net.zlw.cloud.clearProject.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
-import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
-import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
+import springfox.documentation.spring.web.json.Json;
 
-import javax.persistence.Column;
-import javax.persistence.Transient;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,8 +69,11 @@ public class MaintenanceProjectInformationVo {
 
     // 结算审核信息
 //    private SettlementAuditInformation settlementAuditInformation;
+    // 审定数
     private BigDecimal authorizedNumber;
+    // 核减率
     private BigDecimal subtractTheNumber;
+    // 核增数
     private BigDecimal nuclearNumber;
     // 核减率
     private BigDecimal subtractRate;
@@ -133,5 +130,10 @@ public class MaintenanceProjectInformationVo {
     private String type8;
     // 结算审核其他资料 jwxxjjsshxxqtzl
     private String type9;
+
+    // 新增：其他信息
+    private Json coms;
+    // 编辑：其他信息
+    private String json;
 
 }

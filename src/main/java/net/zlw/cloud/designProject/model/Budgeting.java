@@ -49,6 +49,9 @@ public class Budgeting{
     @Column(name = "update_time")
     private String updateTime;
 
+    @Column(name = "outsourcing")
+    private String outsourcing;
+
     @Column(name = "founder_id")
     private String founderId;
 
@@ -92,4 +95,7 @@ public class Budgeting{
     private Double twoThousandCost;//2000
     @Transient
     private Double subtotal;//跟踪审计小计
+
+    @Transient
+    private String costUnitName; // 造价单位名称
 }
