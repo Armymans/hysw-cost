@@ -49,6 +49,9 @@ public class Budgeting{
     @Column(name = "update_time")
     private String updateTime;
 
+    @Column(name = "outsourcing")
+    private String outsourcing;
+
     @Column(name = "founder_id")
     private String founderId;
 

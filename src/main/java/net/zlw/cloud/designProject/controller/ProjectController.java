@@ -1743,7 +1743,9 @@ public class ProjectController extends BaseController {
                 budgeting.setAmountCost(new BigDecimal(0));
             }
             //预算编制人
-            String memberName = memberManageDao.selectByPrimaryKey(budgeting.getBudgetingPeople()).getMemberName();
+
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(budgeting.getBudgetingPeople());
+            String memberName = memberManage.getMemberName();
             if (memberName != null ){
                 budgeting.setBudgetingPeople(memberName);
             }else {
