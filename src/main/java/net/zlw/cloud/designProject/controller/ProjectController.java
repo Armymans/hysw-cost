@@ -10,6 +10,7 @@ import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
@@ -55,6 +56,8 @@ public class ProjectController extends BaseController {
     private MemberManageDao memberManageDao;
     @Resource
     private MessageService messageService;
+    @Resource
+    private BudgetingMapper budgetingMapper;
 
     /**
      * 建设项目提交 _ 保存
@@ -1653,13 +1656,13 @@ public class ProjectController extends BaseController {
                 projectVo3.getDesignInfo().setDesigner("-");
             }
             //正式出图时间
-            if (designInfo.getBlueprintCountersignTime() != null){
-                projectVo3.getDesignInfo().setBlueprintCountersignTime(designInfo.getBlueprintCountersignTime());
+            if (designInfo.getBlueprintStartTime() != null && !"".equals(designInfo.getBlueprintStartTime())){
+                projectVo3.getDesignInfo().setBlueprintStartTime(designInfo.getBlueprintStartTime());
             }else {
-                projectVo3.getDesignInfo().setBlueprintCountersignTime("-");
+                projectVo3.getDesignInfo().setBlueprintStartTime("-");
             }
             //设计单位名称
-            if (designInfo.getDesignUnit() != null){
+            if (designInfo.getDesignUnit() != null && !"".equals(designInfo.getDesignUnit())){
                 projectVo3.getDesignInfo().setDesignUnit(designInfo.getDesignUnit());
             }else {
                 projectVo3.getDesignInfo().setDesignUnit("-");
@@ -1733,7 +1736,9 @@ public class ProjectController extends BaseController {
             projectVo3.setDesignChangeInfo(designChangeInfo);
         }
         //预算编制
-        Budgeting budgeting = projectService.budgetingByid(baseProject.getId());
+
+//        Budgeting budgeting = projectService.budgetingByid(baseProject.getId());
+        Budgeting budgeting = budgetingMapper.selectOneBudgeting(baseProject.getId());
         projectVo3.setBudgeting(budgeting);
         if(budgeting != null){
 
@@ -1744,7 +1749,6 @@ public class ProjectController extends BaseController {
                 budgeting.setAmountCost(new BigDecimal(0));
             }
             //预算编制人
-
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(budgeting.getBudgetingPeople());
             String memberName = memberManage.getMemberName();
             if (memberName != null ){
@@ -1764,6 +1768,18 @@ public class ProjectController extends BaseController {
             }else {
                 budgeting.setAddedTaxAmount("0");
             }
+            // 造价单位名称
+            if (budgeting.getCostUnitName() != null && !"".equals(budgeting.getCostUnitName())){
+                budgeting.setCostUnitName(budgeting.getCostUnitName());
+            }else {
+                budgeting.setCostUnitName("-");
+            }
+            // 委外金额
+            if (budgeting.getOutsourcing() != null && !"".equals(budgeting.getOutsourcing())){
+                budgeting.setOutsourcing(budgeting.getOutsourcing());
+            }else {
+                budgeting.setOutsourcing("-");
+            }
             projectVo3.setBudgeting(budgeting);
             //成本编制
             CostPreparation costPreparation = projectService.costPreparationById(budgeting.getId());
@@ -1772,12 +1788,22 @@ public class ProjectController extends BaseController {
                 projectVo3.setCostPreparation(new CostPreparation());
             }else{
                 // 成本编制人
-                if (costPreparation.getCostTogether() == null){
+                if (costPreparation.getCostTogether() != null && !"".equals(costPreparation.getCostTogether())){
+                    costPreparation.setCostTogether(costPreparation.getCostTogether());
+                }else {
                     costPreparation.setCostTogether("-");
                 }
                 // 成本编制时间
-                if (costPreparation.getCostPreparationTime() == null){
+                if (costPreparation.getCostPreparationTime() != null && !"".equals(costPreparation.getCostPreparationTime())){
+                    costPreparation.setCostPreparationTime(costPreparation.getCostPreparationTime());
+                }else {
                     costPreparation.setCostPreparationTime("-");
+                }
+                // 成本总金额
+                if (costPreparation.getCostTotalAmount() != null && !"".equals(costPreparation.getCostTotalAmount())){
+                    costPreparation.setCostTotalAmount(costPreparation.getCostTotalAmount());
+                }else {
+                    costPreparation.setCostTotalAmount(new BigDecimal(0));
                 }
                 projectVo3.setCostPreparation(costPreparation);
             }
@@ -1787,15 +1813,21 @@ public class ProjectController extends BaseController {
                 projectVo3.setVeryEstablishment(new VeryEstablishment());
             }else{
                 //其中增值税
-                if (veryEstablishment.getVatAmount() == null){
+                if (veryEstablishment.getVatAmount() != null && !"".equals(veryEstablishment.getVatAmount())){
+                    veryEstablishment.setVatAmount(veryEstablishment.getVatAmount());
+                }else {
                     veryEstablishment.setVatAmount(new BigDecimal(0));
                 }
                 //控价编制人
-                if (veryEstablishment.getPricingTogether() == null){
+                if (veryEstablishment.getPricingTogether() != null && !"".equals(veryEstablishment.getPricingTogether())){
+                    veryEstablishment.setPricingTogether(veryEstablishment.getPricingTogether());
+                }else {
                     veryEstablishment.setPricingTogether("-");
                 }
                 //控价编制时间
-                if (veryEstablishment.getEstablishmentTime() == null){
+                if (veryEstablishment.getEstablishmentTime() != null && !"".equals(veryEstablishment.getEstablishmentTime())){
+                    veryEstablishment.setEstablishmentTime(veryEstablishment.getEstablishmentTime());
+                }else {
                     veryEstablishment.setEstablishmentTime("-");
                 }
                 projectVo3.setVeryEstablishment(veryEstablishment);
@@ -1812,19 +1844,27 @@ public class ProjectController extends BaseController {
             projectVo3.setTrackAuditInfo(new TrackAuditInfo());
         }else{
             //CEA总金额
-            if (trackAuditInfo.getCeaTotalMoney() == null){
+            if (trackAuditInfo.getCeaTotalMoney() != null && !"".equals(trackAuditInfo.getCeaTotalMoney())){
+                trackAuditInfo.setCeaTotalMoney(trackAuditInfo.getCeaTotalMoney());
+            }else {
                 trackAuditInfo.setCeaTotalMoney(new BigDecimal(0));
             }
             //项目经理
-            if (trackAuditInfo.getPm() == null){
+            if (trackAuditInfo.getPm() != null && !"".equals(trackAuditInfo.getPm())){
+                trackAuditInfo.setPm(trackAuditInfo.getPm());
+            }else {
                 trackAuditInfo.setPm("-");
             }
             //设计单位名称
-            if (trackAuditInfo.getDesignOrganizationId() == null){
+            if (trackAuditInfo.getDesignOrganizationId() != null && !"".equals(trackAuditInfo.getDesignOrganizationId())){
+                trackAuditInfo.setDesignOrganizationId(trackAuditInfo.getDesignOrganizationId());
+            }else {
                 trackAuditInfo.setDesignOrganizationId("-");
             }
             // 合同金额
-            if (trackAuditInfo.getContractAmount() == null){
+            if (trackAuditInfo.getContractAmount() != null && !"".equals(trackAuditInfo.getContractAmount())){
+                trackAuditInfo.setContractAmount(trackAuditInfo.getContractAmount());
+            }else {
                 trackAuditInfo.setContractAmount(new BigDecimal(0));
             }
             projectVo3.setTrackAuditInfo(trackAuditInfo);
@@ -1850,16 +1890,34 @@ public class ProjectController extends BaseController {
             projectVo3.setSettlementAuditInformation(new SettlementAuditInformation());
         }else{
             // 审定数
-            if (settlementAuditInformation.getAuthorizedNumber() == null){
+            if (settlementAuditInformation.getAuthorizedNumber() != null && !"".equals(settlementAuditInformation.getAuthorizedNumber())){
+                settlementAuditInformation.setAuthorizedNumber(settlementAuditInformation.getAuthorizedNumber());
+            }else {
                 settlementAuditInformation.setAuthorizedNumber(new BigDecimal(0));
             }
             // 核减数
-            if (settlementAuditInformation.getSubtractTheNumber() == null){
+            if (settlementAuditInformation.getSubtractTheNumber() != null && !"".equals(settlementAuditInformation.getSubtractTheNumber())){
+                settlementAuditInformation.setSubtractTheNumber(settlementAuditInformation.getSubtractTheNumber());
+            }else {
                 settlementAuditInformation.setSubtractTheNumber(new BigDecimal(0));
             }
             // 核增数
-            if (settlementAuditInformation.getNuclearNumber() == null){
+            if (settlementAuditInformation.getNuclearNumber() != null && !"".equals(settlementAuditInformation.getNuclearNumber())){
+                settlementAuditInformation.setNuclearNumber(settlementAuditInformation.getNuclearNumber());
+            }else {
                 settlementAuditInformation.setNuclearNumber(new BigDecimal(0));
+            }
+            // 核减率
+            if(settlementAuditInformation.getSubtractRate() != null && !"".equals(settlementAuditInformation.getSubtractRate())){
+                settlementAuditInformation.setSubtractRate(settlementAuditInformation.getSubtractRate());
+            }else {
+                settlementAuditInformation.setSubtractRate(new BigDecimal("0"));
+            }
+            // 委外金额amountOutsourcing
+            if (settlementAuditInformation.getAmountOutsourcing() != null && !"".equals(settlementAuditInformation.getAmountOutsourcing())){
+                settlementAuditInformation.setAmountOutsourcing(settlementAuditInformation.getAmountOutsourcing());
+            }else {
+                settlementAuditInformation.setAmountOutsourcing(new BigDecimal("0"));
             }
             projectVo3.setSettlementAuditInformation(settlementAuditInformation);
         }

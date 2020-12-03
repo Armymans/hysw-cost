@@ -1,5 +1,6 @@
 package net.zlw.cloud.maintenanceProjectInformation.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
@@ -15,8 +16,10 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
+import net.zlw.cloud.settleAccounts.mapper.OtherInfoMapper;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
+import net.zlw.cloud.settleAccounts.model.OtherInfo;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
@@ -27,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import springfox.documentation.spring.web.json.Json;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -75,6 +79,9 @@ public class MaintenanceProjectInformationService {
 
     @Autowired
     private BaseProjectDao baseProjectDao;
+
+    @Autowired
+    private OtherInfoMapper otherInfoMapper;
 
     @Resource
     private MessageService messageService;
@@ -304,6 +311,29 @@ public class MaintenanceProjectInformationService {
         //创建时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = simpleDateFormat.format(new Date());
+
+        // 其他信息
+        //其他信息表
+        if (!"".equals(maintenanceProjectInformation.getComs()) && maintenanceProjectInformation.getComs() != null){
+            Json coms = maintenanceProjectInformation.getComs();
+            String json = coms.value();
+            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            if (otherInfos.size() > 0){
+                for (OtherInfo thisInfo : otherInfos) {
+                    OtherInfo otherInfo1 = new OtherInfo();
+                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    otherInfo1.setForeignKey(maintenanceProjectInformation.getId());
+                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                    otherInfo1.setNum(thisInfo.getNum());
+                    otherInfo1.setCreateTime(createTime);
+                    otherInfo1.setStatus("0");
+//                    otherInfo1.setFoundId(userInfo.getId());
+//                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfoMapper.insertSelective(otherInfo1);
+                }
+            }
+        }
+
 
         //检维修对象
         MaintenanceProjectInformation information = new MaintenanceProjectInformation();
@@ -1322,6 +1352,28 @@ public class MaintenanceProjectInformationService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = simpleDateFormat.format(new Date());
 
+
+        // 其他信息
+        //其他信息表
+        if (!"".equals(maintenanceProjectInformation.getComs()) && maintenanceProjectInformation.getComs() != null){
+            Json coms = maintenanceProjectInformation.getComs();
+            String json = coms.value();
+            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            if (otherInfos.size() > 0){
+                for (OtherInfo thisInfo : otherInfos) {
+                    OtherInfo otherInfo1 = new OtherInfo();
+                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    otherInfo1.setForeignKey(maintenanceProjectInformation.getId());
+                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                    otherInfo1.setNum(thisInfo.getNum());
+                    otherInfo1.setCreateTime(createTime);
+                    otherInfo1.setStatus("0");
+//                    otherInfo1.setFoundId(userInfo.getId());
+//                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfoMapper.insertSelective(otherInfo1);
+                }
+            }
+        }
         //检维修对象
         MaintenanceProjectInformation information = new MaintenanceProjectInformation();
         information.setId(id);

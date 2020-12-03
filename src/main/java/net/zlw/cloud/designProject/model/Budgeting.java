@@ -95,4 +95,7 @@ public class Budgeting{
     private Double twoThousandCost;//2000
     @Transient
     private Double subtotal;//跟踪审计小计
+
+    @Transient
+    private String costUnitName; // 造价单位名称
 }

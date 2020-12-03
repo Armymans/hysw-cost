@@ -2,6 +2,7 @@ package net.zlw.cloud.maintenanceProjectInformation.model.vo;
 
 import lombok.Data;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import springfox.documentation.spring.web.json.Json;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -129,5 +130,10 @@ public class MaintenanceProjectInformationVo {
     private String type8;
     // 结算审核其他资料 jwxxjjsshxxqtzl
     private String type9;
+
+    // 新增：其他信息
+    private Json coms;
+    // 编辑：其他信息
+    private String json;
 
 }
