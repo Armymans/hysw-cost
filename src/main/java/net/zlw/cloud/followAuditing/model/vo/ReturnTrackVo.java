@@ -29,7 +29,7 @@ public class ReturnTrackVo {
     private String fillTime;
     private String outsource;
     private String auditUnitNameId;
-    private String ceaTotalMoney;
+    private int ceaTotalMoney;
     private String aB;
     @Transient
     private String currentHandler;

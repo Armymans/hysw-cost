@@ -416,6 +416,12 @@ public class MaintenanceProjectInformationService {
             settlementAuditInformation.setFounderId("user312");
         }
 
+        // 计算核减率
+        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
+        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
+        // 核减数 / 送审金额 * 100 = 核减率
+        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
+        settlementAuditInformation.setSubtractRate(subtractRate);
         settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
 
@@ -1010,6 +1016,12 @@ public class MaintenanceProjectInformationService {
         SettlementAuditInformation selectOneByExample = settlementAuditInformationDao.selectOneByExample(example);
 
         settlementAuditInformation.setId(selectOneByExample.getId());
+        // 计算核减率
+        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
+        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
+        // 核减数 / 送审金额 * 100 = 核减率
+        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
+        settlementAuditInformation.setSubtractRate(subtractRate);
 
 
         settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
@@ -1141,7 +1153,7 @@ public class MaintenanceProjectInformationService {
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                 information.setType("1");
             }
-            //通过发消息
+            //未通过发消息
             String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
             //检维修名字
             String maintenanceItemName = maintenanceProjectInformation.getMaintenanceItemName();
@@ -1149,8 +1161,8 @@ public class MaintenanceProjectInformationService {
             messageVo.setId("A22");
             messageVo.setUserId(auditInfo.getAuditorId());
             messageVo.setType("1"); // 通知
-            messageVo.setTitle("您有一个检维修项目已通过！");
-            messageVo.setDetails(name+"您好！【"+userInfo.getUsername()+"】提交的【"+maintenanceItemName+"】项目已通过，请查看详情!");
+            messageVo.setTitle("您有一个检维修项目未通过！");
+            messageVo.setDetails(userInfo.getUsername()+"您好！您提交的【"+maintenanceItemName+"】项目【"+name+"】审核未通过，请及时查看详情!");
             messageService.sendOrClose(messageVo);
         }
 
@@ -1233,8 +1245,9 @@ public class MaintenanceProjectInformationService {
 
         MaintenanceVo maintenanceVo = new MaintenanceVo();
         //todo userInfo.getId();
-        String userInfoId = userInfo.getId();
-        MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectByPrimaryKey(id);
+//        String userInfoId = userInfo.getId();
+        String userInfoId = "user324";
+        MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain(id);
         if (information != null) {
             maintenanceVo.setMaintenanceProjectInformation(information);
         } else {
@@ -1407,8 +1420,12 @@ public class MaintenanceProjectInformationService {
         settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
         settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
 
-        settlementAuditInformation.setFounderId(userInfo.getId());
-        settlementAuditInformation.setFounderCompanyId(userInfo.getCompanyId());
+        // 计算核减率
+        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
+        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
+        // 核减数 / 送审金额 * 100 = 核减率
+        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
+        settlementAuditInformation.setSubtractRate(subtractRate);
         settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
 
