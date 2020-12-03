@@ -12,6 +12,7 @@ public class OneCensus6 {
     private BigDecimal desginAchievements2;
 
     private Integer budgetStatus;
+    private Integer trackStatus;
     private Integer progressPaymentStatus;
     private Integer visaStatus;
     private Integer settleAccountsStatus;

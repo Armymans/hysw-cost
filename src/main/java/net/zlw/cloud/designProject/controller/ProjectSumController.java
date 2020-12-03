@@ -871,7 +871,13 @@ public class ProjectSumController extends BaseController {
                         "{\"value1\":"+designChangeInfoCount+",name1:\"变更项目'\"}," +
                         "]";
         JSONArray objects = JSON.parseArray(josn);
-        return RestUtil.success(objects);
+
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("objects",objects);
+        map.put("designInfoCount",designInfoCount);
+        map.put("designChangeInfoCount",designChangeInfoCount);
+        return RestUtil.success(map);
     }
 
     /**
@@ -950,52 +956,79 @@ public class ProjectSumController extends BaseController {
                 "[{" +
                         "\"companyName\": \"上家结算送审\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus4 oneCensus4 : oneCensus4s) {
-            json +=
-                    "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
-                            "\"truckAmmount\": \""+oneCensus4.getReviewNumber()+"\"" +
-                            "},";
+        if(oneCensus4s.size()>0){
+            for (OneCensus4 oneCensus4 : oneCensus4s) {
+                json +=
+                        "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
+                                "\"truckAmmount\": \""+oneCensus4.getReviewNumber()+"\"" +
+                                "},";
+            }
+            json = json.substring(0,json.length()-1);
+        }else{
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        json = json.substring(0,json.length()-1);
+
 
         json +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"下家结算送审\"," +
                         "\"imageAmmount\": [" ;
-        for (OneCensus4 oneCensus4 : oneCensus4s){
-            json +=
-                    "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
-                            "\"truckAmmount\": \""+oneCensus4.getSumbitMoney()+"\"" +
-                            "},";
+        if(oneCensus4s.size()>0){
+            for (OneCensus4 oneCensus4 : oneCensus4s){
+                json +=
+                        "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
+                                "\"truckAmmount\": \""+oneCensus4.getSumbitMoney()+"\"" +
+                                "},";
+            }
+            json = json.substring(0,json.length()-1);
+        }else{
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        json = json.substring(0,json.length()-1);
+
 
         json +=
                 "]" +
                         "}, {" +
                         "\"companyName\":\"下家结算审核\"," +
                         "\"imageAmmount\": [" ;
-        for (OneCensus4 oneCensus4 : oneCensus4s){
-            json +=
-                    "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
-                            "\"truckAmmount\": \""+oneCensus4.getAuthorizedNumber()+"\"" +
-                            "},";
+        if(oneCensus4s.size()>0){
+            for (OneCensus4 oneCensus4 : oneCensus4s){
+                json +=
+                        "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
+                                "\"truckAmmount\": \""+oneCensus4.getAuthorizedNumber()+"\"" +
+                                "},";
+            }
+            json = json.substring(0,json.length()-1);
+        }else{
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        json = json.substring(0,json.length()-1);
+
 
         json +=
                 "]" +
                         "}, {" +
                          "\"companyName\":\"下家结算核减\"," +
                         "\"imageAmmount\": [" ;
-        for (OneCensus4 oneCensus4 : oneCensus4s){
-            json +=
-                    "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
-                            "\"truckAmmount\": \""+oneCensus4.getSubtractTheNumber()+"\"" +
-                            "},";
+        if(oneCensus4s.size()>0){
+            for (OneCensus4 oneCensus4 : oneCensus4s){
+                json +=
+                        "{\"time\": \""+oneCensus4.getYearTime()+"-"+oneCensus4.getMonthTime()+"\"," +
+                                "\"truckAmmount\": \""+oneCensus4.getSubtractTheNumber()+"\"" +
+                                "},";
+            }
+            json = json.substring(0,json.length()-1);
+        }else{
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        json = json.substring(0,json.length()-1);
         json += "]}]";
         JSONArray objects = JSON.parseArray(json);
         return RestUtil.success(objects);
@@ -1730,7 +1763,7 @@ public class ProjectSumController extends BaseController {
         ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
         map.put("costTaskTotal",costTaskTotal);
         map.put("costTaskReviewed",costTaskReviewed);
-        map.put("costTaskHandle",costTaskHandle);
+//        map.put("costTaskHandle",costTaskHandle);
         map.put("costTaskComple",costTaskComple);
         return RestUtil.success(map);
     }
@@ -1747,16 +1780,49 @@ public class ProjectSumController extends BaseController {
                 "[{" +
                         "\"companyName\": \"造价任务\"," +
                         "\"imageAmmount\": [";
-        for (OneCensus6 oneCensus6 : oneCensus6s) {
-            json +=
-                    "{\"time\": \""+oneCensus6.getYearTime()+"-"+oneCensus6.getMonthTime()+"\"," +
-                            "\"truckAmmount\": \""+oneCensus6.getTotal()+"\"" +
-                            "},";
+        if(oneCensus6s.size()>0){
+            for (OneCensus6 oneCensus6 : oneCensus6s) {
+                json +=
+                        "{\"time\": \""+oneCensus6.getYearTime()+"-"+oneCensus6.getMonthTime()+"\"," +
+                                "\"truckAmmount\": \""+oneCensus6.getTotal()+"\"" +
+                                "},";
+            }
+            json = json.substring(0,json.length()-1);
+        }else{
+            json+="{\"time\": \"0\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
-        json = json.substring(0,json.length()-1);
         json += "]}]";
         JSONArray objects = JSON.parseArray(json);
         return RestUtil.success(objects);
+    }
+    /**
+     * 造价任务统计
+     * @param costVo2
+     * @return
+     */
+    @RequestMapping(value = "/api/projectCount/costTaskCensusCount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> costTaskCensusCount(CostVo2 costVo2){
+        //本月任务数量
+        Integer nowMonthCostTaskCensusCount = projectSumService.NowMonthCostTaskCensusCount(costVo2);
+        //上个月的任务数量
+        Integer lastMonthCostTaskCensusCount = projectSumService.LastMonthCostTaskCensusCount(costVo2);
+        //本年任务数量
+        Integer nowYearCostTaskCensusCount = projectSumService.NowYearCostTaskCensusCount(costVo2);
+        //上年的任务数量
+        Integer lastYearCostTaskCensusCount = projectSumService.LastYearCostTaskCensusCount(costVo2);
+        //同比上月
+        Integer aa = nowMonthCostTaskCensusCount - lastMonthCostTaskCensusCount;
+        //同步上年
+        Integer bb = nowYearCostTaskCensusCount - lastYearCostTaskCensusCount;
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("month",nowMonthCostTaskCensusCount);
+        map.put("monthRast",aa);
+        map.put("year",nowYearCostTaskCensusCount);
+        map.put("yearRast",bb);
+        return RestUtil.success(map);
     }
 
     /**
