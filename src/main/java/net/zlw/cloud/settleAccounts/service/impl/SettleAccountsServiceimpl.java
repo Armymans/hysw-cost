@@ -837,9 +837,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //        AB 1A2B
         String ab = baseProject.getAB();
         if (ab.equals("1")){
-            baseProject.setWaterSupplyType("A");
+            baseProject.setAB("A");
         }else if(ab.equals("2")){
-            baseProject.setWaterSupplyType("B");
+            baseProject.setAB("B");
         }
 
         baseAccountsVo.setBaseProject(baseProject);

@@ -658,7 +658,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "(case bt.outsourcing  " +
             "        when '1' then '是' " +
             "        when '2' then '否' " +
-            "      ) outsourcing, " +
+            "        end" +
+            "      ) outsourcing , " +
             "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
