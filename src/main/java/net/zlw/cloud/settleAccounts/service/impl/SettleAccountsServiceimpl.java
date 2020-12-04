@@ -1436,7 +1436,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     public List<OtherInfo> selectInfoList(String baseId) {
         Example example = new Example(OtherInfo.class);
         example.createCriteria().andEqualTo("foreignKey",baseId);
-        List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(baseId);
+        List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(example);
         return otherInfos;
 //        List<OtherInfo> otherInfos = otherInfoMapper.selectOtherList(baseId);
 //        return otherInfos;

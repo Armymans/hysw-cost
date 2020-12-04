@@ -5,6 +5,7 @@ import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 
 import java.util.List;
 
@@ -39,4 +40,6 @@ public interface BudgetingService {
 
 
     List<FileInfo> selectById(String id);
+
+    List<MkyUser> findPreparePeople(String id);
 }
