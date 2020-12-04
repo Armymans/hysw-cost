@@ -48,4 +48,7 @@ public class BudgetingVo {
 
     private AuditInfo auditInfo;
     private String checkHidden;
+
+    private String costPeople;
+    private String pricingPeople;
 }

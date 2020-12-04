@@ -350,6 +350,16 @@ public class BudgetingServiceImpl implements BudgetingService {
                 budgetingVo.setCheckHidden("1");
             }
         }
+
+        MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingVo.getCostTogether());
+        if (mkyUser!=null){
+            budgetingVo.setCostPeople(mkyUser.getUserName());
+        }
+        MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(budgetingVo.getPricingTogether());
+        if (mkyUser1!=null){
+            budgetingVo.setPricingPeople(mkyUser1.getUserName());
+        }
+
         return budgetingVo;
     }
 
