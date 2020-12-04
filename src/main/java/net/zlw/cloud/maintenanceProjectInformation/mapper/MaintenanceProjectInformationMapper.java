@@ -63,6 +63,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "maintenance_project_information m " +
                     "LEFT JOIN construction_unit_management c ON m.construction_unit_id = c.id " +
                     "LEFT JOIN settlement_audit_information p ON m.id = p.maintenance_project_information  " +
+                    "LEFT JOIN audit_info a ON a.base_project_id = m.id" +
                     "WHERE " +
                     "( m.del_flag = '0' )  " +
                     "AND " +
@@ -73,6 +74,8 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "p.compile_time >= #{startTime} OR #{startTime} = '' ) " +
                     "AND ( " +
                     "p.compile_time <= #{endTime} OR #{endTime} = '' ) " +
+                    "AND (" +
+                    "a.auditor_id = #{currentPeople} or #{currentPeople} = '' ) " +
                     "AND ( " +
                     "m.maintenance_item_name LIKE concat( " +
                     "'%',#{keyWord}, '%' ) OR m.customer_name LIKE concat( '%', #{keyWord}, '%' ) ) " +

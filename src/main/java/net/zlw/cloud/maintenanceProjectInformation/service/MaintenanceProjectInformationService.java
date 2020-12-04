@@ -312,27 +312,6 @@ public class MaintenanceProjectInformationService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = simpleDateFormat.format(new Date());
 
-        // 其他信息
-        //其他信息表
-        if (!"".equals(maintenanceProjectInformation.getComs()) && maintenanceProjectInformation.getComs() != null){
-            Json coms = maintenanceProjectInformation.getComs();
-            String json = coms.value();
-            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
-            if (otherInfos.size() > 0){
-                for (OtherInfo thisInfo : otherInfos) {
-                    OtherInfo otherInfo1 = new OtherInfo();
-                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                    otherInfo1.setForeignKey(maintenanceProjectInformation.getId());
-                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
-                    otherInfo1.setNum(thisInfo.getNum());
-                    otherInfo1.setCreateTime(createTime);
-                    otherInfo1.setStatus("0");
-                    otherInfo1.setFoundId(userInfo.getId());
-                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
-                    otherInfoMapper.insertSelective(otherInfo1);
-                }
-            }
-        }
 
 
         //检维修对象
@@ -558,6 +537,29 @@ public class MaintenanceProjectInformationService {
             messageVo.setDetails(name+"您好！【"+userInfo.getUsername()+"】提交的【"+maintenanceItemName+"】项目已通过，请查看详情!");
             messageService.sendOrClose(messageVo);
         }
+
+        // 其他信息
+        //其他信息表
+        if (!"".equals(maintenanceProjectInformation.getComs()) && maintenanceProjectInformation.getComs() != null){
+            Json coms = maintenanceProjectInformation.getComs();
+            String json = coms.value();
+            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            if (otherInfos.size() > 0){
+                for (OtherInfo thisInfo : otherInfos) {
+                    OtherInfo otherInfo1 = new OtherInfo();
+                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    otherInfo1.setForeignKey(information.getId());
+                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                    otherInfo1.setNum(thisInfo.getNum());
+                    otherInfo1.setCreateTime(createTime);
+                    otherInfo1.setStatus("0");
+                    otherInfo1.setFoundId(userInfo.getId());
+                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfoMapper.insertSelective(otherInfo1);
+                }
+            }
+        }
+
 //        MemberManage memberManage = memberManageDao.selectByIdAndStatus(auditInfo.getId());
         maintenanceProjectInformationMapper.insertSelective(information);
 
