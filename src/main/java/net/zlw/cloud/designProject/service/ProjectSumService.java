@@ -1227,7 +1227,15 @@ public class ProjectSumService {
      * @return
      */
     public OneCensus5 desiginMoneyCensus(CostVo2 costVo2){
-        return projectMapper.desiginMoneyCensus(costVo2);
+        OneCensus5 oneCensus5 = new OneCensus5();
+        //到账数
+        Integer integer = projectMapper.desiginMoneyCensus(costVo2);
+        oneCensus5.setWujiangAmount(integer);
+        oneCensus5.setAnhuiAnount(0);
+        //未到账数
+        Integer integer1 = projectMapper.desiginMoneyCensus2(costVo2);
+        oneCensus5.setNotAmount(integer1);
+        return oneCensus5;
     }
 
     /**
