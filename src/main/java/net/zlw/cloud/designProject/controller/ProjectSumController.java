@@ -1358,7 +1358,7 @@ public class ProjectSumController extends BaseController {
                         "{\"value1\":"+outsourceno+",\"name1\":\"内部设计\"}," +
                         "{\"value1\":"+outsourceyes+",name1:\"委外设计'\"}," +
                         "]";
-        JSONArray objects1 = JSON.parseArray(josn);
+        JSONArray objects1 = JSON.parseArray(josn1);
         ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
         map.put("objects",objects);
         map.put("objects1",objects1);
