@@ -686,82 +686,110 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             }
         }
         //消息通知
-        //项目名称
-        String projectName = baseProject.getProjectName();
-        //根据上家结算送审外键找到关联预算的信息
-        Example example1 = new Example(Budgeting.class);
-        example1.createCriteria().andEqualTo("baseProjectId", baseProject.getId());
-        Budgeting budgeting = budgetingDao.selectOneByExample(example1);
-        //审核id
-        String auditId = baseAccountsVo.getAuditId();
-        //预算造价金额
-        BigDecimal amountCost = budgeting.getAmountCost();
-        //上家送审数
-        BigDecimal reviewNumber = baseAccountsVo.getLastSettlementReview().getReviewNumber();
-        //下家审定数
-        BigDecimal authorizedNumber = baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber();
+        if (baseAccountsVo.getAuditId() != null) {
+            //根据上家结算送审外键找到关联预算的信息
+            Example example1 = new Example(Budgeting.class);
+            example1.createCriteria().andEqualTo("baseProjectId", baseProject.getId());
+            Budgeting budgeting = budgetingDao.selectOneByExample(example1);
+            //项目名称
+            String projectName = baseProject.getProjectName();
+            //审核id
+            String auditId = baseAccountsVo.getAuditId();
+            //预算造价金额
+            BigDecimal amountCost = budgeting.getAmountCost();
+            //上家送审数
+            BigDecimal reviewNumber = baseAccountsVo.getLastSettlementReview().getReviewNumber();
+            //下家审定数
+            BigDecimal authorizedNumber = baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber();
+            //提交人
+            String username = loginUser.getUsername();
+            //如果送审数或者审定数超过造价金额的话
+            if (reviewNumber.compareTo(amountCost) == 1 || authorizedNumber.compareTo(amountCost) == 1) {
 
+                //提交人
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId("A01");
+                messageVo.setUserId(loginUser.getId());
+                messageVo.setType("3"); //风险
+                messageVo.setTitle("您有一个结算项目的结算金额超过造价金额");
+                // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
+                messageVo.setSnsContent(username + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageVo.setContent(username + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageService.sendOrClose(messageVo);
+                // 审核人
+                MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditId);
+                String name2 = memberManage1.getMemberName();
+                MessageVo messageVo1 = new MessageVo();
+                messageVo1.setId("A01");
+                messageVo1.setType("3"); // 风险
+                messageVo1.setUserId(whsjm);
+                messageVo1.setPhone(memberManage1.getPhone());
+                messageVo1.setReceiver(memberManage1.getEmail());
+                messageVo1.setTitle("您有一个待审核的结算项目结算金额超过造价金额！");
+                // 「接收人姓名」您好！【提交人】提交给您的【所选项目名称】的结算项目，结算金额超过造价金额，请及时查看详情！
+                messageVo1.setSnsContent(name2 + "您好！【"+username+"】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageVo1.setContent(name2 + "您好！【"+username+"】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageVo1.setDetails(name2 + "您好！【"+username+"】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo1.setSnsContent(name2 + "您好！【sjf】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo1.setContent(name2 + "您好！【sjf】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo1.setDetails(name2 + "您好！【sjf】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageService.sendOrClose(messageVo1);
 
-        //如果送审数或者审定数超过造价金额的话
-//        if (reviewNumber.compareTo(amountCost) == 1 || authorizedNumber.compareTo(amountCost) == 1) {
-//            //whsjh 朱让宁
-//            MemberManage memberManage = memberManageDao.selectByPrimaryKey(whsjh);
-//            String name1 = memberManage.getMemberName();
-//            MessageVo messageVo = new MessageVo();
-//            messageVo.setId("A01");
-//            messageVo.setUserId(whsjh);
-//
-//            messageVo.setTitle("您有一个结算项目的结算金额超过造价金额！");
-//            messageVo.setSnsContent(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-//            messageVo.setContent(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-//            messageVo.setDetails(name1 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
-//            messageService.sendOrClose(messageVo);
-//            // whsjm 刘永涛
-//            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(whsjm);
-//            String name2 = memberManage1.getMemberName();
-//            MessageVo messageVo1 = new MessageVo();
-//            messageVo1.setId("A01");
-//            messageVo1.setUserId(whsjm);
-//            messageVo1.setTitle("您有一个结算项目的结算金额超过造价金额！");
-//            messageVo1.setSnsContent(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-//            messageVo1.setContent(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-//            messageVo1.setDetails(name2 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
-//            messageService.sendOrClose(messageVo1);
-//
-//            // whzjh 罗均
-//            MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(whzjh);
-//            String name3 = memberManage2.getMemberName();
-//            MessageVo messageVo2 = new MessageVo();
-//            messageVo2.setId("A01");
-//            messageVo2.setUserId(whzjh);
-//            messageVo2.setTitle("您有一个结算项目的结算金额超过造价金额！");
-//            messageVo2.setSnsContent(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-//            messageVo2.setContent(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-//            messageVo2.setDetails(name3 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
-//            messageService.sendOrClose(messageVo2);
-//
-//            // whzjm 殷莉萍
-//            MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(whzjm);
-//            String name4 = memberManage3.getMemberName();
-//            MessageVo messageVo3 = new MessageVo();
-//            messageVo3.setId("A01");
-//            messageVo3.setUserId(whzjm);
-//            messageVo3.setTitle("您有一个结算项目的结算金额超过造价金额！");
-//            messageVo3.setSnsContent(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-//            messageVo3.setContent(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-//            messageVo3.setDetails(name4 + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时查看详情！");
-//            messageService.sendOrClose(messageVo2);
-//
-//        } else {
-//            // 站内信
-//            MessageVo messageVo4 = new MessageVo();
-//            messageVo4.setId("A15");
-//            messageVo4.setUserId(auditId);
-//            messageVo4.setTitle("您有一个结算项目待审批！");
-//            messageVo4.setDetails(loginUser.getUsername() + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-//            //调用消息Service
-////            messageService.sendOrClose(messageVo4);
-//        }
+                // whzjh 罗均
+                MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(whzjh);
+                String name3 = memberManage2.getMemberName();
+                MessageVo messageVo2 = new MessageVo();
+                messageVo2.setId("A01");
+                messageVo2.setType("3"); // 风险
+                messageVo2.setUserId(whzjh);
+                messageVo2.setPhone(memberManage2.getPhone());
+                messageVo2.setReceiver(memberManage2.getEmail());
+                messageVo2.setTitle("您有一个结算项目的结算金额超过造价金额！");
+                // 「接收人姓名」您好！【提交人】提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时查看详情！
+                messageVo2.setSnsContent(name3 + "您好！【"+username+"】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageVo2.setContent(name3 + "您好！【"+username+"】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageVo2.setDetails(name3 + "您好！【"+username+"】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo2.setSnsContent(name3 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo2.setContent(name3 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo2.setDetails(name3 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageService.sendOrClose(messageVo2);
+
+                // whzjm 殷莉萍
+                MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(whzjm);
+                String name4 = memberManage3.getMemberName();
+                MessageVo messageVo3 = new MessageVo();
+                messageVo3.setId("A01");
+                messageVo3.setType("3"); // 风险
+                messageVo3.setUserId(whzjm);
+                messageVo3.setPhone(memberManage3.getPhone());
+                messageVo3.setReceiver(memberManage3.getEmail());
+                messageVo3.setTitle("您有一个结算项目的结算金额超过造价金额！");
+                messageVo3.setSnsContent(name4 + "您好！【"+username+"】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageVo3.setContent(name4 + "您好！【"+username+"】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageVo3.setDetails(name4 + "您好！【"+username+"】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo3.setSnsContent(name4 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo3.setContent(name4 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo3.setDetails(name4 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+                messageService.sendOrClose(messageVo3);
+
+            }else {
+                // 站内信
+                MessageVo messageVo4 = new MessageVo();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditId);
+                String name = memberManage.getMemberName();
+                messageVo4.setId("A15");
+                messageVo4.setUserId(auditId);
+                messageVo4.setType("1"); //通知
+                messageVo4.setTitle("您有一个结算项目待审批！");
+                // 「接收人姓名」您好！【提交人】已将【所选项目名称】的结算项目提交给您，请审批！
+                messageVo4.setDetails(name + "您好！【"+username+"】已将【" + projectName + "】的结算项目提交给您，请审批！");
+//                messageVo4.setDetails(name + "您好！【sjf】已将【" + projectName + "】的结算项目提交给您，请审批！");
+                //调用消息Service
+                messageService.sendOrClose(messageVo4);
+            }
+
+        }
     }
 
     @Override
