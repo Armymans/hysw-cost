@@ -954,17 +954,17 @@ public class ProjectController extends BaseController {
         if(!"吴江".equals(baseProject.getDistrict())){
             //设计费（安徽）
             AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
-//            if(anhuiMoneyinfo!=null){
-//                //如果为实收
-//               if("0".equals(anhuiMoneyinfo.getPayTerm())){
-//                   projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
+            if(anhuiMoneyinfo!=null){
+                //如果为实收
+               if("0".equals(anhuiMoneyinfo.getPayTerm())){
+                   projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
+                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
+                   projectVo.getMoneyInfo().setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts()+"");
+                   projectVo.getMoneyInfo().setCostTime(anhuiMoneyinfo.getCollectionTime()+"");
+               }else{
+                   projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
 //                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
-//                   projectVo.getMoneyInfo().setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts()+"");
-//                   projectVo.getMoneyInfo().setCostTime(anhuiMoneyinfo.getCollectionTime()+"");
-//               }else{
-//                   projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
-//                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
-//                   //代收金额添加
+                   //代收金额添加
 //                   String[] collectionMoney = anhuiMoneyinfo.getCollectionMoney().split(",");
 //                   BigDecimal total = new BigDecimal(0);
 //                   if("5".equals(collectionMoney.length)){
@@ -1060,13 +1060,13 @@ public class ProjectController extends BaseController {
 //                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
 //                       projectVo.getMoneyInfo().setTotal(new BigDecimal(collectionMoney[0]));
 //                   }
-//               }
-//            }else{
-//                projectVo.setAnhuiMoneyinfo(new AnhuiMoneyinfo());
-//                projectVo.setMoneyInfo(new MoneyInfo());
-//            }
-//            projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
-//            projectVo.setMoneyInfo(new MoneyInfo());
+               }
+            }else{
+                projectVo.setAnhuiMoneyinfo(new AnhuiMoneyinfo());
+                projectVo.setMoneyInfo(new MoneyInfo());
+            }
+            projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
+            projectVo.setMoneyInfo(new MoneyInfo());
         }else{
             //设计费（吴江）
             WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
@@ -1087,7 +1087,7 @@ public class ProjectController extends BaseController {
 
 
                     //代收金额
-//                    String[] collectionMoney = wujiangMoneyInfo.getCollectionMoney().split(",");
+                    String[] collectionMoney = wujiangMoneyInfo.getCollectionMoney().split(",");
 //                    if("5".equals(collectionMoney.length)){
 //                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
 //                        projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
@@ -1111,7 +1111,7 @@ public class ProjectController extends BaseController {
 //                    }
 
 
-//                    //代收时间添加
+                    //代收时间添加
 //                    if(wujiangMoneyInfo.getCollectionMoneyTime()!=null){
 //                        String[] collectionMoneyTime = wujiangMoneyInfo.getCollectionMoneyTime().split(",");
 //                        if("5".equals(collectionMoneyTime.length)){
