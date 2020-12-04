@@ -1281,8 +1281,8 @@ public class ProjectSumController extends BaseController {
         Integer notamount = oneCensus5.getNotAmount();
         String josn =
                 "[" +
-                        "{\"value1\":"+amount+",\"name1\":\"已到账数目\"}," +
-                        "{\"value1\":"+notamount+",name1:\"未到账数目'\"}," +
+                        "{\"value1\":"+notamount+",\"name1\":\"已到账数目\"}," +
+                        "{\"value1\":"+amount+",name1:\"未到账数目'\"}," +
                         "]";
         JSONArray objects = JSON.parseArray(josn);
         return RestUtil.success(objects);
@@ -1299,8 +1299,8 @@ public class ProjectSumController extends BaseController {
         Integer amount = oneCensus5.getAnhuiAnount()+oneCensus5.getWujiangAmount();
         Integer notamount = oneCensus5.getNotAmount();
         ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
-        map.put("amount",amount);
-        map.put("notamount",notamount);
+        map.put("amount",notamount);
+        map.put("notamount",amount);
         return RestUtil.success(map);
     }
     /**
@@ -1345,8 +1345,8 @@ public class ProjectSumController extends BaseController {
         Integer notamount = oneCensus5.getNotAmount() - amount;
         String josn =
                 "[" +
-                        "{\"value1\":"+amount+",\"name1\":\"已到账数目\"}," +
-                        "{\"value1\":"+notamount+",name1:\"未到账数目'\"}," +
+                        "{\"value1\":"+notamount+",\"name1\":\"已到账数目\"}," +
+                        "{\"value1\":"+amount+",name1:\"未到账数目'\"}," +
                         "]";
         JSONArray objects = JSON.parseArray(josn);
 
