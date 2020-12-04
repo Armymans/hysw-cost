@@ -108,6 +108,7 @@ public class MaintenanceProjectInformationService {
         //获得当前登入人
         //todo userInfo.getId();
         String userInfoId = userInfo.getId();;
+//        String userInfoId = "user319";
         pageRequest.setUid(userInfoId);
 
         //设置分页助手
