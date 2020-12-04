@@ -29,6 +29,8 @@ public class PageRequest {
     private String endTime;
 
     private String uid;
+    //当前处理人
+    private String currentPeople;
 
     public PageRequest() {
     }

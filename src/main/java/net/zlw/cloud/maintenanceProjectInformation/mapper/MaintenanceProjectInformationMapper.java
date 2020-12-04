@@ -84,7 +84,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
 
     @Select(
             "SELECT " +
-                    "distinct m.id id, " +
+                    "distinct m.id id , " +
                     "m.maintenance_item_id maintenanceItemId, " +
                     "m.maintenance_item_name maintenanceItemName, " +
                     "( " +
@@ -199,6 +199,8 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "m.maintenance_item_type = #{maintenanceItemType} or #{maintenanceItemType} = '') " +
             "AND ( " +
             "p.compile_time >= #{startTime} OR #{startTime} = '' ) " +
+            "AND ( " +
+            "a.auditor_id = #{currentPeople} OR #{currentPeople} = '' ) " +
             "AND ( " +
             "p.compile_time <= #{endTime} OR #{endTime} = '' ) " +
             "AND ( " +
