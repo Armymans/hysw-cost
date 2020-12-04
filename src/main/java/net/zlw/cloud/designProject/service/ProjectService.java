@@ -1362,15 +1362,7 @@ public class ProjectService {
         //去空格
         example.createCriteria().andEqualTo("memberName", designer.trim());
         List<MemberManage> memberManages = memberManageDao.selectByExample(example);
-        if (memberManages.size() > 0) {
-            //如果出现重名 则只取第一个人
-            MemberManage memberManagesFirst = memberManages.get(0);
-            if (memberManagesFirst != null) {
-                projectVo.getDesignInfo().setDesigner(memberManagesFirst.getId());
-            }
-        } else {
-            throw new RuntimeException("设计人不存在,请重新填写");
-        }
+
 
         //baseProject, designInfo, packageCame, projectExploration
         String projectuuid = UUID.randomUUID().toString().replaceAll("-", "");
@@ -1623,6 +1615,7 @@ public class ProjectService {
     public void projectEdit(ProjectVo projectVo, UserInfo loginUser) {
         List<BaseProject> list = projectMapper.duplicateCheckingByUpdate(projectVo.getBaseProject());
         if (list != null && list.size() != 0) {
+
             throw new RuntimeException("项目编号或项目名称重复");
         }
         //查询当前设计人 是否存在
@@ -1631,13 +1624,7 @@ public class ProjectService {
         //去空格
         designerExample.createCriteria().andEqualTo("memberName", designer.trim());
         List<MemberManage> memberManages = memberManageDao.selectByExample(designerExample);
-        if (memberManages.size() > 0) {
-            //如果出现重名 则只取第一个人
-            MemberManage designerFirst = memberManages.get(0);
-            if (designerFirst != null) {
-                projectVo.getDesignInfo().setDesigner(designerFirst.getId());
-            }
-        }
+
 
         //方便测试
         //todo loginUser.getId(); loginUser.getCompanyId();
