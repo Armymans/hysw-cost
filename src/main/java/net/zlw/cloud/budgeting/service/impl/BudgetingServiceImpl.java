@@ -819,6 +819,10 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
             }
             for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
+                if (mkyUser2!=null){
+                    budgetingListVo.setBudgetingPeople(mkyUser2.getUserName());
+                }
                 MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
                 if (mkyUser!=null){
                     budgetingListVo.setCostTogether(mkyUser.getUserName());
@@ -845,6 +849,10 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
             }
             for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
+                if (mkyUser2!=null){
+                    budgetingListVo.setBudgetingPeople(mkyUser2.getUserName());
+                }
                 MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
                 if (mkyUser!=null){
                     budgetingListVo.setCostTogether(mkyUser.getUserName());
@@ -871,6 +879,10 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
             }
             for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
+                if (mkyUser2!=null){
+                    budgetingListVo.setBudgetingPeople(mkyUser2.getUserName());
+                }
                 MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
                 if (mkyUser!=null){
                     budgetingListVo.setCostTogether(mkyUser.getUserName());
@@ -897,6 +909,10 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
             }
             for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
+                if (mkyUser2!=null){
+                    budgetingListVo.setBudgetingPeople(mkyUser2.getUserName());
+                }
                 MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
                 if (mkyUser!=null){
                     budgetingListVo.setCostTogether(mkyUser.getUserName());
@@ -923,6 +939,10 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
             }
             for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
+                if (mkyUser2!=null){
+                    budgetingListVo.setBudgetingPeople(mkyUser2.getUserName());
+                }
                 MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
                 if (mkyUser!=null){
                     budgetingListVo.setCostTogether(mkyUser.getUserName());
