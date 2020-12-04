@@ -1096,24 +1096,50 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     List<OneCensus> censusList2(CostVo2 costVo2);
 
     @Select(
-            "select  " +
-                    "count(s1.id) notAmount,  " +
-                    "count(s3.official_receipts) wujiangAmount,  " +
-                    "count(s4.official_receipts) anhuiAnount  " +
-                    "from  " +
-                    "base_project s1 LEFT JOIN design_info s2 on s1.id = s2.base_project_id  " +
-                    "LEFT JOIN wujiang_money_info s3 ON s1.id = s3.base_project_id  " +
-                    "LEFT JOIN anhui_money_info s4 ON s1.id = s4.base_project_id  " +
-                    "where  " +
-                    "(s1.district = #{district} or #{district} = '')  " +
-                    "and  " +
-                    "s1.create_time >= #{startTime}  " +
-                    "and  " +
-                    "(s1.create_time <= #{endTime} or #{endTime} = '')" +
-                    "and  " +
-                    "s1.del_flag = '0'"
+            "SELECT\n" +
+                    "IFNULL(COUNT(*),0)\n" +
+                    "FROM\n" +
+                    "design_info s1,\n" +
+                    "base_project s2\n" +
+                    "WHERE\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "AND\n" +
+                    "s1.`status` = '0'\n" +
+                    "AND\n" +
+                    "s2.del_flag = '0'\n" +
+                    "AND\n" +
+                    "s1.isaccount is NULL\n" +
+                    "AND\n" +
+                    "s2.create_time >= #{startTime}\n" +
+                    "AND\n" +
+                    "(s2.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "AND\n" +
+                    "(s2.district = #{district} or #{district} = '')"
     )
-    OneCensus5 desiginMoneyCensus(CostVo2 costVo2);
+    Integer desiginMoneyCensus(CostVo2 costVo2);
+
+    @Select(
+            "SELECT\n" +
+                    "IFNULL(COUNT(*),0)\n" +
+                    "FROM\n" +
+                    "design_info s1,\n" +
+                    "base_project s2\n" +
+                    "WHERE\n" +
+                    "s1.base_project_id = s2.id\n" +
+                    "AND\n" +
+                    "s1.`status` = '0'\n" +
+                    "AND\n" +
+                    "s2.del_flag = '0'\n" +
+                    "AND\n" +
+                    "s1.isaccount = '1'\n" +
+                    "AND\n" +
+                    "s2.create_time >= #{startTime}\n" +
+                    "AND\n" +
+                    "(s2.create_time <= #{endTime} or #{endTime} = '')\n" +
+                    "AND\n" +
+                    "(s2.district = #{district} or #{district} = '')"
+    )
+    Integer desiginMoneyCensus2(CostVo2 costVo2);
 
     @Select(
             "SELECT  " +

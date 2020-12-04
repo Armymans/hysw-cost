@@ -649,6 +649,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         //根据创建时间排序
         example1.orderBy("createTime").desc();
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+        for (int i = trackMonthlies.size()-1; i >=0 ; i--) {
+            trackMonthlies.get(i).setAuditCount("第"+trackMonthlies.get(i).getAuditCount()+"次月报");
+        }
         return trackMonthlies;
     }
 

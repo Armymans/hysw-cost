@@ -1278,7 +1278,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginMoneyCensus(CostVo2 costVo2){
         OneCensus5 oneCensus5 = projectSumService.desiginMoneyCensus(costVo2);
         Integer amount = oneCensus5.getAnhuiAnount()+oneCensus5.getWujiangAmount();
-        Integer notamount = oneCensus5.getNotAmount() - amount;
+        Integer notamount = oneCensus5.getNotAmount();
         String josn =
                 "[" +
                         "{\"value1\":"+amount+",\"name1\":\"已到账数目\"}," +
@@ -1297,7 +1297,7 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> desiginMoneyCount(CostVo2 costVo2){
         OneCensus5 oneCensus5 = projectSumService.desiginMoneyCensus(costVo2);
         Integer amount = oneCensus5.getAnhuiAnount()+oneCensus5.getWujiangAmount();
-        Integer notamount = oneCensus5.getNotAmount() - amount;
+        Integer notamount = oneCensus5.getNotAmount();
         ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
         map.put("amount",amount);
         map.put("notamount",notamount);
