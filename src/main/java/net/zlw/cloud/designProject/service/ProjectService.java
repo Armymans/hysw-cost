@@ -1619,7 +1619,6 @@ public class ProjectService {
         if (list != null && list.size() != 0) {
             throw new RuntimeException("项目编号或项目名称重复");
         }
-
         //查询当前设计人 是否存在
         String designer = projectVo.getDesignInfo().getDesigner();
         Example designerExample = new Example(MemberManage.class);
@@ -1800,6 +1799,7 @@ public class ProjectService {
         example.createCriteria().andEqualTo("baseProjectId", id);
         AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
         if (anhuiMoneyinfo != null) {
+            anhuiMoneyinfo.setSelectFlag("1");
             return anhuiMoneyinfo;
         } else {
             return new AnhuiMoneyinfo();
@@ -1817,6 +1817,7 @@ public class ProjectService {
         example.createCriteria().andEqualTo("baseProjectId", id);
         WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(example);
         if (wujiangMoneyInfo != null) {
+            wujiangMoneyInfo.setSelectFlag("1");
             return wujiangMoneyInfo;
         } else {
             return new WujiangMoneyInfo();

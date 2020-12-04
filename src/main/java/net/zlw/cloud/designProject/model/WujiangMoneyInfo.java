@@ -72,4 +72,7 @@ public class WujiangMoneyInfo{
 
     @Transient
     private ArrayList<PayItem> strings = new ArrayList<>();
+
+    @Transient
+    private String selectFlag; //列表是否展示
 }

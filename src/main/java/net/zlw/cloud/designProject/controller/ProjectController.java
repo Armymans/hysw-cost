@@ -951,7 +951,7 @@ public class ProjectController extends BaseController {
         BaseProject baseProject = projectService.BaseProjectByid(designInfo.getBaseProjectId());
         projectVo.setBaseProject(baseProject);
         //各种费用
-        if(!"4".equals(baseProject.getDistrict())){
+        if(!"吴江".equals(baseProject.getDistrict())){
             //设计费（安徽）
             AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
             if(anhuiMoneyinfo!=null){
@@ -1083,7 +1083,7 @@ public class ProjectController extends BaseController {
                 }else{
 
                     projectVo.setWujiangMoneyInfo(wujiangMoneyInfo);
-                    projectVo.getMoneyInfo().setRevenue(wujiangMoneyInfo.getRevenue()+"");
+//                    projectVo.getMoneyInfo().setRevenue(wujiangMoneyInfo.getRevenue()+"");
 
 
                     //代收金额
@@ -1112,27 +1112,29 @@ public class ProjectController extends BaseController {
 
 
                     //代收时间添加
-                    String[] collectionMoneyTime = wujiangMoneyInfo.getCollectionMoneyTime().split(",");
-                    if("5".equals(collectionMoneyTime.length)){
-                        projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
-                        projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
-                        projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
-                        projectVo.getMoneyInfo().setCollection04Time(collectionMoneyTime[3]);
-                        projectVo.getMoneyInfo().setCollection05Time(collectionMoneyTime[4]);
-                    }else if ("4".equals(collectionMoneyTime.length)){
-                        projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
-                        projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
-                        projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
-                        projectVo.getMoneyInfo().setCollection04Time(collectionMoneyTime[3]);
-                    }else if ("3".equals(collectionMoneyTime.length)){
-                        projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
-                        projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
-                        projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
-                    }else if ("2".equals(collectionMoneyTime.length)){
-                        projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
-                        projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
-                    }else if ("1".equals(collectionMoneyTime.length)){
-                        projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+                    if(wujiangMoneyInfo.getCollectionMoneyTime()!=null){
+                        String[] collectionMoneyTime = wujiangMoneyInfo.getCollectionMoneyTime().split(",");
+                        if("5".equals(collectionMoneyTime.length)){
+                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
+                            projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
+                            projectVo.getMoneyInfo().setCollection04Time(collectionMoneyTime[3]);
+                            projectVo.getMoneyInfo().setCollection05Time(collectionMoneyTime[4]);
+                        }else if ("4".equals(collectionMoneyTime.length)){
+                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
+                            projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
+                            projectVo.getMoneyInfo().setCollection04Time(collectionMoneyTime[3]);
+                        }else if ("3".equals(collectionMoneyTime.length)){
+                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
+                            projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
+                        }else if ("2".equals(collectionMoneyTime.length)){
+                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
+                        }else if ("1".equals(collectionMoneyTime.length)){
+                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+                        }
                     }
                 }
             }else{
