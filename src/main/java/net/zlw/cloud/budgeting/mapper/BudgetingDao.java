@@ -344,7 +344,7 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "(b.project_nature = #{p.projectNature} or #{p.projectNature} = '') and  " +
             "(b.should_be = #{p.shouldBe} or #{p.shouldBe} = '') and  " +
             "(bt.whether_account = #{p.whetherAccount} or #{p.whetherAccount} = '') and  " +
-            "(a.auditor_id = #{currentPeople} or #{currentPeople} = '' ) and " +
+            "(a.auditor_id = #{p.currentPeople} or #{p.currentPeople} = '' ) and " +
             "(bt.budgeting_time > #{p.startTime} or #{p.startTime} = '') and  " +
             "(bt.budgeting_time < #{p.endTime} or #{p.endTime} = '') and " +
             "(b.budget_status = #{p.budgetingStatus} or #{p.budgetingStatus} = '') and  " +
