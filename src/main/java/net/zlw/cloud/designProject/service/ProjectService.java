@@ -29,6 +29,7 @@ import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import net.zlw.cloud.warningDetails.model.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -1434,6 +1435,11 @@ public class ProjectService {
         projectVo.getDesignInfo().setStatus("0");
         projectVo.getDesignInfo().setIsdeschange("0");
         projectVo.getDesignInfo().setCreateTime(createTime);
+
+        if ("".equals(projectVo.getDesignInfo().getDesigner())){
+            projectVo.getDesignInfo().setDesigner(loginUser.getId());
+        }
+
         designInfoMapper.insert(projectVo.getDesignInfo());
 
 
@@ -3118,5 +3124,9 @@ public class ProjectService {
 
     public List<MkyUser> findCurrentCost(String id) {
       return   auditInfoDao.findCurrentCost(id);
+    }
+
+    public List<MkyUser> findDesignAll(String id) {
+      return   auditInfoDao.findDesignAll(id);
     }
 }
