@@ -954,119 +954,119 @@ public class ProjectController extends BaseController {
         if(!"吴江".equals(baseProject.getDistrict())){
             //设计费（安徽）
             AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
-            if(anhuiMoneyinfo!=null){
-                //如果为实收
-               if("0".equals(anhuiMoneyinfo.getPayTerm())){
-                   projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
-                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                   projectVo.getMoneyInfo().setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts()+"");
-                   projectVo.getMoneyInfo().setCostTime(anhuiMoneyinfo.getCollectionTime()+"");
-               }else{
-                   projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
-                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                   //代收金额添加
-                   String[] collectionMoney = anhuiMoneyinfo.getCollectionMoney().split(",");
-                   BigDecimal total = new BigDecimal(0);
-                   if("5".equals(collectionMoney.length)){
-                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
-                       projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
-                       projectVo.getMoneyInfo().setCollection05(new BigDecimal(collectionMoney[4]));
-
-                       total = new BigDecimal(collectionMoney[0]).add
-                               (new BigDecimal(collectionMoney[1])).add
-                               (new BigDecimal(collectionMoney[2])).add
-                               (new BigDecimal(collectionMoney[3])).add
-                               (new BigDecimal(collectionMoney[4]));
-
-                       projectVo.getMoneyInfo().setTotal(total);
-                   }else if("4".equals(collectionMoney.length)){
-                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
-                       projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
-
-                       total = new BigDecimal(collectionMoney[0]).add
-                               (new BigDecimal(collectionMoney[1])).add
-                               (new BigDecimal(collectionMoney[2])).add
-                               (new BigDecimal(collectionMoney[3]));
-                       projectVo.getMoneyInfo().setTotal(total);
-                   }else if("3".equals(collectionMoney.length)){
-                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
-
-                       total = new BigDecimal(collectionMoney[0]).add
-                               (new BigDecimal(collectionMoney[1])).add
-                               (new BigDecimal(collectionMoney[2]));
-                       projectVo.getMoneyInfo().setTotal(total);
-                   }else if("2".equals(collectionMoney.length)){
-                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-
-                       total = new BigDecimal(collectionMoney[0]).add
-                               (new BigDecimal(collectionMoney[1]));
-                       projectVo.getMoneyInfo().setTotal(total);
-                   }else if("1".equals(collectionMoney.length)){
-                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                       projectVo.getMoneyInfo().setTotal(new BigDecimal(collectionMoney[0]));
-                   }
-
-                   //代收时间添加
-                   String[] collectionMoneyTime = anhuiMoneyinfo.getCollectionMoneyTime().split(",");
-                   if("5".equals(collectionMoney.length)){
-                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
-                       projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
-                       projectVo.getMoneyInfo().setCollection05(new BigDecimal(collectionMoney[4]));
-
-                       total = new BigDecimal(collectionMoney[0]).add
-                               (new BigDecimal(collectionMoney[1])).add
-                               (new BigDecimal(collectionMoney[2])).add
-                               (new BigDecimal(collectionMoney[3])).add
-                               (new BigDecimal(collectionMoney[4]));
-
-                       projectVo.getMoneyInfo().setTotal(total);
-                   }else if("4".equals(collectionMoney.length)){
-                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
-                       projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
-
-                       total = new BigDecimal(collectionMoney[0]).add
-                               (new BigDecimal(collectionMoney[1])).add
-                               (new BigDecimal(collectionMoney[2])).add
-                               (new BigDecimal(collectionMoney[3]));
-                       projectVo.getMoneyInfo().setTotal(total);
-                   }else if("3".equals(collectionMoney.length)){
-                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
-
-                       total = new BigDecimal(collectionMoney[0]).add
-                               (new BigDecimal(collectionMoney[1])).add
-                               (new BigDecimal(collectionMoney[2]));
-                       projectVo.getMoneyInfo().setTotal(total);
-                   }else if("2".equals(collectionMoney.length)){
-                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-
-                       total = new BigDecimal(collectionMoney[0]).add
-                               (new BigDecimal(collectionMoney[1]));
-                       projectVo.getMoneyInfo().setTotal(total);
-                   }else if("1".equals(collectionMoney.length)){
-                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                       projectVo.getMoneyInfo().setTotal(new BigDecimal(collectionMoney[0]));
-                   }
-               }
-            }else{
-                projectVo.setAnhuiMoneyinfo(new AnhuiMoneyinfo());
-                projectVo.setMoneyInfo(new MoneyInfo());
-            }
-            projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
-            projectVo.setMoneyInfo(new MoneyInfo());
+//            if(anhuiMoneyinfo!=null){
+//                //如果为实收
+//               if("0".equals(anhuiMoneyinfo.getPayTerm())){
+//                   projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
+//                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
+//                   projectVo.getMoneyInfo().setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts()+"");
+//                   projectVo.getMoneyInfo().setCostTime(anhuiMoneyinfo.getCollectionTime()+"");
+//               }else{
+//                   projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
+//                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
+//                   //代收金额添加
+//                   String[] collectionMoney = anhuiMoneyinfo.getCollectionMoney().split(",");
+//                   BigDecimal total = new BigDecimal(0);
+//                   if("5".equals(collectionMoney.length)){
+//                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
+//                       projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
+//                       projectVo.getMoneyInfo().setCollection05(new BigDecimal(collectionMoney[4]));
+//
+//                       total = new BigDecimal(collectionMoney[0]).add
+//                               (new BigDecimal(collectionMoney[1])).add
+//                               (new BigDecimal(collectionMoney[2])).add
+//                               (new BigDecimal(collectionMoney[3])).add
+//                               (new BigDecimal(collectionMoney[4]));
+//
+//                       projectVo.getMoneyInfo().setTotal(total);
+//                   }else if("4".equals(collectionMoney.length)){
+//                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
+//                       projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
+//
+//                       total = new BigDecimal(collectionMoney[0]).add
+//                               (new BigDecimal(collectionMoney[1])).add
+//                               (new BigDecimal(collectionMoney[2])).add
+//                               (new BigDecimal(collectionMoney[3]));
+//                       projectVo.getMoneyInfo().setTotal(total);
+//                   }else if("3".equals(collectionMoney.length)){
+//                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
+//
+//                       total = new BigDecimal(collectionMoney[0]).add
+//                               (new BigDecimal(collectionMoney[1])).add
+//                               (new BigDecimal(collectionMoney[2]));
+//                       projectVo.getMoneyInfo().setTotal(total);
+//                   }else if("2".equals(collectionMoney.length)){
+//                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//
+//                       total = new BigDecimal(collectionMoney[0]).add
+//                               (new BigDecimal(collectionMoney[1]));
+//                       projectVo.getMoneyInfo().setTotal(total);
+//                   }else if("1".equals(collectionMoney.length)){
+//                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                       projectVo.getMoneyInfo().setTotal(new BigDecimal(collectionMoney[0]));
+//                   }
+//
+//                   //代收时间添加
+//                   String[] collectionMoneyTime = anhuiMoneyinfo.getCollectionMoneyTime().split(",");
+//                   if("5".equals(collectionMoney.length)){
+//                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
+//                       projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
+//                       projectVo.getMoneyInfo().setCollection05(new BigDecimal(collectionMoney[4]));
+//
+//                       total = new BigDecimal(collectionMoney[0]).add
+//                               (new BigDecimal(collectionMoney[1])).add
+//                               (new BigDecimal(collectionMoney[2])).add
+//                               (new BigDecimal(collectionMoney[3])).add
+//                               (new BigDecimal(collectionMoney[4]));
+//
+//                       projectVo.getMoneyInfo().setTotal(total);
+//                   }else if("4".equals(collectionMoney.length)){
+//                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
+//                       projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
+//
+//                       total = new BigDecimal(collectionMoney[0]).add
+//                               (new BigDecimal(collectionMoney[1])).add
+//                               (new BigDecimal(collectionMoney[2])).add
+//                               (new BigDecimal(collectionMoney[3]));
+//                       projectVo.getMoneyInfo().setTotal(total);
+//                   }else if("3".equals(collectionMoney.length)){
+//                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//                       projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
+//
+//                       total = new BigDecimal(collectionMoney[0]).add
+//                               (new BigDecimal(collectionMoney[1])).add
+//                               (new BigDecimal(collectionMoney[2]));
+//                       projectVo.getMoneyInfo().setTotal(total);
+//                   }else if("2".equals(collectionMoney.length)){
+//                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                       projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//
+//                       total = new BigDecimal(collectionMoney[0]).add
+//                               (new BigDecimal(collectionMoney[1]));
+//                       projectVo.getMoneyInfo().setTotal(total);
+//                   }else if("1".equals(collectionMoney.length)){
+//                       projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                       projectVo.getMoneyInfo().setTotal(new BigDecimal(collectionMoney[0]));
+//                   }
+//               }
+//            }else{
+//                projectVo.setAnhuiMoneyinfo(new AnhuiMoneyinfo());
+//                projectVo.setMoneyInfo(new MoneyInfo());
+//            }
+//            projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
+//            projectVo.setMoneyInfo(new MoneyInfo());
         }else{
             //设计费（吴江）
             WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
@@ -1087,55 +1087,55 @@ public class ProjectController extends BaseController {
 
 
                     //代收金额
-                    String[] collectionMoney = wujiangMoneyInfo.getCollectionMoney().split(",");
-                    if("5".equals(collectionMoney.length)){
-                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                        projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-                        projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
-                        projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
-                        projectVo.getMoneyInfo().setCollection05(new BigDecimal(collectionMoney[4]));
-                    }else if("4".equals(collectionMoney.length)){
-                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                        projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-                        projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
-                        projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
-                    }else if("3".equals(collectionMoney.length)){
-                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                        projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-                        projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
-                    }else if("2".equals(collectionMoney.length)){
-                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                        projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
-                    }else if("1".equals(collectionMoney.length)){
-                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
-                    }
+//                    String[] collectionMoney = wujiangMoneyInfo.getCollectionMoney().split(",");
+//                    if("5".equals(collectionMoney.length)){
+//                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                        projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//                        projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
+//                        projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
+//                        projectVo.getMoneyInfo().setCollection05(new BigDecimal(collectionMoney[4]));
+//                    }else if("4".equals(collectionMoney.length)){
+//                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                        projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//                        projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
+//                        projectVo.getMoneyInfo().setCollection04(new BigDecimal(collectionMoney[3]));
+//                    }else if("3".equals(collectionMoney.length)){
+//                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                        projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//                        projectVo.getMoneyInfo().setCollection03(new BigDecimal(collectionMoney[2]));
+//                    }else if("2".equals(collectionMoney.length)){
+//                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                        projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
+//                    }else if("1".equals(collectionMoney.length)){
+//                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
+//                    }
 
 
-                    //代收时间添加
-                    if(wujiangMoneyInfo.getCollectionMoneyTime()!=null){
-                        String[] collectionMoneyTime = wujiangMoneyInfo.getCollectionMoneyTime().split(",");
-                        if("5".equals(collectionMoneyTime.length)){
-                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
-                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
-                            projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
-                            projectVo.getMoneyInfo().setCollection04Time(collectionMoneyTime[3]);
-                            projectVo.getMoneyInfo().setCollection05Time(collectionMoneyTime[4]);
-                        }else if ("4".equals(collectionMoneyTime.length)){
-                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
-                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
-                            projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
-                            projectVo.getMoneyInfo().setCollection04Time(collectionMoneyTime[3]);
-                        }else if ("3".equals(collectionMoneyTime.length)){
-                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
-                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
-                            projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
-                        }else if ("2".equals(collectionMoneyTime.length)){
-                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
-                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
-                        }else if ("1".equals(collectionMoneyTime.length)){
-                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
-                        }
-                    }
+//                    //代收时间添加
+//                    if(wujiangMoneyInfo.getCollectionMoneyTime()!=null){
+//                        String[] collectionMoneyTime = wujiangMoneyInfo.getCollectionMoneyTime().split(",");
+//                        if("5".equals(collectionMoneyTime.length)){
+//                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+//                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
+//                            projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
+//                            projectVo.getMoneyInfo().setCollection04Time(collectionMoneyTime[3]);
+//                            projectVo.getMoneyInfo().setCollection05Time(collectionMoneyTime[4]);
+//                        }else if ("4".equals(collectionMoneyTime.length)){
+//                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+//                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
+//                            projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
+//                            projectVo.getMoneyInfo().setCollection04Time(collectionMoneyTime[3]);
+//                        }else if ("3".equals(collectionMoneyTime.length)){
+//                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+//                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
+//                            projectVo.getMoneyInfo().setCollection03Time(collectionMoneyTime[2]);
+//                        }else if ("2".equals(collectionMoneyTime.length)){
+//                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+//                            projectVo.getMoneyInfo().setCollection02Time(collectionMoneyTime[1]);
+//                        }else if ("1".equals(collectionMoneyTime.length)){
+//                            projectVo.getMoneyInfo().setCollection01Time(collectionMoneyTime[0]);
+//                        }
+//                    }
                 }
             }else{
                 projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
