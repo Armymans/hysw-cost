@@ -18,6 +18,8 @@ public class PageBVo {
     private String designCategory;
     private String founderId;
 
+    private String currentPeople;
+
 
     private String projectNum;
     private String projectName;

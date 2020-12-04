@@ -2153,6 +2153,25 @@ public class ProjectController extends BaseController {
        List<MkyUser> list =  projectService.findCurrentCost(getLoginUser().getId());
        return RestUtil.success(list);
     }
+    //查询设计人下拉
+
+    /*
+    * ("SELECT   " +
+            "            id  id,   " +
+            "            user_name userName " +
+            "            FROM mky_user   " +
+            "            WHERE   " +
+            "            del_flag = '0'   " +
+            "            and ( role_id = 'role7618' or role_id = 'role7616' or role_id = 'role7636' or role_id = 'role7637')   " +
+            "            and ( job_id = (select job_id from mky_user where id = #{userId} ) or #{userId} = '198910006' or #{userId} = '201803018' )")
+    * */
+    @RequestMapping(value = "/api/costproject/findDesignAll", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findDesignAll(){
+       List<MkyUser> list =  projectService.findDesignAll(getLoginUser().getId());
+       return RestUtil.success(list);
+    }
+
+
 
 
 }

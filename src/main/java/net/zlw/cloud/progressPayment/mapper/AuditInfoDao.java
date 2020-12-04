@@ -214,4 +214,15 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "           and ( role_id = 'role7617' or role_id = 'role7635' or role_id = 'role7639' or role_id = 'role7614' or role_id = 'role7638')  " +
             "           and ( ( job_id = (select job_id from mky_user where id = #{uid} ) or job_id is null)) ")
     List<MkyUser> findPreparePeople(@Param("uid") String id);
+
+@Select("SELECT      " +
+        "                                id  id,      " +
+        "                                user_name userName   , " +
+        "                                  job_id " +
+        "                                FROM mky_user      " +
+        "                                WHERE      " +
+        "                                del_flag = '0'      " +
+        "                                and ( role_id = 'role7618' or role_id = 'role7616' or role_id = 'role7636' or role_id = 'role7637')      " +
+        "                                and ( job_id = (select job_id from mky_user where id = #{userId} ) or job_id is null )")
+    List<MkyUser> findDesignAll(@Param("userId") String id);
 }
