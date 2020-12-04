@@ -1637,8 +1637,6 @@ public class ProjectService {
             if (designerFirst != null) {
                 projectVo.getDesignInfo().setDesigner(designerFirst.getId());
             }
-        } else {
-            throw new RuntimeException("设计人不存在,请重新填写");
         }
 
         //方便测试
