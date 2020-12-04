@@ -1,7 +1,6 @@
 package net.zlw.cloud.maintenanceProjectInformation.model.vo;
 
 import lombok.Data;
-import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
@@ -32,5 +31,6 @@ public class MaintenanceVo {
     private String auditNumber;
 
     private String auditAgainFlag;
+    private String json;
 
 }

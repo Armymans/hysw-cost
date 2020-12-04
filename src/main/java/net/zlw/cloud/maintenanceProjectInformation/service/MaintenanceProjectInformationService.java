@@ -327,8 +327,8 @@ public class MaintenanceProjectInformationService {
                     otherInfo1.setNum(thisInfo.getNum());
                     otherInfo1.setCreateTime(createTime);
                     otherInfo1.setStatus("0");
-//                    otherInfo1.setFoundId(userInfo.getId());
-//                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfo1.setFoundId(userInfo.getId());
+                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
                     otherInfoMapper.insertSelective(otherInfo1);
                 }
             }
@@ -450,7 +450,8 @@ public class MaintenanceProjectInformationService {
         BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
         BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
         // 核减数 / 送审金额 * 100 = 核减率
-        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
+        BigDecimal divide = subtractTheNumber.divide(reviewAmount,2,BigDecimal.ROUND_HALF_UP);
+        BigDecimal subtractRate = divide.multiply(new BigDecimal(100));
         settlementAuditInformation.setSubtractRate(subtractRate);
         settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
@@ -945,7 +946,39 @@ public class MaintenanceProjectInformationService {
         //修改时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updateTime = simpleDateFormat.format(new Date());
-
+        // 转换
+         // 检维修类型
+        if ("道路恢复工程".equals(maintenanceProjectInformationVo.getMaintenanceItemType())) {
+            maintenanceProjectInformationVo.setMaintenanceItemType("0");
+        } else if ("表位改造".equals(maintenanceProjectInformationVo.getMaintenanceItemType())) {
+            maintenanceProjectInformationVo.setMaintenanceItemType("1");
+        } else if ("故障换表".equals(maintenanceProjectInformationVo.getMaintenanceItemType())) {
+            maintenanceProjectInformationVo.setMaintenanceItemType("2");
+        } else if ("水表周检换表".equals(maintenanceProjectInformationVo.getMaintenanceItemType())) {
+            maintenanceProjectInformationVo.setMaintenanceItemType("3");
+        } else if ("DN300以上管道抢维修".equals(maintenanceProjectInformationVo.getMaintenanceItemType())) {
+            maintenanceProjectInformationVo.setMaintenanceItemType("4");
+        } else if ("DN300以下管道抢维修".equals(maintenanceProjectInformationVo.getMaintenanceItemType())) {
+            maintenanceProjectInformationVo.setMaintenanceItemType("5");
+        } else if ("设备维修购置".equals(maintenanceProjectInformationVo.getMaintenanceItemType())) {
+            maintenanceProjectInformationVo.setMaintenanceItemType("6");
+        } else if ("房屋修缮".equals(maintenanceProjectInformationVo.getMaintenanceItemType())) {
+            maintenanceProjectInformationVo.setMaintenanceItemType("7");
+        } else if ("绿化种植".equals(maintenanceProjectInformationVo.getMaintenanceItemType())) {
+            maintenanceProjectInformationVo.setMaintenanceItemType("8");
+        } else if ("装饰及装修".equals(maintenanceProjectInformationVo.getMaintenanceItemType())) {
+            maintenanceProjectInformationVo.setMaintenanceItemType("9");
+        }
+        // 施工单位
+        if ("施工单位2".equals(maintenanceProjectInformationVo.getConstructionUnitId())) {
+            maintenanceProjectInformationVo.setConstructionUnitId("1041");
+        } else if ("施工单位3".equals(maintenanceProjectInformationVo.getConstructionUnitId())) {
+            maintenanceProjectInformationVo.setConstructionUnitId("7643");
+        } else if ("施工单位5".equals(maintenanceProjectInformationVo.getConstructionUnitId())) {
+            maintenanceProjectInformationVo.setConstructionUnitId("7645");
+        } else if ("施工单位7".equals(maintenanceProjectInformationVo.getConstructionUnitId())) {
+            maintenanceProjectInformationVo.setConstructionUnitId("7661");
+        }
         // 根据检维修项目id  查询到的 检维修对象
         MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectBymaintenanceItemId(maintenanceProjectInformationVo.getMaintenanceItemId());
         // 检维修对象
@@ -1195,6 +1228,31 @@ public class MaintenanceProjectInformationService {
             messageVo.setDetails(userInfo.getUsername()+"您好！您提交的【"+maintenanceItemName+"】项目【"+name+"】审核未通过，请及时查看详情!");
             messageService.sendOrClose(messageVo);
         }
+        // json转换
+        Json coms = maintenanceProjectInformationVo.getComs();
+        String json = coms.value();
+        Example example3 = new Example(OtherInfo.class);
+        example.createCriteria().andEqualTo("foreignKey",information.getId());
+        List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(example3);
+        for (OtherInfo thisOther : otherInfos1) {
+            thisOther.setStatus("1");
+            otherInfoMapper.updateByPrimaryKeySelective(thisOther);
+        }
+        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+        if (otherInfos.size() > 0){
+            for (OtherInfo thisInfo : otherInfos) {
+                OtherInfo otherInfo1 = new OtherInfo();
+                otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                otherInfo1.setForeignKey(information.getId());
+                otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                otherInfo1.setNum(thisInfo.getNum());
+                otherInfo1.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                otherInfo1.setStatus("0");
+                otherInfo1.setFoundId(userInfo.getId());
+                otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                otherInfoMapper.insertSelective(otherInfo1);
+            }
+        }
 
         maintenanceProjectInformationMapper.updateByPrimaryKeySelective(information);
 //        // 审核信息
@@ -1274,6 +1332,22 @@ public class MaintenanceProjectInformationService {
     public MaintenanceVo selectMaintenanceProjectInformationById(String id, String userId, UserInfo userInfo) {
 
         MaintenanceVo maintenanceVo = new MaintenanceVo();
+
+        // 回显消息
+        String json = "[";
+        Example examples = new Example(OtherInfo.class);
+        examples.createCriteria().andEqualTo("foreignKey",id)
+                .andEqualTo("status","0");
+        List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(examples);
+        for (int i = 0; i < otherInfos.size(); i++) {
+            json += "{" +
+                    "\"serialNumber\" : \""+otherInfos.get(i).getSerialNumber()+"\"," +
+                    "\"num\": \""+otherInfos.get(i).getNum()+"\","+
+                    "},";
+        }
+        json+="]";
+        maintenanceVo.setJson(json);
+
         //todo userInfo.getId();
         String userInfoId = userInfo.getId();
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain(id);
@@ -1352,8 +1426,6 @@ public class MaintenanceProjectInformationService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = simpleDateFormat.format(new Date());
 
-
-        // 其他信息
         //其他信息表
         if (!"".equals(maintenanceProjectInformation.getComs()) && maintenanceProjectInformation.getComs() != null){
             Json coms = maintenanceProjectInformation.getComs();
@@ -1542,6 +1614,27 @@ public class MaintenanceProjectInformationService {
 
 
         maintenanceProjectInformationMapper.insertSelective(information);
+        // 其他信息
+        //其他信息表
+        if (!"".equals(maintenanceProjectInformation.getComs()) && maintenanceProjectInformation.getComs() != null){
+            Json coms = maintenanceProjectInformation.getComs();
+            String json = coms.value();
+            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            if (otherInfos.size() > 0){
+                for (OtherInfo thisInfo : otherInfos) {
+                    OtherInfo otherInfo1 = new OtherInfo();
+                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    otherInfo1.setForeignKey(information.getId());
+                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                    otherInfo1.setNum(thisInfo.getNum());
+                    otherInfo1.setCreateTime(createTime);
+                    otherInfo1.setStatus("0");
+                    otherInfo1.setFoundId(userInfo.getId());
+                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfoMapper.insertSelective(otherInfo1);
+                }
+            }
+        }
 
         // type
         List<FileInfo> byFreignAndType = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType());
@@ -1645,6 +1738,39 @@ public class MaintenanceProjectInformationService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updateTime = simpleDateFormat.format(new Date());
 
+        // 转换
+        // 检维修类型
+        if ("道路恢复工程".equals(maintenanceProjectInformation.getMaintenanceItemType())) {
+            maintenanceProjectInformation.setMaintenanceItemType("0");
+        } else if ("表位改造".equals(maintenanceProjectInformation.getMaintenanceItemType())) {
+            maintenanceProjectInformation.setMaintenanceItemType("1");
+        } else if ("故障换表".equals(maintenanceProjectInformation.getMaintenanceItemType())) {
+            maintenanceProjectInformation.setMaintenanceItemType("2");
+        } else if ("水表周检换表".equals(maintenanceProjectInformation.getMaintenanceItemType())) {
+            maintenanceProjectInformation.setMaintenanceItemType("3");
+        } else if ("DN300以上管道抢维修".equals(maintenanceProjectInformation.getMaintenanceItemType())) {
+            maintenanceProjectInformation.setMaintenanceItemType("4");
+        } else if ("DN300以下管道抢维修".equals(maintenanceProjectInformation.getMaintenanceItemType())) {
+            maintenanceProjectInformation.setMaintenanceItemType("5");
+        } else if ("设备维修购置".equals(maintenanceProjectInformation.getMaintenanceItemType())) {
+            maintenanceProjectInformation.setMaintenanceItemType("6");
+        } else if ("房屋修缮".equals(maintenanceProjectInformation.getMaintenanceItemType())) {
+            maintenanceProjectInformation.setMaintenanceItemType("7");
+        } else if ("绿化种植".equals(maintenanceProjectInformation.getMaintenanceItemType())) {
+            maintenanceProjectInformation.setMaintenanceItemType("8");
+        } else if ("装饰及装修".equals(maintenanceProjectInformation.getMaintenanceItemType())) {
+            maintenanceProjectInformation.setMaintenanceItemType("9");
+        }
+        // 施工单位
+        if ("施工单位2".equals(maintenanceProjectInformation.getConstructionUnitId())) {
+            maintenanceProjectInformation.setConstructionUnitId("1041");
+        } else if ("施工单位3".equals(maintenanceProjectInformation.getConstructionUnitId())) {
+            maintenanceProjectInformation.setConstructionUnitId("7643");
+        } else if ("施工单位5".equals(maintenanceProjectInformation.getConstructionUnitId())) {
+            maintenanceProjectInformation.setConstructionUnitId("7645");
+        } else if ("施工单位7".equals(maintenanceProjectInformation.getConstructionUnitId())) {
+            maintenanceProjectInformation.setConstructionUnitId("7661");
+        }
         //检维修对象
         MaintenanceProjectInformation information = new MaintenanceProjectInformation();
         information.setId(maintenanceProjectInformation.getId());
@@ -1787,6 +1913,31 @@ public class MaintenanceProjectInformationService {
         }
 
         investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
+        // json转换
+        Json coms = maintenanceProjectInformation.getComs();
+        String json = coms.value();
+        Example example = new Example(OtherInfo.class);
+        example.createCriteria().andEqualTo("foreignKey",information.getId());
+        List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(example);
+        for (OtherInfo thisOther : otherInfos1) {
+            thisOther.setStatus("1");
+            otherInfoMapper.updateByPrimaryKeySelective(thisOther);
+        }
+        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+        if (otherInfos.size() > 0){
+            for (OtherInfo thisInfo : otherInfos) {
+                OtherInfo otherInfo1 = new OtherInfo();
+                otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                otherInfo1.setForeignKey(information.getId());
+                otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                otherInfo1.setNum(thisInfo.getNum());
+                otherInfo1.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                otherInfo1.setStatus("0");
+                otherInfo1.setFoundId(userInfo.getId());
+                otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                otherInfoMapper.insertSelective(otherInfo1);
+            }
+        }
 
 
         maintenanceProjectInformationMapper.updateByPrimaryKeySelective(information);

@@ -202,7 +202,7 @@ public class MaintenanceProjectInformationController extends BaseController {
     }
 
     /**
-     * 修改
+     * 修改 - 提交
      *
      * @param maintenanceProjectInformationVo
      */
@@ -214,7 +214,7 @@ public class MaintenanceProjectInformationController extends BaseController {
         return RestUtil.success("编辑成功");
     }
 
-
+    // 修改-保存
     @RequestMapping(value = "/maintenanceProjectInformation/updateSaveMaintenanceProjectInformation", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> updateSaveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
         UserInfo loginUser = getLoginUser();
