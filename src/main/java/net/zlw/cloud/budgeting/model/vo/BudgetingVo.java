@@ -51,4 +51,5 @@ public class BudgetingVo {
 
     private String costPeople;
     private String pricingPeople;
+    private String butPeople;
 }
