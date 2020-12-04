@@ -34,7 +34,9 @@ import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
@@ -102,6 +104,8 @@ public class BudgetingServiceImpl implements BudgetingService {
     private MessageService messageService;
     @Resource
     private MessageNotificationDao messageNotificationDao;
+    @Resource
+    private MkyUserMapper mkyUserMapper;
 
 
     @Value("${audit.wujiang.sheji.designHead}")
@@ -214,7 +218,11 @@ public class BudgetingServiceImpl implements BudgetingService {
         costPreparation.setOtherCost1(budgetingVo.getOtherCost1());
         costPreparation.setOtherCost2(budgetingVo.getOtherCost2());
         costPreparation.setOtherCost3(budgetingVo.getOtherCost3());
-        costPreparation.setCostTogether(budgetingVo.getCostTogether());
+        if (!"".equals(budgetingVo.getCostTogether())){
+            costPreparation.setCostTogether(budgetingVo.getCostTogether());
+        }else{
+            costPreparation.setCostTogether(loginUser.getId());
+        }
         costPreparation.setReceivingTime(budgetingVo.getReceivingTime());
         costPreparation.setCostPreparationTime(budgetingVo.getCostPreparationTime());
         costPreparation.setRemarkes(budgetingVo.getCRemarkes());
@@ -229,8 +237,11 @@ public class BudgetingServiceImpl implements BudgetingService {
         veryEstablishment.setId(UUID.randomUUID().toString().replace("-",""));
         veryEstablishment.setBiddingPriceControl(budgetingVo.getBiddingPriceControl());
         veryEstablishment.setVatAmount(budgetingVo.getVVatAmount());
-        veryEstablishment.setPricingTogether(budgetingVo.getPricingTogether());
-        veryEstablishment.setReceivingTime(budgetingVo.getVReceivingTime());
+        if (!"".equals(budgetingVo.getPricingTogether())){
+            veryEstablishment.setPricingTogether(budgetingVo.getPricingTogether());
+        }else{
+            veryEstablishment.setReceivingTime(loginUser.getId());
+        }
         veryEstablishment.setEstablishmentTime(budgetingVo.getEstablishmentTime());
         veryEstablishment.setRemarkes(budgetingVo.getVRemarkes());
         veryEstablishment.setBudgetingId(budgeting.getId());
@@ -789,6 +800,16 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }
                 }
             }
+            for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
+                if (mkyUser!=null){
+                    budgetingListVo.setCostTogether(mkyUser.getUserName());
+                }
+                MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getPricingTogether());
+                if (mkyUser1!=null){
+                    budgetingListVo.setPricingTogether(mkyUser1.getUserName());
+                }
+            }
             return list1;
         }
         //处理中
@@ -803,6 +824,16 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }else{
                         budgetingListVo.setShowWhether("2");
                     }
+                }
+            }
+            for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
+                if (mkyUser!=null){
+                    budgetingListVo.setCostTogether(mkyUser.getUserName());
+                }
+                MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getPricingTogether());
+                if (mkyUser1!=null){
+                    budgetingListVo.setPricingTogether(mkyUser1.getUserName());
                 }
             }
             return list1;
@@ -821,6 +852,16 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }
                 }
             }
+            for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
+                if (mkyUser!=null){
+                    budgetingListVo.setCostTogether(mkyUser.getUserName());
+                }
+                MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getPricingTogether());
+                if (mkyUser1!=null){
+                    budgetingListVo.setPricingTogether(mkyUser1.getUserName());
+                }
+            }
             return list1;
         }
         //已完成
@@ -837,6 +878,16 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }
                 }
             }
+            for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
+                if (mkyUser!=null){
+                    budgetingListVo.setCostTogether(mkyUser.getUserName());
+                }
+                MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getPricingTogether());
+                if (mkyUser1!=null){
+                    budgetingListVo.setPricingTogether(mkyUser1.getUserName());
+                }
+            }
             return list1;
         }
         //全部
@@ -851,6 +902,16 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }else{
                         budgetingListVo.setShowWhether("2");
                     }
+                }
+            }
+            for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
+                if (mkyUser!=null){
+                    budgetingListVo.setCostTogether(mkyUser.getUserName());
+                }
+                MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getPricingTogether());
+                if (mkyUser1!=null){
+                    budgetingListVo.setPricingTogether(mkyUser1.getUserName());
                 }
             }
             return list1;
@@ -1155,6 +1216,11 @@ public class BudgetingServiceImpl implements BudgetingService {
             }
         }
         return fileInfos;
+    }
+
+    @Override
+    public List<MkyUser> findPreparePeople(String id) {
+      return   auditInfoDao.findPreparePeople(id);
     }
 
     @Override
