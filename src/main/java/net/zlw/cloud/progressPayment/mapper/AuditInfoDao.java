@@ -183,25 +183,24 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
     List<AuditChekedVo> auditAgainMaintenanceChek(String id);
 
     @Select("SELECT   " +
-            "id  id,   " +
-            "user_name userName " +
-            "FROM mky_user   " +
-            "WHERE   " +
-            "del_flag = '0'   " +
-            "and ( role_id = 'role7618' or role_id = 'role7616' or role_id = 'role7636' or role_id = 'role7637')   " +
-            "and job_id = (select job_id from mky_user where id = #{userId})  ")
+            "            id  id,   " +
+            "            user_name userName " +
+            "            FROM mky_user   " +
+            "            WHERE   " +
+            "            del_flag = '0'   " +
+            "            and ( role_id = 'role7618' or role_id = 'role7616' or role_id = 'role7636' or role_id = 'role7637')   " +
+            "            and ( job_id = (select job_id from mky_user where id = #{userId} ) or #{userId} = '198910006' or #{userId} = '201803018' )")
     List<MkyUser> findCurrent(@Param("userId") String id);
 
 
-    @Select("SELECT " +
-            "id  id, " +
-            "user_name userName, " +
-            "job_id " +
-            "FROM mky_user   " +
-            "WHERE " +
-            "del_flag = '0'   " +
-            "and ( role_id = 'role7617' or role_id = 'role7635' or role_id = 'role7639')   " +
-            "and ( job_id = (select job_id from mky_user where id = #{userId} ) or job_id is null)   " +
-            " ")
+    @Select("SELECT  " +
+            "            id  id,  " +
+            "            user_name userName,  " +
+            "            job_id  " +
+            "            FROM mky_user  " +
+            "            WHERE  " +
+            "            del_flag = '0'  " +
+            "            and ( role_id = 'role7617' or role_id = 'role7635' or role_id = 'role7639' or role_id = 'role7614')  " +
+            "            and ( ( job_id = (select job_id from mky_user where id = #{userId} ) or job_id is null) or #{userId} = '200610002') ")
     List<MkyUser> findCurrentCost(@Param("userId") String id);
 }

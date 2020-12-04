@@ -17,4 +17,6 @@ public class DesignPageVo {
     private String userId; //当前登录用户id
     private String adminId; //领导id
     private String isaccount;
+
+    private String currentPeople;
 }
