@@ -139,7 +139,11 @@ public class BudgetingServiceImpl implements BudgetingService {
         Budgeting budgeting = new Budgeting();
         budgeting.setId(UUID.randomUUID().toString().replace("-",""));
         budgeting.setAmountCost(budgetingVo.getAmountCost());
-        budgeting.setBudgetingPeople(budgetingVo.getBudgetingPeople());
+        if ("".equals(budgeting.getBudgetingPeople())){
+            budgeting.setBudgetingPeople(loginUser.getId());
+        }else{
+            budgeting.setBudgetingPeople(budgetingVo.getBudgetingPeople());
+        }
         budgeting.setAddedTaxAmount(budgetingVo.getAddedTaxAmount());
         budgeting.setOutsourcing(budgetingVo.getOutsourcing());
         budgeting.setNameOfCostUnit(budgetingVo.getNameOfCostUnit());
@@ -358,6 +362,10 @@ public class BudgetingServiceImpl implements BudgetingService {
         MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(budgetingVo.getPricingTogether());
         if (mkyUser1!=null){
             budgetingVo.setPricingPeople(mkyUser1.getUserName());
+        }
+        MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingVo.getBudgetingPeople());
+        if (mkyUser2!=null){
+            budgetingVo.setButPeople(mkyUser2.getUserName());
         }
 
         return budgetingVo;
