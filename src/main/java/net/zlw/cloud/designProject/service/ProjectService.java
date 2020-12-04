@@ -32,6 +32,7 @@ import net.zlw.cloud.warningDetails.model.MemberManage;
 import net.zlw.cloud.warningDetails.model.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -1896,8 +1897,8 @@ public class ProjectService {
 //        IncomeInfo incomeInfo = new IncomeInfo();
 
             anhuiMoneyinfo.setId(uuid);
-//        anhuiMoneyinfo.setFounderId(loginUser.getId());
-//        anhuiMoneyinfo.setCompanyId(loginUser.getCompanyId());
+            anhuiMoneyinfo.setFounderId(loginUser.getId());
+            anhuiMoneyinfo.setCompanyId(loginUser.getCompanyId());
             anhuiMoneyinfo.setStatus("0");
             anhuiMoneyinfo.setCreateTime(simpleDateFormat.format(new Date()));
 
@@ -1953,6 +1954,10 @@ public class ProjectService {
             }
             //根据安徽到账外键查找设计
             DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(anhuiMoneyinfo.getBaseProjectId());
+            if(designInfo!=null){
+                designInfo.setIsaccount("1");
+                designInfoMapper.updateByPrimaryKeySelective(designInfo);
+            }
             BaseProject baseProject = projectMapper.selectByPrimaryKey(designInfo.getBaseProjectId());
 
 //        DesignInfo designInfo = designInfoByid(baseProject.getId());
@@ -2024,6 +2029,8 @@ public class ProjectService {
         BigDecimal officialReceipts = wujiangMoneyInfo.getOfficialReceipts();
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
+
+
         if(!"".equals(officialReceipts) && officialReceipts != null){
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
             Example example = new Example(WujiangMoneyInfo.class);
@@ -2075,8 +2082,11 @@ public class ProjectService {
             }
             //根据安徽到账外键查找设计
             DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(wujiangMoneyInfo.getBaseProjectId());
+            if(designInfo!=null){
+                designInfo.setIsaccount("1");
+                designInfoMapper.updateByPrimaryKeySelective(designInfo);
+            }
             BaseProject baseProject = projectMapper.selectByPrimaryKey(designInfo.getBaseProjectId());
-
             // 计算应计提金额、实际计提金额、余额
             //设计费（吴江）
             WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfopayterm(designInfo.getId());
