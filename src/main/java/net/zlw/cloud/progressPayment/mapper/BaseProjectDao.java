@@ -483,6 +483,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "(b.sa_whether_account = #{saWhetherAccount} or #{saWhetherAccount} = '') and  " +
             "(IFNULL(s.take_time,l.take_time) > #{startTime} or #{startTime} = '') and   " +
             "(IFNULL(s.take_time,l.take_time) < #{endTime} or #{endTime} = '') and  " +
+            "(a.auditor_id = #{currentPeople} or #{currentPeople} = '' ) and " +
             "(IFNULL(s.compile_time,l.compile_time) > #{startTime} or #{startTime} = '') and  " +
             "(IFNULL(s.compile_time,l.compile_time) < #{endTime} or #{endTime} = '') and   " +
             "(b.cea_num like concat('%',#{keyword},'%') or   " +
@@ -583,6 +584,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "(IFNULL(s.take_time,l.take_time) > #{startTime} or #{startTime} = '') and   " +
             "(IFNULL(s.take_time,l.take_time) < #{endTime} or #{endTime} = '') and  " +
             "(IFNULL(s.compile_time,l.compile_time) > #{startTime} or #{startTime} = '') and  " +
+            "(a.auditor_id = #{currentPeople} or #{currentPeople} = '' ) and " +
             "(IFNULL(s.compile_time,l.compile_time) < #{endTime} or #{endTime} = '') and   " +
             "(b.cea_num like concat('%',#{keyword},'%') or   " +
             "b.project_num like concat('%',#{keyword},'%')  or  " +

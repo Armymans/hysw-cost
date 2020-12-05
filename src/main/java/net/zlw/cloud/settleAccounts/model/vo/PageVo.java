@@ -15,4 +15,5 @@ public class PageVo {
     private String keyword;
 
     private String userId;
+    private String currentPeople;
 }

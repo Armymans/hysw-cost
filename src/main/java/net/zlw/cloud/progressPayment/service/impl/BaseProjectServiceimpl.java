@@ -1260,7 +1260,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         List<AuditChekedVo> auditChekedVos = auditChek(id);
         if ("1".equals(num)){
             for (int i = 0; i < auditChekedVos.size(); i++) {
-                if (auditChekedVos.get(i).getAuditType().equals("0") || auditChekedVos.get(i).getAuditType().equals("1") || auditChekedVos.get(i).getAuditType().equals("4")){
+                if (auditChekedVos.get(i).getAuditType().equals("互审") || auditChekedVos.get(i).getAuditType().equals("上级领导审核") || auditChekedVos.get(i).getAuditType().equals("总经理审核")){
 
                 }else{
                     auditChekedVos.remove(i);
@@ -1270,7 +1270,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         }
         if ("2".equals(num)){
             for (int i = 0; i < auditChekedVos.size(); i++) {
-                if (auditChekedVos.get(i).getAuditType().equals("0") || auditChekedVos.get(i).getAuditType().equals("1") || auditChekedVos.get(i).getAuditType().equals("4")){
+                if (auditChekedVos.get(i).getAuditType().equals("互审") || auditChekedVos.get(i).getAuditType().equals("上级领导审核") || auditChekedVos.get(i).getAuditType().equals("总经理审核")){
                     auditChekedVos.remove(i);
                     i--;
                 }else{
