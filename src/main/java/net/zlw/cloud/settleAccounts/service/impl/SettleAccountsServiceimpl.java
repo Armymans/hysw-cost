@@ -141,7 +141,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(mkyUser.getUserName());
+                     if (mkyUser!=null){
+                        accountsVo.setPreparePeople(mkyUser.getUserName());
+                    }
                 }
 
                 return list1;
@@ -173,7 +175,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(mkyUser.getUserName());
+                     if (mkyUser!=null){
+                        accountsVo.setPreparePeople(mkyUser.getUserName());
+                    }
                 }
                 return list1;
             }
@@ -184,7 +188,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(mkyUser.getUserName());
+                     if (mkyUser!=null){
+                        accountsVo.setPreparePeople(mkyUser.getUserName());
+                    }
                 }
                 return list1;
             }
@@ -194,7 +200,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(mkyUser.getUserName());
+                    if (mkyUser!=null){
+                         if (mkyUser!=null){
+                        accountsVo.setPreparePeople(mkyUser.getUserName());
+                    }
+                    }
 
                     Example example = new Example(AuditInfo.class);
                     Example.Criteria c = example.createCriteria();
@@ -223,7 +233,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(mkyUser.getUserName());
+                    if (mkyUser!=null){
+                         if (mkyUser!=null){
+                        accountsVo.setPreparePeople(mkyUser.getUserName());
+                    }
+                    }
                 }
                 return list1;
             }
@@ -233,7 +247,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(mkyUser.getUserName());
+                    if (mkyUser!=null){
+                         if (mkyUser!=null){
+                        accountsVo.setPreparePeople(mkyUser.getUserName());
+                    }
+                    }
                 }
                 return list1;
             }
@@ -250,7 +268,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(mkyUser.getUserName());
+                     if (mkyUser!=null){
+                        accountsVo.setPreparePeople(mkyUser.getUserName());
+                    }
                 }
                 return list1;
             }
