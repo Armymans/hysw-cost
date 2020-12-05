@@ -1185,8 +1185,8 @@ public class MaintenanceProjectInformationService {
                 auditInfo1.setMaintenanceFlag("1");
             }
             auditInfo1.setStatus("0");
-            auditInfo1.setAuditOpinion(null);
-            auditInfo1.setAuditTime(null);
+            auditInfo1.setAuditOpinion("");
+            auditInfo1.setAuditTime("");
             auditInfo1.setAuditorId(maintenanceProjectInformationVo.getAuditorId()); // 审核人id
             auditInfo1.setCreateTime(createDate);
             auditInfoDao.insertSelective(auditInfo1);
@@ -1214,8 +1214,8 @@ public class MaintenanceProjectInformationService {
             if(auditInfo!=null){
                 //将审核状态改为待审核
                 auditInfo.setAuditResult("0");
-                auditInfo.setAuditOpinion(null);
-                auditInfo.setAuditTime(null);
+                auditInfo.setAuditOpinion("");
+                auditInfo.setAuditTime("");
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                 information.setType("1");
             }

@@ -974,11 +974,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
             for (FileInfo fileInfo : fileInfos) {
                 //修改文件外键
-                if (visaChangeVo.getVisaChangeUp().getId()!=null){
-                    fileInfoService.updateFileName2(fileInfo.getId(),visaChangeVo.getVisaChangeUp().getId());
-                }else if(visaChangeVo.getVisaChangeDown().getId()!=null){
-                    fileInfoService.updateFileName2(fileInfo.getId(),visaChangeVo.getVisaChangeDown().getId());
-                }
+                fileInfoService.updateFileName2(fileInfo.getId(),baseProject1.getId());
             }
             baseProjectDao.updateByPrimaryKeySelective(baseProject1);
 
@@ -1066,7 +1062,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             for (FileInfo fileInfo : fileInfos) {
                 //修改文件外键
                  if(visaChangeVo.getVisaChangeDown().getId()!=null){
-                    fileInfoService.updateFileName2(fileInfo.getId(),visaChangeVo.getVisaChangeDown().getId());
+                    fileInfoService.updateFileName2(fileInfo.getId(),baseProject1.getId());
                 }
             }
             baseProjectDao.updateByPrimaryKeySelective(baseProject1);

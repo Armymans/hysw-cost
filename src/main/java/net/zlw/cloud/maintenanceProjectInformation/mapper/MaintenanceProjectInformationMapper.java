@@ -132,6 +132,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "AND " +
                     "(ai.audit_result = '0')  " +
                     "AND " +
+                    "a.auditor_id = #{currentPeople} OR #{currentPeople} = '' ) " +
                     "( m.founder_id = #{uid} or ai.auditor_id = #{uid})  " +
                     "AND ( " +
                     "m.maintenance_item_type = #{maintenanceItemType} or #{maintenanceItemType} = '') " +
@@ -326,6 +327,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "  m.create_time createTime,  " +
             "  m.update_time updateTime,  " +
             "  c.construction_unit_name constructionUnitName,  " +
+            "  c.id constructionUnitId,  " +
             "  m.del_flag delFlag,  " +
             "  m.type,  " +
             "  type   " +

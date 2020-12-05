@@ -619,7 +619,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         example1.createCriteria().andEqualTo("status", "0");
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         AuditInfo auditInfo = null;
-        trackVo.setAuditWord("第" + trackMonthlies.size() + "次月报");
+        trackVo.setAuditWord("第" + trackMonthlies.size() + "次审核");
         TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(id);
         Example example2 = new Example(AuditInfo.class);
         example2.createCriteria().andEqualTo("baseProjectId", trackMonthlyOld.getId())
@@ -675,9 +675,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         example1.orderBy("createTime").desc();
         List<TrackMonthly> trackMonthlies2 = trackMonthlyDao.selectByExample(example2);
         trackMonthlies1.addAll(trackMonthlies2);
-//        for (int i = trackMonthlies.size()-1; i >=0 ; i--) {
-//            trackMonthlies.get(i).setAuditCount("第"+trackMonthlies.get(i).getAuditCount()+"次月报");
-//        }
+        for (int i = 0; i < trackMonthlies2.size(); i++) {
+            trackMonthlies.get(i).setAuditCount("第"+trackMonthlies.get(i).getAuditCount()+"次月报");
+        }
         return trackMonthlies1;
     }
 
@@ -689,20 +689,24 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         Example.Criteria criteria = example1.createCriteria();
         criteria.andEqualTo("trackId", id)  //登录人id
                 .andEqualTo("status", "0");
-        TrackMonthly trackMonthly = trackMonthlyDao.selectOneByExample(example1);
-        if (trackMonthly != null){
-            trackMonthly.setStatus("1");
-            trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
+        List<TrackMonthly> trackMonthly = trackMonthlyDao.selectByExample(example1);
+        if (trackMonthly.size() > 0){
+            for (TrackMonthly monthly : trackMonthly) {
+                monthly.setStatus("1");
+                trackMonthlyDao.updateByPrimaryKeySelective(monthly);
+            }
         }
         //删除文件
         Example example = new Example(FileInfo.class);
         example.createCriteria().andEqualTo("userId",id)
                                 .andEqualTo("status","0")
                                 .andEqualTo("type","gzsjxjsqxx");
-        FileInfo fileInfo = fileInfoMapper.selectOneByExample(example);
-        if (fileInfo != null){
-            fileInfo.setStatus("1");
-            fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+        List<FileInfo> fileInfo = fileInfoMapper.selectByExample(example);
+        if (fileInfo.size() > 0){
+            for (FileInfo info : fileInfo) {
+                info.setStatus("1");
+                fileInfoMapper.updateByPrimaryKeySelective(info);
+            }
         }
     }
 
@@ -740,6 +744,12 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     }
 
     public void addTrackMonthly(TrackMonthly trackMonthly) {
+        Example example1 = new Example(TrackMonthly.class);
+        Example.Criteria criteria = example1.createCriteria();
+        criteria.andEqualTo("trackId", trackMonthly.getCode());
+        criteria.andEqualTo("status", "0");
+        List<TrackMonthly> trackMonthly1 = trackMonthlyDao.selectByExample(example1);
+        trackMonthly.setAuditCount((trackMonthly1.size()+1)+"");
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         trackMonthly.setId(UUID.randomUUID().toString().replace("-", ""));
         trackMonthly.setCreateTime(simpleDateFormat.format(new Date()));

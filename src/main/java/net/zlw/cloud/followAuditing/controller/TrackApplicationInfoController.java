@@ -203,8 +203,6 @@ public class TrackApplicationInfoController extends BaseController {
 
     @RequestMapping(value = "/track/addMonthly",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addMaonthly(TrackMonthly monthly){
-        System.out.println(monthly);
-
         trackApplicationInfoService.addTrackMonthly(monthly);
         FileInfo fileInfo = fileInfoService.getByKey(monthly.getFid());
         fileInfo.setName(monthly.getTitle());
