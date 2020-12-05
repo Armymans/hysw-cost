@@ -112,6 +112,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "'装饰及装修'  " +
                     "END  " +
                     ") AS maintenanceItemType, " +
+                    "( CASE ai.maintenance_flag WHEN '1' THEN '检维修确认审核' WHEN '0' THEN '检维修审核' END) AS maintenanceFlag," +
                     "( CASE m.type WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '已完成' END ) AS type, " +
                     "( CASE m.project_address WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS projectAddress, " +
                     "m.customer_name customerName, " +
