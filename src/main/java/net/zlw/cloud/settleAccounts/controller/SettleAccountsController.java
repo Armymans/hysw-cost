@@ -130,7 +130,11 @@ public class SettleAccountsController extends BaseController {
     public Map<String, Object> updateAccount(@RequestParam(name = "id") String id,@RequestParam(name = "checkWhether") String checkWhether) {
         String[] split = id.split(",");
         for (String s : split) {
-            settleAccountsService.updateAccount(s,getLoginUser(),checkWhether);
+            try {
+                settleAccountsService.updateAccount(s,getLoginUser(),checkWhether);
+            } catch (Exception e) {
+                return RestUtil.error(e.getMessage());
+            }
         }
         return RestUtil.success();
     }

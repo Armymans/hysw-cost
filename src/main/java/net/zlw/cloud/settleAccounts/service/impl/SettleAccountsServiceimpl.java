@@ -399,6 +399,17 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     }
                 }
             }
+        }else{
+            String a = "";
+            for (String s1 : split1) {
+                if (a.equals("")){
+                    a=s1;
+                }else{
+                    a+=","+s1;
+                }
+            }
+            baseProject.setAccountWhether(a);
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
         }
 //        baseProject.setId(s);
         baseProject.setSaWhetherAccount("0");
