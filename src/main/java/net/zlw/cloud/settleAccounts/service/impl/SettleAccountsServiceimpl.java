@@ -11,6 +11,8 @@ import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
 import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
+import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
+import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -87,6 +89,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private MessageService messageService;
     @Resource
     private MkyUserMapper mkyUserMapper;
+    @Resource
+    private ConstructionUnitManagementMapper constructionUnitManagementMapper;
+
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -922,6 +927,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseProject.setAB("A");
         }else if(ab.equals("2")){
             baseProject.setAB("B");
+        }
+        String constructionUnit = baseProject.getConstructionUnit();
+        if (constructionUnit!=null && !"".equals(constructionUnit)){
+            ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(constructionUnit);
+            baseProject.setConstructionUnit(constructionUnitManagement.getConstructionUnitName());
         }
 
         baseAccountsVo.setBaseProject(baseProject);
