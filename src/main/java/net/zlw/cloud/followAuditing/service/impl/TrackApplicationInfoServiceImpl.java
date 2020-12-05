@@ -434,7 +434,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         BaseProject baseProject = baseProjectDao.selectOneByExample(example);
         baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
         //0保存1提交
-        if (trackVo.getStatus().equals("0")) {
+        if ("0".equals(trackVo.getStatus())) {
             // 设置未提交
             baseProject.setTrackStatus("2");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
@@ -480,7 +480,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
                 fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
             }
-        } else if (trackVo.getStatus().equals("1")) {
+        } else if ("1".equals(trackVo.getStatus())) {
 
             baseProject.setTrackStatus("1");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
