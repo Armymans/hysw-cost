@@ -43,5 +43,7 @@ public class OtherInfo {
     private String updateTime;
     @Column(name = "status")
     private String status;
+    @Column(name = "change_num")
+    private int changeNum;
 
 }

@@ -141,7 +141,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(preparePeople);
+                    accountsVo.setPreparePeople(mkyUser.getUserName());
                 }
 
                 return list1;
@@ -173,7 +173,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(preparePeople);
+                    accountsVo.setPreparePeople(mkyUser.getUserName());
                 }
                 return list1;
             }
@@ -184,7 +184,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(preparePeople);
+                    accountsVo.setPreparePeople(mkyUser.getUserName());
                 }
                 return list1;
             }
@@ -194,7 +194,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(preparePeople);
+                    accountsVo.setPreparePeople(mkyUser.getUserName());
 
                     Example example = new Example(AuditInfo.class);
                     Example.Criteria c = example.createCriteria();
@@ -223,7 +223,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(preparePeople);
+                    accountsVo.setPreparePeople(mkyUser.getUserName());
                 }
                 return list1;
             }
@@ -233,7 +233,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(preparePeople);
+                    accountsVo.setPreparePeople(mkyUser.getUserName());
                 }
                 return list1;
             }
@@ -250,7 +250,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                    accountsVo.setPreparePeople(preparePeople);
+                    accountsVo.setPreparePeople(mkyUser.getUserName());
                 }
                 return list1;
             }
@@ -349,8 +349,14 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //        BaseProject baseProject = new BaseProject();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
         String accountWhether = baseProject.getAccountWhether();
-        String[] split = accountWhether.split(",");
-        String[] split1 = checkWhether.split(",");
+        String[] split = null;
+        String[] split1 = null;
+        if (accountWhether!=null){
+           split = accountWhether.split(",");
+        }
+        if (checkWhether!=null){
+            split1 = checkWhether.split(",");
+        }
         if (split!=null){
             if (split1!=null){
                 for (String s1 : split1) {
@@ -569,6 +575,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             Json coms = baseAccountsVo.getComs();
             String json = coms.value();
             List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            int num = 1;
             if (otherInfos.size() > 0){
                 for (OtherInfo thisInfo : otherInfos) {
                     OtherInfo otherInfo1 = new OtherInfo();
@@ -581,7 +588,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
                     otherInfo1.setFoundId(loginUser.getId());
                     otherInfo1.setFounderCompany(loginUser.getCompanyId());
+                    otherInfo1.setChangeNum(num);
                     otherInfoMapper.insertSelective(otherInfo1);
+                    num++;
                 }
             }
         }
@@ -1047,9 +1056,41 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         lastSettlementReviewDao.updateByPrimaryKeySelective(baseAccountsVo.getLastSettlementReview());
         //下家送审修改
         settlementAuditInformationDao.updateByPrimaryKeySelective(baseAccountsVo.getSettlementAuditInformation());
+
+        Example example2 = new Example(OtherInfo.class);
+        Example.Criteria c = example2.createCriteria();
+        c.andEqualTo("baseProjectId",baseProject.getId());
+        c.andEqualTo("status","0");
+        List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(example2);
+        if (otherInfos1!=null && otherInfos1.size()!=0){
+            for (OtherInfo otherInfo : otherInfos1) {
+                otherInfoMapper.deleteByPrimaryKey(otherInfo);
+            }
+        }
         // json转换
-        Json coms = baseAccountsVo.getComs();
-        String json = coms.value();
+        if (!"".equals(baseAccountsVo.getComs()) && baseAccountsVo.getComs() != null){
+            Json coms = baseAccountsVo.getComs();
+            String json = coms.value();
+            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            int num = 1;
+            if (otherInfos.size() > 0){
+                for (OtherInfo thisInfo : otherInfos) {
+                    OtherInfo otherInfo1 = new OtherInfo();
+                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    otherInfo1.setForeignKey(baseProject.getId());
+                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                    otherInfo1.setNum(thisInfo.getNum());
+                    otherInfo1.setCreateTime(data);
+                    otherInfo1.setStatus("0");
+
+                    otherInfo1.setFoundId(loginUser.getId());
+                    otherInfo1.setFounderCompany(loginUser.getCompanyId());
+                    otherInfo1.setChangeNum(num);
+                    otherInfoMapper.insertSelective(otherInfo1);
+                    num++;
+                }
+            }
+        }
 //        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
 //        if (otherInfos.size() > 0){
 //            for (OtherInfo thisInfo : otherInfos) {
@@ -1341,7 +1382,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
                     //预算
                     Example example1 = new Example(Budgeting.class);
-                    example1.createCriteria().andEqualTo("baseProjectId",baseProject.getId());
+                    example1.createCriteria().andEqualTo("baseProjectId",baseProject.getId()).andEqualTo("status","0");
                     Example example4 = new Example(TrackAuditInfo.class);
                     example4.createCriteria().andEqualTo("baseProjectId",baseProject.getId());
                     TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectOneByExample(example4);
@@ -1559,6 +1600,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     public List<OtherInfo> selectInfoList(String baseId) {
         Example example = new Example(OtherInfo.class);
         example.createCriteria().andEqualTo("foreignKey",baseId);
+        example.setOrderByClause(" change_num asc ");
         List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(example);
         return otherInfos;
 //        List<OtherInfo> otherInfos = otherInfoMapper.selectOtherList(baseId);
