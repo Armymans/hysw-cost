@@ -91,7 +91,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public void addProgress(BaseProjectVo baseProject, UserInfo loginUser) {
 
-        if (baseProject.getAmountOutsourcing().equals("")){
+//        if (baseProject.getAmountOutsourcing().equals("")){
+//            baseProject.setAmountOutsourcing(null);
+//        }
+        if (baseProject.getAmountOutsourcing() != null && !"".equals(baseProject.getAmountOutsourcing())){
             baseProject.setAmountOutsourcing(null);
         }
 
@@ -129,7 +132,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         paymentInformation.setRemarkes(baseProject.getRemarkes());
         paymentInformation.setBaseProjectId(project.getId());
         paymentInformation.setId(UUID.randomUUID().toString().replace("-", ""));
-        paymentInformation.setFounderId(loginUser.getId());
+//        paymentInformation.setFounderId(loginUser.getId());
         paymentInformation.setDelFlag("0");
         paymentInformation.setChangeNum(1);
 

@@ -9,7 +9,6 @@ import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
-import net.zlw.cloud.progressPayment.model.ProgressPaymentTotalPayment;
 import net.zlw.cloud.progressPayment.model.vo.*;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.progressPayment.service.ProgressPaymentTotalPaymentService;
