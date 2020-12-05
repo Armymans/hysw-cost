@@ -614,8 +614,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         TrackApplicationInfo trackApplicationInfo = trackApplicationInfoDao.selectOneByExample(example);
 
         Example example1 = new Example(TrackMonthly.class);
-        example1.createCriteria().andEqualTo("trackId", id);
-        example1.createCriteria().andEqualTo("status", "0");
+        Example.Criteria criteria = example1.createCriteria();
+        criteria.andEqualTo("trackId", id);
+        criteria.andEqualTo("status", "0");
+        //根据创建时间排序
+//        example1.orderBy("createTime").desc();
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         AuditInfo auditInfo = null;
         trackVo.setAuditWord("第" + trackMonthlies.size() + "次月报");
