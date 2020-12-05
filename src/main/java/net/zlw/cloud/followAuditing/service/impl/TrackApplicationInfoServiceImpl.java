@@ -480,7 +480,92 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
                 fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
             }
-        } else if ("1".equals(trackVo.getStatus()))
+        } else if ("1".equals(trackVo.getStatus())) {
+
+            baseProject.setTrackStatus("1");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+            //存入跟踪审计
+            if (trackVo.getAuditInfo().getCeaTotalMoney() == null) {
+                trackVo.getAuditInfo().setCeaTotalMoney(new BigDecimal("0"));
+            }
+            if (trackVo.getAuditInfo().getContractAmount() == null) {
+                trackVo.getAuditInfo().setContractAmount(new BigDecimal("0"));
+            }
+            if (trackVo.getAuditInfo().getOutsourceMoney() == null) {
+                trackVo.getAuditInfo().setOutsourceMoney(new BigDecimal("0"));
+            }
+            if (trackVo.getAuditInfo().getTrackAuditBase() == null) {
+                trackVo.getAuditInfo().setTrackAuditBase(new BigDecimal("0"));
+            }
+            trackVo.getAuditInfo().setBaseProjectId(baseProject.getId());
+            trackVo.getAuditInfo().setId(UUID.randomUUID().toString().replace("-", ""));
+            trackVo.getAuditInfo().setFounderId(userInfoId);
+            trackVo.getAuditInfo().setStatus("0");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            trackVo.getAuditInfo().setCreateTime(simpleDateFormat.format(new Date()));
+            trackAuditInfoDao.insertSelective(trackVo.getAuditInfo());
+
+            //月报
+            Example example1 = new Example(TrackMonthly.class);
+            Example.Criteria criteria = example1.createCriteria();
+            criteria.andEqualTo("trackId", userInfoId);
+            criteria.andEqualTo("status", "0");
+            TrackMonthly trackMonthly1 = trackMonthlyDao.selectOneByExample(example1);
+            if (trackMonthly1 == null) {
+                throw new Exception("请上传月报");
+            }
+            trackMonthly1.setAuditCount("1");
+            trackMonthly1.setTrackId(trackVo.getAuditInfo().getId());
+            trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly1);
+            String id = userInfo.getId();
+
+            //存入审核表
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfoId);
+            AuditInfo auditInfo = new AuditInfo();
+            auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+            auditInfo.setBaseProjectId(trackMonthly1.getId());
+            auditInfo.setAuditResult("0");
+            auditInfo.setAuditType("0");
+            auditInfo.setAuditorId(id);
+            auditInfo.setStatus("0");
+            auditInfo.setCreateTime(simpleDateFormat.format(new Date()));
+            //判断当前项目创建人属于哪个地区 根据地区提交给相应领导
+            //如果为芜湖
+            if ("1".equals(memberManage.getWorkType())) {
+                auditInfo.setAuditorId(whzjh);
+            } else {
+                auditInfo.setAuditorId(wjzjh);
+            }
+            auditInfoDao.insertSelective(auditInfo);
+
+
+            //消息站内通知
+            String username = userInfo.getUsername();
+            String projectName = baseProject.getProjectName();
+            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+            //审核人名字
+            MessageVo messageVo = new MessageVo();
+            messageVo.setId("A18");
+            messageVo.setUserId(auditInfo.getAuditorId());
+            messageVo.setTitle("您有一个跟踪审计项目待审核！");
+            messageVo.setType("1"); // 通知
+            messageVo.setDetails(memberManage1.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批!");
+            //调用消息Service
+            messageService.sendOrClose(messageVo);
+
+//            Exadep_adminmple example3 = new Example(MemberManage.class);
+//            example3.createCriteria().andEqualTo("status", "0").andEqualTo("depId", "2").andEqualTo("depAdmin", "1");
+//            MemberManage memberManage = memberManageDao.selectOneByExample(example3);
+
+            // 上传文件，新建-申请信息，列表文件
+            List<FileInfo> byFreignAndType = fileInfoMapper.findByFreignAndType(trackVo.getKey(), trackVo.getType());
+
+            for (FileInfo fileInfo : byFreignAndType) {
+                fileInfo.setPlatCode(trackVo.getAuditInfo().getId());
+
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
+        }
 
 
         trackVo.getTrackApplicationInfo().setId(UUID.randomUUID().toString().replace("-", ""));
