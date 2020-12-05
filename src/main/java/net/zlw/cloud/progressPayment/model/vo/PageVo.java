@@ -14,5 +14,6 @@ public class PageVo {
     private String keyword;
     private String progressStatus;
     private String uid; //当前登录用户id
+    private String currentPeople; // 当前处理人
 
 }

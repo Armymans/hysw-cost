@@ -277,6 +277,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " where " +
   " (p.del_flag = '0')  " +
   "      and  " +
+  " (a.auditor_id = #{currentPeople} or #{currentPeople} = '') and " +
   " (b.district = #{district} or #{district} = '') and  " +
   " (b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
   " (p.project_type = #{projectType} or #{projectType} = '') and " +
@@ -350,6 +351,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " where " +
   " (p.del_flag = '0')  " +
   "      and  " +
+  " (a.auditor_id = #{currentPeople} or #{currentPeople} = '') and " +
   " (b.district = #{district} or #{district} = '') and  " +
   " (b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
   " (p.project_type = #{projectType} or #{projectType} = '') and " +
