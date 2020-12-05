@@ -293,7 +293,8 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            v.up_and_down_mark upAndDownMark,  " +
             "            v.base_project_id baseProjectId, " +
             "            b.cea_num ceaNum,  " +
-            "            b.project_num projectNum,  " +
+            "            b.project_num projectNum, " +
+            "            b.project_name projectName, " +
             "            (case b.visa_status  " +
             "             when '1' then '待审核'  " +
             "             when '2' then '处理中'  " +
