@@ -132,7 +132,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "AND " +
                     "(ai.audit_result = '0')  " +
                     "AND " +
-                    "a.auditor_id = #{currentPeople} OR #{currentPeople} = '' ) " +
+                    "(a.auditor_id = #{currentPeople} OR #{currentPeople} = '' ) " +
                     "( m.founder_id = #{uid} or ai.auditor_id = #{uid})  " +
                     "AND ( " +
                     "m.maintenance_item_type = #{maintenanceItemType} or #{maintenanceItemType} = '') " +

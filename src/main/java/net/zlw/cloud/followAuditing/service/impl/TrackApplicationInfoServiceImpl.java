@@ -610,8 +610,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(trackAuditInfo.getBaseProjectId());
 
         Example example = new Example(TrackApplicationInfo.class);
-        example.createCriteria().andEqualTo("trackAudit", id)
-                                .andEqualTo("state","0");
+        example.createCriteria().andEqualTo("trackAudit", id);
         TrackApplicationInfo trackApplicationInfo = trackApplicationInfoDao.selectOneByExample(example);
 
         Example example1 = new Example(TrackMonthly.class);
@@ -619,7 +618,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         example1.createCriteria().andEqualTo("status", "0");
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         AuditInfo auditInfo = null;
-        trackVo.setAuditWord("第" + trackMonthlies.size() + "次审核");
+        trackVo.setAuditWord("第" + trackMonthlies.size() + "次月报");
         TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(id);
         Example example2 = new Example(AuditInfo.class);
         example2.createCriteria().andEqualTo("baseProjectId", trackMonthlyOld.getId())
