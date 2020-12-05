@@ -39,6 +39,8 @@ public class BaseAccountsVo {
 
     private String showHidden;
 
+    private String preName;
+
 
 
 

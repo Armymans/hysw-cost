@@ -15,7 +15,7 @@ public interface SettleAccountsService {
 
     void deleteAcmcounts(String id);
 
-    void updateAccount(String s,UserInfo loginUser);
+    void updateAccount(String s, UserInfo loginUser, String checkWhether);
 
     void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser);
 

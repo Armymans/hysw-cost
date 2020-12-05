@@ -24,7 +24,9 @@ import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
 import net.zlw.cloud.settleAccounts.service.SettleAccountsService;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
@@ -83,6 +85,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private RemindSetMapper remindSetMapper;
     @Autowired
     private MessageService messageService;
+    @Resource
+    private MkyUserMapper mkyUserMapper;
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -128,7 +132,18 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                             accountsVo.setCurrentHandler(memberManage.getMemberName());
                         }
                     }
+                    if ("0".equals(auditInfo.getAuditType()) || "1".equals(auditInfo.getAuditType()) || "4".equals(auditInfo.getAuditType()) ){
+                        accountsVo.setSettleAccountsStatus("结算审核");
+                    }else {
+                        accountsVo.setSettleAccountsStatus("结算确认审核");
+                    }
                 }
+                for (AccountsVo accountsVo : list1) {
+                    String preparePeople = accountsVo.getPreparePeople();
+                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+                    accountsVo.setPreparePeople(preparePeople);
+                }
+
                 return list1;
             }
             //待审核 普通员工
@@ -147,6 +162,18 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                             accountsVo.setCurrentHandler(memberManage.getMemberName());
                         }
                     }
+                    if (auditInfo!=null){
+                        if ("0".equals(auditInfo.getAuditType()) || "1".equals(auditInfo.getAuditType()) || "4".equals(auditInfo.getAuditType()) ){
+                            accountsVo.setSettleAccountsStatus("结算审核");
+                        }else {
+                            accountsVo.setSettleAccountsStatus("结算确认审核");
+                        }
+                    }
+                }
+                for (AccountsVo accountsVo : list1) {
+                    String preparePeople = accountsVo.getPreparePeople();
+                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+                    accountsVo.setPreparePeople(preparePeople);
                 }
                 return list1;
             }
@@ -154,11 +181,33 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             //处理中
             if (pageVo.getSettleAccountsStatus().equals("2")){
                 List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
+                for (AccountsVo accountsVo : list1) {
+                    String preparePeople = accountsVo.getPreparePeople();
+                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+                    accountsVo.setPreparePeople(preparePeople);
+                }
                 return list1;
             }
             //未通过
             if (pageVo.getSettleAccountsStatus().equals("3")){
                 List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
+                for (AccountsVo accountsVo : list1) {
+                    String preparePeople = accountsVo.getPreparePeople();
+                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+                    accountsVo.setPreparePeople(preparePeople);
+
+                    Example example = new Example(AuditInfo.class);
+                    Example.Criteria c = example.createCriteria();
+                    c.andEqualTo("auditResult","2");
+                    c.andEqualTo("baseProjectId",accountsVo.getAccountId());
+                    c.andEqualTo("status","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    if ("0".equals(auditInfo.getAuditType()) || "1".equals(auditInfo.getAuditType()) || "4".equals(auditInfo.getAuditType()) ){
+                        accountsVo.setSettleAccountsStatus("结算未通过");
+                    }else {
+                        accountsVo.setSettleAccountsStatus("结算确认未通过");
+                    }
+                }
                 return list1;
             }
             //待确认
@@ -171,12 +220,21 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         accountsVo.setShowConfirmed("2");
                     }
                 }
-
+                for (AccountsVo accountsVo : list1) {
+                    String preparePeople = accountsVo.getPreparePeople();
+                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+                    accountsVo.setPreparePeople(preparePeople);
+                }
                 return list1;
             }
             //已完成
             if (pageVo.getSettleAccountsStatus().equals("5")){
                 List<AccountsVo> list1 = baseProjectDao.findAllAccountsSuccess(pageVo);
+                for (AccountsVo accountsVo : list1) {
+                    String preparePeople = accountsVo.getPreparePeople();
+                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+                    accountsVo.setPreparePeople(preparePeople);
+                }
                 return list1;
             }
             //全部
@@ -188,6 +246,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     }else{
                         accountsVo.setShowConfirmed("2");
                     }
+                }
+                for (AccountsVo accountsVo : list1) {
+                    String preparePeople = accountsVo.getPreparePeople();
+                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+                    accountsVo.setPreparePeople(preparePeople);
                 }
                 return list1;
             }
@@ -281,10 +344,36 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     }
 
     @Override
-    public void updateAccount(String s, UserInfo loginUser) {
+    public void updateAccount(String s, UserInfo loginUser, String checkWhether) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 //        BaseProject baseProject = new BaseProject();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
+        String accountWhether = baseProject.getAccountWhether();
+        String[] split = accountWhether.split(",");
+        String[] split1 = checkWhether.split(",");
+        if (split!=null){
+            if (split1!=null){
+                for (String s1 : split1) {
+                    for (String s2 : split) {
+                        if (s1.equals(s2)){
+                            if (s1.equals("1")){
+                                throw new RuntimeException("上家已到账,请勿重复操作");
+                            }else if(s1.equals("2")){
+                                throw new RuntimeException("下家已到账请勿重复操作");
+                            }
+                        }
+                    }
+                    String accountWhether1 = baseProject.getAccountWhether();
+                    if (accountWhether1!=null){
+                        baseProject.setAccountWhether(accountWhether+","+s1);
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    }else{
+                        baseProject.setAccountWhether(accountWhether);
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    }
+                }
+            }
+        }
 //        baseProject.setId(s);
         baseProject.setSaWhetherAccount("0");
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
@@ -558,6 +647,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
         if (baseProject.getAB().equals("1")){
             if(baseAccountsVo.getLastSettlementReview().getId() != null) {
+                if (baseAccountsVo.getLastSettlementReview().getPreparePeople().equals("")){
+                    baseAccountsVo.getLastSettlementReview().setPreparePeople(loginUser.getId());
+                }
                 lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
             }
             if(baseAccountsVo.getSettlementAuditInformation().getId() != null){
@@ -907,6 +999,10 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
         if (baseAccountsVo.getSettlementAuditInformation()==null){
             baseAccountsVo.setSettlementAuditInformation(new SettlementAuditInformation());
+        }
+        MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(baseAccountsVo.getLastSettlementReview().getPreparePeople());
+        if (mkyUser!=null){
+            baseAccountsVo.setPreName(mkyUser.getUserName());
         }
         return baseAccountsVo;
     }

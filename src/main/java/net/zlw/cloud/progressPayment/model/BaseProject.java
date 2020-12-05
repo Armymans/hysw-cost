@@ -186,5 +186,8 @@ public class BaseProject implements Serializable {
     @Column(name = "management_table")
     private String managementTable;
 
+    @Column(name = "account_whether")
+    private String accountWhether;
+
 
 }

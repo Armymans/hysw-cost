@@ -127,10 +127,10 @@ public class SettleAccountsController extends BaseController {
     //结算项目到账
 //    @PutMapping("/updateAccount")
     @RequestMapping(value = "/accounts/updateAccount", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> updateAccount(@RequestParam(name = "id") String id) {
+    public Map<String, Object> updateAccount(@RequestParam(name = "id") String id,@RequestParam(name = "checkWhether") String checkWhether) {
         String[] split = id.split(",");
         for (String s : split) {
-            settleAccountsService.updateAccount(s,getLoginUser());
+            settleAccountsService.updateAccount(s,getLoginUser(),checkWhether);
         }
         return RestUtil.success();
     }
