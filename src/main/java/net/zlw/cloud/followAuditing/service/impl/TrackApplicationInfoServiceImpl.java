@@ -610,7 +610,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(trackAuditInfo.getBaseProjectId());
 
         Example example = new Example(TrackApplicationInfo.class);
-        example.createCriteria().andEqualTo("trackAudit", id);
+        example.createCriteria().andEqualTo("trackAudit", id)
+                                .andEqualTo("state","0");
         TrackApplicationInfo trackApplicationInfo = trackApplicationInfoDao.selectOneByExample(example);
 
         Example example1 = new Example(TrackMonthly.class);
@@ -649,8 +650,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         //根据创建时间排序
         example1.orderBy("createTime").desc();
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
-        for (int i = trackMonthlies.size()-1; i >=0 ; i--) {
-            trackMonthlies.get(i).setAuditCount("第"+trackMonthlies.get(i).getAuditCount()+"次月报");
+        for (int i = 0; i < trackMonthlies.size(); i++) {
+            trackMonthlies.get(i).setAuditCount("第"+(i+1)+"次月报");
         }
         return trackMonthlies;
     }
@@ -674,6 +675,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         example1.orderBy("createTime").desc();
         List<TrackMonthly> trackMonthlies2 = trackMonthlyDao.selectByExample(example2);
         trackMonthlies1.addAll(trackMonthlies2);
+//        for (int i = trackMonthlies.size()-1; i >=0 ; i--) {
+//            trackMonthlies.get(i).setAuditCount("第"+trackMonthlies.get(i).getAuditCount()+"次月报");
+//        }
         return trackMonthlies1;
     }
 
@@ -861,8 +865,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
 
                 auditInfo.setAuditResult("0");
-                auditInfo.setAuditOpinion(null);
-                auditInfo.setAuditTime(null);
+                auditInfo.setAuditOpinion("");
+                auditInfo.setAuditTime("");
                 //修改基本状态
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
             }
