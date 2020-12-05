@@ -1090,7 +1090,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
         Example example2 = new Example(OtherInfo.class);
         Example.Criteria c = example2.createCriteria();
-        c.andEqualTo("baseProjectId",baseProject.getId());
+        c.andEqualTo("foreignKey",baseProject.getId());
         c.andEqualTo("status","0");
         List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(example2);
         if (otherInfos1!=null && otherInfos1.size()!=0){
