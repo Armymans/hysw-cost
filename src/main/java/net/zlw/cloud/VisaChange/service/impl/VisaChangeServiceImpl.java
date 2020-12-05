@@ -114,6 +114,78 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaCheckLeader(pageVo);
 
                 for (VisaChangeListVo budgetingListVo : list1) {
+                    // 造价单位名称
+                    if (budgetingListVo.getNameOfCostUnit() != null && !"".equals(budgetingListVo.getNameOfCostUnit())){
+                        budgetingListVo.setNameOfCostUnit(budgetingListVo.getNameOfCostUnit());
+                    }else {
+                        budgetingListVo.setNameOfCostUnit("/");
+                    }
+                    // 造价金额（含税）（元）
+                    if (budgetingListVo.getAmountCost() != null && !"".equals(budgetingListVo.getAmountCost())){
+                        budgetingListVo.setAmountCost(budgetingListVo.getAmountCost());
+                    }else {
+                        budgetingListVo.setNameOfCostUnit("/");
+                    }
+                    // 上家合同金额（元）
+                    if (budgetingListVo.getContractAmountShang() != null && !"".equals(budgetingListVo.getContractAmountShang())){
+                        budgetingListVo.setContractAmountShang(budgetingListVo.getContractAmountShang());
+                    }else {
+                        budgetingListVo.setContractAmountShang(new BigDecimal("0"));
+                    }
+                    // 累计上家签证/变更金额（元）
+                    if (budgetingListVo.getAmountVisaChangeAddShang() != null && !"".equals(budgetingListVo.getAmountVisaChangeAddShang())){
+                        budgetingListVo.setAmountVisaChangeAddShang(budgetingListVo.getAmountVisaChangeAddShang());
+                    }else {
+                        budgetingListVo.setAmountVisaChangeAddShang("/");
+                    }
+                    // 占上家合同比例
+                    if (budgetingListVo.getProportionContractShang() != null && !"".equals(budgetingListVo.getProportionContractShang())){
+                        budgetingListVo.setProportionContractShang(budgetingListVo.getProportionContractShang());
+                    }else {
+                        budgetingListVo.setProportionContractShang("/");
+                    }
+                    // 下家合同金额（元）
+                    if (budgetingListVo.getContractAmountXia() != null && !"".equals(budgetingListVo.getContractAmountXia())){
+                        budgetingListVo.setContractAmountXia(budgetingListVo.getContractAmountXia());
+                    }else {
+                        budgetingListVo.setContractAmountXia(new BigDecimal("0"));
+                    }
+                    // 累计下家签证/变更金额（元）
+                    if (budgetingListVo.getAmountVisaChangeAddXia() != null && !"".equals(budgetingListVo.getAmountVisaChangeAddXia())){
+                        budgetingListVo.setAmountVisaChangeAddXia(budgetingListVo.getAmountVisaChangeAddXia());
+                    }else {
+                        budgetingListVo.setAmountVisaChangeAddXia("/");
+                    }
+                    // 占下家合同比例
+                    if (budgetingListVo.getProportionContractXia() != null && !"".equals(budgetingListVo.getProportionContractXia())){
+                        budgetingListVo.setProportionContractXia(budgetingListVo.getProportionContractXia());
+                    }else {
+                        budgetingListVo.setProportionContractXia("/");
+                    }
+                    // 本期上家签证/变更金额（元）
+                    if (budgetingListVo.getCurrentShang() != null && !"".equals(budgetingListVo.getCurrentShang())){
+                        budgetingListVo.setCurrentShang(budgetingListVo.getCurrentShang());
+                    }else {
+                        budgetingListVo.setCurrentShang("/");
+                    }
+                    // 本期下家签证/变更金额（元）
+                    if (budgetingListVo.getCurrentXia() != null && !"".equals(budgetingListVo.getCurrentXia())){
+                        budgetingListVo.setCurrentXia(budgetingListVo.getCurrentXia());
+                    }else {
+                        budgetingListVo.setCurrentXia("/");
+                    }
+                    // 接收时间
+                    if (budgetingListVo.getCreateTime() != null && !"".equals(budgetingListVo.getCreateTime())){
+                        budgetingListVo.setCreateTime(budgetingListVo.getCreateTime());
+                    }else {
+                        budgetingListVo.setCreateTime("/");
+                    }
+                    // 编制时间
+                    if (budgetingListVo.getCompileTime() != null && !"".equals(budgetingListVo.getCompileTime())){
+                        budgetingListVo.setCompileTime(budgetingListVo.getCompileTime());
+                    }else {
+                        budgetingListVo.setCompileTime("/");
+                    }
                     Example example = new Example(AuditInfo.class);
                     example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
                             .andEqualTo("auditResult","0");
@@ -132,6 +204,78 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }else {
                 List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaCheckStaff(pageVo);
                 for (VisaChangeListVo budgetingListVo : list1) {
+                    // 造价单位名称
+                    if (  budgetingListVo.getNameOfCostUnit() != null && !"".equals(  budgetingListVo.getNameOfCostUnit())){
+                        budgetingListVo.setNameOfCostUnit(  budgetingListVo.getNameOfCostUnit());
+                    }else {
+                        budgetingListVo.setNameOfCostUnit("/");
+                    }
+                    // 造价金额（含税）（元）
+                    if (  budgetingListVo.getAmountCost() != null && !"".equals(  budgetingListVo.getAmountCost())){
+                        budgetingListVo.setAmountCost(  budgetingListVo.getAmountCost());
+                    }else {
+                        budgetingListVo.setNameOfCostUnit("/");
+                    }
+                    // 上家合同金额（元）
+                    if (  budgetingListVo.getContractAmountShang() != null && !"".equals(  budgetingListVo.getContractAmountShang())){
+                        budgetingListVo.setContractAmountShang(  budgetingListVo.getContractAmountShang());
+                    }else {
+                        budgetingListVo.setContractAmountShang(new BigDecimal("0"));
+                    }
+                    // 累计上家签证/变更金额（元）
+                    if (  budgetingListVo.getAmountVisaChangeAddShang() != null && !"".equals(  budgetingListVo.getAmountVisaChangeAddShang())){
+                        budgetingListVo.setAmountVisaChangeAddShang(  budgetingListVo.getAmountVisaChangeAddShang());
+                    }else {
+                        budgetingListVo.setAmountVisaChangeAddShang("/");
+                    }
+                    // 占上家合同比例
+                    if (  budgetingListVo.getProportionContractShang() != null && !"".equals(  budgetingListVo.getProportionContractShang())){
+                        budgetingListVo.setProportionContractShang(  budgetingListVo.getProportionContractShang());
+                    }else {
+                        budgetingListVo.setProportionContractShang("/");
+                    }
+                    // 下家合同金额（元）
+                    if (  budgetingListVo.getContractAmountXia() != null && !"".equals(  budgetingListVo.getContractAmountXia())){
+                        budgetingListVo.setContractAmountXia(  budgetingListVo.getContractAmountXia());
+                    }else {
+                        budgetingListVo.setContractAmountXia(new BigDecimal("0"));
+                    }
+                    // 累计下家签证/变更金额（元）
+                    if (  budgetingListVo.getAmountVisaChangeAddXia() != null && !"".equals(  budgetingListVo.getAmountVisaChangeAddXia())){
+                        budgetingListVo.setAmountVisaChangeAddXia(  budgetingListVo.getAmountVisaChangeAddXia());
+                    }else {
+                        budgetingListVo.setAmountVisaChangeAddXia("/");
+                    }
+                    // 占下家合同比例
+                    if (  budgetingListVo.getProportionContractXia() != null && !"".equals(  budgetingListVo.getProportionContractXia())){
+                        budgetingListVo.setProportionContractXia(  budgetingListVo.getProportionContractXia());
+                    }else {
+                        budgetingListVo.setProportionContractXia("/");
+                    }
+                    // 本期上家签证/变更金额（元）
+                    if (  budgetingListVo.getCurrentShang() != null && !"".equals(  budgetingListVo.getCurrentShang())){
+                        budgetingListVo.setCurrentShang(  budgetingListVo.getCurrentShang());
+                    }else {
+                        budgetingListVo.setCurrentShang("/");
+                    }
+                    // 本期下家签证/变更金额（元）
+                    if (  budgetingListVo.getCurrentXia() != null && !"".equals(  budgetingListVo.getCurrentXia())){
+                        budgetingListVo.setCurrentXia(  budgetingListVo.getCurrentXia());
+                    }else {
+                        budgetingListVo.setCurrentXia("/");
+                    }
+                    // 接收时间
+                    if (  budgetingListVo.getCreateTime() != null && !"".equals(  budgetingListVo.getCreateTime())){
+                        budgetingListVo.setCreateTime(  budgetingListVo.getCreateTime());
+                    }else {
+                        budgetingListVo.setCreateTime("/");
+                    }
+                    // 编制时间
+                    if (  budgetingListVo.getCompileTime() != null && !"".equals(  budgetingListVo.getCompileTime())){
+                        budgetingListVo.setCompileTime(  budgetingListVo.getCompileTime());
+                    }else {
+                        budgetingListVo.setCompileTime("/");
+                    }
                     Example example = new Example(AuditInfo.class);
                     example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
                             .andEqualTo("auditResult","0");
@@ -152,22 +296,317 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         //处理中
         if (pageVo.getStatus().equals("2")){
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
+            for (VisaChangeListVo thisList : list1) {
+                // 造价单位名称
+                if (  thisList.getNameOfCostUnit() != null && !"".equals(  thisList.getNameOfCostUnit())){
+                    thisList.setNameOfCostUnit(  thisList.getNameOfCostUnit());
+                }else {
+                    thisList.setNameOfCostUnit("/");
+                }
+                // 造价金额（含税）（元）
+                if (  thisList.getAmountCost() != null && !"".equals(  thisList.getAmountCost())){
+                    thisList.setAmountCost(  thisList.getAmountCost());
+                }else {
+                    thisList.setNameOfCostUnit("/");
+                }
+                // 上家合同金额（元）
+                if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
+                    thisList.setContractAmountShang(  thisList.getContractAmountShang());
+                }else {
+                    thisList.setContractAmountShang(new BigDecimal("0"));
+                }
+                // 累计上家签证/变更金额（元）
+                if (  thisList.getAmountVisaChangeAddShang() != null && !"".equals(  thisList.getAmountVisaChangeAddShang())){
+                    thisList.setAmountVisaChangeAddShang(  thisList.getAmountVisaChangeAddShang());
+                }else {
+                    thisList.setAmountVisaChangeAddShang("/");
+                }
+                // 占上家合同比例
+                if (  thisList.getProportionContractShang() != null && !"".equals(  thisList.getProportionContractShang())){
+                    thisList.setProportionContractShang(  thisList.getProportionContractShang());
+                }else {
+                    thisList.setProportionContractShang("/");
+                }
+                // 下家合同金额（元）
+                if (  thisList.getContractAmountXia() != null && !"".equals(  thisList.getContractAmountXia())){
+                    thisList.setContractAmountXia(  thisList.getContractAmountXia());
+                }else {
+                    thisList.setContractAmountXia(new BigDecimal("0"));
+                }
+                // 累计下家签证/变更金额（元）
+                if (  thisList.getAmountVisaChangeAddXia() != null && !"".equals(  thisList.getAmountVisaChangeAddXia())){
+                    thisList.setAmountVisaChangeAddXia(  thisList.getAmountVisaChangeAddXia());
+                }else {
+                    thisList.setAmountVisaChangeAddXia("/");
+                }
+                // 占下家合同比例
+                if (  thisList.getProportionContractXia() != null && !"".equals(  thisList.getProportionContractXia())){
+                    thisList.setProportionContractXia(  thisList.getProportionContractXia());
+                }else {
+                    thisList.setProportionContractXia("/");
+                }
+                // 本期上家签证/变更金额（元）
+                if (  thisList.getCurrentShang() != null && !"".equals(  thisList.getCurrentShang())){
+                    thisList.setCurrentShang(  thisList.getCurrentShang());
+                }else {
+                    thisList.setCurrentShang("/");
+                }
+                // 本期下家签证/变更金额（元）
+                if (  thisList.getCurrentXia() != null && !"".equals(  thisList.getCurrentXia())){
+                    thisList.setCurrentXia(  thisList.getCurrentXia());
+                }else {
+                    thisList.setCurrentXia("/");
+                }
+                // 接收时间
+                if (  thisList.getCreateTime() != null && !"".equals(  thisList.getCreateTime())){
+                    thisList.setCreateTime(  thisList.getCreateTime());
+                }else {
+                    thisList.setCreateTime("/");
+                }
+                // 编制时间
+                if (  thisList.getCompileTime() != null && !"".equals(  thisList.getCompileTime())){
+                    thisList.setCompileTime(  thisList.getCompileTime());
+                }else {
+                    thisList.setCompileTime("/");
+                }
+            }
             return list1;
         }
         //未通过
         if (pageVo.getStatus().equals("3")){
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
+            for (VisaChangeListVo thisList : list1) {
+                    // 造价单位名称
+                    if (  thisList.getNameOfCostUnit() != null && !"".equals(  thisList.getNameOfCostUnit())){
+                        thisList.setNameOfCostUnit(  thisList.getNameOfCostUnit());
+                    }else {
+                        thisList.setNameOfCostUnit("/");
+                    }
+                    // 造价金额（含税）（元）
+                    if (  thisList.getAmountCost() != null && !"".equals(  thisList.getAmountCost())){
+                        thisList.setAmountCost(  thisList.getAmountCost());
+                    }else {
+                        thisList.setNameOfCostUnit("/");
+                    }
+                    // 上家合同金额（元）
+                    if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
+                        thisList.setContractAmountShang(  thisList.getContractAmountShang());
+                    }else {
+                        thisList.setContractAmountShang(new BigDecimal("0"));
+                    }
+                    // 累计上家签证/变更金额（元）
+                    if (  thisList.getAmountVisaChangeAddShang() != null && !"".equals(  thisList.getAmountVisaChangeAddShang())){
+                        thisList.setAmountVisaChangeAddShang(  thisList.getAmountVisaChangeAddShang());
+                    }else {
+                        thisList.setAmountVisaChangeAddShang("/");
+                    }
+                    // 占上家合同比例
+                    if (  thisList.getProportionContractShang() != null && !"".equals(  thisList.getProportionContractShang())){
+                        thisList.setProportionContractShang(  thisList.getProportionContractShang());
+                    }else {
+                        thisList.setProportionContractShang("/");
+                    }
+                    // 下家合同金额（元）
+                    if (  thisList.getContractAmountXia() != null && !"".equals(  thisList.getContractAmountXia())){
+                        thisList.setContractAmountXia(  thisList.getContractAmountXia());
+                    }else {
+                        thisList.setContractAmountXia(new BigDecimal("0"));
+                    }
+                    // 累计下家签证/变更金额（元）
+                    if (  thisList.getAmountVisaChangeAddXia() != null && !"".equals(  thisList.getAmountVisaChangeAddXia())){
+                        thisList.setAmountVisaChangeAddXia(  thisList.getAmountVisaChangeAddXia());
+                    }else {
+                        thisList.setAmountVisaChangeAddXia("/");
+                    }
+                    // 占下家合同比例
+                    if (  thisList.getProportionContractXia() != null && !"".equals(  thisList.getProportionContractXia())){
+                        thisList.setProportionContractXia(  thisList.getProportionContractXia());
+                    }else {
+                        thisList.setProportionContractXia("/");
+                    }
+                    // 本期上家签证/变更金额（元）
+                    if (  thisList.getCurrentShang() != null && !"".equals(  thisList.getCurrentShang())){
+                        thisList.setCurrentShang(  thisList.getCurrentShang());
+                    }else {
+                        thisList.setCurrentShang("/");
+                    }
+                    // 本期下家签证/变更金额（元）
+                    if (  thisList.getCurrentXia() != null && !"".equals(  thisList.getCurrentXia())){
+                        thisList.setCurrentXia(  thisList.getCurrentXia());
+                    }else {
+                        thisList.setCurrentXia("/");
+                    }
+                    // 接收时间
+                    if (  thisList.getCreateTime() != null && !"".equals(  thisList.getCreateTime())){
+                        thisList.setCreateTime(  thisList.getCreateTime());
+                    }else {
+                        thisList.setCreateTime("/");
+                    }
+                    // 编制时间
+                    if (  thisList.getCompileTime() != null && !"".equals(  thisList.getCompileTime())){
+                        thisList.setCompileTime(  thisList.getCompileTime());
+                    }else {
+                        thisList.setCompileTime("/");
+                    }
+                }
             return list1;
         }
         //待确认
         if (pageVo.getStatus().equals("4")){
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
+            for (VisaChangeListVo thisList : list1) {
+                    // 造价单位名称
+                    if (  thisList.getNameOfCostUnit() != null && !"".equals(  thisList.getNameOfCostUnit())){
+                        thisList.setNameOfCostUnit(  thisList.getNameOfCostUnit());
+                    }else {
+                        thisList.setNameOfCostUnit("/");
+                    }
+                    // 造价金额（含税）（元）
+                    if (  thisList.getAmountCost() != null && !"".equals(  thisList.getAmountCost())){
+                        thisList.setAmountCost(  thisList.getAmountCost());
+                    }else {
+                        thisList.setNameOfCostUnit("/");
+                    }
+                    // 上家合同金额（元）
+                    if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
+                        thisList.setContractAmountShang(  thisList.getContractAmountShang());
+                    }else {
+                        thisList.setContractAmountShang(new BigDecimal("0"));
+                    }
+                    // 累计上家签证/变更金额（元）
+                    if (  thisList.getAmountVisaChangeAddShang() != null && !"".equals(  thisList.getAmountVisaChangeAddShang())){
+                        thisList.setAmountVisaChangeAddShang(  thisList.getAmountVisaChangeAddShang());
+                    }else {
+                        thisList.setAmountVisaChangeAddShang("/");
+                    }
+                    // 占上家合同比例
+                    if (  thisList.getProportionContractShang() != null && !"".equals(  thisList.getProportionContractShang())){
+                        thisList.setProportionContractShang(  thisList.getProportionContractShang());
+                    }else {
+                        thisList.setProportionContractShang("/");
+                    }
+                    // 下家合同金额（元）
+                    if (  thisList.getContractAmountXia() != null && !"".equals(  thisList.getContractAmountXia())){
+                        thisList.setContractAmountXia(  thisList.getContractAmountXia());
+                    }else {
+                        thisList.setContractAmountXia(new BigDecimal("0"));
+                    }
+                    // 累计下家签证/变更金额（元）
+                    if (  thisList.getAmountVisaChangeAddXia() != null && !"".equals(  thisList.getAmountVisaChangeAddXia())){
+                        thisList.setAmountVisaChangeAddXia(  thisList.getAmountVisaChangeAddXia());
+                    }else {
+                        thisList.setAmountVisaChangeAddXia("/");
+                    }
+                    // 占下家合同比例
+                    if (  thisList.getProportionContractXia() != null && !"".equals(  thisList.getProportionContractXia())){
+                        thisList.setProportionContractXia(  thisList.getProportionContractXia());
+                    }else {
+                        thisList.setProportionContractXia("/");
+                    }
+                    // 本期上家签证/变更金额（元）
+                    if (  thisList.getCurrentShang() != null && !"".equals(  thisList.getCurrentShang())){
+                        thisList.setCurrentShang(  thisList.getCurrentShang());
+                    }else {
+                        thisList.setCurrentShang("/");
+                    }
+                    // 本期下家签证/变更金额（元）
+                    if (  thisList.getCurrentXia() != null && !"".equals(  thisList.getCurrentXia())){
+                        thisList.setCurrentXia(  thisList.getCurrentXia());
+                    }else {
+                        thisList.setCurrentXia("/");
+                    }
+                    // 接收时间
+                    if (  thisList.getCreateTime() != null && !"".equals(  thisList.getCreateTime())){
+                        thisList.setCreateTime(  thisList.getCreateTime());
+                    }else {
+                        thisList.setCreateTime("/");
+                    }
+                    // 编制时间
+                    if (  thisList.getCompileTime() != null && !"".equals(  thisList.getCompileTime())){
+                        thisList.setCompileTime(  thisList.getCompileTime());
+                    }else {
+                        thisList.setCompileTime("/");
+                    }
+                }
             return list1;
         }
         //进行中
         if (pageVo.getStatus().equals("5")){
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaSuccess(pageVo);
             for (VisaChangeListVo visaChangeListVo : list1) {
+                // 造价单位名称
+                if (  visaChangeListVo.getNameOfCostUnit() != null && !"".equals(  visaChangeListVo.getNameOfCostUnit())){
+                    visaChangeListVo.setNameOfCostUnit(  visaChangeListVo.getNameOfCostUnit());
+                }else {
+                    visaChangeListVo.setNameOfCostUnit("/");
+                }
+                // 造价金额（含税）（元）
+                if (  visaChangeListVo.getAmountCost() != null && !"".equals(  visaChangeListVo.getAmountCost())){
+                    visaChangeListVo.setAmountCost(  visaChangeListVo.getAmountCost());
+                }else {
+                    visaChangeListVo.setNameOfCostUnit("/");
+                }
+                // 上家合同金额（元）
+                if (  visaChangeListVo.getContractAmountShang() != null && !"".equals(  visaChangeListVo.getContractAmountShang())){
+                    visaChangeListVo.setContractAmountShang(  visaChangeListVo.getContractAmountShang());
+                }else {
+                    visaChangeListVo.setContractAmountShang(new BigDecimal("0"));
+                }
+                // 累计上家签证/变更金额（元）
+                if (  visaChangeListVo.getAmountVisaChangeAddShang() != null && !"".equals(  visaChangeListVo.getAmountVisaChangeAddShang())){
+                    visaChangeListVo.setAmountVisaChangeAddShang(  visaChangeListVo.getAmountVisaChangeAddShang());
+                }else {
+                    visaChangeListVo.setAmountVisaChangeAddShang("/");
+                }
+                // 占上家合同比例
+                if (  visaChangeListVo.getProportionContractShang() != null && !"".equals(  visaChangeListVo.getProportionContractShang())){
+                    visaChangeListVo.setProportionContractShang(  visaChangeListVo.getProportionContractShang());
+                }else {
+                    visaChangeListVo.setProportionContractShang("/");
+                }
+                // 下家合同金额（元）
+                if (  visaChangeListVo.getContractAmountXia() != null && !"".equals(  visaChangeListVo.getContractAmountXia())){
+                    visaChangeListVo.setContractAmountXia(  visaChangeListVo.getContractAmountXia());
+                }else {
+                    visaChangeListVo.setContractAmountXia(new BigDecimal("0"));
+                }
+                // 累计下家签证/变更金额（元）
+                if (  visaChangeListVo.getAmountVisaChangeAddXia() != null && !"".equals(  visaChangeListVo.getAmountVisaChangeAddXia())){
+                    visaChangeListVo.setAmountVisaChangeAddXia(  visaChangeListVo.getAmountVisaChangeAddXia());
+                }else {
+                    visaChangeListVo.setAmountVisaChangeAddXia("/");
+                }
+                // 占下家合同比例
+                if (  visaChangeListVo.getProportionContractXia() != null && !"".equals(  visaChangeListVo.getProportionContractXia())){
+                    visaChangeListVo.setProportionContractXia(  visaChangeListVo.getProportionContractXia());
+                }else {
+                    visaChangeListVo.setProportionContractXia("/");
+                }
+                // 本期上家签证/变更金额（元）
+                if (  visaChangeListVo.getCurrentShang() != null && !"".equals(  visaChangeListVo.getCurrentShang())){
+                    visaChangeListVo.setCurrentShang(  visaChangeListVo.getCurrentShang());
+                }else {
+                    visaChangeListVo.setCurrentShang("/");
+                }
+                // 本期下家签证/变更金额（元）
+                if (  visaChangeListVo.getCurrentXia() != null && !"".equals(  visaChangeListVo.getCurrentXia())){
+                    visaChangeListVo.setCurrentXia(  visaChangeListVo.getCurrentXia());
+                }else {
+                    visaChangeListVo.setCurrentXia("/");
+                }
+                // 接收时间
+                if (  visaChangeListVo.getCreateTime() != null && !"".equals(  visaChangeListVo.getCreateTime())){
+                    visaChangeListVo.setCreateTime(  visaChangeListVo.getCreateTime());
+                }else {
+                    visaChangeListVo.setCreateTime("/");
+                }
+                // 编制时间
+                if (  visaChangeListVo.getCompileTime() != null && !"".equals(  visaChangeListVo.getCompileTime())){
+                    visaChangeListVo.setCompileTime(  visaChangeListVo.getCompileTime());
+                }else {
+                    visaChangeListVo.setCompileTime("/");
+                }
+
                 if (visaChangeListVo.getFounderId().equals(pageVo.getUserId())){
                     visaChangeListVo.setShowUnderway("1");
                 }else{
@@ -179,13 +618,158 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         //已完成
         if (pageVo.getStatus().equals("6")){
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaSuccess(pageVo);
+            for (VisaChangeListVo thisList : list1) {
+                // 造价单位名称
+                if (  thisList.getNameOfCostUnit() != null && !"".equals(  thisList.getNameOfCostUnit())){
+                    thisList.setNameOfCostUnit(  thisList.getNameOfCostUnit());
+                }else {
+                    thisList.setNameOfCostUnit("/");
+                }
+                // 造价金额（含税）（元）
+                if (  thisList.getAmountCost() != null && !"".equals(  thisList.getAmountCost())){
+                    thisList.setAmountCost(  thisList.getAmountCost());
+                }else {
+                    thisList.setNameOfCostUnit("/");
+                }
+                // 上家合同金额（元）
+                if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
+                    thisList.setContractAmountShang(  thisList.getContractAmountShang());
+                }else {
+                    thisList.setContractAmountShang(new BigDecimal("0"));
+                }
+                // 累计上家签证/变更金额（元）
+                if (  thisList.getAmountVisaChangeAddShang() != null && !"".equals(  thisList.getAmountVisaChangeAddShang())){
+                    thisList.setAmountVisaChangeAddShang(  thisList.getAmountVisaChangeAddShang());
+                }else {
+                    thisList.setAmountVisaChangeAddShang("/");
+                }
+                // 占上家合同比例
+                if (  thisList.getProportionContractShang() != null && !"".equals(  thisList.getProportionContractShang())){
+                    thisList.setProportionContractShang(  thisList.getProportionContractShang());
+                }else {
+                    thisList.setProportionContractShang("/");
+                }
+                // 下家合同金额（元）
+                if (  thisList.getContractAmountXia() != null && !"".equals(  thisList.getContractAmountXia())){
+                    thisList.setContractAmountXia(  thisList.getContractAmountXia());
+                }else {
+                    thisList.setContractAmountXia(new BigDecimal("0"));
+                }
+                // 累计下家签证/变更金额（元）
+                if (  thisList.getAmountVisaChangeAddXia() != null && !"".equals(  thisList.getAmountVisaChangeAddXia())){
+                    thisList.setAmountVisaChangeAddXia(  thisList.getAmountVisaChangeAddXia());
+                }else {
+                    thisList.setAmountVisaChangeAddXia("/");
+                }
+                // 占下家合同比例
+                if (  thisList.getProportionContractXia() != null && !"".equals(  thisList.getProportionContractXia())){
+                    thisList.setProportionContractXia(  thisList.getProportionContractXia());
+                }else {
+                    thisList.setProportionContractXia("/");
+                }
+                // 本期上家签证/变更金额（元）
+                if (  thisList.getCurrentShang() != null && !"".equals(  thisList.getCurrentShang())){
+                    thisList.setCurrentShang(  thisList.getCurrentShang());
+                }else {
+                    thisList.setCurrentShang("/");
+                }
+                // 本期下家签证/变更金额（元）
+                if (  thisList.getCurrentXia() != null && !"".equals(  thisList.getCurrentXia())){
+                    thisList.setCurrentXia(  thisList.getCurrentXia());
+                }else {
+                    thisList.setCurrentXia("/");
+                }
+                // 接收时间
+                if (  thisList.getCreateTime() != null && !"".equals(  thisList.getCreateTime())){
+                    thisList.setCreateTime(  thisList.getCreateTime());
+                }else {
+                    thisList.setCreateTime("/");
+                }
+                // 编制时间
+                if (  thisList.getCompileTime() != null && !"".equals(  thisList.getCompileTime())){
+                    thisList.setCompileTime(  thisList.getCompileTime());
+                }else {
+                    thisList.setCompileTime("/");
+                }
+            }
             return list1;
         }
         //全部
         if (pageVo.getStatus().equals("") || pageVo.getStatus() == null) {
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
             for (VisaChangeListVo visaChangeListVo : list1) {
-
+                // 造价单位名称
+                if (visaChangeListVo.getNameOfCostUnit() != null && !"".equals(visaChangeListVo.getNameOfCostUnit())){
+                    visaChangeListVo.setNameOfCostUnit(visaChangeListVo.getNameOfCostUnit());
+                }else {
+                    visaChangeListVo.setNameOfCostUnit("/");
+                }
+                // 造价金额（含税）（元）
+                if (visaChangeListVo.getAmountCost() != null && !"".equals(visaChangeListVo.getAmountCost())){
+                    visaChangeListVo.setAmountCost(visaChangeListVo.getAmountCost());
+                }else {
+                    visaChangeListVo.setNameOfCostUnit("/");
+                }
+                // 上家合同金额（元）
+                if (visaChangeListVo.getContractAmountShang() != null && !"".equals(visaChangeListVo.getContractAmountShang())){
+                    visaChangeListVo.setContractAmountShang(visaChangeListVo.getContractAmountShang());
+                }else {
+                    visaChangeListVo.setContractAmountShang(new BigDecimal("0"));
+                }
+                // 累计上家签证/变更金额（元）
+                if (visaChangeListVo.getAmountVisaChangeAddShang() != null && !"".equals(visaChangeListVo.getAmountVisaChangeAddShang())){
+                    visaChangeListVo.setAmountVisaChangeAddShang(visaChangeListVo.getAmountVisaChangeAddShang());
+                }else {
+                    visaChangeListVo.setAmountVisaChangeAddShang("/");
+                }
+                // 占上家合同比例
+                if (visaChangeListVo.getProportionContractShang() != null && !"".equals(visaChangeListVo.getProportionContractShang())){
+                    visaChangeListVo.setProportionContractShang(visaChangeListVo.getProportionContractShang());
+                }else {
+                    visaChangeListVo.setProportionContractShang("/");
+                }
+                // 下家合同金额（元）
+                if (visaChangeListVo.getContractAmountXia() != null && !"".equals(visaChangeListVo.getContractAmountXia())){
+                    visaChangeListVo.setContractAmountXia(visaChangeListVo.getContractAmountXia());
+                }else {
+                    visaChangeListVo.setContractAmountXia(new BigDecimal("0"));
+                }
+                // 累计下家签证/变更金额（元）
+                if (visaChangeListVo.getAmountVisaChangeAddXia() != null && !"".equals(visaChangeListVo.getAmountVisaChangeAddXia())){
+                    visaChangeListVo.setAmountVisaChangeAddXia(visaChangeListVo.getAmountVisaChangeAddXia());
+                }else {
+                    visaChangeListVo.setAmountVisaChangeAddXia("/");
+                }
+                // 占下家合同比例
+                if (visaChangeListVo.getProportionContractXia() != null && !"".equals(visaChangeListVo.getProportionContractXia())){
+                    visaChangeListVo.setProportionContractXia(visaChangeListVo.getProportionContractXia());
+                }else {
+                    visaChangeListVo.setProportionContractXia("/");
+                }
+                // 本期上家签证/变更金额（元）
+                if (visaChangeListVo.getCurrentShang() != null && !"".equals(visaChangeListVo.getCurrentShang())){
+                    visaChangeListVo.setCurrentShang(visaChangeListVo.getCurrentShang());
+                }else {
+                    visaChangeListVo.setCurrentShang("/");
+                }
+                // 本期下家签证/变更金额（元）
+                if (visaChangeListVo.getCurrentXia() != null && !"".equals(visaChangeListVo.getCurrentXia())){
+                    visaChangeListVo.setCurrentXia(visaChangeListVo.getCurrentXia());
+                }else {
+                    visaChangeListVo.setCurrentXia("/");
+                }
+                // 接收时间
+                if (visaChangeListVo.getCreateTime() != null && !"".equals(visaChangeListVo.getCreateTime())){
+                    visaChangeListVo.setCreateTime(visaChangeListVo.getCreateTime());
+                }else {
+                    visaChangeListVo.setCreateTime("/");
+                }
+                // 编制时间
+                if (visaChangeListVo.getCompileTime() != null && !"".equals(visaChangeListVo.getCompileTime())){
+                    visaChangeListVo.setCompileTime(visaChangeListVo.getCompileTime());
+                }else {
+                    visaChangeListVo.setCompileTime("/");
+                }
                     Example example1 = new Example(AuditInfo.class);
                     Example.Criteria c2 = example1.createCriteria();
                     c2.andEqualTo("baseProjectId", visaChangeListVo.getId());
