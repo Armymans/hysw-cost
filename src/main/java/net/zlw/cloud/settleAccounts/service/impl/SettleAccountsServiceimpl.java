@@ -1423,9 +1423,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
                     //预算
                     Example example1 = new Example(Budgeting.class);
-                    example1.createCriteria().andEqualTo("baseProjectId",baseProject.getId()).andEqualTo("status","0");
+                    example1.createCriteria().andEqualTo("baseProjectId",baseProject.getId()).andEqualTo("delFlag","0");
                     Example example4 = new Example(TrackAuditInfo.class);
-                    example4.createCriteria().andEqualTo("baseProjectId",baseProject.getId());
+                    example4.createCriteria().andEqualTo("baseProjectId",baseProject.getId()).andEqualTo("status","0");
                     TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectOneByExample(example4);
                     if (trackAuditInfo != null){
                         EmployeeAchievementsInfo achievementsInfo = new EmployeeAchievementsInfo();
