@@ -22,7 +22,7 @@ public class VisaChangeListVo {
     private String waterAddress;
     private String outsourcing;
     private String nameOfCostUnit;
-    private String amountCost;
+    private int amountCost;
     private BigDecimal contractAmountShang;
     private String amountVisaChangeAddShang;
     private String proportionContractShang;

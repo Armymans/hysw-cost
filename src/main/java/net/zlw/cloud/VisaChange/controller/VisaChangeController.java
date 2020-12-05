@@ -153,10 +153,12 @@ public class VisaChangeController extends BaseController {
         if (list.size()>=1){
             visaReturnStatistic.setTotalChangeNum(list.get(list.size()-1).getChangeNum());
         }
+        int upPro1 = (int) upPro;
+        int downPro1 = (int)downPro;
         visaReturnStatistic.setTotalVisaChangeUpAmount(upAmount);
         visaReturnStatistic.setTotalVisaChangeDownAmount(downAmount);
-        visaReturnStatistic.setTotalVisaChangeUpProportionContract(upPro+"");
-        visaReturnStatistic.setTotalVisaChangeDownProportionContract(downPro+"");
+        visaReturnStatistic.setTotalVisaChangeUpProportionContract(upPro1);
+        visaReturnStatistic.setTotalVisaChangeDownProportionContract(downPro1);
         return RestUtil.success(visaReturnStatistic);
 
     }

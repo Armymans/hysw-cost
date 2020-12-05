@@ -120,12 +120,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     }else {
                         budgetingListVo.setNameOfCostUnit("/");
                     }
-                    // 造价金额（含税）（元）
-                    if (budgetingListVo.getAmountCost() != null && !"".equals(budgetingListVo.getAmountCost())){
-                        budgetingListVo.setAmountCost(budgetingListVo.getAmountCost());
-                    }else {
-                        budgetingListVo.setNameOfCostUnit("/");
-                    }
+
                     // 上家合同金额（元）
                     if (budgetingListVo.getContractAmountShang() != null && !"".equals(budgetingListVo.getContractAmountShang())){
                         budgetingListVo.setContractAmountShang(budgetingListVo.getContractAmountShang());
@@ -210,12 +205,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     }else {
                         budgetingListVo.setNameOfCostUnit("/");
                     }
-                    // 造价金额（含税）（元）
-                    if (  budgetingListVo.getAmountCost() != null && !"".equals(  budgetingListVo.getAmountCost())){
-                        budgetingListVo.setAmountCost(  budgetingListVo.getAmountCost());
-                    }else {
-                        budgetingListVo.setNameOfCostUnit("/");
-                    }
+
                     // 上家合同金额（元）
                     if (  budgetingListVo.getContractAmountShang() != null && !"".equals(  budgetingListVo.getContractAmountShang())){
                         budgetingListVo.setContractAmountShang(  budgetingListVo.getContractAmountShang());
@@ -303,12 +293,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 }else {
                     thisList.setNameOfCostUnit("/");
                 }
-                // 造价金额（含税）（元）
-                if (  thisList.getAmountCost() != null && !"".equals(  thisList.getAmountCost())){
-                    thisList.setAmountCost(  thisList.getAmountCost());
-                }else {
-                    thisList.setNameOfCostUnit("/");
-                }
+
                 // 上家合同金额（元）
                 if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
                     thisList.setContractAmountShang(  thisList.getContractAmountShang());
@@ -379,12 +364,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     // 造价单位名称
                     if (  thisList.getNameOfCostUnit() != null && !"".equals(  thisList.getNameOfCostUnit())){
                         thisList.setNameOfCostUnit(  thisList.getNameOfCostUnit());
-                    }else {
-                        thisList.setNameOfCostUnit("/");
-                    }
-                    // 造价金额（含税）（元）
-                    if (  thisList.getAmountCost() != null && !"".equals(  thisList.getAmountCost())){
-                        thisList.setAmountCost(  thisList.getAmountCost());
                     }else {
                         thisList.setNameOfCostUnit("/");
                     }
@@ -461,12 +440,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     }else {
                         thisList.setNameOfCostUnit("/");
                     }
-                    // 造价金额（含税）（元）
-                    if (  thisList.getAmountCost() != null && !"".equals(  thisList.getAmountCost())){
-                        thisList.setAmountCost(  thisList.getAmountCost());
-                    }else {
-                        thisList.setNameOfCostUnit("/");
-                    }
                     // 上家合同金额（元）
                     if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
                         thisList.setContractAmountShang(  thisList.getContractAmountShang());
@@ -537,12 +510,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 // 造价单位名称
                 if (  visaChangeListVo.getNameOfCostUnit() != null && !"".equals(  visaChangeListVo.getNameOfCostUnit())){
                     visaChangeListVo.setNameOfCostUnit(  visaChangeListVo.getNameOfCostUnit());
-                }else {
-                    visaChangeListVo.setNameOfCostUnit("/");
-                }
-                // 造价金额（含税）（元）
-                if (  visaChangeListVo.getAmountCost() != null && !"".equals(  visaChangeListVo.getAmountCost())){
-                    visaChangeListVo.setAmountCost(  visaChangeListVo.getAmountCost());
                 }else {
                     visaChangeListVo.setNameOfCostUnit("/");
                 }
@@ -625,12 +592,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 }else {
                     thisList.setNameOfCostUnit("/");
                 }
-                // 造价金额（含税）（元）
-                if (  thisList.getAmountCost() != null && !"".equals(  thisList.getAmountCost())){
-                    thisList.setAmountCost(  thisList.getAmountCost());
-                }else {
-                    thisList.setNameOfCostUnit("/");
-                }
                 // 上家合同金额（元）
                 if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
                     thisList.setContractAmountShang(  thisList.getContractAmountShang());
@@ -701,12 +662,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 // 造价单位名称
                 if (visaChangeListVo.getNameOfCostUnit() != null && !"".equals(visaChangeListVo.getNameOfCostUnit())){
                     visaChangeListVo.setNameOfCostUnit(visaChangeListVo.getNameOfCostUnit());
-                }else {
-                    visaChangeListVo.setNameOfCostUnit("/");
-                }
-                // 造价金额（含税）（元）
-                if (visaChangeListVo.getAmountCost() != null && !"".equals(visaChangeListVo.getAmountCost())){
-                    visaChangeListVo.setAmountCost(visaChangeListVo.getAmountCost());
                 }else {
                     visaChangeListVo.setNameOfCostUnit("/");
                 }
