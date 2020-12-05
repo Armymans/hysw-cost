@@ -329,6 +329,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         * */
         BaseProjectVo baseProjectVo = new BaseProjectVo();
         ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(id);
+        if ("1".equals(paymentInformation.getProjectType())){
+            paymentInformation.setProjectType("合同内进度款支付");
+        }else if ("2".equals(paymentInformation.getProjectType())){
+            paymentInformation.setProjectType("合同外进度款支付");
+        }
 
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
 
