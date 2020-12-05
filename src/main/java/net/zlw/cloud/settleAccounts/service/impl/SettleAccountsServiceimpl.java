@@ -928,10 +928,10 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }else if(ab.equals("2")){
             baseProject.setAB("B");
         }
-        String constructionUnit = baseProject.getConstructionUnit();
+        String constructionUnit = baseProject.getConstructionOrganization();
         if (constructionUnit!=null && !"".equals(constructionUnit)){
             ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(constructionUnit);
-            baseProject.setConstructionUnit(constructionUnitManagement.getConstructionUnitName());
+            baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
         }
 
         baseAccountsVo.setBaseProject(baseProject);
