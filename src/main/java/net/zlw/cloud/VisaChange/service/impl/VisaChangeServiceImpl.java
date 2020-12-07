@@ -663,6 +663,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         if (pageVo.getStatus().equals("") || pageVo.getStatus() == null) {
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
             for (VisaChangeListVo visaChangeListVo : list1) {
+                System.err.println(visaChangeListVo);
                 // 造价单位名称
                 if (visaChangeListVo.getNameOfCostUnit() != null && !"".equals(visaChangeListVo.getNameOfCostUnit())){
                     visaChangeListVo.setNameOfCostUnit(visaChangeListVo.getNameOfCostUnit());
@@ -749,8 +750,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                             visaChangeListVo.setShowUnderway("2");
                         }
                     }
-                return list1;
             }
+            return list1;
         }
 
 
