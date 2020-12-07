@@ -895,7 +895,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeUp.getOutsourcingAmount())){
                 visaChangeUp.setOutsourcingAmount(null);
             }
-            if (visaChangeUp.getProportionContract().length()<60){
+            if (visaChangeUp.getProportionContract().length()>60){
                 visaChangeUp.setProportionContract(null);
             }
                 visaChangeUp.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -922,8 +922,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeDown.getContractAmount())){
                 visaChangeDown.setContractAmount(null);
             }
-            if (Double.parseDouble(visaChangeDown.getProportionContract())<60){
-                visaChangeUp.setProportionContract(null);
+            if (visaChangeDown.getProportionContract().length()>60){
+                visaChangeDown.setProportionContract(null);
             }
                 visaChangeDown.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeDown.setCreateTime(sim.format(new Date()));
@@ -970,7 +970,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             Example.Criteria c = example1.createCriteria();
             c.andLike("type","qzbgxmxj%");
             c.andEqualTo("status","0");
-            c.andEqualTo("platCode",loginUser.getId());
+            c.andEqualTo("platCode",id);
             List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
             for (FileInfo fileInfo : fileInfos) {
                 //修改文件外键
@@ -1015,7 +1015,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if ("".equals(visaChangeDown.getOutsourcingAmount())){
                 visaChangeDown.setOutsourcingAmount(null);
             }
-            if (Double.parseDouble(visaChangeDown.getProportionContract())<60){
+            if (visaChangeDown.getProportionContract().length()>60){
                 visaChangeDown.setProportionContract(null);
             }
 
@@ -1057,7 +1057,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             Example.Criteria c = example1.createCriteria();
             c.andLike("type","qzbgxmxj%");
             c.andEqualTo("status","0");
-            c.andEqualTo("platCode",loginUser.getId());
+            c.andEqualTo("platCode",id);
             List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
             for (FileInfo fileInfo : fileInfos) {
                 //修改文件外键
