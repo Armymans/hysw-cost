@@ -198,6 +198,19 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                         }
                     }
                 }
+                for (VisaChangeListVo visaChangeListVo : list1) {
+                    Example example = new Example(AuditInfo.class);
+                    Example.Criteria c = example.createCriteria();
+                    c.andEqualTo("baseProjectId",visaChangeListVo.getId());
+                    c.andEqualTo("auditResult","0");
+                    c.andEqualTo("status","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    if ("0".equals(auditInfo.getAuditType()) || "1".equals(auditInfo.getAuditType()) || "4".equals(auditInfo.getAuditType())){
+                        visaChangeListVo.setStatus("签证/变更审核");
+                    }else{
+                        visaChangeListVo.setStatus("签证/变更确认审核");
+                    }
+                }
                 return list1;
                 //普通员工
             }else {
@@ -1479,8 +1492,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Override
     public void updateVisa(VisaChangeVo visaChangeVo, UserInfo loginUser) {
-        String id = loginUser.getId();
-//        String id = "user309";
+//        String id = loginUser.getId();
+        String id = "user309";
         //进行中编辑
         if (visaChangeVo.getVisaNum() != null && visaChangeVo.getVisaNum().equals("1")) {
             VisaApplyChangeInformation visaApplyChangeInformationUp = visaChangeVo.getVisaApplyChangeInformationUp();
@@ -1571,8 +1584,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             if (visaChangeDown.getProportionContract().length()<60){
                 visaChangeDown.setProportionContract(null);
             }
-            if("".equals(visaChangeDown.getAmountVisaChange()) || visaChangeDown.getAmountVisaChange() == null){
-                visaChangeDown.setAmountVisaChange(new BigDecimal(0));
+            if("".equals(visaChangeDown.getAmountVisaChange())){
+                visaChangeDown.setAmountVisaChange(null);
             }
                 visaChangeDown.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaChangeDown.setCreateTime(sim.format(new Date()));
@@ -1582,7 +1595,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeDown.setApplyChangeInfoId(visaApplyChangeInformationDown.getId());
                 visaChangeDown.setUpAndDownMark("1");
                 visaChangeDown.setChangeNum(downNum + 1);
-
+                if (visaChangeDown.getAmountVisaChange() == null){
+                    visaChangeDown.setAmountVisaChange(new BigDecimal(0));
+                }
+                if (visaChangeDown.getCumulativeChangeAmount() == null){
+                    visaChangeDown.setCumulativeChangeAmount(new BigDecimal(0));
+                }
+                if (bigDecimal1 == null){
+                    bigDecimal1 = new BigDecimal(0);
+                }
                 visaChangeDown.setCumulativeChangeAmount(bigDecimal1.add(visaChangeDown.getAmountVisaChange()));
 //                visaChangeDown.setCumulativeChangeAmount(visaChangeDown.getAmountVisaChange());
                 visaChangeMapper.insertSelective(visaChangeDown);
@@ -1798,7 +1819,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo.setBaseProjectId(visaChangeUp.getId());
                 }
                 auditInfo.setAuditResult("0");
-                auditInfo.setAuditType("2");
+                auditInfo.setAuditType("0");
                 auditInfo.setAuditorId(visaChangeVo.getAuditId());
                 auditInfo.setFounderId(id);
                 auditInfo.setStatus("0");

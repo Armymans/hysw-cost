@@ -386,7 +386,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
     List<VisaChangeListVo> findAllVisaProcessing(PageVo pageVo);
 
     @Select("select  " +
-            "             distinct IFNULL(v.id,v2.id) id, " +
+            "             distinct IFNULL(v2.id,v.id) id, " +
             "            v.up_and_down_mark upAndDownMark,  " +
             "            v.base_project_id baseProjectId, " +
             "            b.cea_num ceaNum,  " +
