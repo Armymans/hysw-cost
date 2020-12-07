@@ -96,8 +96,10 @@ public class VisaChangeController extends BaseController {
     //新增签证变更
     @RequestMapping(value = "/visachange/addVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addVisa(VisaChangeVo visaChangeVo){
+        System.err.println(visaChangeVo.getVisaChangeUp());
         vcisService.addVisa(visaChangeVo,getLoginUser());
 
+//        return null;
         return RestUtil.success();
     }
 
