@@ -29,10 +29,8 @@ import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
-import net.zlw.cloud.warningDetails.model.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -116,6 +114,8 @@ public class ProjectService {
 
     @Resource
     private OutSourceMapper outSourceMapper;
+    @Resource
+    private InComeMapper inComeMapper;
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -1879,8 +1879,6 @@ public class ProjectService {
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
             Example example = new Example(AnhuiMoneyinfo.class);
             Example.Criteria c = example.createCriteria();
-//        IncomeInfo incomeInfo = new IncomeInfo();
-
             anhuiMoneyinfo.setId(uuid);
             anhuiMoneyinfo.setFounderId(loginUser.getId());
             anhuiMoneyinfo.setCompanyId(loginUser.getCompanyId());
@@ -1916,11 +1914,8 @@ public class ProjectService {
                     for (String s : split) {
                         total += Double.parseDouble(s);
                     }
-                    //保存收入表信息
-//                incomeInfo.setBaseProjectId(anhuiMoneyinfo.getBaseProjectId());
                     anhuiMoneyinfo.setTotalMoney(new BigDecimal(total));
-//                incomeInfo.setDesignMoney(new BigDecimal(collectionMoney));
-//                projectSumService.addIncomeInfo(incomeInfo);
+
                     anhuiMoneyinfoMapper.updateByPrimaryKeySelective(anhuiMoneyinfo);
                 }
             } else {
@@ -1928,14 +1923,6 @@ public class ProjectService {
                 anhuiMoneyinfoMapper.insert(anhuiMoneyinfo);
                 //同时返回标识 改账单已支付完成
                 designInfoMapper.updateFinalAccount(anhuiMoneyinfo.getBaseProjectId());
-
-//            //同时将设计费添加到总收入表中
-//            incomeInfo.setBaseProjectId(anhuiMoneyinfo.getBaseProjectId());
-//            incomeInfo.setFounderCompanyId(loginUser.getCompanyId());
-//            incomeInfo.setFounderId(loginUser.getId());
-//            incomeInfo.setDelFlag("0");
-//            incomeInfo.setDesignMoney(anhuiMoneyinfo.getOfficialReceipts());
-//            projectSumService.addIncomeInfo(incomeInfo);
             }
             //根据安徽到账外键查找设计
             DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(anhuiMoneyinfo.getBaseProjectId());
@@ -1944,8 +1931,6 @@ public class ProjectService {
                 designInfoMapper.updateByPrimaryKeySelective(designInfo);
             }
             BaseProject baseProject = projectMapper.selectByPrimaryKey(designInfo.getBaseProjectId());
-
-//        DesignInfo designInfo = designInfoByid(baseProject.getId());
             // 计算应计提金额、实际计提金额、余额
             //设计费（安徽）
             AnhuiMoneyinfo anhuiMoneyinfo1 = anhuiMoneyInfopayterm(designInfo.getId());
@@ -1964,7 +1949,6 @@ public class ProjectService {
                 achievementsInfo.setMemberId(designInfo.getDesigner()); //当前设计人
                 achievementsInfo.setCreateTime(data);
                 achievementsInfo.setUpdateTime(data);
-
                 achievementsInfo.setFounderId(designInfo.getFounderId()); //当前创建人
                 achievementsInfo.setFounderCompanyId(designInfo.getCompanyId()); //当前创建人公司
                 achievementsInfo.setDelFlag("0");
@@ -1979,23 +1963,22 @@ public class ProjectService {
                 achievementsInfo.setOverFlag("0"); // 绩效是否发放完成 默认未完成
                 //存入数据库
                 employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                // 存入收入表
+                InCome inCome = new InCome();
+                inCome.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                inCome.setInMoney(bigDecimal1+""); // 收入金额 (实际计提金额)
+                inCome.setIncomeType("1"); // 设计费
+                inCome.setDistrict(baseProject.getDistrict());
+                inCome.setDept("1"); // 1 设计 2 造价
+                inCome.setDelFlag("0");
+                inCome.setBaseProjectId(baseProject.getId());
+                inCome.setProjectNum(designInfo.getId());
+                inCome.setCreateTime(data);
+                inCome.setUpdateTime(data);
+                inCome.setFounderId(designInfo.getFounderId());
+//                inCome.setFounderCompanyId(designInfo.getCompanyId());
+                inComeMapper.insertSelective(inCome);
             }
-//        else {
-//            //设计费（吴江）
-//            WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfopayterm(designInfo.getId());
-//            if (wujiangMoneyInfo != null) {
-//                baseProject.setDesMoney(wujiangMoneyInfo.getOfficialReceipts());
-//                //应计提金额
-//                BigDecimal bigDecimal = accruedAmount(wujiangMoneyInfo.getOfficialReceipts());
-//                baseProject.setAccrualMoney(bigDecimal.doubleValue());
-//                //建议金额
-//                BigDecimal bigDecimal1 = proposedAmount(bigDecimal);
-//                baseProject.setAdviseMoney(bigDecimal1.doubleValue());
-//                // 余额
-//                BigDecimal surplus = surplus(bigDecimal, bigDecimal1);
-//                baseProject.setSurplus(surplus.doubleValue());
-//            }
-//        }
         }else{
             throw new Exception("请输入实收金额！！！");
         }
@@ -2103,6 +2086,21 @@ public class ProjectService {
                 achievementsInfo.setOverFlag("0"); // 绩效是否发放完成 默认未完成
                 //存入数据库
                 employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                // 存入收入表
+                InCome inCome = new InCome();
+                inCome.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                inCome.setInMoney(bigDecimal1+""); // 收入金额 (实际计提金额)
+                inCome.setIncomeType("1"); // 设计费
+                inCome.setDistrict(baseProject.getDistrict());
+                inCome.setDept("1"); // 1 设计 2 造价
+                inCome.setDelFlag("0");
+                inCome.setBaseProjectId(baseProject.getId());
+                inCome.setProjectNum(designInfo.getId());
+                inCome.setCreateTime(data);
+                inCome.setUpdateTime(data);
+                inCome.setFounderId(designInfo.getId());
+                inCome.setFounderCompanyId(designInfo.getCompanyId());
+                inComeMapper.insertSelective(inCome);
             }
         }else{
             throw new Exception("请输入实收金额！！！");
@@ -2830,7 +2828,7 @@ public class ProjectService {
      * 建议计提金额
      */
     public BigDecimal proposedAmount(BigDecimal accruedAmount) {
-        BigDecimal multiply = accruedAmount.multiply(new BigDecimal(0.8));
+        BigDecimal multiply = accruedAmount.multiply(new BigDecimal(0.8)).setScale(2, BigDecimal.ROUND_HALF_UP);
         return multiply;
     }
 

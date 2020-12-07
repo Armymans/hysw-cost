@@ -6,6 +6,8 @@ import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.SurveyInformationDao;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.designProject.mapper.OutSourceMapper;
+import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.MaintenanceProjectInformationMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
@@ -85,6 +87,9 @@ public class MaintenanceProjectInformationService {
 
     @Resource
     private MessageService messageService;
+
+    @Resource
+    private OutSourceMapper outSourceMapper;
 
     @Value("${audit.wuhu.zaojia.costHead}")
     private String whzjh;  //芜湖造造价领导
@@ -762,7 +767,7 @@ public class MaintenanceProjectInformationService {
                     maintenanceProjectInformation.setType("4");
                 }
                 // TODO 待测试
-               /* Example example1 = new Example(SettlementAuditInformation.class);
+                Example example1 = new Example(SettlementAuditInformation.class);
                 example1.createCriteria().andEqualTo("baseProjectId",maintenanceProjectInformation.getId());
                 SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
                 OutSource outSource = new OutSource();
@@ -779,7 +784,8 @@ public class MaintenanceProjectInformationService {
                 outSource.setCreateTime(data);
                 outSource.setUpdateTime(data);
                 outSource.setFounderId(maintenanceProjectInformation.getFounderId()); //项目创建人
-                outSource.setFounderCompanyId(maintenanceProjectInformation.getFounderCompanyId()); //公司*/
+                outSource.setFounderCompanyId(maintenanceProjectInformation.getFounderCompanyId()); //公司
+                outSourceMapper.insertSelective(outSource);
             }else{
                 //如果未通过
                 maintenanceProjectInformation.setType("3");

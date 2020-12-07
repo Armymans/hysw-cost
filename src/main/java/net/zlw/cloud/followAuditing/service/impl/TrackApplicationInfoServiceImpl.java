@@ -337,7 +337,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     outSource.setDistrict(baseProject.getDistrict());
                     outSource.setDept("2"); //1.设计 2.造价
                     outSource.setDelFlag("0"); //0.正常 1.删除
-                    outSource.setOutType("5"); // 预算委外金额
+                    outSource.setOutType("5"); // 跟踪审计委外金额
                     outSource.setBaseProjectId(baseProject.getId()); //基本信息表外键
                     outSource.setProjectNum(trackAuditInfo.getId()); //跟踪审计信息外键
                     outSource.setCreateTime(data);

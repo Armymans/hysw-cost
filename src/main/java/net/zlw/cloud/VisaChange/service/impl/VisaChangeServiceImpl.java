@@ -12,6 +12,8 @@ import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.VisaChange.service.VisaChangeService;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.designProject.mapper.OutSourceMapper;
+import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -81,6 +83,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Resource
     private FileInfoService fileInfoService;
+    @Resource
+    private OutSourceMapper outSourceMapper;
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -1052,6 +1056,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 messageVo.setType("1"); //通知
                 messageVo.setTitle("您有一个签证变更项目待审核！");
                 messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
+                messageService.sendOrClose(messageVo);
             }
             Example example1 = new Example(FileInfo.class);
             Example.Criteria c = example1.createCriteria();
@@ -1184,15 +1189,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
                     auditInfoDao.insertSelective(auditInfo1);
-                    //审核通过发送消息
-                    String projectName = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId()).getProjectName();
-                    MessageVo messageVo = new MessageVo();
-                    messageVo.setId("A14");
-                    messageVo.setType("1"); // 通知
-                    messageVo.setUserId(auditInfo.getAuditorId());
-                    messageVo.setTitle("您有一个签证变更项目已通过！");
-                    messageVo.setDetails(memberManage.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
-                    messageService.sendOrClose(messageVo);
                 } else if (auditInfo.getAuditType().equals("1")) {
                     AuditInfo auditInfo1 = new AuditInfo();
                     auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -1218,27 +1214,45 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
                     auditInfoDao.insertSelective(auditInfo1);
+                } else if (auditInfo.getAuditType().equals("4")) {
+                    String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+                    baseProject.setVisaStatus("4");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    // 三审通过插入委外金额
+                    BigDecimal sumAmount = new BigDecimal(0);
+                    for (VisaChange thisVisa : visaChanges) {
+                        if ("1".equals(thisVisa.getOutsourcing())){
+                                sumAmount=sumAmount.add(new BigDecimal(thisVisa.getOutsourcingAmount()));
+                        }else {
+                            sumAmount = new BigDecimal(0);
+                        }
+                    }
+                    OutSource outSource = new OutSource();
+                    outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    outSource.setOutMoney(sumAmount.toString());
+                    outSource.setBaseProjectId(baseProject.getId());
+                    outSource.setDistrict(baseProject.getDistrict());
+                    outSource.setDept("2"); // 1 设计 2 造价
+                    outSource.setDelFlag("0");
+                    outSource.setOutType("4"); // 签证/变更委外金额
+                    outSource.setBaseProjectId(baseProject.getId());
+                    outSource.setDistrict(baseProject.getDistrict());
+                    outSource.setProjectNum(visaChange.getId());
+                    outSource.setCreateTime(data);
+                    outSource.setUpdateTime(data);
+//                    outSource.setFounderCompanyId();
+//                    outSource.setFounderId();
+                    outSourceMapper.insertSelective(outSource);
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
                     //审核通过发送消息
-                    String projectName = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId()).getProjectName();
                     MessageVo messageVo = new MessageVo();
                     messageVo.setId("A14");
                     messageVo.setType("1"); // 通知
                     messageVo.setUserId(auditInfo.getAuditorId());
                     messageVo.setTitle("您有一个签证变更项目已通过！");
-                    messageVo.setDetails(memberManage.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
+                    messageVo.setDetails(memberManage.getMemberName() + "您好！【" + username + "】已将【" + baseProject.getProjectName() + "】的签证/变更项目提交给您，请审批！");
                     messageService.sendOrClose(messageVo);
-                } else if (auditInfo.getAuditType().equals("4")) {
-                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
-                    baseProject.setVisaStatus("4");
-                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
-//                    //审核通过发送消息
-//                    MessageVo messageVo = new MessageVo();
-//                    messageVo.setId("A14");
-//                    messageVo.setType("1"); // 通知
-//                    messageVo.setUserId(auditInfo.getAuditorId());
-//                    messageVo.setTitle("您有一个签证变更项目已通过！");
-//                    messageVo.setDetails(memberManage.getMemberName() + "您好！【" + username + "】已将【" + baseProject.getProjectName() + "】的签证/变更项目提交给您，请审批！");
-//                    messageService.sendOrClose(messageVo);
                 } else if (auditInfo.getAuditType().equals("2")) {
                     AuditInfo auditInfo1 = new AuditInfo();
                     auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -1264,15 +1278,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
                     auditInfoDao.insertSelective(auditInfo1);
-                    //审核通过发送消息
-                    String projectName = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId()).getProjectName();
-                    MessageVo messageVo = new MessageVo();
-                    messageVo.setId("A14");
-                    messageVo.setType("1"); // 通知
-                    messageVo.setUserId(auditInfo.getAuditorId());
-                    messageVo.setTitle("您有一个签证变更项目已通过！");
-                    messageVo.setDetails(memberManage.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
-                    messageService.sendOrClose(messageVo);
                 } else if (auditInfo.getAuditType().equals("3")) {
                     AuditInfo auditInfo1 = new AuditInfo();
                     auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -1298,15 +1303,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
                     auditInfoDao.insertSelective(auditInfo1);
-                    //审核通过发送消息
-                    String projectName = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId()).getProjectName();
-                    MessageVo messageVo = new MessageVo();
-                    messageVo.setId("A14");
-                    messageVo.setType("1"); // 通知
-                    messageVo.setUserId(auditInfo.getAuditorId());
-                    messageVo.setTitle("您有一个签证变更项目已通过！");
-                    messageVo.setDetails(memberManage.getMemberName() + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
-                    messageService.sendOrClose(messageVo);
+
                 } else if (auditInfo.getAuditType().equals("5")) {
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
                     baseProject.setVisaStatus("5");

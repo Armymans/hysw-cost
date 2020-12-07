@@ -5,7 +5,9 @@ import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
+import net.zlw.cloud.designProject.mapper.OutSourceMapper;
 import net.zlw.cloud.designProject.model.Budgeting;
+import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
@@ -60,6 +62,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     private RemindSetMapper remindSetMapper;
     @Resource
     private MessageService messageService;
+    @Resource
+    private OutSourceMapper outSourceMapper;
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
@@ -94,7 +98,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 //        if (baseProject.getAmountOutsourcing().equals("")){
 //            baseProject.setAmountOutsourcing(null);
 //        }
-        if (baseProject.getAmountOutsourcing() != null && !"".equals(baseProject.getAmountOutsourcing())){
+        if (baseProject.getAmountOutsourcing() == null && "".equals(baseProject.getAmountOutsourcing())){
             baseProject.setAmountOutsourcing(null);
         }
 
@@ -132,7 +136,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         paymentInformation.setRemarkes(baseProject.getRemarkes());
         paymentInformation.setBaseProjectId(project.getId());
         paymentInformation.setId(UUID.randomUUID().toString().replace("-", ""));
-//        paymentInformation.setFounderId(loginUser.getId());
+        paymentInformation.setFounderId(loginUser.getId());
         paymentInformation.setDelFlag("0");
         paymentInformation.setChangeNum(1);
 
@@ -999,12 +1003,32 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
                     auditInfoDao.insertSelective(auditInfo1);
                 }else if(auditInfo.getAuditType().equals("4")){
+                    String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     auditInfo.setAuditResult("1");
                     auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 
                     baseProject.setProgressPaymentStatus("4");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    // 三审通过插入委外金额
+                    OutSource outSource = new OutSource();
+                    outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    if ("1".equals(progressPaymentInformation.getOutsourcing())){
+                        outSource.setOutMoney(progressPaymentInformation.getAmountOutsourcing().toString());
+                    }else {
+                        outSource.setOutMoney("0");
+                    }
+                    outSource.setBaseProjectId(baseProject.getId());
+                    outSource.setDistrict(baseProject.getDistrict());
+                    outSource.setDept("2"); // 1 设计 2 造价
+                    outSource.setDelFlag("0");
+                    outSource.setOutType("3"); //进度款支付委外金额
+                    outSource.setProjectNum(progressPaymentInformation.getId());
+                    outSource.setCreateTime(data);
+                    outSource.setUpdateTime(data);
+                    outSource.setFounderCompanyId(progressPaymentInformation.getFounderCompanyId());
+                    outSource.setFounderId(progressPaymentInformation.getFounderId());
+                    outSourceMapper.insertSelective(outSource);
                 }else if(auditInfo.getAuditType().equals("2")){
                     auditInfo.setAuditResult("1");
                     Date date = new Date();
@@ -1020,9 +1044,6 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo1.setFounderId(loginUser.getId());
                     auditInfo1.setCreateTime(format);
                     auditInfo1.setStatus("0");
-
-
-
 
                     Example example1 = new Example(MemberManage.class);
                     Example.Criteria cc = example1.createCriteria();

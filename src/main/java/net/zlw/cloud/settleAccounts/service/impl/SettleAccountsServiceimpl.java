@@ -7,7 +7,11 @@ import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.EmployeeAchievementsInfoMapper;
+import net.zlw.cloud.designProject.mapper.InComeMapper;
+import net.zlw.cloud.designProject.mapper.OutSourceMapper;
 import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
+import net.zlw.cloud.designProject.model.InCome;
+import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
@@ -79,7 +83,10 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private FileInfoMapper fileInfoMapper;
     @Autowired
     private FileInfoService fileInfoService;
-
+    @Autowired
+    private OutSourceMapper outSourceMapper;
+    @Autowired
+    private InComeMapper inComeMapper;
     @Autowired
     private BudgetingDao budgetingDao;
 
@@ -1412,6 +1419,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
                     //三审
                 }else if(auditInfo.getAuditType().equals("4")){
+                    String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     auditInfo.setAuditResult("1");
                     Date date = new Date();
                     String format = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(date);
@@ -1421,6 +1429,164 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
                     baseProject.setSettleAccountsStatus("4");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    // 三审通过插入委外金额
+                    OutSource outSource = new OutSource();
+                    BigDecimal addAmount = new BigDecimal(0);
+                    if ("1".equals(lastSettlementReview.getOutsourcing())){
+                        addAmount = addAmount.add(lastSettlementReview.getAmountOutsourcing());
+                    }else if ("1".equals(settlementAuditInformation.getOutsourcing())){
+                        addAmount = addAmount.add(settlementAuditInformation.getAmountOutsourcing());
+                    }else {
+                        addAmount = new BigDecimal(0);
+                    }
+                    outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    outSource.setOutMoney(addAmount.toString());
+                    outSource.setBaseProjectId(baseProject.getId());
+                    outSource.setDistrict(baseProject.getDistrict());
+                    outSource.setDept("2"); // 1 设计 2 造价
+                    outSource.setDelFlag("0");
+                    outSource.setOutType("6"); //结算委外金额
+                    outSource.setCreateTime(data);
+                    outSource.setUpdateTime(data);
+//                    outSource.setFounderCompanyId();
+//                    outSource.setFounderId();
+                    outSourceMapper.insertSelective(outSource);
+                    //上家结算收入信息
+                    if (lastSettlementReview != null) {
+                        // 绩效计算
+                        //计提和
+                        BigDecimal total3 = new BigDecimal(0);
+                        // 如果是安徽
+                        if (!"4".equals(baseProject.getDistrict())) {
+                            Double money = projectSumService.anhuiLastSettlementReviewChargeMoney(lastSettlementReview.getReviewNumber());
+                            //咨询费
+                            money = (double) Math.round(money * 100) / 100;
+                            //计提
+                            Double aDouble1 = projectSumService.technicalImprovement(money);
+                            aDouble1 = (double) Math.round(aDouble1 * 100) / 100;
+                            total3 = total3.add(new BigDecimal(aDouble1));
+                            //实际计提 保留两位小数四舍五入
+                            BigDecimal actualAmount = total3.multiply(new BigDecimal(0.8)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                            //余额
+                            // 上家结算收入信息
+                            InCome inCome = new InCome();
+                            inCome.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                            inCome.setInMoney(actualAmount+""); // 收入金额 (实际计提金额)
+                            inCome.setIncomeType("4"); // 上家结算编制咨询费
+                            inCome.setDistrict(baseProject.getDistrict());
+                            inCome.setDept("2"); // 1 设计 2 造价
+                            inCome.setDelFlag("0");
+                            inCome.setBaseProjectId(baseProject.getId());
+                            inCome.setProjectNum(lastSettlementReview.getId());
+                            inCome.setCreateTime(data);
+                            inCome.setUpdateTime(data);
+                            inCome.setFounderId(lastSettlementReview.getFounderId());
+//                            inCome.setFounderCompanyId(lastSettlementReview.getFounderCompanyId());
+                            inComeMapper.insertSelective(inCome);
+                            //如果是吴江
+                        } else {
+                            //咨询费
+                            Double money = projectSumService.wujiangLastSettlementReviewChargeMoney(lastSettlementReview.getReviewNumber());
+                            money = (double) Math.round(money * 100) / 100;
+                            //计提
+                            Double aDouble1 = projectSumService.technicalImprovement(money);
+                            aDouble1 = (double) Math.round(aDouble1 * 100) / 100;
+                            total3 = total3.add(new BigDecimal(aDouble1));
+                            //实际计提 保留两位小数四舍五入
+                            BigDecimal actualAmount = total3.multiply(new BigDecimal(0.8)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                           // 下家结算收入信息
+                            // 上家结算收入信息
+                            InCome inCome = new InCome();
+                            inCome.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                            inCome.setInMoney(actualAmount+""); // 收入金额 (实际计提金额)
+                            inCome.setIncomeType("4"); // 上家结算编制咨询费
+                            inCome.setDistrict(baseProject.getDistrict());
+                            inCome.setDept("2"); // 1 设计 2 造价
+                            inCome.setDelFlag("0");
+                            inCome.setBaseProjectId(baseProject.getId());
+                            inCome.setProjectNum(lastSettlementReview.getId());
+                            inCome.setCreateTime(data);
+                            inCome.setUpdateTime(data);
+                            inCome.setFounderId(lastSettlementReview.getFounderId());
+//                            inCome.setFounderCompanyId(lastSettlementReview.getFounderCompanyId());
+                            inComeMapper.insertSelective(inCome);
+
+                        }
+                    }
+                    //下家结算送审 收入信息
+                    if (settlementAuditInformation != null) {
+                        //计算计提
+                        //计提和
+                        BigDecimal total7 = new BigDecimal(0);
+                        Example example5 = new Example(SettlementInfo.class);
+                        //查找结算送审信息
+                        example5.createCriteria().andEqualTo("baseProjectId", baseProject.getId())
+                                .andEqualTo("upAndDown", "2");
+                        SettlementInfo settlementInfo = settlementInfoMapper.selectOneByExample(example5);
+                        // 送审金额
+                        String sumbitMoney = settlementInfo.getSumbitMoney();
+                        if (!"4".equals(baseProject.getDistrict())) {
+                            //计算基本费
+                            Double money = projectSumService.anhuiSettlementAuditInformationChargeBase(new BigDecimal(sumbitMoney));
+                            money = (double) Math.round(money * 100) / 100;
+                            //计算核检费
+                            Double money1 = projectSumService.anhuiSubtractTheNumberMoney(settlementAuditInformation.getSubtractTheNumber());
+                            money1 = (double) Math.round(money1 * 100) / 100;
+                            //计算咨询费计算基数
+                            Double money2 = projectSumService.anhuiSettlementAuditInformationChargeMoney(money, money1);
+                            //计提
+                            Double aDouble = projectSumService.settlementAuditImprovement(money, money1, money2);
+                            aDouble = (double) Math.round(aDouble * 100) / 100;
+                            total7 = total7.add(new BigDecimal(aDouble));
+                            //实际计提 保留两位小数四舍五入
+                            BigDecimal actualAmount = total7.multiply(new BigDecimal(0.8)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                            // 下家结算收入信息
+                            InCome inCome = new InCome();
+                            inCome.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                            inCome.setInMoney(actualAmount+""); // 收入金额 (实际计提金额)
+                            inCome.setIncomeType("5"); // 下家结算编制咨询费
+                            inCome.setDistrict(baseProject.getDistrict());
+                            inCome.setDept("2"); // 1 设计 2 造价
+                            inCome.setDelFlag("0");
+                            inCome.setBaseProjectId(baseProject.getId());
+                            inCome.setProjectNum(lastSettlementReview.getId());
+                            inCome.setCreateTime(data);
+                            inCome.setUpdateTime(data);
+                            inCome.setFounderId(settlementAuditInformation.getFounderId());
+//                            inCome.setFounderCompanyId(settlementAuditInformation.getFounderCompanyId());
+                            inComeMapper.insertSelective(inCome);
+                        } else {
+                            //计算基本费
+                            Double money = projectSumService.wujiangSettlementAuditInformationChargeBase(new BigDecimal(sumbitMoney));
+                            money = (double) Math.round(money * 100) / 100;
+                            //计算核检费
+                            Double money1 = projectSumService.wujiangSubtractTheNumberMoney(settlementAuditInformation.getSubtractTheNumber());
+                            money1 = (double) Math.round(money1 * 100) / 100;
+                            //计算咨询费计算基数
+                            Double money2 = projectSumService.anhuiSettlementAuditInformationChargeMoney(money, money1);
+                            //计提
+                            Double aDouble = projectSumService.settlementAuditImprovement(money, money1, money2);
+                            aDouble = (double) Math.round(aDouble * 100) / 100;
+                            total7 = total7.add(new BigDecimal(aDouble));
+                            //实际计提 保留两位小数四舍五入
+                            BigDecimal actualAmount = total7.multiply(new BigDecimal(0.8)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                            // 下家结算收入信息
+                            InCome inCome = new InCome();
+                            inCome.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                            inCome.setInMoney(actualAmount+""); // 收入金额 (实际计提金额)
+                            inCome.setIncomeType("5"); // 下家结算编制咨询费
+                            inCome.setDistrict(baseProject.getDistrict());
+                            inCome.setDept("2"); // 1 设计 2 造价
+                            inCome.setDelFlag("0");
+                            inCome.setBaseProjectId(baseProject.getId());
+                            inCome.setProjectNum(lastSettlementReview.getId());
+                            inCome.setCreateTime(data);
+                            inCome.setUpdateTime(data);
+                            inCome.setFounderId(settlementAuditInformation.getFounderId());
+//                            inCome.setFounderCompanyId(settlementAuditInformation.getFounderCompanyId());
+                            inComeMapper.insertSelective(inCome);
+                        }
+                    }
                     //预算
                     Example example1 = new Example(Budgeting.class);
                     example1.createCriteria().andEqualTo("baseProjectId",baseProject.getId()).andEqualTo("delFlag","0");
@@ -1470,7 +1636,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                             //余额
                             BigDecimal balance = total5.subtract(actualAmount);
                             // 员工绩效
-//                            achievementsInfo.setMemberId(trackAuditInfo.getp()); 跟踪审计没有编制人
                             achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
                             achievementsInfo.setCreateTime(format);
                             achievementsInfo.setUpdateTime(format);
