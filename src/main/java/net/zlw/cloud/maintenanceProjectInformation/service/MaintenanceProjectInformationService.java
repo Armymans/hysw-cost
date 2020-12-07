@@ -766,9 +766,8 @@ public class MaintenanceProjectInformationService {
                 }else{
                     maintenanceProjectInformation.setType("4");
                 }
-                // TODO 待测试
                 Example example1 = new Example(SettlementAuditInformation.class);
-                example1.createCriteria().andEqualTo("baseProjectId",maintenanceProjectInformation.getId());
+                example1.createCriteria().andEqualTo("maintenanceProjectInformation",maintenanceProjectInformation.getId());
                 SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
                 OutSource outSource = new OutSource();
                 outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
@@ -784,7 +783,7 @@ public class MaintenanceProjectInformationService {
                 outSource.setCreateTime(data);
                 outSource.setUpdateTime(data);
                 outSource.setFounderId(maintenanceProjectInformation.getFounderId()); //项目创建人
-                outSource.setFounderCompanyId(maintenanceProjectInformation.getFounderCompanyId()); //公司
+//                outSource.setFounderCompanyId(maintenanceProjectInformation.getFounderCompanyId()); //公司
                 outSourceMapper.insertSelective(outSource);
             }else{
                 //如果未通过

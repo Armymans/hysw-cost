@@ -1549,7 +1549,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                             inCome.setDept("2"); // 1 设计 2 造价
                             inCome.setDelFlag("0");
                             inCome.setBaseProjectId(baseProject.getId());
-                            inCome.setProjectNum(lastSettlementReview.getId());
+                            inCome.setProjectNum(settlementAuditInformation.getId());
                             inCome.setCreateTime(data);
                             inCome.setUpdateTime(data);
                             inCome.setFounderId(settlementAuditInformation.getFounderId());
@@ -1579,7 +1579,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                             inCome.setDept("2"); // 1 设计 2 造价
                             inCome.setDelFlag("0");
                             inCome.setBaseProjectId(baseProject.getId());
-                            inCome.setProjectNum(lastSettlementReview.getId());
+                            inCome.setProjectNum(settlementAuditInformation.getId());
                             inCome.setCreateTime(data);
                             inCome.setUpdateTime(data);
                             inCome.setFounderId(settlementAuditInformation.getFounderId());
