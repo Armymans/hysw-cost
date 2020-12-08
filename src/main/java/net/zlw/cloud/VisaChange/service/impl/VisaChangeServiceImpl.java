@@ -387,7 +387,13 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
 
             for (VisaChangeListVo visaChangeListVo : list1) {
-
+                if (visaChangeListVo.getAmountVisaChangeAddShang() != null && visaChangeListVo.getAmountVisaChangeAddXia() != null){
+                    visaChangeListVo.setStatus("-");
+                }else if(visaChangeListVo.getAmountVisaChangeAddShang() != null){
+                    visaChangeListVo.setStatus("上家编制中");
+                }else if(visaChangeListVo.getAmountVisaChangeAddXia() != null){
+                    visaChangeListVo.setStatus("下家编制中");
+                }
             }
             return list1;
         }
