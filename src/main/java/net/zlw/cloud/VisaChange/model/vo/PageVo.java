@@ -14,5 +14,7 @@ public class PageVo {
     private String status;
 
     private String userId;
+    private String currentPeople;
+
 
 }

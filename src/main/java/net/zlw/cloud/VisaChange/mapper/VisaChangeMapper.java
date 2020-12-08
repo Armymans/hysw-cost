@@ -172,6 +172,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "     (v.create_time >= #{startTime} or #{startTime} = '') and    " +
             "     (v.create_time <= #{endTime} or #{endTime} = '') and    " +
             "     (v.compile_time >= #{startTime} or #{startTime} = '') and    " +
+            "     (a.auditor_id = #{currentPeople} or #{currentPeople} = '' ) and " +
             "     (v.compile_time <= #{endTime} or #{endTime} = '') and   " +
             "     (b.visa_status = #{status} or #{status} = '') and   " +
             "     (   " +
@@ -270,6 +271,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            (b.project_nature = #{projectNature} or #{projectNature} = '') and   " +
             "            (v.create_time >= #{startTime} or #{startTime} = '') and   " +
             "            (v.create_time <= #{endTime} or #{endTime} = '') and   " +
+            "            (a.auditor_id = #{currentPeople} or #{currentPeople} = '' ) and " +
             "            (v.compile_time >= #{startTime} or #{startTime} = '') and   " +
             "            (v.compile_time <= #{endTime} or #{endTime} = '') and  " +
             "      (b.visa_status = #{status} or #{status} = '') and  " +

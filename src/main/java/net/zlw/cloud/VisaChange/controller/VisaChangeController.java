@@ -79,10 +79,77 @@ public class VisaChangeController extends BaseController {
     public Map<String,Object> selectVisa(PageVo pageVo){
         Page page = new Page();
         pageVo.setStatus("");
-        Map<String, Object> allVisa = findAllVisa(pageVo);
+        List<VisaChangeListVo> allVisa = vcisService.findAllVisa(pageVo);
+        PageInfo<VisaChangeListVo> visaChangeListVoPageInfo = new PageInfo<>(allVisa);
+        page.setData(visaChangeListVoPageInfo.getList());
+        page.setPageNum(visaChangeListVoPageInfo.getPageNum());
+        page.setPageSize(visaChangeListVoPageInfo.getPageSize());
+        page.setTotalCount(visaChangeListVoPageInfo.getTotal());
 
+        Page page1 = new Page();
+        pageVo.setStatus("1");
+        List<VisaChangeListVo> allVisa1 = vcisService.findAllVisa(pageVo);
+        PageInfo<VisaChangeListVo> visaChangeListVoPageInfo1 = new PageInfo<>(allVisa1);
+        page1.setData(visaChangeListVoPageInfo1.getList());
+        page1.setPageNum(visaChangeListVoPageInfo1.getPageNum());
+        page1.setPageSize(visaChangeListVoPageInfo1.getPageSize());
+        page1.setTotalCount(visaChangeListVoPageInfo1.getTotal());
 
-        return RestUtil.success();
+        Page page2 = new Page();
+        pageVo.setStatus("2");
+        List<VisaChangeListVo> allVisa2 = vcisService.findAllVisa(pageVo);
+        PageInfo<VisaChangeListVo> visaChangeListVoPageInfo2 = new PageInfo<>(allVisa2);
+        page2.setData(visaChangeListVoPageInfo2.getList());
+        page2.setPageNum(visaChangeListVoPageInfo2.getPageNum());
+        page2.setPageSize(visaChangeListVoPageInfo2.getPageSize());
+        page2.setTotalCount(visaChangeListVoPageInfo2.getTotal());
+
+        Page page3 = new Page();
+        pageVo.setStatus("3");
+        List<VisaChangeListVo> allVisa3 = vcisService.findAllVisa(pageVo);
+        PageInfo<VisaChangeListVo> visaChangeListVoPageInfo3 = new PageInfo<>(allVisa3);
+        page3.setData(visaChangeListVoPageInfo3.getList());
+        page3.setPageNum(visaChangeListVoPageInfo3.getPageNum());
+        page3.setPageSize(visaChangeListVoPageInfo3.getPageSize());
+        page3.setTotalCount(visaChangeListVoPageInfo3.getTotal());
+
+        Page page4 = new Page();
+        pageVo.setStatus("4");
+        List<VisaChangeListVo> allVisa4 = vcisService.findAllVisa(pageVo);
+        PageInfo<VisaChangeListVo> visaChangeListVoPageInfo4 = new PageInfo<>(allVisa4);
+        page4.setData(visaChangeListVoPageInfo4.getList());
+        page4.setPageNum(visaChangeListVoPageInfo4.getPageNum());
+        page4.setPageSize(visaChangeListVoPageInfo4.getPageSize());
+        page4.setTotalCount(visaChangeListVoPageInfo4.getTotal());
+
+        Page page5 = new Page();
+        pageVo.setStatus("5");
+        List<VisaChangeListVo> allVisa5 = vcisService.findAllVisa(pageVo);
+        PageInfo<VisaChangeListVo> visaChangeListVoPageInfo5 = new PageInfo<>(allVisa5);
+        page5.setData(visaChangeListVoPageInfo5.getList());
+        page5.setPageNum(visaChangeListVoPageInfo5.getPageNum());
+        page5.setPageSize(visaChangeListVoPageInfo5.getPageSize());
+        page5.setTotalCount(visaChangeListVoPageInfo5.getTotal());
+
+        Page page6 = new Page();
+        pageVo.setStatus("6");
+        List<VisaChangeListVo> allVisa6 = vcisService.findAllVisa(pageVo);
+        PageInfo<VisaChangeListVo> visaChangeListVoPageInfo6 = new PageInfo<>(allVisa6);
+        page6.setData(visaChangeListVoPageInfo6.getList());
+        page6.setPageNum(visaChangeListVoPageInfo6.getPageNum());
+        page6.setPageSize(visaChangeListVoPageInfo6.getPageSize());
+        page6.setTotalCount(visaChangeListVoPageInfo6.getTotal());
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("table1",page);
+        map.put("table2",page1);
+        map.put("table3",page2);
+        map.put("table4",page3);
+        map.put("table5",page4);
+        map.put("table6",page5);
+        map.put("table7",page6);
+
+        return RestUtil.success(map);
     }
 
     /**
