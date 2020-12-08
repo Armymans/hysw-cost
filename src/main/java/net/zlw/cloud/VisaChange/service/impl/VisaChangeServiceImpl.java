@@ -1343,10 +1343,38 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
                 } else if (auditInfo.getAuditType().equals("5")) {
 
+                    String f = "";
 
-                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
-                    baseProject.setVisaStatus("5");
-                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    for (VisaChange change : visaChanges) {
+                        if (change.getAmountVisaChange() == null){
+                            f = "b";
+                        }
+                    }
+                    if (f.equals("")){
+                        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+                        baseProject.setVisaStatus("5");
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                    }else if(f.equals("b")){
+                        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+                        baseProject.setVisaStatus("2");
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+                        for (VisaChange change : visaChanges) {
+                            if (change.getUpAndDownMark().equals("2")){
+                                Example example2 = new Example(AuditInfo.class);
+                                Example.Criteria c3 = example2.createCriteria();
+                                c3.andEqualTo("baseProjectId",change.getId());
+                                c3.andEqualTo("status","0");
+                                List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
+                                for (AuditInfo info : auditInfos) {
+                                    auditInfoDao.deleteByPrimaryKey(info);
+                                }
+                            }
+                        }
+
+                    }
+
+
                 }
             } else if (batchReviewVo.getAuditResult().equals("2")) {
                 auditInfo.setAuditResult("2");
