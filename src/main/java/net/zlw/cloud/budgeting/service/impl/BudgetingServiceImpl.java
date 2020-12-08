@@ -13,10 +13,7 @@ import net.zlw.cloud.budgeting.model.SurveyInformation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
-import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
-import net.zlw.cloud.designProject.mapper.EmployeeAchievementsInfoMapper;
-import net.zlw.cloud.designProject.mapper.InComeMapper;
-import net.zlw.cloud.designProject.mapper.OutSourceMapper;
+import net.zlw.cloud.designProject.mapper.*;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
 import net.zlw.cloud.designProject.model.InCome;
@@ -28,8 +25,10 @@ import net.zlw.cloud.index.mapper.MessageNotificationDao;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
+import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
@@ -110,6 +109,8 @@ public class BudgetingServiceImpl implements BudgetingService {
     private MessageNotificationDao messageNotificationDao;
     @Resource
     private MkyUserMapper mkyUserMapper;
+    @Resource
+    private ProgressPaymentInformationDao progressPaymentInformationDao;
 
 
     @Value("${audit.wujiang.sheji.designHead}")
@@ -1178,7 +1179,6 @@ public class BudgetingServiceImpl implements BudgetingService {
         if (sid!=null && sid.equals("5")){
             for (BudgetingListVo budgetingListVo : budgetingAll) {
 
-
                 Example example = new Example(LastSettlementReview.class);
                 Example example1 = new Example(SettlementAuditInformation.class);
                 Example.Criteria criteria = example.createCriteria();
@@ -1208,6 +1208,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }
                 }
             }
+            //预算
         }else if("2".equals(sid)){
             for (BudgetingListVo budgetingListVo : budgetingAll) {
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetingListVo.getBaseId());
@@ -1235,10 +1236,25 @@ public class BudgetingServiceImpl implements BudgetingService {
                     budgetingListVos.remove(budgetingListVo);
                 }
             }
+            //清标
         }else if(sid!=null && sid.equals("6")){
             List<BudgetingListVo> clearProjectAll = budgetingDao.findClearProjectAll(pageBVo);
             return clearProjectAll;
 
+            //进度款
+        }else if (sid!=null && sid.equals("7")){
+            List<BudgetingListVo> budgetingAll2 = budgetingDao.findBudgetingAll(pageBVo);
+            for (BudgetingListVo budgetingListVo : budgetingAll2) {
+                Example example = new Example(ProgressPaymentInformation.class);
+                Example.Criteria cc = example.createCriteria();
+                cc.andEqualTo("baseProjectId",budgetingListVo.getBaseId());
+                cc.andEqualTo("del_flag","0");
+                List<ProgressPaymentInformation> list = progressPaymentInformationDao.selectByExample(example);
+                if (list!=null && list.size()!=0){
+                    budgetingAll2.remove(budgetingListVo);
+                }
+            }
+            return budgetingAll2;
         }
         return budgetingListVos;
     }

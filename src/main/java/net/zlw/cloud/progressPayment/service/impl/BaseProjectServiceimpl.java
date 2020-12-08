@@ -1454,6 +1454,21 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
                     progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
                 }
+                for (ProgressListVo progressListVo : list) {
+                    String id = progressListVo.getId();
+                    Example example = new Example(AuditInfo.class);
+                    Example.Criteria c = example.createCriteria();
+                    c.andEqualTo("baseProjectId",id);
+                    c.andEqualTo("status","0");
+                    c.andEqualTo("auditResult","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    if (auditInfo.getAuditType().equals("0") || auditInfo.getAuditType().equals("1") || auditInfo.getAuditType().equals("4")){
+                        progressListVo.setProgressPaymentStatus("进度款审核");
+                    }else{
+                        progressListVo.setProgressPaymentStatus("进度款确认审核");
+                    }
+
+                }
                 return new PageInfo<ProgressListVo>(list);
                 //普通员工
             }else {
@@ -1474,6 +1489,21 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
                     progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
                 }
+                for (ProgressListVo progressListVo : list) {
+                    String id = progressListVo.getId();
+                    Example example = new Example(AuditInfo.class);
+                    Example.Criteria c = example.createCriteria();
+                    c.andEqualTo("baseProjectId",id);
+                    c.andEqualTo("status","0");
+                    c.andEqualTo("auditResult","0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    if (auditInfo.getAuditType().equals("0") || auditInfo.getAuditType().equals("1") || auditInfo.getAuditType().equals("4")){
+                        progressListVo.setProgressPaymentStatus("进度款审核");
+                    }else{
+                        progressListVo.setProgressPaymentStatus("进度款确认审核");
+                    }
+
+                }
                 return new PageInfo<ProgressListVo>(list);
             }
         }
@@ -1485,6 +1515,20 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         //未通过
         if (pageVo.getProgressStatus().equals("3")){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
+            for (ProgressListVo progressListVo : list) {
+                String id = progressListVo.getId();
+                Example example = new Example(AuditInfo.class);
+                Example.Criteria c = example.createCriteria();
+                c.andEqualTo("baseProjectId",id);
+                c.andEqualTo("status","0");
+                c.andEqualTo("auditResult","2");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                if (auditInfo.getAuditType().equals("0") || auditInfo.getAuditType().equals("1") || auditInfo.getAuditType().equals("4")){
+                    progressListVo.setProgressPaymentStatus("进度款未通过");
+                }else{
+                    progressListVo.setProgressPaymentStatus("进度款确认未通过");
+                }
+            }
             return new PageInfo<ProgressListVo>(list);
         }
         //待确认
