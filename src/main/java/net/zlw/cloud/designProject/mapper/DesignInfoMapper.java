@@ -82,8 +82,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                         "s1.project_category like  CONCAT('%',#{keyword},'%')  or " +
                         "s2.design_unit like  CONCAT('%',#{keyword},'%')  " +
                         ") " +
-                        "and " +
-                        "(s3.`status`  is null or s3.`status`  = '0') " +
+//                        "and " +
+//                        "(s3.`status`  is null or s3.`status`  = '0') " +
                         "ORDER BY  " +
                         "s1.should_be, " +
                         "s1.create_time DESC"
@@ -158,8 +158,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.project_category like  CONCAT('%',#{keyword},'%')  or " +
                     "s2.design_unit like  CONCAT('%',#{keyword},'%')  " +
                     ") " +
-                    "and " +
-                    "(s3.`status`  is null or s3.`status`  = '0') " +
+//                    "and " +
+//                    "(s3.`status`  is null or s3.`status`  = '0') " +
                     "ORDER BY  " +
                     "s1.should_be, " +
                     "s1.create_time DESC"
@@ -231,8 +231,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.project_category like  CONCAT('%',#{keyword},'%')  or " +
                     "s2.design_unit like  CONCAT('%',#{keyword},'%')  " +
                     ")" +
-                    "and " +
-                    "(s3.`status`  is null or s3.`status`  = '0') " +
+//                    "and " +
+//                    "(s3.`status`  is null or s3.`status`  = '0') " +
                     "ORDER BY " +
                     "s1.should_be, " +
                     "s1.create_time DESC"
@@ -305,8 +305,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.project_category like  CONCAT('%',#{keyword},'%')  or " +
                     "s2.design_unit like  CONCAT('%',#{keyword},'%')  " +
                     ") " +
-                    "and " +
-                    "(s3.`status`  is null or s3.`status`  = '0') " +
+//                    "and " +
+//                    "(s3.`status`  is null or s3.`status`  = '0') " +
                     "ORDER BY  " +
                     "s1.should_be, " +
                     "s1.create_time DESC"
@@ -377,8 +377,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.project_category like  CONCAT('%',#{keyword},'%')  or " +
                     "s2.design_unit like  CONCAT('%',#{keyword},'%')  " +
                     ") " +
-                    "and " +
-                    "(s3.`status`  is null or s3.`status`  = '0') " +
+//                    "and " +
+//                    "(s3.`status`  is null or s3.`status`  = '0') " +
                     "ORDER BY  " +
                     "s1.should_be, " +
                     "s1.create_time DESC"
