@@ -385,6 +385,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     thisList.setCompileTime("/");
                 }
             }
+
+
             return list1;
         }
         //未通过
@@ -1332,6 +1334,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfoDao.insertSelective(auditInfo1);
 
                 } else if (auditInfo.getAuditType().equals("5")) {
+
+
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
                     baseProject.setVisaStatus("5");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
@@ -1629,6 +1633,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
 
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
+
             baseProject1.setVisaStatus("2");
             if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")) {
                 baseProject1.setVisaStatus("1");

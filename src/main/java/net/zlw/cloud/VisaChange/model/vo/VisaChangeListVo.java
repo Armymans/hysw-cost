@@ -40,5 +40,6 @@ public class VisaChangeListVo {
     private String founderId;
 
     private String showUnderway;
+    private Integer changeNum;
 
 }

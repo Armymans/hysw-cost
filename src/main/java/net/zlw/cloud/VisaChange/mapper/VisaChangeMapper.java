@@ -353,7 +353,8 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "      v.amount_visa_change currentShang, " +
             "      v2.amount_visa_change currentXia, " +
             "      IFNULL(v.completion_time,v2.completion_time) createTime, " +
-            "      IFNULL(v.compile_time,v2.compile_time) compileTime " +
+            "      IFNULL(v.compile_time,v2.compile_time) compileTime, " +
+            "      v2.change_num changeNum " +
             "            from   " +
             "      base_project b " +
             "              " +
