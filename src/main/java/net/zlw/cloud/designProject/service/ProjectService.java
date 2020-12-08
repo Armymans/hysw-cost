@@ -1007,6 +1007,10 @@ public class ProjectService {
     public DesignInfo mergeProjectList(String id) {
         //根据id查找 合并信息
         DesignInfo designInfo = designInfoMapper.designProjectSelectOne(id);
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+        if (memberManage != null){
+            designInfo.setDesigner(memberManage.getMemberName());
+        }
         // 联系人
         if (designInfo.getContacts() != null && !"".equals(designInfo.getContacts())){
             designInfo.setContacts(designInfo.getContacts());
@@ -3355,7 +3359,7 @@ public class ProjectService {
         Example example = new Example(AuditInfo.class);
         Example.Criteria criteria = example.createCriteria();
         //todo userInfo.getId()
-        criteria.andEqualTo("auditorId", "user321");
+        criteria.andEqualTo("auditorId", userInfo.getId());
         criteria.andEqualTo("baseProjectId", id);
         criteria.andEqualTo("auditResult", "0");
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);

@@ -375,6 +375,11 @@ public class ProjectController extends BaseController {
         projectVo.setBaseProject(baseProject);
 
         DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+        // 设计人
+        if (memberManage != null){
+            designInfo.setDesigner(memberManage.getMemberName());
+        }
         projectVo.setDesignInfo(designInfo);
         projectVo.setDesginStatus(baseProject.getDesginStatus());
         System.out.println(designInfo.getId());
