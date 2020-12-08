@@ -386,7 +386,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 }
             }
 
+            for (VisaChangeListVo visaChangeListVo : list1) {
 
+            }
             return list1;
         }
         //未通过

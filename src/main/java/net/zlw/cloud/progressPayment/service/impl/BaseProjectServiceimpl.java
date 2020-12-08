@@ -104,7 +104,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
 //        loginUser = new UserInfo("user309",null,null,true);
 
-//        Budgeting budgeting = budgetingMapper.selectByPrimaryKey(baseProject.getId());
+//        Budgeting budgeting = budgetingMapper.sdesignProjectSelectelectByPrimaryKey(baseProject.getId());
 
         //项目基本信息
 //        BaseProject project = findById(budgeting.getBaseProjectId());

@@ -938,7 +938,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         String constructionUnit = baseProject.getConstructionOrganization();
         if (constructionUnit!=null && !"".equals(constructionUnit)){
             ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(constructionUnit);
-            baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+            if (constructionUnitManagement!=null){
+                baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+            }
         }
 
         baseAccountsVo.setBaseProject(baseProject);
