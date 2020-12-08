@@ -1248,7 +1248,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 Example example = new Example(ProgressPaymentInformation.class);
                 Example.Criteria cc = example.createCriteria();
                 cc.andEqualTo("baseProjectId",budgetingListVo.getBaseId());
-                cc.andEqualTo("del_flag","0");
+                cc.andEqualTo("delFlag","0");
                 List<ProgressPaymentInformation> list = progressPaymentInformationDao.selectByExample(example);
                 if (list!=null && list.size()!=0){
                     budgetingAll2.remove(budgetingListVo);
