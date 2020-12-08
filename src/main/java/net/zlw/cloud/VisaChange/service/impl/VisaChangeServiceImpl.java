@@ -1509,8 +1509,8 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Override
     public void updateVisa(VisaChangeVo visaChangeVo, UserInfo loginUser) {
-//        String id = loginUser.getId();
-        String id = "user309";
+        String id = loginUser.getId();
+//        String id = "user309";
         //进行中编辑
         if (visaChangeVo.getVisaNum() != null && visaChangeVo.getVisaNum().equals("1")) {
             VisaApplyChangeInformation visaApplyChangeInformationUp = visaChangeVo.getVisaApplyChangeInformationUp();

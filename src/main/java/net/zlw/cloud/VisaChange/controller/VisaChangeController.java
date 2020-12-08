@@ -77,6 +77,9 @@ public class VisaChangeController extends BaseController {
 
     @RequestMapping(value = "/visachange/selectVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectVisa(PageVo pageVo){
+
+        String id = getLoginUser().getId();
+        pageVo.setUserId(id);
         Page page = new Page();
         pageVo.setStatus("");
         List<VisaChangeListVo> allVisa = vcisService.findAllVisa(pageVo);
