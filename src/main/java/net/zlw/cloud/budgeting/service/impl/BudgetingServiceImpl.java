@@ -1244,6 +1244,10 @@ public class BudgetingServiceImpl implements BudgetingService {
             //进度款
         }else if (sid!=null && sid.equals("7")){
             List<BudgetingListVo> budgetingAll2 = budgetingDao.findBudgetingAll(pageBVo);
+            ArrayList<BudgetingListVo> budgetingListVos1 = new ArrayList<>();
+            for (BudgetingListVo budgetingListVo : budgetingAll2) {
+                budgetingListVos1.add(budgetingListVo);
+            }
             for (BudgetingListVo budgetingListVo : budgetingAll2) {
                 Example example = new Example(ProgressPaymentInformation.class);
                 Example.Criteria cc = example.createCriteria();
@@ -1251,10 +1255,10 @@ public class BudgetingServiceImpl implements BudgetingService {
                 cc.andEqualTo("delFlag","0");
                 List<ProgressPaymentInformation> list = progressPaymentInformationDao.selectByExample(example);
                 if (list!=null && list.size()!=0){
-                    budgetingAll2.remove(budgetingListVo);
+                    budgetingListVos1.remove(budgetingListVo);
                 }
             }
-            return budgetingAll2;
+            return budgetingListVos1;
         }
         return budgetingListVos;
     }
