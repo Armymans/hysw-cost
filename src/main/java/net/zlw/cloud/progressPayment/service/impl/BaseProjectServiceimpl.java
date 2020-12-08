@@ -102,6 +102,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             baseProject.setAmountOutsourcing(null);
         }
 
+
 //        loginUser = new UserInfo("user309",null,null,true);
 
 //        Budgeting budgeting = budgetingMapper.sdesignProjectSelectelectByPrimaryKey(baseProject.getId());
@@ -120,7 +121,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         //成员管理
 
         paymentInformation.setCurrentPaymentInformation(baseProject.getCurrentPaymentInformation());
-        paymentInformation.setCumulativePaymentTimes(baseProject.getCumulativePaymentTimes());
+
         paymentInformation.setCurrentPaymentRatio(baseProject.getCurrentPaymentRatio());
         paymentInformation.setCurrentPeriodAccording(baseProject.getCurrentPeriodAccording());
         paymentInformation.setContractAmount(baseProject.getContractAmount());
@@ -187,7 +188,6 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
             payment.setId(UUID.randomUUID().toString());
             payment.setTotalPaymentAmount(baseProject.getCurrentPaymentInformation());
-            payment.setCumulativeNumberPayment(new BigDecimal(baseProject.getCumulativePaymentTimes()));
             payment.setAccumulativePaymentProportion(baseProject.getCurrentPaymentRatio());
             payment.setProgressPaymentId(paymentInformation.getId());
             payment.setBaseProjectId(project.getId());
@@ -471,7 +471,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public void updateProgress(BaseProjectVo baseProject, UserInfo loginUser) {
 //        loginUser = new UserInfo("user309",null,null,true);
 
-        if (baseProject.getAmountOutsourcing().equals("")){
+        if ("".equals(baseProject.getAmountOutsourcing()) || baseProject.getAmountOutsourcing() == null){
             baseProject.setAmountOutsourcing(null);
         }
 
@@ -827,6 +827,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     // 未通過編輯
     public void updateProgressPayment(BaseProjectVo baseProject) {
+
+        if (baseProject.getAmountOutsourcing().equals("")){
+            baseProject.setAmountOutsourcing(null);
+        }
 
         //申请信息
         ApplicationInformation information = new ApplicationInformation();
