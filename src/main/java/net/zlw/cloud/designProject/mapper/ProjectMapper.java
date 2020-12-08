@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import tk.mybatis.mapper.common.Mapper;
 
-import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -1619,7 +1618,14 @@ public interface ProjectMapper extends Mapper<BaseProject> {
             "  when '2' then '商业区配套'  " +
             "  when '3' then '工商区配套'  " +
             "  end  " +
-            ") as projectCategory,  " +
+            ") as projectCategory, " +
+            " ( " +
+            "  case construction_organization " +
+            "  when '1' then 'xxx有限公司' " +
+            "  when '2' then 'xxx有限公司' " +
+            "  when '3' then 'xxx有限公司' " +
+            "  end  " +
+            "   ) as constructionOrganization,   " +
             "water_address waterAddress,  " +
             "(  " +
             "case water_supply_type  " +
@@ -1661,6 +1667,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "cea_num ceaNum,  " +
                     "should_be shouldBe,  " +
                     "id id,  " +
+                    "virtual_code virtualCode ," +
                     "project_num projectNum,  " +
                     "project_name projectName,  " +
                     "district district,  " +

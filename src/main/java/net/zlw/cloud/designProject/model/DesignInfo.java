@@ -41,7 +41,7 @@ public class DesignInfo{
     private String phone;
 
     @Column(name = "outsource_money")
-    private BigDecimal outsourceMoney;
+    private String outsourceMoney;
 
     @Column(name = "designer")
     private String designer;
@@ -124,7 +124,7 @@ public class DesignInfo{
     private String ischange;  //是否更改
 
     @Transient
-    private BigDecimal amountCost;  //造价金额
+    private String amountCost;  //造价金额
     @Transient
     private String shouldBe; //营商0紧急 1不紧急
     @Transient
@@ -156,7 +156,7 @@ public class DesignInfo{
     @Transient
     private String aB;
     @Transient
-    private BigDecimal revenue; //应收收金额',
+    private String revenue; //应收收金额',
     @Transient
     private BigDecimal officialReceipts; //'实收金额',
     @Transient

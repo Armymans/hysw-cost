@@ -15,6 +15,8 @@ import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.model.MessageNotification;
+import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
+import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
@@ -58,6 +60,8 @@ public class ProjectController extends BaseController {
     private MessageService messageService;
     @Resource
     private BudgetingMapper budgetingMapper;
+    @Resource
+    private ConstructionUnitManagementMapper constructionUnitManagementMapper;
 
     /**
      * 建设项目提交 _ 保存
@@ -342,7 +346,7 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/disproject/disProjectadd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> disProjectadd(ProjectVo projectVo) {
         if (projectVo.getDesignInfo().getOutsourceMoney() == null || projectVo.getDesignInfo().getOutsourceMoney().equals("")){
-            projectVo.getDesignInfo().setOutsourceMoney(new BigDecimal(0));
+            projectVo.getDesignInfo().setOutsourceMoney("0");
         }
         //@RequestBody BaseProject baseProject,
         //             @RequestBody DesignInfo designInfo,
@@ -934,7 +938,7 @@ public class ProjectController extends BaseController {
         //根据id查找设计信息
         DesignInfo designInfo = projectService.designInfoByPrimaryKey(id);
         /**
-         * 如果id找不大说明传过来得是baseProjectid
+         * 如果id找不到说明传过来得是baseProjectid
          */
         if(designInfo==null){
             BaseProject baseProject = projectService.BaseProjectByid(id);
@@ -949,6 +953,10 @@ public class ProjectController extends BaseController {
         projectVo.setDesignInfo(designInfo);
         //根据设计信息查找基本信息
         BaseProject baseProject = projectService.BaseProjectByid(designInfo.getBaseProjectId());
+        ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(baseProject.getConstructionOrganization());
+        if (constructionUnitManagement != null){
+            baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+        }
         projectVo.setBaseProject(baseProject);
         //各种费用
         if(!"吴江".equals(baseProject.getDistrict())){
@@ -1676,12 +1684,12 @@ public class ProjectController extends BaseController {
         if(!baseProject.getDistrict().equals("4")){
             AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyinfoByid(baseProject.getId());
             if(anhuiMoneyinfo!=null){
-                designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
                 designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                 designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                 designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
             }else{
-                designInfo.setRevenue(new BigDecimal(0));
+                designInfo.setRevenue("0");
                 designInfo.setOfficialReceipts(new BigDecimal(0));
                 designInfo.setDisMoney(new BigDecimal(0));
                 designInfo.setPayTerm("0");
@@ -1690,7 +1698,7 @@ public class ProjectController extends BaseController {
             //如果为吴江
             WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfoByid(baseProject.getId());
             if(wujiangMoneyInfo!=null){
-                designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
                 designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());

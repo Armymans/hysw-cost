@@ -158,9 +158,86 @@ public class ProjectService {
             //如果当前用户是部门主管 或者 部门经理 则展示全部待审核信息
             if (wjsjh.equals(pageVo.getUserId()) || whsjh.equals(pageVo.getUserId()) || whsjm.equals(pageVo.getUserId())) {
                 designInfos = designInfoMapper.designProjectSelect1(pageVo);
+                for (DesignInfo thisInfo : designInfos) {
+                    // 建设单位
+                    if (!"".equals(thisInfo.getConstructionUnit()) && thisInfo.getConstructionUnit() != null){
+                        thisInfo.setConstructionUnit(thisInfo.getConstructionUnit());
+                    }else {
+                        thisInfo.setConstructionUnit("/");
+                    }
+                    // 设计单位
+                    if (!"".equals(thisInfo.getDesignUnitName()) && thisInfo.getDesignUnitName() != null){
+                        thisInfo.setDesignUnitName(thisInfo.getDesignUnitName());
+                    }else {
+                        thisInfo.setDesignUnitName("/");
+                    }
+                    // 造价金额
+                    if (!"".equals(thisInfo.getAmountCost()) && thisInfo.getAmountCost() != null){
+                        thisInfo.setAmountCost(thisInfo.getAmountCost());
+                    }else {
+                        thisInfo.setAmountCost("/");
+                    }
+                    // 委外金额
+                    if (!"".equals(thisInfo.getOutsourceMoney()) && thisInfo.getOutsourceMoney() != null){
+                        thisInfo.setOutsourceMoney(thisInfo.getOutsourceMoney());
+                    }else {
+                        thisInfo.setAmountCost("/");
+                    }
+                    // 接受时间
+                    if (!"".equals(thisInfo.getTakeTime()) && thisInfo.getTakeTime() != null){
+                        thisInfo.setTakeTime(thisInfo.getTakeTime());
+                    }else {
+                        thisInfo.setTakeTime("/");
+                    }
+                    // 正式出图时间
+                    if (!"".equals(thisInfo.getBlueprintStartTime()) && thisInfo.getBlueprintStartTime() != null){
+                        thisInfo.setBlueprintStartTime(thisInfo.getBlueprintStartTime());
+                    }else {
+                        thisInfo.setBlueprintStartTime("/");
+                    }
+                }
+
             } else {
                 //普通员工则展示自己创建或者自己负责得
                 designInfos = designInfoMapper.designProjectSelect(pageVo);
+                for (DesignInfo thisInfo : designInfos) {
+                    // 建设单位
+                    if (thisInfo.getConstructionUnit() != null && !"".equals(thisInfo.getConstructionUnit())){
+                        thisInfo.setConstructionUnit(thisInfo.getConstructionUnit());
+                    }else {
+                        thisInfo.setConstructionUnit("/");
+                    }
+                    // 设计单位
+                    if (!"".equals(thisInfo.getDesignUnitName()) && thisInfo.getDesignUnitName() != null){
+                        thisInfo.setDesignUnitName(thisInfo.getDesignUnitName());
+                    }else {
+                        thisInfo.setDesignUnitName("/");
+                    }
+                    // 造价金额
+                    if (!"".equals(thisInfo.getAmountCost()) && thisInfo.getAmountCost() != null){
+                        thisInfo.setAmountCost(thisInfo.getAmountCost());
+                    }else {
+                        thisInfo.setAmountCost("/");
+                    }
+                    // 委外金额
+                    if (!"".equals(thisInfo.getOutsourceMoney()) && thisInfo.getOutsourceMoney() != null){
+                        thisInfo.setOutsourceMoney(thisInfo.getOutsourceMoney());
+                    }else {
+                        thisInfo.setAmountCost("/");
+                    }
+                    // 接受时间
+                    if (!"".equals(thisInfo.getTakeTime()) && thisInfo.getTakeTime() != null){
+                        thisInfo.setTakeTime(thisInfo.getTakeTime());
+                    }else {
+                        thisInfo.setTakeTime("/");
+                    }
+                    // 正式出图时间
+                    if (!"".equals(thisInfo.getBlueprintStartTime()) && thisInfo.getBlueprintStartTime() != null){
+                        thisInfo.setBlueprintStartTime(thisInfo.getBlueprintStartTime());
+                    }else {
+                        thisInfo.setBlueprintStartTime("/");
+                    }
+                }
             }
             for (DesignInfo thisDesign : designInfos) {
                 //获取当前待审核信息
@@ -196,7 +273,7 @@ public class ProjectService {
                     if (memberManage1 != null) {
                         designInfo.setDesigner(memberManage1.getMemberName());
                     } else {
-                        designInfo.setDesigner("-");
+                        designInfo.setDesigner("/");
                     }
 
                     //根据地区判断相应的设计费 应付金额 实付金额
@@ -208,7 +285,7 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                             if (anhuiMoneyinfo != null) {
-                                designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                                designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
                                 designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                                 designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                                 designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
@@ -220,7 +297,7 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                             if (wujiangMoneyInfo != null) {
-                                designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                                designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
                                 designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
@@ -233,9 +310,9 @@ public class ProjectService {
                     c.andEqualTo("baseProjectId", designInfo.getBaseProjectId());
                     Budgeting budgeting = budgetingMapper.selectOneByExample(example);
                     if (budgeting != null) {
-                        designInfo.setAmountCost(budgeting.getAmountCost());
+                        designInfo.setAmountCost(budgeting.getAmountCost()+"");
                     } else {
-                        designInfo.setAmountCost(new BigDecimal(0));
+                        designInfo.setAmountCost("/");
                     }
                 }
             }
@@ -255,14 +332,49 @@ public class ProjectService {
                         if (designInfo.getDesignChangeTime() == null || designInfo.getDesignChangeTime().equals("")) {
                             designInfo.setDesignChangeTime("/");
                         }
-
+                        // 建设单位
+                        if (!"".equals(designInfo.getConstructionUnit()) && designInfo.getConstructionUnit() != null){
+                            designInfo.setConstructionUnit(designInfo.getConstructionUnit());
+                        }else {
+                            designInfo.setConstructionUnit("/");
+                        }
+                        // 设计单位
+                        if (!"".equals(designInfo.getDesignUnitName()) && designInfo.getDesignUnitName() != null){
+                            designInfo.setDesignUnitName(designInfo.getDesignUnitName());
+                        }else {
+                            designInfo.setDesignUnitName("/");
+                        }
+                        // 造价金额
+                        if (!"".equals(designInfo.getAmountCost()) && designInfo.getAmountCost() != null){
+                            designInfo.setAmountCost(designInfo.getAmountCost());
+                        }else {
+                            designInfo.setAmountCost("/");
+                        }
+                        // 委外金额
+                        if (!"".equals(designInfo.getOutsourceMoney()) && designInfo.getOutsourceMoney() != null){
+                            designInfo.setOutsourceMoney(designInfo.getOutsourceMoney());
+                        }else {
+                            designInfo.setAmountCost("/");
+                        }
+                        // 接受时间
+                        if (!"".equals(designInfo.getTakeTime()) && designInfo.getTakeTime() != null){
+                            designInfo.setTakeTime(designInfo.getTakeTime());
+                        }else {
+                            designInfo.setTakeTime("/");
+                        }
+                        // 正式出图时间
+                        if (!"".equals(designInfo.getBlueprintStartTime()) && designInfo.getBlueprintStartTime() != null){
+                            designInfo.setBlueprintStartTime(designInfo.getBlueprintStartTime());
+                        }else {
+                            designInfo.setBlueprintStartTime("/");
+                        }
                         //根据设计人id 查询
                         MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
                         //将id替换成姓名
                         if (memberManage1 != null) {
                             designInfo.setDesigner(memberManage1.getMemberName());
                         } else {
-                            designInfo.setDesigner("-");
+                            designInfo.setDesigner("/");
                         }
 
                         //根据地区判断相应的设计费 应付金额 实付金额
@@ -274,7 +386,7 @@ public class ProjectService {
                                 c2.andEqualTo("baseProjectId", designInfo.getId());
                                 AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                                 if (anhuiMoneyinfo != null) {
-                                    designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                                    designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
                                     designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                                     designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                                     designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
@@ -286,7 +398,7 @@ public class ProjectService {
                                 c2.andEqualTo("baseProjectId", designInfo.getId());
                                 WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                                 if (wujiangMoneyInfo != null) {
-                                    designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                                    designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
                                     designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                     designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                     designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
@@ -300,9 +412,9 @@ public class ProjectService {
                         c.andEqualTo("baseProjectId", designInfo.getBaseProjectId());
                         Budgeting budgeting = budgetingMapper.selectOneByExample(example);
                         if (budgeting != null) {
-                            designInfo.setAmountCost(budgeting.getAmountCost());
+                            designInfo.setAmountCost(budgeting.getAmountCost()+"");
                         } else {
-                            designInfo.setAmountCost(new BigDecimal(0));
+                            designInfo.setAmountCost("/");
                         }
                     }
                 }
@@ -319,14 +431,49 @@ public class ProjectService {
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             if (designInfos.size() > 0) {
                 for (DesignInfo designInfo : designInfos) {
-
+                    // 建设单位
+                    if (!"".equals(designInfo.getConstructionUnit()) && designInfo.getConstructionUnit() != null){
+                        designInfo.setConstructionUnit(designInfo.getConstructionUnit());
+                    }else {
+                        designInfo.setConstructionUnit("/");
+                    }
+                    // 设计单位
+                    if (!"".equals(designInfo.getDesignUnitName()) && designInfo.getDesignUnitName() != null){
+                        designInfo.setDesignUnitName(designInfo.getDesignUnitName());
+                    }else {
+                        designInfo.setDesignUnitName("/");
+                    }
+                    // 造价金额
+                    if (!"".equals(designInfo.getAmountCost()) && designInfo.getAmountCost() != null){
+                        designInfo.setAmountCost(designInfo.getAmountCost());
+                    }else {
+                        designInfo.setAmountCost("/");
+                    }
+                    // 委外金额
+                    if (!"".equals(designInfo.getOutsourceMoney()) && designInfo.getOutsourceMoney() != null){
+                        designInfo.setOutsourceMoney(designInfo.getOutsourceMoney());
+                    }else {
+                        designInfo.setAmountCost("/");
+                    }
+                    // 接受时间
+                    if (!"".equals(designInfo.getTakeTime()) && designInfo.getTakeTime() != null){
+                        designInfo.setTakeTime(designInfo.getTakeTime());
+                    }else {
+                        designInfo.setTakeTime("/");
+                    }
+                    // 正式出图时间
+                    if (!"".equals(designInfo.getBlueprintStartTime()) && designInfo.getBlueprintStartTime() != null){
+                        designInfo.setBlueprintStartTime(designInfo.getBlueprintStartTime());
+                    }else {
+                        designInfo.setBlueprintStartTime("/");
+                    }
                     //根据设计人id 查询
                     MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
                     //将id替换成姓名
                     if (memberManage1 != null) {
                         designInfo.setDesigner(memberManage1.getMemberName());
                     } else {
-                        designInfo.setDesigner("-");
+                        designInfo.setDesigner("/");
                     }
 
                     //判断当前项目是否为设计变更项目 如果是返回一个状态
@@ -355,7 +502,7 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                             if (anhuiMoneyinfo != null) {
-                                designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                                designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
                                 designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                                 designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                                 designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
@@ -367,7 +514,7 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                             if (wujiangMoneyInfo != null) {
-                                designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                                designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
                                 designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
@@ -380,9 +527,9 @@ public class ProjectService {
                     c.andEqualTo("baseProjectId", designInfo.getBaseProjectId());
                     Budgeting budgeting = budgetingMapper.selectOneByExample(example);
                     if (budgeting != null) {
-                        designInfo.setAmountCost(budgeting.getAmountCost());
+                        designInfo.setAmountCost(budgeting.getAmountCost()+"");
                     } else {
-                        designInfo.setAmountCost(new BigDecimal(0));
+                        designInfo.setAmountCost("/");
                     }
                 }
             }
@@ -397,13 +544,49 @@ public class ProjectService {
                     if (designInfo.getDesignChangeTime() == null || designInfo.getDesignChangeTime().equals("")) {
                         designInfo.setDesignChangeTime("/");
                     }
+                    // 建设单位
+                    if (!"".equals(designInfo.getConstructionUnit()) && designInfo.getConstructionUnit() != null){
+                        designInfo.setConstructionUnit(designInfo.getConstructionUnit());
+                    }else {
+                        designInfo.setConstructionUnit("/");
+                    }
+                    // 设计单位
+                    if (!"".equals(designInfo.getDesignUnitName()) && designInfo.getDesignUnitName() != null){
+                        designInfo.setDesignUnitName(designInfo.getDesignUnitName());
+                    }else {
+                        designInfo.setDesignUnitName("/");
+                    }
+                    // 造价金额
+                    if (!"".equals(designInfo.getAmountCost()) && designInfo.getAmountCost() != null){
+                        designInfo.setAmountCost(designInfo.getAmountCost());
+                    }else {
+                        designInfo.setAmountCost("/");
+                    }
+                    // 委外金额
+                    if (!"".equals(designInfo.getOutsourceMoney()) && designInfo.getOutsourceMoney() != null){
+                        designInfo.setOutsourceMoney(designInfo.getOutsourceMoney());
+                    }else {
+                        designInfo.setAmountCost("/");
+                    }
+                    // 接受时间
+                    if (!"".equals(designInfo.getTakeTime()) && designInfo.getTakeTime() != null){
+                        designInfo.setTakeTime(designInfo.getTakeTime());
+                    }else {
+                        designInfo.setTakeTime("/");
+                    }
+                    // 正式出图时间
+                    if (!"".equals(designInfo.getBlueprintStartTime()) && designInfo.getBlueprintStartTime() != null){
+                        designInfo.setBlueprintStartTime(designInfo.getBlueprintStartTime());
+                    }else {
+                        designInfo.setBlueprintStartTime("/");
+                    }
                     //根据设计人id 查询
                     MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
                     //将id替换成姓名
                     if (memberManage1 != null) {
                         designInfo.setDesigner(memberManage1.getMemberName());
                     } else {
-                        designInfo.setDesigner("-");
+                        designInfo.setDesigner("/");
                     }
 
                     //归属按钮展示
@@ -424,7 +607,7 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                             if (anhuiMoneyinfo != null) {
-                                designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                                designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
                                 designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                                 designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                                 designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
@@ -436,7 +619,7 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                             if (wujiangMoneyInfo != null) {
-                                designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                                designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
                                 designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
@@ -450,9 +633,9 @@ public class ProjectService {
                     c.andEqualTo("delFlag", "0");
                     Budgeting budgeting = budgetingMapper.selectOneByExample(example);
                     if (budgeting != null) {
-                        designInfo.setAmountCost(budgeting.getAmountCost());
+                        designInfo.setAmountCost(budgeting.getAmountCost()+"");
                     } else {
-                        designInfo.setAmountCost(new BigDecimal(0));
+                        designInfo.setAmountCost("/");
                     }
                 }
             }
@@ -479,14 +662,49 @@ public class ProjectService {
                 if (designInfo.getDesignChangeTime() == null || designInfo.getDesignChangeTime().equals("")) {
                     designInfo.setDesignChangeTime("/");
                 }
-
+                // 建设单位
+                if ("".equals(designInfo.getConstructionUnit()) && designInfo.getConstructionUnit() == null){
+                    designInfo.setConstructionUnit("/");
+                }else {
+                    designInfo.setConstructionUnit(designInfo.getConstructionUnit());
+                }
+                // 设计单位
+                if ("".equals(designInfo.getDesignUnitName()) && designInfo.getDesignUnitName() == null){
+                    designInfo.setDesignUnitName("/");
+                }else {
+                    designInfo.setDesignUnitName(designInfo.getDesignUnitName());
+                }
+                // 造价金额
+                if ("".equals(designInfo.getAmountCost()) && designInfo.getAmountCost() == null){
+                    designInfo.setAmountCost("/");
+                }else {
+                    designInfo.setAmountCost(designInfo.getAmountCost());
+                }
+                // 委外金额
+                if ("".equals(designInfo.getOutsourceMoney()) && designInfo.getOutsourceMoney() == null){
+                    designInfo.setAmountCost("/");
+                }else {
+                    designInfo.setOutsourceMoney(designInfo.getOutsourceMoney());
+                }
+                // 接受时间
+                if ("".equals(designInfo.getTakeTime()) && designInfo.getTakeTime() == null){
+                    designInfo.setTakeTime("/");
+                }else {
+                    designInfo.setTakeTime(designInfo.getTakeTime());
+                }
+                // 正式出图时间
+                if ("".equals(designInfo.getBlueprintStartTime()) && designInfo.getBlueprintStartTime() == null){
+                    designInfo.setBlueprintStartTime("/");
+                }else {
+                    designInfo.setBlueprintStartTime(designInfo.getBlueprintStartTime());
+                }
                 //根据设计人id 查询
                 MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
                 //将id替换成姓名
                 if (memberManage1 != null) {
                     designInfo.setDesigner(memberManage1.getMemberName());
                 } else {
-                    designInfo.setDesigner("-");
+                    designInfo.setDesigner("/");
                 }
 
                 //根据地区判断相应的设计费 应付金额 实付金额
@@ -498,7 +716,7 @@ public class ProjectService {
                         c2.andEqualTo("baseProjectId", designInfo.getId());
                         AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                         if (anhuiMoneyinfo != null) {
-                            designInfo.setRevenue(anhuiMoneyinfo.getRevenue());
+                            designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
                             designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                             designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                             designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
@@ -510,7 +728,7 @@ public class ProjectService {
                         c2.andEqualTo("baseProjectId", designInfo.getId());
                         WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                         if (wujiangMoneyInfo != null) {
-                            designInfo.setRevenue(wujiangMoneyInfo.getRevenue());
+                            designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
                             designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                             designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                             designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
@@ -523,9 +741,9 @@ public class ProjectService {
                 c.andEqualTo("baseProjectId", designInfo.getBaseProjectId());
                 Budgeting budgeting = budgetingMapper.selectOneByExample(example);
                 if (budgeting != null) {
-                    designInfo.setAmountCost(budgeting.getAmountCost());
+                    designInfo.setAmountCost(budgeting.getAmountCost()+"/");
                 } else {
-                    designInfo.setAmountCost(new BigDecimal(0));
+                    designInfo.setAmountCost("/");
                 }
             }
         }
@@ -789,6 +1007,54 @@ public class ProjectService {
     public DesignInfo mergeProjectList(String id) {
         //根据id查找 合并信息
         DesignInfo designInfo = designInfoMapper.designProjectSelectOne(id);
+        // 联系人
+        if (designInfo.getContacts() != null && !"".equals(designInfo.getContacts())){
+            designInfo.setContacts(designInfo.getContacts());
+        }else {
+            designInfo.setContacts("/");
+        }
+        // 电话
+        if (designInfo.getPhone() != null && !"".equals(designInfo.getPhone())){
+            designInfo.setPhone(designInfo.getPhone());
+        }else {
+            designInfo.setPhone("/");
+        }
+        // 设计单位名称
+        if (designInfo.getDesignUnitName() != null && !"".equals(designInfo.getDesignUnitName())){
+            designInfo.setDesignUnitName(designInfo.getDesignUnitName());
+        }else {
+            designInfo.setDesignUnitName("/");
+        }
+        // 造价金额
+        if (designInfo.getAmountCost() != null && !"".equals(designInfo.getAmountCost())){
+            designInfo.setAmountCost(designInfo.getAmountCost());
+        }else {
+            designInfo.setAmountCost("/");
+        }
+        // 设计费
+        if (designInfo.getRevenue() != null && !"".equals(designInfo.getRevenue())){
+            designInfo.setRevenue(designInfo.getRevenue());
+        }else {
+            designInfo.setRevenue("/");
+        }
+        // 委外金额
+        if (designInfo.getOutsourceMoney() != null && !"".equals(designInfo.getOutsourceMoney())){
+            designInfo.setOutsourceMoney(designInfo.getOutsourceMoney());
+        } else {
+            designInfo.setOutsourceMoney("/");
+        }
+        // 接受时间
+        if (designInfo.getTakeTime() != null && !"".equals(designInfo.getTakeTime())){
+            designInfo.setTakeTime(designInfo.getTakeTime());
+        }else {
+            designInfo.setTakeTime("/");
+        }
+         // 正式出图时间
+        if (designInfo.getBlueprintStartTime() != null && !"".equals(designInfo.getBlueprintStartTime())){
+            designInfo.setBlueprintStartTime(designInfo.getBlueprintStartTime());
+        }else {
+            designInfo.setBlueprintStartTime("/");
+        }
         return designInfo;
     }
 
@@ -2579,9 +2845,10 @@ public class ProjectService {
             DesignInfo designInfo = this.designInfoByid(baseProject.getId());
             if (designInfo != null) {
                 if (designInfo.getOutsourceMoney() == null) {
-                    designInfo.setOutsourceMoney(new BigDecimal(0));
+                    designInfo.setOutsourceMoney("/");
                 } else {
-                    outsourceMoney.add(designInfo.getOutsourceMoney().add(outsourceMoney));
+                    BigDecimal bigDecimal = new BigDecimal(designInfo.getOutsourceMoney());
+                    outsourceMoney.add(bigDecimal.add(outsourceMoney));
                 }
             }
         }
@@ -3088,7 +3355,7 @@ public class ProjectService {
         Example example = new Example(AuditInfo.class);
         Example.Criteria criteria = example.createCriteria();
         //todo userInfo.getId()
-        criteria.andEqualTo("auditorId", userInfo.getId());
+        criteria.andEqualTo("auditorId", "user321");
         criteria.andEqualTo("baseProjectId", id);
         criteria.andEqualTo("auditResult", "0");
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);

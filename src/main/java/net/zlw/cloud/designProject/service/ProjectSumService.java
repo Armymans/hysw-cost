@@ -1288,9 +1288,9 @@ public class ProjectSumService {
             c.andEqualTo("baseProjectId",designInfo.getId());
             Budgeting budgeting = budgetingMapper.selectOneByExample(example);
             if(budgeting!=null){
-                designInfo.setAmountCost(budgeting.getAmountCost());
+                designInfo.setAmountCost(budgeting.getAmountCost()+"");
             }else{
-                designInfo.setAmountCost(new BigDecimal(0));
+                designInfo.setAmountCost("0");
             }
         }
         PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
@@ -1359,9 +1359,9 @@ public class ProjectSumService {
             c.andEqualTo("baseProjectId",designInfo.getId());
             Budgeting budgeting = budgetingMapper.selectOneByExample(example);
             if(budgeting!=null){
-                designInfo.setAmountCost(budgeting.getAmountCost());
+                designInfo.setAmountCost(budgeting.getAmountCost()+"");
             }else{
-                designInfo.setAmountCost(new BigDecimal(0));
+                designInfo.setAmountCost("0");
             }
         }
         PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
