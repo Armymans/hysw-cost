@@ -951,10 +951,6 @@ public class ProjectController extends BaseController {
             DesignInfo designInfo1 = projectService.designInfoByid(baseProject.getId());
             designInfo = designInfo1;
         }
-//        MemberManage memberManage = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
-//        if (memberManage != null){
-//            designInfo.setDesigner(memberManage.getMemberName());
-//        }
         projectVo.setDesignInfo(designInfo);
         //根据设计信息查找基本信息
         BaseProject baseProject = projectService.BaseProjectByid(designInfo.getBaseProjectId());
@@ -1078,8 +1074,8 @@ public class ProjectController extends BaseController {
                 projectVo.setAnhuiMoneyinfo(new AnhuiMoneyinfo());
                 projectVo.setMoneyInfo(new MoneyInfo());
             }
-//            projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
-//            projectVo.setMoneyInfo(new MoneyInfo());
+            projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
+            projectVo.setMoneyInfo(new MoneyInfo());
         }else{
             //设计费（吴江）
             WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
