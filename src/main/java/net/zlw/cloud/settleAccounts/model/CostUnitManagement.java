@@ -8,7 +8,7 @@ import javax.persistence.Table;
 import java.io.Serializable;
 @Data
 @Table(name = "cost_unit_management")
-public class CostUnitManagement implements Serializable {
+public class CostUnitManagement  {
     @Id
     private String id;
     @Column(name = "cost_unit_name")

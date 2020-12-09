@@ -8,8 +8,6 @@ import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
-import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
-import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
 import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
 import net.zlw.cloud.settleAccounts.model.OtherInfo;
@@ -31,7 +29,7 @@ public class SettleAccountsController extends BaseController {
     private SettleAccountsService settleAccountsService;
     //造价单位名称
     @Resource
-    private CostUnitManagementMapper constructionUnitManagementMapper;
+    private CostUnitManagementMapper costUnitManagementMapper;
 
 
     //查询所有结算
@@ -176,14 +174,14 @@ public class SettleAccountsController extends BaseController {
         BaseAccountsVo accountsVo = settleAccountsService.findAccountById(id, getLoginUser());
         String nameOfTheCost = accountsVo.getLastSettlementReview().getNameOfTheCost();
         if (nameOfTheCost!=null && !"".equals(nameOfTheCost)){
-            CostUnitManagement costUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(nameOfTheCost);
+            CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfTheCost);
             if (costUnitManagement!=null){
                 accountsVo.getLastSettlementReview().setNameOfTheCost(costUnitManagement.getCostUnitName());
             }
         }
         String nameOfTheCost1 = accountsVo.getSettlementAuditInformation().getNameOfTheCost();
         if (nameOfTheCost1!=null && !"".equals(nameOfTheCost1)){
-            CostUnitManagement costUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(nameOfTheCost1);
+            CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfTheCost1);
             if (costUnitManagement!=null){
                 accountsVo.getSettlementAuditInformation().setNameOfTheCost(costUnitManagement.getCostUnitName());
             }
