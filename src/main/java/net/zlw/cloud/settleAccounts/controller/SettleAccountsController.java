@@ -8,6 +8,8 @@ import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
+import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.settleAccounts.model.OtherInfo;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
@@ -25,6 +27,8 @@ import java.util.Map;
 public class SettleAccountsController extends BaseController {
     @Resource
     private SettleAccountsService settleAccountsService;
+    @Resource
+    private ConstructionUnitManagementMapper constructionUnitManagementMapper;
 
     //查询所有结算
 //    @PostMapping("/findAllAccounts")
@@ -166,7 +170,20 @@ public class SettleAccountsController extends BaseController {
             return RestUtil.error();
         }
         BaseAccountsVo accountsVo = settleAccountsService.findAccountById(id, getLoginUser());
-
+        String nameOfTheCost = accountsVo.getLastSettlementReview().getNameOfTheCost();
+        if (nameOfTheCost!=null && !"".equals(nameOfTheCost)){
+            ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(nameOfTheCost);
+            if (constructionUnitManagement!=null){
+                accountsVo.getLastSettlementReview().setNameOfTheCost(constructionUnitManagement.getConstructionUnitName());
+            }
+        }
+        String nameOfTheCost1 = accountsVo.getSettlementAuditInformation().getNameOfTheCost();
+        if (nameOfTheCost1!=null && !"".equals(nameOfTheCost1)){
+            ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(nameOfTheCost1);
+            if (constructionUnitManagement!=null){
+                accountsVo.getSettlementAuditInformation().setNameOfTheCost(constructionUnitManagement.getConstructionUnitName());
+            }
+        }
         return RestUtil.success(accountsVo);
     }
 
