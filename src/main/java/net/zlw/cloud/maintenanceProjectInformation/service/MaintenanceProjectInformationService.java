@@ -34,6 +34,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import springfox.documentation.spring.web.json.Json;
 import tk.mybatis.mapper.entity.Example;
 
@@ -52,6 +53,7 @@ import java.util.UUID;
  * @Version 1.0
  */
 @Service
+@Transactional
 public class MaintenanceProjectInformationService {
     Date date = new Date();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm");
@@ -1097,7 +1099,10 @@ public class MaintenanceProjectInformationService {
 
         SettlementAuditInformation selectOneByExample = settlementAuditInformationDao.selectOneByExample(example);
 
-        settlementAuditInformation.setId(selectOneByExample.getId());// 计算核减率
+
+        if (selectOneByExample!=null){
+            settlementAuditInformation.setId(selectOneByExample.getId());// 计算核减率
+        }
         BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
         BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
         // 核减数 / 送审金额 * 100 = 核减率
@@ -1248,6 +1253,7 @@ public class MaintenanceProjectInformationService {
         }
         // json转换
         Json coms = maintenanceProjectInformationVo.getComs();
+
         String json = coms.value();
         Example example3 = new Example(OtherInfo.class);
         example.createCriteria().andEqualTo("foreignKey",information.getId());
