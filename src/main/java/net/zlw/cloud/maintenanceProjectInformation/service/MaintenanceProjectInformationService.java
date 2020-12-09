@@ -1099,11 +1099,11 @@ public class MaintenanceProjectInformationService {
 
         settlementAuditInformation.setId(selectOneByExample.getId());
         // 计算核减率
-        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
-        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
-        // 核减数 / 送审金额 * 100 = 核减率
-        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
-        settlementAuditInformation.setSubtractRate(subtractRate);
+//        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
+//        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
+//        // 核减数 / 送审金额 * 100 = 核减率
+//        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
+//        settlementAuditInformation.setSubtractRate(subtractRate);
 
 
         settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
