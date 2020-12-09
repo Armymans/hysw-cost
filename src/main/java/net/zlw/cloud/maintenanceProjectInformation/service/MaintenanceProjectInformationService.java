@@ -1097,8 +1097,7 @@ public class MaintenanceProjectInformationService {
 
         SettlementAuditInformation selectOneByExample = settlementAuditInformationDao.selectOneByExample(example);
 
-        settlementAuditInformation.setId(selectOneByExample.getId());
-        // 计算核减率
+        settlementAuditInformation.setId(selectOneByExample.getId());// 计算核减率
 //        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
 //        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
 //        // 核减数 / 送审金额 * 100 = 核减率

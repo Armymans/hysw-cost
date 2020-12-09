@@ -12,6 +12,7 @@ import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
+import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class BudgetingController extends BaseController {
     private MemberManageDao memberManageDao;
     @Autowired
     private AuditInfoDao auditInfoDao;
+    @Resource
+    private MkyUserMapper mkyUserMapper;
 
     //添加预算信息
 //    @PostMapping("/addBudgeting")
@@ -202,6 +205,13 @@ public class BudgetingController extends BaseController {
     public Map<String,Object> findDesignAll(PageBVo pageBVo){
         PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
        List<DesignInfo> list = budgetingService.findDesignAll(pageBVo);
+        for (DesignInfo designInfo : list) {
+            String designer = designInfo.getDesigner();
+            MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(designer);
+            if (mkyUser!=null){
+                designInfo.setDesigner(mkyUser.getUserName());
+            }
+        }
         PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(list);
         return RestUtil.page(designInfoPageInfo);
     }
