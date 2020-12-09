@@ -1256,7 +1256,7 @@ public class MaintenanceProjectInformationService {
 
         String json = coms.value();
         Example example3 = new Example(OtherInfo.class);
-        example.createCriteria().andEqualTo("foreignKey",information.getId());
+        example3.createCriteria().andEqualTo("foreignKey",information.getId());
         List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(example3);
         for (OtherInfo thisOther : otherInfos1) {
             thisOther.setStatus("1");
