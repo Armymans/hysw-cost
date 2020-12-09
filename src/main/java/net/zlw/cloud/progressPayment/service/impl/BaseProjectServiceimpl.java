@@ -1258,10 +1258,13 @@ public class BaseProjectServiceimpl implements BaseProjectService {
            if (progressPaymentInformation.getCurrentPaymentInformation()!=null){
                bigDecimal = bigDecimal.add(progressPaymentInformation.getCurrentPaymentInformation());
            }
-           if (progressPaymentInformation.getCumulativePaymentTimes()!=null){
-               bigDecimal1 = bigDecimal1.add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes()));
-           }
            if (progressPaymentInformation.getCurrentPaymentRatio()!=null){
+               if (progressPaymentInformation.getCurrentPaymentRatio() == null ){
+                   progressPaymentInformation.setCurrentPaymentRatio("0");
+               }
+               bigDecimal1 = bigDecimal1.add(new BigDecimal(progressPaymentInformation.getCurrentPaymentRatio()));
+           }
+           if (progressPaymentInformation.getChangeNum()!=null){
                if (pro<=progressPaymentInformation.getChangeNum()){
                    pro = progressPaymentInformation.getChangeNum();
                }
