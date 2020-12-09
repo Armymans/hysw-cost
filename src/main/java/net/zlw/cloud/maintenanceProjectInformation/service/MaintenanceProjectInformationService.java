@@ -1095,7 +1095,7 @@ public class MaintenanceProjectInformationService {
 
         Example example = new Example(SettlementAuditInformation.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("maintenanceProjectInformation", information.getId());
+        criteria.andEqualTo("maintenanceProjectInformation", maintenanceProjectInformationVo.getId());
 
         SettlementAuditInformation selectOneByExample = settlementAuditInformationDao.selectOneByExample(example);
 
@@ -1171,7 +1171,7 @@ public class MaintenanceProjectInformationService {
 
         Example example1 = new Example(InvestigationOfTheAmount.class);
         Example.Criteria example1Criteria = example1.createCriteria();
-        example1Criteria.andEqualTo("maintenanceProjectInformation", information.getId());
+        example1Criteria.andEqualTo("maintenanceProjectInformation", maintenanceProjectInformationVo.getId());
 
         InvestigationOfTheAmount ofTheAmount = investigationOfTheAmountDao.selectOneByExample(example1);
 
