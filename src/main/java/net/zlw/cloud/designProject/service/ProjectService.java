@@ -1928,21 +1928,6 @@ public class ProjectService {
                     projectVo.getBaseProject().setReviewerId(auditInfo1.getAuditorId());
                     projectVo.getBaseProject().setDesginStatus("1");
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
-
-                    //消息通知 未通过提醒
-                    MessageVo messageVo = new MessageVo();
-                    String projectName = projectVo.getBaseProject().getProjectName();
-
-                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo1.getAuditorId());
-                    //审核人名字
-                    String name = memberManage.getMemberName();
-                    messageVo.setId("A04");
-                    messageVo.setUserId(loginUserId);
-                    messageVo.setType("1"); // 1 通知
-                    messageVo.setTitle("您有一个设计项目未通过！");
-                    messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的设计项目未通过审核，请及时查看详情！");
-                    //调用消息Service
-                    messageService.sendOrClose(messageVo);
                 }
             } else {
                 if ("2".equals(projectVo.getBaseProject().getDesginStatus())) {
@@ -1963,19 +1948,6 @@ public class ProjectService {
                     auditInfoDao.insert(auditInfo);
                     //审核状态从出图中变为待审核
                     projectVo.getBaseProject().setDesginStatus("1");
-                    //消息通知 未通过提醒
-                    MessageVo messageVo = new MessageVo();
-                    String projectName = projectVo.getBaseProject().getProjectName();
-                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-                    //审核人名字
-                    String name = memberManage.getMemberName();
-                    messageVo.setId("A04");
-                    messageVo.setUserId(loginUserId);
-                    messageVo.setType("1"); // 1 通知
-                    messageVo.setTitle("您有一个设计项目未通过！");
-                    messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的设计项目未通过审核，请及时查看详情！");
-                    //调用消息Service
-                    messageService.sendOrClose(messageVo);
                 }
             }
         } else {
@@ -1993,9 +1965,9 @@ public class ProjectService {
         //添加勘探表时间
         if (projectVo.getProjectExploration() != null) {
             projectVo.getProjectExploration().setUpdateTime(updateTime);
-            ProjectExploration projectExploration = this.ProjectExplorationByid(projectVo.getBaseProject().getId());
+            ProjectExploration projectExploration = this.ProjectExplorationByid(projectVo.getDesignInfo().getId());
             if (projectExploration != null) {
-                projectVo.getProjectExploration().setId(projectExploration.getId());
+//                projectVo.getProjectExploration().setId(projectExploration.getId());
                 projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
             }
         }
@@ -2584,7 +2556,7 @@ public class ProjectService {
             }
         } else {
             //如果不为1 则为保存 状态依旧是出图中
-            projectVo.getBaseProject().setDesginStatus("2");
+            projectVo.getBaseProject().setDesginStatus("3");
         }
         //添加设计变更信息
         packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
@@ -3359,7 +3331,7 @@ public class ProjectService {
         Example example = new Example(AuditInfo.class);
         Example.Criteria criteria = example.createCriteria();
         //todo userInfo.getId()
-        criteria.andEqualTo("auditorId", userInfo.getId());
+        criteria.andEqualTo("auditorId", "201803018");
         criteria.andEqualTo("baseProjectId", id);
         criteria.andEqualTo("auditResult", "0");
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);

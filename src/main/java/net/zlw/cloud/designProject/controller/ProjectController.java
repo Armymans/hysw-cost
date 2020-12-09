@@ -811,9 +811,10 @@ public class ProjectController extends BaseController {
     public Map<String,Object> disProjectChangeCountList(String id) {
         //设计变更累计
         List<DesignChangeInfo> designChangeInfos = projectService.designChangeInfosByid(id);
-        int Number = 0;
+        int number = 0;
         for (DesignChangeInfo designChangeInfo : designChangeInfos) {
-            designChangeInfo.setIdNumber(Number+1+"");
+            number++;
+            designChangeInfo.setIdNumber(number+"");
         }
         return RestUtil.success(designChangeInfos);
     }
@@ -950,11 +951,10 @@ public class ProjectController extends BaseController {
             DesignInfo designInfo1 = projectService.designInfoByid(baseProject.getId());
             designInfo = designInfo1;
         }
-        //设计人改成名字
-        Example example = new Example(MemberManage.class);
-        example.createCriteria().andEqualTo("id",designInfo.getDesigner());
-        MemberManage memberManage = memberManageDao.selectOneByExample(example);
-        designInfo.setDesigner(memberManage.getMemberName());
+//        MemberManage memberManage = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+//        if (memberManage != null){
+//            designInfo.setDesigner(memberManage.getMemberName());
+//        }
         projectVo.setDesignInfo(designInfo);
         //根据设计信息查找基本信息
         BaseProject baseProject = projectService.BaseProjectByid(designInfo.getBaseProjectId());
@@ -1078,8 +1078,8 @@ public class ProjectController extends BaseController {
                 projectVo.setAnhuiMoneyinfo(new AnhuiMoneyinfo());
                 projectVo.setMoneyInfo(new MoneyInfo());
             }
-            projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
-            projectVo.setMoneyInfo(new MoneyInfo());
+//            projectVo.setWujiangMoneyInfo(new WujiangMoneyInfo());
+//            projectVo.setMoneyInfo(new MoneyInfo());
         }else{
             //设计费（吴江）
             WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
@@ -1177,6 +1177,8 @@ public class ProjectController extends BaseController {
         //设计变更信息
         DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
         if(designChangeInfo!=null){
+            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designChangeInfo.getDesigner());
+            designChangeInfo.setDesigner(memberManage1.getMemberName());
             projectVo.setDesignChangeInfo(designChangeInfo);
         }else{
             projectVo.setDesignChangeInfo(new DesignChangeInfo());
