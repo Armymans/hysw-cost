@@ -33,4 +33,7 @@ public class MaintenanceVo {
     private String auditAgainFlag;
     private String json;
 
+    private String pre1;
+    private String pre2;
+
 }

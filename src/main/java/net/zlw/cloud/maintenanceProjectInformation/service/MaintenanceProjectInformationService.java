@@ -24,7 +24,9 @@ import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
 import net.zlw.cloud.settleAccounts.model.OtherInfo;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
@@ -90,6 +92,8 @@ public class MaintenanceProjectInformationService {
 
     @Resource
     private OutSourceMapper outSourceMapper;
+    @Resource
+    private MkyUserMapper mkyUserMapper;
 
     @Value("${audit.wuhu.zaojia.costHead}")
     private String whzjh;  //芜湖造造价领导
@@ -311,6 +315,13 @@ public class MaintenanceProjectInformationService {
      * @param userInfo
      */
     public void addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo) {
+
+        if ("".equals(maintenanceProjectInformation.getPreparePeople())){
+            maintenanceProjectInformation.setPreparePeople(userInfo.getId());
+        }
+        if ("".equals(maintenanceProjectInformation.getPreparePeople2())){
+            maintenanceProjectInformation.setPreparePeople2(userInfo.getId());
+        }
 
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         System.err.println(uuid);
@@ -1419,7 +1430,16 @@ public class MaintenanceProjectInformationService {
             }
 
         }
-
+        String preparePeople = maintenanceVo.getMaintenanceProjectInformation().getPreparePeople();
+        MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+        if (mkyUser!=null){
+            maintenanceVo.setPre1(mkyUser.getUserName());
+        }
+        String preparePeople1 = maintenanceVo.getSettlementAuditInformation().getPreparePeople();
+        MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(preparePeople1);
+        if (mkyUser1!=null){
+            maintenanceVo.setPre2(mkyUser1.getUserName());
+        }
 
         return maintenanceVo;
     }
@@ -1428,6 +1448,13 @@ public class MaintenanceProjectInformationService {
      * 新增--保存
      */
     public void saveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo) {
+
+        if ("".equals(maintenanceProjectInformation.getPreparePeople2())){
+            maintenanceProjectInformation.setPreparePeople2(userInfo.getId());
+        }
+        if ("".equals(maintenanceProjectInformation.getPreparePeople())){
+            maintenanceProjectInformation.setPreparePeople(userInfo.getId());
+        }
 
         String id = UUID.randomUUID().toString().replaceAll("-", "");
         //创建时间
