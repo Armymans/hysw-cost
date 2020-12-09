@@ -1967,7 +1967,8 @@ public class ProjectService {
             projectVo.getProjectExploration().setUpdateTime(updateTime);
             ProjectExploration projectExploration = this.ProjectExplorationByid(projectVo.getDesignInfo().getId());
             if (projectExploration != null) {
-//                projectVo.getProjectExploration().setId(projectExploration.getId());
+                projectVo.getProjectExploration().setFounderId(loginUser.getId());
+                projectVo.getProjectExploration().setId(projectExploration.getId());
                 projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
             }
         }
