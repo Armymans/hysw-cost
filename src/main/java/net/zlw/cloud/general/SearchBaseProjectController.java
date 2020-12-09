@@ -4,6 +4,8 @@ import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.index.model.vo.pageVo;
+import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
+import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,8 @@ import java.util.Map;
 public class SearchBaseProjectController {
     @Resource
     private BaseProjectService baseProjectService;
+    @Resource
+    private ConstructionUnitManagementMapper constructionUnitManagementMapper;
 
     //模糊搜索项目编号
     @GetMapping("/{name}")
@@ -52,6 +56,11 @@ public class SearchBaseProjectController {
         BaseProject byId = null;
         try {
             byId = baseProjectService.findBaseProjectById(id);
+            String constructionOrganization = byId.getConstructionOrganization();
+            ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(constructionOrganization);
+            if (constructionOrganization!=null){
+                byId.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             RestUtil.error();

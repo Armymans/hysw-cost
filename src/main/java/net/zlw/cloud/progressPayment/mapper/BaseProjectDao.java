@@ -454,7 +454,11 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ") waterSupplyType, " +
             "b.customer_name customerName, " +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
-            "bt.outsourcing outsourcing, " +
+            "(case bt.outsourcing " +
+            "   when '1' then '是' " +
+            "   when '2' then '否' " +
+            "end" +
+            ") outsourcing, " +
             "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
@@ -554,7 +558,11 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ") waterSupplyType, " +
             "b.customer_name customerName, " +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
-            "bt.outsourcing outsourcing, " +
+            " ( case bt.outsourcing " +
+            "   when '1' then '是' " +
+            "   when '2' then '否' " +
+            "   end " +
+            ") outsourcing, " +
             "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
@@ -855,7 +863,11 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ") waterSupplyType, " +
             "b.customer_name customerName, " +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
-            "bt.outsourcing outsourcing, " +
+            "( case bt.outsourcing " +
+            "   when '1' then '是' " +
+            "   when '2' then '否' " +
+            " end " +
+            " ) outsourcing, " +
             "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
