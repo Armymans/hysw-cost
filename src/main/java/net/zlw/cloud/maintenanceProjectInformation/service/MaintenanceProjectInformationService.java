@@ -1098,12 +1098,12 @@ public class MaintenanceProjectInformationService {
         SettlementAuditInformation selectOneByExample = settlementAuditInformationDao.selectOneByExample(example);
 
         settlementAuditInformation.setId(selectOneByExample.getId());// 计算核减率
-//        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
-//        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
-//        // 核减数 / 送审金额 * 100 = 核减率
-//        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
-//        settlementAuditInformation.setSubtractRate(subtractRate);
-
+        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
+        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
+        // 核减数 / 送审金额 * 100 = 核减率
+        BigDecimal divide = subtractTheNumber.divide(reviewAmount,2,BigDecimal.ROUND_HALF_UP);
+        BigDecimal subtractRate = divide.multiply(new BigDecimal(100));
+        settlementAuditInformation.setSubtractRate(subtractRate);
 
         settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
 
@@ -1563,7 +1563,8 @@ public class MaintenanceProjectInformationService {
         BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
         BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
         // 核减数 / 送审金额 * 100 = 核减率
-        BigDecimal subtractRate = subtractTheNumber.divide(reviewAmount).multiply(new BigDecimal(100));
+        BigDecimal divide = subtractTheNumber.divide(reviewAmount,2,BigDecimal.ROUND_HALF_UP);
+        BigDecimal subtractRate = divide.multiply(new BigDecimal(100));
         settlementAuditInformation.setSubtractRate(subtractRate);
         settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
@@ -1872,6 +1873,13 @@ public class MaintenanceProjectInformationService {
         }
         settlementAuditInformation.setCompileTime(maintenanceProjectInformation.getCompileTime());
         settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
+        // 计算核减率
+        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
+        BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
+        // 核减数 / 送审金额 * 100 = 核减率
+        BigDecimal divide = subtractTheNumber.divide(reviewAmount,2,BigDecimal.ROUND_HALF_UP);
+        BigDecimal subtractRate = divide.multiply(new BigDecimal(100));
+        settlementAuditInformation.setSubtractRate(subtractRate);
 
         settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
 
