@@ -141,16 +141,13 @@ public class MaintenanceProjectInformationService {
                 for (MaintenanceProjectInformationReturnVo thisVo : maintenanceProjectInformationReturnVos1) {
                     Example example2 = new Example(AuditInfo.class);
                     example2.createCriteria().andEqualTo("baseProjectId",thisVo.getId())
+                                                .andEqualTo("maintenanceFlag", "0")
                                              .andEqualTo("status","0");
                     List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
                     if (auditInfos.size() >0){
-                        for (AuditInfo thisInfo : auditInfos) {
-                            if ("0".equals(thisInfo.getMaintenanceFlag())){
-                                thisVo.setMaintenanceFlag("检维修确认审核");
-                            }else {
-                                thisVo.setMaintenanceFlag("检维修审核");
-                            }
-                        }
+                        thisVo.setMaintenanceFlag("检维修确认审核");
+                    }else {
+                        thisVo.setMaintenanceFlag("检维修审核");
                     }
                     // 编制人
                     MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(thisVo.getPreparePeople());
