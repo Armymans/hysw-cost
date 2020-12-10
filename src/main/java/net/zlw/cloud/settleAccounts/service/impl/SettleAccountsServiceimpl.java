@@ -122,7 +122,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Override
     public List<AccountsVo> findAllAccounts(PageVo pageVo, UserInfo loginUser) {
 //        loginUser = new UserInfo("200101005",null,null,true);
-//        loginUser = new UserInfo("200101005", null, null, true);
+//        loginUser = new UserInfo("user309", null, null, true);
         pageVo.setUserId(loginUser.getId());
 //        List<AccountsVo> list = baseProjectDao.findAllAccounts(pageVo);
 //        ArrayList<AccountsVo> returnList = new ArrayList<>();
@@ -203,7 +203,16 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                      if (mkyUser!=null){
                         accountsVo.setPreparePeople(mkyUser.getUserName());
                     }
+                     if (accountsVo.getAuthorizedNumber()!=null && accountsVo.getLReviewNumber()!=null){
+                         accountsVo.setSettleAccountsStatus("-");
+                     }else if(accountsVo.getAuthorizedNumber()!=null){
+                         accountsVo.setSettleAccountsStatus("下家处理中");
+                     }else if(accountsVo.getLReviewNumber()!=null){
+                         accountsVo.setSettleAccountsStatus("上家处理中");
+                     }
+
                 }
+
                 return list1;
             }
             //未通过
