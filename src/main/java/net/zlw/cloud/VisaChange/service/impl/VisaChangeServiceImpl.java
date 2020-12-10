@@ -1981,7 +1981,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 //                String username = "造价业务员三";
                 String username = loginUser.getUsername();
                 String projectName = baseProject.getProjectName();
-                MemberManage memberManage = memberManageDao.selectByPrimaryKey(visaChangeVo.getAuditId());
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
                 //审核人名字
                 String name = memberManage.getMemberName();
                 MessageVo messageVo = new MessageVo();
