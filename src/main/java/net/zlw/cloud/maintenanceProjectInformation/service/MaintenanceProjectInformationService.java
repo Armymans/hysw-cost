@@ -222,24 +222,25 @@ public class MaintenanceProjectInformationService {
                 for (MaintenanceProjectInformationReturnVo vo : maintenanceProjectInformationReturnVos) {
                     // 审核状态
                     Example example2 = new Example(AuditInfo.class);
-                    example2.createCriteria().andEqualTo("baseProjectId",vo.getId())
-                            .andEqualTo("status","0");
-                    List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
-                    if (auditInfos.size() >0){
-                        for (AuditInfo thisInfo : auditInfos) {
-                            if ("0".equals(thisInfo.getMaintenanceFlag())){
-                                vo.setMaintenanceFlag("检维修确认未通过");
-                            }else {
-                                vo.setMaintenanceFlag("检维修未通过");
-                            }
-                        }
+                    example2.createCriteria().andEqualTo("baseProjectId", vo.getId())
+                            .andEqualTo("maintenanceFlag", "0")
+                            .andNotEqualTo("auditResult", "2")
+                            .andEqualTo("auditType", "2")
+                            .andEqualTo("status", "0");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example2);
+
+                    if (auditInfo != null) {
+                        vo.setMaintenanceFlag("检维修确认未通过");
+                    } else {
+                        vo.setMaintenanceFlag("检维修未通过");
                     }
+
                     // 编制人
                     MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(vo.getPreparePeople());
-                    if (memberManage1 != null){
+                    if (memberManage1 != null) {
                         vo.setPreparePeople(memberManage1.getMemberName());
                     }
-                    if(vo.getFounderId().equals(userInfoId)){
+                    if (vo.getFounderId().equals(userInfoId)) {
                         vo.setFounderId("1");
                     }
                 }
