@@ -180,12 +180,12 @@ public class VisaChangeController extends BaseController {
        VisaChangeVo visaChangeVo =  vcisService.findVisaById(baseId,visaNum,getLoginUser());
         String proportionContract = visaChangeVo.getVisaChangeUp().getProportionContract();
         String proportionContract1 = visaChangeVo.getVisaChangeDown().getProportionContract();
-        if (proportionContract!=null && !"".equals(proportionContract)){
+        if (proportionContract!=null && !"".equals(proportionContract) && !"NaN".equals(proportionContract)){
             BigDecimal bigDecimal = new BigDecimal(proportionContract);
             BigDecimal bigDecimal2 = bigDecimal.setScale(2, RoundingMode.HALF_UP);
             visaChangeVo.getVisaChangeUp().setProportionContract(bigDecimal2.toString());
         }
-        if (proportionContract1!=null && !"".equals(proportionContract1)){
+        if (proportionContract1!=null && !"".equals(proportionContract1) && !"NaN".equals(proportionContract1)){
             BigDecimal bigDecimal1 = new BigDecimal(proportionContract1);
             BigDecimal bigDecimal3 = bigDecimal1.setScale(2, RoundingMode.HALF_UP);
             visaChangeVo.getVisaChangeDown().setProportionContract(bigDecimal3.toString());
