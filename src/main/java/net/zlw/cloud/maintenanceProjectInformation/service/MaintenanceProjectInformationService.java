@@ -373,7 +373,7 @@ public class MaintenanceProjectInformationService {
         information.setSubmitTime(maintenanceProjectInformation.getSubmitTime());
         information.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
-//        information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
+        information.setArea(maintenanceProjectInformation.getArea());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
         information.setCustomerName(maintenanceProjectInformation.getCustomerName());
         // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
@@ -1038,6 +1038,7 @@ public class MaintenanceProjectInformationService {
 //        编制人
         information.setPreparePeople(maintenanceProjectInformationVo.getPreparePeople());
         information.setProjectAddress(maintenanceProjectInformationVo.getProjectAddress());
+        information.setArea(maintenanceProjectInformationVo.getArea());
         information.setConstructionUnitId(maintenanceProjectInformationVo.getConstructionUnitId());
         // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
         if ("".equals(maintenanceProjectInformation.getReviewAmount())) {
@@ -1512,7 +1513,7 @@ public class MaintenanceProjectInformationService {
         information.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
-        information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
+        information.setArea(maintenanceProjectInformation.getArea());
         information.setCustomerName(maintenanceProjectInformation.getCustomerName());
         // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
         if ("".equals(maintenanceProjectInformation.getReviewAmount())) {
@@ -1833,6 +1834,7 @@ public class MaintenanceProjectInformationService {
         information.setSubmitTime(maintenanceProjectInformation.getSubmitTime());
         information.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
+        information.setArea(maintenanceProjectInformation.getArea());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
         // todo `review_amount` decimal 判断如不传值，判断空字符串，赋值0
         if ("".equals(maintenanceProjectInformation.getReviewAmount())) {

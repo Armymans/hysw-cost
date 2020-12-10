@@ -33,10 +33,14 @@ public class MaintenanceProjectInformationVo {
     private String preparePeople;
 
     /**
-     * 项目地址
+     * 地区
      */
     private String projectAddress;
 
+    /**
+     * 项目地址
+     */
+    private String area;
     /**
      * 施工单位Id
      */

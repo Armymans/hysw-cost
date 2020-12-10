@@ -121,6 +121,10 @@ public class MaintenanceProjectInformation implements Serializable {
     @Column(name = "`type`")
     private String type;
 
+    @Column(name = "area")
+    private String area;
+
+
 //    @Transient
 //    private ConstructionUnitManagement constructionUnitManagement;
 
