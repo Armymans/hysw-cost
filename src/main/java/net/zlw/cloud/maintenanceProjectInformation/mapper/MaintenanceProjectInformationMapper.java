@@ -296,7 +296,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "  m.maintenance_item_id maintenanceItemId," +
             "  m.area area,  " +
             "  maintenance_item_name maintenanceItemName, " +
-            "  m.project_address     " +
+            "  m.project_address projectAddress,     " +
             "  (  " +
             "  CASE  " +
             "  m.maintenance_item_type   " +
