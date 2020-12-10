@@ -557,19 +557,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                         thisList.setCompileTime("/");
                     }
                 }
-            for (VisaChangeListVo visaChangeListVo : list1) {
-                Example example = new Example(AuditInfo.class);
-                Example.Criteria c = example.createCriteria();
-                c.andEqualTo("baseProjectId",visaChangeListVo.getId());
-                c.andEqualTo("status","0");
-                c.andEqualTo("auditResult","2");
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                if ("0".equals(auditInfo.getAuditType()) || "1".equals(auditInfo.getAuditType()) || "4".equals(auditInfo.getAuditType())){
-                    visaChangeListVo.setStatus("签证/变更未通过");
-                }else {
-                    visaChangeListVo.setStatus("签证/变更确认未通过");
-                }
-            }
+
             return list1;
         }
         //进行中
