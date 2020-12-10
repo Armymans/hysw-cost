@@ -65,10 +65,10 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "(case audit_type  " +
                     "when '0' then '互审'  " +
                     "when '1' then '上级领导审核'  " +
-                    "when '2' then '变更互审'  " +
-                    "when '3' then '变更上级领导审核'  " +
+                    "when '2' then '确认互审'  " +
+                    "when '3' then '确认上级领导审核'  " +
                     "when '4' then '部门主管审核'  " +
-                    "when '5' then '变更部门主管审核'  " +
+                    "when '5' then '确认部门主管审核'  " +
                     "end  " +
                     ") auditType,  " +
                     "(select member_name from member_manage where id = auditor_id)  auditor,  " +

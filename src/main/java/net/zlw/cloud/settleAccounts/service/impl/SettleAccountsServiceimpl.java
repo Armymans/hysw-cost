@@ -1204,6 +1204,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             for (AuditInfo auditInfo : auditInfos) {
                 if (auditInfo.getAuditResult().equals("2")) {
                     auditInfo.setAuditResult("0");
+                    auditInfo.setAuditOpinion("");
+                    auditInfo.setAuditTime("");
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                     baseProject.setSettleAccountsStatus("1");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
