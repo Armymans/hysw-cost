@@ -32,7 +32,7 @@ public class ProgressPaymentController  extends BaseController {
     private ProgressPaymentTotalPaymentService progressPaymentTotalPaymentService;
 
     //进度款新增
-//    @PostMapping("/addProgress")
+//    @PostMapping("/addProgress")progress/updateProgress
     @RequestMapping(value = "/progress/addProgress",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addProgress(BaseProjectVo baseProject){
         try {

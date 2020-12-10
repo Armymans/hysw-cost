@@ -487,9 +487,13 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         BaseProject project = baseProjectDao.selectOneByExample(example2);
         TotalVo total = findTotal(project.getId());
         BigDecimal cumulativeNumberPayment = total.getCumulativeNumberPayment();
+        //本次
         BigDecimal bigDecimal = new BigDecimal(baseProject.getCurrentPaymentRatio());
-        BigDecimal add = cumulativeNumberPayment.add(bigDecimal);
-        if (add.compareTo(new BigDecimal("100")) == 1){
+        if (project.getProgressPaymentStatus().equals("2")){
+
+            cumulativeNumberPayment = cumulativeNumberPayment.add(bigDecimal);
+        }
+        if (cumulativeNumberPayment.compareTo(new BigDecimal("100")) == 1){
             throw new RuntimeException("累计支付比例大于100%");
         }
         //申请信息
