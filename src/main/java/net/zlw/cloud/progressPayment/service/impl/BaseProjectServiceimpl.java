@@ -95,7 +95,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public void addProgress(BaseProjectVo baseProject, UserInfo loginUser) {
 
-//        if (baseProject.getAmountOutsourcing().equals("")){
+//        if (baseProject.getAmountOutsourcing().equaupdateProgressls("")){
 //            baseProject.setAmountOutsourcing(null);
 //        }
         if (baseProject.getAmountOutsourcing() == null && "".equals(baseProject.getAmountOutsourcing())){
@@ -477,6 +477,15 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         if ("".equals(baseProject.getAmountOutsourcing()) || baseProject.getAmountOutsourcing() == null){
             baseProject.setAmountOutsourcing(null);
         }
+
+        TotalVo total = findTotal(baseProject.getBaseId());
+        BigDecimal cumulativeNumberPayment = total.getCumulativeNumberPayment();
+        BigDecimal bigDecimal = new BigDecimal(baseProject.getCurrentPaymentRatio());
+        BigDecimal add = cumulativeNumberPayment.add(bigDecimal);
+        if (add.compareTo(new BigDecimal("100")) == 1){
+            throw new RuntimeException("累计支付比例大于100%");
+        }
+
 
         //项目基本信息
         Example example2 = new Example(BaseProject.class);
