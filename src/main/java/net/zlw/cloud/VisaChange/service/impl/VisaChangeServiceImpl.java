@@ -387,11 +387,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
 
             for (VisaChangeListVo visaChangeListVo : list1) {
-                if (visaChangeListVo.getAmountVisaChangeAddShang() != null && visaChangeListVo.getAmountVisaChangeAddXia() != null){
+                if (visaChangeListVo.getAmountVisaChangeAddShang() != null && !"".equals(visaChangeListVo.getAmountVisaChangeAddShang()) && visaChangeListVo.getAmountVisaChangeAddXia() != null && !"".equals(visaChangeListVo.getAmountVisaChangeAddXia())){
                     visaChangeListVo.setStatus("-");
-                }else if(visaChangeListVo.getAmountVisaChangeAddShang() != null){
+                }else if(visaChangeListVo.getAmountVisaChangeAddShang() != null && ! "".equals(visaChangeListVo.getAmountVisaChangeAddShang())){
                     visaChangeListVo.setStatus("上家编制中");
-                }else if(visaChangeListVo.getAmountVisaChangeAddXia() != null){
+                }else if(visaChangeListVo.getAmountVisaChangeAddXia() != null && ! "".equals(visaChangeListVo.getAmountVisaChangeAddXia())){
                     visaChangeListVo.setStatus("下家编制中");
                 }
             }
