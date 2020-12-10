@@ -23,7 +23,8 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "SELECT " +
                     " distinct m.id id, " +
                     "m.maintenance_item_id maintenanceItemId, " +
-                    "m.maintenance_item_name maintenanceItemName, " +
+                    "m.maintenance_item_name maintenanceItemName," +
+                    "m.area area, " +
                     "( " +
                     "CASE " +
                     "m.maintenance_item_type  " +
@@ -89,6 +90,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "distinct m.id id , " +
                     "m.maintenance_item_id maintenanceItemId, " +
                     "m.maintenance_item_name maintenanceItemName, " +
+                    "m.area area," +
                     "( " +
                     "CASE " +
                     "m.maintenance_item_type  " +
@@ -155,7 +157,8 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
     @Select("SELECT " +
             "distinct m.id id, " +
             "m.maintenance_item_id maintenanceItemId, " +
-            "m.maintenance_item_name maintenanceItemName, " +
+            "m.maintenance_item_name maintenanceItemName," +
+            "m.area area, " +
             "( " +
             "CASE " +
             "m.maintenance_item_type  " +
