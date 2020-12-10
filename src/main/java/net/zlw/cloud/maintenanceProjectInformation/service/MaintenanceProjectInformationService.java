@@ -447,10 +447,12 @@ public class MaintenanceProjectInformationService {
         // 计算核减率
         BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
         BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
-        // 核减数 / 送审金额 * 100 = 核减率
-        BigDecimal divide = subtractTheNumber.divide(reviewAmount,2,BigDecimal.ROUND_HALF_UP);
+        // 核减数 / 送审金额 * 100 = 核减率 (使用除法要精确到固定的值，这里精确到小数后10位)
+        BigDecimal divide = subtractTheNumber.divide(reviewAmount,10,BigDecimal.ROUND_HALF_UP);
         BigDecimal subtractRate = divide.multiply(new BigDecimal(100));
-        settlementAuditInformation.setSubtractRate(subtractRate);
+        // 保留两位小数。四舍五入
+        BigDecimal setScale = subtractRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        settlementAuditInformation.setSubtractRate(setScale);
         settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
 
@@ -1103,12 +1105,15 @@ public class MaintenanceProjectInformationService {
         if (selectOneByExample!=null){
             settlementAuditInformation.setId(selectOneByExample.getId());// 计算核减率
         }
+        // 计算核减率
         BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
         BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
-        // 核减数 / 送审金额 * 100 = 核减率
-        BigDecimal divide = subtractTheNumber.divide(reviewAmount,2,BigDecimal.ROUND_HALF_UP);
+        // 核减数 / 送审金额 * 100 = 核减率 (使用除法要精确到固定的值，这里精确到小数后10位)
+        BigDecimal divide = subtractTheNumber.divide(reviewAmount,10,BigDecimal.ROUND_HALF_UP);
         BigDecimal subtractRate = divide.multiply(new BigDecimal(100));
-        settlementAuditInformation.setSubtractRate(subtractRate);
+        // 保留两位小数。四舍五入
+        BigDecimal setScale = subtractRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        settlementAuditInformation.setSubtractRate(setScale);
 
         settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
 
@@ -1568,10 +1573,12 @@ public class MaintenanceProjectInformationService {
         // 计算核减率
         BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
         BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
-        // 核减数 / 送审金额 * 100 = 核减率
-        BigDecimal divide = subtractTheNumber.divide(reviewAmount,2,BigDecimal.ROUND_HALF_UP);
+        // 核减数 / 送审金额 * 100 = 核减率 (使用除法要精确到固定的值，这里精确到小数后10位)
+        BigDecimal divide = subtractTheNumber.divide(reviewAmount,10,BigDecimal.ROUND_HALF_UP);
         BigDecimal subtractRate = divide.multiply(new BigDecimal(100));
-        settlementAuditInformation.setSubtractRate(subtractRate);
+        // 保留两位小数。四舍五入
+        BigDecimal setScale = subtractRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        settlementAuditInformation.setSubtractRate(setScale);
         settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
 
@@ -1869,6 +1876,7 @@ public class MaintenanceProjectInformationService {
         settlementAuditInformation.setNameOfTheCost(maintenanceProjectInformation.getNameOfTheCost());
         settlementAuditInformation.setContact(maintenanceProjectInformation.getContact());
         settlementAuditInformation.setContactPhone(maintenanceProjectInformation.getContactPhone());
+        settlementAuditInformation.setRemarkes(maintenanceProjectInformation.getRemark());
         // `amount_outsourcing` decimal
         if ("".equals(maintenanceProjectInformation.getAmountOutsourcing())) {
             String str1 = "0";
@@ -1882,10 +1890,12 @@ public class MaintenanceProjectInformationService {
         // 计算核减率
         BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
         BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
-        // 核减数 / 送审金额 * 100 = 核减率
-        BigDecimal divide = subtractTheNumber.divide(reviewAmount,2,BigDecimal.ROUND_HALF_UP);
+        // 核减数 / 送审金额 * 100 = 核减率 (使用除法要精确到固定的值，这里精确到小数后10位)
+        BigDecimal divide = subtractTheNumber.divide(reviewAmount,10,BigDecimal.ROUND_HALF_UP);
         BigDecimal subtractRate = divide.multiply(new BigDecimal(100));
-        settlementAuditInformation.setSubtractRate(subtractRate);
+        // 保留两位小数。四舍五入
+        BigDecimal setScale = subtractRate.setScale(2, BigDecimal.ROUND_HALF_UP);
+        settlementAuditInformation.setSubtractRate(setScale);
 
         settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
 
@@ -1963,8 +1973,8 @@ public class MaintenanceProjectInformationService {
                 otherInfo1.setNum(thisInfo.getNum());
                 otherInfo1.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 otherInfo1.setStatus("0");
-                otherInfo1.setFoundId(userInfo.getId());
-                otherInfo1.setFounderCompany(userInfo.getCompanyId());
+//                otherInfo1.setFoundId(userInfo.getId());
+//                otherInfo1.setFounderCompany(userInfo.getCompanyId());
                 otherInfoMapper.insertSelective(otherInfo1);
             }
         }
