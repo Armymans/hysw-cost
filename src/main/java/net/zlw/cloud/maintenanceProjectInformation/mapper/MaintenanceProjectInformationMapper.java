@@ -293,21 +293,10 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
     
     @Select("SELECT  " +
             "  m.id,  " +
-            "  m.maintenance_item_id maintenanceItemId,  " +
+            "  m.maintenance_item_id maintenanceItemId," +
+            "  m.area area,  " +
             "  maintenance_item_name maintenanceItemName, " +
-            "  (" +
-            "  CASE    " +
             "  m.project_address     " +
-            "  WHEN '1' THEN    " +
-            "  '芜湖'     " +
-            "  WHEN '2' THEN    " +
-            "  '马鞍山'     " +
-            "  WHEN '3' THEN    " +
-            "  '江北'     " +
-            "  WHEN '4' THEN    " +
-            "  '吴江'  " +
-            "  END " +
-            "  ) projectAddress,  " +
             "  (  " +
             "  CASE  " +
             "  m.maintenance_item_type   " +

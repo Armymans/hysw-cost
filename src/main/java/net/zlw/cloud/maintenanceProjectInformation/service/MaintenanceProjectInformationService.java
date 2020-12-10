@@ -1400,8 +1400,8 @@ public class MaintenanceProjectInformationService {
         maintenanceVo.setJson(json);
 
         //todo userInfo.getId();
-        String userInfoId = userInfo.getId();
-//        String userInfoId = "user309";
+//        String userInfoId = userInfo.getId();
+        String userInfoId = "200101005";
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain(id);
         if (information != null) {
             maintenanceVo.setMaintenanceProjectInformation(information);
