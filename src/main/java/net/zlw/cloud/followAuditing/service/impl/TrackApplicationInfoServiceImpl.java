@@ -98,6 +98,17 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
                 //需要赋值当前负责人
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                    // 编制人
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(returnTrackVo.getWritter());
+                    if (memberManage != null){
+                        returnTrackVo.setWritter(memberManage.getMemberName());
+                    }
+                    // 造价单位名称
+                    if (returnTrackVo.getAuditUnitNameId() !=null && !"".equals(returnTrackVo.getAuditUnitNameId())){
+                        returnTrackVo.setAuditUnitNameId(returnTrackVo.getAuditUnitNameId());
+                    }else {
+                        returnTrackVo.setAuditUnitNameId("/");
+                    }
 
                     List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByTrickId2(returnTrackVo.getId());
                     for (TrackMonthly trackMonthly : trackMonthlies) {
@@ -126,6 +137,17 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 //普通员工则根据创建人查看
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                    // 编制人
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(returnTrackVo.getWritter());
+                    if (memberManage != null){
+                        returnTrackVo.setWritter(memberManage.getMemberName());
+                    }
+                    // 造价单位名称
+                    if (returnTrackVo.getAuditUnitNameId() !=null && !"".equals(returnTrackVo.getAuditUnitNameId())){
+                        returnTrackVo.setAuditUnitNameId(returnTrackVo.getAuditUnitNameId());
+                    }else {
+                        returnTrackVo.setAuditUnitNameId("/");
+                    }
                     List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByTrickId2(returnTrackVo.getId());
                     for (TrackMonthly trackMonthly : trackMonthlies) {
                         //审核信息为未审核状态得
@@ -156,6 +178,17 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             if ("3".equals(pageVo.getTrackStatus()) || "5".equals(pageVo.getTrackStatus())) {
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                    // 编制人
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(returnTrackVo.getWritter());
+                    if (memberManage != null){
+                        returnTrackVo.setWritter(memberManage.getMemberName());
+                    }
+                    // 造价单位名称
+                    if (returnTrackVo.getAuditUnitNameId() !=null && !"".equals(returnTrackVo.getAuditUnitNameId())){
+                        returnTrackVo.setAuditUnitNameId(returnTrackVo.getAuditUnitNameId());
+                    }else {
+                        returnTrackVo.setAuditUnitNameId("/");
+                    }
                     if (returnTrackVo.getFounderId().equals(pageVo.getUid())) {
                         returnTrackVo.setShowEdit("1");
                     } else {
@@ -166,6 +199,19 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             } else {
                 //全部，未提交和未通过谁创建谁看到
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
+                for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                    // 编制人
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(returnTrackVo.getWritter());
+                    if (memberManage != null){
+                        returnTrackVo.setWritter(memberManage.getMemberName());
+                    }
+                    // 造价单位名称
+                    if (returnTrackVo.getAuditUnitNameId() !=null && !"".equals(returnTrackVo.getAuditUnitNameId())){
+                        returnTrackVo.setAuditUnitNameId(returnTrackVo.getAuditUnitNameId());
+                    }else {
+                        returnTrackVo.setAuditUnitNameId("/");
+                    }
+                }
                 pageInfo = new PageInfo<>(returnTrackVos);
             }
         }

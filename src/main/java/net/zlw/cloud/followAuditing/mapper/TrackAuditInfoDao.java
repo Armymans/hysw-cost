@@ -120,14 +120,14 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
                     "   '行政事业'  " +
                     "  END  " +
                     "  ) AS designCategory,  " +
-                    "( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType,  " +
+                    "( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType, " +
+                    "( CASE tai.outsource WHEN '0' THEN '是' WHEN '1' THEN '是' END ) AS outsource,  " +
                     "b.customer_name customerName,  " +
                     "b.water_address waterAddress,  " +
                     "b.a_b aB,  " +
                     "b.construction_organization constructionOrganization,  " +
                     "(select writter from track_monthly where track_id = tai.id limit 0,1) writter,  " +
                     "(select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) fillTime ,  " +
-                    "tai.outsource outsource,  " +
                     "tai.audit_unit_name_id auditUnitNameId,  " +
                     "tai.cea_total_money ceaTotalMoney  " +
                     "from track_audit_info tai  " +
@@ -135,9 +135,9 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
                     "LEFT JOIN track_application_info ta on ta.track_audit = tai.id  " +
                     "LEFT JOIN track_monthly tm on tm.track_id = tai.id  " +
                     "where  " +
-                    "tai.`status` = \"0\"   " +
+                    "tai.`status` = '0'   " +
                     "and  " +
-                    "b.del_flag = \"0\"   " +
+                    "b.del_flag = '0'   " +
                     "and  " +
                     "(b.track_status = #{trackStatus} or #{trackStatus} = '')   " +
                     "and  " +
