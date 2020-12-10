@@ -1013,7 +1013,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         c4.andEqualTo("baseProjectId", baseAccountsVo.getId());
         c4.andEqualTo("status", "0");
         c4.andEqualTo("auditResult", "0");
-        c4.andEqualTo("auditorId", loginUser.getId());
+        c4.andEqualTo("auditorId", "user309");
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example4);
         if (auditInfo != null) {
             baseAccountsVo.setCheckAudit(auditInfo.getAuditType());

@@ -191,7 +191,9 @@ public class SettleAccountsController extends BaseController {
         String sumbitMoney = accountsVo.getSettlementInfo().getSumbitMoney();
         BigDecimal subtractTheNumber = accountsVo.getSettlementAuditInformation().getSubtractTheNumber();
         BigDecimal bigDecimal = new BigDecimal(sumbitMoney);
-        BigDecimal divide = subtractTheNumber.divide(bigDecimal);
+        System.err.println(subtractTheNumber);
+        System.err.println(bigDecimal);
+        BigDecimal divide = subtractTheNumber.divide(bigDecimal,2,RoundingMode.HALF_UP);
         BigDecimal multiply = divide.multiply(new BigDecimal(100));
         BigDecimal bigDecimal1 = multiply.setScale(2, RoundingMode.HALF_UP);
         accountsVo.getSettlementAuditInformation().setSubtractRate(bigDecimal1);
