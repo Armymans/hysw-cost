@@ -118,8 +118,8 @@ public class MaintenanceProjectInformationService {
     public PageInfo<MaintenanceProjectInformationReturnVo> findAllMaintenanceProjectInformation(PageRequest pageRequest, UserInfo userInfo) {
         //获得当前登入人
         //todo userInfo.getId();
-//        String userInfoId = userInfo.getId();
-        String userInfoId = "200101005";
+        String userInfoId = userInfo.getId();
+//        String userInfoId = "200101005";
         pageRequest.setUid(userInfoId);
 
         //设置分页助手
