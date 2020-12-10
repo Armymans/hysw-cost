@@ -137,8 +137,14 @@ public class MaintenanceProjectInformationService {
         if("1".equals(pageRequest.getType())){
             //如果是部门经理或者部门领导查看列表则看所有
             if(whzjh.equals(userInfoId)||whzjm.equals(userInfoId)||wjzjh.equals(userInfoId)||wjzjm.equals(userInfoId)){
-                //获取处理人
+
                 for (MaintenanceProjectInformationReturnVo thisVo : maintenanceProjectInformationReturnVos1) {
+                    // 编制人
+                    MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(thisVo.getPreparePeople());
+                    if (memberManage1 != null){
+                        thisVo.setPreparePeople(memberManage1.getMemberName());
+                    }
+                    //获取处理人
                     Example example = new Example(AuditInfo.class);
                     example.createCriteria()
                             .andEqualTo("baseProjectId", thisVo.getId())
@@ -160,6 +166,11 @@ public class MaintenanceProjectInformationService {
             }else{
                 //获取处理人
                 for (MaintenanceProjectInformationReturnVo thisVo : maintenanceProjectInformationReturnVos0) {
+                    // 编制人
+                    MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(thisVo.getPreparePeople());
+                    if (memberManage1 != null){
+                        thisVo.setPreparePeople(memberManage1.getMemberName());
+                    }
                     Example example = new Example(AuditInfo.class);
                     example.createCriteria()
                             .andEqualTo("baseProjectId", thisVo.getId())
@@ -183,6 +194,11 @@ public class MaintenanceProjectInformationService {
             //已完成
             if("5".equals(pageRequest.getType())){
                 for (MaintenanceProjectInformationReturnVo vo : maintenanceProjectInformationReturnVos1) {
+                    // 编制人
+                    MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(vo.getPreparePeople());
+                    if (memberManage1 != null){
+                        vo.setPreparePeople(memberManage1.getMemberName());
+                    }
                     if(vo.getFounderId().equals(userInfoId)){
                         vo.setFounderId("1");
                     }
@@ -191,6 +207,11 @@ public class MaintenanceProjectInformationService {
             }else{
                 //未通过 处理中 待确认 所有(根据创建人)
                 for (MaintenanceProjectInformationReturnVo vo : maintenanceProjectInformationReturnVos) {
+                    // 编制人
+                    MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(vo.getPreparePeople());
+                    if (memberManage1 != null){
+                        vo.setPreparePeople(memberManage1.getMemberName());
+                    }
                     if(vo.getFounderId().equals(userInfoId)){
                         vo.setFounderId("1");
                     }
