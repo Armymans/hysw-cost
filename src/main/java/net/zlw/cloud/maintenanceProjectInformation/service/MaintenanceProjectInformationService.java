@@ -118,8 +118,8 @@ public class MaintenanceProjectInformationService {
     public PageInfo<MaintenanceProjectInformationReturnVo> findAllMaintenanceProjectInformation(PageRequest pageRequest, UserInfo userInfo) {
         //获得当前登入人
         //todo userInfo.getId();
-        String userInfoId = userInfo.getId();;
-//        String userInfoId = "user319";
+//        String userInfoId = userInfo.getId();
+        String userInfoId = "200101005";
         pageRequest.setUid(userInfoId);
 
         //设置分页助手
@@ -139,6 +139,19 @@ public class MaintenanceProjectInformationService {
             if(whzjh.equals(userInfoId)||whzjm.equals(userInfoId)||wjzjh.equals(userInfoId)||wjzjm.equals(userInfoId)){
 
                 for (MaintenanceProjectInformationReturnVo thisVo : maintenanceProjectInformationReturnVos1) {
+                    Example example2 = new Example(AuditInfo.class);
+                    example2.createCriteria().andEqualTo("baseProjectId",thisVo.getId())
+                                             .andEqualTo("status","0");
+                    List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
+                    if (auditInfos.size() >0){
+                        for (AuditInfo thisInfo : auditInfos) {
+                            if ("0".equals(thisInfo.getMaintenanceFlag())){
+                                thisVo.setMaintenanceFlag("检维修确认审核");
+                            }else {
+                                thisVo.setMaintenanceFlag("检维修审核");
+                            }
+                        }
+                    }
                     // 编制人
                     MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(thisVo.getPreparePeople());
                     if (memberManage1 != null){
@@ -207,6 +220,20 @@ public class MaintenanceProjectInformationService {
             }else{
                 //未通过 处理中 待确认 所有(根据创建人)
                 for (MaintenanceProjectInformationReturnVo vo : maintenanceProjectInformationReturnVos) {
+                    // 审核状态
+                    Example example2 = new Example(AuditInfo.class);
+                    example2.createCriteria().andEqualTo("baseProjectId",vo.getId())
+                            .andEqualTo("status","0");
+                    List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example2);
+                    if (auditInfos.size() >0){
+                        for (AuditInfo thisInfo : auditInfos) {
+                            if ("0".equals(thisInfo.getMaintenanceFlag())){
+                                vo.setMaintenanceFlag("检维修确认未通过");
+                            }else {
+                                vo.setMaintenanceFlag("检维修未通过");
+                            }
+                        }
+                    }
                     // 编制人
                     MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(vo.getPreparePeople());
                     if (memberManage1 != null){

@@ -50,7 +50,6 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "'装饰及装修'  " +
                     "END  " +
                     ") AS maintenanceItemType, " +
-                    "( CASE ai.maintenance_flag WHEN '1' THEN '检维修未通过' WHEN '0' THEN '检维修确认未通过' END) AS maintenanceFlag," +
                     "( CASE m.type WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '已完成' END ) AS type, " +
                     "( CASE m.project_address WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS projectAddress, " +
                     "m.customer_name customerName, " +
@@ -65,7 +64,6 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "maintenance_project_information m " +
                     "LEFT JOIN construction_unit_management c ON m.construction_unit_id = c.id " +
                     "LEFT JOIN settlement_audit_information p ON m.id = p.maintenance_project_information  " +
-                    "LEFT JOIN audit_info ai ON m.id = ai.base_project_id " +
                     "WHERE " +
                     "( m.del_flag = '0' )  " +
                     "AND " +
@@ -184,7 +182,6 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "'装饰及装修'  " +
             "END  " +
             ") AS maintenanceItemType, " +
-            "( CASE a.maintenance_flag WHEN '1' THEN '检维修审核' WHEN '0' THEN '检维修确认审核' END) AS maintenanceFlag,  " +
             "( CASE m.type WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '已完成' END ) AS type, " +
             "( CASE m.project_address WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS projectAddress, " +
             "m.customer_name customerName, " +
@@ -199,7 +196,6 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "maintenance_project_information m " +
             "LEFT JOIN construction_unit_management c ON m.construction_unit_id = c.id " +
             "LEFT JOIN settlement_audit_information p ON m.id = p.maintenance_project_information  " +
-            "LEFT JOIN audit_info a ON m.id = a.base_project_id   " +
             "WHERE " +
             "( m.del_flag = '0' )  " +
             "AND ( " +
