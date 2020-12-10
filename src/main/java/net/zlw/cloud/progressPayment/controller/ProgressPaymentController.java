@@ -39,7 +39,7 @@ public class ProgressPaymentController  extends BaseController {
             baseProjectService.addProgress(baseProject,getLoginUser());
         } catch (Exception e) {
             e.printStackTrace();
-            return RestUtil.error("失败");
+            return RestUtil.error(e.getMessage());
         }
         return RestUtil.success("成功");
     }
@@ -71,7 +71,7 @@ public class ProgressPaymentController  extends BaseController {
             return RestUtil.success("修改成功");
         } catch (Exception e) {
             e.printStackTrace();
-            return RestUtil.success("编辑失败");
+            return RestUtil.success(e.getMessage());
         }
     }
 

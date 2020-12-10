@@ -101,6 +101,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         if (baseProject.getAmountOutsourcing() == null && "".equals(baseProject.getAmountOutsourcing())){
             baseProject.setAmountOutsourcing(null);
         }
+        if (Integer.parseInt(baseProject.getCurrentPaymentRatio()) >100){
+            throw new RuntimeException("支付比例不得大于100");
+        }
 
 
 //        loginUser = new UserInfo("user309",null,null,true);
@@ -831,6 +834,14 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         if (baseProject.getAmountOutsourcing().equals("")){
             baseProject.setAmountOutsourcing(null);
         }
+        TotalVo total = findTotal(baseProject.getBaseId());
+        BigDecimal cumulativeNumberPayment = total.getCumulativeNumberPayment();
+        BigDecimal bigDecimal = new BigDecimal(baseProject.getCurrentPaymentRatio());
+        BigDecimal add = cumulativeNumberPayment.add(bigDecimal);
+        if (add.compareTo(new BigDecimal("100")) == 1){
+            throw new RuntimeException("累计支付比例大于100%");
+        }
+
 
         //申请信息
         ApplicationInformation information = new ApplicationInformation();
