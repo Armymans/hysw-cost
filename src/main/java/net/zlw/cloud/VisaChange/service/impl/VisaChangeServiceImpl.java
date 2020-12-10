@@ -1987,7 +1987,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 MessageVo messageVo = new MessageVo();
                 messageVo.setId("A13");
                 messageVo.setType("1"); // 通知
-                messageVo.setUserId(visaChangeVo.getAuditId());
+                messageVo.setUserId(auditInfo.getAuditorId());
                 messageVo.setTitle("您有一个签证变更项目待审核！");
                 messageVo.setDetails(name + "您好！【" + username + "】已将【" + projectName + "】的签证/变更项目提交给您，请审批！");
                 //调用消息Service
