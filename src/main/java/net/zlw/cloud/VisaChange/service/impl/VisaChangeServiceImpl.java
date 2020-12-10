@@ -475,11 +475,14 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 c.andEqualTo("auditResult","2");
                 c.andEqualTo("status","0");
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                if ("0".equals(auditInfo.getAuditType()) || "1".equals(auditInfo.getAuditType()) || "4".equals(auditInfo.getAuditType())){
-                    visaChangeListVo.setStatus("签证/变更未通过");
-                }else{
-                    visaChangeListVo.setStatus("签证/变更确认未通过");
+                if (auditInfo!=null){
+                    if ("0".equals(auditInfo.getAuditType()) || "1".equals(auditInfo.getAuditType()) || "4".equals(auditInfo.getAuditType())){
+                        visaChangeListVo.setStatus("签证/变更未通过");
+                    }else{
+                        visaChangeListVo.setStatus("签证/变更确认未通过");
+                    }
                 }
+
             }
             return list1;
         }
