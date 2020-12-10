@@ -204,8 +204,6 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "AND ( " +
             "p.compile_time >= #{startTime} OR #{startTime} = '' ) " +
             "AND ( " +
-            "a.auditor_id = #{currentPeople} OR #{currentPeople} = '' ) " +
-            "AND ( " +
             "p.compile_time <= #{endTime} OR #{endTime} = '' ) " +
             "AND ( " +
             "m.maintenance_item_name LIKE concat( " +
