@@ -478,19 +478,20 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             baseProject.setAmountOutsourcing(null);
         }
 
-        TotalVo total = findTotal(baseProject.getBaseId());
-        BigDecimal cumulativeNumberPayment = total.getCumulativeNumberPayment();
-        BigDecimal bigDecimal = new BigDecimal(baseProject.getCurrentPaymentRatio());
-        BigDecimal add = cumulativeNumberPayment.add(bigDecimal);
-        if (add.compareTo(new BigDecimal("100")) == 1){
-            throw new RuntimeException("累计支付比例大于100%");
-        }
+
 
 
         //项目基本信息
         Example example2 = new Example(BaseProject.class);
         example2.createCriteria().andEqualTo("projectNum", baseProject.getProjectNum());
         BaseProject project = baseProjectDao.selectOneByExample(example2);
+        TotalVo total = findTotal(project.getId());
+        BigDecimal cumulativeNumberPayment = total.getCumulativeNumberPayment();
+        BigDecimal bigDecimal = new BigDecimal(baseProject.getCurrentPaymentRatio());
+        BigDecimal add = cumulativeNumberPayment.add(bigDecimal);
+        if (add.compareTo(new BigDecimal("100")) == 1){
+            throw new RuntimeException("累计支付比例大于100%");
+        }
         //申请信息
         ApplicationInformation information = new ApplicationInformation();
         //进度款累计支付信息
@@ -1259,7 +1260,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         c.andEqualTo("baseProjectId",baseId);
         List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
-        if (! baseProject.getProgressPaymentStatus().equals("2")){
+        System.err.println(baseProject);
+        if (!"2".equals( baseProject.getProgressPaymentStatus())){
             Example example1 = new Example(ProgressPaymentInformation.class);
             Example.Criteria c2 = example1.createCriteria();
             c2.andEqualTo("baseProjectId",baseId);

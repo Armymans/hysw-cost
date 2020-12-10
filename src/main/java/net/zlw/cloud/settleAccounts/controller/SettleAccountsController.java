@@ -204,7 +204,11 @@ public class SettleAccountsController extends BaseController {
 //    @PutMapping("/updateAccountById")
     @RequestMapping(value = "/accounts/updateAccountById", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> updateAccountById(BaseAccountsVo baseAccountsVo) {
-        settleAccountsService.updateAccountById(baseAccountsVo, getLoginUser());
+        try {
+            settleAccountsService.updateAccountById(baseAccountsVo, getLoginUser());
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success();
     }
 
