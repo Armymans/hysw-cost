@@ -99,6 +99,7 @@ public class ProgressPaymentController  extends BaseController {
     //模糊搜索
     @RequestMapping(value = "/progress/selectProgressPaymentStatus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectProgressPaymentStatus(PageVo pageVo){
+        pageVo.setUid(getLoginUser().getId());
         Page page = new Page();
         pageVo.setProgressStatus("");
         PageInfo<ProgressListVo> pageInfo = baseProjectService.searchAllProgress(pageVo);
