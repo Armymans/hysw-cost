@@ -1231,7 +1231,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             //提交人
             String username = loginUser.getUsername();
             //如果送审数或者审定数超过造价金额的话
-            if (reviewNumber.compareTo(amountCost) == 1 || authorizedNumber.compareTo(amountCost) == 1) {
+            if (reviewNumber!=null && reviewNumber.compareTo(amountCost) == 1 || authorizedNumber!=null && authorizedNumber.compareTo(amountCost) == 1) {
 
                 //提交人
                 MessageVo messageVo = new MessageVo();
