@@ -83,7 +83,7 @@ public class ProgressPaymentController  extends BaseController {
             return RestUtil.success("修改成功");
         } catch (Exception e) {
             e.printStackTrace();
-            return RestUtil.success(e.getMessage());
+            return RestUtil.error(e.getMessage());
         }
     }
     //查询进度款列表
