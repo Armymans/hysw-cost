@@ -1400,8 +1400,8 @@ public class MaintenanceProjectInformationService {
         maintenanceVo.setJson(json);
 
         //todo userInfo.getId();
-//        String userInfoId = userInfo.getId();
-        String userInfoId = "200101005";
+        String userInfoId = userInfo.getId();
+//        String userInfoId = "200101005"; 罗均
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain(id);
         if (information != null) {
             maintenanceVo.setMaintenanceProjectInformation(information);
@@ -2076,4 +2076,100 @@ public class MaintenanceProjectInformationService {
         return maintenanceProjectInformationMapper.yearCount(year);
     }
 
+    public MaintenanceVo selectMainById(String id, String userId, UserInfo userInfo) {
+
+        MaintenanceVo maintenanceVo = new MaintenanceVo();
+
+        // 回显消息
+        String json = "[";
+        Example examples = new Example(OtherInfo.class);
+        examples.createCriteria().andEqualTo("foreignKey",id)
+                .andEqualTo("status","0");
+        List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(examples);
+        for (int i = 0; i < otherInfos.size(); i++) {
+            json += "{" +
+                    "\"serialNumber\" : \""+otherInfos.get(i).getSerialNumber()+"\"," +
+                    "\"num\": \""+otherInfos.get(i).getNum()+"\","+
+                    "},";
+        }
+        json+="]";
+        maintenanceVo.setJson(json);
+
+        //todo userInfo.getId();
+        String userInfoId = userInfo.getId();
+//        String userInfoId = "200101005";
+        MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain2(id);
+        if (information != null) {
+            maintenanceVo.setMaintenanceProjectInformation(information);
+        } else {
+            maintenanceVo.setMaintenanceProjectInformation(new MaintenanceProjectInformation());
+        }
+
+
+        Example example1 = new Example(SettlementAuditInformation.class);
+        example1.createCriteria().andEqualTo("maintenanceProjectInformation", information.getId());
+        SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
+        if (settlementAuditInformation != null) {
+            maintenanceVo.setSettlementAuditInformation(settlementAuditInformation);
+        } else {
+            maintenanceVo.setSettlementAuditInformation(new SettlementAuditInformation());
+        }
+
+        Example example2 = new Example(InvestigationOfTheAmount.class);
+        example2.createCriteria().andEqualTo("maintenanceProjectInformation", information.getId());
+        InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example2);
+        if (investigationOfTheAmount != null) {
+            maintenanceVo.setInvestigationOfTheAmount(investigationOfTheAmount);
+        } else {
+            maintenanceVo.setInvestigationOfTheAmount(new InvestigationOfTheAmount());
+        }
+
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseProjectId", information.getId());
+
+        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+        for (AuditInfo auditInfo : auditInfos) {
+            if ("0".equals(auditInfo.getAuditResult())) {
+                maintenanceVo.setAuditType(auditInfo.getAuditType());
+            }
+        }
+
+        maintenanceVo.setAuditInfos(auditInfos);
+
+        //查找审核数据
+        Example auditExample = new Example(AuditInfo.class);
+        Example.Criteria criteria1 = auditExample.createCriteria();
+        criteria1.andEqualTo("baseProjectId", information.getId());
+//        criteria1.andEqualTo("auditType",'0');
+        // 未审批
+        criteria1.andEqualTo("auditResult", '0');
+        criteria1.andEqualTo("auditorId",userInfoId);
+
+
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditExample);
+        if (auditInfo != null) {
+            maintenanceVo.setAuditAgainFlag("1");
+            maintenanceVo.setAuditInfo(auditInfo);
+            // 0 代表一审，未审批
+            if ("0".equals(auditInfo.getAuditType()) || "1".equals(auditInfo.getAuditType()) || "4".equals(auditInfo.getAuditType())) {
+                maintenanceVo.setAuditNumber("0");
+            }else{
+                maintenanceVo.setAuditNumber("1");
+            }
+
+        }
+        String preparePeople = maintenanceVo.getMaintenanceProjectInformation().getPreparePeople();
+        MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+        if (mkyUser!=null){
+            maintenanceVo.setPre1(mkyUser.getUserName());
+        }
+        String preparePeople1 = maintenanceVo.getSettlementAuditInformation().getPreparePeople();
+        MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(preparePeople1);
+        if (mkyUser1!=null){
+            maintenanceVo.setPre2(mkyUser1.getUserName());
+        }
+
+        return maintenanceVo;
+    }
 }

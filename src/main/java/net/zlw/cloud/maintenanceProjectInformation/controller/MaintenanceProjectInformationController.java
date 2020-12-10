@@ -175,7 +175,7 @@ public class MaintenanceProjectInformationController extends BaseController {
 
 
     /**
-     * 根据id 回显数据
+     * 编辑根据id 回显数据
      *
      * @param id
      * @return
@@ -183,6 +183,19 @@ public class MaintenanceProjectInformationController extends BaseController {
     @RequestMapping(value = "/maintenanceProjectInformation/selectMaintenanceProjectInformationById", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> selectMaintenanceProjectInformationById(String id,String userId) {
         MaintenanceVo maintenanceVo = maintenanceProjectInformationService.selectMaintenanceProjectInformationById(id,userId,getLoginUser());
+        return RestUtil.success(maintenanceVo);
+    }
+
+
+    /**
+     * 查看根据id 回显数据
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/maintenanceProjectInformation/selectMainById", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> selectMainById(String id,String userId) {
+        MaintenanceVo maintenanceVo = maintenanceProjectInformationService.selectMainById(id,userId,getLoginUser());
         return RestUtil.success(maintenanceVo);
     }
 

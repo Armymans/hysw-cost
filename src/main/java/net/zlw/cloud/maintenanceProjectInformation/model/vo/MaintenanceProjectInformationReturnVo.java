@@ -36,6 +36,7 @@ public class MaintenanceProjectInformationReturnVo {
     private String projectAddress;
     private String compileTime;
     private String founderId;
+    private String area;
     private String currentHandler;
     //  检维修审核/检维修确认审核
     private String maintenanceFlag;
