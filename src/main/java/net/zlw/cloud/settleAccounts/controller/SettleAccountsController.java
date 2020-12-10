@@ -18,6 +18,8 @@ import net.zlw.cloud.settleAccounts.service.SettleAccountsService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,6 +188,13 @@ public class SettleAccountsController extends BaseController {
                 accountsVo.getSettlementAuditInformation().setNameOfTheCost(costUnitManagement.getCostUnitName());
             }
         }
+        String sumbitMoney = accountsVo.getSettlementInfo().getSumbitMoney();
+        BigDecimal subtractTheNumber = accountsVo.getSettlementAuditInformation().getSubtractTheNumber();
+        BigDecimal bigDecimal = new BigDecimal(sumbitMoney);
+        BigDecimal divide = subtractTheNumber.divide(bigDecimal);
+        BigDecimal multiply = divide.multiply(new BigDecimal(100));
+        BigDecimal bigDecimal1 = multiply.setScale(2, RoundingMode.HALF_UP);
+        accountsVo.getSettlementAuditInformation().setSubtractRate(bigDecimal1);
         return RestUtil.success(accountsVo);
     }
 
