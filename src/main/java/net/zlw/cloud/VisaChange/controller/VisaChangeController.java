@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -177,7 +178,21 @@ public class VisaChangeController extends BaseController {
     @RequestMapping(value = "/visachange/findVisaById",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findVisaById(@RequestParam(name = "baseId") String baseId,@RequestParam(name = "visaNum1") String visaNum){
        VisaChangeVo visaChangeVo =  vcisService.findVisaById(baseId,visaNum,getLoginUser());
-       return RestUtil.success(visaChangeVo);
+        String proportionContract = visaChangeVo.getVisaChangeUp().getProportionContract();
+        String proportionContract1 = visaChangeVo.getVisaChangeDown().getProportionContract();
+        if (proportionContract!=null && !"".equals(proportionContract)){
+            BigDecimal bigDecimal = new BigDecimal(proportionContract);
+            BigDecimal bigDecimal2 = bigDecimal.setScale(2, RoundingMode.HALF_UP);
+            visaChangeVo.getVisaChangeUp().setProportionContract(bigDecimal2.toString());
+        }
+        if (proportionContract1!=null && !"".equals(proportionContract1)){
+            BigDecimal bigDecimal1 = new BigDecimal(proportionContract1);
+            BigDecimal bigDecimal3 = bigDecimal1.setScale(2, RoundingMode.HALF_UP);
+            visaChangeVo.getVisaChangeDown().setProportionContract(bigDecimal3.toString());
+        }
+
+
+        return RestUtil.success(visaChangeVo);
     }
 
     //编辑
