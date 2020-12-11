@@ -129,7 +129,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     if (budgetingListVo.getContractAmountShang() != null && !"".equals(budgetingListVo.getContractAmountShang())){
                         budgetingListVo.setContractAmountShang(budgetingListVo.getContractAmountShang());
                     }else {
-                        budgetingListVo.setContractAmountShang(new BigDecimal("0"));
+                        budgetingListVo.setContractAmountShang(null);
                     }
                     // 累计上家签证/变更金额（元）
                     if (budgetingListVo.getAmountVisaChangeAddShang() != null && !"".equals(budgetingListVo.getAmountVisaChangeAddShang())){
@@ -147,7 +147,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     if (budgetingListVo.getContractAmountXia() != null && !"".equals(budgetingListVo.getContractAmountXia())){
                         budgetingListVo.setContractAmountXia(budgetingListVo.getContractAmountXia());
                     }else {
-                        budgetingListVo.setContractAmountXia(new BigDecimal("0"));
+                        budgetingListVo.setContractAmountXia(null);
                     }
                     // 累计下家签证/变更金额（元）
                     if (budgetingListVo.getAmountVisaChangeAddXia() != null && !"".equals(budgetingListVo.getAmountVisaChangeAddXia())){
@@ -211,6 +211,14 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                         visaChangeListVo.setStatus("签证/变更确认审核");
                     }
                 }
+                for (VisaChangeListVo visaChangeListVo : list1) {
+                    String proportionContractShang = visaChangeListVo.getProportionContractShang();
+                    String proportionContractXia = visaChangeListVo.getProportionContractXia();
+                    BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    visaChangeListVo.setProportionContractShang(bigDecimal.toString());
+                    visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
+                }
                 return list1;
                 //普通员工
             }else {
@@ -227,7 +235,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     if (  budgetingListVo.getContractAmountShang() != null && !"".equals(  budgetingListVo.getContractAmountShang())){
                         budgetingListVo.setContractAmountShang(  budgetingListVo.getContractAmountShang());
                     }else {
-                        budgetingListVo.setContractAmountShang(new BigDecimal("0"));
+                        budgetingListVo.setContractAmountShang(null);
                     }
                     // 累计上家签证/变更金额（元）
                     if (  budgetingListVo.getAmountVisaChangeAddShang() != null && !"".equals(  budgetingListVo.getAmountVisaChangeAddShang())){
@@ -245,7 +253,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     if (  budgetingListVo.getContractAmountXia() != null && !"".equals(  budgetingListVo.getContractAmountXia())){
                         budgetingListVo.setContractAmountXia(  budgetingListVo.getContractAmountXia());
                     }else {
-                        budgetingListVo.setContractAmountXia(new BigDecimal("0"));
+                        budgetingListVo.setContractAmountXia(null);
                     }
                     // 累计下家签证/变更金额（元）
                     if (  budgetingListVo.getAmountVisaChangeAddXia() != null && !"".equals(  budgetingListVo.getAmountVisaChangeAddXia())){
@@ -310,6 +318,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                         visaChangeListVo.setStatus("签证/变更确认审核");
                     }
                 }
+
+                for (VisaChangeListVo visaChangeListVo : list1) {
+                    String proportionContractShang = visaChangeListVo.getProportionContractShang();
+                    String proportionContractXia = visaChangeListVo.getProportionContractXia();
+                    BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    visaChangeListVo.setProportionContractShang(bigDecimal.toString());
+                    visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
+                }
                 return list1;
             }
         }
@@ -328,7 +345,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
                     thisList.setContractAmountShang(  thisList.getContractAmountShang());
                 }else {
-                    thisList.setContractAmountShang(new BigDecimal("0"));
+                    thisList.setContractAmountShang(null);
                 }
                 // 累计上家签证/变更金额（元）
                 if (  thisList.getAmountVisaChangeAddShang() != null && !"".equals(  thisList.getAmountVisaChangeAddShang())){
@@ -346,7 +363,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (  thisList.getContractAmountXia() != null && !"".equals(  thisList.getContractAmountXia())){
                     thisList.setContractAmountXia(  thisList.getContractAmountXia());
                 }else {
-                    thisList.setContractAmountXia(new BigDecimal("0"));
+                    thisList.setContractAmountXia(null);
                 }
                 // 累计下家签证/变更金额（元）
                 if (  thisList.getAmountVisaChangeAddXia() != null && !"".equals(  thisList.getAmountVisaChangeAddXia())){
@@ -395,6 +412,14 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     visaChangeListVo.setStatus("下家编制中");
                 }
             }
+            for (VisaChangeListVo visaChangeListVo : list1) {
+                String proportionContractShang = visaChangeListVo.getProportionContractShang();
+                String proportionContractXia = visaChangeListVo.getProportionContractXia();
+                BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
+                visaChangeListVo.setProportionContractShang(bigDecimal.toString());
+                visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
+            }
             return list1;
         }
         //未通过
@@ -411,7 +436,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
                         thisList.setContractAmountShang(  thisList.getContractAmountShang());
                     }else {
-                        thisList.setContractAmountShang(new BigDecimal("0"));
+                        thisList.setContractAmountShang(null);
                     }
                     // 累计上家签证/变更金额（元）
                     if (  thisList.getAmountVisaChangeAddShang() != null && !"".equals(  thisList.getAmountVisaChangeAddShang())){
@@ -429,7 +454,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     if (  thisList.getContractAmountXia() != null && !"".equals(  thisList.getContractAmountXia())){
                         thisList.setContractAmountXia(  thisList.getContractAmountXia());
                     }else {
-                        thisList.setContractAmountXia(new BigDecimal("0"));
+                        thisList.setContractAmountXia(null);
                     }
                     // 累计下家签证/变更金额（元）
                     if (  thisList.getAmountVisaChangeAddXia() != null && !"".equals(  thisList.getAmountVisaChangeAddXia())){
@@ -484,6 +509,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 }
 
             }
+
+            for (VisaChangeListVo visaChangeListVo : list1) {
+                String proportionContractShang = visaChangeListVo.getProportionContractShang();
+                String proportionContractXia = visaChangeListVo.getProportionContractXia();
+                BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
+                visaChangeListVo.setProportionContractShang(bigDecimal.toString());
+                visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
+            }
             return list1;
         }
         //待确认
@@ -500,7 +534,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
                         thisList.setContractAmountShang(  thisList.getContractAmountShang());
                     }else {
-                        thisList.setContractAmountShang(new BigDecimal("0"));
+                        thisList.setContractAmountShang(null);
                     }
                     // 累计上家签证/变更金额（元）
                     if (  thisList.getAmountVisaChangeAddShang() != null && !"".equals(  thisList.getAmountVisaChangeAddShang())){
@@ -518,7 +552,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     if (  thisList.getContractAmountXia() != null && !"".equals(  thisList.getContractAmountXia())){
                         thisList.setContractAmountXia(  thisList.getContractAmountXia());
                     }else {
-                        thisList.setContractAmountXia(new BigDecimal("0"));
+                        thisList.setContractAmountXia(null);
                     }
                     // 累计下家签证/变更金额（元）
                     if (  thisList.getAmountVisaChangeAddXia() != null && !"".equals(  thisList.getAmountVisaChangeAddXia())){
@@ -557,7 +591,14 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                         thisList.setCompileTime("/");
                     }
                 }
-
+            for (VisaChangeListVo visaChangeListVo : list1) {
+                String proportionContractShang = visaChangeListVo.getProportionContractShang();
+                String proportionContractXia = visaChangeListVo.getProportionContractXia();
+                BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
+                visaChangeListVo.setProportionContractShang(bigDecimal.toString());
+                visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
+            }
             return list1;
         }
         //进行中
@@ -574,7 +615,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (  visaChangeListVo.getContractAmountShang() != null && !"".equals(  visaChangeListVo.getContractAmountShang())){
                     visaChangeListVo.setContractAmountShang(  visaChangeListVo.getContractAmountShang());
                 }else {
-                    visaChangeListVo.setContractAmountShang(new BigDecimal("0"));
+                    visaChangeListVo.setContractAmountShang(null);
                 }
                 // 累计上家签证/变更金额（元）
                 if (  visaChangeListVo.getAmountVisaChangeAddShang() != null && !"".equals(  visaChangeListVo.getAmountVisaChangeAddShang())){
@@ -592,7 +633,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (  visaChangeListVo.getContractAmountXia() != null && !"".equals(  visaChangeListVo.getContractAmountXia())){
                     visaChangeListVo.setContractAmountXia(  visaChangeListVo.getContractAmountXia());
                 }else {
-                    visaChangeListVo.setContractAmountXia(new BigDecimal("0"));
+                    visaChangeListVo.setContractAmountXia(null);
                 }
                 // 累计下家签证/变更金额（元）
                 if (  visaChangeListVo.getAmountVisaChangeAddXia() != null && !"".equals(  visaChangeListVo.getAmountVisaChangeAddXia())){
@@ -637,6 +678,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     visaChangeListVo.setShowUnderway("2");
                 }
             }
+
+            for (VisaChangeListVo visaChangeListVo : list1) {
+                String proportionContractShang = visaChangeListVo.getProportionContractShang();
+                String proportionContractXia = visaChangeListVo.getProportionContractXia();
+                BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
+                visaChangeListVo.setProportionContractShang(bigDecimal.toString());
+                visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
+            }
             return list1;
         }
         //已完成
@@ -653,7 +703,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (  thisList.getContractAmountShang() != null && !"".equals(  thisList.getContractAmountShang())){
                     thisList.setContractAmountShang(  thisList.getContractAmountShang());
                 }else {
-                    thisList.setContractAmountShang(new BigDecimal("0"));
+                    thisList.setContractAmountShang(null);
                 }
                 // 累计上家签证/变更金额（元）
                 if (  thisList.getAmountVisaChangeAddShang() != null && !"".equals(  thisList.getAmountVisaChangeAddShang())){
@@ -671,7 +721,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (  thisList.getContractAmountXia() != null && !"".equals(  thisList.getContractAmountXia())){
                     thisList.setContractAmountXia(  thisList.getContractAmountXia());
                 }else {
-                    thisList.setContractAmountXia(new BigDecimal("0"));
+                    thisList.setContractAmountXia(null);
                 }
                 // 累计下家签证/变更金额（元）
                 if (  thisList.getAmountVisaChangeAddXia() != null && !"".equals(  thisList.getAmountVisaChangeAddXia())){
@@ -710,6 +760,14 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     thisList.setCompileTime("/");
                 }
             }
+            for (VisaChangeListVo visaChangeListVo : list1) {
+                String proportionContractShang = visaChangeListVo.getProportionContractShang();
+                String proportionContractXia = visaChangeListVo.getProportionContractXia();
+                BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
+                visaChangeListVo.setProportionContractShang(bigDecimal.toString());
+                visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
+            }
             return list1;
         }
         //全部
@@ -727,7 +785,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (visaChangeListVo.getContractAmountShang() != null && !"".equals(visaChangeListVo.getContractAmountShang())){
                     visaChangeListVo.setContractAmountShang(visaChangeListVo.getContractAmountShang());
                 }else {
-                    visaChangeListVo.setContractAmountShang(new BigDecimal("0"));
+                    visaChangeListVo.setContractAmountShang(null);
                 }
                 // 累计上家签证/变更金额（元）
                 if (visaChangeListVo.getAmountVisaChangeAddShang() != null && !"".equals(visaChangeListVo.getAmountVisaChangeAddShang())){
@@ -745,7 +803,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (visaChangeListVo.getContractAmountXia() != null && !"".equals(visaChangeListVo.getContractAmountXia())){
                     visaChangeListVo.setContractAmountXia(visaChangeListVo.getContractAmountXia());
                 }else {
-                    visaChangeListVo.setContractAmountXia(new BigDecimal("0"));
+                    visaChangeListVo.setContractAmountXia(null);
                 }
                 // 累计下家签证/变更金额（元）
                 if (visaChangeListVo.getAmountVisaChangeAddXia() != null && !"".equals(visaChangeListVo.getAmountVisaChangeAddXia())){
@@ -803,6 +861,15 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                             visaChangeListVo.setShowUnderway("2");
                         }
                     }
+            }
+
+            for (VisaChangeListVo visaChangeListVo : list1) {
+                String proportionContractShang = visaChangeListVo.getProportionContractShang();
+                String proportionContractXia = visaChangeListVo.getProportionContractXia();
+                BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
+                visaChangeListVo.setProportionContractShang(bigDecimal.toString());
+                visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
             }
             return list1;
         }
