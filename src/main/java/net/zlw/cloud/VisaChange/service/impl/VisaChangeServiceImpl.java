@@ -1995,6 +1995,24 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
 //            baseProject1.setVisaStatus("2");
             if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")) {
+
+                BigDecimal cumulativeChangeAmount = visaChangeUp.getCumulativeChangeAmount();
+                if (cumulativeChangeAmount==null){
+                    BigDecimal amountVisaChange = visaChangeUp.getAmountVisaChange();
+                    if (amountVisaChange!=null){
+                        visaChangeUp.setCumulativeChangeAmount(amountVisaChange);
+                        visaChangeMapper.updateByPrimaryKeySelective(visaChangeUp);
+                    }
+                }
+                BigDecimal cumulativeChangeAmount1 = visaChangeDown.getCumulativeChangeAmount();
+                if (cumulativeChangeAmount1==null){
+                    BigDecimal amountVisaChange = visaChangeDown.getAmountVisaChange();
+                    if (amountVisaChange!=null){
+                        visaChangeDown.setCumulativeChangeAmount(amountVisaChange);
+                        visaChangeMapper.updateByPrimaryKeySelective(visaChangeDown);
+                    }
+                }
+
                 baseProject1.setVisaStatus("1");
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
                 baseProject.setVisaStatus("1");
