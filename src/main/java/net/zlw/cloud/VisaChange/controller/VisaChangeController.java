@@ -198,6 +198,12 @@ public class VisaChangeController extends BaseController {
     //编辑
     @RequestMapping(value = "/visachange/updateVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateVisa(VisaChangeVo visaChangeVo){
+        if (visaChangeVo.getVisaChangeUp().getProportionContract().equals("NaN")){
+            visaChangeVo.getVisaChangeUp().setProportionContract("0");
+        }
+        if (visaChangeVo.getVisaChangeDown().getProportionContract().equals("NaN")){
+            visaChangeVo.getVisaChangeDown().setProportionContract("0");
+        }
         vcisService.updateVisa(visaChangeVo,getLoginUser());
         return RestUtil.success();
     }

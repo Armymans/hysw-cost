@@ -909,6 +909,12 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 //        String username = "造价业务员3";
 
 
+        if (visaChangeVo.getVisaChangeUp().getProportionContract().equals("NaN")){
+            visaChangeVo.getVisaChangeUp().setProportionContract("0");
+        }
+        if (visaChangeVo.getVisaChangeDown().getProportionContract().equals("NaN")){
+            visaChangeVo.getVisaChangeDown().setProportionContract("0");
+        }
 
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
         VisaApplyChangeInformation visaApplyChangeInformationUp = null;
