@@ -1493,7 +1493,16 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             visaChangeStatisticVos.add(visaChangeStatisticVo1);
         }
 
-
+        for (VisaChangeStatisticVo visaChangeStatisticVo : visaChangeStatisticVos) {
+            String visaChangeUpProportionContract = visaChangeStatisticVo.getVisaChangeUpProportionContract();
+            String visaChangeDownProportionContract = visaChangeStatisticVo.getVisaChangeDownProportionContract();
+            BigDecimal bigDecimal = new BigDecimal(visaChangeUpProportionContract);
+            BigDecimal bigDecimal1 = new BigDecimal(visaChangeDownProportionContract);
+            BigDecimal bigDecimal2 = bigDecimal.setScale(2, BigDecimal.ROUND_HALF_UP);
+            BigDecimal bigDecimal3 = bigDecimal1.setScale(2, BigDecimal.ROUND_HALF_UP);
+            visaChangeStatisticVo.setVisaChangeUpProportionContract(bigDecimal2.toString());
+            visaChangeStatisticVo.setVisaChangeDownProportionContract(bigDecimal3.toString());
+        }
         return visaChangeStatisticVos;
     }
 

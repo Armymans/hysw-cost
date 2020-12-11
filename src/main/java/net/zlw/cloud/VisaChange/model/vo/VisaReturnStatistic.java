@@ -13,7 +13,7 @@ public class VisaReturnStatistic {
    private Integer totalChangeNum;
    private BigDecimal totalVisaChangeUpAmount;
    private BigDecimal totalVisaChangeDownAmount;
-   private int totalVisaChangeUpProportionContract;
-   private int totalVisaChangeDownProportionContract;
+   private String  totalVisaChangeUpProportionContract;
+   private String totalVisaChangeDownProportionContract;
 
 }

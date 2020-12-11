@@ -233,12 +233,7 @@ public class VisaChangeController extends BaseController {
             if (visaChangeStatisticVo.getVisaChangeUpProportionContract()!=null && !"".equals(visaChangeStatisticVo.getVisaChangeUpProportionContract())){
                 upPro+=Double.parseDouble(visaChangeStatisticVo.getVisaChangeUpProportionContract());
             }
-            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
-            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
-            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
-            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
-            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
-            System.err.println(visaChangeStatisticVo.getVisaChangeDownProportionContract());
+
             if (visaChangeStatisticVo.getVisaChangeDownProportionContract()!=null && !"".equals(visaChangeStatisticVo.getVisaChangeDownProportionContract())){
                 downPro+=Double.parseDouble(visaChangeStatisticVo.getVisaChangeDownProportionContract());
             }
@@ -246,12 +241,14 @@ public class VisaChangeController extends BaseController {
         if (list.size()>=1){
             visaReturnStatistic.setTotalChangeNum(list.get(list.size()-1).getChangeNum());
         }
-        int upPro1 = (int) upPro;
-        int downPro1 = (int)downPro;
+        double upPro1 = upPro;
+        double downPro1 = downPro;
+        double v = new BigDecimal(upPro1).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+        double v2 = new BigDecimal(downPro1).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         visaReturnStatistic.setTotalVisaChangeUpAmount(upAmount);
         visaReturnStatistic.setTotalVisaChangeDownAmount(downAmount);
-        visaReturnStatistic.setTotalVisaChangeUpProportionContract(upPro1);
-        visaReturnStatistic.setTotalVisaChangeDownProportionContract(downPro1);
+        visaReturnStatistic.setTotalVisaChangeUpProportionContract(v+"");
+        visaReturnStatistic.setTotalVisaChangeDownProportionContract(v2+"");
         return RestUtil.success(visaReturnStatistic);
 
     }
