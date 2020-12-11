@@ -174,6 +174,12 @@ public class DesignInfo{
     private String currentHandler;
 
     @Transient
+    private String contacts1;
+
+    @Transient
+    private String customerPhone;
+
+    @Transient
     private String ascriptionFlag; //归属标识
 
     @Transient

@@ -2625,6 +2625,11 @@ public class ProjectService {
         baseProjectc.andNotEqualTo("mergeFlag", "0");
         List<BaseProject> baseProjects = projectMapper.selectByExample(baseProjectexample);
         for (BaseProject baseProject : baseProjects) {
+            if ("0".equals(baseProject.getCeaNum())){
+                baseProject.setCeaNum("是");
+            }else if ("1".equals(baseProject.getCeaNum())){
+                baseProject.setCeaNum("否");
+            }
             //将设计表id注入
             Example example = new Example(DesignInfo.class);
             Example.Criteria Designc = example.createCriteria();
