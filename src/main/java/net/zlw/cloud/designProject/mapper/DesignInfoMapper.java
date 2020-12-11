@@ -319,6 +319,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s2.id, " +
                     "s2.base_project_id, " +
                     "s1.should_be should_be, " +
+                    "s1.customer_phone customerPhone, " +
                     "s1.cea_num, " +
                     "s1.project_num, " +
                     "s1.merge_flag, " +
@@ -327,7 +328,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.district, " +
                     "s1.water_address, " +
                     "s1.construction_unit, " +
-                    "s2.contacts, " +
+                    "s1.contacts, " +
                     "s2.phone, " +
                     "s2.outsource, " +
                     "s2.designer, " +

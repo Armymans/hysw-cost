@@ -1951,8 +1951,8 @@ public class ProjectService {
                 }
             }
         } else {
-            //如果不为1 则为保存 状态依旧是出图中
-            projectVo.getBaseProject().setDesginStatus("2");
+//            projectVo.getBaseProject().setDesginStatus("2");
+
         }
 
         //添加修改时间
@@ -1967,7 +1967,7 @@ public class ProjectService {
             projectVo.getProjectExploration().setUpdateTime(updateTime);
             ProjectExploration projectExploration = this.ProjectExplorationByid(projectVo.getDesignInfo().getId());
             if (projectExploration != null) {
-                projectVo.getProjectExploration().setFounderId(loginUser.getId());
+                projectVo.getProjectExploration().setFounderId(loginUserId);
                 projectVo.getProjectExploration().setId(projectExploration.getId());
                 projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
             }
