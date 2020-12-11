@@ -686,6 +686,12 @@ public class ProjectService {
                 }else {
                     designInfo.setOutsourceMoney(designInfo.getOutsourceMoney());
                 }
+                // 设计单位名称
+                if ("".equals(designInfo.getDesignUnitName()) && designInfo.getDesignUnitName() == null){
+                    designInfo.setDesignUnitName("/");
+                }else {
+                    designInfo.setDesignUnitName(designInfo.getDesignUnitName());
+                }
                 // 接受时间
                 if ("".equals(designInfo.getTakeTime()) && designInfo.getTakeTime() == null){
                     designInfo.setTakeTime("/");
