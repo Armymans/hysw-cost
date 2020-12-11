@@ -166,79 +166,6 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
     )
     List<DesignInfo> designProjectSelect1(DesignPageVo pageVo);
 
-    @Select(
-            "SELECT " +
-                    "s2.id, " +
-                    "s2.base_project_id, " +
-                    "s1.should_be should_be, " +
-                    "s1.cea_num, " +
-                    "s1.project_num, " +
-                    "s1.project_name, " +
-                    "s1.merge_flag, " +
-                    "s1.desgin_status, " +
-                    "s1.district, " +
-                    "s1.water_address, " +
-                    "s1.construction_unit, " +
-                    "s2.contacts, " +
-                    "s2.phone, " +
-                    "s2.outsource, " +
-                    "s2.designer, " +
-                    "s1.project_nature, " +
-                    "s1.design_category, " +
-                    "s1.project_category, " +
-                    "s1.a_b, " +
-                    "s5.design_unit_name designUnitName, " +
-                    "s2.isaccount, " +
-                    "s2.isdeschange, " +
-                    "s2.outsource_money, " +
-                    "s2.take_time, " +
-                    "s2.blueprint_start_time, " +
-                    "s3.design_change_time , " +
-                    "s2.isfinalaccount , " +
-                    "( CASE WHEN s3.design_change_time IS NULL THEN '否' ELSE '是' END ) AS ischange " +
-                    "FROM " +
-                    "design_info s2 LEFT JOIN design_change_info s3 ON s2.id = s3.design_info_id  " +
-                    "LEFT JOIN base_project s1 ON s2.base_project_id = s1.id " +
-                    "LEFT JOIN  design_unit_management s5 ON s5.id = s2.design_unit " +
-                    "where " +
-                    "s1.desgin_status = #{desginStatus} " +
-                    "and " +
-                    "(s1.district = #{district} or #{district} ='') " +
-                    "and " +
-                    "(s1.design_category =#{designCategory} or #{designCategory} ='') " +
-                    "and " +
-                    "(s1.project_nature = #{projectNature} or #{projectNature}='') " +
-                    "and " +
-                    "(s1.should_be = #{shouldBe} or #{shouldBe} ='') " +
-                    "and " +
-                    "blueprint_start_time>= #{desginStartTime} " +
-                    "and  " +
-                    "(blueprint_start_time<=#{desginEndTime} or  #{desginEndTime} ='')  " +
-                    "and " +
-                    "(s2.isaccount = #{isaccount} or #{isaccount} ='') " +
-                    "and " +
-                    "s2.status= '0' " +
-                    "and  " +
-                    "s1.del_flag = '0' " +
-                    "and " +
-                    "s2.founder_id = #{userId} " +
-                    "and " +
-                    "( " +
-                    "s1.cea_num like CONCAT('%',#{keyword},'%') or  " +
-                    "s1.project_num like CONCAT('%',#{keyword},'%') or " +
-                    "s1.project_name like  CONCAT('%',#{keyword},'%')  or " +
-                    "s1.construction_unit like  CONCAT('%',#{keyword},'%')  or " +
-                    "s1.project_category like  CONCAT('%',#{keyword},'%')  or " +
-                    "s2.design_unit like  CONCAT('%',#{keyword},'%')  " +
-                    ")" +
-//                    "and " +
-//                    "(s3.`status`  is null or s3.`status`  = '0') " +
-                    "ORDER BY " +
-                    "s1.should_be, " +
-                    "s1.create_time DESC"
-    )
-    List<DesignInfo> designProjectSelect2(DesignPageVo pageVo);
-
 
     @Select(
             "SELECT " +
@@ -312,6 +239,80 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.create_time DESC"
     )
     List<DesignInfo> designProjectSelect3(DesignPageVo pageVo);
+
+    @Select(
+            "SELECT " +
+                    "s2.id, " +
+                    "s2.base_project_id, " +
+                    "s1.should_be should_be," +
+                    "s1.customer_phone customerPhone, " +
+                    "s1.cea_num, " +
+                    "s1.project_num, " +
+                    "s1.project_name, " +
+                    "s1.merge_flag, " +
+                    "s1.desgin_status, " +
+                    "s1.district, " +
+                    "s1.water_address, " +
+                    "s1.construction_unit, " +
+                    "s1.contacts, " +
+                    "s2.phone, " +
+                    "s2.outsource, " +
+                    "s2.designer, " +
+                    "s1.project_nature, " +
+                    "s1.design_category, " +
+                    "s1.project_category, " +
+                    "s1.a_b, " +
+                    "s5.design_unit_name designUnitName, " +
+                    "s2.isaccount, " +
+                    "s2.isdeschange, " +
+                    "s2.outsource_money, " +
+                    "s2.take_time, " +
+                    "s2.blueprint_start_time, " +
+                    "s3.design_change_time, " +
+                    "s2.isfinalaccount, " +
+                    "( CASE WHEN s3.design_change_time IS NULL THEN '否' ELSE '是' END ) AS ischange " +
+                    "FROM " +
+                    "design_info s2 LEFT JOIN design_change_info s3 ON s2.id = s3.design_info_id  " +
+                    "LEFT JOIN base_project s1 ON s2.base_project_id = s1.id " +
+                    "LEFT JOIN  design_unit_management s5 ON s5.id = s2.design_unit " +
+                    "where " +
+                    "(s1.desgin_status = #{desginStatus} or #{desginStatus} ='') " +
+                    "and " +
+                    "(s1.district = #{district} or #{district} ='') " +
+                    "and " +
+                    "(s1.design_category =#{designCategory} or #{designCategory} ='') " +
+                    "and " +
+                    "(s1.project_nature = #{projectNature} or #{projectNature}='') " +
+                    "and " +
+                    "(s1.should_be = #{shouldBe} or #{shouldBe} ='') " +
+                    "and " +
+                    "blueprint_start_time>= #{desginStartTime} " +
+                    "and  " +
+                    "(blueprint_start_time<=#{desginEndTime} or  #{desginEndTime} ='')  " +
+                    "and " +
+                    "(s2.isaccount = #{isaccount} or #{isaccount} ='') " +
+                    "and " +
+                    "s2.status= '0' " +
+                    "and  " +
+                    "s1.del_flag = '0' " +
+                    "and " +
+                    "(s2.founder_id = #{userId} or #{userId} = '' )  " +
+                    "and " +
+                    "( " +
+                    "s1.cea_num like CONCAT('%',#{keyword},'%') or  " +
+                    "s1.project_num like CONCAT('%',#{keyword},'%') or " +
+                    "s1.project_name like  CONCAT('%',#{keyword},'%')  or " +
+                    "s1.construction_unit like  CONCAT('%',#{keyword},'%')  or " +
+                    "s1.project_category like  CONCAT('%',#{keyword},'%')  or " +
+                    "s2.design_unit like  CONCAT('%',#{keyword},'%')  " +
+                    ")" +
+//                    "and " +
+//                    "(s3.`status`  is null or s3.`status`  = '0') " +
+                    "ORDER BY " +
+                    "s1.should_be, " +
+                    "s1.create_time DESC"
+    )
+    List<DesignInfo> designProjectSelect2(DesignPageVo pageVo);
 
     @Select(
             "SELECT " +
