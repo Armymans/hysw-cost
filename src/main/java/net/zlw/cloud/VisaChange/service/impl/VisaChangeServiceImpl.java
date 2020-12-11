@@ -214,11 +214,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 for (VisaChangeListVo visaChangeListVo : list1) {
                     String proportionContractShang = visaChangeListVo.getProportionContractShang();
                     String proportionContractXia = visaChangeListVo.getProportionContractXia();
-                    if (!"".equals(proportionContractShang) && proportionContractShang!=null){
+                    if (!"".equals(proportionContractShang) && proportionContractShang!=null && !"/".equals(proportionContractShang)){
                         BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
                         visaChangeListVo.setProportionContractShang(bigDecimal.toString());
                     }
-                    if (!"".equals(proportionContractXia) && proportionContractXia!=null){
+                    if (!"".equals(proportionContractXia) && proportionContractXia!=null && !"/".equals(proportionContractXia)){
                         BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
                         visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
                     }
@@ -326,11 +326,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 for (VisaChangeListVo visaChangeListVo : list1) {
                     String proportionContractShang = visaChangeListVo.getProportionContractShang();
                     String proportionContractXia = visaChangeListVo.getProportionContractXia();
-                    if (!"".equals(proportionContractShang) && proportionContractShang!=null){
+                    if (!"".equals(proportionContractShang) && proportionContractShang!=null && !"/".equals(proportionContractShang)){
                         BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
                         visaChangeListVo.setProportionContractShang(bigDecimal.toString());
                     }
-                    if (!"".equals(proportionContractXia) && proportionContractXia!=null){
+                    if (!"".equals(proportionContractXia) && proportionContractXia!=null && !"/".equals(proportionContractXia)){
                         BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
                         visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
                     }
@@ -423,11 +423,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             for (VisaChangeListVo visaChangeListVo : list1) {
                 String proportionContractShang = visaChangeListVo.getProportionContractShang();
                 String proportionContractXia = visaChangeListVo.getProportionContractXia();
-                if (!"".equals(proportionContractShang) && proportionContractShang!=null){
+                if (!"".equals(proportionContractShang) && proportionContractShang!=null && !"/".equals(proportionContractShang)){
                     BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractShang(bigDecimal.toString());
                 }
-                if (!"".equals(proportionContractXia) && proportionContractXia!=null){
+                if (!"".equals(proportionContractXia) && proportionContractXia!=null && !"/".equals(proportionContractXia)){
                     BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
                 }
@@ -525,11 +525,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             for (VisaChangeListVo visaChangeListVo : list1) {
                 String proportionContractShang = visaChangeListVo.getProportionContractShang();
                 String proportionContractXia = visaChangeListVo.getProportionContractXia();
-                if (!"".equals(proportionContractShang) && proportionContractShang!=null){
+                if (!"".equals(proportionContractShang) && proportionContractShang!=null && !"/".equals(proportionContractShang)){
                     BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractShang(bigDecimal.toString());
                 }
-                if (!"".equals(proportionContractXia) && proportionContractXia!=null){
+                if (!"".equals(proportionContractXia) && proportionContractXia!=null && !"/".equals(proportionContractXia)){
                     BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
                 }
@@ -610,11 +610,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             for (VisaChangeListVo visaChangeListVo : list1) {
                 String proportionContractShang = visaChangeListVo.getProportionContractShang();
                 String proportionContractXia = visaChangeListVo.getProportionContractXia();
-                if (!"".equals(proportionContractShang) && proportionContractShang!=null){
+                if (!"".equals(proportionContractShang) && proportionContractShang!=null && !"/".equals(proportionContractShang)){
                     BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractShang(bigDecimal.toString());
                 }
-                if (!"".equals(proportionContractXia) && proportionContractXia!=null){
+                if (!"".equals(proportionContractXia) && proportionContractXia!=null && !"/".equals(proportionContractXia)){
                     BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
                 }
@@ -702,11 +702,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             for (VisaChangeListVo visaChangeListVo : list1) {
                 String proportionContractShang = visaChangeListVo.getProportionContractShang();
                 String proportionContractXia = visaChangeListVo.getProportionContractXia();
-                if (!"".equals(proportionContractShang) && proportionContractShang!=null){
+                if (!"".equals(proportionContractShang) && proportionContractShang!=null && !"/".equals(proportionContractShang)){
                     BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractShang(bigDecimal.toString());
                 }
-                if (!"".equals(proportionContractXia) && proportionContractXia!=null){
+                if (!"".equals(proportionContractXia) && proportionContractXia!=null && !"/".equals(proportionContractXia)){
                     BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
                 }
@@ -787,11 +787,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             for (VisaChangeListVo visaChangeListVo : list1) {
                 String proportionContractShang = visaChangeListVo.getProportionContractShang();
                 String proportionContractXia = visaChangeListVo.getProportionContractXia();
-                if (!"".equals(proportionContractShang) && proportionContractShang!=null){
+                if (!"".equals(proportionContractShang) && proportionContractShang!=null && !"/".equals(proportionContractShang)){
                     BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractShang(bigDecimal.toString());
                 }
-                if (!"".equals(proportionContractXia) && proportionContractXia!=null){
+                if (!"".equals(proportionContractXia) && proportionContractXia!=null && !"/".equals(proportionContractXia)){
                     BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
                 }
@@ -894,11 +894,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             for (VisaChangeListVo visaChangeListVo : list1) {
                 String proportionContractShang = visaChangeListVo.getProportionContractShang();
                 String proportionContractXia = visaChangeListVo.getProportionContractXia();
-                if (!"".equals(proportionContractShang) && proportionContractShang!=null){
+                if (!"".equals(proportionContractShang) && proportionContractShang!=null && !"/".equals(proportionContractShang)){
                     BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractShang(bigDecimal.toString());
                 }
-                if (!"".equals(proportionContractXia) && proportionContractXia!=null){
+                if (!"".equals(proportionContractXia) && proportionContractXia!=null && !"/".equals(proportionContractXia)){
                     BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
                     visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
                 }
