@@ -3,6 +3,7 @@ package net.zlw.cloud.buildingProject.controller;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
+import net.zlw.cloud.buildingProject.model.vo.BaseVo;
 import net.zlw.cloud.buildingProject.service.BuildingProjectService;
 import net.zlw.cloud.common.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,5 +82,18 @@ public class BuildingProjectController extends BaseController {
         }
         return RestUtil.success();
 
+    }
+
+    /**
+     * @Author sjf
+     * @Description // 建设项目查看 - 工程项目
+     * @Date 14:34 2020/12/2
+     * @Param
+     * @return
+     **/
+    @RequestMapping(value = "/selectBaseProjectList",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectBaseProjectList(String id){
+      List<BaseVo> findList = buildingProjectService.selectBaseProjectList(id);
+      return RestUtil.success(findList);
     }
 }

@@ -2,6 +2,7 @@ package net.zlw.cloud.buildingProject.service;
 
 import net.zlw.cloud.buildingProject.mapper.BuildingProjectMapper;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
+import net.zlw.cloud.buildingProject.model.vo.BaseVo;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
@@ -108,5 +109,56 @@ public class BuildingProjectService {
                 buildingProject.setDelFlag("1");
                 buildingProjectMapper.deleteBuilding(id);
             }
+    }
+
+    public List<BaseVo> selectBaseProjectList(String id) {
+        List<BaseVo> BaseProjectVo = buildingProjectMapper.selectBaseProjectList(id);
+        if (BaseProjectVo.size() > 0){
+            for (BaseVo thisVo : BaseProjectVo) {
+                // 造价金额
+                if (thisVo.getAmountCost() != null && !"".equals(thisVo.getAmountCost())){
+                    thisVo.setAmountCost(thisVo.getActualAmount());
+                }else {
+                    thisVo.setAmountCost("/");
+                }
+                // 合同金额
+                if (thisVo.getContractAmount() != null && !"".equals(thisVo.getContractAmount())){
+                    thisVo.setContractAmount(thisVo.getContractAmount());
+                }else {
+                    thisVo.setContractAmount("/");
+                }
+                // 进度款支付次数累计
+                if (thisVo.getCumulativePaymentTimes() != null && !"".equals(thisVo.getCumulativePaymentTimes())){
+                    thisVo.setCumulativePaymentTimes(thisVo.getCumulativePaymentTimes());
+                }else {
+                    thisVo.setCumulativePaymentTimes("/");
+                }
+                // 跟踪审计CEA金额
+                if (thisVo.getCeaTotalMoney() != null && !"".equals(thisVo.getCeaTotalMoney())){
+                    thisVo.setCeaTotalMoney(thisVo.getCeaTotalMoney());
+                }else {
+                    thisVo.setCeaTotalMoney("/");
+                }
+                //  签证/变更累计金额（元）
+                if (thisVo.getCumulativeChangeAmount() != null && !"".equals(thisVo.getCumulativeChangeAmount())){
+                    thisVo.setCumulativeChangeAmount(thisVo.getCumulativeChangeAmount());
+                }else {
+                    thisVo.setCumulativeChangeAmount("/");
+                }
+                // 结算审定金额（元）
+                if (thisVo.getAuthorizedNumber() != null && !"".equals(thisVo.getAuthorizedNumber())){
+                    thisVo.setAuthorizedNumber(thisVo.getAuthorizedNumber());
+                }else {
+                    thisVo.setAuthorizedNumber("/");
+                }
+                // 设计费
+                if (thisVo.getActualAmount() != null && !"".equals(thisVo.getActualAmount())){
+                    thisVo.setActualAmount(thisVo.getActualAmount());
+                }else {
+                    thisVo.setActualAmount  ("/");
+                }
+            }
+        }
+        return BaseProjectVo;
     }
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -41,4 +42,6 @@ public class TrackAuditInfo implements Serializable {
     private String baseProjectId;
     @Column(name = "track_audit_base")
     private BigDecimal trackAuditBase;
+    @Transient
+    private String money;
 }

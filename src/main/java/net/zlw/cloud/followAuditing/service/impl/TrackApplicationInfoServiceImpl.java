@@ -503,6 +503,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             }
             trackVo.getAuditInfo().setFounderId(userInfoId);
             trackVo.getAuditInfo().setStatus("0");
+            trackVo.getAuditInfo().setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             trackAuditInfoDao.insertSelective(trackVo.getAuditInfo());
 
             //月报
@@ -651,8 +652,16 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
     @Override
     public TrackVo selectTrackById(String id, UserInfo userInfo) {
+        String userId = userInfo.getId();
+//        String userId = "user320";
         TrackVo trackVo = new TrackVo();
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(id);
+        BigDecimal bigDecimal = new BigDecimal(0);
+        if (trackAuditInfo.getOutsourceMoney() == bigDecimal){
+            trackAuditInfo.setMoney(null);
+        }else {
+            trackAuditInfo.setMoney(trackAuditInfo.getOutsourceMoney()+"");
+        }
         BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(trackAuditInfo.getBaseProjectId());
 
         Example example = new Example(TrackApplicationInfo.class);
@@ -672,7 +681,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         Example example2 = new Example(AuditInfo.class);
         example2.createCriteria().andEqualTo("baseProjectId", trackMonthlyOld.getId())
                 .andEqualTo("status", "0")
-                .andEqualTo("auditorId", userInfo.getId())
+                .andEqualTo("auditorId", userId)
                 .andEqualTo("auditResult", "0");
         auditInfo = auditInfoDao.selectOneByExample(example2);
 
@@ -816,9 +825,18 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     @Override
     public void updateTrack(TrackVo trackVo, UserInfo userInfo) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String userInfoId = userInfo.getId();
+//        String userInfoId = "user320";
+
 
         //如果点击得是保存
         if (trackVo.getStatus().equals("0")) {
+            trackVo.getAuditInfo().setId(trackVo.getAuditInfo().getId());
+            trackVo.getAuditInfo().setUpdateTime(simpleDateFormat.format(new Date()));
+            // 如果前台传一个null或者空字符串，那么bigDecimal类型就修改不了
+            if (trackVo.getAuditInfo().getOutsourceMoney() == null && "".equals(trackVo.getAuditInfo().getOutsourceMoney())){
+                trackVo.getAuditInfo().setOutsourceMoney(new BigDecimal(0));
+            }
             trackAuditInfoDao.updateByPrimaryKeySelective(trackVo.getAuditInfo());
         } else if (trackVo.getStatus().equals("1")) {
             //如果是提交 将数据覆盖
@@ -856,7 +874,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             if (auditInfo == null) { //未提交 进行中
                 if (booleans) { //未提交
                     //存入审核表
-                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfoId);
                     AuditInfo auditInfo1 = new AuditInfo();
                     auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
                     auditInfo1.setBaseProjectId(trackMonthlyNew.get(0).getId());
@@ -879,7 +897,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     trackMonthlyDao.updateByPrimaryKeySelective(trackMonthlyOld);
 
                     //存入审核表
-                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfoId);
                     AuditInfo auditInfo1 = new AuditInfo();
                     auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
                     auditInfo1.setBaseProjectId(trackMonthlyOld.getId());

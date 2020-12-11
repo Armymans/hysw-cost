@@ -610,6 +610,7 @@ public class MaintenanceProjectInformationService {
         if (!"".equals(maintenanceProjectInformation.getComs()) && maintenanceProjectInformation.getComs() != null){
             Json coms = maintenanceProjectInformation.getComs();
             String json = coms.value();
+            int num = 1;
             List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
             if (otherInfos.size() > 0){
                 for (OtherInfo thisInfo : otherInfos) {
@@ -622,6 +623,8 @@ public class MaintenanceProjectInformationService {
                     otherInfo1.setStatus("0");
                     otherInfo1.setFoundId(userInfo.getId());
                     otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfo1.setChangeNum(num);
+                    num++;
                     otherInfoMapper.insertSelective(otherInfo1);
                 }
             }
@@ -1305,7 +1308,6 @@ public class MaintenanceProjectInformationService {
         }
         // json转换
         Json coms = maintenanceProjectInformationVo.getComs();
-
         String json = coms.value();
         Example example3 = new Example(OtherInfo.class);
         example3.createCriteria().andEqualTo("foreignKey",information.getId());
@@ -1314,6 +1316,7 @@ public class MaintenanceProjectInformationService {
             thisOther.setStatus("1");
             otherInfoMapper.updateByPrimaryKeySelective(thisOther);
         }
+        int num = 1;
         List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
         if (otherInfos.size() > 0){
             for (OtherInfo thisInfo : otherInfos) {
@@ -1326,6 +1329,8 @@ public class MaintenanceProjectInformationService {
                 otherInfo1.setStatus("0");
                 otherInfo1.setFoundId(userInfo.getId());
                 otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                otherInfo1.setChangeNum(num);
+                num++;
                 otherInfoMapper.insertSelective(otherInfo1);
             }
         }
@@ -1696,6 +1701,7 @@ public class MaintenanceProjectInformationService {
         if (!"".equals(maintenanceProjectInformation.getComs()) && maintenanceProjectInformation.getComs() != null){
             Json coms = maintenanceProjectInformation.getComs();
             String json = coms.value();
+            int num =1;
             List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
             if (otherInfos.size() > 0){
                 for (OtherInfo thisInfo : otherInfos) {
@@ -1708,6 +1714,8 @@ public class MaintenanceProjectInformationService {
                     otherInfo1.setStatus("0");
                     otherInfo1.setFoundId(userInfo.getId());
                     otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfo1.setChangeNum(num);
+                    num++;
                     otherInfoMapper.insertSelective(otherInfo1);
                 }
             }
@@ -2012,6 +2020,7 @@ public class MaintenanceProjectInformationService {
             otherInfoMapper.updateByPrimaryKeySelective(thisOther);
         }
         List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+        int num = 1;
         if (otherInfos.size() > 0){
             for (OtherInfo thisInfo : otherInfos) {
                 OtherInfo otherInfo1 = new OtherInfo();
@@ -2021,8 +2030,10 @@ public class MaintenanceProjectInformationService {
                 otherInfo1.setNum(thisInfo.getNum());
                 otherInfo1.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 otherInfo1.setStatus("0");
-//                otherInfo1.setFoundId(userInfo.getId());
-//                otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                otherInfo1.setFoundId(userInfo.getId());
+                otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                otherInfo1.setChangeNum(num);
+                num++;
                 otherInfoMapper.insertSelective(otherInfo1);
             }
         }

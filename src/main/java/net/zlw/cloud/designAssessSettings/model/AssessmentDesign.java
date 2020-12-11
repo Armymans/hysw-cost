@@ -1,5 +1,7 @@
 package net.zlw.cloud.designAssessSettings.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 
 /**
@@ -7,7 +9,8 @@ import javax.persistence.*;
  * @Description 设计-考核设计
  * @Date 2020/9/18 20:57
  **/
-@Entity
+//@Entity
+@Data
 @Table(name = "assessment_design")
 public class AssessmentDesign {
 
