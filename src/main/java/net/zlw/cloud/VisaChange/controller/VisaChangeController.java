@@ -11,6 +11,8 @@ import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
+import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
+import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,8 @@ public class VisaChangeController extends BaseController {
 
     @Resource
     private MkyUserMapper mkyUserMapper;
+    @Resource
+    private CostUnitManagementMapper costUnitManagementMapper;
 
     //查询所有
 
@@ -189,6 +193,17 @@ public class VisaChangeController extends BaseController {
             BigDecimal bigDecimal1 = new BigDecimal(proportionContract1);
             BigDecimal bigDecimal3 = bigDecimal1.setScale(2, RoundingMode.HALF_UP);
             visaChangeVo.getVisaChangeDown().setProportionContract(bigDecimal3.toString());
+        }
+
+        String nameOfCostUnit = visaChangeVo.getVisaChangeUp().getNameOfCostUnit();
+        String nameOfCostUnit1 = visaChangeVo.getVisaChangeDown().getNameOfCostUnit();
+        if (nameOfCostUnit!=null && !"".equals(nameOfCostUnit)){
+            CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfCostUnit);
+            visaChangeVo.getVisaChangeUp().setNameOfCostUnit(costUnitManagement.getCostUnitName());
+        }
+        if (nameOfCostUnit1!=null && !"".equals(nameOfCostUnit1)){
+            CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfCostUnit1);
+            visaChangeVo.getVisaChangeDown().setNameOfCostUnit(costUnitManagement.getCostUnitName());
         }
 
 

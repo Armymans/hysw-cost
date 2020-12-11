@@ -1482,7 +1482,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                         baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
                         for (VisaChange change : visaChanges) {
-                            if (change.getUpAndDownMark().equals("2")){
+
                                 Example example2 = new Example(AuditInfo.class);
                                 Example.Criteria c3 = example2.createCriteria();
                                 c3.andEqualTo("baseProjectId",change.getId());
@@ -1491,7 +1491,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                                 for (AuditInfo info : auditInfos) {
                                     auditInfoDao.deleteByPrimaryKey(info);
                                 }
-                            }
+
                         }
 
                     }
