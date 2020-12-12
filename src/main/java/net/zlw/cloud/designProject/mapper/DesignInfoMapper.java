@@ -53,7 +53,9 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                         "and " +
                         "s2.status= '0' " +
                         "and  " +
-                        "s1.del_flag = '0' " +
+                        "s1.del_flag = '0'" +
+                        "and " +
+                        "s3.`status` = '0'" +
                         "and " +
                         "s4.audit_result = '0' " +
                         "and " +
@@ -132,7 +134,9 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "and " +
                     "s2.status= '0' " +
                     "and  " +
-                    "s1.del_flag = '0' " +
+                    "s1.del_flag = '0'" +
+                    "and " +
+                    "s3.`status` = '0'" +
                     "and " +
                     "s4.audit_result = '0' " +
                     "and " +

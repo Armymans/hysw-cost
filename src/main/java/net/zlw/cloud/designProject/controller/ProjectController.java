@@ -1171,7 +1171,9 @@ public class ProjectController extends BaseController {
         DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
         if(designChangeInfo!=null){
             MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(designChangeInfo.getDesigner());
-            designChangeInfo.setDesigner(memberManage1.getMemberName());
+            if (memberManage1 != null){
+                designChangeInfo.setDesigner(memberManage1.getMemberName());
+            }
             projectVo.setDesignChangeInfo(designChangeInfo);
         }else{
             projectVo.setDesignChangeInfo(new DesignChangeInfo());
