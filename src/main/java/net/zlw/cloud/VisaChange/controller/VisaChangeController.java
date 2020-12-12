@@ -199,11 +199,15 @@ public class VisaChangeController extends BaseController {
         String nameOfCostUnit1 = visaChangeVo.getVisaChangeDown().getNameOfCostUnit();
         if (nameOfCostUnit!=null && !"".equals(nameOfCostUnit)){
             CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfCostUnit);
-            visaChangeVo.getVisaChangeUp().setNameOfCostUnit(costUnitManagement.getCostUnitName());
+            if (costUnitManagement!=null){
+                visaChangeVo.setNameShang(costUnitManagement.getCostUnitName());
+            }
         }
         if (nameOfCostUnit1!=null && !"".equals(nameOfCostUnit1)){
             CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfCostUnit1);
-            visaChangeVo.getVisaChangeDown().setNameOfCostUnit(costUnitManagement.getCostUnitName());
+            if (costUnitManagement!=null){
+                visaChangeVo.setNameXia(costUnitManagement.getCostUnitName());
+            }
         }
 
 

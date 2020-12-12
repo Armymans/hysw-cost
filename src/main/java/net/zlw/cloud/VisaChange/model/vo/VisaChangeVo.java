@@ -29,6 +29,9 @@ public class VisaChangeVo {
     private String visaNum;
     private String baseId;
 
+    private String nameShang;
+    private String nameXia;
+
 
 
 }
