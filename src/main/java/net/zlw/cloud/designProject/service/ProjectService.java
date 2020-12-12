@@ -154,7 +154,7 @@ public class ProjectService {
             //todo getLoginUser().getId()
             //则根据登录用户id展示于其身份对应的数据
             pageVo.setUserId(loginUser.getId());
-//            pageVo.setUserId("user323");
+//            pageVo.setUserId("user321");
             //如果当前用户是部门主管 或者 部门经理 则展示全部待审核信息
             if (wjsjh.equals(pageVo.getUserId()) || whsjh.equals(pageVo.getUserId()) || whsjm.equals(pageVo.getUserId())) {
                 designInfos = designInfoMapper.designProjectSelect1(pageVo);
