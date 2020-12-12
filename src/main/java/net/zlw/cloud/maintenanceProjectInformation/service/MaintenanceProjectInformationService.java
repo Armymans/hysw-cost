@@ -588,8 +588,7 @@ public class MaintenanceProjectInformationService {
             auditInfo.setFounderId(userInfo.getId());
             // 审核人id
             auditInfo.setAuditorId(maintenanceProjectInformation.getAuditorId());
-            String createDate = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
-            auditInfo.setCreateTime(createDate);
+            auditInfo.setCreateTime(createTime);
             auditInfo.setMaintenanceFlag("1"); //不是二次审核
             auditInfoDao.insertSelective(auditInfo);
             //通过发消息

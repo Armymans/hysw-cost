@@ -149,7 +149,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "and " +
                     "maintenance_flag = '1' " +
                     "order by  " +
-                    "create_time DESC"
+                    "create_time"
     )
     List<AuditChekedVo> auditMaintenanceChek(String id);
 
