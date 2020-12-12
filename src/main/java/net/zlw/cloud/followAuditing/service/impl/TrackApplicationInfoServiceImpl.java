@@ -793,6 +793,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             List<AuditInfoVo> allAuditInfosByTrackId2 = trackAuditInfoDao.findAllAuditInfosByTrackId(trackMonthly.getId());
             for (AuditInfoVo auditInfoVo : allAuditInfosByTrackId2) {
                 auditInfoVo.setAuditWord("第" + trackMonthly.getAuditCount() + "次月报");
+                if ("未审批".equals(auditInfoVo.getAuditResult())){
+                    auditInfoVo.setAuditOpinion("-");
+                    auditInfoVo.setAuditTime("-");
+                }
+
             }
             allAuditInfosByTrackId.addAll(allAuditInfosByTrackId2);
         }
