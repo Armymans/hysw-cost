@@ -2078,8 +2078,8 @@ public class ProjectService {
         if (anhuiMoneyinfo != null) {
             String[] split = anhuiMoneyinfo.getCollectionMoney().split(",");
             Integer count = 1;
-            CollectionMoney collectionMoney = new CollectionMoney();
             for (String money : split) {
+                CollectionMoney collectionMoney = new CollectionMoney();
                 collectionMoney.setId("第" + (count) + "次收款");
                 collectionMoney.setMoney(money);
                 collectionMonies.add(collectionMoney);
@@ -2160,7 +2160,8 @@ public class ProjectService {
                     String collectionMoney = anhuiMoneyinfo1.getCollectionMoney();
                     //若果不是说明第一次添加
                     anhuiMoneyinfo1.setCollectionMoney(collectionMoney +officialReceipts+ ",");
-                    String[] split = collectionMoney.split(",");
+//                    String[] split = collectionMoney.split(",");
+                    String[] split = anhuiMoneyinfo1.getCollectionMoney().split(",");
                     Double total = 0.0;
                     for (String s : split) {
                         total += Double.parseDouble(s);
