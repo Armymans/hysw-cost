@@ -1236,6 +1236,31 @@ public class BudgetingServiceImpl implements BudgetingService {
                     budgetingListVos.remove(budgetingListVo);
                 }
             }
+            for (BudgetingListVo budgetingListVo : budgetingListVos) {
+                String budgetingPeople = budgetingListVo.getBudgetingPeople();
+                String costTogether = budgetingListVo.getCostTogether();
+                String pricingTogether = budgetingListVo.getPricingTogether();
+                if (budgetingPeople!=null && !"".equals(budgetingPeople)){
+                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingPeople);
+                    if (mkyUser!=null){
+                        budgetingListVo.setBudgetingPeople(mkyUser.getUserName());
+                    }
+                }
+
+                if (costTogether!=null && !"".equals(costTogether)){
+                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(costTogether);
+                    if (mkyUser!=null){
+                        budgetingListVo.setCostTogether(mkyUser.getUserName());
+                    }
+                }
+
+                if (pricingTogether!=null && !"".equals(pricingTogether)){
+                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(pricingTogether);
+                    if (mkyUser!=null){
+                        budgetingListVo.setPricingTogether(mkyUser.getUserName());
+                    }
+                }
+            }
             //清标
         }else if(sid!=null && sid.equals("6")){
             List<BudgetingListVo> clearProjectAll = budgetingDao.findClearProjectAll(pageBVo);
@@ -1260,6 +1285,7 @@ public class BudgetingServiceImpl implements BudgetingService {
             }
             return budgetingListVos1;
         }
+
         return budgetingListVos;
     }
 

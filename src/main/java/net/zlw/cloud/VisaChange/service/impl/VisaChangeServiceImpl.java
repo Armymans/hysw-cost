@@ -1125,6 +1125,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setFounderId(id);
                 auditInfo.setStatus("0");
                 auditInfo.setCreateTime(sim.format(new Date()));
+                auditInfo.setUpdateTime(sim.format(new Date()));
                 auditInfoDao.insertSelective(auditInfo);
             }
 
@@ -1203,6 +1204,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setFounderId(id);
                 auditInfo.setStatus("0");
                 auditInfo.setCreateTime(sim.format(new Date()));
+                auditInfo.setUpdateTime(sim.format(new Date()));
                 auditInfoDao.insertSelective(auditInfo);
                 //消息通知
                 MessageVo messageVo = new MessageVo();
@@ -1347,6 +1349,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setFounderId(id);
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
+                    auditInfo1.setUpdateTime(sim.format(new Date()));
                     auditInfoDao.insertSelective(auditInfo1);
                 } else if (auditInfo.getAuditType().equals("1")) {
                     AuditInfo auditInfo1 = new AuditInfo();
@@ -1372,6 +1375,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setFounderId(id);
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
+                    auditInfo1.setUpdateTime(sim.format(new Date()));
                     auditInfoDao.insertSelective(auditInfo1);
                 } else if (auditInfo.getAuditType().equals("4")) {
                     String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -1436,6 +1440,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setFounderId(id);
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
+                    auditInfo1.setUpdateTime(sim.format(new Date()));
                     auditInfoDao.insertSelective(auditInfo1);
                 } else if (auditInfo.getAuditType().equals("3")) {
                     AuditInfo auditInfo1 = new AuditInfo();
@@ -1461,6 +1466,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setFounderId(id);
                     auditInfo1.setStatus("0");
                     auditInfo1.setCreateTime(sim.format(new Date()));
+                    auditInfo1.setUpdateTime(sim.format(new Date()));
                     auditInfoDao.insertSelective(auditInfo1);
 
                 } else if (auditInfo.getAuditType().equals("5")) {
@@ -1821,6 +1827,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setFounderId(id);
                 auditInfo.setStatus("0");
                 auditInfo.setCreateTime(sim.format(new Date()));
+                auditInfo.setUpdateTime(sim.format(new Date()));
                 auditInfoDao.insertSelective(auditInfo);
             }
             baseProjectDao.updateByPrimaryKeySelective(baseProject1);
@@ -1914,6 +1921,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setFounderId(id);
                 auditInfo.setStatus("0");
                 auditInfo.setCreateTime(sim.format(new Date()));
+                auditInfo.setUpdateTime(sim.format(new Date()));
                 auditInfoDao.insertSelective(auditInfo);
             }
             baseProjectDao.updateByPrimaryKeySelective(baseProject1);
@@ -2031,6 +2039,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setFounderId(id);
                 auditInfo.setStatus("0");
                 auditInfo.setCreateTime(sim.format(new Date()));
+                auditInfo.setUpdateTime(sim.format(new Date()));
                 auditInfoDao.insertSelective(auditInfo);
             }
             baseProjectDao.updateByPrimaryKeySelective(baseProject1);
@@ -2121,6 +2130,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setAuditResult("0");
                 auditInfo.setAuditOpinion("");
                 auditInfo.setAuditTime("");
+                auditInfo.setUpdateTime(sim.format(new Date()));
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());

@@ -79,4 +79,6 @@ public class ProgressPaymentInformation implements Serializable {
     private String delFlag;
     @Column(name = "change_num")
     private Integer changeNum;
+
+    private String typeS;
 }

@@ -17,8 +17,12 @@ import net.zlw.cloud.progressPayment.model.*;
 import net.zlw.cloud.progressPayment.model.vo.*;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
+import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
+import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
@@ -67,6 +71,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
+
+    @Resource
+    private MkyUserMapper mkyUserMapper;
+
+    @Resource
+    private CostUnitManagementMapper costUnitManagementMapper;
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -337,9 +347,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         BaseProjectVo baseProjectVo = new BaseProjectVo();
         ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(id);
         if ("1".equals(paymentInformation.getProjectType())){
-            paymentInformation.setProjectType("合同内进度款支付");
+            paymentInformation.setTypeS("合同内进度款支付");
         }else if ("2".equals(paymentInformation.getProjectType())){
-            paymentInformation.setProjectType("合同外进度款支付");
+            paymentInformation.setTypeS("合同外进度款支付");
         }
 
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
@@ -1561,6 +1571,19 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 }else{
                     progressListVo.setProgressPaymentStatus("进度款确认未通过");
                 }
+
+
+                String nameOfCostUnit = progressListVo.getNameOfCostUnit();
+                if (nameOfCostUnit!=null && !"".equals(nameOfCostUnit)){
+                    CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfCostUnit);
+                    if (costUnitManagement!=null){
+                        progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                    }
+                }
+                TotalVo total = findTotal(progressListVo.getBaseId());
+                progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
+                progressListVo.setAccumulativePaymentProportion(total.getCumulativeNumberPayment().toString());
+                progressListVo.setCumulativeNumberPayment(new BigDecimal(total.getAccumulativePaymentProportion()));
             }
             return new PageInfo<ProgressListVo>(list);
         }
