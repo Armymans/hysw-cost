@@ -10,6 +10,7 @@ import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.designProject.mapper.AnhuiMoneyinfoMapper;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
@@ -60,6 +61,8 @@ public class ProjectController extends BaseController {
     private MessageService messageService;
     @Resource
     private BudgetingMapper budgetingMapper;
+    @Resource
+    private AnhuiMoneyinfoMapper anhuiMoneyinfoMapper;
     @Resource
     private ConstructionUnitManagementMapper constructionUnitManagementMapper;
 
@@ -969,6 +972,8 @@ public class ProjectController extends BaseController {
                    projectVo.getMoneyInfo().setCostTime(anhuiMoneyinfo.getCollectionTime()+"");
                }else{
                    projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
+
+
 //                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
                    //代收金额添加
 //                   String[] collectionMoney = anhuiMoneyinfo.getCollectionMoney().split(",");

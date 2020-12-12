@@ -63,7 +63,7 @@ public interface FileInfoMapper extends Mapper<FileInfo> {
                     "SET\n" +
                     "status = '1'\n" +
                     "WHERE\n" +
-                    "user_id = #{key}"
+                    "plat_code = #{key}"
     )
     void deleteOldFileList(@Param("key") String key);
 

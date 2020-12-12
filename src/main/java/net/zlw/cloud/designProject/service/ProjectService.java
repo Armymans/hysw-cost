@@ -2103,11 +2103,13 @@ public class ProjectService {
         if (wujiangMoneyInfo != null) {
             String[] split = wujiangMoneyInfo.getCollectionMoney().split(",");
             Integer count = 1;
-            CollectionMoney collectionMoney = new CollectionMoney();
             for (String money : split) {
+                CollectionMoney collectionMoney = new CollectionMoney();
                 collectionMoney.setId("第" + (count) + "次收款");
                 collectionMoney.setMoney(money);
+                collectionMoney.setCollectionTime(wujiangMoneyInfo.getCollectionTime());
                 collectionMonies.add(collectionMoney);
+
                 count++;
             }
         }
@@ -2128,11 +2130,6 @@ public class ProjectService {
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
             Example example = new Example(AnhuiMoneyinfo.class);
             Example.Criteria c = example.createCriteria();
-            anhuiMoneyinfo.setId(uuid);
-            anhuiMoneyinfo.setFounderId(loginUser.getId());
-            anhuiMoneyinfo.setCompanyId(loginUser.getCompanyId());
-            anhuiMoneyinfo.setStatus("0");
-            anhuiMoneyinfo.setCreateTime(simpleDateFormat.format(new Date()));
 
             //根据设计表id 查询数据取出代收金额
             c.andEqualTo("baseProjectId", anhuiMoneyinfo.getBaseProjectId());
@@ -2153,22 +2150,36 @@ public class ProjectService {
                         //同时返回标识 改账单已支付完成
                         designInfoMapper.updateFinalAccount(anhuiMoneyinfo.getBaseProjectId());
                     }
+                    anhuiMoneyinfo.setId(uuid);
+                    anhuiMoneyinfo.setFounderId(loginUser.getId());
+                    anhuiMoneyinfo.setCompanyId(loginUser.getCompanyId());
+                    anhuiMoneyinfo.setStatus("0");
+                    anhuiMoneyinfo.setCreateTime(simpleDateFormat.format(new Date()));
                     anhuiMoneyinfoMapper.insert(anhuiMoneyinfo);
                 } else {
                     String collectionMoney = anhuiMoneyinfo1.getCollectionMoney();
                     //若果不是说明第一次添加
-                    anhuiMoneyinfo.setCollectionMoney(officialReceipts+collectionMoney + ",");
+                    anhuiMoneyinfo1.setCollectionMoney(collectionMoney +officialReceipts+ ",");
                     String[] split = collectionMoney.split(",");
                     Double total = 0.0;
                     for (String s : split) {
                         total += Double.parseDouble(s);
                     }
-                    anhuiMoneyinfo.setTotalMoney(new BigDecimal(total));
-
-                    anhuiMoneyinfoMapper.updateByPrimaryKeySelective(anhuiMoneyinfo);
+                    anhuiMoneyinfo1.setTotalMoney(new BigDecimal(total));
+                    //如果代收金额超过或者等于 应收金额后
+                    if (anhuiMoneyinfo1.getRevenue().compareTo(anhuiMoneyinfo1.getTotalMoney()) <= 0) {
+                        //同时返回标识 改账单已支付完成
+                        designInfoMapper.updateFinalAccount(anhuiMoneyinfo1.getBaseProjectId());
+                    }
+                    anhuiMoneyinfoMapper.updateByPrimaryKeySelective(anhuiMoneyinfo1);
                 }
             } else {
                 //如果是实收 则直接添加到表中
+                anhuiMoneyinfo.setId(uuid);
+                anhuiMoneyinfo.setFounderId(loginUser.getId());
+                anhuiMoneyinfo.setCompanyId(loginUser.getCompanyId());
+                anhuiMoneyinfo.setStatus("0");
+                anhuiMoneyinfo.setCreateTime(simpleDateFormat.format(new Date()));
                 anhuiMoneyinfoMapper.insert(anhuiMoneyinfo);
                 //同时返回标识 改账单已支付完成
                 designInfoMapper.updateFinalAccount(anhuiMoneyinfo.getBaseProjectId());
@@ -2253,10 +2264,6 @@ public class ProjectService {
             Example example = new Example(WujiangMoneyInfo.class);
             Example.Criteria c = example.createCriteria();
 
-            wujiangMoneyInfo.setId(uuid);
-            wujiangMoneyInfo.setStatus("0");
-            wujiangMoneyInfo.setCreateTime(data);
-
             //根据设计表id 查询数据取出代收金额
             c.andEqualTo("baseProjectId", wujiangMoneyInfo.getBaseProjectId());
             if ("1".equals(wujiangMoneyInfo.getPayTerm())) {
@@ -2276,21 +2283,35 @@ public class ProjectService {
                         //同时返回标识 改账单已支付完成
                         designInfoMapper.updateFinalAccount(wujiangMoneyInfo.getBaseProjectId());
                     }
+                    wujiangMoneyInfo.setId(uuid);
+                    wujiangMoneyInfo.setStatus("0");
+                    wujiangMoneyInfo.setCreateTime(data);
                     wujiangMoneyInfoMapper.insert(wujiangMoneyInfo);
                 } else {
                     String collectionMoney = wujiangMoneyInfo1.getCollectionMoney();
                     //若果不是说明第一次添加
-                    wujiangMoneyInfo.setCollectionMoney(officialReceipts+collectionMoney + ",");
-                    String[] split = collectionMoney.split(",");
+                    String s1 = officialReceipts.toString();
+                    wujiangMoneyInfo1.setCollectionMoney(collectionMoney+s1+",");
+//                    String[] split = collectionMoney.split(",");
+                    String[] split = wujiangMoneyInfo1.getCollectionMoney().split(",");
                     Double total = 0.0;
                     for (String s : split) {
                         total += Double.parseDouble(s);
                     }
-                    wujiangMoneyInfo.setTotalMoney(new BigDecimal(total));
+                    wujiangMoneyInfo1.setTotalMoney(new BigDecimal(total));
+                    //如果代收金额超过或者等于 应收金额后
+                    if (wujiangMoneyInfo1.getRevenue().compareTo(wujiangMoneyInfo1.getTotalMoney()) <= 0) {
+                        //同时返回标识 改账单已支付完成
+                        designInfoMapper.updateFinalAccount(wujiangMoneyInfo1.getBaseProjectId());
+                    }
 
-                    wujiangMoneyInfoMapper.updateByPrimaryKeySelective(wujiangMoneyInfo);
+                    wujiangMoneyInfoMapper.updateByPrimaryKeySelective(wujiangMoneyInfo1);
+//                    wujiangMoneyInfoMapper.updateByPrimaryKey(wujiangMoneyInfo);
                 }
             } else {
+                wujiangMoneyInfo.setId(uuid);
+                wujiangMoneyInfo.setStatus("0");
+                wujiangMoneyInfo.setCreateTime(data);
                 //如果是实收 则直接添加到表中
                 wujiangMoneyInfoMapper.insert(wujiangMoneyInfo);
                 //同时返回标识 改账单已支付完成

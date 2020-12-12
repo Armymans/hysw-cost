@@ -6,4 +6,5 @@ import lombok.Data;
 public class CollectionMoney {
     private String id;
     private String money;
+    private String collectionTime;
 }
