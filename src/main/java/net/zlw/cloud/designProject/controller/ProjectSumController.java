@@ -861,6 +861,24 @@ public class ProjectSumController extends BaseController {
      * @param costVo2
      * @return
      */
+    @RequestMapping(value = "/api/projectCount/designCountCensus2",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> designCountCensus2(CostVo2 costVo2){
+        Integer designInfoCount = projectSumService.designInfoCount(costVo2);
+        Integer designChangeInfoCount = projectSumService.designChangeInfoCount(costVo2);
+        String josn =
+                "[" +
+                        "{\"value1\":"+designInfoCount+",\"name1\":\"未变更项目\"}," +
+                        "{\"value1\":"+designChangeInfoCount+",name1:\"变更项目'\"}," +
+                        "]";
+        JSONArray objects = JSON.parseArray(josn);
+        return RestUtil.success(objects);
+    }
+
+    /**
+     *设计变更分析
+     * @param costVo2
+     * @return
+     */
     @RequestMapping(value = "/api/projectCount/designCountCensus",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> designCountCensus(CostVo2 costVo2){
         Integer designInfoCount = projectSumService.designInfoCount(costVo2);
