@@ -229,6 +229,9 @@ public class FileInfoController extends BaseController {
         fileInfo.setPlatCode(code);
         fileInfo.setUpdateTime(DateUtil.getDateTime());
         fileInfoService.updateFileName(fileInfo);
+
+
+
         return RestUtil.success("修改成功");
     }
 

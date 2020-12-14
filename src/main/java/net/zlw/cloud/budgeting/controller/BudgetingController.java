@@ -4,22 +4,32 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
+import net.tec.cloud.common.util.DateUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.excel.dao.PartTableQuantitiesDao;
+import net.zlw.cloud.excel.dao.SummaryShenjiDao;
+import net.zlw.cloud.excel.dao.SummaryUnitsDao;
+import net.zlw.cloud.excel.model.PartTableQuantities;
+import net.zlw.cloud.excel.model.SummaryShenji;
+import net.zlw.cloud.excel.model.SummaryUnits;
+import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
+import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -41,6 +51,18 @@ public class BudgetingController extends BaseController {
     private AuditInfoDao auditInfoDao;
     @Resource
     private MkyUserMapper mkyUserMapper;
+    @Resource
+    private FileInfoService fileInfoService;
+    @Resource
+    private BudgetCoverService budgetCoverService;
+    @Resource
+    private SummaryShenjiDao summaryShenjiDao;
+    @Resource
+    private SummaryUnitsDao summaryUnitsDaol;
+    @Resource
+    private PartTableQuantitiesDao partTableQuantitiesDao;
+
+
 
     //添加预算信息
 //    @PostMapping("/addBudgeting")
@@ -245,6 +267,51 @@ public class BudgetingController extends BaseController {
     public Map<String,Object> findPreparePeople(){
       List<MkyUser> list =   budgetingService.findPreparePeople(getLoginUser().getId());
       return RestUtil.success(list);
+    }
+
+    //预算文件上传()预算汇总表
+
+    @RequestMapping(value = "/updateFileName", method = RequestMethod.POST)
+    public Map<String, Object> updateFileName(@RequestParam(name = "code") String code, @RequestParam(name = "id") String id, @RequestParam(name = "name") String name, @RequestParam(name = "remark") String remark, @RequestParam(name = "rtype") String rtype) {
+        FileInfo fileInfo = fileInfoService.getByKey(id);
+        fileInfo.setName(name);
+        fileInfo.setRemark(remark);
+        fileInfo.setPlatCode(code);
+        fileInfo.setUpdateTime(DateUtil.getDateTime());
+        fileInfoService.updateFileName(fileInfo);
+
+        //新增
+        if (rtype.equals("1")){
+            budgetCoverService.addbudgetAll(id);
+        }else {
+            Example example = new Example(SummaryShenji.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("budgetId",id);
+            criteria.andEqualTo("delFlag","0");
+            List<SummaryShenji> summaryShenjis = summaryShenjiDao.selectByExample(example);
+            for (SummaryShenji summaryShenji : summaryShenjis) {
+                summaryShenjiDao.deleteByPrimaryKey(summaryShenji);
+            }
+            Example example1 = new Example(SummaryUnits.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("budgetingId",id);
+            criteria1.andEqualTo("delFlag","0");
+            List<SummaryUnits> summaryUnits = summaryUnitsDaol.selectByExample(example1);
+            for (SummaryUnits summaryUnit : summaryUnits) {
+                summaryUnitsDaol.deleteByPrimaryKey(summaryUnit);
+            }
+            Example example2 = new Example(PartTableQuantities.class);
+            Example.Criteria criteria2 = example2.createCriteria();
+            criteria2.andEqualTo("foreignKey",id);
+            criteria2.andEqualTo("delFlag","0");
+            List<PartTableQuantities> partTableQuantities = partTableQuantitiesDao.selectByExample(example2);
+            for (PartTableQuantities partTableQuantity : partTableQuantities) {
+                partTableQuantitiesDao.deleteByPrimaryKey(partTableQuantity);
+            }
+            budgetCoverService.addbudgetAll(id);
+        }
+
+        return RestUtil.success("修改成功");
     }
 
 }

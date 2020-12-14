@@ -116,6 +116,7 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
             summaryShenji.setAmountCostCapital(((List<String>) read.get(6)).get(4));
             summaryShenji.setUnit(((List<String>) read.get(7)).get(3));
             summaryShenji.setAuditor(s);
+            summaryShenji.setBudgetId(id);
             summaryShenji.setPreparePeople(s2);
             summaryShenji.setCompileTime(s1);
             summaryShenji.setDelFlag("0");
@@ -128,7 +129,7 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     }
 
     @Override
-    public void summaryUnitsImport() {
+    public void summaryUnitsImport(String id) {
         String url = "E:\\正量\\新建文件夹\\预算汇总表-神机（安徽）.xlsx";
         try {
             FileInputStream fileInputStream = new FileInputStream(new File(url));
@@ -147,6 +148,7 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
                     summaryUnits.setId(UUID.randomUUID().toString().replace("-",""));
                     summaryUnits.setSerialNumber(((List<String>) read.get(i)).get(0));
                     summaryUnits.setProjectName(projectName);
+                    summaryUnits.setBudgetingId(id);
                     summaryUnits.setAggregateContent(((List<String>) read.get(i)).get(1));
                     summaryUnits.setDelFlag("0");
                     if (((List<String>) read.get(i)).get(2)!=null){
@@ -665,6 +667,14 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
                 settlementReportTextReductionReasonsDao.insertSelective(settReductionList);
             }
         }
+    }
+
+    @Override
+    public void addbudgetAll(String id) {
+
+        coverImport(id);
+        summaryUnitsImport(id);
+        partTableQuantitiesImport(id);
     }
 
 

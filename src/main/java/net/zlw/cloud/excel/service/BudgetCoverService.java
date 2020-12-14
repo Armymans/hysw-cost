@@ -8,7 +8,7 @@ import net.zlw.cloud.excelLook.domain.SettlementDirectory;
 public interface BudgetCoverService {
     void coverImport(String id);
 
-    void summaryUnitsImport();
+    void summaryUnitsImport(String id);
 
 
     void partTableQuantitiesImport(String id);
@@ -32,4 +32,6 @@ public interface BudgetCoverService {
     void updateDirectory(SettlementDirectory settlementDirectory);
 
     void updateReportContent(ReportTextVo reportTextVo);
+
+    void addbudgetAll(String id);
 }

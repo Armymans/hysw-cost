@@ -27,8 +27,8 @@ public class BudgetCoverController {
     }
     //汇总表-神机 单位汇总表导入
     @RequestMapping(value = "/budgetCover/summaryUnitsImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> summaryUnitsImport(){
-        budgetCoverService.summaryUnitsImport();
+    public Map<String,Object> summaryUnitsImport(@RequestParam(name = "id") String id){
+        budgetCoverService.summaryUnitsImport(id);
         return RestUtil.success();
     }
     //汇总表-神机 分部分项工程量清单计价表   /    上家结算汇总表 分部分项目工程量清单计价表
@@ -95,6 +95,13 @@ public class BudgetCoverController {
     @RequestMapping(value = "/budgetCover/updateReportContent",method = {RequestMethod.POST,RequestMethod.GET})
     public Map<String,Object> updateReportContent(@RequestBody ReportTextVo reportTextVo){
         budgetCoverService.updateReportContent(reportTextVo);
+        return RestUtil.success();
+    }
+
+    //预算汇总表
+    @RequestMapping(value = "/budgetCover/addbudgetAll",method = {RequestMethod.POST,RequestMethod.GET})
+    public Map<String,Object> addbudgetAll(@RequestParam(name = "id") String id){
+        budgetCoverService.addbudgetAll(id);
         return RestUtil.success();
     }
 }

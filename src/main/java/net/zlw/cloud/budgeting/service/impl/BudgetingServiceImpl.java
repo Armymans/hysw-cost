@@ -19,6 +19,7 @@ import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
 import net.zlw.cloud.designProject.model.InCome;
 import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.designProject.service.ProjectSumService;
+import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.mapper.MessageNotificationDao;
@@ -111,6 +112,9 @@ public class BudgetingServiceImpl implements BudgetingService {
     private MkyUserMapper mkyUserMapper;
     @Resource
     private ProgressPaymentInformationDao progressPaymentInformationDao;
+    @Resource
+    private BudgetCoverService budgetCoverService;
+
 
 
     @Value("${audit.wujiang.sheji.designHead}")
