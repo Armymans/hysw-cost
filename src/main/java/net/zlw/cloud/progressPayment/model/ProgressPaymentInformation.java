@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
@@ -79,6 +80,6 @@ public class ProgressPaymentInformation implements Serializable {
     private String delFlag;
     @Column(name = "change_num")
     private Integer changeNum;
-
+    @Transient
     private String typeS;
 }
