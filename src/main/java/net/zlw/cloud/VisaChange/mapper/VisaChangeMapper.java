@@ -187,7 +187,8 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "     bt.del_flag = '0' and    " +
             "     v.state = '0' and    " +
             "     vv.state = '0' and " +
-            "     v2.state = '0'  ")
+            "     v2.state = '0'  " +
+            " order by a.update_time desc ")
     List<VisaChangeListVo> findAllVisaCheckLeader(PageVo pageVo);
 
     @Select("select  " +
@@ -287,7 +288,8 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            bt.del_flag = '0' and   " +
             "            v.state = '0' and   " +
             "            vv.state = '0' and " +
-            "            v2.state = '0' ")
+            "            v2.state = '0' " +
+            " order by a.update_time desc ")
     List<VisaChangeListVo> findAllVisaCheckStaff(PageVo pageVo);
 
     @Select("  select  " +
@@ -385,7 +387,8 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            bt.del_flag = '0' and   " +
             "            v.state = '0' and   " +
             "            vv.state = '0' and " +
-            "            v2.state = '0' ")
+            "            v2.state = '0' " +
+            "            order by v2.create_time desc ")
     List<VisaChangeListVo> findAllVisaProcessing(PageVo pageVo);
 
     @Select("select  " +
@@ -481,6 +484,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            bt.del_flag = '0' and   " +
             "            IFNULL(v.state,'0') = '0' and   " +
             "            vv.state = '0' and " +
-            "            IFNULL(v2.state,'0') = '0' ")
+            "            IFNULL(v2.state,'0') = '0' " +
+            "            order by b2.create_time desc ")
     List<VisaChangeListVo> findAllVisaSuccess(PageVo pageVo);
 }
