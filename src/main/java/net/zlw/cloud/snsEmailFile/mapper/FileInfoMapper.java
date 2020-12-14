@@ -79,4 +79,9 @@ public interface FileInfoMapper extends Mapper<FileInfo> {
             " AND fi.type = #{type} and fi.plat_code = #{key}")
     FileInfo findByCodeAndType(@Param("type") String type,@Param("key") String key);
 
+    @Select("SELECT * FROM file_info where status = '0' and plat_code = #{id} and type ='jdkzfbqzfxx'")
+    List<FileInfo> deleteOneByF(@Param("id")String id);
+
+    @Select("SELECT * FROM file_info where status = '1' and plat_code = #{id} and type ='jdkzfbqzfxx' ORDER BY update_time desc limit 1")
+    List<FileInfo> reductionFileF(String id);
 }

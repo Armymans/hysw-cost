@@ -3,6 +3,7 @@ package net.zlw.cloud.progressPayment.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
+import net.tec.cloud.common.util.DateUtil;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.designProject.mapper.OutSourceMapper;
@@ -431,6 +432,16 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             baseProjectVo.setAmountOutsourcing(paymentInformation.getAmountOutsourcing());
             baseProjectVo.setSituation(paymentInformation.getSituation());
             baseProjectVo.setRemarkes1(paymentInformation.getRemarkes());
+        }else{
+            //第二次进度款支付需要删除上次支付附件
+            List<FileInfo> fileInfo = fileInfoMapper.deleteOneByF(id);
+            if(fileInfo.size() > 0){
+                for (FileInfo info : fileInfo) {
+                    info.setStatus("1");
+                    info.setUpdateTime(DateUtil.getDateTime());
+                    fileInfoMapper.updateByPrimaryKeySelective(info);
+                }
+            }
         }
 
 //        Example example2 = new Example(AuditInfo.class);

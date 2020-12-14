@@ -99,4 +99,15 @@ public class FileInfoService {
             e.printStackTrace();
         }
     }
+
+    public void reductionFile(String id) {
+        List<FileInfo> fileInfoList = fileInfoMapper.reductionFileF(id);
+        if(fileInfoList.size() > 0){
+            for (FileInfo fileInfo : fileInfoList) {
+                fileInfo.setStatus("0");
+                fileInfo.setUpdateTime(DateUtil.getDateTime());
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
+        }
+    }
 }

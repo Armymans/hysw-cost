@@ -84,6 +84,16 @@ public class FileInfoController extends BaseController {
     }
 
     /**
+     * 点击返回按钮 还原 文件
+     * @return
+     */
+    @RequestMapping(value = "/reductionFile", method = RequestMethod.POST)
+    public Map<String,Object> reductionFile(String id){
+        fileInfoService.reductionFile(id);
+        return RestUtil.success();
+    }
+
+    /**
      * @Author Armyman
      * @Description //上传文件
      * @Date 11:28 2020/10/10
