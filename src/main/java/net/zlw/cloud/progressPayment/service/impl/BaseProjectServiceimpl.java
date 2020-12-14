@@ -22,7 +22,6 @@ import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
-import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
@@ -604,7 +603,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     progressPaymentInformation.setRemarkes(baseProject.getRemarkes());
                     progressPaymentInformation.setBaseProjectId(project.getId());
                     progressPaymentInformation.setCreateTime(format);
-//                    progressPaymentInformation.setFounderId(loginUser.getId());
+                    progressPaymentInformation.setFounderId(loginUser.getId());
                     progressPaymentInformation.setDelFlag("0");
                     progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
                     progressPaymentInformationDao.insertSelective(progressPaymentInformation);
@@ -621,11 +620,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(progressPaymentInformation.getCurrentPaymentInformation()));
 
                     }
-                    if (progressPaymentTotalPayment.getCumulativeNumberPayment()==null){
-                        progressPaymentTotalPayment.setCumulativeNumberPayment(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes()));
-                    }else {
-                        progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes())));
-                    }
+                    progressPaymentTotalPayment.setCumulativeNumberPayment(new BigDecimal(paymentInformation.getChangeNum()+1));
+//                    if (progressPaymentTotalPayment.getCumulativeNumberPayment()==null){
+//                        progressPaymentTotalPayment.setCumulativeNumberPayment(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes()));
+//                    }else {
+//                        progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes())));
+//                    }
                     if (progressPaymentTotalPayment.getAccumulativePaymentProportion()==null){
                         progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
                     }else{
@@ -638,7 +638,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo.setAuditResult("0");
                     auditInfo.setAuditType("0");
                     auditInfo.setAuditorId(baseProject.getAuditorId());
-//                    auditInfo.setFounderId(loginUser.getId());
+                    auditInfo.setFounderId(loginUser.getId());
                     auditInfo.setStatus("0");
                     auditInfo.setCreateTime(format);
                     auditInfoDao.insertSelective(auditInfo);
