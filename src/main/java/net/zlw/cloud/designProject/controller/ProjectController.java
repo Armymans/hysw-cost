@@ -949,7 +949,12 @@ public class ProjectController extends BaseController {
         if(designInfo==null){
             BaseProject baseProject = projectService.BaseProjectByid(id);
             DesignInfo designInfo1 = projectService.designInfoByid(baseProject.getId());
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
             designInfo = designInfo1;
+            if (memberManage != null){
+                designInfo.setDesigner(memberManage.getMemberName());
+            }
+        }else {
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
             if (memberManage != null){
                 designInfo.setDesigner(memberManage.getMemberName());
