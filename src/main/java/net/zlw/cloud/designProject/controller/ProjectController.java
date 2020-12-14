@@ -980,9 +980,17 @@ public class ProjectController extends BaseController {
                    projectVo.getMoneyInfo().setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts()+"");
                    projectVo.getMoneyInfo().setCostTime(anhuiMoneyinfo.getCollectionTime()+"");
                }else{
+                   // 总金额累加
+                   String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
+                   String[] split = collectionMoney.split(",");
+                   BigDecimal num = new BigDecimal(0);
+                   if (split != null){
+                       for (String s : split) {
+                           num = num.add(new BigDecimal(s));
+                       }
+                   }
+                   anhuiMoneyinfo.setOfficialReceipts(num);
                    projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
-
-
 //                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
                    //代收金额添加
 //                   String[] collectionMoney = anhuiMoneyinfo.getCollectionMoney().split(",");
@@ -1101,13 +1109,22 @@ public class ProjectController extends BaseController {
                     projectVo.getMoneyInfo().setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts()+"");
                     projectVo.getMoneyInfo().setCostTime(wujiangMoneyInfo.getCollectionTime());
                 }else{
-
+                    // 总金额累加
+                    String collectionMoney = wujiangMoneyInfo.getCollectionMoney();
+                    String[] split = collectionMoney.split(",");
+                    BigDecimal num = new BigDecimal(0);
+                    if (split != null){
+                        for (String s : split) {
+                            num = num.add(new BigDecimal(s));
+                        }
+                    }
+                   wujiangMoneyInfo.setOfficialReceipts(num);
                     projectVo.setWujiangMoneyInfo(wujiangMoneyInfo);
 //                    projectVo.getMoneyInfo().setRevenue(wujiangMoneyInfo.getRevenue()+"");
 
 
                     //代收金额
-                    String[] collectionMoney = wujiangMoneyInfo.getCollectionMoney().split(",");
+//                    String[] collectionMoney = wujiangMoneyInfo.getCollectionMoney().split(",");
 //                    if("5".equals(collectionMoney.length)){
 //                        projectVo.getMoneyInfo().setCollection01(new BigDecimal(collectionMoney[0]));
 //                        projectVo.getMoneyInfo().setCollection02(new BigDecimal(collectionMoney[1]));
