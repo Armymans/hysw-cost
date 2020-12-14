@@ -950,6 +950,10 @@ public class ProjectController extends BaseController {
             BaseProject baseProject = projectService.BaseProjectByid(id);
             DesignInfo designInfo1 = projectService.designInfoByid(baseProject.getId());
             designInfo = designInfo1;
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+            if (memberManage != null){
+                designInfo.setDesigner(memberManage.getMemberName());
+            }
         }
         projectVo.setDesignInfo(designInfo);
         //根据设计信息查找基本信息
