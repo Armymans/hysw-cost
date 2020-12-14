@@ -320,7 +320,7 @@ public class ProjectService {
                                     }
                                 }
                                 designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-//                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                             }
@@ -443,7 +443,7 @@ public class ProjectService {
                                         }
                                     }
                                     designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-//                                    designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                                    designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                     designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                     designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                                 }
@@ -581,7 +581,7 @@ public class ProjectService {
                                     }
                                 }
                                 designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-//                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                             }
@@ -685,7 +685,7 @@ public class ProjectService {
                                     }
                                 }
                                 designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
-//                                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                                 designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                                 designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
                             }
@@ -708,7 +708,7 @@ public class ProjectService {
                                     }
                                 }
                                 designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-//                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                             }
@@ -845,7 +845,7 @@ public class ProjectService {
                                 }
                             }
                             designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-//                            designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                            designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                             designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                             designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                         }
