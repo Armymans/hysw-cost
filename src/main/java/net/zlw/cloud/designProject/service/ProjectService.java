@@ -285,8 +285,19 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                             if (anhuiMoneyinfo != null) {
+                                String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
+                                if (collectionMoney != null) {
+                                    String[] split = collectionMoney.split(",");
+                                    BigDecimal num = new BigDecimal(0);
+                                    if (split != null) {
+                                        for (String s : split) {
+                                            num = num.add(new BigDecimal(s));
+                                        }
+                                        anhuiMoneyinfo.setOfficialReceipts(num);
+                                    }
+                                }
                                 designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+//                                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                                 designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                                 designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
                             }
@@ -297,8 +308,19 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                             if (wujiangMoneyInfo != null) {
+                                String collectionMoney = wujiangMoneyInfo.getCollectionMoney();
+                                if (collectionMoney != null) {
+                                    String[] split = collectionMoney.split(",");
+                                    BigDecimal num = new BigDecimal(0);
+                                    if (split != null) {
+                                        for (String s : split) {
+                                            num = num.add(new BigDecimal(s));
+                                        }
+                                        wujiangMoneyInfo.setOfficialReceipts(num);
+                                    }
+                                }
                                 designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+//                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                             }
@@ -386,8 +408,19 @@ public class ProjectService {
                                 c2.andEqualTo("baseProjectId", designInfo.getId());
                                 AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                                 if (anhuiMoneyinfo != null) {
+                                    String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
+                                    if (collectionMoney != null) {
+                                        String[] split = collectionMoney.split(",");
+                                        BigDecimal num = new BigDecimal(0);
+                                        if (split != null) {
+                                            for (String s : split) {
+                                                num = num.add(new BigDecimal(s));
+                                            }
+                                            anhuiMoneyinfo.setOfficialReceipts(num);
+                                        }
+                                    }
                                     designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                                    designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+//                                    designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                                     designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                                     designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
                                 }
@@ -398,8 +431,19 @@ public class ProjectService {
                                 c2.andEqualTo("baseProjectId", designInfo.getId());
                                 WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                                 if (wujiangMoneyInfo != null) {
+                                    String collectionMoney = wujiangMoneyInfo.getCollectionMoney();
+                                    if (collectionMoney != null) {
+                                        String[] split = collectionMoney.split(",");
+                                        BigDecimal num = new BigDecimal(0);
+                                        if (split != null) {
+                                            for (String s : split) {
+                                                num = num.add(new BigDecimal(s));
+                                            }
+                                            wujiangMoneyInfo.setOfficialReceipts(num);
+                                        }
+                                    }
                                     designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-                                    designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+//                                    designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                     designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                     designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                                 }
@@ -502,8 +546,19 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                             if (anhuiMoneyinfo != null) {
+                                String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
+                                if (collectionMoney != null) {
+                                    String[] split = collectionMoney.split(",");
+                                    BigDecimal num = new BigDecimal(0);
+                                    if (split != null) {
+                                        for (String s : split) {
+                                            num = num.add(new BigDecimal(s));
+                                        }
+                                        anhuiMoneyinfo.setOfficialReceipts(num);
+                                    }
+                                }
                                 designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+//                                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                                 designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                                 designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
                             }
@@ -514,8 +569,19 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                             if (wujiangMoneyInfo != null) {
+                                String collectionMoney = wujiangMoneyInfo.getCollectionMoney();
+                                if (collectionMoney != null) {
+                                    String[] split = collectionMoney.split(",");
+                                    BigDecimal num = new BigDecimal(0);
+                                    if (split != null) {
+                                        for (String s : split) {
+                                            num = num.add(new BigDecimal(s));
+                                        }
+                                        wujiangMoneyInfo.setOfficialReceipts(num);
+                                    }
+                                }
                                 designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+//                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                             }
@@ -607,8 +673,19 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                             if (anhuiMoneyinfo != null) {
+                                String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
+                                if (collectionMoney != null) {
+                                    String[] split = collectionMoney.split(",");
+                                    BigDecimal num = new BigDecimal(0);
+                                    if (split != null) {
+                                        for (String s : split) {
+                                            num = num.add(new BigDecimal(s));
+                                        }
+                                        anhuiMoneyinfo.setOfficialReceipts(num);
+                                    }
+                                }
                                 designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+//                                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                                 designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                                 designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
                             }
@@ -619,8 +696,19 @@ public class ProjectService {
                             c2.andEqualTo("baseProjectId", designInfo.getId());
                             WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                             if (wujiangMoneyInfo != null) {
+                                String collectionMoney = wujiangMoneyInfo.getCollectionMoney();
+                                if (collectionMoney != null) {
+                                    String[] split = collectionMoney.split(",");
+                                    BigDecimal num = new BigDecimal(0);
+                                    if (split != null) {
+                                        for (String s : split) {
+                                            num = num.add(new BigDecimal(s));
+                                        }
+                                        wujiangMoneyInfo.setOfficialReceipts(num);
+                                    }
+                                }
                                 designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+//                                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                             }
@@ -722,8 +810,19 @@ public class ProjectService {
                         c2.andEqualTo("baseProjectId", designInfo.getId());
                         AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(anhui);
                         if (anhuiMoneyinfo != null) {
+                            String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
+                            if (collectionMoney != null) {
+                                String[] split = collectionMoney.split(",");
+                                BigDecimal num = new BigDecimal(0);
+                                if (split != null) {
+                                    for (String s : split) {
+                                        num = num.add(new BigDecimal(s));
+                                    }
+                                    anhuiMoneyinfo.setOfficialReceipts(num);
+                                }
+                            }
                             designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                            designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+//                            designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
                             designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                             designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
                         }
@@ -734,8 +833,19 @@ public class ProjectService {
                         c2.andEqualTo("baseProjectId", designInfo.getId());
                         WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(wujiang);
                         if (wujiangMoneyInfo != null) {
+                            String collectionMoney = wujiangMoneyInfo.getCollectionMoney();
+                            if (collectionMoney != null) {
+                                String[] split = collectionMoney.split(",");
+                                BigDecimal num = new BigDecimal(0);
+                                if (split != null) {
+                                    for (String s : split) {
+                                        num = num.add(new BigDecimal(s));
+                                    }
+                                    wujiangMoneyInfo.setOfficialReceipts(num);
+                                }
+                            }
                             designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-                            designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+//                            designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                             designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                             designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                         }
