@@ -32,7 +32,7 @@ public class MaintenanceProjectInformationReturnVo {
     private String customerName;
     private String constructionUnitName;
     private String waterAddress;
-    private String contractAmount;
+    private BigDecimal contractAmount;
     private String projectAddress;
     private String compileTime;
     private String founderId;
