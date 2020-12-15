@@ -150,8 +150,8 @@ public class WarningDetailsService {
 
         //查询预警信息
         WarningDetails warningDetails = warningDetailsMapper.selectByPrimaryKey(id);
-        warningDetails.setStatus("2");
-        warningDetailsMapper.updateByPrimaryKeySelective(warningDetails);
+//        warningDetails.setStatus("2");
+//        warningDetailsMapper.updateByPrimaryKeySelective(warningDetails);
         //获取审核信息
         Example example = new Example(AuditInfo.class);
         Example.Criteria c = example.createCriteria();
@@ -170,7 +170,11 @@ public class WarningDetailsService {
 
             if (auditInfo.getAuditorId()!=null){
                 if (auditInfo.getAuditorId().equals(loginUser.getId())){
-                    warningDetails.setCheckAudit("0");
+                    if (auditInfo.getAuditResult().equals("已通过")){
+                        warningDetails.setCheckAudit("1");
+                    }else{
+                        warningDetails.setCheckAudit("0");
+                    }
                 }else{
                     warningDetails.setCheckAudit("1");
                 }
@@ -208,12 +212,31 @@ public class WarningDetailsService {
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
         if (warningDetails != null) {
             if ("1".equals(warningDetailAndAuditInfoVo.getAuditResult())) {
-                warningDetails.setStatus("5");
+                Example example1 = new Example(WarningDetails.class);
+                Example.Criteria c = example1.createCriteria();
+                c.andEqualTo("baseId",warningDetails.getBaseId());
+                c.andEqualTo("delFlag","0");
+                List<WarningDetails> warningDetails1 = warningDetailsMapper.selectByExample(example1);
+                for (WarningDetails details : warningDetails1) {
+                    details.setStatus("5");
+                    details.setUpdateTime(sdf.format(new Date()));
+                    warningDetailsMapper.updateByPrimaryKeySelective(details);
+                }
             }else{
-                warningDetails.setStatus("4");
+                Example example1 = new Example(WarningDetails.class);
+                Example.Criteria c = example1.createCriteria();
+                c.andEqualTo("baseId",warningDetails.getBaseId());
+                c.andEqualTo("delFlag","0");
+                List<WarningDetails> warningDetails1 = warningDetailsMapper.selectByExample(example1);
+                for (WarningDetails details : warningDetails1) {
+                    details.setStatus("4");
+                    details.setUpdateTime(sdf.format(new Date()));
+                    warningDetailsMapper.updateByPrimaryKeySelective(details);
+                }
+//                warningDetails.setStatus("4");
             }
-            warningDetails.setUpdateTime(sdf.format(new Date()));
-            warningDetailsMapper.updateByPrimaryKeySelective(warningDetails);
+//            warningDetails.setUpdateTime(sdf.format(new Date()));
+//            warningDetailsMapper.updateByPrimaryKeySelective(warningDetails);
         }
         if (auditInfo!=null){
             auditInfo.setAuditOpinion(warningDetailAndAuditInfoVo.getAuditOpinion());
