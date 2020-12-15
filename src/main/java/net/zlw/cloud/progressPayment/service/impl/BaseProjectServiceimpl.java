@@ -26,7 +26,9 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
+import net.zlw.cloud.warningDetails.model.DetailsVo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import net.zlw.cloud.warningDetails.service.WarningDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -77,6 +79,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Resource
     private CostUnitManagementMapper costUnitManagementMapper;
+
+    @Resource
+    private WarningDetailsService warningDetailsService;
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -243,6 +248,19 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     BigDecimal multiply = contractAmount.multiply(qi);
                     //如果累计支付金额大于合同金额的70%就发邮件和短信
                     if (totalMoney.compareTo(multiply) == 1) {
+
+                       if( baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")){
+
+                           DetailsVo detailsVo = new DetailsVo();
+                           detailsVo.setType("进度款超额");
+                           detailsVo.setDetails(project.getProjectName());
+                           detailsVo.setAuditId(baseProject.getAuditorId());
+                           detailsVo.setRiskNotification("您好,"+project.getProjectName()+"进度款超额");
+                           detailsVo.setBaseId(project.getId());
+                           warningDetailsService.addDetails(detailsVo,loginUser);
+                       }
+
+
                         // 部门领导罗均
                         MemberManage memberManage = memberManageDao.selectByPrimaryKey(whzjh);
                         String username = loginUser.getUsername();

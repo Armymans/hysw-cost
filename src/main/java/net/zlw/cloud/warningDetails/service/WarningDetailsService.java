@@ -6,6 +6,7 @@ import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.warningDetails.mapper.WarningDetailsMapper;
 import net.zlw.cloud.warningDetails.model.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -40,6 +41,24 @@ public class WarningDetailsService {
     @Resource
     private MemberManageDao memberManageDao;
 
+    @Value("${audit.wujiang.sheji.designHead}")
+    private String wjsjh;
+    @Value("${audit.wujiang.sheji.designManager}")
+    private String wjsjm;
+    @Value("${audit.wujiang.zaojia.costHead}")
+    private String wjzjh;
+    @Value("${audit.wujiang.zaojia.costManager}")
+    private String wjzjm;
+
+    @Value("${audit.wuhu.sheji.designHead}")
+    private String whsjh;
+    @Value("${audit.wuhu.sheji.designManager}")
+    private String whsjm;
+    @Value("${audit.wuhu.zaojia.costHead}")
+    private String whzjh;
+    @Value("${audit.wuhu.zaojia.costManager}")
+    private String whzjm;
+
 
 
     /**
@@ -68,25 +87,54 @@ public class WarningDetailsService {
      */
     public WarningDetails warningFindById(String id, String instructions, UserInfo userInfo) {
         WarningDetails warningDetails = findById(id);
-        warningDetails.setInstructions(instructions);
-        warningDetails.setStatus("3");
-        //更新预警信息
-        warningDetailsMapper.updateByPrimaryKey(warningDetails);
+        String baseId = warningDetails.getBaseId();
+        Example example = new Example(WarningDetails.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseId",baseId);
+        criteria.andEqualTo("delFlag","0");
+        List<WarningDetails> warningDetails1 = warningDetailsMapper.selectByExample(example);
+        for (WarningDetails details : warningDetails1) {
+            warningDetails.setInstructions(instructions);
+            warningDetails.setStatus("3");
+            //更新预警信息
+            warningDetailsMapper.updateByPrimaryKey(details);
+        }
         //查询审批人(部门负责人)
-        MemberManage memberManage = manageDao.selectAdmin();
-        //存审批
-        AuditInfo auditInfo = new AuditInfo();
-        auditInfo.setId(UUID.randomUUID().toString());
-        auditInfo.setBaseProjectId(id);
-        auditInfo.setAuditResult("0");
-        auditInfo.setAuditType("risk");
-        auditInfo.setAuditorId(memberManage.getId());
-        auditInfo.setStatus("0");
-        String date = sdf.format(new Date());
-        auditInfo.setCreateTime(date);
-        auditInfo.setFounderId("user310");
-        auditInfo.setCompanyId("user88");
-        auditInfoDao.insert(auditInfo);
+//        MemberManage memberManage = manageDao.selectAdmin();
+        Example example1 = new Example(AuditInfo.class);
+        Example.Criteria criteria1 = example1.createCriteria();
+        criteria1.andEqualTo("auditorId",baseId+"#");
+        criteria1.andEqualTo("status","0");
+        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example1);
+        if (auditInfo1 == null){
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userInfo.getId());
+            String auditid = "";
+            if (memberManage.getWorkType().equals("1")){
+                auditid = whzjh;
+            }else if(memberManage.getWorkType().equals("2")){
+                auditid = wjzjh;
+            }
+            //存审批
+            AuditInfo auditInfo = new AuditInfo();
+            auditInfo.setId(UUID.randomUUID().toString());
+            auditInfo.setBaseProjectId(baseId+"#");
+            auditInfo.setAuditResult("0");
+            auditInfo.setAuditType("risk");
+            auditInfo.setAuditorId(auditid);
+            auditInfo.setStatus("0");
+            String date = sdf.format(new Date());
+            auditInfo.setCreateTime(date);
+            auditInfo.setFounderId(userInfo.getId());
+//        auditInfo.setCompanyId("user88");
+            auditInfoDao.insert(auditInfo);
+        }else if(auditInfo1.getAuditResult().equals("2")){
+            auditInfo1.setAuditResult("0");
+            auditInfo1.setAuditTime("");
+            auditInfo1.setAuditOpinion("");
+            auditInfoDao.updateByPrimaryKeySelective(auditInfo1);
+        }
+
+
         return warningDetails;
     }
 
@@ -104,30 +152,28 @@ public class WarningDetailsService {
         warningDetails.setStatus("2");
         warningDetailsMapper.updateByPrimaryKeySelective(warningDetails);
         //获取审核信息
-        AuditInfo auditInfo = auditInfoDao.findByTypeAndAuditorIdAndAuditResult(loginUser.getId(), id);
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",warningDetails.getBaseId()+"#");
+        c.andEqualTo("status","0");
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
         //未审核
         if (auditInfo != null) {
-            warningDetails.setAuditInfo(auditInfo);
-        } else {
-            //已审核或者未提交说明
-            auditInfo = auditInfoDao.findByTypeAnd(id);
-            if(auditInfo != null){
-                if ("0".equals(auditInfo.getAuditResult())) {
-                    auditInfo.setAuditResult("未审批");
-                }
-                if ("1".equals(auditInfo.getAuditResult())) {
-                    auditInfo.setAuditResult("通过");
-                }
-                if ("2".equals(auditInfo.getAuditResult())){
-                    auditInfo.setAuditResult("未通过");
-                }
-                MemberManage memberManage = manageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-                auditInfo.setAuditorId(memberManage.getMemberName());
-            }else{
-                auditInfo = new AuditInfo();
+            if (auditInfo.getAuditResult().equals("0")){
+                auditInfo.setAuditResult("待审核");
+            }else if(auditInfo.getAuditResult().equals("1")){
+                auditInfo.setAuditResult("已通过");
+            }else if(auditInfo.getAuditResult().equals("2")){
+                auditInfo.setAuditResult("未通过");
             }
+
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+            if (memberManage!=null){
+                auditInfo.setAuditorId(memberManage.getMemberName());
+            }
+            warningDetails.setAuditInfo(auditInfo);
         }
-        warningDetails.setAuditInfo(auditInfo);
+
         if (auditInfo.getAuditorId()!=null){
             if (auditInfo.getAuditorId().equals(loginUser.getId())){
                 warningDetails.setCheckAudit("0");
@@ -144,7 +190,11 @@ public class WarningDetailsService {
 
     public void updateWarningDetails(WarningDetailAndAuditInfoVo warningDetailAndAuditInfoVo) {
         WarningDetails warningDetails = warningDetailsMapper.selectByPrimaryKey(warningDetailAndAuditInfoVo.getId());
-        AuditInfo auditInfo = auditInfoDao.selectByPrimaryKey(warningDetailAndAuditInfoVo.getAid());
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseProjectId",warningDetails.getBaseId()+"#");
+        criteria.andEqualTo("status","0");
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
         if (warningDetails != null) {
             if ("1".equals(warningDetailAndAuditInfoVo.getAuditResult())) {
                 warningDetails.setStatus("5");
@@ -190,7 +240,7 @@ public class WarningDetailsService {
             warningDetails.setSendTime(sim.format(new Date()));
             warningDetails.setTitle(detailsVo.getDetails());
             warningDetails.setRiskType(detailsVo.getType());
-            warningDetails.setRiskNotification(detailsVo.getDetails());
+            warningDetails.setRiskNotification(detailsVo.getRiskNotification());
             warningDetails.setStatus("1");
             warningDetails.setRecipientId(s);
             warningDetails.setCreateTime(sim.format(new Date()));

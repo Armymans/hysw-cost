@@ -48,6 +48,8 @@ public class WarningDetails {
     private String delFlag;
     @Column(name = "risk_time")
     private String riskTime;
+    @Column(name = "base_id")
+    private String baseId;
 
     @Transient
     private AuditInfo auditInfo;

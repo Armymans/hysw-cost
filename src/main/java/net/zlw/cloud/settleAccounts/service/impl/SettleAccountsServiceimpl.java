@@ -36,7 +36,9 @@ import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
+import net.zlw.cloud.warningDetails.model.DetailsVo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import net.zlw.cloud.warningDetails.service.WarningDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -98,6 +100,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private MkyUserMapper mkyUserMapper;
     @Resource
     private ConstructionUnitManagementMapper constructionUnitManagementMapper;
+    @Resource
+    private WarningDetailsService warningDetailsService;
+
 
 
     @Value("${audit.wujiang.sheji.designHead}")
@@ -780,6 +785,17 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             String username = loginUser.getUsername();
             //如果送审数或者审定数超过造价金额的话
             if (reviewNumber.compareTo(amountCost) == 1 || authorizedNumber.compareTo(amountCost) == 1) {
+
+                if( baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")){
+
+                    DetailsVo detailsVo = new DetailsVo();
+                    detailsVo.setType("进度款超额");
+                    detailsVo.setDetails(baseProject.getProjectName());
+                    detailsVo.setAuditId(baseAccountsVo.getAuditId());
+                    detailsVo.setRiskNotification("您好,"+baseProject.getProjectName()+"结算超预算");
+                    detailsVo.setBaseId(baseProject.getId());
+                    warningDetailsService.addDetails(detailsVo,loginUser);
+                }
 
                 //提交人
                 MessageVo messageVo = new MessageVo();

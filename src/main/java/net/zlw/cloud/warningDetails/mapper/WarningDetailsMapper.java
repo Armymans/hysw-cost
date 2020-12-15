@@ -16,41 +16,41 @@ import java.util.List;
 @org.apache.ibatis.annotations.Mapper
 public interface WarningDetailsMapper extends Mapper<WarningDetails> {
 
-    @Update("update\n" +
-            "warning_details\n" +
-            "set\n" +
-            "update_time = #{updateTime},\n" +
-            "status = #{status},\n" +
-            "WHERE\n" +
-            "id = #{id}\n")
+    @Update("update " +
+            "warning_details " +
+            "set " +
+            "update_time = #{updateTime}, " +
+            "status = #{status}, " +
+            "WHERE " +
+            "id = #{id} ")
     WarningDetails updateWarningDetails();
 
-    @Select("select\n" +
-            "w.id id,\n" +
-            "w.risk_type riskType,\n" +
-            "w.risk_notification riskNotification,\n" +
-            "w.risk_time riskTime,\n" +
-            "(case w.status\n" +
-            "\twhen '1' then '未读'\n" +
-            "\twhen '2' then '已读'\n" +
-            "\twhen '3' then '已说明'\n" +
-            "\twhen '4' then '未通过'\n" +
-            "\twhen '5' then '已通过'\n" +
-            "\tend\n" +
-            ") status,\n" +
-            "w.sender sender,\n" +
-            "w.founder_id founderId,\n" +
-            "a.auditor_id auditorId\n" +
-            "from \n" +
-            "warning_details w LEFT JOIN audit_info a on w.id = a.base_project_id and a.audit_result = '0'\n" +
-            "where \n" +
-            "(w.recipient_id = #{id}) and \n" +
-            "(w.status = #{p.status} or #{p.status} = '') and \n" +
-            "(w.send_time >= #{p.startTime} or #{p.startTime} = '') and \n" +
-            "(w.send_time <= #{p.endTime} or #{p.endTime} = '') and\n" +
-            "(\n" +
-            "w.risk_type like concat('%',#{p.keyword},'%') or\n" +
-            "w.risk_notification like concat('%',#{p.keyword},'%') \n" +
+    @Select("select " +
+            "w.id id, " +
+            "w.risk_type riskType, " +
+            "w.risk_notification riskNotification, " +
+            "w.risk_time riskTime, " +
+            "(case w.status " +
+            " when '1' then '未读' " +
+            " when '2' then '已读' " +
+            " when '3' then '已说明' " +
+            " when '4' then '未通过' " +
+            " when '5' then '已通过' " +
+            " end " +
+            ") status, " +
+            "w.sender sender, " +
+            "w.founder_id founderId, " +
+            "a.auditor_id auditorId " +
+            "from  " +
+            "warning_details w LEFT JOIN audit_info a on w.id = a.base_project_id and a.audit_result = '0' " +
+            "where  " +
+            "(w.recipient_id = #{id}) and  " +
+            "(w.status = #{p.status} or #{p.status} = '') and  " +
+            "(w.send_time >= #{p.startTime} or #{p.startTime} = '') and  " +
+            "(w.send_time <= #{p.endTime} or #{p.endTime} = '') and " +
+            "( " +
+            "w.risk_type like concat('%',#{p.keyword},'%') or " +
+            "w.risk_notification like concat('%',#{p.keyword},'%')  " +
             ")")
     List<WarningDetailsVo> findDetails(@Param("p") PageVo pageVo, @Param("id") String id);
 }

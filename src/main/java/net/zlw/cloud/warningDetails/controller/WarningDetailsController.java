@@ -5,9 +5,11 @@ import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.warningDetails.model.*;
 import net.zlw.cloud.warningDetails.service.WarningDetailsService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -23,6 +25,8 @@ public class WarningDetailsController extends BaseController {
 
      @Resource
      private WarningDetailsService warningDetailsService;
+     @Resource
+     private MemberManageDao memberManageDao;
 
 
     /**
@@ -43,7 +47,7 @@ public class WarningDetailsController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/detailById", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
-    public  Map<String,Object> detailById(String id,String userId) {
+    public  Map<String,Object> detailById(String id, String userId) {
         //获取预警信息  获取审核信息
         WarningDetails warningDetails = warningDetailsService.detailById(id, userId,getLoginUser());
         return RestUtil.success(warningDetails);
@@ -65,6 +69,13 @@ public class WarningDetailsController extends BaseController {
     public Map<String,Object> findDetails(PageVo pageVo){
         PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
         List<WarningDetailsVo> list = warningDetailsService.findDetails(pageVo,getLoginUser());
+        for (WarningDetailsVo warningDetailsVo : list) {
+            String sender = warningDetailsVo.getSender();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(sender);
+            if (memberManage!=null){
+                warningDetailsVo.setSender(memberManage.getMemberName());
+            }
+        }
         PageInfo<WarningDetailsVo> warningDetailsVoPageInfo = new PageInfo<>(list);
         return RestUtil.page(warningDetailsVoPageInfo);
     }

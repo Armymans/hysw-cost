@@ -7,5 +7,7 @@ public class DetailsVo {
     private String type;
     private String details;
     private String auditId;
+    private String riskNotification;
+    private String baseId;
 
 }
