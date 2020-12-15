@@ -91,7 +91,7 @@ public class WarningDetailsService {
         String baseId = warningDetails.getBaseId();
         Example example = new Example(WarningDetails.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("baseId",baseId);
+        criteria.andEqualTo("baseId",baseId+warningDetails.getRiskType());
         criteria.andEqualTo("delFlag","0");
         List<WarningDetails> warningDetails1 = warningDetailsMapper.selectByExample(example);
         for (WarningDetails details : warningDetails1) {
@@ -104,7 +104,7 @@ public class WarningDetailsService {
 //        MemberManage memberManage = manageDao.selectAdmin();
         Example example1 = new Example(AuditInfo.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("baseProjectId",baseId+"#");
+        criteria1.andEqualTo("baseProjectId",baseId+"#"+warningDetails.getRiskType());
         criteria1.andEqualTo("status","0");
         AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example1);
         if (auditInfo1 == null){
@@ -155,7 +155,7 @@ public class WarningDetailsService {
         //获取审核信息
         Example example = new Example(AuditInfo.class);
         Example.Criteria c = example.createCriteria();
-        c.andEqualTo("baseProjectId",warningDetails.getBaseId()+"#");
+        c.andEqualTo("baseProjectId",warningDetails.getBaseId()+"#"+warningDetails.getRiskType());
         c.andEqualTo("status","0");
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
         //未审核
@@ -207,14 +207,14 @@ public class WarningDetailsService {
         WarningDetails warningDetails = warningDetailsMapper.selectByPrimaryKey(warningDetailAndAuditInfoVo.getId());
         Example example = new Example(AuditInfo.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("baseProjectId",warningDetails.getBaseId()+"#");
+        criteria.andEqualTo("baseProjectId",warningDetails.getBaseId()+"#"+warningDetails.getRiskType());
         criteria.andEqualTo("status","0");
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
         if (warningDetails != null) {
             if ("1".equals(warningDetailAndAuditInfoVo.getAuditResult())) {
                 Example example1 = new Example(WarningDetails.class);
                 Example.Criteria c = example1.createCriteria();
-                c.andEqualTo("baseId",warningDetails.getBaseId());
+                c.andEqualTo("baseId",warningDetails.getBaseId()+warningDetails.getRiskType());
                 c.andEqualTo("delFlag","0");
                 List<WarningDetails> warningDetails1 = warningDetailsMapper.selectByExample(example1);
                 for (WarningDetails details : warningDetails1) {
@@ -225,7 +225,7 @@ public class WarningDetailsService {
             }else{
                 Example example1 = new Example(WarningDetails.class);
                 Example.Criteria c = example1.createCriteria();
-                c.andEqualTo("baseId",warningDetails.getBaseId());
+                c.andEqualTo("baseId",warningDetails.getBaseId()+warningDetails.getRiskType());
                 c.andEqualTo("delFlag","0");
                 List<WarningDetails> warningDetails1 = warningDetailsMapper.selectByExample(example1);
                 for (WarningDetails details : warningDetails1) {
