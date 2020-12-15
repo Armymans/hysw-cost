@@ -269,11 +269,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         messageVo.setId("A02");
                         messageVo.setUserId(whzjh);
                         messageVo.setType("3"); //風險
-                        messageVo.setPhone(memberManage.getPhone());
+//                        messageVo.setPhone(memberManage.getPhone());
                         messageVo.setReceiver(memberManage.getEmail());
                         messageVo.setTitle("您有一个待审核的进度款支付项目已超额！");
                         // 「接收人姓名」您好！【提交人】提交的【所选项目名称】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！
-                        messageVo.setSnsContent(name1+"您好！【"+username+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+//                        messageVo.setSnsContent(name1+"您好！【"+username+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
                         messageVo.setContent(name1+"您好！【"+username+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
                         messageVo.setDetails(name1+"您好！【"+username+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo.setSnsContent(name1+"您好！【"+"sjf"+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
@@ -287,10 +287,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         messageVo1.setId("A02");
                         messageVo1.setUserId(whzjm);
                         messageVo1.setType("3"); //風險
-                        messageVo1.setPhone(memberManage1.getPhone());
+//                        messageVo1.setPhone(memberManage1.getPhone());
                         messageVo1.setReceiver(memberManage1.getEmail());
                         messageVo1.setTitle("您有一个待审核的进度款支付项目已超额！");
-                        messageVo1.setSnsContent(name2+"您好！【"+username+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+//                        messageVo1.setSnsContent(name2+"您好！【"+username+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
                         messageVo1.setContent(name2+"您好！【"+username+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
                         messageVo1.setDetails(name2+"您好！【"+username+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo1.setSnsContent(name2+"您好！【sjf】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
@@ -306,10 +306,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         messageVo2.setUserId(loginUser.getId());
                         messageVo2.setType("3"); //風險
                         messageVo2.setReceiver(memberManage2.getEmail());
-                        messageVo2.setPhone(memberManage2.getPhone());
+//                        messageVo2.setPhone(memberManage2.getPhone());
                         messageVo2.setTitle("您有一个进度款支付项目已超额");
                         // 「接收人姓名」您好！您提交的【所选项目名称】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！
-                        messageVo2.setSnsContent(name3+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情!");
+//                        messageVo2.setSnsContent(name3+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情!");
                         messageVo2.setContent(name3+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情!");
                         messageVo2.setDetails(name3+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
                         messageService.sendOrClose(messageVo2);
@@ -323,10 +323,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         messageVo3.setType("3"); //風險
                         messageVo3.setUserId(auditorId);
                         messageVo3.setReceiver(memberManage3.getEmail());
-                        messageVo3.setPhone(memberManage3.getPhone());
+//                        messageVo3.setPhone(memberManage3.getPhone());
                         messageVo3.setTitle("您有一个进度款支付项目已超额");
                         // 接收人姓名」您好！【提交人】提交给您的【所选项目名称】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！
-                        messageVo3.setSnsContent(name4+"您好！【"+username+"】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+//                        messageVo3.setSnsContent(name4+"您好！【"+username+"】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
                         messageVo3.setContent(name4+"您好！【"+username+"】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
                         messageVo3.setDetails(name4+"您好！【"+username+"】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
 //                        messageVo3.setSnsContent(name4+"您好！【sjf】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
