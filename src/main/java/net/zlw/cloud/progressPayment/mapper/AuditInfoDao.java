@@ -42,7 +42,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "  when '2' then '确认互审'  " +
             "  when '3' then '确认上级领导审核'  " +
             "  when '4' then '总经理审核'  " +
-            "  when '5' then '确认部门主管审核'  " +
+            "  when '5' then '总经理审核'  " +
             "  end  " +
             ") auditType,  " +
             "(select member_name from member_manage where id = auditor_id)  auditor,  " +
