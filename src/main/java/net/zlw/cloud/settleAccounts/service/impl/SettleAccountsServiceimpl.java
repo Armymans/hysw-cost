@@ -790,9 +790,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
                     DetailsVo detailsVo = new DetailsVo();
                     detailsVo.setType("进度款超额");
-                    detailsVo.setDetails(baseProject.getProjectName());
+                    detailsVo.setDetails("您好，"+baseProject.getProjectName()+"项目，结算金额超出预算，请关注！");
                     detailsVo.setAuditId(baseAccountsVo.getAuditId());
-                    detailsVo.setRiskNotification("您好,"+baseProject.getProjectName()+"结算超预算");
+                    detailsVo.setRiskNotification(baseProject.getProjectName()+"项目结算超预算");
                     detailsVo.setBaseId(baseProject.getId());
                     warningDetailsService.addDetails(detailsVo,loginUser);
                 }

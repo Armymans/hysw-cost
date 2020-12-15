@@ -172,17 +172,19 @@ public class WarningDetailsService {
                 auditInfo.setAuditorId(memberManage.getMemberName());
             }
             warningDetails.setAuditInfo(auditInfo);
-        }
 
-        if (auditInfo.getAuditorId()!=null){
-            if (auditInfo.getAuditorId().equals(loginUser.getId())){
-                warningDetails.setCheckAudit("0");
+            if (auditInfo.getAuditorId()!=null){
+                if (auditInfo.getAuditorId().equals(loginUser.getId())){
+                    warningDetails.setCheckAudit("0");
+                }else{
+                    warningDetails.setCheckAudit("1");
+                }
             }else{
                 warningDetails.setCheckAudit("1");
             }
-        }else{
-            warningDetails.setCheckAudit("1");
         }
+
+
 
         return warningDetails;
     }
@@ -247,7 +249,7 @@ public class WarningDetailsService {
             warningDetails.setId(UUID.randomUUID().toString().replace("-",""));
             warningDetails.setSender(id);
             warningDetails.setSendTime(sim.format(new Date()));
-            warningDetails.setTitle(detailsVo.getDetails());
+            warningDetails.setTitle(detailsVo.getRiskNotification());
             warningDetails.setRiskType(detailsVo.getType());
             warningDetails.setRiskNotification(detailsVo.getRiskNotification());
             warningDetails.setStatus("1");
