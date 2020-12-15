@@ -789,7 +789,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 if( baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")){
 
                     DetailsVo detailsVo = new DetailsVo();
-                    detailsVo.setType("进度款超额");
+                    detailsVo.setType("结算超预算");
                     detailsVo.setDetails("您好，"+baseProject.getProjectName()+"项目，结算金额超出预算，请关注！");
                     detailsVo.setAuditId(baseAccountsVo.getAuditId());
                     detailsVo.setRiskNotification(baseProject.getProjectName()+"项目结算超预算");
@@ -807,7 +807,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 messageVo.setSnsContent(username + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
                 messageVo.setContent(username + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
                 messageVo.setDetails(username + "您好！您提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-                messageService.sendOrClose(messageVo);
+//                messageService.sendOrClose(messageVo);
                 // 审核人
                 MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditId);
                 String name2 = memberManage1.getMemberName();
@@ -825,7 +825,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //                messageVo1.setSnsContent(name2 + "您好！【sjf】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
 //                messageVo1.setContent(name2 + "您好！【sjf】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
 //                messageVo1.setDetails(name2 + "您好！【sjf】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-                messageService.sendOrClose(messageVo1);
+//                messageService.sendOrClose(messageVo1);
 
                 // whzjh 罗均
                 MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(whzjh);
@@ -844,7 +844,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //                messageVo2.setSnsContent(name3 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
 //                messageVo2.setContent(name3 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
 //                messageVo2.setDetails(name3 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-                messageService.sendOrClose(messageVo2);
+//                messageService.sendOrClose(messageVo2);
 
                 // whzjm 殷莉萍
                 MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(whzjm);
@@ -862,7 +862,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 //                messageVo3.setSnsContent(name4 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
 //                messageVo3.setContent(name4 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
 //                messageVo3.setDetails(name4 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
-                messageService.sendOrClose(messageVo3);
+//                messageService.sendOrClose(messageVo3);
 
             }else {
                 // 站内信
@@ -877,7 +877,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 messageVo4.setDetails(name + "您好！【"+username+"】已将【" + projectName + "】的结算项目提交给您，请审批！");
 //                messageVo4.setDetails(name + "您好！【sjf】已将【" + projectName + "】的结算项目提交给您，请审批！");
                 //调用消息Service
-                messageService.sendOrClose(messageVo4);
+//                messageService.sendOrClose(messageVo4);
             }
 
         }
