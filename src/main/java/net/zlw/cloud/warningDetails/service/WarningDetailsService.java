@@ -225,7 +225,7 @@ public class WarningDetailsService {
             }else{
                 Example example1 = new Example(WarningDetails.class);
                 Example.Criteria c = example1.createCriteria();
-                c.andEqualTo("baseId",warningDetails.getBaseId()+warningDetails.getRiskType());
+                c.andEqualTo("baseId",warningDetails.getBaseId());
                 c.andEqualTo("delFlag","0");
                 List<WarningDetails> warningDetails1 = warningDetailsMapper.selectByExample(example1);
                 for (WarningDetails details : warningDetails1) {
