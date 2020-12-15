@@ -1564,6 +1564,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         //处理中
         if (pageVo.getProgressStatus().equals("2")){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
+            for (ProgressListVo progressListVo : list) {
+                TotalVo total = findTotal(progressListVo.getBaseId());
+                progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
+                progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
+                progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
+            }
             return new PageInfo<ProgressListVo>(list);
         }
         //未通过
@@ -1601,12 +1607,23 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         //待确认
         if (pageVo.getProgressStatus().equals("4")){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
+            for (ProgressListVo progressListVo : list) {
+                TotalVo total = findTotal(progressListVo.getBaseId());
+                progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
+                progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
+                progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
+            }
             return new PageInfo<ProgressListVo>(list);
         }
         //进行中
         if (pageVo.getProgressStatus().equals("5")){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressSueecss(pageVo);
             for (ProgressListVo progressListVo : list) {
+                // 累计支付金额、比例、次数
+                TotalVo total = findTotal(progressListVo.getBaseId());
+                progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
+                progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
+                progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
                 if(progressListVo.getProgressPaymentStatus().equals("进行中")){
                     if (progressListVo.getFounderId().equals(pageVo.getUid())){
                         progressListVo.setShowUpdate("3");
@@ -1618,12 +1635,25 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         //已完成
         if (pageVo.getProgressStatus().equals("6")){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressSueecss(pageVo);
+            for (ProgressListVo progressListVo : list) {
+                // 累计支付金额、比例、次数
+                TotalVo total = findTotal(progressListVo.getBaseId());
+                progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
+                progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
+                progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
+            }
             return new PageInfo<ProgressListVo>(list);
         }
         //全部
         if (pageVo.getProgressStatus().equals("") || pageVo.getProgressStatus() == null){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
             for (ProgressListVo progressListVo : list) {
+                // 累计支付金额、比例、次数
+                TotalVo total = findTotal(progressListVo.getBaseId());
+                progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
+                progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
+                progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
+
                 if (progressListVo.getProgressPaymentStatus().equals("处理中")){
                     progressListVo.setShowUpdate("1");
                 }else if (progressListVo.getProgressPaymentStatus().equals("待确认")){

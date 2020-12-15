@@ -91,7 +91,7 @@ public class ProgressPaymentController  extends BaseController {
     public Map<String,Object> searchAllProgress(PageVo pageVo){
 
         pageVo.setUid(getLoginUser().getId());
-//        pageVo.setUid("user309");
+//        pageVo.setUid("200101005");
         PageInfo<ProgressListVo> progressListVoPageInfo = baseProjectService.searchAllProgress(pageVo);
         return RestUtil.page(progressListVoPageInfo);
     }
