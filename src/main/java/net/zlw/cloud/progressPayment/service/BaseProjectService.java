@@ -7,7 +7,6 @@ import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
-import net.zlw.cloud.progressPayment.model.ProgressPaymentTotalPayment;
 import net.zlw.cloud.progressPayment.model.vo.*;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
 
@@ -18,6 +17,8 @@ public interface BaseProjectService {
     void addProgress(BaseProjectVo baseProject, UserInfo loginUser);
 
     BaseProjectVo seachProgressById(String id, UserInfo userInfo, String visaNum);
+
+    BaseProjectVo editProgressById(String id, UserInfo userInfo, String visaNum);
 
     void updateProgress(BaseProjectVo baseProjectVo ,UserInfo loginUser);
     void updateProgressPayment(BaseProjectVo baseProjectVo);

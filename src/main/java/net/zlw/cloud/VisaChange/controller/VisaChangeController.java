@@ -80,6 +80,13 @@ public class VisaChangeController extends BaseController {
         return RestUtil.page(visaChangeListVoPageInfo);
     }
 
+    /**
+     * @Author sjf
+     * @Description //签证变更 模糊搜索
+     * @Date 10:34 2020/11/22
+     * @Param
+     * @return
+     **/
     @RequestMapping(value = "/visachange/selectVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectVisa(PageVo pageVo){
 
@@ -160,13 +167,7 @@ public class VisaChangeController extends BaseController {
         return RestUtil.success(map);
     }
 
-    /**
-        * @Author sjf
-        * @Description //签证变更 模糊搜索
-        * @Date 10:34 2020/11/22
-        * @Param
-        * @return
-     **/
+
 
     //新增签证变更
     @RequestMapping(value = "/visachange/addVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)

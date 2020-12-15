@@ -330,7 +330,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public BaseProjectVo seachProgressById(String id, UserInfo userInfo, String visaNum) {
 
-//        userInfo = new UserInfo("user309",null,null,true);
+        //        userInfo = new UserInfo("200101005",null,null,true);
 
         /*
         * //项目基本信息
@@ -352,7 +352,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             paymentInformation.setTypeS("合同外进度款支付");
         }
 
-        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
+        BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(paymentInformation.getBaseProjectId());
+        ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(baseProject.getConstructionOrganization());
+        if (constructionUnitManagement!=null){
+            baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+        }
 
         // 查询审核信息的集合
         Example auditExample = new Example(AuditInfo.class);
@@ -422,7 +426,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             baseProjectVo.setCurrentPaymentRatio(paymentInformation.getCurrentPaymentRatio());
             baseProjectVo.setCurrentPeriodAccording(paymentInformation.getCurrentPeriodAccording());
             baseProjectVo.setContractAmount(paymentInformation.getContractAmount());
-            baseProjectVo.setProjectType(paymentInformation.getProjectType());
+            baseProjectVo.setProjectType(paymentInformation.getTypeS());
             baseProjectVo.setReceivingTime(paymentInformation.getReceivingTime());
             baseProjectVo.setCompileTime(paymentInformation.getCompileTime());
             baseProjectVo.setOutsourcing(paymentInformation.getOutsourcing());
@@ -486,6 +490,133 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 //                baseProjectVo.setAuditNumber("1");
 //            }
 //        }
+        return baseProjectVo;
+    }
+
+    /**
+     * 根据id查询编辑进度款信息
+     */
+    @Override
+    public BaseProjectVo editProgressById(String id, UserInfo userInfo, String visaNum) {
+
+//        userInfo = new UserInfo("user309",null,null,true);
+//        userInfo = new UserInfo("200101005",null,null,true);
+        BaseProjectVo baseProjectVo = new BaseProjectVo();
+        ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(id);
+
+
+        BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(paymentInformation.getBaseProjectId());
+        ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(baseProject.getConstructionOrganization());
+        if (constructionUnitManagement!=null){
+            baseProject.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+        }
+
+        // 查询审核信息的集合
+        Example auditExample = new Example(AuditInfo.class);
+        Example.Criteria criteria = auditExample.createCriteria();
+        criteria.andEqualTo("baseProjectId", paymentInformation.getId());
+        criteria.andEqualTo("status", "0");
+        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(auditExample);
+
+        for (AuditInfo auditInfo : auditInfos) {
+            if ("0".equals(auditInfo.getAuditResult())) {
+                baseProjectVo.setAuditType(auditInfo.getAuditType());
+            }
+        }
+        Example example = new Example(ApplicationInformation.class);
+        example.createCriteria().andEqualTo("baseProjectId", baseProject.getId()).andEqualTo("delFlag","0");
+        ApplicationInformation applicationInformation = applicationInformationDao.selectOneByExample(example);
+
+        Example example1 = new Example(ProgressPaymentTotalPayment.class);
+        example1.createCriteria().andEqualTo("progressPaymentId", id).andEqualTo("delFlag","0");
+        ProgressPaymentTotalPayment totalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example1);
+
+        baseProjectVo.setId(id);
+        baseProjectVo.setProgressPaymentStatus(baseProject.getProgressPaymentStatus());
+        baseProjectVo.setManagementTable(baseProject.getManagementTable()); //后加的 管理表字段
+        baseProjectVo.setProjectNum(baseProject.getProjectNum());
+        baseProjectVo.setProjectName(baseProject.getProjectName());
+        baseProjectVo.setApplicationNum(baseProject.getApplicationNum());
+        baseProjectVo.setCeaNum(baseProject.getCeaNum());
+        baseProjectVo.setDistrict(baseProject.getDistrict());
+        baseProjectVo.setDesignCategory(baseProject.getDesignCategory());
+        baseProjectVo.setConstructionUnit(baseProject.getConstructionUnit());
+        baseProjectVo.setContacts(baseProject.getContacts());
+        baseProjectVo.setContactNumber(baseProject.getContactNumber());
+        baseProjectVo.setCustomerName(baseProject.getCustomerName());
+        baseProjectVo.setSubject(baseProject.getSubject());
+        baseProjectVo.setCustomerPhone(baseProject.getCustomerPhone());
+        baseProjectVo.setConstructionOrganization(baseProject.getConstructionOrganization());
+        baseProjectVo.setProjectNature(baseProject.getProjectNature());
+        baseProjectVo.setProjectCategory(baseProject.getProjectCategory());
+        baseProjectVo.setWaterAddress(baseProject.getWaterAddress());
+        baseProjectVo.setWaterSupplyType(baseProject.getWaterSupplyType());
+        baseProjectVo.setThisDeclaration(baseProject.getThisDeclaration());
+        baseProjectVo.setAgent(baseProject.getAgent());
+        baseProjectVo.setAgentPhone(baseProject.getAgentPhone());
+        baseProjectVo.setApplicationDate(baseProject.getApplicationDate());
+        baseProjectVo.setBusinessLocation(baseProject.getBusinessLocation());
+        baseProjectVo.setBusinessTypes(baseProject.getBusinessTypes());
+        baseProjectVo.setAB(baseProject.getAB());
+        baseProjectVo.setWaterUse(baseProject.getWaterUse());
+        baseProjectVo.setFireTableSize(baseProject.getFireTableSize());
+        baseProjectVo.setClassificationCaliber(baseProject.getClassificationCaliber());
+        baseProjectVo.setWaterMeterDiameter(baseProject.getWaterMeterDiameter());
+        baseProjectVo.setSite(baseProject.getSite());
+        baseProjectVo.setSystemNumber(baseProject.getSystemNumber());
+        baseProjectVo.setProposer(baseProject.getProposer());
+        baseProjectVo.setApplicationNumber(baseProject.getApplicationNumber());
+
+
+        baseProjectVo.setRemarkes(applicationInformation.getRemarkes());
+
+        if (visaNum.equals("1")){
+            baseProjectVo.setCurrentPaymentInformation(paymentInformation.getCurrentPaymentInformation());
+            baseProjectVo.setCumulativePaymentTimes(paymentInformation.getCumulativePaymentTimes());
+            baseProjectVo.setCurrentPaymentRatio(paymentInformation.getCurrentPaymentRatio());
+            baseProjectVo.setCurrentPeriodAccording(paymentInformation.getCurrentPeriodAccording());
+            baseProjectVo.setContractAmount(paymentInformation.getContractAmount());
+            baseProjectVo.setProjectType(paymentInformation.getProjectType());
+            baseProjectVo.setReceivingTime(paymentInformation.getReceivingTime());
+            baseProjectVo.setCompileTime(paymentInformation.getCompileTime());
+            baseProjectVo.setOutsourcing(paymentInformation.getOutsourcing());
+            baseProjectVo.setNameOfCostUnit(paymentInformation.getNameOfCostUnit());
+            baseProjectVo.setContact(paymentInformation.getContact());
+            baseProjectVo.setContactPhone(paymentInformation.getContactPhone());
+            baseProjectVo.setAmountOutsourcing(paymentInformation.getAmountOutsourcing());
+            baseProjectVo.setSituation(paymentInformation.getSituation());
+            baseProjectVo.setRemarkes1(paymentInformation.getRemarkes());
+        }else{
+            //第二次进度款支付需要删除上次支付附件
+            List<FileInfo> fileInfo = fileInfoMapper.deleteOneByF(id);
+            if(fileInfo.size() > 0){
+                for (FileInfo info : fileInfo) {
+                    info.setStatus("1");
+                    info.setUpdateTime(DateUtil.getDateTime());
+                    fileInfoMapper.updateByPrimaryKeySelective(info);
+                }
+            }
+        }
+
+
+        //查找审核数据
+        Example auditInfoExample = new Example(AuditInfo.class);
+        Example.Criteria criteria2 = auditInfoExample.createCriteria();
+        criteria2.andEqualTo("baseProjectId", paymentInformation.getId());
+//        criteria1.andEqualTo("auditType",'0');
+        // 未审批
+        criteria2.andEqualTo("auditResult", '0');
+        criteria2.andEqualTo("auditorId", userInfo.getId());
+
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(auditInfoExample);
+
+        if (auditInfo!=null){
+            if (auditInfo.getAuditType().equals("0") || auditInfo.getAuditType().equals("1") ||auditInfo.getAuditType().equals("4")){
+                baseProjectVo.setAuditNumber("1");
+            }else if(auditInfo.getAuditType().equals("2") || auditInfo.getAuditType().equals("3") ||auditInfo.getAuditType().equals("5")){
+                baseProjectVo.setAuditNumber("2");
+            }
+        }
         return baseProjectVo;
     }
 
@@ -1503,6 +1634,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     if (memberManage !=null){
                         progressListVo.setCurrentHandler(memberManage.getMemberName());
                     }
+                    // 造价单位
+                    CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(progressListVo.getNameOfCostUnit());
+                    if (costUnitManagement != null){
+                        progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                    }
                     TotalVo total = findTotal(progressListVo.getBaseId());
                     progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
                     progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
@@ -1538,6 +1674,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     if (memberManage !=null){
                         progressListVo.setCurrentHandler(memberManage.getMemberName());
                     }
+                    // 造价单位
+                    CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(progressListVo.getNameOfCostUnit());
+                    if (costUnitManagement != null){
+                        progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                    }
                     TotalVo total = findTotal(progressListVo.getBaseId());
                     progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
                     progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
@@ -1569,6 +1710,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
                 progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
                 progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
+                // 造价单位
+                CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(progressListVo.getNameOfCostUnit());
+                if (costUnitManagement != null){
+                    progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                }
             }
             return new PageInfo<ProgressListVo>(list);
         }
@@ -1588,8 +1734,6 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 }else{
                     progressListVo.setProgressPaymentStatus("进度款确认未通过");
                 }
-
-
                 String nameOfCostUnit = progressListVo.getNameOfCostUnit();
                 if (nameOfCostUnit!=null && !"".equals(nameOfCostUnit)){
                     CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfCostUnit);
@@ -1608,6 +1752,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         if (pageVo.getProgressStatus().equals("4")){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
             for (ProgressListVo progressListVo : list) {
+                // 造价单位
+                CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(progressListVo.getNameOfCostUnit());
+                if (costUnitManagement != null){
+                    progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                }
                 TotalVo total = findTotal(progressListVo.getBaseId());
                 progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
                 progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
@@ -1619,6 +1768,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         if (pageVo.getProgressStatus().equals("5")){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressSueecss(pageVo);
             for (ProgressListVo progressListVo : list) {
+                // 造价单位
+                CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(progressListVo.getNameOfCostUnit());
+                if (costUnitManagement != null){
+                    progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                }
                 // 累计支付金额、比例、次数
                 TotalVo total = findTotal(progressListVo.getBaseId());
                 progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
@@ -1636,6 +1790,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         if (pageVo.getProgressStatus().equals("6")){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressSueecss(pageVo);
             for (ProgressListVo progressListVo : list) {
+                // 造价单位
+                CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(progressListVo.getNameOfCostUnit());
+                if (costUnitManagement != null){
+                    progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                }
                 // 累计支付金额、比例、次数
                 TotalVo total = findTotal(progressListVo.getBaseId());
                 progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
@@ -1648,6 +1807,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         if (pageVo.getProgressStatus().equals("") || pageVo.getProgressStatus() == null){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
             for (ProgressListVo progressListVo : list) {
+                // 造价单位
+                CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(progressListVo.getNameOfCostUnit());
+                if (costUnitManagement != null){
+                    progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                }
                 // 累计支付金额、比例、次数
                 TotalVo total = findTotal(progressListVo.getBaseId());
                 progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
