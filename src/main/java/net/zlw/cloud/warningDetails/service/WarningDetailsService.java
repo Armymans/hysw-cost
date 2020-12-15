@@ -95,8 +95,8 @@ public class WarningDetailsService {
         criteria.andEqualTo("delFlag","0");
         List<WarningDetails> warningDetails1 = warningDetailsMapper.selectByExample(example);
         for (WarningDetails details : warningDetails1) {
-            warningDetails.setInstructions(instructions);
-            warningDetails.setStatus("3");
+            details.setInstructions(instructions);
+            details.setStatus("3");
             //更新预警信息
             warningDetailsMapper.updateByPrimaryKey(details);
         }
