@@ -168,12 +168,6 @@ public class WarningDetailsService {
                 auditInfo.setAuditResult("未通过");
             }
 
-            MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-            if (memberManage!=null){
-                auditInfo.setAuditorId(memberManage.getMemberName());
-            }
-            warningDetails.setAuditInfo(auditInfo);
-
             if (auditInfo.getAuditorId()!=null){
                 if (auditInfo.getAuditorId().equals(loginUser.getId())){
                     warningDetails.setCheckAudit("0");
@@ -183,6 +177,14 @@ public class WarningDetailsService {
             }else{
                 warningDetails.setCheckAudit("1");
             }
+
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
+            if (memberManage!=null){
+                auditInfo.setAuditorId(memberManage.getMemberName());
+            }
+            warningDetails.setAuditInfo(auditInfo);
+
+
         }else{
             warningDetails.setAuditInfo(new AuditInfo());
         }
