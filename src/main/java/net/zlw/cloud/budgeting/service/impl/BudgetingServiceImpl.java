@@ -1275,6 +1275,19 @@ public class BudgetingServiceImpl implements BudgetingService {
             List<BudgetingListVo> budgetingAll2 = budgetingDao.findBudgetingAll(pageBVo);
             ArrayList<BudgetingListVo> budgetingListVos1 = new ArrayList<>();
             for (BudgetingListVo budgetingListVo : budgetingAll2) {
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
+                if (memberManage != null){
+                    budgetingListVo.setBudgetingPeople(memberManage.getMemberName());
+                }
+                MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(budgetingListVo.getCostTogether());
+                if (memberManage1 != null){
+                    budgetingListVo.setCostTogether(memberManage1.getMemberName());
+                }
+                MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(budgetingListVo.getPricingTogether());
+                if (memberManage2 != null){
+                    budgetingListVo.setPricingTogether(memberManage2.getMemberName());
+                }
+
                 budgetingListVos1.add(budgetingListVo);
             }
             for (BudgetingListVo budgetingListVo : budgetingAll2) {

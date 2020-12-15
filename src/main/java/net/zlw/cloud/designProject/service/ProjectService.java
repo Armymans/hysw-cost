@@ -734,7 +734,8 @@ public class ProjectService {
             //查找集团领导
             Example admin = new Example(MemberManage.class);
             Example.Criteria adminc = admin.createCriteria();
-            adminc.andEqualTo("memberRoleId", "2");
+            adminc.andEqualTo("memberRoleId", "2")
+                  .andEqualTo("status","0");
             MemberManage boss = memberManageDao.selectOneByExample(admin);
             //判断当前人是否为部门领导 如果是 则展示所有数据
             if (boss.getId().equals(loginUser.getId())) {
