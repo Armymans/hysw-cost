@@ -104,7 +104,7 @@ public class WarningDetailsService {
 //        MemberManage memberManage = manageDao.selectAdmin();
         Example example1 = new Example(AuditInfo.class);
         Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("auditorId",baseId+"#");
+        criteria1.andEqualTo("baseProjectId",baseId+"#");
         criteria1.andEqualTo("status","0");
         AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example1);
         if (auditInfo1 == null){
@@ -170,7 +170,7 @@ public class WarningDetailsService {
 
             if (auditInfo.getAuditorId()!=null){
                 if (auditInfo.getAuditorId().equals(loginUser.getId())){
-                    if (auditInfo.getAuditResult().equals("已通过")){
+                    if (auditInfo.getAuditResult().equals("已通过") || "1".equals(warningDetails.getStatus())){
                         warningDetails.setCheckAudit("1");
                     }else{
                         warningDetails.setCheckAudit("0");
