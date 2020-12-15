@@ -251,6 +251,17 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
                        if( baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")){
 
+                           System.err.println(baseProject);
+                           System.err.println(baseProject);
+                           System.err.println(baseProject);
+                           System.err.println(baseProject);
+                           System.err.println(baseProject);
+                           System.err.println(baseProject);
+                           System.err.println(baseProject);
+                           System.err.println(baseProject);
+                           System.err.println(baseProject);
+
+
                            DetailsVo detailsVo = new DetailsVo();
                            detailsVo.setType("进度款超额");
                            detailsVo.setDetails("您好，"+project.getProjectName()+"项目，进度款超额，请关注！");
