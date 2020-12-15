@@ -260,6 +260,7 @@ public class WarningDetailsService {
             warningDetails.setFounderId(id);
             warningDetails.setDelFlag("0");
             warningDetails.setRiskTime(sim.format(new Date()));
+            warningDetails.setBaseId(detailsVo.getBaseId());
             warningDetailsMapper.insertSelective(warningDetails);
         }
     }
