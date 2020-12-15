@@ -599,6 +599,8 @@ public class ProjectService {
                     }
                 }
             }
+            PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
+            return designInfoPageInfo;
         }
         //如果为已完成
         if ("4".equals(pageVo.getDesginStatus())) {
