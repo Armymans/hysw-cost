@@ -2192,6 +2192,7 @@ public class ProjectService {
                 CollectionMoney collectionMoney = new CollectionMoney();
                 collectionMoney.setId("第" + (count) + "次收款");
                 collectionMoney.setMoney(money);
+                collectionMoney.setCollectionTime(anhuiMoneyinfo.getCollectionTime());
                 collectionMonies.add(collectionMoney);
                 count++;
             }
@@ -2654,6 +2655,8 @@ public class ProjectService {
                 criteria.andEqualTo("auditResult", "2");
                 AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example);
                 //如果是未通过 提交时 将审核信息改为待审核
+                auditInfo1.setAuditTime("");
+                auditInfo1.setAuditOpinion("");
                 auditInfo1.setAuditResult("0");
                 //修改基本状态 未通过重新变为待审核
                 projectVo.getBaseProject().setDesginStatus("1");
@@ -2662,8 +2665,7 @@ public class ProjectService {
                 //将之前的设计变更信息设为不可用
                 DesignChangeInfo designChangeInfo = designChangeInfoMapper.selectOneByExample(change);
                 if (designChangeInfo != null) {
-                    designChangeInfo.setStatus("1"); //将该条数据删除
-                    designChangeInfoMapper.updateByPrimaryKeySelective(designChangeInfo);
+                    designChangeInfoMapper.deleteByPrimaryKey(designChangeInfo);
                 }
 
             } else {
