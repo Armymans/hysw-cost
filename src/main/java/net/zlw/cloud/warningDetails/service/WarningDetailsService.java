@@ -278,7 +278,15 @@ public class WarningDetailsService {
      List<WarningDetailsVo> list =  warningDetailsMapper.findDetails(pageVo,loginUser.getId());
         for (WarningDetailsVo warningDetailsVo : list) {
             if (warningDetailsVo.getFounderId().equals(loginUser.getId())){
-                warningDetailsVo.setCheckInstructions("0");
+
+
+                if (warningDetailsVo.getStatus().equals("已说明") || warningDetailsVo.getStatus().equals("已通过") ){
+                    warningDetailsVo.setCheckInstructions("1");
+                }else {
+
+                    warningDetailsVo.setCheckInstructions("0");
+                }
+
             }else{
                 warningDetailsVo.setCheckInstructions("1");
             }
