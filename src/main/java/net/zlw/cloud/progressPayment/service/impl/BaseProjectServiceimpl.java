@@ -256,7 +256,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                            detailsVo.setDetails("您好，"+project.getProjectName()+"项目，进度款超额，请关注！");
                            detailsVo.setAuditId(baseProject.getAuditorId());
                            detailsVo.setRiskNotification(project.getProjectName()+"项目进度款超额");
-                           detailsVo.setBaseId(project.getId());
+                           detailsVo.setBaseId(baseProject.getBaseId());
                            warningDetailsService.addDetails(detailsVo,loginUser);
                        }
 

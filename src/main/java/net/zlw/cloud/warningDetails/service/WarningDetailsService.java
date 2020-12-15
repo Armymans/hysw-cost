@@ -182,6 +182,8 @@ public class WarningDetailsService {
             }else{
                 warningDetails.setCheckAudit("1");
             }
+        }else{
+            warningDetails.setAuditInfo(new AuditInfo());
         }
 
 
