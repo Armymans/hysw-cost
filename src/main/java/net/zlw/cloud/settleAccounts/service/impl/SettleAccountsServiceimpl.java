@@ -786,7 +786,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             //如果送审数或者审定数超过造价金额的话
             if (reviewNumber.compareTo(amountCost) == 1 || authorizedNumber.compareTo(amountCost) == 1) {
 
-                if( baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")){
 
                     DetailsVo detailsVo = new DetailsVo();
                     detailsVo.setType("结算超预算");
@@ -795,7 +794,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     detailsVo.setRiskNotification(baseProject.getProjectName()+"项目结算超预算");
                     detailsVo.setBaseId(baseProject.getId());
                     warningDetailsService.addDetails(detailsVo,loginUser);
-                }
 
                 //提交人
                 MessageVo messageVo = new MessageVo();
