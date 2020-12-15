@@ -91,7 +91,7 @@ public class WarningDetailsService {
         String baseId = warningDetails.getBaseId();
         Example example = new Example(WarningDetails.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("baseId",baseId+warningDetails.getRiskType());
+        criteria.andEqualTo("baseId",baseId);
         criteria.andEqualTo("delFlag","0");
         List<WarningDetails> warningDetails1 = warningDetailsMapper.selectByExample(example);
         for (WarningDetails details : warningDetails1) {
@@ -118,7 +118,7 @@ public class WarningDetailsService {
             //存审批
             AuditInfo auditInfo = new AuditInfo();
             auditInfo.setId(UUID.randomUUID().toString());
-            auditInfo.setBaseProjectId(baseId+"#");
+            auditInfo.setBaseProjectId(baseId+"#"+warningDetails.getRiskType());
             auditInfo.setAuditResult("0");
             auditInfo.setAuditType("risk");
             auditInfo.setAuditorId(auditid);
