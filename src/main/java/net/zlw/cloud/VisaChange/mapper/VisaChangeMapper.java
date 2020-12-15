@@ -485,6 +485,6 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            IFNULL(v.state,'0') = '0' and   " +
             "            vv.state = '0' and " +
             "            IFNULL(v2.state,'0') = '0' " +
-            "            order by b2.create_time desc ")
+            "            order by v2.create_time desc ")
     List<VisaChangeListVo> findAllVisaSuccess(PageVo pageVo);
 }
