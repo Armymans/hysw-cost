@@ -41,6 +41,7 @@ public class WarningDetailsService {
     @Resource
     private MemberManageDao memberManageDao;
 
+
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
     @Value("${audit.wujiang.sheji.designManager}")
@@ -187,7 +188,11 @@ public class WarningDetailsService {
         }
 
 
-
+        String sender = warningDetails.getSender();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(sender);
+        if (memberManage!=null){
+            warningDetails.setSender(memberManage.getMemberName());
+        }
         return warningDetails;
     }
 
@@ -261,6 +266,7 @@ public class WarningDetailsService {
             warningDetails.setDelFlag("0");
             warningDetails.setRiskTime(sim.format(new Date()));
             warningDetails.setBaseId(detailsVo.getBaseId());
+            warningDetails.setElaborate(detailsVo.getDetails());
             warningDetailsMapper.insertSelective(warningDetails);
         }
     }
