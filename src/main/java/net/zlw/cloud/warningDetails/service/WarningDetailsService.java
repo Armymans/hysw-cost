@@ -170,7 +170,7 @@ public class WarningDetailsService {
 
             if (auditInfo.getAuditorId()!=null){
                 if (auditInfo.getAuditorId().equals(loginUser.getId())){
-                    if (auditInfo.getAuditResult().equals("已通过") || !"3".equals(warningDetails.getStatus())){
+                    if (!auditInfo.getAuditResult().equals("已通过") && "3".equals(warningDetails.getStatus())){
                         warningDetails.setCheckAudit("1");
                     }else{
                         warningDetails.setCheckAudit("0");
