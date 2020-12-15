@@ -279,7 +279,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 //                        messageVo.setSnsContent(name1+"您好！【"+"sjf"+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo.setContent(name1+"您好！【"+"sjf"+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo.setDetails(name1+"您好！【"+"sjf"+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                        messageService.sendOrClose(messageVo);
+//                        messageService.sendOrClose(messageVo);
                         // 集团领导 殷莉萍
                         MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(whzjm);
                         String name2 = memberManage1.getMemberName();
@@ -296,7 +296,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 //                        messageVo1.setSnsContent(name2+"您好！【sjf】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo1.setContent(name2+"您好！【sjf】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo1.setDetails(name2+"您好！【sjf】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                        messageService.sendOrClose(messageVo1);
+//                        messageService.sendOrClose(messageVo1);
 
                         // 提交人
                         MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(loginUser.getId());
@@ -312,7 +312,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 //                        messageVo2.setSnsContent(name3+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情!");
                         messageVo2.setContent(name3+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情!");
                         messageVo2.setDetails(name3+"您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                        messageService.sendOrClose(messageVo2);
+//                        messageService.sendOrClose(messageVo2);
 
                         // 互审人
                         String auditorId = auditInfo.getAuditorId();
@@ -332,7 +332,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 //                        messageVo3.setSnsContent(name4+"您好！【sjf】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
 //                        messageVo3.setContent(name4+"您好！【sjf】提交给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
 //                        messageVo3.setDetails(name4+"您好！【sjf】提交给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                        messageService.sendOrClose(messageVo3);
+//                        messageService.sendOrClose(messageVo3);
                     }
                 }
 
