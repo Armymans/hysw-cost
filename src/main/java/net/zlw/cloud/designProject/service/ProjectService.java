@@ -3475,7 +3475,7 @@ public class ProjectService {
         Example example = new Example(AuditInfo.class);
         Example.Criteria criteria = example.createCriteria();
         //todo userInfo.getId()
-        criteria.andEqualTo("auditorId", "user321");
+        criteria.andEqualTo("auditorId", userInfo.getId());
         criteria.andEqualTo("baseProjectId", id);
         criteria.andEqualTo("auditResult", "0");
         AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
