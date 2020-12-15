@@ -219,20 +219,29 @@ public class WarningDetailsService {
         //发送人
         String id = loginUser.getId();
         //上级领导
-        Example example = new Example(MemberManage.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("memberRoleId","3");
-        MemberManage memberManage = memberManageDao.selectOneByExample(example);
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
+        String id1 = "";
+        if (memberManage!=null){
+            if (memberManage.getWorkType().equals("1")){
+                id1 = whzjh;
+            }else if(memberManage.getWorkType().equals("2")){
+                id1 = wjzjh;
+            }
+        }
         //总经理
-        Example example1 = new Example(MemberManage.class);
-        Example.Criteria criteria1 = example1.createCriteria();
-        criteria1.andEqualTo("memberRoleId","2");
-        MemberManage memberManage1 = memberManageDao.selectOneByExample(example1);
+        String id2 = "";
+        if (memberManage!=null){
+            if (memberManage.getWorkType().equals("1")){
+                id2 = whzjm;
+            }else if(memberManage.getWorkType().equals("2")){
+                id2 = wjzjm;
+            }
+        }
         ArrayList<String> list = new ArrayList<>();
         list.add(id);
         list.add(detailsVo.getAuditId());
-        list.add(memberManage.getId());
-        list.add(memberManage1.getId());
+        list.add(id1);
+        list.add(id2);
         for (String s : list) {
             WarningDetails warningDetails = new WarningDetails();
             warningDetails.setId(UUID.randomUUID().toString().replace("-",""));
