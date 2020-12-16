@@ -2026,6 +2026,36 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 visaChangeMapper.insertSelective(visaChangeDown);
 
 
+            VisaChange change = null;
+            for (VisaChange visaChange : visaChanges) {
+                if (visaChange.getUpAndDownMark().equals("1")){
+                    change = visaChange;
+                }
+            }
+
+            Example example2 = new Example(FileInfo.class);
+            Example.Criteria criteria = example2.createCriteria();
+            criteria.andEqualTo("type","qzbgxmxjbcsjqz");
+            criteria.andEqualTo("status","0");
+            criteria.andEqualTo("platCode",change.getId());
+            List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example2);
+            for (FileInfo fileInfo : fileInfos) {
+                fileInfo.setPlatCode(visaChangeDown.getId());
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
+
+            Example example4 = new Example(FileInfo.class);
+            Example.Criteria criteria1 = example4.createCriteria();
+            criteria1.andEqualTo("type","qzbgxmxjbcxjqz");
+            criteria1.andEqualTo("status","0");
+            criteria1.andEqualTo("platCode",change.getId());
+            List<FileInfo> fileInfos1 = fileInfoMapper.selectByExample(example4);
+            for (FileInfo fileInfo : fileInfos1) {
+                fileInfo.setPlatCode(visaChangeDown.getId());
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
+
+
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
 
             baseProject1.setVisaStatus("2");
