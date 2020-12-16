@@ -454,7 +454,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ") waterSupplyType, " +
             "b.customer_name customerName, " +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
-            "(case IFNULL(l.outsourcing,s.outsourcing) ) " +
+            "(case IFNULL(l.outsourcing,s.outsourcing)  " +
             "   when '1' then '是' " +
             "   when '2' then '否' " +
             "end" +
