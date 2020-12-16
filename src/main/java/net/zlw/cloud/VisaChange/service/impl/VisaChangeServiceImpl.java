@@ -2035,7 +2035,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
             Example example2 = new Example(FileInfo.class);
             Example.Criteria criteria = example2.createCriteria();
-            criteria.andEqualTo("type","qzbgxmxjbcsjqz");
+            criteria.andLike("type","qzbgxmxj%");
             criteria.andEqualTo("status","0");
             criteria.andEqualTo("platCode",change.getId());
             List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example2);
@@ -2044,16 +2044,16 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
             }
 
-            Example example4 = new Example(FileInfo.class);
-            Example.Criteria criteria1 = example4.createCriteria();
-            criteria1.andEqualTo("type","qzbgxmxjbcxjqz");
-            criteria1.andEqualTo("status","0");
-            criteria1.andEqualTo("platCode",change.getId());
-            List<FileInfo> fileInfos1 = fileInfoMapper.selectByExample(example4);
-            for (FileInfo fileInfo : fileInfos1) {
-                fileInfo.setPlatCode(visaChangeDown.getId());
-                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
-            }
+//            Example example4 = new Example(FileInfo.class);
+//            Example.Criteria criteria1 = example4.createCriteria();
+//            criteria1.andEqualTo("type","qzbgxmxjbcxjqz");
+//            criteria1.andEqualTo("status","0");
+//            criteria1.andEqualTo("platCode",change.getId());
+//            List<FileInfo> fileInfos1 = fileInfoMapper.selectByExample(example4);
+//            for (FileInfo fileInfo : fileInfos1) {
+//                fileInfo.setPlatCode(visaChangeDown.getId());
+//                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+//            }
 
 
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
