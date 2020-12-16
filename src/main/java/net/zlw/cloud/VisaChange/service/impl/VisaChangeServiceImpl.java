@@ -1423,8 +1423,48 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     visaChangeVo.setVisaApplyChangeInformationDown(visaApplyChangeInformation);
                 }
             }
-            visaChangeVo.setVisaChangeUp(new VisaChange());
-            visaChangeVo.setVisaChangeDown(new VisaChange());
+            VisaChange visaChange = new VisaChange();
+            visaChange.setOutsourcing("2");
+            visaChangeVo.setVisaChangeUp(visaChange);
+            VisaChange visaChange1 = new VisaChange();
+            visaChange1.setOutsourcing("2");
+            visaChangeVo.setVisaChangeDown(visaChange1);
+
+            Example example2 = new Example(VisaChange.class);
+            Example.Criteria cc = example2.createCriteria();
+            cc.andEqualTo("baseProjectId",baseId);
+            cc.andEqualTo("state","0");
+            List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example2);
+            VisaChange v = null;
+            for (VisaChange change : visaChanges) {
+                if (change.getUpAndDownMark().equals("1")){
+                    v = change;
+                }
+            }
+
+            Example example1 = new Example(FileInfo.class);
+            Example.Criteria criteria = example1.createCriteria();
+            criteria.andEqualTo("type","qzbgxmxjbcsjqz");
+            criteria.andEqualTo("status","0");
+            criteria.andEqualTo("platCode",v.getId());
+            List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
+            for (FileInfo fileInfo : fileInfos) {
+                fileInfo.setStatus("1");
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
+
+            Example example3 = new Example(FileInfo.class);
+            Example.Criteria criteria1 = example3.createCriteria();
+            criteria1.andEqualTo("type","qzbgxmxjbcxjqz");
+            criteria1.andEqualTo("status","0");
+            criteria1.andEqualTo("platCode",v.getId());
+            List<FileInfo> fileInfos1 = fileInfoMapper.selectByExample(example3);
+            for (FileInfo fileInfo : fileInfos1) {
+                fileInfo.setStatus("1");
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
+
+
         }
 
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
@@ -1829,6 +1869,47 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                                 .andEqualTo("status","0");
         List<MemberManage> memberManages = memberManageDao.selectByExample(example);
         return memberManages;
+    }
+
+    @Override
+    public void renewFile(String baseId, String visaNum) {
+
+        if(visaNum.equals("1")){
+            Example example2 = new Example(VisaChange.class);
+            Example.Criteria cc = example2.createCriteria();
+            cc.andEqualTo("baseProjectId",baseId);
+            cc.andEqualTo("state","0");
+            List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example2);
+            VisaChange v = null;
+            for (VisaChange change : visaChanges) {
+                if (change.getUpAndDownMark().equals("1")){
+                    v = change;
+                }
+            }
+
+            Example example1 = new Example(FileInfo.class);
+            Example.Criteria criteria = example1.createCriteria();
+            criteria.andEqualTo("type","qzbgxmxjbcsjqz");
+            criteria.andEqualTo("status","0");
+            criteria.andEqualTo("platCode",v.getId());
+            List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
+            for (FileInfo fileInfo : fileInfos) {
+                fileInfo.setStatus("0");
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
+
+            Example example3 = new Example(FileInfo.class);
+            Example.Criteria criteria1 = example3.createCriteria();
+            criteria1.andEqualTo("type","qzbgxmxjbcxjqz");
+            criteria1.andEqualTo("status","0");
+            criteria1.andEqualTo("platCode",v.getId());
+            List<FileInfo> fileInfos1 = fileInfoMapper.selectByExample(example3);
+            for (FileInfo fileInfo : fileInfos1) {
+                fileInfo.setStatus("0");
+                fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
+            }
+        }
+
     }
 
     @Override

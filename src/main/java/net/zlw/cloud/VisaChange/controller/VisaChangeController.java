@@ -314,6 +314,13 @@ public class VisaChangeController extends BaseController {
         return RestUtil.success(memberManageNames);
     }
 
+    //返回恢复附件
+    @RequestMapping(value = "/public/renewFile",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> renewFile(@RequestParam(name = "baseId") String baseId , @RequestParam(name = "visaNum1") String visaNum1){
+        vcisService.renewFile(baseId,visaNum1);
+        return RestUtil.success();
+    }
+
 
 
 

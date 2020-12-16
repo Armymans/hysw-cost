@@ -30,4 +30,6 @@ public interface VisaChangeService {
      void deleteVisa(String baseId);
 
      List<MemberManage> costOfPersonnel();
+
+     void renewFile(String id, String baseId);
 }
