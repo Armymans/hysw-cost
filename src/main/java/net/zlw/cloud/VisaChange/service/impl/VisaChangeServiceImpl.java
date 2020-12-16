@@ -431,11 +431,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     }
                     visaChangeListVo.setOutsourcing(outsourcing);
                     visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeDown().getNameOfCostUnit());
-                    if (visaById.getVisaChangeDown().getOutsourcingAmount()!=null && !"".equals(visaById.getVisaChangeDown().getOutsourcingAmount())){
-                        visaChangeListVo.setAmountCost(Integer.parseInt(visaById.getVisaChangeDown().getOutsourcingAmount()));
-                    }else{
-                        visaChangeListVo.setAmountCost(0);
-                    }
+                   
                 }else if(visaChangeListVo.getCurrentShang() != null && ! "".equals(visaChangeListVo.getCurrentShang())){
                     visaChangeListVo.setStatus("上家编制中");
                     VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
@@ -472,11 +468,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     }
                     visaChangeListVo.setOutsourcing(outsourcing);
                     visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeDown().getNameOfCostUnit());
-                    if (visaById.getVisaChangeDown().getOutsourcingAmount()!=null && !"".equals(visaById.getVisaChangeDown().getOutsourcingAmount())){
-                        visaChangeListVo.setAmountCost(Integer.parseInt(visaById.getVisaChangeDown().getOutsourcingAmount()));
-                    }else{
-                        visaChangeListVo.setAmountCost(0);
-                    }
+                   
                 }
             }
             for (VisaChangeListVo visaChangeListVo : list1) {
@@ -605,11 +597,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     }
                     visaChangeListVo.setOutsourcing(outsourcing);
                     visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeDown().getNameOfCostUnit());
-                    if (visaById.getVisaChangeDown().getOutsourcingAmount()!=null && !"".equals(visaById.getVisaChangeDown().getOutsourcingAmount())){
-                        visaChangeListVo.setAmountCost(Integer.parseInt(visaById.getVisaChangeDown().getOutsourcingAmount()));
-                    }else{
-                        visaChangeListVo.setAmountCost(0);
-                    }
+                   
                 }else if(visaChangeListVo.getCurrentShang() != null && ! "".equals(visaChangeListVo.getCurrentShang())){
 
                     VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
@@ -643,11 +631,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     }
                     visaChangeListVo.setOutsourcing(outsourcing);
                     visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeDown().getNameOfCostUnit());
-                    if (visaById.getVisaChangeDown().getOutsourcingAmount()!=null && !"".equals(visaById.getVisaChangeDown().getOutsourcingAmount())){
-                        visaChangeListVo.setAmountCost(Integer.parseInt(visaById.getVisaChangeDown().getOutsourcingAmount()));
-                    }else{
-                        visaChangeListVo.setAmountCost(0);
-                    }
+                   
                 }
 
             }
