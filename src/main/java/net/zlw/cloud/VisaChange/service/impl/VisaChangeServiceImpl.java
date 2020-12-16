@@ -1453,7 +1453,12 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
         if (baseProject.getVisaStatus().equals("2")){
-            visaChangeVo.setShowCart("0");
+            Integer changeNum = visaChangeVo.getVisaChangeDown().getChangeNum();
+            if (changeNum>1){
+                visaChangeVo.setShowCart("1");
+            }else{
+                visaChangeVo.setShowCart("0");
+            }
         }else {
             visaChangeVo.setShowCart("1");
         }

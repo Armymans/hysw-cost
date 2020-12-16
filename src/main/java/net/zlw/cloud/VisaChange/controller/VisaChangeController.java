@@ -74,6 +74,14 @@ public class VisaChangeController extends BaseController {
         //TODO id测试写死
         PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
         List<VisaChangeListVo> list =  vcisService.findAllVisa(pageVo);
+        for (VisaChangeListVo visaChangeListVo : list) {
+            String outsourcing = visaChangeListVo.getOutsourcing();
+            if (outsourcing.equals("1")){
+
+            }else if(outsourcing.equals("2")){
+                visaChangeListVo.setNameOfCostUnit("");
+            }
+        }
         PageInfo<VisaChangeListVo> visaChangeListVoPageInfo = new PageInfo<>(list);
 
 
