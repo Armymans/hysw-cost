@@ -468,6 +468,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         }else{
             //第二次进度款支付需要删除上次支付附件
             List<FileInfo> fileInfo = fileInfoMapper.deleteOneByF(id);
+            baseProjectVo.setOutsourcing("2");
             if(fileInfo.size() > 0){
                 for (FileInfo info : fileInfo) {
                     info.setStatus("1");
@@ -1412,8 +1413,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public List<ProgressPaymentInformation> findTotalList(String baseId) {
         Example example = new Example(ProgressPaymentInformation.class);
         Example.Criteria c = example.createCriteria();
-        c.andEqualTo("delFlag","2");
+//        c.andEqualTo("delFlag","2");
         c.andEqualTo("baseProjectId",baseId);
+        example.orderBy("changeNum");
         List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
         if (!"2".equals(baseProject.getProgressPaymentStatus())) {
@@ -1441,7 +1443,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         Example example = new Example(ProgressPaymentInformation.class);
         Example.Criteria c = example.createCriteria();
-        c.andEqualTo("delFlag","2");
+//        c.andEqualTo("delFlag","2");
         c.andEqualTo("baseProjectId",baseId);
         List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
