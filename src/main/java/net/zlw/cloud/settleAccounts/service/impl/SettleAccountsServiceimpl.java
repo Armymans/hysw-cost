@@ -1043,7 +1043,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example examples = new Example(OtherInfo.class);
         examples.createCriteria().andEqualTo("foreignKey",baseProject.getId())
                 .andEqualTo("status","0");
-        examples.orderBy("change_num").asc();
+        examples.orderBy("changeNum").asc();
         List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(examples);
         for (int i = 0; i < otherInfos.size(); i++) {
             json += "{" +

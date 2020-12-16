@@ -454,17 +454,17 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ") waterSupplyType, " +
             "b.customer_name customerName, " +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
-            "(case bt.outsourcing " +
+            "(case IFNULL(l.outsourcing,s.outsourcing) ) " +
             "   when '1' then '是' " +
             "   when '2' then '否' " +
             "end" +
             ") outsourcing, " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = IFNULL(l.name_of_cost_unit,s.name_of_cost_unit) ) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
             "s.authorized_number authorizedNumber, " +
-            "IFNULL(s.take_time,l.take_time) takeTime, " +
-            "IFNULL(s.compile_time,l.compile_time) compileTime, " +
+            "IFNULL(l.take_time,s.take_time) takeTime, " +
+            "IFNULL(l.compile_time,s.compile_time) compileTime, " +
             "(case IFNULL(s.whether_account,l.whether_account) " +
             "    when '0' then '到账' " +
             "    when '1' then '未到账' " +
@@ -558,17 +558,17 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ") waterSupplyType, " +
             "b.customer_name customerName, " +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
-            " ( case bt.outsourcing " +
+            " ( case IFNULL(l.outsourcing,s.outsourcing) " +
             "   when '1' then '是' " +
             "   when '2' then '否' " +
             "   end " +
             ") outsourcing, " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = IFNULL(l.name_of_cost_unit,s.name_of_cost_unit) ) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
             "s.authorized_number authorizedNumber, " +
-            "IFNULL(s.take_time,l.take_time) takeTime, " +
-            "IFNULL(s.compile_time,l.compile_time) compileTime, " +
+            "IFNULL(l.take_time,s.take_time) takeTime, " +
+            "IFNULL(l.compile_time,s.compile_time) compileTime, " +
             "(case IFNULL(s.whether_account,l.whether_account) " +
             "    when '0' then '到账' " +
             "    when '1' then '未到账' " +
@@ -665,17 +665,17 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ") waterSupplyType, " +
             "b.customer_name customerName, " +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
-            "(case bt.outsourcing  " +
+            "(case IFNULL(l.outsourcing,s.outsourcing)  " +
             "        when '1' then '是' " +
             "        when '2' then '否' " +
             "        end" +
             "      ) outsourcing , " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = IFNULL(l.name_of_cost_unit,s.name_of_cost_unit) ) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
             "s.authorized_number authorizedNumber, " +
-            "IFNULL(s.take_time,l.take_time) takeTime, " +
-            "IFNULL(s.compile_time,l.compile_time) compileTime, " +
+            "IFNULL(l.take_time,s.take_time) takeTime, " +
+            "IFNULL(l.compile_time,s.compile_time) compileTime, " +
             "(case IFNULL(s.whether_account,l.whether_account) " +
             "    when '0' then '到账' " +
             "    when '1' then '未到账' " +
@@ -766,13 +766,17 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ") waterSupplyType, " +
             "b.customer_name customerName, " +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
-            "bt.outsourcing outsourcing, " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "( case IFNULL(l.outsourcing,s.outsourcing) " +
+            "   when '1' then '是' " +
+            "   when '2' then '否' " +
+            " end " +
+            " ) outsourcing, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = IFNULL(l.name_of_cost_unit,s.name_of_cost_unit) ) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
             "s.authorized_number authorizedNumber, " +
-            "IFNULL(s.take_time,l.take_time) takeTime, " +
-            "IFNULL(s.compile_time,l.compile_time) compileTime, " +
+            "IFNULL(l.take_time,s.take_time) takeTime, " +
+            "IFNULL(l.compile_time,s.compile_time) compileTime, " +
             "(case IFNULL(s.whether_account,l.whether_account) " +
             "    when '0' then '到账' " +
             "    when '1' then '未到账' " +
@@ -863,17 +867,17 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             ") waterSupplyType, " +
             "b.customer_name customerName, " +
             "IFNULL(s.prepare_people,l.prepare_people) preparePeople, " +
-            "( case bt.outsourcing " +
+            "( case IFNULL(l.outsourcing,s.outsourcing) " +
             "   when '1' then '是' " +
             "   when '2' then '否' " +
             " end " +
             " ) outsourcing, " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = IFNULL(l.name_of_cost_unit,s.name_of_cost_unit) ) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
             "s.authorized_number authorizedNumber, " +
-            "IFNULL(s.take_time,l.take_time) takeTime, " +
-            "IFNULL(s.compile_time,l.compile_time) compileTime, " +
+            "IFNULL(l.take_time,s.take_time) takeTime, " +
+            "IFNULL(l.compile_time,s.compile_time) compileTime, " +
             "(case IFNULL(s.whether_account,l.whether_account) " +
             "    when '0' then '到账' " +
             "    when '1' then '未到账' " +
