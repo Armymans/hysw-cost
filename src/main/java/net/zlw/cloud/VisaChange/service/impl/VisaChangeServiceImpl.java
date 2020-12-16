@@ -420,7 +420,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (visaChangeListVo.getCurrentShang() != null && !"".equals(visaChangeListVo.getCurrentShang()) && visaChangeListVo.getCurrentXia() != null && !"".equals(visaChangeListVo.getCurrentXia())){
                     visaChangeListVo.setStatus("-");
                     VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
-                    String outsourcing = visaById.getVisaChangeDown().getOutsourcing();
+                    String outsourcing = visaById.getVisaChangeUp().getOutsourcing();
                     if (outsourcing!=null && !"".equals(outsourcing)){
                         if (outsourcing.equals("1")){
                             outsourcing = "是";
