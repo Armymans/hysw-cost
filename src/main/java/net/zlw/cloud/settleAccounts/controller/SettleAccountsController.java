@@ -40,6 +40,11 @@ public class SettleAccountsController extends BaseController {
     public Map<String,Object> findAllAccounts(PageVo pageVo){
         PageHelper.startPage(pageVo.getPageNum(),pageVo.getPageSize());
         List<AccountsVo> allAccounts = settleAccountsService.findAllAccounts(pageVo,getLoginUser());
+        for (AccountsVo allAccount : allAccounts) {
+            if (allAccount.getOutsourcing().equals("2")){
+                allAccount.setNameOfCostUnit("");
+            }
+        }
         PageInfo<AccountsVo> accountsVoPageInfo = new PageInfo<>(allAccounts);
         return RestUtil.page(accountsVoPageInfo);
     }
