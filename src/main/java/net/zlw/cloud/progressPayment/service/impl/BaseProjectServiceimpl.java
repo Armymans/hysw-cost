@@ -468,6 +468,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         }else{
             //第二次进度款支付需要删除上次支付附件
             List<FileInfo> fileInfo = fileInfoMapper.deleteOneByF(id);
+            baseProjectVo.setOutsourcing("2");
             if(fileInfo.size() > 0){
                 for (FileInfo info : fileInfo) {
                     info.setStatus("1");
