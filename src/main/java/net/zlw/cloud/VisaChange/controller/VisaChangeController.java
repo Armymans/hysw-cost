@@ -63,6 +63,8 @@ public class VisaChangeController extends BaseController {
     private MkyUserMapper mkyUserMapper;
     @Resource
     private CostUnitManagementMapper costUnitManagementMapper;
+    @Resource
+    private VisaChangeService visaChangeService;
 
     //查询所有
 
@@ -81,6 +83,44 @@ public class VisaChangeController extends BaseController {
             }else if(outsourcing.equals("2")){
                 visaChangeListVo.setNameOfCostUnit("");
             }
+
+            List<VisaChangeStatisticVo> list1 =  vcisService.findAllchangeStatistics(visaChangeListVo.getBaseProjectId());
+            BigDecimal upAmount = new BigDecimal(0);
+            BigDecimal downAmount = new BigDecimal(0);
+            double upPro = 0.0;
+            double downPro = 0.0;
+            VisaReturnStatistic visaReturnStatistic = new VisaReturnStatistic();
+            visaReturnStatistic.setList(list1);
+            for (VisaChangeStatisticVo visaChangeStatisticVo : list1) {
+                if (visaChangeStatisticVo.getVisaChangeUpAmount()!=null){
+                    upAmount = upAmount.add(visaChangeStatisticVo.getVisaChangeUpAmount());
+                }
+                if (visaChangeStatisticVo.getVisaChangeDownAmount()!=null){
+                    downAmount = downAmount.add(visaChangeStatisticVo.getVisaChangeDownAmount());
+                }
+                if (visaChangeStatisticVo.getVisaChangeUpProportionContract()!=null && !"".equals(visaChangeStatisticVo.getVisaChangeUpProportionContract())){
+                    upPro+=Double.parseDouble(visaChangeStatisticVo.getVisaChangeUpProportionContract());
+                }
+
+                if (visaChangeStatisticVo.getVisaChangeDownProportionContract()!=null && !"".equals(visaChangeStatisticVo.getVisaChangeDownProportionContract())){
+                    downPro+=Double.parseDouble(visaChangeStatisticVo.getVisaChangeDownProportionContract());
+                }
+            }
+            if (list1.size()>=1){
+                visaReturnStatistic.setTotalChangeNum(list1.get(list1.size()-1).getChangeNum());
+            }
+            double upPro1 = upPro;
+            double downPro1 = downPro;
+            double v = new BigDecimal(upPro1).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            double v2 = new BigDecimal(downPro1).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            visaReturnStatistic.setTotalVisaChangeUpAmount(upAmount);
+            visaReturnStatistic.setTotalVisaChangeDownAmount(downAmount);
+            visaReturnStatistic.setTotalVisaChangeUpProportionContract(v+"");
+            visaReturnStatistic.setTotalVisaChangeDownProportionContract(v2+"");
+
+            visaChangeListVo.setAmountVisaChangeAddShang(visaReturnStatistic.getTotalVisaChangeUpAmount().toString());
+            visaChangeListVo.setAmountVisaChangeAddXia(visaReturnStatistic.getTotalVisaChangeDownAmount().toString());
+
         }
         PageInfo<VisaChangeListVo> visaChangeListVoPageInfo = new PageInfo<>(list);
 
