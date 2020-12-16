@@ -430,7 +430,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
                     }
                     visaChangeListVo.setOutsourcing(outsourcing);
-                    visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeDown().getNameOfCostUnit());
+                    visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeUp().getNameOfCostUnit());
                    
                 }else if(visaChangeListVo.getCurrentShang() != null && ! "".equals(visaChangeListVo.getCurrentShang())){
                     visaChangeListVo.setStatus("上家编制中");
