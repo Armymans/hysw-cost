@@ -1413,7 +1413,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public List<ProgressPaymentInformation> findTotalList(String baseId) {
         Example example = new Example(ProgressPaymentInformation.class);
         Example.Criteria c = example.createCriteria();
-//        c.andEqualTo("delFlag","2");
+        c.andEqualTo("delFlag","2");
         c.andEqualTo("baseProjectId",baseId);
         example.orderBy("changeNum");
         List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
@@ -1443,7 +1443,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         Example example = new Example(ProgressPaymentInformation.class);
         Example.Criteria c = example.createCriteria();
-//        c.andEqualTo("delFlag","2");
+        c.andEqualTo("delFlag","2");
         c.andEqualTo("baseProjectId",baseId);
         List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
