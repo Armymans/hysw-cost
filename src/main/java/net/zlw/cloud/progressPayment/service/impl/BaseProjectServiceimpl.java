@@ -697,7 +697,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo.setAuditResult("0");
                     auditInfo.setAuditType("0");
                     auditInfo.setAuditorId(baseProject.getAuditorId());
-//                    auditInfo.setFounderId(loginUser.getId());
+                    auditInfo.setFounderId(loginUser.getId());
                     auditInfo.setStatus("0");
                     auditInfo.setCreateTime(format);
                     auditInfoDao.insertSelective(auditInfo);
@@ -725,7 +725,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo.setAuditResult("0");
                     auditInfo.setAuditType("2");
                     auditInfo.setAuditorId(baseProject.getAuditorId());
-//                    auditInfo.setFounderId(loginUser.getId());
+                    auditInfo.setFounderId(loginUser.getId());
                     auditInfo.setStatus("0");
                     auditInfo.setCreateTime(format);
                     auditInfoDao.insertSelective(auditInfo);
@@ -848,7 +848,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 progressPaymentInformation.setCreateTime(format);
                 progressPaymentInformation.setFounderId(loginUser.getId());
                 progressPaymentInformation.setDelFlag("0");
-//                progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
+                progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
                 progressPaymentInformationDao.insertSelective(progressPaymentInformation);
 
 
@@ -1416,7 +1416,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         c.andEqualTo("baseProjectId",baseId);
         List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
-        if (! baseProject.getProgressPaymentStatus().equals("2")){
+        if (!"2".equals(baseProject.getProgressPaymentStatus())) {
             Example example1 = new Example(ProgressPaymentInformation.class);
             Example.Criteria c2 = example1.createCriteria();
             c2.andEqualTo("baseProjectId",baseId);
@@ -1425,9 +1425,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             progressPaymentInformations.add(progressPaymentInformation);
         }
         for (ProgressPaymentInformation progressPaymentInformation : progressPaymentInformations) {
-            if (progressPaymentInformation.getProjectType().equals("1")){
+            if ("1".equals(progressPaymentInformation.getProjectType())) {
                 progressPaymentInformation.setProjectType("合同内进度款支付");
-            }else if(progressPaymentInformation.getProjectType().equals("2")){
+            } else if ("2".equals(progressPaymentInformation.getProjectType())) {
                 progressPaymentInformation.setProjectType("合同外进度款支付");
             }
         }
