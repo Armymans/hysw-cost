@@ -253,8 +253,9 @@ public class BudgetingServiceImpl implements BudgetingService {
         if (!"".equals(budgetingVo.getPricingTogether())){
             veryEstablishment.setPricingTogether(budgetingVo.getPricingTogether());
         }else{
-            veryEstablishment.setReceivingTime(loginUser.getId());
+            veryEstablishment.setPricingTogether(loginUser.getId());
         }
+        veryEstablishment.setReceivingTime(budgetingVo.getVReceivingTime());
         veryEstablishment.setEstablishmentTime(budgetingVo.getEstablishmentTime());
         veryEstablishment.setRemarkes(budgetingVo.getVRemarkes());
         veryEstablishment.setBudgetingId(budgeting.getId());
