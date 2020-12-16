@@ -78,9 +78,9 @@ public class ProjectController extends BaseController {
             String uid = projectService.buildSubmit(buildingProject);
             //更改userid 为 建设项目id
             String id = getLoginUser().getId();
-            List<FileInfo> xmxgt = fileInfoService.findByFreignAndType2(id, "xmxgt");
-            if(xmxgt.size()>0){
-                for (FileInfo fileInfo : xmxgt) {
+            List<FileInfo> build = fileInfoService.findByFreignAndType2(id, "build");
+            if(build.size()>0){
+                for (FileInfo fileInfo : build) {
                     fileInfo.setPlatCode(uid);
                     projectService.updateFileInfo(fileInfo);
                 }
@@ -142,8 +142,7 @@ public class ProjectController extends BaseController {
         List<FileInfo> fileInfo = fileInfoService.findByPlatCode(id);
         if (fileInfo.size() > 0) {
             for (FileInfo info : fileInfo) {
-                String url = "/images/" +info.getFilePath();
-                //http://10.61.96.48/images/1.jpg
+                String url = "/hysw/cost/api/common/file/view/" +info.getId()+".png";
                 info.setImgurl(url);
             }
         }

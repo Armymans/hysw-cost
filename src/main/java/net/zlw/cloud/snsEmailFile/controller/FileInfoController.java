@@ -16,12 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -548,6 +547,29 @@ public class FileInfoController extends BaseController {
                 e.printStackTrace();
 
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/view/{id}.png", method = RequestMethod.GET)
+    public void view(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response) {
+        log.info(getLogInfo("view", id));
+        FileInfo attachInfo = null;
+        try {
+            attachInfo = fileInfoService.findByKey(id);
+            String filePath = attachInfo.getFilePath();
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("image/jpeg");
+            response.setHeader("Content-Disposition", "inline;fileName=" + attachInfo.getFileName());
+            InputStream inputStream = new FileInputStream(new File(LixAttachDir, filePath));
+            OutputStream os = response.getOutputStream();
+            byte[] b = new byte[1024];
+            int length;
+            while ((length = inputStream.read(b)) > 0) {
+                os.write(b, 0, length);
+            }
+            inputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

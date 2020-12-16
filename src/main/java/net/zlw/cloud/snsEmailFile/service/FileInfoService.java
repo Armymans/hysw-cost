@@ -110,4 +110,8 @@ public class FileInfoService {
             }
         }
     }
+
+    public FileInfo findByKey(String id) {
+        return fileInfoMapper.selectByPrimaryKey(id);
+    }
 }
