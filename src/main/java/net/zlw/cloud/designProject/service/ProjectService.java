@@ -2073,11 +2073,16 @@ public class ProjectService {
 //            projectVo.getBaseProject().setDesginStatus("2");
 
         }
-
+        // 前台传的designInfo.id实际上是外键，这里通过外键找到设计信息进行修改
+        Example example = new Example(DesignInfo.class);
+        example.createCriteria().andEqualTo("baseProjectId",projectVo.getDesignInfo().getId())
+                                .andEqualTo("status","0");
+        DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
         //添加修改时间
         projectVo.getBaseProject().setUpdateTime(updateTime);
         projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
         //添加设计表修改时间
+        projectVo.getDesignInfo().setId(designInfo.getId());
         projectVo.getDesignInfo().setUpdateTime(updateTime);
         projectVo.getDesignInfo().setIsdeschange("0");
         designInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignInfo());
@@ -2094,7 +2099,7 @@ public class ProjectService {
         //方案会审
         if (projectVo.getProjectExploration() != null) {
             projectVo.getPackageCame().setUpdateTime(updateTime);
-            PackageCame packageCame = this.PackageCameByid(projectVo.getBaseProject().getId());
+            PackageCame packageCame = this.PackageCameByid(designInfo.getId());
             if (packageCame != null) {
                 projectVo.getPackageCame().setId(packageCame.getId());
                 packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
