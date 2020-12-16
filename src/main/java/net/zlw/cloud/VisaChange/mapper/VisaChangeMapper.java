@@ -63,7 +63,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "  when '2' then '否' " +
             "  end " +
             ") outsourcing, " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = v.name_of_cost_unit_id) nameOfCostUnit, " +
             "bt.amount_cost amountCost, " +
             "v.creator_id founderId  " +
             "from  " +
@@ -138,12 +138,12 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "     ) waterSupplyType,   " +
             "     b.customer_name customerName,   " +
             "     b.water_address waterAddress,   " +
-            "     (case bt.outsourcing   " +
+            "     (case v.outsourcing   " +
             "       when '1' then '是'   " +
             "       when '2' then '否'   " +
             "       end   " +
             "     ) outsourcing,   " +
-            "     (select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit,   " +
+            "     (select cost_unit_name from cost_unit_management cum where cum.id = v.name_of_cost_unit_id) nameOfCostUnit,   " +
             "     bt.amount_cost amountCost,   " +
             "     v.creator_id founderId,  " +
             "     v.contract_amount contractAmountShang,  " +
@@ -237,12 +237,12 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            ) waterSupplyType,  " +
             "            b.customer_name customerName,  " +
             "            b.water_address waterAddress,  " +
-            "            (case bt.outsourcing  " +
+            "            (case v.outsourcing  " +
             "              when '1' then '是'  " +
             "              when '2' then '否'  " +
             "              end  " +
             "            ) outsourcing,  " +
-            "            (select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit,  " +
+            "            (select cost_unit_name from cost_unit_management cum where cum.id = v.name_of_cost_unit_id) nameOfCostUnit,  " +
             "            bt.amount_cost amountCost,  " +
             "            v.creator_id founderId, " +
             "      v.contract_amount contractAmountShang, " +
@@ -338,12 +338,12 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            ) waterSupplyType,  " +
             "            b.customer_name customerName,  " +
             "            b.water_address waterAddress,  " +
-            "            (case bt.outsourcing  " +
+            "            (case v.outsourcing  " +
             "              when '1' then '是'  " +
             "              when '2' then '否'  " +
             "              end  " +
             "            ) outsourcing,  " +
-            "            (select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit,  " +
+            "            (select cost_unit_name from cost_unit_management cum where cum.id = v.name_of_cost_unit_id) nameOfCostUnit,  " +
             "            bt.amount_cost amountCost,  " +
             "            v.creator_id founderId, " +
             "      v.contract_amount contractAmountShang, " +
@@ -437,12 +437,12 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            ) waterSupplyType,  " +
             "            b.customer_name customerName,  " +
             "            b.water_address waterAddress,  " +
-            "            (case bt.outsourcing  " +
+            "            (case v.outsourcing  " +
             "              when '1' then '是'  " +
             "              when '2' then '否'  " +
             "              end  " +
             "            ) outsourcing,  " +
-            "            (select cost_unit_name from cost_unit_management cum where cum.id = bt.name_of_cost_unit) nameOfCostUnit,  " +
+            "            (select cost_unit_name from cost_unit_management cum where cum.id = v.name_of_cost_unit_id) nameOfCostUnit,  " +
             "            bt.amount_cost amountCost,  " +
             "            v.creator_id founderId, " +
             "      v.contract_amount contractAmountShang, " +
