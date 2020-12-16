@@ -459,7 +459,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "   when '2' then '否' " +
             "end" +
             ") outsourcing, " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = IFNULL(l.name_of_the_cost,s.name_of_the_cost) ) nameOfCostUnit, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = l.name_of_the_cost ) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
             "s.authorized_number authorizedNumber, " +
@@ -563,7 +563,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "   when '2' then '否' " +
             "   end " +
             ") outsourcing, " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = IFNULL(l.name_of_the_cost,s.name_of_the_cost) ) nameOfCostUnit, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = l.name_of_the_cost ) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
             "s.authorized_number authorizedNumber, " +
@@ -670,7 +670,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "        when '2' then '否' " +
             "        end" +
             "      ) outsourcing , " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = IFNULL(l.name_of_the_cost,s.name_of_the_cost) ) nameOfCostUnit, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = l.name_of_the_cost ) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
             "s.authorized_number authorizedNumber, " +
@@ -771,7 +771,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "   when '2' then '否' " +
             " end " +
             " ) outsourcing, " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = IFNULL(l.name_of_the_cost,s.name_of_the_cost) ) nameOfCostUnit, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = l.name_of_the_cost ) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
             "s.authorized_number authorizedNumber, " +
@@ -872,7 +872,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "   when '2' then '否' " +
             " end " +
             " ) outsourcing, " +
-            "(select cost_unit_name from cost_unit_management cum where cum.id = IFNULL(l.name_of_the_cost,s.name_of_the_cost) ) nameOfCostUnit, " +
+            "(select cost_unit_name from cost_unit_management cum where cum.id = l.name_of_the_cost ) nameOfCostUnit, " +
             "l.review_number lReviewNumber, " +
             "si.sumbit_money sumbitMoney, " +
             "s.authorized_number authorizedNumber, " +
