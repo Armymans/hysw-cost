@@ -1879,7 +1879,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             Example example1 = new Example(FileInfo.class);
             Example.Criteria criteria = example1.createCriteria();
             criteria.andEqualTo("type","qzbgxmxjbcsjqz");
-            criteria.andEqualTo("status","0");
+            criteria.andEqualTo("status","1");
             criteria.andEqualTo("platCode",v.getId());
             List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
             for (FileInfo fileInfo : fileInfos) {
@@ -1890,7 +1890,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             Example example3 = new Example(FileInfo.class);
             Example.Criteria criteria1 = example3.createCriteria();
             criteria1.andEqualTo("type","qzbgxmxjbcxjqz");
-            criteria1.andEqualTo("status","0");
+            criteria1.andEqualTo("status","1");
             criteria1.andEqualTo("platCode",v.getId());
             List<FileInfo> fileInfos1 = fileInfoMapper.selectByExample(example3);
             for (FileInfo fileInfo : fileInfos1) {
