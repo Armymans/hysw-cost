@@ -1418,6 +1418,7 @@ public class MaintenanceProjectInformationService {
         Example examples = new Example(OtherInfo.class);
         examples.createCriteria().andEqualTo("foreignKey",id)
                 .andEqualTo("status","0");
+        examples.orderBy("changeNum").asc();
         List<OtherInfo> otherInfos = otherInfoMapper.selectByExample(examples);
         for (int i = 0; i < otherInfos.size(); i++) {
             json += "{" +
@@ -1430,7 +1431,7 @@ public class MaintenanceProjectInformationService {
 
         //todo userInfo.getId();
         String userInfoId = userInfo.getId();
-//        String userInfoId = "200101005"; 罗均
+//        String userInfoId = "user320";
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain(id);
         if (information != null) {
             maintenanceVo.setMaintenanceProjectInformation(information);
@@ -2132,7 +2133,7 @@ public class MaintenanceProjectInformationService {
 
         //todo userInfo.getId();
         String userInfoId = userInfo.getId();
-//        String userInfoId = "200101005";
+//        String userInfoId = "user320";
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain2(id);
         if (information != null) {
             maintenanceVo.setMaintenanceProjectInformation(information);
