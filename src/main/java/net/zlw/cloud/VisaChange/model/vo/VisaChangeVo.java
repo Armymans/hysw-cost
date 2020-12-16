@@ -32,6 +32,8 @@ public class VisaChangeVo {
     private String nameShang;
     private String nameXia;
 
+    private String showCart;
+
 
 
 }
