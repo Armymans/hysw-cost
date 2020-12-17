@@ -262,7 +262,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " ( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType, " +
   " b.customer_name customerName, " +
   " (select member_name username from member_manage where id = p.founder_id) username, " +
-  " ( CASE bt.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
+  " ( CASE p.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
   " bt.name_of_cost_unit nameOfCostUnit, " +
   " bt.amount_cost amountCost, " +
   " p.contract_amount contractAmount, " +
@@ -336,7 +336,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " ( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType, " +
   " b.customer_name customerName, " +
   " (select member_name username from member_manage where id = p.founder_id) username, " +
-  " ( CASE bt.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
+  " ( CASE p.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
   " bt.name_of_cost_unit nameOfCostUnit, " +
   " bt.amount_cost amountCost, " +
   " p.contract_amount contractAmount, " +
@@ -412,7 +412,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " ( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType, " +
   " b.customer_name customerName, " +
   " (select member_name username from member_manage where id = p.founder_id) username, " +
-  " ( CASE bt.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
+  " ( CASE p.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
   " bt.name_of_cost_unit nameOfCostUnit, " +
   " bt.amount_cost amountCost, " +
   " p.contract_amount contractAmount, " +
@@ -484,7 +484,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " ( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType, " +
   " b.customer_name customerName, " +
   " (select member_name username from member_manage where id = p.founder_id) username, " +
-  " ( CASE bt.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
+  " ( CASE p.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
   " bt.name_of_cost_unit nameOfCostUnit, " +
   " bt.amount_cost amountCost, " +
   " p.contract_amount contractAmount, " +
