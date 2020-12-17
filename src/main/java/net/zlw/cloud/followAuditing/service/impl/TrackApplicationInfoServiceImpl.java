@@ -698,7 +698,6 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 //        String userId = "user324";
         TrackVo trackVo = new TrackVo();
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(id);
-        BigDecimal bigDecimal = new BigDecimal(0);
         // 设计单位名称
         DesignUnitManagement designName = designUnitManagementDao.selectByPrimaryKey(trackAuditInfo.getDesignOrganizationId());
         if (designName != null){
@@ -708,11 +707,6 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(trackAuditInfo.getAuditUnitNameId());
         if (costUnitManagement != null){
             trackAuditInfo.setAuditUnitNameId(costUnitManagement.getCostUnitName());
-        }
-        if (trackAuditInfo.getOutsourceMoney() == bigDecimal){
-            trackAuditInfo.setMoney(null);
-        }else {
-            trackAuditInfo.setMoney(trackAuditInfo.getOutsourceMoney()+"");
         }
         BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(trackAuditInfo.getBaseProjectId());
 
@@ -756,11 +750,12 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 //        String userId = "user324";
         TrackVo trackVo = new TrackVo();
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(id);
-        BigDecimal bigDecimal = new BigDecimal(0);
-        if (trackAuditInfo.getOutsourceMoney() == bigDecimal){
-            trackAuditInfo.setMoney(null);
+        BigDecimal outsourceMoney = trackAuditInfo.getOutsourceMoney();
+        String money = outsourceMoney.toString();
+        if ("0.00".equals(money)){
+            trackAuditInfo.setOutsourceMoney(null);
         }else {
-            trackAuditInfo.setMoney(trackAuditInfo.getOutsourceMoney()+"");
+            trackAuditInfo.setOutsourceMoney(trackAuditInfo.getOutsourceMoney());
         }
         BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(trackAuditInfo.getBaseProjectId());
 
