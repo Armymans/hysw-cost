@@ -51,13 +51,13 @@ public class AhExcelServiceImpl implements AhExcelService {
     private SummaryMaterialsSuppliedDao summaryMaterialsSuppliedDao;
 
     @Override
-    public void coverImport(String id) {
+    public void coverImport(String id,FileInputStream fileInputStream) {
 
 
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         try {
-            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
-            FileInputStream fileInputStream = new FileInputStream(new File(url));
+//            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
+//            FileInputStream fileInputStream = new FileInputStream(new File(url));
             Sheet sheet = new Sheet(1, 3);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             //读到excel所有数据
@@ -85,11 +85,11 @@ public class AhExcelServiceImpl implements AhExcelService {
     }
 
     @Override
-    public void summarySheetImport(String id) {
+    public void summarySheetImport(String id,FileInputStream fileInputStream) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         try {
-            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
-            FileInputStream fileInputStream = new FileInputStream(new File(url));
+//            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
+//            FileInputStream fileInputStream = new FileInputStream(new File(url));
             Sheet sheet = new Sheet(3, 1);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
@@ -131,11 +131,11 @@ public class AhExcelServiceImpl implements AhExcelService {
     }
 
     @Override
-    public void quantitiesPartialWorksImport(String id) {
+    public void quantitiesPartialWorksImport(String id,FileInputStream fileInputStream) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         try {
-            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
-            FileInputStream fileInputStream = new FileInputStream(new File(url));
+//            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
+//            FileInputStream fileInputStream = new FileInputStream(new File(url));
             Sheet sheet = new Sheet(4, 1);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
@@ -190,13 +190,13 @@ public class AhExcelServiceImpl implements AhExcelService {
     }
 
     @Override
-    public void competitiveItemValuationImport(String id) {
+    public void competitiveItemValuationImport(String id,FileInputStream fileInputStream) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
 
         try {
-            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
-            FileInputStream fileInputStream = new FileInputStream(new File(url));
+//            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
+//            FileInputStream fileInputStream = new FileInputStream(new File(url));
             Sheet sheet = new Sheet(5, 1);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
@@ -243,11 +243,11 @@ public class AhExcelServiceImpl implements AhExcelService {
     }
 
     @Override
-    public void taxStatementImport(String id) {
+    public void taxStatementImport(String id,FileInputStream fileInputStream) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         try {
-            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
-            FileInputStream fileInputStream = new FileInputStream(new File(url));
+//            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
+//            FileInputStream fileInputStream = new FileInputStream(new File(url));
             Sheet sheet = new Sheet(6, 1);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
@@ -282,10 +282,10 @@ public class AhExcelServiceImpl implements AhExcelService {
     }
 
     @Override
-    public void summaryMaterialsSuppliedAImport(String id) {
+    public void summaryMaterialsSuppliedAImport(String id,FileInputStream fileInputStream) {
         try {
-            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
-            FileInputStream fileInputStream = new FileInputStream(new File(url));
+//            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
+//            FileInputStream fileInputStream = new FileInputStream(new File(url));
             Sheet sheet = new Sheet(7, 1);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
@@ -322,10 +322,10 @@ public class AhExcelServiceImpl implements AhExcelService {
     }
 
     @Override
-    public void summaryMaterialsSuppliedBImport(String id) {
+    public void summaryMaterialsSuppliedBImport(String id,FileInputStream fileInputStream) {
         try {
-            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
-            FileInputStream fileInputStream = new FileInputStream(new File(url));
+//            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
+//            FileInputStream fileInputStream = new FileInputStream(new File(url));
             Sheet sheet = new Sheet(7, 1);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);

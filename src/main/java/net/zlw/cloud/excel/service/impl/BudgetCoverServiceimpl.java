@@ -64,6 +64,8 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     private SettlementReportTextAttachmentDao settlementReportTextAttachmentDao;
     @Resource
     private SettlementReportTextReductionReasonsDao settlementReportTextReductionReasonsDao;
+    @Resource
+    private AhExcelServiceImpl ahExcelService;
 
 
 
@@ -93,10 +95,10 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
 
 
     @Override
-    public void coverImport(String id) {
-        String url = "E:\\正量\\新建文件夹\\预算汇总表-神机（安徽）.xlsx";
+    public void coverImport(String id,FileInputStream fileInputStream) {
+//        String url = "E:\\正量\\新建文件夹\\预算汇总表-神机（安徽）.xlsx";
         try {
-            FileInputStream fileInputStream = new FileInputStream(new File(url));
+//            FileInputStream fileInputStream = new FileInputStream(new File(url));
             Sheet sheet = new Sheet(2,4);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
@@ -123,16 +125,16 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
 
             System.out.println(summaryShenji);
             summaryShenjiDao.insertSelective(summaryShenji);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void summaryUnitsImport(String id) {
-        String url = "E:\\正量\\新建文件夹\\预算汇总表-神机（安徽）.xlsx";
+    public void summaryUnitsImport(String id, FileInputStream fileInputStream) {
+//        String url = "E:\\正量\\新建文件夹\\预算汇总表-神机（安徽）.xlsx";
         try {
-            FileInputStream fileInputStream = new FileInputStream(new File(url));
+//            FileInputStream fileInputStream = new FileInputStream(new File(url));
             Sheet sheet = new Sheet(3,4);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
@@ -157,17 +159,17 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
                    summaryUnitsDao.insertSelective(summaryUnits);
                 }
             }
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void partTableQuantitiesImport(String id) {
-        String url = "E:\\正量\\新建文件夹\\预算汇总表-神机（安徽）.xlsx";
+    public void partTableQuantitiesImport(String id, FileInputStream fileInputStream) {
+//        String url = "E:\\正量\\新建文件夹\\预算汇总表-神机（安徽）.xlsx";
         String projectName = "";
         try {
-            FileInputStream fileInputStream = new FileInputStream(new File(url));
+//            FileInputStream fileInputStream = new FileInputStream(new File(url));
             Sheet sheet = new Sheet(4,4);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
@@ -669,12 +671,25 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
         }
     }
 
+    //新增所有神机
     @Override
-    public void addbudgetAll(String id) {
+    public void addbudgetAll(String id,FileInputStream fileInputStream) {
 
-        coverImport(id);
-        summaryUnitsImport(id);
-        partTableQuantitiesImport(id);
+        coverImport(id,fileInputStream);
+        summaryUnitsImport(id,fileInputStream);
+        partTableQuantitiesImport(id,fileInputStream);
+    }
+
+    //新增所有新点
+    @Override
+    public void addbudgetAllXindian(String id,FileInputStream fileInputStream){
+        ahExcelService.coverImport(id,fileInputStream);
+        ahExcelService.summarySheetImport(id,fileInputStream);
+        ahExcelService.quantitiesPartialWorksImport(id,fileInputStream);
+        ahExcelService.competitiveItemValuationImport(id,fileInputStream);
+        ahExcelService.taxStatementImport(id,fileInputStream);
+        ahExcelService.summaryMaterialsSuppliedAImport(id,fileInputStream);
+        ahExcelService.summaryMaterialsSuppliedBImport(id,fileInputStream);
     }
 
 

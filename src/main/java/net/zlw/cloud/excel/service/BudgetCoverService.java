@@ -5,13 +5,15 @@ import net.zlw.cloud.excel.model.ReportTextVo;
 import net.zlw.cloud.excel.model.SummaryShenji;
 import net.zlw.cloud.excelLook.domain.SettlementDirectory;
 
+import java.io.FileInputStream;
+
 public interface BudgetCoverService {
-    void coverImport(String id);
+    void coverImport(String id, FileInputStream fileInputStream);
 
-    void summaryUnitsImport(String id);
+    void summaryUnitsImport(String id, FileInputStream fileInputStream);
 
 
-    void partTableQuantitiesImport(String id);
+    void partTableQuantitiesImport(String id, FileInputStream fileInputStream);
 
     void bomTableImport(String id);
 
@@ -33,5 +35,7 @@ public interface BudgetCoverService {
 
     void updateReportContent(ReportTextVo reportTextVo);
 
-    void addbudgetAll(String id);
+    void addbudgetAll(String id, FileInputStream fileInputStream);
+
+     void addbudgetAllXindian(String id,FileInputStream fileInputStream);
 }

@@ -1,10 +1,14 @@
 package net.zlw.cloud.budgeting.controller;
 
+import com.alibaba.excel.EasyExcelFactory;
+import com.alibaba.excel.metadata.Sheet;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.DateUtil;
+import net.tec.cloud.common.util.FileUtil;
+import net.tec.cloud.common.util.IdUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
@@ -20,21 +24,27 @@ import net.zlw.cloud.excel.model.SummaryUnits;
 import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
+import net.zlw.cloud.snsEmailFile.controller.FileInfoController;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 //@RequestMapping("/budgeting")
@@ -61,6 +71,8 @@ public class BudgetingController extends BaseController {
     private SummaryUnitsDao summaryUnitsDaol;
     @Resource
     private PartTableQuantitiesDao partTableQuantitiesDao;
+    @Resource
+    private FileInfoMapper fileInfoMapper;
 
 
 
@@ -269,49 +281,147 @@ public class BudgetingController extends BaseController {
       return RestUtil.success(list);
     }
 
+
+
+//    @RequestMapping(value = "/updateFileName", method = {RequestMethod.GET,RequestMethod.POST})
+//    public Map<String, Object> updateFileName(@RequestParam("file") MultipartFile multipartFile,@RequestParam(name = "code") String code, @RequestParam(name = "id") String id, @RequestParam(name = "name") String name, @RequestParam(name = "remark") String remark, @RequestParam(name = "rtype") String rtype) {
+//        FileInfo fileInfo = fileInfoService.getByKey(id);
+//        fileInfo.setName(name);
+//        fileInfo.setRemark(remark);
+//        fileInfo.setPlatCode(code);
+//        fileInfo.setUpdateTime(DateUtil.getDateTime());
+//        fileInfoService.updateFileName(fileInfo);
+//
+//        //新增
+//        if (rtype.equals("1")){
+//
+//
+//            budgetCoverService.addbudgetAll(id,null);
+//        }else {
+//            Example example = new Example(SummaryShenji.class);
+//            Example.Criteria criteria = example.createCriteria();
+//            criteria.andEqualTo("budgetId",id);
+//            criteria.andEqualTo("delFlag","0");
+//            List<SummaryShenji> summaryShenjis = summaryShenjiDao.selectByExample(example);
+//            for (SummaryShenji summaryShenji : summaryShenjis) {
+//
+//
+//                summaryShenjiDao.deleteByPrimaryKey(summaryShenji);
+//            }
+//            Example example1 = new Example(SummaryUnits.class);
+//            Example.Criteria criteria1 = example1.createCriteria();
+//            criteria1.andEqualTo("budgetingId",id);
+//            criteria1.andEqualTo("delFlag","0");
+//            List<SummaryUnits> summaryUnits = summaryUnitsDaol.selectByExample(example1);
+//            for (SummaryUnits summaryUnit : summaryUnits) {
+//                summaryUnitsDaol.deleteByPrimaryKey(summaryUnit);
+//            }
+//            Example example2 = new Example(PartTableQuantities.class);
+//            Example.Criteria criteria2 = example2.createCriteria();
+//            criteria2.andEqualTo("foreignKey",id);
+//            criteria2.andEqualTo("delFlag","0");
+//            List<PartTableQuantities> partTableQuantities = partTableQuantitiesDao.selectByExample(example2);
+//            for (PartTableQuantities partTableQuantity : partTableQuantities) {
+//                partTableQuantitiesDao.deleteByPrimaryKey(partTableQuantity);
+//            }
+//            budgetCoverService.addbudgetAll(id,fileInfo.getFilePath());
+//        }
+//
+//        return RestUtil.success("修改成功");
+//    }
+
+
+
     //预算文件上传()预算汇总表
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");
+    private static final transient Logger log = LoggerFactory.getLogger(FileInfoController.class);
+    @Value("${app.attachPath}")
+    private String LixAttachDir;
+    @Value("${app.testPath}")
+    private String WinAttachDir;
 
-    @RequestMapping(value = "/updateFileName", method = RequestMethod.POST)
-    public Map<String, Object> updateFileName(@RequestParam(name = "code") String code, @RequestParam(name = "id") String id, @RequestParam(name = "name") String name, @RequestParam(name = "remark") String remark, @RequestParam(name = "rtype") String rtype) {
-        FileInfo fileInfo = fileInfoService.getByKey(id);
-        fileInfo.setName(name);
-        fileInfo.setRemark(remark);
-        fileInfo.setPlatCode(code);
-        fileInfo.setUpdateTime(DateUtil.getDateTime());
-        fileInfoService.updateFileName(fileInfo);
+    @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
+    public Map<String, Object> applyUpload1(@RequestParam("file") MultipartFile file, String type) throws IOException {
 
-        //新增
-        if (rtype.equals("1")){
-            budgetCoverService.addbudgetAll(id);
-        }else {
-            Example example = new Example(SummaryShenji.class);
-            Example.Criteria criteria = example.createCriteria();
-            criteria.andEqualTo("budgetId",id);
-            criteria.andEqualTo("delFlag","0");
-            List<SummaryShenji> summaryShenjis = summaryShenjiDao.selectByExample(example);
-            for (SummaryShenji summaryShenji : summaryShenjis) {
-                summaryShenjiDao.deleteByPrimaryKey(summaryShenji);
+        MultipartFile aaa = file;
+
+        log.info(getLogInfo("upload", file));
+        FileInfo attachInfo = new FileInfo();
+        try {
+
+            String fileName = new String(FileUtil.getFileName(file).getBytes(), "UTF-8");
+            String fileType = FileUtil.getFileExtName(file);
+
+            String fileDir = "/" + sdf2.format(new Date());
+
+            String tmpFileName = IdUtil.uuid2().substring(0, 15) + sdf.format(new Date()) + "." + fileType;
+            String filePath = fileDir + "/" + tmpFileName;
+            //上传路径
+            String path = "";
+            String os = System.getProperty("os.name");
+            if (os.toLowerCase().startsWith("win")) {
+                path = WinAttachDir;
+            } else {
+                path = LixAttachDir;
             }
-            Example example1 = new Example(SummaryUnits.class);
-            Example.Criteria criteria1 = example1.createCriteria();
-            criteria1.andEqualTo("budgetingId",id);
-            criteria1.andEqualTo("delFlag","0");
-            List<SummaryUnits> summaryUnits = summaryUnitsDaol.selectByExample(example1);
-            for (SummaryUnits summaryUnit : summaryUnits) {
-                summaryUnitsDaol.deleteByPrimaryKey(summaryUnit);
+
+            File outDir = new File(path + fileDir);
+            if (!outDir.exists()) {
+                outDir.mkdirs();
             }
-            Example example2 = new Example(PartTableQuantities.class);
-            Example.Criteria criteria2 = example2.createCriteria();
-            criteria2.andEqualTo("foreignKey",id);
-            criteria2.andEqualTo("delFlag","0");
-            List<PartTableQuantities> partTableQuantities = partTableQuantitiesDao.selectByExample(example2);
-            for (PartTableQuantities partTableQuantity : partTableQuantities) {
-                partTableQuantitiesDao.deleteByPrimaryKey(partTableQuantity);
+            log.info(outDir.getAbsolutePath());
+            File targetFile = new File(outDir.getAbsolutePath(), tmpFileName);
+
+            attachInfo.setFileName(fileName);
+            attachInfo.setFilePath(filePath);
+            attachInfo.setFileSource("1");
+            attachInfo.setFileType(fileType);
+            attachInfo.setType(type);
+            attachInfo.setCreateTime(DateUtil.getDateTime());
+            attachInfo.setStatus("1");
+//            attachInfo.setUserId(getLoginUser().getId());
+            attachInfo.setStatus("0");
+//            attachInfo.setCompanyId(getLoginUser().getCompanyId());
+            //添加到数据库
+
+
+            FileInputStream inputStream = (FileInputStream) aaa.getInputStream();
+
+            //将文件与企业材料管理进行关联
+            try {
+                attachInfo.setId("file"+ UUID.randomUUID().toString().replaceAll("-", ""));
+                fileInfoMapper.insert(attachInfo);
+
+                if (aaa.getOriginalFilename().contains("神机")){
+                 budgetCoverService.addbudgetAll(attachInfo.getId(),inputStream);
+                }else if(aaa.getOriginalFilename().contains("新点")){
+                    budgetCoverService.addbudgetAllXindian(attachInfo.getId(),inputStream);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            budgetCoverService.addbudgetAll(id);
+
+            try {
+                file.transferTo(targetFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error("操作异常,请联系管理员!");
         }
 
-        return RestUtil.success("修改成功");
+
+
+
+
+        Map<String, String> map = new HashMap<>();
+        map.put("id",attachInfo.getId());
+        map.put("name",attachInfo.getFileName()+"."+attachInfo.getFileType());
+        return RestUtil.success(map);
     }
 
 }

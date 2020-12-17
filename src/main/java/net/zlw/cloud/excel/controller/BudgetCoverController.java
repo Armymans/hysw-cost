@@ -22,19 +22,19 @@ public class BudgetCoverController {
     //汇总表-神机封面导入
     @RequestMapping(value = "/budgetCover/coverImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> coverImport(@RequestParam(name = "id") String id){
-        budgetCoverService.coverImport(id);
+        budgetCoverService.coverImport(id,null);
         return RestUtil.success();
     }
     //汇总表-神机 单位汇总表导入
     @RequestMapping(value = "/budgetCover/summaryUnitsImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> summaryUnitsImport(@RequestParam(name = "id") String id){
-        budgetCoverService.summaryUnitsImport(id);
+        budgetCoverService.summaryUnitsImport(id,null);
         return RestUtil.success();
     }
     //汇总表-神机 分部分项工程量清单计价表   /    上家结算汇总表 分部分项目工程量清单计价表
     @RequestMapping(value = "/budgetCover/partTableQuantitiesImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> partTableQuantitiesImport(@RequestParam(name = "id") String id){
-        budgetCoverService.partTableQuantitiesImport(id);
+        budgetCoverService.partTableQuantitiesImport(id,null);
         return RestUtil.success();
     }
     //物料清单表(安徽)
@@ -101,7 +101,7 @@ public class BudgetCoverController {
     //预算汇总表
     @RequestMapping(value = "/budgetCover/addbudgetAll",method = {RequestMethod.POST,RequestMethod.GET})
     public Map<String,Object> addbudgetAll(@RequestParam(name = "id") String id){
-        budgetCoverService.addbudgetAll(id);
+        budgetCoverService.addbudgetAll(id,null);
         return RestUtil.success();
     }
 }

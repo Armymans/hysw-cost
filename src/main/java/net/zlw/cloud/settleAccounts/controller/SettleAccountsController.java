@@ -33,7 +33,6 @@ public class SettleAccountsController extends BaseController {
     @Resource
     private CostUnitManagementMapper costUnitManagementMapper;
 
-
     //查询所有结算
 //    @PostMapping("/findAllAccounts")
     @RequestMapping(value = "/accounts/findAllAccounts",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
