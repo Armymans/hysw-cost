@@ -7,9 +7,11 @@ import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.OutSourceMapper;
 import net.zlw.cloud.designProject.model.OutSource;
+import net.zlw.cloud.followAuditing.mapper.DesignUnitManagementDao;
 import net.zlw.cloud.followAuditing.mapper.TrackApplicationInfoDao;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.mapper.TrackMonthlyDao;
+import net.zlw.cloud.followAuditing.model.DesignUnitManagement;
 import net.zlw.cloud.followAuditing.model.TrackApplicationInfo;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.followAuditing.model.TrackMonthly;
@@ -26,6 +28,8 @@ import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
+import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
+import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
@@ -64,6 +68,11 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     private MemberManageDao memberManageDao;
     @Resource
     private BudgetingDao budgetingDao;
+    @Resource
+    private DesignUnitManagementDao designUnitManagementDao;
+    @Resource
+    private CostUnitManagementMapper costUnitManagementMapper;
+
 
     @Resource
     private RemindSetMapper remindSetMapper;
@@ -686,7 +695,65 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     @Override
     public TrackVo selectTrackById(String id, UserInfo userInfo) {
         String userId = userInfo.getId();
-//        String userId = "user320";
+//        String userId = "user324";
+        TrackVo trackVo = new TrackVo();
+        TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(id);
+        BigDecimal bigDecimal = new BigDecimal(0);
+        // 设计单位名称
+        DesignUnitManagement designName = designUnitManagementDao.selectByPrimaryKey(trackAuditInfo.getDesignOrganizationId());
+        if (designName != null){
+            trackAuditInfo.setDesignOrganizationId(designName.getDesignUnitName());
+        }
+        // 造价单位名称
+        CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(trackAuditInfo.getAuditUnitNameId());
+        if (costUnitManagement != null){
+            trackAuditInfo.setAuditUnitNameId(costUnitManagement.getCostUnitName());
+        }
+        if (trackAuditInfo.getOutsourceMoney() == bigDecimal){
+            trackAuditInfo.setMoney(null);
+        }else {
+            trackAuditInfo.setMoney(trackAuditInfo.getOutsourceMoney()+"");
+        }
+        BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(trackAuditInfo.getBaseProjectId());
+
+        Example example = new Example(TrackApplicationInfo.class);
+        example.createCriteria().andEqualTo("trackAudit", id);
+        TrackApplicationInfo trackApplicationInfo = trackApplicationInfoDao.selectOneByExample(example);
+
+        Example example1 = new Example(TrackMonthly.class);
+        Example.Criteria criteria = example1.createCriteria();
+        criteria.andEqualTo("trackId", id);
+        criteria.andEqualTo("status", "0");
+        //根据创建时间排序
+//        example1.orderBy("createTime").desc();
+        List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
+        AuditInfo auditInfo = null;
+        trackVo.setAuditWord("第" + trackMonthlies.size() + "次月报");
+        TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(id);
+        Example example2 = new Example(AuditInfo.class);
+        example2.createCriteria().andEqualTo("baseProjectId", trackMonthlyOld.getId())
+                .andEqualTo("status", "0")
+                .andEqualTo("auditorId", userId)
+                .andEqualTo("auditResult", "0");
+        auditInfo = auditInfoDao.selectOneByExample(example2);
+
+        if (auditInfo == null) {
+            trackVo.setAuditResult("0"); //不审核
+        } else {
+            trackVo.setAuditResult("1");
+        }
+        trackVo.setTrackStatus(baseProject.getTrackStatus());
+        trackVo.setBaseProject(baseProject);
+        trackVo.setAuditInfo(trackAuditInfo);
+        trackVo.setTrackApplicationInfo(trackApplicationInfo);
+        trackVo.setMonthlyList(trackMonthlies);
+        return trackVo;
+    }
+
+    @Override
+    public TrackVo editTrackById(String id, UserInfo userInfo) {
+        String userId = userInfo.getId();
+//        String userId = "user324";
         TrackVo trackVo = new TrackVo();
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(id);
         BigDecimal bigDecimal = new BigDecimal(0);
@@ -730,7 +797,6 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         trackVo.setMonthlyList(trackMonthlies);
         return trackVo;
     }
-
     // TODO 回显页面，月报
     public List<TrackMonthly> findAllByTrackId(String id) {
         Example example1 = new Example(TrackMonthly.class);
@@ -741,6 +807,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         example1.orderBy("createTime").desc();
         List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example1);
         for (int i = 0; i < trackMonthlies.size(); i++) {
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(trackMonthlies.get(i).getWritter());
+            if (memberManage != null){
+                trackMonthlies.get(i).setWritter(memberManage.getMemberName());
+            }
             trackMonthlies.get(i).setAuditCount("第"+(i+1)+"次月报");
         }
         return trackMonthlies;

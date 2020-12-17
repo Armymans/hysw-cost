@@ -174,11 +174,18 @@ public class TrackApplicationInfoController extends BaseController {
         }
         return RestUtil.success("添加成功");
     }
-    //跟踪审计信息回显
+    //跟踪审计信息回显--查看
 //    @GetMapping("/track/selectTrackById/{id}")
     @RequestMapping(value = "/track/selectTrackById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectTrackById(@RequestParam(name = "id") String id){
        TrackVo trackVo =  trackApplicationInfoService.selectTrackById(id,getLoginUser());
+        return RestUtil.success(trackVo);
+    }
+    //跟踪审计信息回显--编辑
+//    @GetMapping("/track/selectTrackById/{id}")
+    @RequestMapping(value = "/track/editTrackById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> editTrackById(@RequestParam(name = "id") String id){
+        TrackVo trackVo =  trackApplicationInfoService.editTrackById(id,getLoginUser());
         return RestUtil.success(trackVo);
     }
     //修改审计月报

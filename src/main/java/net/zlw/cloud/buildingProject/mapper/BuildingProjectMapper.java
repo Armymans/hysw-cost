@@ -17,14 +17,14 @@ import java.util.List;
 @Mapper
 public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<BuildingProject> {
 
-    @Select("SELECT  " +
-            "   distinct bp.id,  " +
-            "   building_project_name buildingProjectName, " +
-            "   building_project_code buildingProjectCode " +
-            "   FROM  " +
-            "   building_project bp  " +
-            "   left join base_project b on b.building_project_id != bp.id  " +
-            "   where bp.del_flag = 0 and bp.or_submit = 0 and bp.merge_flag = 2")
+    @Select("SELECT     " +
+            "   distinct bp.id,     " +
+            "   building_project_name buildingProjectName,    " +
+            "   building_project_code buildingProjectCode    " +
+            "   FROM     " +
+            "   building_project bp     " +
+            "   left join base_project b on b.building_project_id != bp.id     " +
+            " where bp.del_flag = 0")
     List<BuildingProject> findBuildingProject();
 
     @Select("select * from building_project where id = #{id}")
