@@ -380,9 +380,9 @@ public class BudgetingController extends BaseController {
             attachInfo.setType(type);
             attachInfo.setCreateTime(DateUtil.getDateTime());
             attachInfo.setStatus("1");
-//            attachInfo.setUserId(getLoginUser().getId());
+            attachInfo.setUserId(getLoginUser().getId());
             attachInfo.setStatus("0");
-//            attachInfo.setCompanyId(getLoginUser().getCompanyId());
+            attachInfo.setCompanyId(getLoginUser().getCompanyId());
             //添加到数据库
 
 
