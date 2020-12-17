@@ -74,7 +74,7 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
     BuildingProject selectOneBuilding(@Param("id") String id);
 
     @Select("SELECT" +
-            "  b2.id," +
+            "  distinct b2.id," +
             "  b2.cea_num ceaNum," +
             "  b2.project_num projectNum," +
             "  b2.project_name projectName," +
@@ -118,7 +118,6 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
             "  LEFT JOIN employee_achievements_info e1 ON e1.base_project_id = b2.id " +
             "  WHERE" +
             "  b1.del_flag = '0' " +
-            "  AND b2.del_flag = '0'" +
             "  AND b1.id = #{id}")
     List<BaseVo> selectBaseProjectList(@Param("id") String id);
 }

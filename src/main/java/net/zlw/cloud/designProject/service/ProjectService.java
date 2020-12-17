@@ -2951,10 +2951,10 @@ public class ProjectService {
                 AnhuiMoneyinfo anhuiMoneyinfo = this.anhuiMoneyinfoByid(designInfo.getId());
                 WujiangMoneyInfo wujiangMoneyInfo = this.wujiangMoneyInfoByid(designInfo.getId());
                 if (wujiangMoneyInfo != null) {
-                    officialReceipts = anhuiMoneyinfo.getOfficialReceipts().add(officialReceipts);
+                    officialReceipts = wujiangMoneyInfo.getOfficialReceipts().add(officialReceipts);
                 }
                 if (anhuiMoneyinfo != null) {
-                    officialReceipts = wujiangMoneyInfo.getOfficialReceipts().add(officialReceipts);
+                    officialReceipts = anhuiMoneyinfo.getOfficialReceipts().add(officialReceipts);
                 }
             }
         }

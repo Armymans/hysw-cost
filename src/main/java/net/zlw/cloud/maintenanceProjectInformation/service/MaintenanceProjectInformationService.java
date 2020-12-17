@@ -1051,7 +1051,7 @@ public class MaintenanceProjectInformationService {
             maintenanceProjectInformationVo.setConstructionUnitId("7661");
         }
         // 根据检维修项目id  查询到的 检维修对象
-        MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectBymaintenanceItemId(maintenanceProjectInformationVo.getMaintenanceItemId());
+        MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectBymaintenanceItemId(maintenanceProjectInformationVo.getId());
         // 检维修对象
         MaintenanceProjectInformation information = new MaintenanceProjectInformation();
         information.setId(maintenanceProjectInformation.getId());
