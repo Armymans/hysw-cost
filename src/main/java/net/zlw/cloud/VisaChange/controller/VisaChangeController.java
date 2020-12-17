@@ -78,11 +78,7 @@ public class VisaChangeController extends BaseController {
         List<VisaChangeListVo> list =  vcisService.findAllVisa(pageVo);
         for (VisaChangeListVo visaChangeListVo : list) {
             String outsourcing = visaChangeListVo.getOutsourcing();
-            if (outsourcing.equals("1")){
 
-            }else if(outsourcing.equals("2")){
-                visaChangeListVo.setNameOfCostUnit("");
-            }
 
             List<VisaChangeStatisticVo> list1 =  vcisService.findAllchangeStatistics(visaChangeListVo.getBaseProjectId());
             BigDecimal upAmount = new BigDecimal(0);
