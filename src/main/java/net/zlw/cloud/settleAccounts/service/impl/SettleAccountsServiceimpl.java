@@ -162,11 +162,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         accountsVo.setPreparePeople(mkyUser.getUserName());
                     }
                 }
-                for (AccountsVo allAccount : list1) {
-                    if (allAccount.getOutsourcing().equals("2")){
-                        allAccount.setNameOfCostUnit("");
-                    }
-                }
+
                 return list1;
             }
             //待审核 普通员工
@@ -200,11 +196,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         accountsVo.setPreparePeople(mkyUser.getUserName());
                     }
                 }
-                for (AccountsVo allAccount : list1) {
-                    if (allAccount.getOutsourcing().equals("2")){
-                        allAccount.setNameOfCostUnit("");
-                    }
-                }
+
                 return list1;
             }
         }
@@ -226,11 +218,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                      }
 
                 }
-                for (AccountsVo allAccount : list1) {
-                    if (allAccount.getOutsourcing().equals("2")){
-                        allAccount.setNameOfCostUnit("");
-                    }
-                }
+
                 return list1;
             }
             //未通过
@@ -257,11 +245,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         accountsVo.setSettleAccountsStatus("结算确认未通过");
                     }
                 }
-                for (AccountsVo allAccount : list1) {
-                    if (allAccount.getOutsourcing().equals("2")){
-                        allAccount.setNameOfCostUnit("");
-                    }
-                }
+
                 return list1;
             }
             //待确认
@@ -283,11 +267,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     }
                     }
                 }
-                for (AccountsVo allAccount : list1) {
-                    if (allAccount.getOutsourcing().equals("2")){
-                        allAccount.setNameOfCostUnit("");
-                    }
-                }
+
                 return list1;
             }
             //已完成
@@ -302,11 +282,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     }
                     }
                 }
-                for (AccountsVo allAccount : list1) {
-                    if (allAccount.getOutsourcing().equals("2")){
-                        allAccount.setNameOfCostUnit("");
-                    }
-                }
+
                 return list1;
             }
             //全部
@@ -326,11 +302,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         accountsVo.setPreparePeople(mkyUser.getUserName());
                     }
                 }
-                for (AccountsVo allAccount : list1) {
-                    if (allAccount.getOutsourcing().equals("2")){
-                        allAccount.setNameOfCostUnit("");
-                    }
-                }
+
                 return list1;
             }
 
