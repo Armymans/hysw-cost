@@ -673,23 +673,23 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
 
     //新增所有神机
     @Override
-    public void addbudgetAll(String id,FileInputStream fileInputStream) {
+    public void addbudgetAll(String id, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream fileInputStream) {
 
-        coverImport(id,fileInputStream);
-        summaryUnitsImport(id,fileInputStream);
+        coverImport(id,inputStream);
+        summaryUnitsImport(id,inputStream2);
         partTableQuantitiesImport(id,fileInputStream);
     }
 
     //新增所有新点
     @Override
-    public void addbudgetAllXindian(String id,FileInputStream fileInputStream){
+    public void addbudgetAllXindian(String id, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream inputStream3, FileInputStream inputStream4, FileInputStream inputStream5, FileInputStream inputStream6, FileInputStream fileInputStream){
         ahExcelService.coverImport(id,fileInputStream);
-        ahExcelService.summarySheetImport(id,fileInputStream);
-        ahExcelService.quantitiesPartialWorksImport(id,fileInputStream);
-        ahExcelService.competitiveItemValuationImport(id,fileInputStream);
-        ahExcelService.taxStatementImport(id,fileInputStream);
-        ahExcelService.summaryMaterialsSuppliedAImport(id,fileInputStream);
-        ahExcelService.summaryMaterialsSuppliedBImport(id,fileInputStream);
+        ahExcelService.summarySheetImport(id,inputStream2);
+        ahExcelService.quantitiesPartialWorksImport(id,inputStream3);
+        ahExcelService.competitiveItemValuationImport(id,inputStream4);
+        ahExcelService.taxStatementImport(id,inputStream5);
+        ahExcelService.summaryMaterialsSuppliedAImport(id,inputStream6);
+        ahExcelService.summaryMaterialsSuppliedBImport(id,inputStream);
     }
 
 

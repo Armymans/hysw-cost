@@ -3,7 +3,6 @@ package net.zlw.cloud.excel.controller;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.demo.FinalReport;
-import net.zlw.cloud.excel.model.BudgetCover;
 import net.zlw.cloud.excel.model.ReportTextVo;
 import net.zlw.cloud.excel.model.SummaryShenji;
 import net.zlw.cloud.excel.service.BudgetCoverService;
@@ -11,7 +10,6 @@ import net.zlw.cloud.excelLook.domain.SettlementDirectory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -101,7 +99,7 @@ public class BudgetCoverController {
     //预算汇总表
     @RequestMapping(value = "/budgetCover/addbudgetAll",method = {RequestMethod.POST,RequestMethod.GET})
     public Map<String,Object> addbudgetAll(@RequestParam(name = "id") String id){
-        budgetCoverService.addbudgetAll(id,null);
+        budgetCoverService.addbudgetAll(id, null, null, null);
         return RestUtil.success();
     }
 }

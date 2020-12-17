@@ -35,7 +35,7 @@ public interface BudgetCoverService {
 
     void updateReportContent(ReportTextVo reportTextVo);
 
-    void addbudgetAll(String id, FileInputStream fileInputStream);
+    void addbudgetAll(String id, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream fileInputStream);
 
-     void addbudgetAllXindian(String id,FileInputStream fileInputStream);
+     void addbudgetAllXindian(String id, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream inputStream3, FileInputStream inputStream4, FileInputStream inputStream5, FileInputStream inputStream6, FileInputStream fileInputStream);
 }

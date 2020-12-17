@@ -380,23 +380,37 @@ public class BudgetingController extends BaseController {
             attachInfo.setType(type);
             attachInfo.setCreateTime(DateUtil.getDateTime());
             attachInfo.setStatus("1");
-            attachInfo.setUserId(getLoginUser().getId());
+//            attachInfo.setUserId(getLoginUser().getId());
             attachInfo.setStatus("0");
-            attachInfo.setCompanyId(getLoginUser().getCompanyId());
+//            attachInfo.setCompanyId(getLoginUser().getCompanyId());
             //添加到数据库
 
 
             FileInputStream inputStream = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream2 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream3 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream4 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream5 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream6 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream7 = (FileInputStream) aaa.getInputStream();
+
 
             //将文件与企业材料管理进行关联
             try {
                 attachInfo.setId("file"+ UUID.randomUUID().toString().replaceAll("-", ""));
                 fileInfoMapper.insert(attachInfo);
 
-                if (aaa.getOriginalFilename().contains("神机")){
-                 budgetCoverService.addbudgetAll(attachInfo.getId(),inputStream);
-                }else if(aaa.getOriginalFilename().contains("新点")){
-                    budgetCoverService.addbudgetAllXindian(attachInfo.getId(),inputStream);
+                if (aaa.getOriginalFilename().contains("吴江")){
+
+                }else if(aaa.getOriginalFilename().contains("安徽")){
+
+                    if (aaa.getOriginalFilename().contains("神机")){
+                        //神机
+                        budgetCoverService.addbudgetAll(attachInfo.getId(),inputStream,inputStream2,inputStream3);
+                    }else if(aaa.getOriginalFilename().contains("新点")){
+                        //新点
+                        budgetCoverService.addbudgetAllXindian(attachInfo.getId(),inputStream,inputStream2,inputStream3,inputStream4,inputStream5,inputStream6,inputStream7);
+                    }
                 }
 
             } catch (Exception e) {

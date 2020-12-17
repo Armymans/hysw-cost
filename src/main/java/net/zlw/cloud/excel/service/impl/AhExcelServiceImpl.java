@@ -58,21 +58,27 @@ public class AhExcelServiceImpl implements AhExcelService {
         try {
 //            String url = "F:\\吴江模板\\安徽表格模板\\预算汇总表-新点（安徽）2.0.xls";
 //            FileInputStream fileInputStream = new FileInputStream(new File(url));
-            Sheet sheet = new Sheet(1, 3);
+            Sheet sheet = new Sheet(2, 3);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             //读到excel所有数据
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
+            System.err.println(read);
+            System.err.println(read);
+            System.err.println(read);
+            System.err.println(read);
+            System.err.println(read);
 
             //读到数据库
             AnhuiCover anhuiCover = new AnhuiCover();
 //            AnhuiSummarySheet anhuiSummarySheet = new AnhuiSummarySheet();
+            anhuiCover.setId(UUID.randomUUID().toString().replace("-",""));
             anhuiCover.setProjectName(((List<String>) read.get(1)).get(1));
-            anhuiCover.setPriceSmall(((List<String>) read.get(10)).get(4));
-            anhuiCover.setPriceBig(((List<String>) read.get(11)).get(4));
-            anhuiCover.setConsultingUnit(((List<String>) read.get(18)).get(2));
-            anhuiCover.setAuditor(((List<String>) read.get(4)).get(2));
-            anhuiCover.setPrepareThePeople(((List<String>) read.get(5)).get(2));
-            anhuiCover.setCompileTime(((List<String>) read.get(6)).get(2));
+            anhuiCover.setPriceSmall(((List<String>) read.get(2)).get(3));
+            anhuiCover.setPriceBig(((List<String>) read.get(3)).get(3));
+            anhuiCover.setConsultingUnit(((List<String>) read.get(4)).get(2));
+            anhuiCover.setAuditor(((List<String>) read.get(5)).get(2));
+            anhuiCover.setPrepareThePeople(((List<String>) read.get(6)).get(2));
+            anhuiCover.setCompileTime(((List<String>) read.get(7)).get(2));
             anhuiCover.setCreateTime(data);
             anhuiCover.setBaseProjectId(id);
             anhuiCover.setStatus("0");
@@ -139,6 +145,9 @@ public class AhExcelServiceImpl implements AhExcelService {
             Sheet sheet = new Sheet(4, 1);
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
+            for (Object o : read) {
+                System.err.println(o);
+            }
             String itemName = "";
             for (int i = 0; i < read.size(); i++) {
                 //对工程名称进行切割
