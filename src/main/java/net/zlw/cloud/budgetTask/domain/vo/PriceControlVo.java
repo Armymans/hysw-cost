@@ -13,19 +13,19 @@ import java.util.List;
  */
 @Data
 public class PriceControlVo {
-    private String applicationNum;
-    private String totalPriceControlLabel;
-    private String labelVatAmount;
-    private String priceControlCompilers;
-    private String priceControlTime;
-    private String priceControlRemark;
-    private String priceExamineResult;
-    private String priceExamineOpinion;
-    private String priceExaminer;
-    private String priceExamineTime;
+    private String application_num;
+    private String total_price_control_label;
+    private String label_vat_amount;
+    private String price_control_compilers;
+    private String price_control_time;
+    private String price_control_remark;
+    private String price_examine_result;
+    private String price_examine_opinion;
+    private String price_examiner;
+    private String price_examine_time;
     private String status;
 
 
-    private List<LabelMeansList> labelMeansList;
+    private List<LabelMeansList> LabelMeansList;
 
 }

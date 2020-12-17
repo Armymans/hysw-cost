@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class StatusSynchronService {
 
 
-
     @Autowired
     private BaseProjectDao baseProjectDao;
 
@@ -47,27 +46,33 @@ public class StatusSynchronService {
     private DesignInfoMapper designInfoMapper;
 
 
-    public void updateStatusSynchron(String applicationNum,String status){
-        BaseProject baseProject = new BaseProject();
-        Budgeting budgeting = new Budgeting();
-        CostPreparation costPreparation = new CostPreparation();
-        FileInfo fileInfo = new FileInfo();
-        VeryEstablishment veryEstablishment = new VeryEstablishment();
-        DesignInfo designInfo = new DesignInfo();
-        if (applicationNum != null){
+    public void updateStatusSynchron(String applicationNum, String status) {
+        BaseProject baseProject = baseProjectDao.findByApplicationNum(applicationNum);
+        if (baseProject != null) {
+            Budgeting budgeting = budgetingDao.findByBaseId(baseProject.getId());
+            CostPreparation costPreparation = costPreparationDao.findByBaseId(baseProject.getId());
+            VeryEstablishment veryEstablishment = veryEstablishmentDao.findByBaseId(baseProject.getId());
+            DesignInfo designInfo = designInfoMapper.findByBaseId(baseProject.getId());
+            if (budgeting != null) {
+                budgeting.setDelFlag(status);
+                budgetingDao.updateByPrimaryKeySelective(budgeting);
+            }
+            if (costPreparation != null) {
+                costPreparation.setDelFlag(status);
+                costPreparationDao.updateByPrimaryKeySelective(costPreparation);
+            }
+            if (veryEstablishment != null) {
+                veryEstablishment.setStatus(status);
+                veryEstablishmentDao.updateByPrimaryKeySelective(veryEstablishment);
+            }
+            if (designInfo != null) {
+                designInfo.setStatus(status);
+                designInfoMapper.updateByPrimaryKeySelective(designInfo);
+            }
             baseProject.setStatus(status);
-            budgeting.setDelFlag(status);
-            costPreparation.setDelFlag(status);
-            fileInfo.setStatus(status);
-            veryEstablishment.setStatus(status);
-            designInfo.setStatus(status);
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
         }
-        baseProjectDao.updateByPrimaryKeySelective(baseProject);
-        budgetingDao.updateByPrimaryKeySelective(budgeting);
-        costPreparationDao.updateByPrimaryKeySelective(costPreparation);
-        fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
-        veryEstablishmentDao.updateByPrimaryKeySelective(veryEstablishment);
-        designInfoMapper.updateByPrimaryKeySelective(designInfo);
-
     }
+
+
 }

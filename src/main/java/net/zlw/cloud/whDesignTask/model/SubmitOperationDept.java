@@ -18,19 +18,19 @@ public class SubmitOperationDept {
     @Column(name = "id")
     private String id;
     @Column(name = "base_project_id")
-    private String baseProjectId;
+    private String base_project_id;
     @Column(name = "submit_dept")
-    private String submitDept;
+    private String submit_dept;
     @Column(name = "submitter")
     private String submitter;
     @Column(name = "submit_time")
-    private String submitTime;
+    private String submit_time;
     @Column(name = "examine_opinion")
-    private String examineOpinion;
+    private String examine_opinion;
     @Column(name = "examine_dep")
-    private String examineDept;
+    private String examine_dep;
     @Column(name = "reviewer")
     private String reviewer;
     @Column(name = "examine_time")
-    private String examineTime;
+    private String examine_time;
 }

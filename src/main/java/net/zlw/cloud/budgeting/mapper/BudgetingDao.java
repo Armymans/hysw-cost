@@ -689,4 +689,7 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "b.should_be asc, " +
             "b.create_time desc")
     List<BudgetingListVo> findAllBudgetingCompleted(@Param("p")PageBVo pageBVo, @Param("id") String id);
+
+    @Select("select * from budgeting where base_project_id = #{id}")
+    Budgeting findByBaseId(@Param("id")String id);
 }

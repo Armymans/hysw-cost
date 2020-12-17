@@ -12,10 +12,10 @@ import lombok.Data;
 public class CustomerProvidedFile {
 
     private String id;
-    private String baseProjectId;
-    private String customerProvidedName;
-    private String customerProvidedFileName;
-    private String customerProvidedTime;
-    private String customerProvidedBy;
-    private String customerProvidedDrawing;
+    private String base_project_id;
+    private String customer_provided_name;
+    private String customer_provided_file_name;
+    private String customer_provided_time;
+    private String customer_provided_by;
+    private String customer_provided_drawing;
 }

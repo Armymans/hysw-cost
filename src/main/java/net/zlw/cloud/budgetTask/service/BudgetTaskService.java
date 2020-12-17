@@ -3,6 +3,7 @@ package net.zlw.cloud.budgetTask.service;
 import net.zlw.cloud.budgetTask.domain.CostMeansList;
 import net.zlw.cloud.budgetTask.domain.TotalMeansList;
 import net.zlw.cloud.budgetTask.domain.vo.BudgetVo;
+import net.zlw.cloud.budgetTask.domain.vo.BudgetVoF;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
 import net.zlw.cloud.budgeting.mapper.VeryEstablishmentDao;
@@ -47,112 +48,122 @@ public class BudgetTaskService {
     private FileInfoMapper fileInfoMapper;
 
 
-    public void getBudgetEngineering(String account, BudgetVo budgetVo) {
+    public void getBudgetEngineering(BudgetVoF budgetVoF) {
+        BudgetVo budgetVo = budgetVoF.getBudgetVo();
 
         //设置时间
         String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
-        if (budgetVo != null){
-            //添加基本项目
-            BaseProject baseProject = new BaseProject();
-            if (budgetVo.getApplicationNum() != null){
-                baseProject.setId(budgetVo.getApplicationNum());
-                baseProject.setApplicationNum(budgetVo.getApplicationNum());
-                baseProject.setDistrict(budgetVo.getDistinct());
-                baseProject.setCreateTime(format);
-                baseProject.setUpdateTime(format);
-                baseProject.setFounderId(account);
-                baseProject.setDelFlag("0");
-            }
-            baseProjectDao.insertSelective(baseProject);
+        if (budgetVo != null) {
+//            //添加基本项目
+//            BaseProject baseProject = new BaseProject();
+//            if (budgetVo.getApplication_num() != null){
+//                baseProject.setId(budgetVo.getBase_broject_id());
+//                baseProject.setApplicationNum(budgetVo.getApplication_num());
+//                baseProject.setDistrict(budgetVo.getDistinct());
+//                baseProject.setCreateTime(format);
+//                baseProject.setUpdateTime(format);
+//                baseProject.setFounderId(account);
+//                baseProject.setDelFlag("0");
+//                baseProjectDao.insertSelective(baseProject);
+//            }
 
             //添加预算信息
             Budgeting budgeting = new Budgeting();
-            if (budgetVo.getAddedTaxAmount() !=null){
+            if (budgetVo.getAdded_tax_amount() != null) {
                 //强转
-                String amountCost = budgetVo.getAmountCost();
+                String amountCost = budgetVo.getAmount_cost();
                 BigDecimal bigDecimal = new BigDecimal(amountCost);
-                budgeting.setId(budgetVo.getApplicationNum());
+                budgeting.setId(budgetVo.getId());
                 budgeting.setAmountCost(bigDecimal);
-                budgeting.setBudgetingPeople(budgetVo.getBudgetingPeople());
-                String addedTaxAmount = budgetVo.getAddedTaxAmount();
+                budgeting.setBudgetingPeople(budgetVo.getBudgeting_people());
+                String addedTaxAmount = budgetVo.getAdded_tax_amount();
                 BigDecimal decimal = new BigDecimal(addedTaxAmount);
                 budgeting.setAddedTaxAmount(decimal);
-                budgeting.setBudgetingTime(budgetVo.getBudgetingTime());
-                budgeting.setBaseProjectId(budgetVo.getBaseProjectId());
+                budgeting.setBudgetingTime(budgetVo.getBudgeting_time());
+                budgeting.setBaseProjectId(budgetVo.getBase_broject_id());
                 budgeting.setDelFlag("0");
                 budgeting.setCreateTime(format);
                 budgeting.setUpdateTime(format);
+                budgetingDao.insertSelective(budgeting);
             }
-            budgetingDao.insertSelective(budgeting);
 
             //成本表
             CostPreparation costPreparation = new CostPreparation();
-            if (budgetVo.getTotalCostAmount() != null){
-                costPreparation.setId(budgetVo.getApplicationNum());
-                costPreparation.setBaseProjectId(budgetVo.getBaseProjectId());
-                costPreparation.setCostTogether(budgetVo.getCostBy());
-                costPreparation.setCostPreparationTime(budgetVo.getCostPreparationTime());
-                String totalCostAmount = budgetVo.getTotalCostAmount();
+            if (budgetVo.getTotal_cost_amount() != null) {
+                costPreparation.setId(UUID.randomUUID().toString());
+                costPreparation.setBaseProjectId(budgetVo.getBase_broject_id());
+                costPreparation.setCostTogether(budgetVo.getCost_by());
+                costPreparation.setCostPreparationTime(budgetVo.getCost_preparation_time());
+                String totalCostAmount = budgetVo.getTotal_cost_amount();
                 BigDecimal bigDecimal = new BigDecimal(totalCostAmount);
                 costPreparation.setCostTotalAmount(bigDecimal);
-                String totalVatAmount = budgetVo.getTotalCostAmount();
+                String totalVatAmount = budgetVo.getTotal_cost_amount();
                 BigDecimal bigDecimal1 = new BigDecimal(totalVatAmount);
                 costPreparation.setVatAmount(bigDecimal1);
-                String sourcingCost = budgetVo.getOutsourcingCostAmount();
+                String sourcingCost = budgetVo.getOutsourcing_cost_amount();
                 BigDecimal bigDecimal2 = new BigDecimal(sourcingCost);
                 costPreparation.setOutsourcingCostAmount(bigDecimal2);
-                String sourcingCost1 = budgetVo.getSourcingCost();
+                String sourcingCost1 = budgetVo.getSourcing_cost();
                 BigDecimal bigDecimal3 = new BigDecimal(sourcingCost1);
                 costPreparation.setTotalPackageMaterial(bigDecimal3);
-                String otherExpensesOne = budgetVo.getOtherExpensesOne();
+                String otherExpensesOne = budgetVo.getOther_expenses_one();
                 BigDecimal bigDecimal4 = new BigDecimal(otherExpensesOne);
-                String otherExpensesTwo = budgetVo.getOtherExpensesTwo();
+                String otherExpensesTwo = budgetVo.getOther_expenses_two();
                 BigDecimal bigDecimal5 = new BigDecimal(otherExpensesTwo);
-                String otherExpensesThree = budgetVo.getOtherExpensesThree();
+                String otherExpensesThree = budgetVo.getOther_expenses_three();
                 BigDecimal bigDecimal6 = new BigDecimal(otherExpensesThree);
                 costPreparation.setOtherCost1(bigDecimal4);
                 costPreparation.setOtherCost2(bigDecimal5);
                 costPreparation.setOtherCost3(bigDecimal6);
                 costPreparation.setDelFlag("0");
+                costPreparationDao.insertSelective(costPreparation);
             }
-            costPreparationDao.insertSelective(costPreparation);
 
-            //文件表
-            FileInfo fileInfo = new FileInfo();
             //预算编制附件资料
             List<CostMeansList> costMeansList = budgetVo.getCostMeansList();
-            for (CostMeansList thisMean : costMeansList) {
-                if (thisMean.getCostFileName() != null){
-                    fileInfo.setId(UUID.randomUUID().toString().replace("-",""));
-                    fileInfo.setName(thisMean.getCostMeansName());
-                    fileInfo.setFileName(thisMean.getCostFileName());
-                    fileInfo.setFilePath(budgetVo.getApplicationNum());
-                    fileInfo.setCreateTime(format);
-                    fileInfo.setUpdateTime(format);
-                    fileInfo.setStatus("0");
-                    fileInfo.setType("ysbzfjzl");
+            if(costMeansList != null && costMeansList.size() > 0){
+                for (CostMeansList thisMean : costMeansList) {
+                    //文件表
+                    FileInfo fileInfo = new FileInfo();
+                    if (thisMean.getCost_file_name() != null) {
+                        fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                        fileInfo.setPlatCode(budgetVo.getId());
+                        fileInfo.setName(thisMean.getCost_means_name());
+                        fileInfo.setFileName(thisMean.getCost_file_name());
+                        fileInfo.setFilePath(budgetVo.getApplication_num());
+                        fileInfo.setCreateTime(format);
+                        fileInfo.setUpdateTime(format);
+                        fileInfo.setStatus("0");
+                        fileInfo.setType("ysbzfjzl");
+                        fileInfoMapper.insertSelective(fileInfo);
+                    }
                 }
-                fileInfoMapper.insertSelective(fileInfo);
             }
+
 
             //成本编制附件资料
             List<TotalMeansList> totalMeansList = budgetVo.getTotalMeansList();
-            for (TotalMeansList thisTotal : totalMeansList) {
-                if (thisTotal.getTotalFileName() != null){
-                    fileInfo.setId(UUID.randomUUID().toString().replace("-",""));
-                    fileInfo.setName(thisTotal.getTotalMeansName());
-                    fileInfo.setFileName(thisTotal.getTotalFileName());
-                    fileInfo.setFilePath(budgetVo.getApplicationNum());
-                    fileInfo.setCreateTime(format);
-                    fileInfo.setUpdateTime(format);
-                    fileInfo.setStatus("0");
-                    fileInfo.setType("cbbzfjzl");
+            if(totalMeansList != null && totalMeansList.size() > 0){
+                for (TotalMeansList thisTotal : totalMeansList) {
+                    //文件表
+                    FileInfo fileInfo = new FileInfo();
+                    if (thisTotal.getTotal_file_name() != null) {
+                        fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                        fileInfo.setPlatCode(budgetVo.getId());
+                        fileInfo.setName(thisTotal.getTotal_means_name());
+                        fileInfo.setFileName(thisTotal.getTotal_file_name());
+                        fileInfo.setFilePath(budgetVo.getApplication_num());
+                        fileInfo.setCreateTime(format);
+                        fileInfo.setUpdateTime(format);
+                        fileInfo.setStatus("0");
+                        fileInfo.setType("cbbzfjzl");
+                        fileInfoMapper.insertSelective(fileInfo);
+                    }
                 }
-                fileInfoMapper.insertSelective(fileInfo);
             }
-
 
         }
     }
+
 }

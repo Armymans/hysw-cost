@@ -1,5 +1,6 @@
 package net.zlw.cloud.designProject.mapper;
 
+import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.designProject.model.CostVo2;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.designProject.model.DesignPageVo;
@@ -637,4 +638,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
             " del_flag = '0' and  " +
             " id = #{id}")
     String findDesignUnit( @Param("id") String designUnit);
+
+    @Select("select * from design_info where base_project_id = #{id}")
+    DesignInfo findByBaseId(@Param("id") String id);
 }
