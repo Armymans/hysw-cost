@@ -14,14 +14,18 @@ import net.zlw.cloud.designProject.mapper.AnhuiMoneyinfoMapper;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
+import net.zlw.cloud.followAuditing.mapper.DesignUnitManagementDao;
+import net.zlw.cloud.followAuditing.model.DesignUnitManagement;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.model.MessageNotification;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.settleAccounts.mapper.SettlementInfoMapper;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
+import net.zlw.cloud.settleAccounts.model.SettlementInfo;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
@@ -35,6 +39,7 @@ import tk.mybatis.mapper.util.StringUtil;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +54,8 @@ public class ProjectController extends BaseController {
     private String LixAttachDir;
     @Value("${app.testPath}")
     private String WinAttachDir;
-
+    @Resource
+    private SettlementInfoMapper settlementInfoMapper;
     @Resource
     private ProjectService projectService;
     @Resource
@@ -65,6 +71,8 @@ public class ProjectController extends BaseController {
     private AnhuiMoneyinfoMapper anhuiMoneyinfoMapper;
     @Resource
     private ConstructionUnitManagementMapper constructionUnitManagementMapper;
+    @Resource
+    private DesignUnitManagementDao designUnitManagementDao;
 
     /**
      * 建设项目提交 _ 保存
@@ -1681,7 +1689,6 @@ public class ProjectController extends BaseController {
         DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
         projectVo3.setDesignInfo(designInfo);
         if(designInfo == null){
-
             if (designInfo.getDesignChangeTime() != null){
                 projectVo3.getDesignInfo().setDesignChangeTime(designInfo.getDesignChangeTime());
             }else {
@@ -1714,10 +1721,17 @@ public class ProjectController extends BaseController {
         //根据地区判断相应的设计费 应付金额 实付金额
         //如果为安徽
         if(!baseProject.getDistrict().equals("4")){
-            AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyinfoByid(baseProject.getId());
+            AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyinfoByid(designInfo.getId());
             if(anhuiMoneyinfo!=null){
+                // 累加实收金额
+                String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
+                String[] split = collectionMoney.split(",");
+                BigDecimal num = new BigDecimal(0);
+                for (String thisNum : split) {
+                    num = num.add(new BigDecimal(thisNum));
+                }
                 designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                designInfo.setOfficialReceipts(num);
                 designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
                 designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
             }else{
@@ -1728,10 +1742,16 @@ public class ProjectController extends BaseController {
             }
         }else{
             //如果为吴江
-            WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfoByid(baseProject.getId());
+            WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfoByid(designInfo.getId());
             if(wujiangMoneyInfo!=null){
+                String collectionMoney = wujiangMoneyInfo.getCollectionMoney();
+                String[] split = collectionMoney.split(",");
+                BigDecimal num = new BigDecimal(0);
+                for (String thisNum : split) {
+                    num = num.add(new BigDecimal(thisNum));
+                }
                 designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-                designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                designInfo.setOfficialReceipts(num);
                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
             }
@@ -1830,10 +1850,11 @@ public class ProjectController extends BaseController {
                 projectVo3.setCostPreparation(new CostPreparation());
             }else{
                 // 成本编制人
-                if (costPreparation.getCostTogether() != null && !"".equals(costPreparation.getCostTogether())){
-                    costPreparation.setCostTogether(costPreparation.getCostTogether());
+                MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(costPreparation.getCostTogether());
+                if (memberManage1 != null) {
+                    costPreparation.setCostTogether(memberManage1.getMemberName());
                 }else {
-                    costPreparation.setCostTogether("-");
+                    costPreparation.setCostTogether("/");
                 }
                 // 成本编制时间
                 if (costPreparation.getCostPreparationTime() != null && !"".equals(costPreparation.getCostPreparationTime())){
@@ -1861,10 +1882,11 @@ public class ProjectController extends BaseController {
                     veryEstablishment.setVatAmount(new BigDecimal(0));
                 }
                 //控价编制人
-                if (veryEstablishment.getPricingTogether() != null && !"".equals(veryEstablishment.getPricingTogether())){
-                    veryEstablishment.setPricingTogether(veryEstablishment.getPricingTogether());
+                MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(veryEstablishment.getPricingTogether());
+                if (memberManage1 != null){
+                    veryEstablishment.setPricingTogether(memberManage1.getMemberName());
                 }else {
-                    veryEstablishment.setPricingTogether("-");
+                    veryEstablishment.setPricingTogether("/");
                 }
                 //控价编制时间
                 if (veryEstablishment.getEstablishmentTime() != null && !"".equals(veryEstablishment.getEstablishmentTime())){
@@ -1898,10 +1920,11 @@ public class ProjectController extends BaseController {
                 trackAuditInfo.setPm("-");
             }
             //设计单位名称
-            if (trackAuditInfo.getDesignOrganizationId() != null && !"".equals(trackAuditInfo.getDesignOrganizationId())){
-                trackAuditInfo.setDesignOrganizationId(trackAuditInfo.getDesignOrganizationId());
+            DesignUnitManagement designUnitManagement = designUnitManagementDao.selectByPrimaryKey(trackAuditInfo.getDesignOrganizationId());
+            if (designUnitManagement != null){
+                trackAuditInfo.setDesignOrganizationId(designUnitManagement.getDesignUnitName());
             }else {
-                trackAuditInfo.setDesignOrganizationId("-");
+                trackAuditInfo.setDesignOrganizationId("/");
             }
             // 合同金额
             if (trackAuditInfo.getContractAmount() != null && !"".equals(trackAuditInfo.getContractAmount())){
@@ -1921,7 +1944,7 @@ public class ProjectController extends BaseController {
 
         //计算签证累计值
         ProjectVo3 projectVo32 = projectService.visaApplyChangeInformationSum(baseProject.getId());
-        projectVo3.setAmountVisaChangeSum(projectVo32.getAmountVisaChangeSum());
+        projectVo3.setAmountVisaChangeSum(projectVo32.getAmountVisaChangeSum()); //次数
         projectVo3.setChangeCount(projectVo32.getChangeCount());
         projectVo3.setContractAmount(projectVo32.getContractAmount());
 
@@ -1931,6 +1954,22 @@ public class ProjectController extends BaseController {
         if(settlementAuditInformation==null){
             projectVo3.setSettlementAuditInformation(new SettlementAuditInformation());
         }else{
+            // 核减率
+            Example example = new Example(SettlementInfo.class);
+            example.createCriteria().andEqualTo("baseProjectId",baseProject.getId())
+                                    .andEqualTo("upAndDown","2");
+            SettlementInfo settlementInfo = settlementInfoMapper.selectOneByExample(example);
+            if (settlementInfo != null){
+                String sumbitMoney = settlementInfo.getSumbitMoney();
+                BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber();
+                BigDecimal bigDecimal = new BigDecimal(sumbitMoney);
+                if (subtractTheNumber!=null && bigDecimal!=null){
+                    BigDecimal divide = subtractTheNumber.divide(bigDecimal,4,RoundingMode.HALF_UP);
+                    BigDecimal multiply = divide.multiply(new BigDecimal(100));
+                    BigDecimal bigDecimal1 = multiply.setScale(2, RoundingMode.HALF_UP);
+                    settlementAuditInformation.setSubtractRate(bigDecimal1);
+                }
+            }
             // 审定数
             if (settlementAuditInformation.getAuthorizedNumber() != null && !"".equals(settlementAuditInformation.getAuthorizedNumber())){
                 settlementAuditInformation.setAuthorizedNumber(settlementAuditInformation.getAuthorizedNumber());
@@ -1948,12 +1987,6 @@ public class ProjectController extends BaseController {
                 settlementAuditInformation.setNuclearNumber(settlementAuditInformation.getNuclearNumber());
             }else {
                 settlementAuditInformation.setNuclearNumber(new BigDecimal(0));
-            }
-            // 核减率
-            if(settlementAuditInformation.getSubtractRate() != null && !"".equals(settlementAuditInformation.getSubtractRate())){
-                settlementAuditInformation.setSubtractRate(settlementAuditInformation.getSubtractRate());
-            }else {
-                settlementAuditInformation.setSubtractRate(new BigDecimal("0"));
             }
             // 委外金额amountOutsourcing
             if (settlementAuditInformation.getAmountOutsourcing() != null && !"".equals(settlementAuditInformation.getAmountOutsourcing())){

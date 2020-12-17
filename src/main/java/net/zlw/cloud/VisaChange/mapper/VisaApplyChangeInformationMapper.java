@@ -8,30 +8,30 @@ import tk.mybatis.mapper.common.Mapper;
 @org.apache.ibatis.annotations.Mapper
 public interface VisaApplyChangeInformationMapper extends Mapper<VisaApplyChangeInformation> {
     @Select(
-            "SELECT\n" +
-                    "sum(amount_visa_change)\n" +
-                    "FROM\n" +
-                    "visa_change_information\n" +
-                    "where\n" +
-                    "base_project_id = #{id}"
+            "SELECT  " +
+                    "amount_visa_change " +
+                    " FROM  " +
+                    "  `visa_change_information`   " +
+                    "WHERE  " +
+                    "  base_project_id = #{id}   ORDER BY change_num desc limit 1"
     )
 
     String amountVisaChangeSum(@Param("id") String id);
     @Select(
-            "SELECT\n" +
-                    "sum(contract_amount)\n" +
-                    "FROM\n" +
-                    "visa_change_information\n" +
-                    "where\n" +
+            "SELECT  " +
+                    "sum(contract_amount)  " +
+                    "FROM  " +
+                    "visa_change_information  " +
+                    "where  " +
                     "base_project_id = #{id}"
     )
     String contractAmount(@Param("id") String id);
     @Select(
-            "SELECT\n" +
-                    "count(*)\n" +
-                    "FROM\n" +
-                    "visa_change_information\n" +
-                    "where\n" +
+            "SELECT  " +
+                    "max(change_num)  " +
+                    "FROM  " +
+                    "visa_change_information  " +
+                    "where  " +
                     "base_project_id = #{id}"
     )
     String changeCount(@Param("id") String id);

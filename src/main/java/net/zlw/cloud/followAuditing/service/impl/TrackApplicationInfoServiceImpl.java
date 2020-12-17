@@ -118,8 +118,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                         returnTrackVo.setWritter(memberManage.getMemberName());
                     }
                     // 造价单位名称
-                    if (returnTrackVo.getAuditUnitNameId() !=null && !"".equals(returnTrackVo.getAuditUnitNameId())){
-                        returnTrackVo.setAuditUnitNameId(returnTrackVo.getAuditUnitNameId());
+                    CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getAuditUnitNameId());
+                    if (costUnitManagement != null){
+                        returnTrackVo.setAuditUnitNameId(costUnitManagement.getCostUnitName());
                     }else {
                         returnTrackVo.setAuditUnitNameId("/");
                     }
@@ -164,8 +165,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                         returnTrackVo.setWritter(memberManage.getMemberName());
                     }
                     // 造价单位名称
-                    if (returnTrackVo.getAuditUnitNameId() !=null && !"".equals(returnTrackVo.getAuditUnitNameId())){
-                        returnTrackVo.setAuditUnitNameId(returnTrackVo.getAuditUnitNameId());
+                    CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getAuditUnitNameId());
+                    if (costUnitManagement != null){
+                        returnTrackVo.setAuditUnitNameId(costUnitManagement.getCostUnitName());
                     }else {
                         returnTrackVo.setAuditUnitNameId("/");
                     }
@@ -219,8 +221,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                         returnTrackVo.setWritter(memberManage.getMemberName());
                     }
                     // 造价单位名称
-                    if (returnTrackVo.getAuditUnitNameId() !=null && !"".equals(returnTrackVo.getAuditUnitNameId())){
-                        returnTrackVo.setAuditUnitNameId(returnTrackVo.getAuditUnitNameId());
+                    CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getAuditUnitNameId());
+                    if (costUnitManagement != null){
+                        returnTrackVo.setAuditUnitNameId(costUnitManagement.getCostUnitName());
                     }else {
                         returnTrackVo.setAuditUnitNameId("/");
                     }
@@ -248,8 +251,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                         returnTrackVo.setWritter(memberManage.getMemberName());
                     }
                     // 造价单位名称
-                    if (returnTrackVo.getAuditUnitNameId() !=null && !"".equals(returnTrackVo.getAuditUnitNameId())){
-                        returnTrackVo.setAuditUnitNameId(returnTrackVo.getAuditUnitNameId());
+                    CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getAuditUnitNameId());
+                    if (costUnitManagement != null){
+                        returnTrackVo.setAuditUnitNameId(costUnitManagement.getCostUnitName());
                     }else {
                         returnTrackVo.setAuditUnitNameId("/");
                     }

@@ -3196,8 +3196,8 @@ public class ProjectService {
     }
 
     public ProjectVo3 visaApplyChangeInformationSum(String id) {
-        String s = visaApplyChangeInformationMapper.amountVisaChangeSum(id);
-        String s1 = visaApplyChangeInformationMapper.changeCount(id);
+        String s = visaApplyChangeInformationMapper.changeCount(id);
+        String s1 = visaApplyChangeInformationMapper.amountVisaChangeSum(id);
         String s2 = visaApplyChangeInformationMapper.contractAmount(id);
         ProjectVo3 projectVo3 = new ProjectVo3();
         projectVo3.setAmountVisaChangeSum(s);
