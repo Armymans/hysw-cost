@@ -2,7 +2,11 @@ package net.zlw.cloud.progressPayment.mapper;
 
 
 import net.zlw.cloud.budgeting.model.vo.PageBVo;
+import net.zlw.cloud.buildingProject.model.vo.PageBaseVo;
+import net.zlw.cloud.buildingProject.model.vo.ProVo;
+import net.zlw.cloud.designProject.model.AnhuiMoneyinfo;
 import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.designProject.model.WujiangMoneyInfo;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.vo.VisaBaseProjectVo;
@@ -1028,4 +1032,83 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
     Double selectAchievements2(pageVo pageVo);
     @Select("SELECT * FROM base_project WHERE id = #{id}")
     BaseProject findById(@Param("id") String id);
+
+    @Select("SELECT  " +
+            "  s1.id id,  " +
+            "  s1.cea_num ceaNum," +
+            "  s1.district,  " +
+            "  s1.project_num projectNum,  " +
+            "  s1.project_name projectName,  " +
+            "  s1.create_time createTime,  " +
+            "  ( CASE project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,  " +
+            "  s1.construction_unit constructionUnit,  " +
+            "  ( CASE IFNULL( merge_flag, 'xxxx' ) WHEN '1' THEN '未合并' WHEN 'xxxx' THEN '未合并' WHEN '0' THEN '已合并' END ) AS mergeFlag,  " +
+            "  (  " +
+            "CASE  " +
+            "  design_category   " +
+            "  WHEN '1' THEN  " +
+            "  '市政管道'   " +
+            "  WHEN '2' THEN  " +
+            "  '管网改造'   " +
+            "  WHEN '3' THEN  " +
+            "  '新建小区'   " +
+            "  WHEN '4' THEN  " +
+            "  '二次供水项目'   " +
+            "  WHEN '5' THEN  " +
+            "  '工商户'   " +
+            "  WHEN '6' THEN  " +
+            "  '居民装接水'   " +
+            "  WHEN '7' THEN  " +
+            "  '行政事业'   " +
+            "END   " +
+            "  ) AS designCategory,  " +
+            "  s1.water_supply_type waterSupplyType,  " +
+            "  s1.customer_name customerName,  " +
+            "  s1.water_address waterAddress,  " +
+            "  s2.amount_cost amountCost,  " +
+            "  IFNULL( s3.compile_time, s4.compile_time ) compileTime,  " +
+            "  project_flow projectFlow   " +
+            "FROM  " +
+            "  base_project s1  " +
+            "  LEFT JOIN budgeting s2 ON s1.id = s2.base_project_id  " +
+            "  LEFT JOIN settlement_audit_information s3 ON s1.id = s3.base_project_id  " +
+            "  LEFT JOIN last_settlement_review s4 ON s1.id = s4.base_project_id   " +
+            "WHERE  " +
+            "  (  " +
+            " IFNULL( s3.compile_time, s4.compile_time ) >= #{startTime}  or #{startTime}  = '')  " +
+            "   " +
+            " AND (  " +
+            "   IFNULL( s3.compile_time, s4.compile_time ) <= #{endTime} or #{endTime}='')  " +
+            "     " +
+            "   AND (  " +
+            " design_category = #{designCategory} or #{designCategory} = '')  " +
+            "   " +
+            " AND (  " +
+            " project_nature = #{projectNature} or #{projectNature} = '')  " +
+            "   " +
+            " AND (  " +
+            " merge_flag = #{mergeFlag} or #{mergeFlag}= '')  " +
+            "   " +
+            " AND (  " +
+            " cea_num LIKE CONCAT(  " +
+            " '%',#{keyword},'%') or  " +
+            " project_num LIKE CONCAT(  " +
+            " '%',#{keyword},'%') or  " +
+            " project_name LIKE CONCAT(  " +
+            " '%',#{keyword},'%')  or  " +
+            " construction_unit LIKE CONCAT(  " +
+            " '%',#{keyword},'%')  or  " +
+            " water_supply_type LIKE CONCAT(  " +
+            " '%',#{keyword},'%')  or  " +
+            " customer_name LIKE CONCAT( '%', #{keyword},'%')  " +
+            " )   " +
+            " ORDER BY  " +
+            "s1.create_time DESC")
+    List<ProVo> selectBaseProjectFindAll(PageBaseVo pageVo);
+
+    @Select("SELECT revenue FROM anhui_money_info WHERE base_project_id = #{id}")
+    AnhuiMoneyinfo selectByAnHuiOfficialReceipts(@Param("id") String id);
+
+    @Select("SELECT revenue FROM wujiang_money_info WHERE base_project_id = #{id}")
+    WujiangMoneyInfo selectByWuJiangOfficialReceipts(@Param("id") String id);
 }

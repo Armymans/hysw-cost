@@ -3,11 +3,18 @@ package net.zlw.cloud.buildingProject.service;
 import net.zlw.cloud.buildingProject.mapper.BuildingProjectMapper;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.buildingProject.model.vo.BaseVo;
+import net.zlw.cloud.buildingProject.model.vo.PageBaseVo;
+import net.zlw.cloud.buildingProject.model.vo.ProVo;
+import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
+import net.zlw.cloud.designProject.model.AnhuiMoneyinfo;
+import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.designProject.model.WujiangMoneyInfo;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,6 +39,8 @@ public class BuildingProjectService {
     @Autowired
     private BaseProjectDao baseProjectDao;
 
+    @Autowired
+    private DesignInfoMapper designInfoMapper;
 
     /**
      * @Author Armyman
@@ -160,5 +169,28 @@ public class BuildingProjectService {
             }
         }
         return BaseProjectVo;
+    }
+
+    public List<ProVo> selectBaseProjectFindAll(PageBaseVo pageVo) {
+        List<ProVo> baseList = baseProjectDao.selectBaseProjectFindAll(pageVo);
+            for (ProVo thisVo : baseList) {
+                Example example = new Example(DesignInfo.class);
+                example.createCriteria().andEqualTo("baseProjectId",thisVo.getId());
+//                                        .andEqualTo("status","0");
+                DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
+                // 如果是安徽
+                if (!"4".equals(thisVo.getDistrict())) {
+                    AnhuiMoneyinfo anhuiMoneyinfo = baseProjectDao.selectByAnHuiOfficialReceipts(designInfo.getId());
+                    if (anhuiMoneyinfo != null) {
+                        thisVo.setOfficialReceipts(anhuiMoneyinfo.getRevenue());
+                    }
+                } else {
+                    WujiangMoneyInfo wujiangMoneyInfo = baseProjectDao.selectByWuJiangOfficialReceipts(designInfo.getId());
+                    if (wujiangMoneyInfo != null) {
+                        thisVo.setOfficialReceipts(wujiangMoneyInfo.getRevenue());
+                    }
+                }
+            }
+        return baseList;
     }
 }
