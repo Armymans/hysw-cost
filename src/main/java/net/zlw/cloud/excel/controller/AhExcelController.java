@@ -33,7 +33,7 @@ public class AhExcelController {
      **/
     @RequestMapping(value = "/anHuiExcel/aHCoverImport", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> aHCoverImport(@RequestParam(name = "id") String id) {
-        ahExcelService.coverImport(id);
+        ahExcelService.coverImport(id,null);
         return RestUtil.success();
     }
 
@@ -46,7 +46,7 @@ public class AhExcelController {
      **/
     @RequestMapping(value = "/anHuiExcel/summarySheetImport", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> summarySheetImport(@RequestParam(name = "id") String id) {
-        ahExcelService.summarySheetImport(id);
+        ahExcelService.summarySheetImport(id,null);
         return RestUtil.success();
     }
 
@@ -59,7 +59,7 @@ public class AhExcelController {
      **/
     @RequestMapping(value = "/anHuiExcel/quantitiesPartialWorksImport", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> quantitiesPartialWorksImport(@RequestParam(name = "id") String id) {
-        ahExcelService.quantitiesPartialWorksImport(id);
+        ahExcelService.quantitiesPartialWorksImport(id,null);
         return RestUtil.success();
     }
 
@@ -72,7 +72,7 @@ public class AhExcelController {
      **/
     @RequestMapping(value = "/anHuiExcel/competitiveItemValuationImport", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> competitiveItemValuationImport(@RequestParam(name = "id") String id) {
-        ahExcelService.competitiveItemValuationImport(id);
+        ahExcelService.competitiveItemValuationImport(id,null);
         return RestUtil.success();
     }
 
@@ -85,7 +85,7 @@ public class AhExcelController {
      **/
     @RequestMapping(value = "/anHuiExcel/taxStatementImport", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> taxStatementImport(@RequestParam(name = "id") String id) {
-        ahExcelService.taxStatementImport(id);
+        ahExcelService.taxStatementImport(id,null);
         return RestUtil.success();
     }
 
@@ -98,7 +98,7 @@ public class AhExcelController {
      **/
     @RequestMapping(value = "/anHuiExcel/summaryMaterialsSuppliedAImport", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> summaryMaterialsSuppliedAImport(@RequestParam(name = "id") String id) {
-        ahExcelService.summaryMaterialsSuppliedAImport(id);
+        ahExcelService.summaryMaterialsSuppliedAImport(id,null);
         return RestUtil.success();
     }
 
@@ -111,7 +111,7 @@ public class AhExcelController {
      **/
     @RequestMapping(value = "/anHuiExcel/summaryMaterialsSuppliedBImport", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> summaryMaterialsSuppliedBImport(@RequestParam(name = "id") String id) {
-        ahExcelService.summaryMaterialsSuppliedBImport(id);
+        ahExcelService.summaryMaterialsSuppliedBImport(id,null);
         return RestUtil.success();
     }
 
