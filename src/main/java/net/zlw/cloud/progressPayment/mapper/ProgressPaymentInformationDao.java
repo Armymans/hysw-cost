@@ -263,7 +263,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " b.customer_name customerName, " +
   " (select member_name username from member_manage where id = p.founder_id) username, " +
   " ( CASE p.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
-  " bt.name_of_cost_unit nameOfCostUnit, " +
+  " p.name_of_cost_unit nameOfCostUnit, " +
   " bt.amount_cost amountCost, " +
   " p.contract_amount contractAmount, " +
   " p.current_payment_Information currentPaymentInformation, " +
@@ -337,7 +337,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " b.customer_name customerName, " +
   " (select member_name username from member_manage where id = p.founder_id) username, " +
   " ( CASE p.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
-  " bt.name_of_cost_unit nameOfCostUnit, " +
+  " p.name_of_cost_unit nameOfCostUnit, " +
   " bt.amount_cost amountCost, " +
   " p.contract_amount contractAmount, " +
   " p.current_payment_Information currentPaymentInformation, " +
@@ -413,7 +413,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " b.customer_name customerName, " +
   " (select member_name username from member_manage where id = p.founder_id) username, " +
   " ( CASE p.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
-  " bt.name_of_cost_unit nameOfCostUnit, " +
+  " p.name_of_cost_unit nameOfCostUnit, " +
   " bt.amount_cost amountCost, " +
   " p.contract_amount contractAmount, " +
   " p.current_payment_Information currentPaymentInformation, " +
@@ -443,7 +443,6 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " bt.name_of_cost_unit like concat  ('%',#{keyword},'%') " +
   " ) and  " +
   " (b.progress_payment_status = #{progressStatus} or #{progressStatus} = '')  " +
-  "       " +
   " ORDER BY " +
   " p.create_time desc")
     List<ProgressListVo> searchAllProgressProcessed(PageVo pageVo);
@@ -485,7 +484,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " b.customer_name customerName, " +
   " (select member_name username from member_manage where id = p.founder_id) username, " +
   " ( CASE p.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
-  " bt.name_of_cost_unit nameOfCostUnit, " +
+  " p.name_of_cost_unit nameOfCostUnit, " +
   " bt.amount_cost amountCost, " +
   " p.contract_amount contractAmount, " +
   " p.current_payment_Information currentPaymentInformation, " +
