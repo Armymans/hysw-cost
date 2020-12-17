@@ -82,7 +82,7 @@ public class MessageService {
             messageNotification.setTitle(messageVo.getTitle());
             messageNotification.setDetails(messageVo.getDetails());
             messageNotification.setAcceptId(memberManage.getId());
-            messageNotification.setSender("华衍税务设计造价平台");
+            messageNotification.setSender("华衍水务设计造价平台");
             messageNotification.setCreateTime(data);
             messageNotification.setSubmitTime(data);
             messageNotification.setInformStatus("0");
