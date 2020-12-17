@@ -18,6 +18,8 @@ import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
 import net.zlw.cloud.followAuditing.model.vo.TrackVo;
 import net.zlw.cloud.followAuditing.service.TrackApplicationInfoService;
+import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
+import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -69,6 +71,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     @Resource
     private MessageService messageService;
 
+    @Resource
+    private ConstructionUnitManagementMapper constructionUnitManagementMapper;
+
     @Autowired
     private FileInfoMapper fileInfoMapper;
 
@@ -109,6 +114,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     }else {
                         returnTrackVo.setAuditUnitNameId("/");
                     }
+                    // 施工单位
+                    ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getConstructionOrganization());
+                    if (constructionUnitManagement != null){
+                        returnTrackVo.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+                    }else {
+                        returnTrackVo.setConstructionOrganization("/");
+                    }
 
                     List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByTrickId2(returnTrackVo.getId());
                     for (TrackMonthly trackMonthly : trackMonthlies) {
@@ -148,6 +160,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     }else {
                         returnTrackVo.setAuditUnitNameId("/");
                     }
+                    // 施工单位
+                    ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getConstructionOrganization());
+                    if (constructionUnitManagement != null){
+                        returnTrackVo.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+                    }else {
+                        returnTrackVo.setConstructionOrganization("/");
+                    }
                     List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByTrickId2(returnTrackVo.getId());
                     for (TrackMonthly trackMonthly : trackMonthlies) {
                         //审核信息为未审核状态得
@@ -178,6 +197,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             if ("3".equals(pageVo.getTrackStatus()) || "5".equals(pageVo.getTrackStatus())) {
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                    // 施工单位
+                    ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getConstructionOrganization());
+                    if (constructionUnitManagement != null){
+                        returnTrackVo.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+                    }else {
+                        returnTrackVo.setConstructionOrganization("/");
+                    }
                     // 编制人
                     MemberManage memberManage = memberManageDao.selectByPrimaryKey(returnTrackVo.getWritter());
                     if (memberManage != null){
@@ -200,6 +226,13 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 //全部，未提交和未通过谁创建谁看到
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                    // 施工单位
+                    ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getConstructionOrganization());
+                    if (constructionUnitManagement != null){
+                        returnTrackVo.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+                    }else {
+                        returnTrackVo.setConstructionOrganization("/");
+                    }
                     // 编制人
                     MemberManage memberManage = memberManageDao.selectByPrimaryKey(returnTrackVo.getWritter());
                     if (memberManage != null){

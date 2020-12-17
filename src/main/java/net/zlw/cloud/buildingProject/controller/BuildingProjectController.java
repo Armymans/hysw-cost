@@ -1,16 +1,21 @@
 package net.zlw.cloud.buildingProject.controller;
 
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.buildingProject.model.vo.BaseVo;
+import net.zlw.cloud.buildingProject.model.vo.PageBaseVo;
+import net.zlw.cloud.buildingProject.model.vo.ProVo;
 import net.zlw.cloud.buildingProject.service.BuildingProjectService;
+import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -95,5 +100,40 @@ public class BuildingProjectController extends BaseController {
     public Map<String,Object> selectBaseProjectList(String id){
       List<BaseVo> findList = buildingProjectService.selectBaseProjectList(id);
       return RestUtil.success(findList);
+    }
+
+    /**
+        * @Author sjf
+        * @Description // 工程项目列表
+        * @Date 10:17 2020/12/17
+        * @Param
+        * @return
+     **/
+    @RequestMapping(value = "/selectBaseProjectFindAll",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectBaseProjectFindAll(PageBaseVo pageBaseVo){
+        List<ProVo> findList = buildingProjectService.selectBaseProjectFindAll(pageBaseVo);
+        PageInfo<ProVo> proVoPageInfo = new PageInfo<>(findList);
+        return RestUtil.page(proVoPageInfo);
+    }
+    /**
+        * @Author sjf
+        * @Description //工程列表模糊查询
+        * @Date 10:51 2020/12/17
+        * @Param
+        * @return
+     **/
+    @RequestMapping(value = "/selectLikeBaseProject",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectLikeBaseProject(PageBaseVo pageBaseVo){
+
+        Page page = new Page();
+        List<ProVo> proVos = buildingProjectService.selectBaseProjectFindAll(pageBaseVo);
+        PageInfo<ProVo> proVoPageInfo = new PageInfo<>(proVos);
+        page.setPageNum(proVoPageInfo.getPageNum());
+        page.setPageSize(proVoPageInfo.getPageSize());
+        page.setTotalCount(proVoPageInfo.getTotal());
+        page.setData(proVoPageInfo.getList());
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put("table1",page);
+        return RestUtil.success(map);
     }
 }
