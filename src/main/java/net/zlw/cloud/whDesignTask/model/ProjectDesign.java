@@ -13,10 +13,10 @@ public class ProjectDesign {
 
 
     private String id;
-    private String baseProjectId;
-    private String projectDrawing;
-    private String projectFileName;
-    private String projectUpTime;
-    private String projectEngineeringDesignNotes;
-    private String projectUploadedBy;
+    private String base_project_id;
+    private String project_drawing;
+    private String project_file_name;
+    private String project_up_time;
+    private String project_engineering_design_notes;
+    private String project_uploaded_by;
 }

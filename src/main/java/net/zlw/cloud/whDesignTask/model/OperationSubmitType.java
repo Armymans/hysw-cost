@@ -18,15 +18,15 @@ public class OperationSubmitType {
     @Column(name = "id")
     private String id;
     @Column(name = "base_project_id")
-    private String baseProjectId;
+    private String base_project_id;
     @Column(name = "operation_tpe")
-    private String operationTpe;
+    private String operation_tpe;
     @Column(name = "resreon")
     private String resreon;
     @Column(name = "operation_time")
-    private String operationTime;
+    private String operation_time;
     @Column(name = "operation_dept")
-    private String operationDept;
+    private String operation_dept;
     @Column(name = "operator")
     private String operator;
 

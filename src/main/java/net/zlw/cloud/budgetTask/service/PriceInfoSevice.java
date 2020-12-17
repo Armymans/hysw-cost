@@ -2,6 +2,7 @@ package net.zlw.cloud.budgetTask.service;
 
 import net.zlw.cloud.budgetTask.domain.LabelMeansList;
 import net.zlw.cloud.budgetTask.domain.vo.PriceControlVo;
+import net.zlw.cloud.budgetTask.domain.vo.PriceControlVoF;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
 import net.zlw.cloud.budgeting.mapper.VeryEstablishmentDao;
@@ -49,25 +50,25 @@ public class PriceInfoSevice {
     @Autowired
     private FileInfoMapper fileInfoMapper;
 
-    public void getPriceInfo(PriceControlVo priceControlVo,String account){
+    public void getPriceInfo(PriceControlVoF priceControlVoF){
+        PriceControlVo priceControlVo = priceControlVoF.getPriceControlVo();
         //设置时间
         String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        FileInfo fileInfo = new FileInfo();
         if (priceControlVo != null){
             //控价编制
             VeryEstablishment veryEstablishment = new VeryEstablishment();
-            if (priceControlVo.getApplicationNum() != null){
-                veryEstablishment.setId(priceControlVo.getApplicationNum());
-                veryEstablishment.setTotalPriceControlLabel(priceControlVo.getTotalPriceControlLabel());
-                BigDecimal vatAmount = new BigDecimal(priceControlVo.getLabelVatAmount());
+            if (priceControlVo.getApplication_num() != null){
+                veryEstablishment.setId(UUID.randomUUID().toString());
+                veryEstablishment.setTotalPriceControlLabel(priceControlVo.getTotal_price_control_label());
+                BigDecimal vatAmount = new BigDecimal(priceControlVo.getLabel_vat_amount());
                 veryEstablishment.setVatAmount(vatAmount);
-                veryEstablishment.setPricingTogether(priceControlVo.getPriceControlCompilers());
-                veryEstablishment.setEstablishmentTime(priceControlVo.getPriceControlTime());
-                veryEstablishment.setRemarkes(priceControlVo.getPriceControlRemark());
-                veryEstablishment.setPriceResult(priceControlVo.getPriceExamineResult());
-                veryEstablishment.setPriceOpinion(priceControlVo.getPriceExamineOpinion());
-                veryEstablishment.setPriceExaminer(priceControlVo.getPriceExaminer());
-                veryEstablishment.setPriceExamineTime(priceControlVo.getPriceExamineTime());
+                veryEstablishment.setPricingTogether(priceControlVo.getPrice_control_compilers());
+                veryEstablishment.setEstablishmentTime(priceControlVo.getPrice_control_time());
+                veryEstablishment.setRemarkes(priceControlVo.getPrice_control_remark());
+                veryEstablishment.setPriceResult(priceControlVo.getPrice_examine_result());
+                veryEstablishment.setPriceOpinion(priceControlVo.getPrice_examine_opinion());
+                veryEstablishment.setPriceExaminer(priceControlVo.getPrice_examiner());
+                veryEstablishment.setPriceExamineTime(priceControlVo.getPrice_examine_time());
                 veryEstablishment.setStatus(priceControlVo.getStatus());
                 veryEstablishment.setCreateTime(format);
                 veryEstablishment.setUpdateTime(format);
@@ -76,20 +77,24 @@ public class PriceInfoSevice {
 
             //控价编制附件资料
             List<LabelMeansList> labelMeansList = priceControlVo.getLabelMeansList();
-            for (LabelMeansList thisLable : labelMeansList) {
-                if (thisLable.getLabelFileName() != null){
-                    fileInfo.setId(UUID.randomUUID().toString().replace("-",""));
-                    fileInfo.setName(thisLable.getLabelMeansName());
-                    fileInfo.setFileName(thisLable.getLabelFileName());
-                    fileInfo.setPlatCode(priceControlVo.getApplicationNum());
-                    fileInfo.setFilePath(thisLable.getLableFileDrawing());
-                    fileInfo.setCreateTime(format);
-                    fileInfo.setUpdateTime(format);
-                    fileInfo.setStatus("0");
-                    fileInfo.setType("kjbzfjzl");
+            if(labelMeansList != null && labelMeansList.size() > 0 ){
+                for (LabelMeansList thisLable : labelMeansList) {
+                    FileInfo fileInfo = new FileInfo();
+                    if (thisLable.getLabel_file_name() != null){
+                        fileInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                        fileInfo.setName(thisLable.getLabel_file_name());
+                        fileInfo.setFileName(thisLable.getLabel_file_name());
+                        fileInfo.setPlatCode(priceControlVo.getApplication_num());
+                        fileInfo.setFilePath(thisLable.getLable_file_drawing());
+                        fileInfo.setCreateTime(format);
+                        fileInfo.setUpdateTime(format);
+                        fileInfo.setStatus("0");
+                        fileInfo.setType("kjbzfjzl");
+                        fileInfoMapper.insertSelective(fileInfo);
+                    }
                 }
-                fileInfoMapper.insertSelective(fileInfo);
             }
+
 
         }
     }

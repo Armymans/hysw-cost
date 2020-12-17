@@ -9,8 +9,8 @@ import lombok.Data;
 public class TotalMeansList {
 
     private String id;
-    private String totalMeansName;
-    private String totalFileName;
-    private String totalFileDrawing;
+    private String total_means_name;
+    private String total_file_name;
+    private String total_file_drawing;
 
 }

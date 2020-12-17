@@ -18,17 +18,17 @@ public class DeclarationInformation {
     @Column(name = "id")
     private String id;
     @Column(name = "base_project_id")
-    private String baseProjectId;
+    private String base_project_id;
     @Column(name = "declared_diameter")
-    private String declaredDiameter;
+    private String declared_diameter;
     @Column(name = "user_of_life")
-    private String userOfLife;
+    private String user_of_life;
     @Column(name = "water_use")
-    private String waterUse;
+    private String water_use;
     @Column(name = "declaration_count")
-    private String declarationCount;
+    private String declaration_count;
     @Column(name = "setting_area")
-    private String settingArea;
+    private String setting_area;
     @Column(name = "declaration_type")
-    private String declarationType;
+    private String declaration_type;
 }

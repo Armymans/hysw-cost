@@ -18,7 +18,7 @@ public class MangerDemand {
     @Column(name = "id")
     private String id;
     @Column(name = "base_project_id")
-    private String baseProjectId;
+    private String base_project_id;
     @Column(name = "type")
     private String type;
     @Column(name = "caliber")

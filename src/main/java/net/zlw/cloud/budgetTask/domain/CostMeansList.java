@@ -9,7 +9,7 @@ import lombok.Data;
 public class CostMeansList {
 
     private String id;
-    private String costMeansName;
-    private String costFileName;
-    private String costFileDrawing;
+    private String cost_means_name;
+    private String cost_file_name;
+    private String cost_file_drawing;
 }

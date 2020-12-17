@@ -10,7 +10,7 @@ import lombok.Data;
 public class LabelMeansList {
 
     private String id;
-    private String labelMeansName;
-    private String labelFileName;
-    private String lableFileDrawing;
+    private String label_means_name;
+    private String label_file_name;
+    private String lable_file_drawing;
 }

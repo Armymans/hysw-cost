@@ -16,28 +16,28 @@ import java.util.List;
 @Data
 public class BudgetVo {
     private String id;
-    private String baseProjectId;
-    private String applicationNum;
-    private String amountCost;
-    private String budgetingPeople;
-    private String addedTaxAmount;
-    private String budgetingTime;
+    private String base_broject_id;
+    private String application_num;
+    private String amount_cost;
+    private String budgeting_people;
+    private String added_tax_amount;
+    private String budgeting_time;
     private String distinct;
-    private String costExamineResult;
-    private String costExamineOpinion;
-    private String costExamine;
-    private String costBy;
-    private String costPreparationTime;
-    private String totalCostAmount;
-    private String outsourcingCostAmount;
-    private String sourcingCost;
-    private String otherExpensesOne;
-    private String otherExpensesTwo;
-    private String otherExpensesThree;
-    private String priceControlRemark;
+    private String cost_examine_result;
+    private String cost_examine_opinion;
+    private String cost_examine;
+    private String cost_by;
+    private String cost_preparation_time;
+    private String total_cost_amount;
+    private String outsourcing_cost_amount;
+    private String sourcing_cost;
+    private String other_expenses_one;
+    private String other_expenses_two;
+    private String other_expenses_three;
+    private String price_control_remark;
 
-    private List<CostMeansList> costMeansList;
+    private List<CostMeansList> CostMeansList;
 //    private List<LabelMeansList> labelMeansList;
-    private List<TotalMeansList> totalMeansList;
+    private List<TotalMeansList> TotalMeansList;
 
 }

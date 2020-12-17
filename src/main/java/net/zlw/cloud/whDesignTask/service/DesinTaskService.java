@@ -12,6 +12,7 @@ import net.zlw.cloud.whDesignTask.dao.OperationSubmitTypeDao;
 import net.zlw.cloud.whDesignTask.dao.SubmitOperationDeptDao;
 import net.zlw.cloud.whDesignTask.model.*;
 import net.zlw.cloud.whDesignTask.model.vo.DesignVo;
+import net.zlw.cloud.whDesignTask.model.vo.DesignVoF;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ import java.util.List;
 @Service
 @Transactional
 public class DesinTaskService {
+
+    //设置创建时间以及修改时间
+    String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
     @Autowired
     private DesignInfoMapper designInfoMapper;
@@ -53,202 +57,214 @@ public class DesinTaskService {
     private SubmitOperationDeptDao submitOperationDeptDao;
 
 
-    public void getDesignEngineering(String account, DesignVo designVo) {
-        //设置创建时间以及修改时间
-        String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
-
+    public void getDesignEngineering(DesignVoF designVoF) {
+        DesignVo designVo = designVoF.getDesignVo();
         //判断vo
         if (designVo != null) {
             //创建项目对象
             BaseProject baseProject = new BaseProject();
             //添加数据
-            baseProject.setId(designVo.getApplicationNum());
-            baseProject.setApplicationNum(designVo.getApplicationNum());
+            baseProject.setId(designVo.getBase_project_id());
+            baseProject.setApplicationNum(designVo.getApplication_num());
             baseProject.setDistrict(designVo.getDistinct());
-            baseProject.setProjectName(designVo.getProjectName());
-            baseProject.setConstructionUnit(designVo.getConstructionUnit());
-            baseProject.setCustomerName(designVo.getCustomerName());
-            baseProject.setContactNumber(designVo.getContactNumberOperator());
+            baseProject.setProjectName(designVo.getProject_name());
+            baseProject.setConstructionUnit(designVo.getConstruction_unit());
+            baseProject.setCustomerName(designVo.getCustomer_name());
+            baseProject.setContactNumber(designVo.getContact_number_operator());
             baseProject.setSubject(designVo.getSubject());
-            baseProject.setProjectNature(designVo.getProjectNature());
-            baseProject.setProjectCategory(designVo.getProjectCategory());
-            baseProject.setWaterAddress(designVo.getWaterAddress());
-            baseProject.setWaterSupplyType(designVo.getWaterSupplyType());
+            baseProject.setProjectNature(designVo.getProject_nature());
+            baseProject.setProjectCategory(designVo.getProject_category());
+            baseProject.setWaterAddress(designVo.getWater_address());
+            baseProject.setWaterSupplyType(designVo.getWater_supply_type());
             baseProject.setAgent(designVo.getAgent());
-            baseProject.setApplicationDate(designVo.getApplicationDate());
-            baseProject.setBusinessLocation(designVo.getBusinessLocation());
-            baseProject.setBusinessTypes(designVo.getBusinessTypes());
-            baseProject.setWaterUse(designVo.getWaterUses());
-            baseProject.setApplicationNumber(designVo.getApplicationNumber());
-            baseProject.setShouldBe(designVo.getShouldBe());
+            baseProject.setApplicationDate(designVo.getApplication_date());
+            baseProject.setBusinessLocation(designVo.getBusiness_location());
+            baseProject.setBusinessTypes(designVo.getBusiness_types());
+            baseProject.setWaterUse(designVo.getWater_address());
+            baseProject.setApplicationNumber(designVo.getApplication_number());
+            baseProject.setShouldBe(designVo.getShould_be());
             baseProject.setStatus(designVo.getStatus());
-            baseProject.setThisDeclaration(designVo.getThisTask());
-            baseProject.setVirtualCode(designVo.getVirtualCode());
-
+            baseProject.setThisDeclaration(designVo.getThis_task());
+            baseProject.setVirtualCode(designVo.getVirtual_code());
+            baseProject.setStatus("0");
             baseProject.setDelFlag("0");
+            baseProject.setDesginStatus("4");
             //写到数据库
             baseProjectDao.insertSelective(baseProject);
 
             DesignInfo designInfo = new DesignInfo();
-
             //判断信息表如果没有重复外键的话就添加数据
-            if (StringUtils.isNotEmpty(designVo.getApplicationNum())) {
-                designInfo.setId(designVo.getApplicationNum());
+            if (StringUtils.isNotEmpty(designVo.getApplication_num())) {
+                designInfo.setId(designVo.getApplication_num());
+                designInfo.setBaseProjectId(designVo.getBase_project_id());
                 designInfo.setPhone(designVo.getPhone());
-                designInfo.setProjectRemark(designVo.getProjectRemark());
-                designInfo.setWaterSupply(designVo.getWaterSupply());
-                designInfo.setSpecialUser(designVo.getSpecialUser());
-                designInfo.setUserOfDay(designVo.getUserOfDay());
-                designInfo.setTimeOfUser(designVo.getTimeOfUser());
-                designInfo.setNumberOfBuilding(designVo.getNumberOfBuilding());
-                designInfo.setNumBuilding(designVo.getNumBuilding());
-                designInfo.setBuildingLayers(designVo.getBuildingLayers());
-                designInfo.setNotesDrawingTime(designVo.getNotesDrawingTime());
-                designInfo.setBlueprintCountersignTime(designVo.getBlueprintCountersignTime());
-                designInfo.setBlueprintStartTime(designVo.getBlueprintStartTime());
+                designInfo.setProjectRemark(designVo.getProject_remark());
+                designInfo.setWaterSupply(designVo.getWater_supply());
+                designInfo.setSpecialUser(designVo.getSpecial_user());
+                designInfo.setUserOfDay(designVo.getUserOf_day());
+                designInfo.setTimeOfUser(designVo.getTimeOf_user());
+                designInfo.setNumberOfBuilding(designVo.getNumber_of_building());
+                designInfo.setNumBuilding(designVo.getNum_building());
+                designInfo.setBuildingLayers(designVo.getBuilding_layers());
+                designInfo.setFounderId(designVo.getAgent());
+                designInfo.setNotesDrawingTime(designVo.getNotes_drawing_time());
+                designInfo.setBlueprintCountersignTime(designVo.getBlueprint_countersign_time());
+                designInfo.setBlueprintStartTime(designVo.getBlueprint_start_time());
                 designInfo.setStatus("0");
+                //写到数据库
+                designInfoMapper.insertSelective(designInfo);
             }
-            //写到数据库
-            designInfoMapper.insertSelective(designInfo);
 
-
-            //管理表对象
-            MangerDemand mangerDemand = new MangerDemand();
             //管理表集合
             List<MangerDemand> mangerDemand1 = designVo.getMangerDemand();
             //遍历
-            for (MangerDemand thisManger : mangerDemand1) {
-                //判断管理表是否为空
-                if (thisManger != null) {
-                    mangerDemand.setId(thisManger.getId());
-                    mangerDemand.setBaseProjectId(designVo.getBaseProjectId());
-                    mangerDemand.setCaliber(thisManger.getCaliber());
-                    mangerDemand.setCount(thisManger.getCount());
-                    mangerDemand.setType(thisManger.getType());
+            if (mangerDemand1 != null && mangerDemand1.size() > 0) {
+                for (MangerDemand thisManger : mangerDemand1) {
+                    //判断管理表是否为空
+                    if (thisManger != null) {
+                        //管理表对象
+                        MangerDemand mangerDemand = new MangerDemand();
+                        mangerDemand.setId(thisManger.getId());
+                        mangerDemand.setBase_project_id(designVo.getBase_project_id());
+                        mangerDemand.setCaliber(thisManger.getCaliber());
+                        mangerDemand.setCount(thisManger.getCount());
+                        mangerDemand.setType(thisManger.getType());
+                        mangerDemandDao.insertSelective(mangerDemand);
+                    }
                 }
             }
-            mangerDemandDao.insertSelective(mangerDemand);
-            //获得提交对象
-            SubmitOperationDept submitOperationDept = new SubmitOperationDept();
+
+
             //获得提交集合
             List<SubmitOperationDept> submitOperationDept1 = designVo.getSubmitOperationDept();
-            for (SubmitOperationDept thisSubmitOperation : submitOperationDept1) {
-                if (thisSubmitOperation != null) {
-                    submitOperationDept.setId(thisSubmitOperation.getId());
-                    submitOperationDept.setBaseProjectId(designVo.getBaseProjectId());
-                    submitOperationDept.setExamineDept(thisSubmitOperation.getExamineDept());
-                    submitOperationDept.setExamineOpinion(thisSubmitOperation.getExamineOpinion());
-                    submitOperationDept.setExamineTime(thisSubmitOperation.getExamineTime());
-                    submitOperationDept.setReviewer(thisSubmitOperation.getReviewer());
-                    submitOperationDept.setSubmitDept(thisSubmitOperation.getSubmitDept());
-                    submitOperationDept.setSubmitter(thisSubmitOperation.getSubmitter());
-                    submitOperationDept.setSubmitTime(thisSubmitOperation.getSubmitTime());
-                }
-                submitOperationDeptDao.insertSelective(submitOperationDept);
+            if ( submitOperationDept1 != null &&  submitOperationDept1.size() > 0) {
+                for (SubmitOperationDept thisSubmitOperation : submitOperationDept1) {
+                    if (thisSubmitOperation != null) {
+                        //获得提交对象
+                        SubmitOperationDept submitOperationDept = new SubmitOperationDept();
+                        submitOperationDept.setId(thisSubmitOperation.getId());
+                        submitOperationDept.setBase_project_id(designVo.getBase_project_id());
+                        submitOperationDept.setExamine_dep(thisSubmitOperation.getExamine_dep());
+                        submitOperationDept.setExamine_opinion(thisSubmitOperation.getExamine_opinion());
+                        submitOperationDept.setExamine_time(thisSubmitOperation.getExamine_time());
+                        submitOperationDept.setReviewer(thisSubmitOperation.getReviewer());
+                        submitOperationDept.setSubmit_dept(thisSubmitOperation.getSubmit_dept());
+                        submitOperationDept.setSubmitter(thisSubmitOperation.getSubmitter());
+                        submitOperationDept.setSubmit_time(thisSubmitOperation.getSubmit_time());
+                        submitOperationDeptDao.insertSelective(submitOperationDept);
+                    }
 
+                }
             }
 
-            //拟申报水表对象
-            DeclarationInformation declarationInformation = new DeclarationInformation();
-            List<DeclarationInformation> declarationInformation1 = designVo.getDeclarationInformation();
-            for (DeclarationInformation thisDeclar : declarationInformation1) {
-                if (thisDeclar != null) {
-                    declarationInformation.setId(designVo.getApplicationNum());
-                    declarationInformation.setBaseProjectId(designVo.getBaseProjectId());
-                    declarationInformation.setDeclarationCount(thisDeclar.getDeclarationCount());
-                    declarationInformation.setDeclarationType(thisDeclar.getDeclarationType());
-                    declarationInformation.setDeclaredDiameter(thisDeclar.getDeclaredDiameter());
-                    declarationInformation.setSettingArea(thisDeclar.getSettingArea());
-                    declarationInformation.setUserOfLife(thisDeclar.getUserOfLife());
-                    declarationInformation.setWaterUse(thisDeclar.getWaterUse());
+
+            List<DeclarationInformation> declarationInformation1 = designVo.getDeclaration_information();
+            if (declarationInformation1 != null &&  declarationInformation1.size() > 0) {
+                for (DeclarationInformation thisDeclar : declarationInformation1) {
+                    if (thisDeclar != null) {
+                        //拟申报水表对象
+                        DeclarationInformation declarationInformation = new DeclarationInformation();
+                        declarationInformation.setId(designVo.getApplication_num());
+                        declarationInformation.setBase_project_id(designVo.getBase_project_id());
+                        declarationInformation.setDeclaration_count(thisDeclar.getDeclaration_count());
+                        declarationInformation.setDeclaration_type(thisDeclar.getDeclaration_type());
+                        declarationInformation.setDeclared_diameter(thisDeclar.getDeclared_diameter());
+                        declarationInformation.setSetting_area(thisDeclar.getSetting_area());
+                        declarationInformation.setUser_of_life(thisDeclar.getUser_of_life());
+                        declarationInformation.setWater_use(thisDeclar.getWater_use());
+                        declarationInformationDao.insertSelective(declarationInformation);
+                    }
                 }
-                declarationInformationDao.insertSelective(declarationInformation);
             }
 
-            //创建操作历史对象
-            OperationSubmitType operationSubmitType = new OperationSubmitType();
+
             //获得vo集合并遍历
             List<OperationSubmitType> operationSubmitType1 = designVo.getOperationSubmitType();
-            for (OperationSubmitType thisSubmitType : operationSubmitType1) {
-                //判断是否为空
-                if (thisSubmitType != null) {
-                    operationSubmitType.setId(designVo.getApplicationNum());
-                    operationSubmitType.setBaseProjectId(thisSubmitType.getBaseProjectId());
-                    operationSubmitType.setOperationDept(thisSubmitType.getOperationDept());
-                    operationSubmitType.setOperationTime(thisSubmitType.getOperationTime());
-                    operationSubmitType.setOperationTpe(thisSubmitType.getOperationTpe());
-                    operationSubmitType.setOperator(account);
-                    operationSubmitType.setResreon(thisSubmitType.getResreon());
+            if (operationSubmitType1 != null && operationSubmitType1.size() > 0) {
+                for (OperationSubmitType thisSubmitType : operationSubmitType1) {
+                    //判断是否为空
+                    if (thisSubmitType != null) {
+                        //创建操作历史对象
+                        OperationSubmitType operationSubmitType = new OperationSubmitType();
+                        operationSubmitType.setId(designVo.getApplication_num());
+                        operationSubmitType.setBase_project_id(thisSubmitType.getBase_project_id());
+                        operationSubmitType.setOperation_dept(thisSubmitType.getOperation_dept());
+                        operationSubmitType.setOperation_time(thisSubmitType.getOperation_time());
+                        operationSubmitType.setOperation_tpe(thisSubmitType.getOperation_tpe());
+                        operationSubmitType.setOperator(thisSubmitType.getOperator());
+                        operationSubmitType.setResreon(thisSubmitType.getResreon());
+                        //写入数据库
+                        operationSubmitTypeDao.insertSelective(operationSubmitType);
+                    }
                 }
-                //写入数据库
-                operationSubmitTypeDao.insertSelective(operationSubmitType);
             }
 
-            //获得文件对象
-            FileInfo fileInfo = new FileInfo();
+
             //获得图纸、批文资料
             List<CustomerProvidedFile> customerProvidedFile = designVo.getCustomerProvidedFile();
-
-            for (CustomerProvidedFile thisProvidedFile : customerProvidedFile) {
-                fileInfo.setId(thisProvidedFile.getId());
-                fileInfo.setPlatCode(thisProvidedFile.getBaseProjectId());
-                fileInfo.setFileName(thisProvidedFile.getCustomerProvidedFileName());
-                fileInfo.setName(thisProvidedFile.getCustomerProvidedName());
-                fileInfo.setCreateTime(thisProvidedFile.getCustomerProvidedTime());
-                fileInfo.setUserId(thisProvidedFile.getCustomerProvidedBy());
-                fileInfo.setFilePath(thisProvidedFile.getCustomerProvidedDrawing());
-                fileInfo.setPlatCode(designVo.getApplicationNum());
-                fileInfo.setType("tzpwzl");
-                fileInfo.setFileSource("3");
+            if (customerProvidedFile != null && customerProvidedFile.size() > 0) {
+                for (CustomerProvidedFile thisProvidedFile : customerProvidedFile) {
+                    //获得文件对象
+                    FileInfo fileInfo = new FileInfo();
+                    fileInfo.setId(thisProvidedFile.getId());
+                    fileInfo.setPlatCode(thisProvidedFile.getBase_project_id());
+                    fileInfo.setFileName(thisProvidedFile.getCustomer_provided_file_name());
+                    fileInfo.setName(thisProvidedFile.getCustomer_provided_name());
+                    fileInfo.setCreateTime(thisProvidedFile.getCustomer_provided_time());
+                    fileInfo.setUserId(thisProvidedFile.getCustomer_provided_by());
+                    fileInfo.setFilePath(thisProvidedFile.getCustomer_provided_drawing());
+                    fileInfo.setPlatCode(designVo.getApplication_num());
+                    fileInfo.setType("tzpwzl");
+                    fileInfo.setFileSource("3");
+                    fileInfo.setStatus("0");
+                    //插入文件表
+                    fileInfoMapper.insertSelective(fileInfo);
+                }
             }
-            //插入文件表
-            fileInfoMapper.insertSelective(fileInfo);
 
 
             //获得工程设计图纸集合
             List<ProjectDesign> projectDesign = designVo.getProjectDesign();
-
-            for (ProjectDesign thisProject : projectDesign) {
-                //如果文件信息不重复就写入
-                fileInfo.setId(thisProject.getId());
-                fileInfo.setPlatCode(thisProject.getBaseProjectId());
-                fileInfo.setFileName(thisProject.getProjectFileName());
-                fileInfo.setCreateTime(thisProject.getProjectUpTime());
-                fileInfo.setRemark(thisProject.getProjectUploadedBy());
-                fileInfo.setCreateTime(thisProject.getProjectUploadedBy());
-                fileInfo.setPlatCode(designVo.getApplicationNum());
-
-                fileInfo.setStatus("0");
-                fileInfo.setFileSource("3");
-
-                fileInfo.setType("gcsjtz");
+            if(projectDesign != null &&  projectDesign.size() > 0){
+                for (ProjectDesign thisProject : projectDesign) {
+                    //获得文件对象
+                    FileInfo fileInfo = new FileInfo();
+                    //如果文件信息不重复就写入
+                    fileInfo.setId(thisProject.getId());
+                    fileInfo.setPlatCode(thisProject.getBase_project_id());
+                    fileInfo.setFileName(thisProject.getProject_file_name());
+                    fileInfo.setCreateTime(thisProject.getProject_up_time());
+                    fileInfo.setRemark(thisProject.getProject_uploaded_by());
+                    fileInfo.setPlatCode(designVo.getApplication_num());
+                    fileInfo.setStatus("0");
+                    fileInfo.setFileSource("3");
+                    fileInfo.setType("gcsjtz");
+                    //插入文件表
+                    fileInfoMapper.insertSelective(fileInfo);
+                }
             }
-
-            //插入文件表
-            fileInfoMapper.insertSelective(fileInfo);
 
 
             //获得水表数量清单集合
             List<WatherList> waterList = designVo.getWaterList();
-
-            for (WatherList thisWater : waterList) {
-                //如果文件信息不重复就写入
-                fileInfo.setId(thisWater.getId());
-                fileInfo.setPlatCode(thisWater.getBaseProjectId());
-                fileInfo.setFileName(thisWater.getWaterListFileName());
-                fileInfo.setCreateTime(thisWater.getWaterListTime());
-                fileInfo.setUserId(thisWater.getWaterListBy());
-                fileInfo.setFilePath(thisWater.getWaterListDrawing());
-                fileInfo.setPlatCode(designVo.getApplicationNum());
-                fileInfo.setType("sbslqd");
-                fileInfo.setFileSource("3");
-
+            if( waterList != null &&  waterList.size() > 0){
+                for (WatherList thisWater : waterList) {
+                    //获得文件对象
+                    FileInfo fileInfo = new FileInfo();
+                    //如果文件信息不重复就写入
+                    fileInfo.setId(thisWater.getId());
+                    fileInfo.setPlatCode(thisWater.getBase_project_id());
+                    fileInfo.setFileName(thisWater.getWater_list_file_name());
+                    fileInfo.setCreateTime(thisWater.getWater_list_time());
+                    fileInfo.setUserId(thisWater.getWater_list_by());
+                    fileInfo.setFilePath(thisWater.getWater_list_drawing());
+                    fileInfo.setPlatCode(designVo.getApplication_num());
+                    fileInfo.setType("sbslqd");
+                    fileInfo.setFileSource("3");
+                    //插入文件表
+                    fileInfoMapper.insertSelective(fileInfo);
+                }
             }
-
-            //插入文件表
-            fileInfoMapper.insertSelective(fileInfo);
-
 
         }
 

@@ -12,10 +12,10 @@ import lombok.Data;
 public class WatherList {
 
     private String id;
-    private String baseProjectId;
-    private String waterListFileName;
-    private String waterListTime;
-    private String waterListBy;
-    private String waterListDrawing;
+    private String base_project_id;
+    private String water_list_file_name;
+    private String water_list_time;
+    private String water_list_by;
+    private String water_list_drawing;
 
 }
