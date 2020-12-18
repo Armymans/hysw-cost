@@ -226,7 +226,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "b.project_name like concat('%',#{keyword},'%') or  " +
             "b.construction_unit like concat('%',#{keyword},'%') or " +
             "b.customer_name like concat ('%',#{keyword},'%')   " +
-            ")")
+            ") and " +
+            " b.del_flag = '0' ")
     List<DesignInfo> findDesignAll(PageBVo pageBVo);
 
     @Select("select * from base_project where  " +

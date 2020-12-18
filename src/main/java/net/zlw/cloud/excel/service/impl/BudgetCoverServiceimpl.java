@@ -267,13 +267,12 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
                         bomTable.setDelFlag("0");
                         bomTable.setMaterialCode(o1.get(0));
                         bomTableList.add(bomTable);
-//                        bomTable1Dao.insertSelective(bomTable);
+                        bomTable1Dao.insertSelective(bomTable);
                     }
                 }
 
-
             }
-//            bomTableInfomationDao.insertSelective(bomTableInfomation);
+            bomTableInfomationDao.insertSelective(bomTableInfomation);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
