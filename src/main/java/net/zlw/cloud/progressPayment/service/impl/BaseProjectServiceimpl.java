@@ -1448,7 +1448,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
         System.err.println(baseProject);
-        if (!"2".equals( baseProject.getProgressPaymentStatus())){
+//        if (!"2".equals( baseProject.getProgressPaymentStatus())){
             Example example1 = new Example(ProgressPaymentInformation.class);
             Example.Criteria c2 = example1.createCriteria();
             c2.andEqualTo("baseProjectId",baseId);
@@ -1458,24 +1458,24 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             if (progressPaymentInformation!=null){
                 progressPaymentInformations.add(progressPaymentInformation);
             }
-        }
+//        }
 
         BigDecimal bigDecimal = new BigDecimal(0);
         BigDecimal bigDecimal1 = new BigDecimal(0);
         int pro = 0;
-        for (ProgressPaymentInformation progressPaymentInformation : progressPaymentInformations) {
-           if (progressPaymentInformation.getCurrentPaymentInformation()!=null){
-               bigDecimal = bigDecimal.add(progressPaymentInformation.getCurrentPaymentInformation());
+        for (ProgressPaymentInformation thisPro : progressPaymentInformations) {
+           if (thisPro.getCurrentPaymentInformation()!=null){
+               bigDecimal = bigDecimal.add(thisPro.getCurrentPaymentInformation());
            }
-           if (progressPaymentInformation.getCurrentPaymentRatio()!=null){
-               if (progressPaymentInformation.getCurrentPaymentRatio() == null ){
-                   progressPaymentInformation.setCurrentPaymentRatio("0");
+           if (thisPro.getCurrentPaymentRatio()!=null){
+               if (thisPro.getCurrentPaymentRatio() == null ){
+                   thisPro.setCurrentPaymentRatio("0");
                }
-               bigDecimal1 = bigDecimal1.add(new BigDecimal(progressPaymentInformation.getCurrentPaymentRatio()));
+               bigDecimal1 = bigDecimal1.add(new BigDecimal(thisPro.getCurrentPaymentRatio()));
            }
-           if (progressPaymentInformation.getChangeNum()!=null){
-               if (pro<=progressPaymentInformation.getChangeNum()){
-                   pro = progressPaymentInformation.getChangeNum();
+           if (thisPro.getChangeNum()!=null){
+               if (pro<=thisPro.getChangeNum()){
+                   pro = thisPro.getChangeNum();
                }
            }
         }
