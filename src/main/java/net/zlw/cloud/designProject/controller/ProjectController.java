@@ -1699,6 +1699,10 @@ public class ProjectController extends BaseController {
         //基本数据信息
         ProjectVo3 projectVo3 = new ProjectVo3();
         BaseProject baseProject = projectService.BaseProjectByid(id);
+        ConstructionUnitManagement unitManagement = constructionUnitManagementMapper.selectByPrimaryKey(baseProject.getConstructionOrganization());
+        if (unitManagement != null){
+            baseProject.setConstructionOrganization(unitManagement.getConstructionUnitName());
+        }
         projectVo3.setBaseProject(baseProject);
         //设计信息
         DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());

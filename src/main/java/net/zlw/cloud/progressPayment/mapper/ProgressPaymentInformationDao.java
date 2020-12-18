@@ -53,7 +53,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
 
     @Select(
   "SELECT " +
-          "SUM(cumulative_payment_times) " +
+          "MAX(change_num) " +
           "FROM " +
           "progress_payment_information " +
           "GROUP BY " +

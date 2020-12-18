@@ -1,6 +1,5 @@
 package net.zlw.cloud.designProject.mapper;
 
-import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.designProject.model.CostVo2;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.designProject.model.DesignPageVo;
@@ -27,7 +26,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                         "s1.district, " +
                         "s1.water_address, " +
                         "s1.construction_unit, " +
-                        "s1.contacts, " +
+                        "s1.contacts contacts, " +
                         "s2.phone, " +
                         "s1.project_nature, " +
                         "s1.design_category, " +
@@ -106,7 +105,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.district, " +
                     "s1.water_address, " +
                     "s1.construction_unit, " +
-                    "s1.contacts contacts1, " +
+                    "s1.contacts contacts, " +
                     "s2.phone, " +
                     "s1.project_nature, " +
                     "s1.design_category, " +
@@ -184,7 +183,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.district, " +
                     "s1.water_address, " +
                     "s1.construction_unit, " +
-                    "s1.contacts contacts1, " +
+                    "s1.contacts contacts, " +
                     "s2.phone, " +
                     "s2.outsource, " +
                     "s2.designer, " +
@@ -258,7 +257,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.district, " +
                     "s1.water_address, " +
                     "s1.construction_unit, " +
-                    "s1.contacts contacts1, " +
+                    "s1.contacts contacts, " +
                     "s2.phone, " +
                     "s2.outsource, " +
                     "s2.designer, " +
@@ -332,7 +331,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s1.district, " +
                     "s1.water_address, " +
                     "s1.construction_unit, " +
-                    "s1.contacts contacts1, " +
+                    "s1.contacts contacts, " +
                     "s2.phone, " +
                     "s2.outsource, " +
                     "s2.designer, " +
