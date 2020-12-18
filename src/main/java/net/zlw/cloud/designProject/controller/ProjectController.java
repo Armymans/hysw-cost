@@ -12,6 +12,7 @@ import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.mapper.AnhuiMoneyinfoMapper;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
+import net.zlw.cloud.designProject.mapper.WujiangMoneyInfoMapper;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
 import net.zlw.cloud.followAuditing.mapper.DesignUnitManagementDao;
@@ -64,6 +65,8 @@ public class ProjectController extends BaseController {
 
     @Resource
     private MemberManageDao memberManageDao;
+    @Resource
+    private WujiangMoneyInfoMapper wujiangMoneyInfoMapper;
     @Resource
     private CostUnitManagementMapper costUnitManagementMapper;
     @Resource
@@ -979,14 +982,20 @@ public class ProjectController extends BaseController {
         //各种费用
         if(!"吴江".equals(baseProject.getDistrict())){
             //设计费（安徽）
-            AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
+            Example example = new Example(AnhuiMoneyinfo.class);
+            Example.Criteria c = example.createCriteria();
+            //根据设计表id 查询数据取出代收金额
+            c.andEqualTo("baseProjectId",designInfo.getId());
+            AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
+//            AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyInfopayterm(designInfo.getId());
             if(anhuiMoneyinfo!=null){
                 //如果为实收
                if("0".equals(anhuiMoneyinfo.getPayTerm())){
                    projectVo.setAnhuiMoneyinfo(anhuiMoneyinfo);
-                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                   projectVo.getMoneyInfo().setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts()+"");
-                   projectVo.getMoneyInfo().setCostTime(anhuiMoneyinfo.getCollectionTime()+"");
+
+//                   projectVo.getMoneyInfo().setRevenue(anhuiMoneyinfo.getRevenue()+"");
+//                   projectVo.getMoneyInfo().setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts()+"");
+//                   projectVo.getMoneyInfo().setCostTime(anhuiMoneyinfo.getCollectionTime()+"");
                }else{
                    // 总金额累加
                    String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
@@ -1105,17 +1114,22 @@ public class ProjectController extends BaseController {
             projectVo.setMoneyInfo(new MoneyInfo());
         }else{
             //设计费（吴江）
-            WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
+            Example example = new Example(WujiangMoneyInfo.class);
+            Example.Criteria c = example.createCriteria();
+            //根据设计表id 查询数据取出代收金额
+            c.andEqualTo("baseProjectId", designInfo.getId());
+            WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(example);
+//            WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfopayterm(designInfo.getId());
             if(wujiangMoneyInfo!=null){
                 if("0".equals(wujiangMoneyInfo.getPayTerm())){
 
                     projectVo.setWujiangMoneyInfo(wujiangMoneyInfo);
-                    projectVo.getMoneyInfo().setCostType(wujiangMoneyInfo.getCostType());
-                    projectVo.getMoneyInfo().setDesignRate(wujiangMoneyInfo.getDesignRate()+"");
-                    projectVo.getMoneyInfo().setOneDesMoney(wujiangMoneyInfo.getOneDesmoney()+"");
-                    projectVo.getMoneyInfo().setRevenue(wujiangMoneyInfo.getRevenue()+"");
-                    projectVo.getMoneyInfo().setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts()+"");
-                    projectVo.getMoneyInfo().setCostTime(wujiangMoneyInfo.getCollectionTime());
+//                    projectVo.getMoneyInfo().setCostType(wujiangMoneyInfo.getCostType());
+//                    projectVo.getMoneyInfo().setDesignRate(wujiangMoneyInfo.getDesignRate()+"");
+//                    projectVo.getMoneyInfo().setOneDesMoney(wujiangMoneyInfo.getOneDesmoney()+"");
+//                    projectVo.getMoneyInfo().setRevenue(wujiangMoneyInfo.getRevenue()+"");
+//                    projectVo.getMoneyInfo().setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts()+"");
+//                    projectVo.getMoneyInfo().setCostTime(wujiangMoneyInfo.getCollectionTime());
                 }else{
                     // 总金额累加
                     String collectionMoney = wujiangMoneyInfo.getCollectionMoney();
