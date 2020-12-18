@@ -101,6 +101,9 @@ public class AhExcelServiceImpl implements AhExcelService {
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
             String projectName = "";
             for (int i = 0; i < read.size(); i++) {
+
+                System.err.println(read.get(i));
+
                 //切割 得到项目名称
                 if (i == 0) {
                     String s = ((List<String>) read.get(i)).get(0);
@@ -120,8 +123,17 @@ public class AhExcelServiceImpl implements AhExcelService {
                     anhuiSummarySheet.setProjectName(projectName);
                     anhuiSummarySheet.setSerialNumber(((List<String>) read.get(i)).get(0));
                     anhuiSummarySheet.setSummarizing(((List<String>) read.get(i)).get(1));
-                    anhuiSummarySheet.setPrice(((List<String>) read.get(i)).get(2));
-                    anhuiSummarySheet.setProvisionalEstimate(((List<String>) read.get(i)).get(3));
+                    if (!"".equals(((List<String>) read.get(i)).get(4))){
+                        anhuiSummarySheet.setPrice(((List<String>) read.get(i)).get(4));
+                    }else{
+                        anhuiSummarySheet.setPrice("/");
+                    }
+                    if (!"".equals(((List<String>) read.get(i)).get(3))){
+                        anhuiSummarySheet.setProvisionalEstimate(((List<String>) read.get(i)).get(3));
+
+                    }else{
+                        anhuiSummarySheet.setProvisionalEstimate("/");
+                    }
                     anhuiSummarySheet.setBaseProjectId(id);
                     anhuiSummarySheet.setCreateTime(data);
                     anhuiSummarySheet.setStatus("0");
@@ -172,18 +184,28 @@ public class AhExcelServiceImpl implements AhExcelService {
                     quantitiesPartialWorks.setQuantities(((List<String>) read.get(i)).get(5));
                     if (((List<String>) read.get(i)).get(6) != null && !"".equals(((List<String>) read.get(i)).get(6))) {
                         quantitiesPartialWorks.setComprehensiveUnitPrice(new BigDecimal(((List<String>) read.get(i)).get(6)));
+                    }else{
+                        quantitiesPartialWorks.setComprehensiveUnitPrice(new BigDecimal("0"));
                     }
                     if (((List<String>) read.get(i)).get(7) != null && !"".equals(((List<String>) read.get(i)).get(7))) {
                         quantitiesPartialWorks.setAndPrice(new BigDecimal(((List<String>) read.get(i)).get(7)));
+                    }else{
+                        quantitiesPartialWorks.setAndPrice(new BigDecimal("0"));
                     }
                     if (((List<String>) read.get(i)).get(8) != null && !"".equals(((List<String>) read.get(i)).get(8))) {
                         quantitiesPartialWorks.setRateArtificialCost(new BigDecimal(((List<String>) read.get(i)).get(8)));
+                    }else{
+                        quantitiesPartialWorks.setRateArtificialCost(new BigDecimal("0"));
                     }
                     if (((List<String>) read.get(i)).get(9) != null && !"".equals(((List<String>) read.get(i)).get(9))) {
                         quantitiesPartialWorks.setFixedMechanicalFee(new BigDecimal(((List<String>) read.get(i)).get(9)));
+                    }else{
+                        quantitiesPartialWorks.setFixedMechanicalFee(new BigDecimal("0"));
                     }
                     if (((List<String>) read.get(i)).get(10) != null && !"".equals(((List<String>) read.get(i)).get(10))) {
                         quantitiesPartialWorks.setTemporaryValuation(new BigDecimal(((List<String>) read.get(i)).get(10)));
+                    }else {
+                        quantitiesPartialWorks.setTemporaryValuation(new BigDecimal("0"));
                     }
 
                     quantitiesPartialWorks.setBudgetingId(id);
@@ -280,6 +302,7 @@ public class AhExcelServiceImpl implements AhExcelService {
                     if (((List<String>) read.get(i)).get(8) != null && !"".equals(((List<String>) read.get(i)).get(8))) {
                         taxStatement.setAmount(new BigDecimal(((List<String>) read.get(i)).get(8)));
                     }
+                    taxStatement.setProjectCode("/");
                     taxStatement.setForeignKey(id);
                     taxStatementDao.insertSelective(taxStatement);
                 }

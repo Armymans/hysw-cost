@@ -155,6 +155,8 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
                     summaryUnits.setDelFlag("0");
                     if (((List<String>) read.get(i)).get(2)!=null){
                         summaryUnits.setAmount(new BigDecimal(((List<String>) read.get(i)).get(2)));
+                    }else {
+                        summaryUnits.setAmount(new BigDecimal("0"));
                     }
                    summaryUnitsDao.insertSelective(summaryUnits);
                 }
@@ -690,6 +692,15 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
         ahExcelService.taxStatementImport(id,inputStream5);
         ahExcelService.summaryMaterialsSuppliedAImport(id,inputStream6);
         ahExcelService.summaryMaterialsSuppliedBImport(id,inputStream);
+    }
+
+    @Override
+    public List<PartTableQuantities> findPartTableQuantitiesAll(String id) {
+        Example example = new Example(PartTableQuantities.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("foreignKey",id);
+      return   partTableQuantitiesDao.selectByExample(example);
+
     }
 
 

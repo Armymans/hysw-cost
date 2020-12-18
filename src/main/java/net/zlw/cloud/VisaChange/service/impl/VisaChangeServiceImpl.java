@@ -1727,11 +1727,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         c2.andEqualTo("state", "0");
         List<VisaChange> visaChanges1 = visaChangeMapper.selectByExample(example1);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
-        if (!baseProject.getVisaStatus().equals("2")) {
+
             for (VisaChange visaChange : visaChanges1) {
                 visaChanges.add(visaChange);
             }
-        }
+
         //返回出去的集合
         ArrayList<VisaChangeStatisticVo> visaChangeStatisticVos = new ArrayList<>();
         //上家集合

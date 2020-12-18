@@ -3,14 +3,17 @@ package net.zlw.cloud.excelLook.controller;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.excel.model.*;
+import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.excelLook.domain.QuantitiesPartialWorks;
 import net.zlw.cloud.excelLook.service.AnHuiXinDianService;
+import net.zlw.cloud.excelLook.service.SummaryUnitsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +29,11 @@ public class AnHuiXinDianController {
 
     @Autowired
     private AnHuiXinDianService anHuiXinDianService;
+    @Resource
+    private BudgetCoverService budgetCoverService;
+    @Resource
+    private SummaryUnitsService summaryUnitsService;
+
 
     /**
         * @Author sjf
@@ -37,6 +45,10 @@ public class AnHuiXinDianController {
     @RequestMapping(value = "/anHuiExcelLook/XDCover",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findSheetOne(@RequestParam("id") String id){
         AnhuiCover one = anHuiXinDianService.findOne(id);
+        if (one == null){
+            SummaryShenji budgetCoverById = budgetCoverService.findBudgetCoverById(id);
+            return RestUtil.success(budgetCoverById);
+        }
         return RestUtil.success(one);
     }
 
@@ -50,6 +62,10 @@ public class AnHuiXinDianController {
     @RequestMapping(value = "/anHuiExcelLook/XDSheetList",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findSheetList(@RequestParam("id") String id){
         List<AnhuiSummarySheet> list = anHuiXinDianService.findList(id);
+        if (list == null || list.size() == 0){
+            List<SummaryUnits> summaryUnits = summaryUnitsService.summaryUnitsList(id);
+            return RestUtil.success(summaryUnits);
+        }
         return RestUtil.success(list);
     }
 
@@ -63,6 +79,10 @@ public class AnHuiXinDianController {
     @RequestMapping(value = "/anHuiExcelLook/XDWorkList",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findWorkList(@RequestParam("id") String id){
         List<QuantitiesPartialWorks> list = anHuiXinDianService.findWorksList(id);
+        if (list == null || list.size() == 0){
+            List<PartTableQuantities> partTableQuantitiesAll = budgetCoverService.findPartTableQuantitiesAll(id);
+            return RestUtil.success(partTableQuantitiesAll);
+        }
         return RestUtil.success(list);
     }
 

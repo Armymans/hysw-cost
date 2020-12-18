@@ -1,11 +1,13 @@
 package net.zlw.cloud.excel.service;
 
 import net.zlw.cloud.demo.FinalReport;
+import net.zlw.cloud.excel.model.PartTableQuantities;
 import net.zlw.cloud.excel.model.ReportTextVo;
 import net.zlw.cloud.excel.model.SummaryShenji;
 import net.zlw.cloud.excelLook.domain.SettlementDirectory;
 
 import java.io.FileInputStream;
+import java.util.List;
 
 public interface BudgetCoverService {
     void coverImport(String id, FileInputStream fileInputStream);
@@ -38,4 +40,6 @@ public interface BudgetCoverService {
     void addbudgetAll(String id, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream fileInputStream);
 
      void addbudgetAllXindian(String id, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream inputStream3, FileInputStream inputStream4, FileInputStream inputStream5, FileInputStream inputStream6, FileInputStream fileInputStream);
+
+    List<PartTableQuantities> findPartTableQuantitiesAll(String id);
 }
