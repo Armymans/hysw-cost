@@ -26,6 +26,7 @@ public class BaseVo {
     private String ceaTotalMoney; // 跟踪审计CEA金额
     private String cumulativeChangeAmount; // 签证/变更累计金额（元）
     private String authorizedNumber; // 结算审定金额（元）
+    private String projectFlow; // 项目流程
 
 
 }

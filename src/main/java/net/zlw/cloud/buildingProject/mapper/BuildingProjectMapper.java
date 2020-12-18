@@ -78,6 +78,7 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
             "  b2.cea_num ceaNum," +
             "  b2.project_num projectNum," +
             "  b2.project_name projectName," +
+            "  b2.project_flow projectFlow," +
             "  b2.construction_unit constructionUnit," +
             "  b2.customer_name customerName," +
             "   ( CASE b2.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) projectNature," +

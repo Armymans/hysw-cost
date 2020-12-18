@@ -23,6 +23,8 @@ import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.mapper.MessageNotificationDao;
+import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
+import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -67,6 +69,8 @@ public class BudgetingServiceImpl implements BudgetingService {
     private BudgetingDao budgetingDao;
     @Resource
     private BaseProjectDao projectDao;
+    @Resource
+    private ConstructionUnitManagementMapper constructionUnitManagementMapper;
     @Resource
     private SurveyInformationDao surveyInformationDao;
     @Resource
@@ -292,7 +296,10 @@ public class BudgetingServiceImpl implements BudgetingService {
         SurveyInformation surveyInformation1 = surveyInformationDao.selectByOne(id);
 
         BaseProject baseProject = projectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
-
+        ConstructionUnitManagement unitManagement = constructionUnitManagementMapper.selectByPrimaryKey(baseProject.getConstructionOrganization());
+        if (unitManagement != null){
+            baseProject.setConstructionOrganization(unitManagement.getConstructionUnitName());
+        }
         Example example1 = new Example(CostPreparation.class);
         example1.createCriteria().andEqualTo("budgetingId",id);
         CostPreparation costPreparation = costPreparationDao.selectOneByExample(example1);
