@@ -73,8 +73,9 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
     @Select("select * from building_project where id = #{id}")
     BuildingProject selectOneBuilding(@Param("id") String id);
 
-    @Select("SELECT" +
+    @Select("SELECT " +
             "  distinct b2.id," +
+            "  b1.id id2," +
             "  b2.cea_num ceaNum," +
             "  b2.project_num projectNum," +
             "  b2.project_name projectName," +

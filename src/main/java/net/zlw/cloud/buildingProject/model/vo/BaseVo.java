@@ -11,7 +11,8 @@ import lombok.Data;
 @Data
 public class BaseVo {
 
-    private String id; // 建设id
+    private String id; // 工程id
+    private String id2; // 建设id
     private String ceaNum; // cea编号
     private String projectNum; // 项目编号
     private String projectName;// 项目名称
