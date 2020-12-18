@@ -56,13 +56,13 @@ public class CallForBidsService{
         FileInfo snd = fileInfoMapper.findByCodeAndType("snd", callForBids.getId());
         if(snd != null){
             callForBids.setFileIdOfBid(snd.getId());
-            callForBids.setFileNameOfBid(snd.getFileName());
+            callForBids.setFileNameOfBid(snd.getFileName()+"."+snd.getFileType());
         }
         //中标文件
         FileInfo tdr = fileInfoMapper.findByCodeAndType("tdr", callForBids.getId());
         if(tdr != null){
             callForBids.setFileIdOfWin(tdr.getId());
-            callForBids.setFileNameOfWin(tdr.getFileName());
+            callForBids.setFileNameOfWin(tdr.getFileName()+"."+tdr.getFileType());
         }
         return callForBids;
     }
