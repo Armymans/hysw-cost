@@ -22,14 +22,15 @@ import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManage
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
+import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
 import net.zlw.cloud.settleAccounts.mapper.SettlementInfoMapper;
+import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.settleAccounts.model.SettlementInfo;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
-import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,7 +65,7 @@ public class ProjectController extends BaseController {
     @Resource
     private MemberManageDao memberManageDao;
     @Resource
-    private MessageService messageService;
+    private CostUnitManagementMapper costUnitManagementMapper;
     @Resource
     private BudgetingMapper budgetingMapper;
     @Resource
@@ -1970,6 +1971,13 @@ public class ProjectController extends BaseController {
                     settlementAuditInformation.setSubtractRate(bigDecimal1);
                 }
             }
+            // 造价单位名称
+            CostUnitManagement costUnit = costUnitManagementMapper.selectByPrimaryKey(settlementAuditInformation.getNameOfTheCost());
+            if (costUnit != null){
+                settlementAuditInformation.setNameOfTheCost(costUnit.getCostUnitName());
+            }else {
+                settlementAuditInformation.setNameOfTheCost("-");
+            }
             // 审定数
             if (settlementAuditInformation.getAuthorizedNumber() != null && !"".equals(settlementAuditInformation.getAuthorizedNumber())){
                 settlementAuditInformation.setAuthorizedNumber(settlementAuditInformation.getAuthorizedNumber());
@@ -2006,8 +2014,18 @@ public class ProjectController extends BaseController {
                 lastSettlementReview.setReviewNumber(new BigDecimal(0));
             }
             // 编制人
-            if (lastSettlementReview.getPreparePeople() == null){
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(lastSettlementReview.getPreparePeople());
+            if (memberManage != null){
+                lastSettlementReview.setPreparePeople(memberManage.getMemberName());
+            }else {
                 lastSettlementReview.setPreparePeople("-");
+            }
+            // 造价单位名称
+            CostUnitManagement costUnit = costUnitManagementMapper.selectByPrimaryKey(lastSettlementReview.getNameOfTheCost());
+            if (costUnit != null){
+                lastSettlementReview.setNameOfTheCost(costUnit.getCostUnitName());
+            }else {
+                lastSettlementReview.setNameOfTheCost("-");
             }
             // 编制时间
             if (lastSettlementReview.getCompileTime() == null){
