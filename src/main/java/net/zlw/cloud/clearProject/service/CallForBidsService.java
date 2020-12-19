@@ -2,17 +2,23 @@ package net.zlw.cloud.clearProject.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import net.zlw.cloud.budgeting.mapper.BudgetingDao;
+import net.zlw.cloud.budgeting.model.Budgeting;
+import net.zlw.cloud.clearProject.mapper.CallForBidsMapper;
+import net.zlw.cloud.clearProject.mapper.ClearProjectMapper;
 import net.zlw.cloud.clearProject.model.CallForBids;
+import net.zlw.cloud.clearProject.model.ClearProject;
+import net.zlw.cloud.clearProject.model.vo.ClearAndCallVo;
 import net.zlw.cloud.clearProject.model.vo.PageVo;
-import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationReturnVo;
+import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
+import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import net.zlw.cloud.clearProject.mapper.CallForBidsMapper;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -25,6 +31,12 @@ public class CallForBidsService{
 
     @Resource
     private CallForBidsMapper callForBidsMapper;
+    @Resource
+    private BaseProjectDao baseProjectDao;
+    @Resource
+    private ClearProjectMapper clearProjectMapper;
+    @Resource
+    private BudgetingDao budgetingDao;
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
@@ -67,4 +79,20 @@ public class CallForBidsService{
         return callForBids;
     }
 
+    public ClearAndCallVo selectOneClearProject(String id) {
+        ClearAndCallVo callVo = new ClearAndCallVo();
+        ClearProject clearProject = clearProjectMapper.selectByPrimaryKey(id);
+        Budgeting budgeting = budgetingDao.selectByPrimaryKey(clearProject.getBudgetingId());
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+        if (baseProject != null){
+            callVo.setProjectNum(baseProject.getProjectNum());
+            callVo.setProjectName(baseProject.getProjectName());
+        }
+        CallForBids callForBids = callForBidsMapper.selectByCallForBids(clearProject.getId());
+        if (callForBids != null){
+            callVo.setCallForBids(callForBids);
+        }
+
+        return callVo;
+    }
 }

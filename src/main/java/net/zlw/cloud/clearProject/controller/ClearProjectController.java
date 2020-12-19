@@ -8,6 +8,7 @@ import net.zlw.cloud.budgeting.service.impl.BudgetingServiceImpl;
 import net.zlw.cloud.clearProject.model.Budgeting;
 import net.zlw.cloud.clearProject.model.CallForBids;
 import net.zlw.cloud.clearProject.model.ClearProject;
+import net.zlw.cloud.clearProject.model.vo.ClearAndCallVo;
 import net.zlw.cloud.clearProject.model.vo.ClearProjectVo;
 import net.zlw.cloud.clearProject.model.vo.PageVo;
 import net.zlw.cloud.clearProject.service.CallForBidsService;
@@ -98,6 +99,12 @@ public class ClearProjectController extends BaseController {
         CallForBids byId = callForBidsService.findById(id);
         return RestUtil.success(byId);
     }
+    @RequestMapping(value = "/clearProject/selectOneClearProject",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectOneClearProject(@RequestParam(name = "id2") String id2){
+        ClearAndCallVo clearAndCallVo = callForBidsService.selectOneClearProject(id2);
+        return RestUtil.success(clearAndCallVo);
+    }
+
 
 
     /**

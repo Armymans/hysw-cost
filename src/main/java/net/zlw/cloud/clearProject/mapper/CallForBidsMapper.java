@@ -14,4 +14,7 @@ public interface CallForBidsMapper extends tk.mybatis.mapper.common.Mapper<CallF
 
     @Update("UPDATE call_for_bids set clear_project_id = null ,bid_project_address  = null where clear_project_id = #{id}")
     void updateByClearProjectId(@Param("id") String id);
+
+    @Select("SELECT * FROM `call_for_bids` WHERE clear_project_id = #{id}")
+    CallForBids selectByCallForBids(@Param("id") String id);
 }
