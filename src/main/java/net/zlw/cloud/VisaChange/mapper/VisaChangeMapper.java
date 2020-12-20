@@ -367,7 +367,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            where   " +
             "            (" +
             "      IFNULL(v.up_and_down_mark,'0') = '0' OR  " +
-            "      IFNULL(v2.up_and_down_mark,'1') = '1'" +
+            "      IFNULL(v2.up_and_down_mark,'1') = '1' " +
             "            ) and  " +
             "      IFNULL(v2.creator_id,v.creator_id) = #{userId} and  " +
             "            (b.district = #{district} or #{district} = '') and   " +
