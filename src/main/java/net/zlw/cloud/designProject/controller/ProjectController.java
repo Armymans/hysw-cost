@@ -1945,6 +1945,12 @@ public class ProjectController extends BaseController {
             }else {
                 trackAuditInfo.setDesignOrganizationId("/");
             }
+            CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(trackAuditInfo.getAuditUnitNameId());
+            if (costUnitManagement != null){
+                trackAuditInfo.setAuditUnitNameId(costUnitManagement.getCostUnitName());
+            }else {
+                trackAuditInfo.setAuditUnitNameId("-");
+            }
             // 合同金额
             if (trackAuditInfo.getContractAmount() != null && !"".equals(trackAuditInfo.getContractAmount())){
                 trackAuditInfo.setContractAmount(trackAuditInfo.getContractAmount());
