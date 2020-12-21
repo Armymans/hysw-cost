@@ -110,17 +110,17 @@ public class ClearProjectService {
         budgeting.setClearStatus("1");
         budgetingMapper.updateByPrimaryKeySelective(budgeting);
 
-        //修改文件外键
-        Example example1 = new Example(FileInfo.class);
-        Example.Criteria c = example1.createCriteria();
-        c.andLike("type","qbxz%");
-        c.andEqualTo("status","0");
-        c.andEqualTo("platCode",userInfo.getId());
-        List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
-        for (FileInfo fileInfo : fileInfos) {
-            //修改文件外键
-            fileInfoService.updateFileName2(fileInfo.getId(),callForBids.getId());
-        }
+//        //修改文件外键
+//        Example example1 = new Example(FileInfo.class);
+//        Example.Criteria c = example1.createCriteria();
+//        c.andLike("type","qbxz%");
+//        c.andEqualTo("status","0");
+//        c.andEqualTo("platCode",userInfo.getId());
+//        List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
+//        for (FileInfo fileInfo : fileInfos) {
+//            //修改文件外键
+//             fileInfoService.updateFileName2(fileInfo.getId(),callForBids.getId());
+//        }
 
 
         //添加到数据库
