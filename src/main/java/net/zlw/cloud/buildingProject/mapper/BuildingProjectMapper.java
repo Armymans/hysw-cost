@@ -103,19 +103,14 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
             "  END " +
             "   ) designCategory," +
             "  b3.amount_cost amountCost," +
-            "  p1.contract_amount contractAmount," +
-            "  p1.cumulative_payment_times cumulativePaymentTimes," +
             "  t1.cea_total_money ceaTotalMoney," +
-            "  v1.cumulative_change_amount cumulativeChangeAmount," +
             "  s1.authorized_number authorizedNumber," +
             "  e1.actual_amount actualAmount " +
             "  FROM" +
             "  building_project b1" +
             "  LEFT JOIN base_project b2 ON b2.building_project_id = b1.id" +
             "  LEFT JOIN budgeting b3 ON b3.base_project_id = b2.id" +
-            "  LEFT JOIN progress_payment_information p1 ON p1.base_project_id = b2.id" +
             "  LEFT JOIN track_audit_info t1 ON t1.base_project_id = b2.id" +
-            "  LEFT JOIN visa_change_information v1 ON v1.base_project_id = b2.id" +
             "  LEFT JOIN settlement_audit_information s1 ON s1.base_project_id = b2.id " +
             "  LEFT JOIN employee_achievements_info e1 ON e1.base_project_id = b2.id " +
             "  WHERE" +

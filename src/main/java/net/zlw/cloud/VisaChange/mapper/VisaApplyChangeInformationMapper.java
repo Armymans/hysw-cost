@@ -19,13 +19,26 @@ public interface VisaApplyChangeInformationMapper extends Mapper<VisaApplyChange
     String amountVisaChangeSum(@Param("id") String id);
     @Select(
             "SELECT  " +
-                    "sum(contract_amount)  " +
-                    "FROM  " +
-                    "visa_change_information  " +
-                    "where  " +
-                    "base_project_id = #{id}"
+                    " sum(contract_amount)  " +
+                    " FROM  " +
+                    " visa_change_information  " +
+                    " where  " +
+                    " up_and_down_mark = '0' " +
+                    " and +" +
+                    " base_project_id = #{id}"
     )
-    String contractAmount(@Param("id") String id);
+    String upContractAmount(@Param("id") String id);
+    @Select(
+            "SELECT  " +
+                    " sum(contract_amount)  " +
+                    " FROM  " +
+                    " visa_change_information  " +
+                    " where  " +
+                    " up_and_down_mark = '1'" +
+                    " and + " +
+                    " base_project_id = #{id}"
+    )
+    String downContractAmount(@Param("id") String id);
     @Select(
             "SELECT  " +
                     "max(change_num)  " +

@@ -567,6 +567,10 @@ public class ProjectController extends BaseController {
         ProjectVo projectVo = new ProjectVo();
         //设计信息
         DesignInfo designInfo = projectService.designInfoByPrimaryKey(id);
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(designInfo.getDesigner());
+        if (memberManage != null){
+            designInfo.setDesigner(memberManage.getMemberName());
+        }
         //项目基本信息
         BaseProject baseProject = projectService.BaseProjectByid(designInfo.getBaseProjectId());
         projectVo.setDesignInfo(designInfo);
@@ -1971,7 +1975,8 @@ public class ProjectController extends BaseController {
         ProjectVo3 projectVo32 = projectService.visaApplyChangeInformationSum(baseProject.getId());
         projectVo3.setAmountVisaChangeSum(projectVo32.getAmountVisaChangeSum()); //次数
         projectVo3.setChangeCount(projectVo32.getChangeCount());
-        projectVo3.setContractAmount(projectVo32.getContractAmount());
+        projectVo3.setUpContractAmount(projectVo32.getUpContractAmount());
+        projectVo3.setDownContractAmount(projectVo32.getDownContractAmount());
 
 
         //下家结算送审

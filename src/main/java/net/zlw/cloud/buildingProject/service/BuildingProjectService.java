@@ -1,5 +1,7 @@
 package net.zlw.cloud.buildingProject.service;
 
+import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
+import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.buildingProject.mapper.BuildingProjectMapper;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.buildingProject.model.vo.BaseVo;
@@ -10,12 +12,15 @@ import net.zlw.cloud.designProject.model.AnhuiMoneyinfo;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.designProject.model.WujiangMoneyInfo;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
+import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -41,6 +46,10 @@ public class BuildingProjectService {
 
     @Autowired
     private DesignInfoMapper designInfoMapper;
+    @Autowired
+    private VisaChangeMapper visaChangeMapper;
+    @Autowired
+    private ProgressPaymentInformationDao progressPaymentInformationDao;
 
     /**
      * @Author Armyman
@@ -124,6 +133,33 @@ public class BuildingProjectService {
         List<BaseVo> BaseProjectVo = buildingProjectMapper.selectBaseProjectList(id);
         if (BaseProjectVo.size() > 0){
             for (BaseVo thisVo : BaseProjectVo) {
+                //签证变更累计金额
+                Example example = new Example(VisaChange.class);
+                example.createCriteria().andEqualTo("baseProjectId",thisVo.getId()) //基本信息表id
+                                        .andEqualTo("state","0");
+                List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
+                if (visaChanges.size() >0){
+                    BigDecimal visaNum = new BigDecimal(0);
+                    for (VisaChange thisVisa : visaChanges) {
+                        visaNum = visaNum.add(thisVisa.getAmountVisaChange());
+                    }
+                    thisVo.setCumulativeChangeAmount(visaNum+"");
+                }
+                // 进度款
+                Example example1 = new Example(ProgressPaymentInformation.class);
+                example1.createCriteria().andEqualTo("baseProjectId",thisVo.getId()) //基本信息表id
+                        .andEqualTo("delFlag","0");
+                List<ProgressPaymentInformation> informations = progressPaymentInformationDao.selectByExample(example1);
+                if (informations.size() > 0){
+                    BigDecimal proNum = new BigDecimal(0); //进度款次数
+                    BigDecimal proAmount = new BigDecimal(0); // 合同金额
+                    for (ProgressPaymentInformation thisInfo : informations) {
+                        proNum = proNum.add(new BigDecimal(thisInfo.getChangeNum()));
+                        proAmount = proAmount.add(thisInfo.getContractAmount());
+                    }
+                    thisVo.setContractAmount(proAmount+"");
+                    thisVo.setCumulativePaymentTimes(proNum+"");
+                }
                 // 造价金额
                 if (thisVo.getAmountCost() != null && !"".equals(thisVo.getAmountCost())){
                     thisVo.setAmountCost(thisVo.getActualAmount());

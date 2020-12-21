@@ -76,8 +76,12 @@ public class BudgetingController extends BaseController {
 //    @PostMapping("/addBudgeting")
     @RequestMapping(value = "/budgeting/addBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addBudgeting(BudgetingVo budgetingVo){
-        UserInfo loginUser = getLoginUser();
-        budgetingService.addBudgeting(budgetingVo,loginUser);
+        try {
+            UserInfo loginUser = getLoginUser();
+            budgetingService.addBudgeting(budgetingVo,loginUser);
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success("添加成功");
     }
     //根据ID查询预算信息

@@ -35,7 +35,8 @@ public class ProjectVo3 {
     private String cumulativePaymentTimes; //累计支付次数
 
     private String amountVisaChangeSum;
-    private String contractAmount;
+    private String upContractAmount;
+    private String downContractAmount;
     private String changeCount;
     // 查看上下家显隐状态
     private Integer wori;

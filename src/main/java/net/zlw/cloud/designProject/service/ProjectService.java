@@ -3198,11 +3198,13 @@ public class ProjectService {
     public ProjectVo3 visaApplyChangeInformationSum(String id) {
         String s = visaApplyChangeInformationMapper.changeCount(id);
         String s1 = visaApplyChangeInformationMapper.amountVisaChangeSum(id);
-        String s2 = visaApplyChangeInformationMapper.contractAmount(id);
+        String s2 = visaApplyChangeInformationMapper.upContractAmount(id);
+        String s3 = visaApplyChangeInformationMapper.downContractAmount(id);
         ProjectVo3 projectVo3 = new ProjectVo3();
         projectVo3.setAmountVisaChangeSum(s);
         projectVo3.setChangeCount(s1);
-        projectVo3.setContractAmount(s2);
+        projectVo3.setUpContractAmount(s2);
+        projectVo3.setDownContractAmount(s3);
         return projectVo3;
     }
 
