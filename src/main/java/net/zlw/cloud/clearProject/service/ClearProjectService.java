@@ -15,6 +15,9 @@ import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +54,10 @@ public class ClearProjectService {
 
     @Autowired
     private MemberManageDao memberManageDao;
+    @Resource
+    private FileInfoMapper fileInfoMapper;
+    @Resource
+    private FileInfoService fileInfoService;
 
     /**
      * 新增--确定
@@ -102,6 +109,20 @@ public class ClearProjectService {
         }
         budgeting.setClearStatus("1");
         budgetingMapper.updateByPrimaryKeySelective(budgeting);
+
+        //修改文件外键
+        Example example1 = new Example(FileInfo.class);
+        Example.Criteria c = example1.createCriteria();
+        c.andLike("type","qbxz%");
+        c.andEqualTo("status","0");
+        c.andEqualTo("platCode",userInfo.getId());
+        List<FileInfo> fileInfos = fileInfoMapper.selectByExample(example1);
+        for (FileInfo fileInfo : fileInfos) {
+            //修改文件外键
+            fileInfoService.updateFileName2(fileInfo.getId(),callForBids.getId());
+        }
+
+
         //添加到数据库
         clearProjectMapper.insertSelective(clearProject);
     }
