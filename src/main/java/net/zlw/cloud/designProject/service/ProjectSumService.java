@@ -965,16 +965,13 @@ public class ProjectSumService {
         if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())||
         costVo2.getEndTime()!=null&&!"".equals(costVo2.getEndTime())){
             baseProjects = projectMapper.BaseProjectDesignList(costVo2);
-            PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
-            return baseProjectPageInfo;
+
         }else{
             LocalDateTime now = LocalDateTime.now();
             int year = now.getYear();
             costVo2.setStartTime(year + "-01-01");
             costVo2.setEndTime(year + "-12-31");
             baseProjects = projectMapper.BaseProjectDesignList(costVo2);
-            PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
-            return baseProjectPageInfo;
         }
         for (BaseProject baseProject : baseProjects) {
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(baseProject.getDesigner());
@@ -984,6 +981,8 @@ public class ProjectSumService {
                 baseProject.setDesigner("-");
             }
         }
+        PageInfo<BaseProject> baseProjectPageInfo = new PageInfo<>(baseProjects);
+        return baseProjectPageInfo;
     }
 
     /**
