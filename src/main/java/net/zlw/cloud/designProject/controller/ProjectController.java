@@ -1746,17 +1746,23 @@ public class ProjectController extends BaseController {
         if(!baseProject.getDistrict().equals("4")){
             AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyinfoByid(designInfo.getId());
             if(anhuiMoneyinfo!=null){
-                // 累加实收金额
-                String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
-                String[] split = collectionMoney.split(",");
-                BigDecimal num = new BigDecimal(0);
-                for (String thisNum : split) {
-                    num = num.add(new BigDecimal(thisNum));
+                //实收
+                if ("0".equals(anhuiMoneyinfo.getPayTerm())){
+                    designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
+                    designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                }else {
+                    // 累加实收金额
+                    String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
+                    String[] split = collectionMoney.split(",");
+                    BigDecimal num = new BigDecimal(0);
+                    for (String thisNum : split) {
+                        num = num.add(new BigDecimal(thisNum));
+                    }
+                    designInfo.setRevenue(anhuiMoneyinfo.getRevenue() + "");
+                    designInfo.setOfficialReceipts(num);
+                    designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                    designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
                 }
-                designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                designInfo.setOfficialReceipts(num);
-                designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
-                designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
             }else{
                 designInfo.setRevenue("0");
                 designInfo.setOfficialReceipts(new BigDecimal(0));
@@ -1766,17 +1772,23 @@ public class ProjectController extends BaseController {
         }else{
             //如果为吴江
             WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfoByid(designInfo.getId());
-            if(wujiangMoneyInfo!=null){
-                String collectionMoney = wujiangMoneyInfo.getCollectionMoney();
-                String[] split = collectionMoney.split(",");
-                BigDecimal num = new BigDecimal(0);
-                for (String thisNum : split) {
-                    num = num.add(new BigDecimal(thisNum));
+            if(wujiangMoneyInfo!=null) {
+                //实收
+                if ("0".equals(wujiangMoneyInfo.getPayTerm())) {
+                    designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
+                    designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
+                }else {
+                    String collectionMoney = wujiangMoneyInfo.getCollectionMoney();
+                    String[] split = collectionMoney.split(",");
+                    BigDecimal num = new BigDecimal(0);
+                    for (String thisNum : split) {
+                        num = num.add(new BigDecimal(thisNum));
+                    }
+                    designInfo.setRevenue(wujiangMoneyInfo.getRevenue() + "");
+                    designInfo.setOfficialReceipts(num);
+                    designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
+                    designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
                 }
-                designInfo.setRevenue(wujiangMoneyInfo.getRevenue()+"");
-                designInfo.setOfficialReceipts(num);
-                designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
-                designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
             }
         }
         //项目探勘
