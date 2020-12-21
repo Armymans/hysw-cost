@@ -4,9 +4,14 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
+import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.designProject.mapper.AchievementsInfoMapper;
+import net.zlw.cloud.designProject.mapper.EmployeeAchievementsInfoMapper;
 import net.zlw.cloud.designProject.mapper.OutSourceMapper;
+import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
 import net.zlw.cloud.designProject.model.OutSource;
+import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.followAuditing.mapper.DesignUnitManagementDao;
 import net.zlw.cloud.followAuditing.mapper.TrackApplicationInfoDao;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
@@ -85,6 +90,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
+    @Resource
+    private ProjectSumService projectSumService;
+    @Resource
+    private EmployeeAchievementsInfoMapper employeeAchievementsInfoMapper;
 
     @Value("${audit.wujiang.zaojia.costHead}")
     private String wjzjh;  //吴江造价领导
@@ -207,7 +216,20 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             //但是进行中的和已完成按钮除查看只有领导和创建人可操作
             if ("3".equals(pageVo.getTrackStatus()) || "5".equals(pageVo.getTrackStatus())) {
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
+
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+
+                    TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(returnTrackVo.getId());
+                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
+                    String district = baseProject.getDistrict();
+                    String designCategory = baseProject.getDesignCategory();
+                    if (district == null || "".equals(district)){
+                        returnTrackVo.setAttributionShow("0");
+                    }
+                    if (designCategory == null || "".equals(designCategory)){
+                        returnTrackVo.setAttributionShow("0");
+                    }
+
                     // 施工单位
                     ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getConstructionOrganization());
                     if (constructionUnitManagement != null){
@@ -867,6 +889,88 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 fileInfoMapper.updateByPrimaryKeySelective(info);
             }
         }
+    }
+
+
+    @Override
+    public void addAttribution(String baseId, String district, String designCategory, String prePeople) {
+        TrackAuditInfo trackAuditInfo1 = trackAuditInfoDao.selectByPrimaryKey(baseId);
+        String baseProjectId = trackAuditInfo1.getBaseProjectId();
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
+        baseProject.setDistrict(district);
+        baseProject.setDesignCategory(designCategory);
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String format = simpleDateFormat.format(new Date());
+
+
+        Example example1 = new Example(Budgeting.class);
+        example1.createCriteria().andEqualTo("baseProjectId",baseProject.getId()).andEqualTo("delFlag","0");
+        Example example4 = new Example(TrackAuditInfo.class);
+        example4.createCriteria().andEqualTo("baseProjectId",baseProject.getId()).andEqualTo("status","0");
+        TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectOneByExample(example4);
+        if (trackAuditInfo != null){
+            EmployeeAchievementsInfo achievementsInfo = new EmployeeAchievementsInfo();
+            BigDecimal trackAuditBase = trackAuditInfo.getTrackAuditBase();
+            double track = trackAuditBase.doubleValue();
+            //计价基数
+            //计提和
+            BigDecimal total5= new BigDecimal(0);
+            if(!"4".equals(baseProject.getDistrict())){
+                Double aDouble = projectSumService.trackImprovement(track);
+                aDouble = (double)Math.round(aDouble*100)/100;
+                total5 = total5.add(new BigDecimal(aDouble));
+                //实际计提
+                BigDecimal actualAmount = total5.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);;
+                //余额
+                BigDecimal balance = total5.subtract(actualAmount);
+                // 员工绩效
+//                            achievementsInfo.setMemberId(trackAuditInfo.getp()); 跟踪审计没有编制人
+                achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                achievementsInfo.setCreateTime(format);
+                achievementsInfo.setUpdateTime(format);
+                achievementsInfo.setFounderId(trackAuditInfo.getFounderId());
+                achievementsInfo.setFounderCompanyId(trackAuditInfo.getCompanyId());
+                achievementsInfo.setDelFlag("0");
+                achievementsInfo.setDistrict(baseProject.getDistrict());
+                achievementsInfo.setDept("2"); //造价
+                achievementsInfo.setAccruedAmount(total5);
+                achievementsInfo.setActualAmount(actualAmount);
+                achievementsInfo.setBalance(balance);
+                achievementsInfo.setAchievementsType("5"); //跟踪审计
+                achievementsInfo.setBaseProjectId(baseProject.getId());
+                achievementsInfo.setProjectNum(trackAuditInfo.getId());
+                achievementsInfo.setOverFlag("0");
+                employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+            }else{
+//                            Double money = projectSumService.wujiangTrackChargeBaseRate(amountCost);
+                Double aDouble = projectSumService.trackImprovement(track);
+                aDouble = (double)Math.round(aDouble*100)/100;
+                total5 = total5.add(new BigDecimal(aDouble));
+                //实际计提 2位 四舍五入
+                BigDecimal actualAmount = total5.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);;
+                //余额
+                BigDecimal balance = total5.subtract(actualAmount);
+                // 员工绩效
+                achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                achievementsInfo.setCreateTime(format);
+                achievementsInfo.setUpdateTime(format);
+                achievementsInfo.setFounderId(trackAuditInfo.getFounderId());
+                achievementsInfo.setFounderCompanyId(trackAuditInfo.getCompanyId());
+                achievementsInfo.setDelFlag("0");
+                achievementsInfo.setDistrict(baseProject.getDistrict());
+                achievementsInfo.setDept("2"); //造价
+                achievementsInfo.setAccruedAmount(total5);
+                achievementsInfo.setActualAmount(actualAmount);
+                achievementsInfo.setBalance(balance);
+                achievementsInfo.setAchievementsType("5"); //跟踪审计
+                achievementsInfo.setBaseProjectId(baseProject.getId());
+                achievementsInfo.setProjectNum(trackAuditInfo.getId());
+                achievementsInfo.setOverFlag("0");
+                employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+            }
+        }
+
     }
 
     // TODO 回显页面，新增页面月报显示

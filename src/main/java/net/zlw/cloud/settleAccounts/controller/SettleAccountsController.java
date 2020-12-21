@@ -8,14 +8,19 @@ import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
+import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
+import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
+import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.OtherInfo;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
 import net.zlw.cloud.settleAccounts.service.SettleAccountsService;
 import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -32,6 +37,11 @@ public class SettleAccountsController extends BaseController {
     //造价单位名称
     @Resource
     private CostUnitManagementMapper costUnitManagementMapper;
+    @Resource
+    private BaseProjectDao baseProjectDao;
+    @Resource
+    private LastSettlementReviewDao lastSettlementReviewDao;
+
 
     //查询所有结算
 //    @PostMapping("/findAllAccounts")
@@ -139,6 +149,25 @@ public class SettleAccountsController extends BaseController {
         String[] split = id.split(",");
         for (String s : split) {
             try {
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
+                String designCategory = baseProject.getDesignCategory();
+                String district = baseProject.getDistrict();
+                Example example = new Example(LastSettlementReview.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("baseProjectId",s);
+                criteria.andEqualTo("delFlag","0");
+                LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example);
+                String preparePeople = lastSettlementReview.getPreparePeople();
+                if (designCategory == null || "".equals(designCategory)){
+                    throw new RuntimeException("您所选的项目中有未归属的项目,请填写完归属后在重新尝试");
+                }
+                if (district == null || "".equals(district)){
+                    throw new RuntimeException("您所选的项目中有未归属的项目,请填写完归属后在重新尝试");
+                }
+                if (preparePeople == null || "".equals(preparePeople)){
+                    throw new RuntimeException("您所选的项目中有未归属的项目,请填写完归属后在重新尝试");
+                }
+
                 settleAccountsService.updateAccount(s,getLoginUser(),checkWhether);
             } catch (Exception e) {
                 return RestUtil.error(e.getMessage());
@@ -226,6 +255,12 @@ public class SettleAccountsController extends BaseController {
     public Map<String, Object> selectInfoList(String baseId) {
         List<OtherInfo> otherInfos = settleAccountsService.selectInfoList(baseId);
         return RestUtil.success(otherInfos);
+    }
+    //归属
+    @RequestMapping(value = "/accounts/addAttribution", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> addAttribution(@RequestParam(name = "baseProjectId") String baseId,@RequestParam(name = "district") String district,@RequestParam(name = "designCategory") String designCategory,@RequestParam(name = "prePeople") String prePeople){
+        settleAccountsService.addAttribution(baseId,district,designCategory,prePeople);
+        return RestUtil.success();
     }
 
 }

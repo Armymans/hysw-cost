@@ -17,6 +17,7 @@ import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.mapper.MessageNotificationDao;
 import net.zlw.cloud.index.model.MessageNotification;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
+import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
@@ -116,6 +117,8 @@ public class ProjectService {
     private OutSourceMapper outSourceMapper;
     @Resource
     private InComeMapper inComeMapper;
+    @Resource
+    private BaseProjectDao baseProjectDao;
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -608,6 +611,26 @@ public class ProjectService {
             designInfos = designInfoMapper.designProjectSelect4(pageVo);
             if (designInfos.size() > 0) {
                 for (DesignInfo designInfo : designInfos) {
+
+                    DesignInfo designInfo1 = designInfoMapper.selectByPrimaryKey(designInfo.getId());
+                    String designer = designInfo1.getDesigner();
+                    net.zlw.cloud.progressPayment.model.BaseProject baseProject = baseProjectDao.selectByPrimaryKey(designInfo1.getBaseProjectId());
+                    String district = baseProject.getDistrict();
+                    String designCategory = baseProject.getDesignCategory();
+                    designInfo.setAffiliationShow("0");
+
+                    if (designer == null || "".equals(designer)){
+                        designInfo.setAffiliationShow("1");
+                    }
+                    if (district == null || "".equals(district)){
+                        designInfo.setAffiliationShow("1");
+                    }
+                    if (designCategory == null || "".equals(designCategory)){
+                        designInfo.setAffiliationShow("1");
+                    }
+
+
+
                     //展示设计变更时间 如果为空展示 /
                     if (designInfo.getDesignChangeTime() == null || designInfo.getDesignChangeTime().equals("")) {
                         designInfo.setDesignChangeTime("/");
@@ -713,6 +736,7 @@ public class ProjectService {
                                 designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
+
                             }
                         }
                     }
@@ -3516,5 +3540,21 @@ public class ProjectService {
 
     public List<MkyUser> findDesignAll(String id) {
       return   auditInfoDao.findDesignAll(id);
+    }
+
+    public void affiliationProject( String baseId, String district, String designCategory,String desiner) {
+        net.zlw.cloud.progressPayment.model.BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+        baseProject.setDistrict(district);
+        baseProject.setDesignCategory(designCategory);
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+        Example example = new Example(DesignInfo.class);
+        Example.Criteria cc = example.createCriteria();
+        cc.andEqualTo("baseProjectId",baseId);
+        cc.andEqualTo("status","0");
+        DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
+        designInfo.setDesigner(desiner);
+        designInfoMapper.updateByPrimaryKey(designInfo);
+
     }
 }

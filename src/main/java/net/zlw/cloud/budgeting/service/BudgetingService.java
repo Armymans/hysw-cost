@@ -28,7 +28,7 @@ public interface BudgetingService {
 
     List<BudgetingListVo> findBudgetingAll(PageBVo pageBVo, String sid);
 
-    void addAttribution(String id, String designCategory, String district);
+    void addAttribution(String id, String designCategory, String district,String prePeople);
 
     List<DesignInfo> findDesignAll(PageBVo pageBVo);
 

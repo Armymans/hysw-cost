@@ -795,7 +795,43 @@ public class BudgetingServiceImpl implements BudgetingService {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         String[] split = s1.split(",");
         for (String s : split) {
+
             Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+            BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+            Example example1 = new Example(CostPreparation.class);
+            Example.Criteria criteria = example1.createCriteria();
+            criteria.andEqualTo("budgetingId",budgeting.getId());
+            criteria.andEqualTo("delFlag","0");
+            CostPreparation costPreparation = costPreparationDao.selectOneByExample(example1);
+
+            Example example2 = new Example(CostPreparation.class);
+            Example.Criteria criteria1 = example2.createCriteria();
+            criteria1.andEqualTo("budgetingId",budgeting.getId());
+            criteria1.andEqualTo("delFlag","0");
+            VeryEstablishment veryEstablishment1 = veryEstablishmentDao.selectOneByExample(example2);
+
+            String designCategory = baseProject1.getDesignCategory();
+            String district = baseProject1.getDistrict();
+            String budgetingPeople = budgeting.getBudgetingPeople();
+            String costPreparationTime = costPreparation.getCostPreparationTime();
+            String pricingTogether = veryEstablishment1.getPricingTogether();
+            if (designCategory == null || "".equals(designCategory)){
+                throw new RuntimeException("您所选项目中存在未归属项目,请填写完归属在重新尝试");
+            }
+            if (district == null || "".equals(district)){
+                throw new RuntimeException("您所选项目中存在未归属项目,请填写完归属在重新尝试");
+            }
+            if (budgetingPeople == null || "".equals(budgetingPeople)){
+                throw new RuntimeException("您所选项目中存在未归属项目,请填写完归属在重新尝试");
+            }
+            if (costPreparationTime == null || "".equals(costPreparationTime)){
+                throw new RuntimeException("您所选项目中存在未归属项目,请填写完归属在重新尝试");
+            }
+            if (pricingTogether == null || "".equals(pricingTogether)){
+                throw new RuntimeException("您所选项目中存在未归属项目,请填写完归属在重新尝试");
+            }
+
+
             String founderId = budgeting.getFounderId();
             if (founderId.equals(ids) || ids.equals(whzjh) || ids.equals(whzjm) || ids.equals(wjzjh)){
                 //TODO start
@@ -1028,7 +1064,45 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }else{
                         budgetingListVo.setShowWhether("2");
                     }
+
                 }
+                if (baseProject.getDesignCategory() == null || baseProject.getDesignCategory().equals("")){
+                    if (budgetingListVo.getFounderId().equals(id)){
+                        budgetingListVo.setShowWhether("1");
+                    }else{
+                        budgetingListVo.setShowWhether("2");
+                    }
+                }
+
+                String budgetingPeople = budgetingListVo.getBudgetingPeople();
+                String costTogether = budgetingListVo.getCostTogether();
+                String pricingTogether = budgetingListVo.getPricingTogether();
+
+                if (budgetingPeople == null || budgetingPeople.equals("")){
+                    if (budgetingListVo.getFounderId().equals(id)){
+                        budgetingListVo.setShowWhether("1");
+                    }else{
+                        budgetingListVo.setShowWhether("2");
+                    }
+                }
+
+                if (costTogether == null || costTogether.equals("")){
+                    if (budgetingListVo.getFounderId().equals(id)){
+                        budgetingListVo.setShowWhether("1");
+                    }else{
+                        budgetingListVo.setShowWhether("2");
+                    }
+                }
+
+                if (pricingTogether == null || pricingTogether.equals("")){
+                    if (budgetingListVo.getFounderId().equals(id)){
+                        budgetingListVo.setShowWhether("1");
+                    }else{
+                        budgetingListVo.setShowWhether("2");
+                    }
+                }
+
+
             }
             for (BudgetingListVo budgetingListVo : list1) {
                 MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
@@ -1359,11 +1433,35 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
-    public void addAttribution(String id, String designCategory, String district) {
+    public void addAttribution(String id, String designCategory, String district,String prePeople) {
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
         baseProject.setDesignCategory(designCategory);
         baseProject.setDistrict(district);
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+        Example example = new Example(Budgeting.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseProjectId",baseProject.getId());
+        criteria.andEqualTo("delFlag","0");
+        Budgeting budgeting = budgetingDao.selectOneByExample(example);
+        budgeting.setBudgetingPeople(prePeople);
+        budgetingDao.updateByPrimaryKeySelective(budgeting);
+
+        Example example1 = new Example(CostPreparation.class);
+        Example.Criteria c2 = example1.createCriteria();
+        c2.andEqualTo("budgetingId",budgeting.getId());
+        c2.andEqualTo("delFlag","0");
+        CostPreparation costPreparation = costPreparationDao.selectOneByExample(example1);
+        costPreparation.setCostTogether(prePeople);
+        costPreparationDao.updateByPrimaryKeySelective(costPreparation);
+
+        Example example2 = new Example(VeryEstablishment.class);
+        Example.Criteria c3 = example2.createCriteria();
+        c3.andEqualTo("budgetingId",budgeting.getId());
+        c3.andEqualTo("delFlag","0");
+        VeryEstablishment veryEstablishment = veryEstablishmentDao.selectOneByExample(example2);
+        veryEstablishment.setPricingTogether(prePeople);
+        veryEstablishmentDao.updateByPrimaryKeySelective(veryEstablishment);
     }
 
     @Override

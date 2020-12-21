@@ -230,8 +230,8 @@ public class BudgetingController extends BaseController {
     }
     //归属
     @RequestMapping(value = "/budgeting/addAttribution",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> addAttribution(@RequestParam(name = "baseId") String id,@RequestParam(name = "designCategory") String designCategory,@RequestParam(name = "district") String district){
-        budgetingService.addAttribution(id,designCategory,district);
+    public Map<String,Object> addAttribution(@RequestParam(name = "baseId") String id,@RequestParam(name = "designCategory") String designCategory,@RequestParam(name = "district") String district,@RequestParam(name = "prePeople") String prePeople){
+        budgetingService.addAttribution(id,designCategory,district,prePeople);
         return RestUtil.success();
     }
     //选择项目查看设计

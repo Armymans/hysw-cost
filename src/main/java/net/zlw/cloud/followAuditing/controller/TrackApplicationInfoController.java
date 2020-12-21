@@ -226,6 +226,12 @@ public class TrackApplicationInfoController extends BaseController {
         trackApplicationInfoService.deleteMonthly(key);
         return RestUtil.success();
     }
+    //归属
+    @RequestMapping(value = "/track/addAttribution",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> addAttribution(@RequestParam(name = "baseProjectId") String baseId,@RequestParam(name = "district") String district,@RequestParam(name = "designCategory") String designCategory,@RequestParam(name = "prePeople") String prePeople){
+        trackApplicationInfoService.addAttribution(baseId,district,designCategory,prePeople);
+        return RestUtil.success();
+    }
 
 
 }

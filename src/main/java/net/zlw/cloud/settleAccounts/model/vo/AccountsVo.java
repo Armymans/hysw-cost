@@ -46,6 +46,8 @@ public class AccountsVo {
 
     //回显待确认按钮
     private String showConfirmed;
+    //回显归属
+    private String attributionShow;
 
     @Override
     public boolean equals(Object o) {

@@ -39,4 +39,6 @@ public interface TrackApplicationInfoService {
     List<TrackMonthly> findAllByTrackId3(String id,UserInfo userInfo);
 
     void deleteMonthly(String id);
+
+    void addAttribution(String baseId, String district, String designCategory, String prePeople);
 }

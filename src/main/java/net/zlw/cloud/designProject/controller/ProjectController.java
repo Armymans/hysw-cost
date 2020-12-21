@@ -12,6 +12,7 @@ import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.mapper.AnhuiMoneyinfoMapper;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
+import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
 import net.zlw.cloud.designProject.mapper.WujiangMoneyInfoMapper;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectService;
@@ -21,6 +22,7 @@ import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.model.MessageNotification;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
+import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
@@ -38,6 +40,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
+
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -77,6 +80,11 @@ public class ProjectController extends BaseController {
     private ConstructionUnitManagementMapper constructionUnitManagementMapper;
     @Resource
     private DesignUnitManagementDao designUnitManagementDao;
+    @Resource
+    private BaseProjectDao baseProjectDao;
+    @Resource
+    private DesignInfoMapper designInfoMapper;
+
 
     /**
      * 建设项目提交 _ 保存
@@ -451,9 +459,31 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/disproject/anhuiMoneyInfoAdd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> anhuiMoneyInfoAdd(AnhuiMoneyinfo anhuiMoneyinfo) {
         try {
+            DesignInfo designInfo1 = designInfoMapper.selectByPrimaryKey(anhuiMoneyinfo.getBaseProjectId());
+            net.zlw.cloud.progressPayment.model.BaseProject baseProject = baseProjectDao.selectByPrimaryKey(designInfo1.getBaseProjectId());
+
+            if (baseProject!=null){
+                String district = baseProject.getDistrict();
+                String projectCategory = baseProject.getDesignCategory();
+                Example example = new Example(DesignInfo.class);
+                Example.Criteria c = example.createCriteria();
+                c.andEqualTo("baseProjectId",baseProject.getId());
+                c.andEqualTo("status","0");
+                DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
+                String designer = designInfo.getDesigner();
+                if (district == null || "".equals(district)){
+                    throw new RuntimeException("请先填写归属");
+                }
+                if (projectCategory == null || "".equals(projectCategory)){
+                    throw new RuntimeException("请先填写归属");
+                }
+                if (designer == null || "".equals(designer)){
+                    throw new RuntimeException("请先填写归属");
+                }
+            }
             projectService.anhuiMoneyInfoAdd(anhuiMoneyinfo, getLoginUser());
         } catch (Exception e) {
-            RestUtil.error(e.getMessage());
+          return  RestUtil.error(e.getMessage());
         }
         return RestUtil.success();
     }
@@ -511,6 +541,28 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/disproject/wujiangMoneyInfoAdd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> wujiangMoneyInfoAdd(WujiangMoneyInfo wujiangMoneyInfo) {
         try {
+            DesignInfo designInfo1 = designInfoMapper.selectByPrimaryKey(wujiangMoneyInfo.getBaseProjectId());
+            net.zlw.cloud.progressPayment.model.BaseProject baseProject = baseProjectDao.selectByPrimaryKey(designInfo1.getBaseProjectId());
+            if (baseProject!=null){
+                String district = baseProject.getDistrict();
+                String projectCategory = baseProject.getDesignCategory();
+                Example example = new Example(DesignInfo.class);
+                Example.Criteria c = example.createCriteria();
+                c.andEqualTo("baseProjectId",baseProject.getId());
+                c.andEqualTo("status","0");
+                DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
+                String designer = designInfo.getDesigner();
+                if (district == null || "".equals(district)){
+                    throw new RuntimeException("请先填写归属");
+                }
+                if (projectCategory == null || "".equals(projectCategory)){
+                    throw new RuntimeException("请先填写归属");
+                }
+                if (designer == null || "".equals(designer)){
+                    throw new RuntimeException("请先填写归属");
+                }
+            }
+
             projectService.wujiangMoneyInfoAdd(wujiangMoneyInfo, getLoginUser());
         } catch (Exception e) {
             RestUtil.error(e.getMessage());
@@ -2301,6 +2353,11 @@ public class ProjectController extends BaseController {
     public Map<String,Object> findDesignAll(){
        List<MkyUser> list =  projectService.findDesignAll(getLoginUser().getId());
        return RestUtil.success(list);
+    }
+    @RequestMapping(value = "/project/affiliationProject", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> affiliationProject(@RequestParam(name = "baseProjectId") String baseId,@RequestParam(name = "district") String district,@RequestParam(name = "designCategory") String designCategory,@RequestParam(name = "designer") String designer){
+        projectService.affiliationProject(baseId,district,designCategory,designer);
+        return RestUtil.success();
     }
 
 

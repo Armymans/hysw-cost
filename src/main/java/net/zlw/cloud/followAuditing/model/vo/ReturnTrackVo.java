@@ -41,6 +41,8 @@ public class ReturnTrackVo {
     private String showEdit;
     private List<AuditInfoVo> auditInfoVoList;
 
+    private String attributionShow;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

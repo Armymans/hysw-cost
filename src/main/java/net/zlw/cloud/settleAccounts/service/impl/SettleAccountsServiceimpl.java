@@ -279,8 +279,22 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     if (mkyUser!=null){
                          if (mkyUser!=null){
                         accountsVo.setPreparePeople(mkyUser.getUserName());
+                        }
                     }
+                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(accountsVo.getId());
+                    String designCategory = baseProject.getDesignCategory();
+                    String district = baseProject.getDistrict();
+                    if (designCategory == null || "".equals(designCategory)){
+                        accountsVo.setAttributionShow("0");
                     }
+                    if (district == null || "".equals(district)){
+                        accountsVo.setAttributionShow("0");
+                    }
+                    if (preparePeople == null || "".equals(preparePeople)){
+                        accountsVo.setAttributionShow("0");
+                    }
+
+
                 }
 
                 return list1;
@@ -294,6 +308,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     }else{
                         accountsVo.setShowConfirmed("2");
                     }
+
+
+
                 }
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
@@ -1845,5 +1862,25 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         return otherInfos;
 //        List<OtherInfo> otherInfos = otherInfoMapper.selectOtherList(baseId);
 //        return otherInfos;
+    }
+
+    @Override
+    public void addAttribution(String baseId, String district, String designCategory, String prePeople) {
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+        baseProject.setDistrict(district);
+        baseProject.setDesignCategory(designCategory);
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+        Example example = new Example(LastSettlementReview.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("baseProjectId",baseId);
+        criteria.andEqualTo("delFlag","0");
+        LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example);
+        if (lastSettlementReview!=null){
+            lastSettlementReview.setPreparePeople(prePeople);
+        }
+        lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
+
+
     }
 }

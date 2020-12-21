@@ -26,4 +26,6 @@ public interface SettleAccountsService {
     void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser);
 
     List<OtherInfo> selectInfoList(String baseId);
+
+    void addAttribution(String baseId, String district, String designCategory, String prePeople);
 }

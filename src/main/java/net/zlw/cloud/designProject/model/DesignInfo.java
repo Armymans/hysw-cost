@@ -184,4 +184,7 @@ public class DesignInfo{
 
     @Transient
     private String desChangeFlag; //是否设计变更 0:是 1:否
+
+    @Transient
+    private String affiliationShow;
 }
