@@ -252,11 +252,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         //控价编制
         VeryEstablishment veryEstablishment = new VeryEstablishment();
         veryEstablishment.setId(UUID.randomUUID().toString().replace("-",""));
-        if (budgetingVo.getBiddingPriceControl() != null && !"".equals(budgetingVo.getBiddingPriceControl())){
             veryEstablishment.setBiddingPriceControl(budgetingVo.getBiddingPriceControl());
-        }else {
-            throw new RuntimeException("请填入招标控制价");
-        }
         veryEstablishment.setVatAmount(budgetingVo.getVVatAmount());
         if (!"".equals(budgetingVo.getPricingTogether())){
             veryEstablishment.setPricingTogether(budgetingVo.getPricingTogether());
