@@ -81,11 +81,16 @@ public class BudgetTaskService {
                 BigDecimal decimal = new BigDecimal(addedTaxAmount);
                 budgeting.setAddedTaxAmount(decimal);
                 budgeting.setBudgetingTime(budgetVo.getBudgeting_time());
-                budgeting.setBaseProjectId(budgetVo.getBase_broject_id());
+                budgeting.setBaseProjectId(budgetVo.getApplication_num());
                 budgeting.setDelFlag("0");
                 budgeting.setCreateTime(format);
                 budgeting.setUpdateTime(format);
                 budgetingDao.insertSelective(budgeting);
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetVo.getApplication_num());
+                if(baseProject != null){
+                    baseProject.setBudgetStatus("4");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                }
             }
 
             //成本表
@@ -96,26 +101,40 @@ public class BudgetTaskService {
                 costPreparation.setCostTogether(budgetVo.getCost_by());
                 costPreparation.setCostPreparationTime(budgetVo.getCost_preparation_time());
                 String totalCostAmount = budgetVo.getTotal_cost_amount();
-                BigDecimal bigDecimal = new BigDecimal(totalCostAmount);
-                costPreparation.setCostTotalAmount(bigDecimal);
+                if(totalCostAmount!=null){
+                    BigDecimal bigDecimal = new BigDecimal(totalCostAmount);
+                    costPreparation.setCostTotalAmount(bigDecimal);
+                }
                 String totalVatAmount = budgetVo.getTotal_cost_amount();
-                BigDecimal bigDecimal1 = new BigDecimal(totalVatAmount);
-                costPreparation.setVatAmount(bigDecimal1);
+                if(totalVatAmount!=null){
+                    BigDecimal bigDecimal1 = new BigDecimal(totalVatAmount);
+                    costPreparation.setVatAmount(bigDecimal1);
+                }
                 String sourcingCost = budgetVo.getOutsourcing_cost_amount();
-                BigDecimal bigDecimal2 = new BigDecimal(sourcingCost);
-                costPreparation.setOutsourcingCostAmount(bigDecimal2);
+                if(sourcingCost!=null){
+                    BigDecimal bigDecimal2 = new BigDecimal(sourcingCost);
+                    costPreparation.setOutsourcingCostAmount(bigDecimal2);
+                }
                 String sourcingCost1 = budgetVo.getSourcing_cost();
-                BigDecimal bigDecimal3 = new BigDecimal(sourcingCost1);
-                costPreparation.setTotalPackageMaterial(bigDecimal3);
+                if(sourcingCost1!=null) {
+                    BigDecimal bigDecimal3 = new BigDecimal(sourcingCost1);
+                    costPreparation.setTotalPackageMaterial(bigDecimal3);
+                }
                 String otherExpensesOne = budgetVo.getOther_expenses_one();
-                BigDecimal bigDecimal4 = new BigDecimal(otherExpensesOne);
+                if(otherExpensesOne!=null) {
+                    BigDecimal bigDecimal4 = new BigDecimal(otherExpensesOne);
+                    costPreparation.setOtherCost1(bigDecimal4);
+                }
                 String otherExpensesTwo = budgetVo.getOther_expenses_two();
-                BigDecimal bigDecimal5 = new BigDecimal(otherExpensesTwo);
+                if(otherExpensesTwo!=null) {
+                    BigDecimal bigDecimal5 = new BigDecimal(otherExpensesTwo);
+                    costPreparation.setOtherCost2(bigDecimal5);
+                }
                 String otherExpensesThree = budgetVo.getOther_expenses_three();
-                BigDecimal bigDecimal6 = new BigDecimal(otherExpensesThree);
-                costPreparation.setOtherCost1(bigDecimal4);
-                costPreparation.setOtherCost2(bigDecimal5);
-                costPreparation.setOtherCost3(bigDecimal6);
+                if(otherExpensesThree!=null) {
+                    BigDecimal bigDecimal6 = new BigDecimal(otherExpensesThree);
+                    costPreparation.setOtherCost3(bigDecimal6);
+                }
                 costPreparation.setDelFlag("0");
                 costPreparationDao.insertSelective(costPreparation);
             }

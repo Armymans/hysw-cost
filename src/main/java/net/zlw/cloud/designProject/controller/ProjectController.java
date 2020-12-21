@@ -1270,7 +1270,7 @@ public class ProjectController extends BaseController {
             List<BaseProject> baseProjects = projectService.DesProjectInfoSelect(vid);
             return RestUtil.success(baseProjects);
         }else{
-            return RestUtil.success(null);
+            return RestUtil.error("vid为空");
         }
     }
 

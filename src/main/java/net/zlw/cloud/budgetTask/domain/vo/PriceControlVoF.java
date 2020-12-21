@@ -9,6 +9,6 @@ import lombok.Data;
  **/
 @Data
 public class PriceControlVoF {
-    private PriceControlVo priceControlVo;
+    private PriceControlVo priceControl;
     private String account;
 }
