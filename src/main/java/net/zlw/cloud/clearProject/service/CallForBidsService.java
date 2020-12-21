@@ -88,7 +88,11 @@ public class CallForBidsService{
             callVo.setProjectNum(baseProject.getProjectNum());
             callVo.setProjectName(baseProject.getProjectName());
         }
-        CallForBids callForBids = callForBidsMapper.selectByCallForBids(clearProject.getId());
+        Example example = new Example(CallForBids.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("clearProjectId",clearProject.getId());
+        c.andEqualTo("status","0");
+        CallForBids callForBids = callForBidsMapper.selectOneByExample(example);
         if (callForBids != null){
             callVo.setCallForBids(callForBids);
         }
