@@ -631,7 +631,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                         CostPreparation costPreparation = costPreparationDao.selectOneByExample(example2);
 
                         Example example3 = new Example(VeryEstablishment.class);
-                        Example.Criteria cc1 = example2.createCriteria();
+                        Example.Criteria cc1 = example3.createCriteria();
                         cc1.andEqualTo("budgetingId",budgeting1.getId());
                         cc1.andEqualTo("delFlag","0");
                         VeryEstablishment veryEstablishment1 = veryEstablishmentDao.selectOneByExample(example3);

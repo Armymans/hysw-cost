@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Data
-@Table(name = "material_Info")
+@Table(name = "material_info")
 public class Materie {
     @Id
     @Column(name = "id")
