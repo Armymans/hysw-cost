@@ -2,9 +2,7 @@ package net.zlw.cloud.budgetTask.controller;
 
 
 import net.tec.cloud.common.web.MediaTypes;
-import net.zlw.cloud.budgetTask.domain.vo.BudgetVo;
 import net.zlw.cloud.budgetTask.domain.vo.BudgetVoF;
-import net.zlw.cloud.budgetTask.domain.vo.PriceControlVo;
 import net.zlw.cloud.budgetTask.domain.vo.PriceControlVoF;
 import net.zlw.cloud.budgetTask.service.BudgetTaskService;
 import net.zlw.cloud.budgetTask.service.PriceInfoSevice;
@@ -33,8 +31,7 @@ public class BudgetTaskController {
 
     /***
      * 预算成本信息报装接口
-     * @param budgetVo
-     * @param account
+     * @param budgetVoF
      * @return
      */
     @RequestMapping(value = "api/getBudgetEngineering",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)

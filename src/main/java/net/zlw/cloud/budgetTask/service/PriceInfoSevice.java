@@ -77,6 +77,7 @@ public class PriceInfoSevice {
                     veryEstablishment.setPriceExaminer(priceControlVo.getPrice_examiner());
                     veryEstablishment.setPriceExamineTime(priceControlVo.getPrice_examine_time());
                     veryEstablishment.setStatus(priceControlVo.getStatus());
+                    veryEstablishment.setDelFlag("0");
                     veryEstablishment.setCreateTime(format);
                     veryEstablishment.setUpdateTime(format);
                     veryEstablishmentDao.insertSelective(veryEstablishment);
@@ -91,7 +92,7 @@ public class PriceInfoSevice {
                             fileInfo.setId(thisLable.getId());
                             fileInfo.setName(thisLable.getLabel_file_name());
                             fileInfo.setFileName(thisLable.getLabel_file_name());
-                            fileInfo.setPlatCode(priceControlVo.getApplication_num());
+                            fileInfo.setPlatCode(byBaseId.getId());
                             fileInfo.setFilePath(thisLable.getLable_file_drawing());
                             fileInfo.setCreateTime(format);
                             fileInfo.setUpdateTime(format);

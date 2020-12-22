@@ -3,6 +3,7 @@ package net.zlw.cloud.whDesignTask.service;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
@@ -51,6 +52,9 @@ public class DesinTaskService {
     private MangerDemandDao mangerDemandDao;
 
     @Autowired
+    private MemberManageDao memberManageDao;
+
+    @Autowired
     private OperationSubmitTypeDao operationSubmitTypeDao;
 
     @Autowired
@@ -61,12 +65,19 @@ public class DesinTaskService {
         DesignVo designVo = designVoF.getDesignVo();
         //判断vo
         if (designVo != null) {
+            // 根据账号查询id
+            String userId = memberManageDao.selectById(designVoF.getAccount());
             //创建项目对象
             BaseProject baseProject = new BaseProject();
             //添加数据
             baseProject.setId(designVo.getBase_project_id());
             baseProject.setApplicationNum(designVo.getApplication_num());
-            baseProject.setDistrict(designVo.getDistinct());
+            //TODO 如果没有获取到地区就暂给 1
+            if (designVo.getDistinct() != null && "".equals(designVo.getDistinct())){
+                baseProject.setDistrict(designVo.getDistinct());
+            }else {
+                baseProject.setDistrict("1");
+            }
             baseProject.setProjectName(designVo.getProject_name());
             baseProject.setConstructionUnit(designVo.getConstruction_unit());
             baseProject.setCustomerName(designVo.getCustomer_name());
@@ -207,13 +218,12 @@ public class DesinTaskService {
                     //获得文件对象
                     FileInfo fileInfo = new FileInfo();
                     fileInfo.setId(thisProvidedFile.getId());
-                    fileInfo.setPlatCode(thisProvidedFile.getBase_project_id());
                     fileInfo.setFileName(thisProvidedFile.getCustomer_provided_file_name());
                     fileInfo.setName(thisProvidedFile.getCustomer_provided_name());
                     fileInfo.setCreateTime(thisProvidedFile.getCustomer_provided_time());
                     fileInfo.setUserId(thisProvidedFile.getCustomer_provided_by());
                     fileInfo.setFilePath(thisProvidedFile.getCustomer_provided_drawing());
-                    fileInfo.setPlatCode(designVo.getApplication_num());
+                    fileInfo.setPlatCode(designInfo.getId());
                     fileInfo.setType("tzpwzl");
                     fileInfo.setFileSource("3");
                     fileInfo.setStatus("0");
@@ -235,7 +245,7 @@ public class DesinTaskService {
                     fileInfo.setFileName(thisProject.getProject_file_name());
                     fileInfo.setCreateTime(thisProject.getProject_up_time());
                     fileInfo.setRemark(thisProject.getProject_uploaded_by());
-                    fileInfo.setPlatCode(designVo.getApplication_num());
+                    fileInfo.setPlatCode(designInfo.getId());
                     fileInfo.setStatus("0");
                     fileInfo.setFileSource("3");
                     fileInfo.setType("gcsjtz");
@@ -258,7 +268,7 @@ public class DesinTaskService {
                     fileInfo.setCreateTime(thisWater.getWater_list_time());
                     fileInfo.setUserId(thisWater.getWater_list_by());
                     fileInfo.setFilePath(thisWater.getWater_list_drawing());
-                    fileInfo.setPlatCode(designVo.getApplication_num());
+                    fileInfo.setPlatCode(designInfo.getId());
                     fileInfo.setType("sbslqd");
                     fileInfo.setFileSource("3");
                     //插入文件表

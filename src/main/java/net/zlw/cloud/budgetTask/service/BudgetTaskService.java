@@ -97,41 +97,41 @@ public class BudgetTaskService {
             CostPreparation costPreparation = new CostPreparation();
             if (budgetVo.getTotal_cost_amount() != null) {
                 costPreparation.setId(UUID.randomUUID().toString());
-                costPreparation.setBaseProjectId(budgetVo.getBase_broject_id());
+                costPreparation.setBudgetingId(budgeting.getId());
                 costPreparation.setCostTogether(budgetVo.getCost_by());
                 costPreparation.setCostPreparationTime(budgetVo.getCost_preparation_time());
                 String totalCostAmount = budgetVo.getTotal_cost_amount();
-                if(totalCostAmount!=null){
+                if(totalCostAmount!=null && !"null".equals(totalCostAmount)){
                     BigDecimal bigDecimal = new BigDecimal(totalCostAmount);
                     costPreparation.setCostTotalAmount(bigDecimal);
                 }
-                String totalVatAmount = budgetVo.getTotal_cost_amount();
-                if(totalVatAmount!=null){
+                String totalVatAmount = budgetVo.getTotal_vat_amount();
+                if(totalVatAmount!=null && !"null".equals(totalVatAmount)){
                     BigDecimal bigDecimal1 = new BigDecimal(totalVatAmount);
                     costPreparation.setVatAmount(bigDecimal1);
                 }
                 String sourcingCost = budgetVo.getOutsourcing_cost_amount();
-                if(sourcingCost!=null){
+                if(sourcingCost!=null && !"null".equals(sourcingCost)){
                     BigDecimal bigDecimal2 = new BigDecimal(sourcingCost);
                     costPreparation.setOutsourcingCostAmount(bigDecimal2);
                 }
                 String sourcingCost1 = budgetVo.getSourcing_cost();
-                if(sourcingCost1!=null) {
+                if(sourcingCost1!=null && !"null".equals(sourcingCost1)) {
                     BigDecimal bigDecimal3 = new BigDecimal(sourcingCost1);
                     costPreparation.setTotalPackageMaterial(bigDecimal3);
                 }
                 String otherExpensesOne = budgetVo.getOther_expenses_one();
-                if(otherExpensesOne!=null) {
+                if(otherExpensesOne!=null &&!"null".equals(otherExpensesOne)) {
                     BigDecimal bigDecimal4 = new BigDecimal(otherExpensesOne);
                     costPreparation.setOtherCost1(bigDecimal4);
                 }
                 String otherExpensesTwo = budgetVo.getOther_expenses_two();
-                if(otherExpensesTwo!=null) {
+                if(otherExpensesTwo!=null &&!"null".equals(otherExpensesTwo)) {
                     BigDecimal bigDecimal5 = new BigDecimal(otherExpensesTwo);
                     costPreparation.setOtherCost2(bigDecimal5);
                 }
                 String otherExpensesThree = budgetVo.getOther_expenses_three();
-                if(otherExpensesThree!=null) {
+                if(otherExpensesThree!=null &&!"null".equals(otherExpensesThree)) {
                     BigDecimal bigDecimal6 = new BigDecimal(otherExpensesThree);
                     costPreparation.setOtherCost3(bigDecimal6);
                 }

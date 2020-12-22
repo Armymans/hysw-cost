@@ -1771,14 +1771,17 @@ public class ProjectController extends BaseController {
             }
             projectVo3.setDesignChangeInfo(new DesignChangeInfo());
         }else{
-            Example example = new Example(MemberManage.class);
-            example.createCriteria().andEqualTo("id",designInfo.getDesigner());
-            MemberManage memberManage = memberManageDao.selectOneByExample(example);
             if (designInfo.getDesigner() != null){
-                projectVo3.getDesignInfo().setDesigner(memberManage.getMemberName());
-            }else {
-                projectVo3.getDesignInfo().setDesigner("-");
+                Example example = new Example(MemberManage.class);
+                example.createCriteria().andEqualTo("id",designInfo.getDesigner());
+                MemberManage memberManage = memberManageDao.selectOneByExample(example);
+                if (memberManage != null){
+                    projectVo3.getDesignInfo().setDesigner(memberManage.getMemberName());
+                }else {
+                    projectVo3.getDesignInfo().setDesigner("-");
+                }
             }
+
             //正式出图时间
             if (designInfo.getBlueprintStartTime() != null && !"".equals(designInfo.getBlueprintStartTime())){
                 projectVo3.getDesignInfo().setBlueprintStartTime(designInfo.getBlueprintStartTime());

@@ -26,6 +26,6 @@ public class PriceControlVo {
     private String status;
 
 
-    private List<LabelMeansList> LabelMeansList;
+    private List<LabelMeansList> labelMeansList;
 
 }

@@ -51,12 +51,12 @@ public class DesignVo {
     private String virtual_code;
 
 
-    private List<WatherList> WaterList;
+    private List<WatherList> waterList;
     private List<DeclarationInformation> declaration_information;
     private List<OperationSubmitType> OperationSubmitType;
     private List<SubmitOperationDept> SubmitOperationDept;
-    private List<ProjectDesign> ProjectDesign;
-    private List<CustomerProvidedFile> CustomerProvidedFile;
+    private List<ProjectDesign> projectDesign;
+    private List<CustomerProvidedFile> customerProvidedFile;
     private List<MangerDemand> MangerDemand;
 
 
