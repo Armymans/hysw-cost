@@ -608,17 +608,17 @@ public class ProjectService {
         //如果为已完成
         if ("4".equals(pageVo.getDesginStatus())) {
             //已完成不分层级所以全部展示
-            designInfos = designInfoMapper.designProjectSelect4(pageVo);
-
-            if (designInfos!=null && designInfos.size()>0){
-                for (DesignInfo designInfo : designInfos) {
+            List<DesignInfo> designInfos1 = designInfoMapper.designProjectSelect41(pageVo);
+            if (designInfos1!=null && designInfos1.size()>0){
+                for (DesignInfo designInfo : designInfos1) {
                     if (designInfo.getAttributionShow() == null || "".equals(designInfo.getAttributionShow())){
                         designInfo.setAttributionShow("2");
-                        designInfoMapper.updateByPrimaryKey(designInfo);
+                        designInfoMapper.updateByPrimaryKeySelective(designInfo);
                     }
                 }
             }
 
+            designInfos = designInfoMapper.designProjectSelect4(pageVo);
             if (designInfos.size() > 0) {
                 for (DesignInfo designInfo : designInfos) {
 
