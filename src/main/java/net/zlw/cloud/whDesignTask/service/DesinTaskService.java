@@ -7,10 +7,8 @@ import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
-import net.zlw.cloud.whDesignTask.dao.DeclarationInformationDao;
-import net.zlw.cloud.whDesignTask.dao.MangerDemandDao;
-import net.zlw.cloud.whDesignTask.dao.OperationSubmitTypeDao;
-import net.zlw.cloud.whDesignTask.dao.SubmitOperationDeptDao;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
+import net.zlw.cloud.whDesignTask.dao.*;
 import net.zlw.cloud.whDesignTask.model.*;
 import net.zlw.cloud.whDesignTask.model.vo.DesignVo;
 import net.zlw.cloud.whDesignTask.model.vo.DesignVoF;
@@ -19,9 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @Classname DesinTaskService
@@ -35,6 +35,9 @@ public class DesinTaskService {
 
     //设置创建时间以及修改时间
     String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+    @Autowired
+    private DockLogDao dockLogDao;
 
     @Autowired
     private DesignInfoMapper designInfoMapper;
@@ -60,8 +63,13 @@ public class DesinTaskService {
     @Autowired
     private SubmitOperationDeptDao submitOperationDeptDao;
 
+    @Autowired
+    private MemberService memberService;
 
-    public void getDesignEngineering(DesignVoF designVoF) {
+
+    public void getDesignEngineering(DesignVoF designVoF , HttpServletRequest request) {
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
         DesignVo designVo = designVoF.getDesignVo();
         //判断vo
         if (designVo != null) {
@@ -275,7 +283,25 @@ public class DesinTaskService {
                     fileInfoMapper.insertSelective(fileInfo);
                 }
             }
-
+           /*  `id` varchar(60) NOT NULL COMMENT '唯一标识',
+             `name` varchar(60) DEFAULT NULL COMMENT '操作人',
+             `type` varchar(1) DEFAULT NULL COMMENT '类型1.设计2预算3结算4跟踪审计5状态更新',
+             `content` longtext COMMENT '参数',
+             `do_time` varchar(60) DEFAULT NULL COMMENT '操作时间',
+             `do_object` varchar(200) DEFAULT NULL COMMENT '项目标识',
+             `status` varchar(1) DEFAULT NULL COMMENT '状态',
+             `ip` varchar(255) DEFAULT NULL COMMENT 'ip',*/
+            DockLog dockLog = new DockLog();
+            dockLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            dockLog.setName(designVoF.getAccount()); // 操作人
+            dockLog.setType("1"); //设计
+            dockLog.setContent(designVoF.toString());
+            dockLog.setDoTime(data);
+            dockLog.setDoObject(designVoF.getDesignVo().getApplication_num());
+            dockLog.setStatus("0");
+            String ip = memberService.getIp(request);
+            dockLog.setIp(ip);
+            dockLogDao.insertSelective(dockLog);
         }
 
     }

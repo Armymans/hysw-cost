@@ -1,9 +1,6 @@
 package net.zlw.cloud.snsEmailFile.service;
 
 import com.github.pagehelper.util.StringUtil;
-import com.sun.javafx.PlatformUtil;
-
-import lombok.Data;
 import net.zlw.cloud.depManage.domain.DepManage;
 import net.zlw.cloud.depManage.mapper.DepManageMapper;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
@@ -11,19 +8,15 @@ import net.zlw.cloud.snsEmailFile.mapper.PlatInformactionLogDao;
 import net.zlw.cloud.snsEmailFile.mapper.SysCompanyMapper;
 import net.zlw.cloud.snsEmailFile.model.InformationLog;
 import net.zlw.cloud.snsEmailFile.model.SysCompany;
-import net.zlw.cloud.snsEmailFile.util.Common;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.ws.soap.Addressing;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -63,6 +56,7 @@ public class MemberService {
                 DepManage depManage = depManageMapper.selectByPrimaryKey(user.getCompanyId());
                 if (company == null && depManage == null) {
                     return "用户信息未同步，请联系管理员。";
+
                 } else {
                     String ip = getIp(request);
                     if(company != null){

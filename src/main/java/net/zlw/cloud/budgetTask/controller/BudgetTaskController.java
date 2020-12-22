@@ -1,6 +1,7 @@
 package net.zlw.cloud.budgetTask.controller;
 
 
+import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgetTask.domain.vo.BudgetVoF;
 import net.zlw.cloud.budgetTask.domain.vo.PriceControlVoF;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-public class BudgetTaskController {
+public class BudgetTaskController extends BaseController {
 
 
     @Autowired
@@ -29,6 +30,7 @@ public class BudgetTaskController {
     @Autowired
     private StatusSynchronService statusSynchronService;
 
+
     /***
      * 预算成本信息报装接口
      * @param budgetVoF
@@ -36,7 +38,7 @@ public class BudgetTaskController {
      */
     @RequestMapping(value = "api/getBudgetEngineering",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> getBudgetEngineering(@RequestBody BudgetVoF budgetVoF){
-        budgetTaskService.getBudgetEngineering(budgetVoF);
+        budgetTaskService.getBudgetEngineering(budgetVoF,request);
         return RestUtil.success();
     }
 
@@ -49,7 +51,7 @@ public class BudgetTaskController {
      **/
     @RequestMapping(value = "api/getPriceControlEngineering",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> getPriceControlEngineering(@RequestBody PriceControlVoF priceControlVoF){
-       priceInfoSevice.getPriceInfo(priceControlVoF);
+       priceInfoSevice.getPriceInfo(priceControlVoF,request);
         return RestUtil.success();
     }
 
@@ -61,8 +63,8 @@ public class BudgetTaskController {
         * @return
      **/
     @RequestMapping(value = "/api/updateStatusSynchron",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> updateStatusSynchron(@RequestBody String application_num,String account){
-        statusSynchronService.updateStatusSynchron(application_num,account);
+    public Map<String,Object> updateStatusSynchron(String application_num,String status){
+        statusSynchronService.updateStatusSynchron(application_num,status,request);
         return RestUtil.success();
     }
 }

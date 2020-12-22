@@ -14,9 +14,13 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
+import net.zlw.cloud.whDesignTask.dao.DockLogDao;
+import net.zlw.cloud.whDesignTask.model.DockLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -46,9 +50,14 @@ public class BudgetTaskService {
 
     @Autowired
     private FileInfoMapper fileInfoMapper;
+    @Autowired
+    private DockLogDao dockLogDao;
+
+    @Autowired
+    private MemberService memberService;
 
 
-    public void getBudgetEngineering(BudgetVoF budgetVoF) {
+    public void getBudgetEngineering(BudgetVoF budgetVoF , HttpServletRequest request) {
         BudgetVo budgetVo = budgetVoF.getBudgetVo();
 
         //设置时间
@@ -181,6 +190,17 @@ public class BudgetTaskService {
                     }
                 }
             }
+            DockLog dockLog = new DockLog();
+            dockLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            dockLog.setName(budgetVoF.getAccount()); // 操作人
+            dockLog.setType("2"); //预算
+            dockLog.setContent(budgetVoF.toString());
+            dockLog.setDoTime(format);
+            dockLog.setDoObject(budgetVo.getApplication_num());
+            dockLog.setStatus("0");
+            String ip = memberService.getIp(request);
+            dockLog.setIp(ip);
+            dockLogDao.insertSelective(dockLog);
 
         }
     }

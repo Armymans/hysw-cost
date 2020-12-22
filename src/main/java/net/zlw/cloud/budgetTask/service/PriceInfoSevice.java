@@ -13,9 +13,13 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
+import net.zlw.cloud.whDesignTask.dao.DockLogDao;
+import net.zlw.cloud.whDesignTask.model.DockLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -52,7 +56,13 @@ public class PriceInfoSevice {
     @Autowired
     private FileInfoMapper fileInfoMapper;
 
-    public void getPriceInfo(PriceControlVoF priceControlVoF) {
+    @Autowired
+    private MemberService memberService;
+
+    @Autowired
+    private DockLogDao dockLogDao;
+
+    public void getPriceInfo(PriceControlVoF priceControlVoF, HttpServletRequest request) {
         PriceControlVo priceControlVo = priceControlVoF.getPriceControl();
         //设置时间
         String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -103,6 +113,18 @@ public class PriceInfoSevice {
                     }
                 }
             }
+            DockLog dockLog = new DockLog();
+            dockLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            dockLog.setName(priceControlVoF.getAccount()); // 操作人
+            dockLog.setType("6"); // 控价
+            dockLog.setContent(priceControlVoF.toString());
+            dockLog.setDoTime(format);
+            dockLog.setDoObject(priceControlVo.getApplication_num());
+            dockLog.setStatus("0");
+            String ip = memberService.getIp(request);
+            dockLog.setIp(ip);
+            dockLogDao.insertSelective(dockLog);
+
         }
     }
 

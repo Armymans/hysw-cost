@@ -2,17 +2,12 @@ package net.zlw.cloud.snsEmailFile.controller;
 
 import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
-import net.tec.cloud.common.vo.LoginUser;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.snsEmailFile.mapper.SysCompanyMapper;
-import net.zlw.cloud.snsEmailFile.model.SysCompany;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
-import net.zlw.cloud.snsEmailFile.util.AESUtil;
 import net.zlw.cloud.snsEmailFile.util.AdUtils;
-import net.zlw.cloud.snsEmailFile.util.AesEncryptUtil;
 import net.zlw.cloud.snsEmailFile.util.Common;
-import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
