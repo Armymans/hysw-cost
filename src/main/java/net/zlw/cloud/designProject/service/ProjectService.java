@@ -609,6 +609,16 @@ public class ProjectService {
         if ("4".equals(pageVo.getDesginStatus())) {
             //已完成不分层级所以全部展示
             designInfos = designInfoMapper.designProjectSelect4(pageVo);
+
+            if (designInfos!=null && designInfos.size()>0){
+                for (DesignInfo designInfo : designInfos) {
+                    if (designInfo.getAttributionShow() == null || "".equals(designInfo.getAttributionShow())){
+                        designInfo.setAttributionShow("2");
+                        designInfoMapper.updateByPrimaryKey(designInfo);
+                    }
+                }
+            }
+
             if (designInfos.size() > 0) {
                 for (DesignInfo designInfo : designInfos) {
 
@@ -1348,6 +1358,25 @@ public class ProjectService {
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setUpdateTime(createTime);
                         baseProject.setDesginStatus("4");
+                        String district = baseProject.getDistrict();
+                        String designCategory = baseProject.getDesignCategory();
+                        String designer = designInfo.getDesigner();
+                        if (district == null || "".equals(district)){
+                            designInfo.setAttributionShow("2");
+                            designInfoMapper.updateByPrimaryKey(designInfo);
+                        }
+                        if (designCategory == null || "".equals(designCategory)){
+                            designInfo.setAttributionShow("2");
+                            designInfoMapper.updateByPrimaryKey(designInfo);
+                        }
+                        if (designer == null || "".equals(designer)){
+                            designInfo.setAttributionShow("2");
+                            designInfoMapper.updateByPrimaryKey(designInfo);
+                        }
+                        if (district != null && !"".equals(district) && designCategory != null && !"".equals(designCategory) && designer != null && !"".equals(designer) ){
+                            designInfo.setAttributionShow("1");
+                            designInfoMapper.updateByPrimaryKey(designInfo);
+                        }
                         auditInfo2.setAuditTime(createTime);
                         projectMapper.updateByPrimaryKeySelective(baseProject);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
@@ -1492,6 +1521,25 @@ public class ProjectService {
                         auditInfo2.setUpdateTime(createTime);
                         auditInfo2.setAuditTime(createTime);
                         baseProject.setDesginStatus("4");
+                        String district = baseProject.getDistrict();
+                        String designCategory = baseProject.getDesignCategory();
+                        String designer = designInfo.getDesigner();
+                        if (district == null || "".equals(district)){
+                            designInfo.setAttributionShow("2");
+                            designInfoMapper.updateByPrimaryKey(designInfo);
+                        }
+                        if (designCategory == null || "".equals(designCategory)){
+                            designInfo.setAttributionShow("2");
+                            designInfoMapper.updateByPrimaryKey(designInfo);
+                        }
+                        if (designer == null || "".equals(designer)){
+                            designInfo.setAttributionShow("2");
+                            designInfoMapper.updateByPrimaryKey(designInfo);
+                        }
+                        if (district != null && !"".equals(district) && designCategory != null && !"".equals(designCategory) && designer != null && !"".equals(designer) ){
+                            designInfo.setAttributionShow("1");
+                            designInfoMapper.updateByPrimaryKey(designInfo);
+                        }
                         projectMapper.updateByPrimaryKeySelective(baseProject);
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo2);
                         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -3554,6 +3602,9 @@ public class ProjectService {
         cc.andEqualTo("status","0");
         DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
         designInfo.setDesigner(desiner);
+        if (district!=null && !"".equals(district) && designCategory!=null && !"".equals(designCategory) && desiner!=null && !"".equals(desiner) ){
+            designInfo.setAttributionShow("1");
+        }
         designInfoMapper.updateByPrimaryKey(designInfo);
 
     }

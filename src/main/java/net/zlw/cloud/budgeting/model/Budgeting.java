@@ -57,6 +57,8 @@ public class Budgeting implements Serializable {
     private String sureResult;
     @Column(name = "sure_man")
     private String sureMan;
+    @Column(name = "attribution_show")
+    private String attributionShow;
 
     //当前处理人
     @Transient

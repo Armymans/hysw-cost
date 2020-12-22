@@ -19,4 +19,5 @@ public class DesignPageVo {
     private String isaccount;
 
     private String currentPeople;
+    private String attributionShow;
 }

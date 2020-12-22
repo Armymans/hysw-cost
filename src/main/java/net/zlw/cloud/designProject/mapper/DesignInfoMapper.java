@@ -374,6 +374,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "and " +
                     "(s2.isaccount = #{isaccount} or #{isaccount} ='') " +
                     "and " +
+                    " (s2.attribution_show = #{attributionShow} or #{attributionShow} = '' ) and  " +
                     "( " +
                     "s1.cea_num like CONCAT('%',#{keyword},'%') or  " +
                     "s1.project_num like CONCAT('%',#{keyword},'%') or " +

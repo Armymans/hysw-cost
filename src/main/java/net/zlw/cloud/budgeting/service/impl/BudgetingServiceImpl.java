@@ -610,6 +610,49 @@ public class BudgetingServiceImpl implements BudgetingService {
 
                         //三审通过
                     }else if(auditInfo.getAuditResult().equals("0") && auditInfo.getAuditType().equals("4")){
+                        Budgeting budgeting1 = budgetingDao.selectByPrimaryKey(s);
+                        BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(budgeting1.getBaseProjectId());
+                        if (baseProject1.getDistrict() == null || baseProject1.getDistrict().equals("")){
+                            budgeting1.setAttributionShow("2");
+                        }
+                        if (baseProject1.getDesignCategory() == null || baseProject1.getDesignCategory().equals("")){
+                            budgeting1.setAttributionShow("2");
+                        }
+                        Example example2 = new Example(CostPreparation.class);
+                        Example.Criteria cc = example2.createCriteria();
+                        cc.andEqualTo("budgetingId",budgeting1.getId());
+                        cc.andEqualTo("delFlag","0");
+                        CostPreparation costPreparation = costPreparationDao.selectOneByExample(example2);
+
+                        Example example3 = new Example(VeryEstablishment.class);
+                        Example.Criteria cc1 = example2.createCriteria();
+                        cc1.andEqualTo("budgetingId",budgeting1.getId());
+                        cc1.andEqualTo("delFlag","0");
+                        VeryEstablishment veryEstablishment1 = veryEstablishmentDao.selectOneByExample(example3);
+
+                        String budgetingPeople = budgeting1.getBudgetingPeople();
+                        String costTogether = costPreparation.getCostTogether();
+                        String pricingTogether = veryEstablishment1.getPricingTogether();
+
+                        if (budgetingPeople == null || budgetingPeople.equals("")){
+                            budgeting1.setAttributionShow("2");
+                        }
+
+                        if (costTogether == null || costTogether.equals("")){
+                            budgeting1.setAttributionShow("2");
+                        }
+
+                        if (pricingTogether == null || pricingTogether.equals("")){
+                            budgeting1.setAttributionShow("2");
+                        }
+
+                        if ( !"2".equals(budgeting1.getAttributionShow())){
+                            budgeting1.setAttributionShow("1");
+                        }
+                        budgetingDao.updateByPrimaryKeySelective(budgeting1);
+
+
+
                         auditInfo.setAuditResult("1");
                         auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                         SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1103,6 +1146,8 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
 
 
+
+
             }
             for (BudgetingListVo budgetingListVo : list1) {
                 MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
@@ -1445,6 +1490,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         criteria.andEqualTo("delFlag","0");
         Budgeting budgeting = budgetingDao.selectOneByExample(example);
         budgeting.setBudgetingPeople(prePeople);
+        budgeting.setAttributionShow("1");
         budgetingDao.updateByPrimaryKeySelective(budgeting);
 
         Example example1 = new Example(CostPreparation.class);

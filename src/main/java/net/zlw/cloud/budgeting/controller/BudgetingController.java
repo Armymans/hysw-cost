@@ -133,7 +133,6 @@ public class BudgetingController extends BaseController {
 //        PageInfo<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo,"user324");
         PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);
 
-
         return RestUtil.page(budgetingListVoPageInfo);
     }
 

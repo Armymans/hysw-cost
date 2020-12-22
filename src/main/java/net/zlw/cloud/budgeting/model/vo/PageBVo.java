@@ -25,6 +25,8 @@ public class PageBVo {
     private String projectName;
     private String constructionUnit;
     private String waterAddress;
+    private String attributionShow;
+
 
 
     public int getPageNum() {

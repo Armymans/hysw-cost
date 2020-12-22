@@ -105,6 +105,9 @@ public class DesignInfo{
     @Column(name = "notes_drawing_time")
     private String notesDrawingTime;
 
+    @Column(name = "attribution_show")
+    private String attributionShow;
+
 //    private BaseProject baseProject;
 //    private List<DesignChangeInfo> designChangeInfolist;
 //    private AnhuiMoneyinfo anhuiMoneyinfo;
