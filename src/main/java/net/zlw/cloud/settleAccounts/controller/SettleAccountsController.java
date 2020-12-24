@@ -134,7 +134,7 @@ public class SettleAccountsController extends BaseController {
     @RequestMapping(value = "/accounts/deleteAcmcounts", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> deleteAcmcounts(@RequestParam(name = "id") String id) {
         try {
-            settleAccountsService.deleteAcmcounts(id);
+            settleAccountsService.deleteAcmcounts(id,getLoginUser(),request);
         } catch (Exception e) {
             e.printStackTrace();
             return RestUtil.error();
@@ -187,7 +187,7 @@ public class SettleAccountsController extends BaseController {
 //            System.err.println(baseAccountsVo.getSettlementAuditInformation());
 //            System.err.println(baseAccountsVo.getLastSettlementReview());
 //            System.err.println(baseAccountsVo.getInvestigationOfTheAmount());
-            settleAccountsService.addAccount(baseAccountsVo, getLoginUser());
+            settleAccountsService.addAccount(baseAccountsVo, getLoginUser(),request);
         } catch (Exception e) {
             e.printStackTrace();
             return RestUtil.error(e.getMessage());
@@ -236,7 +236,7 @@ public class SettleAccountsController extends BaseController {
     @RequestMapping(value = "/accounts/updateAccountById", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> updateAccountById(BaseAccountsVo baseAccountsVo) {
         try {
-            settleAccountsService.updateAccountById(baseAccountsVo, getLoginUser());
+            settleAccountsService.updateAccountById(baseAccountsVo, getLoginUser(),request);
         } catch (Exception e) {
             return RestUtil.error(e.getMessage());
         }
@@ -246,7 +246,7 @@ public class SettleAccountsController extends BaseController {
     //结算批量审核
     @RequestMapping(value = "/accounts/batchReview", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> batchReview(BatchReviewVo batchReviewVo) {
-        settleAccountsService.batchReview(batchReviewVo,getLoginUser());
+        settleAccountsService.batchReview(batchReviewVo,getLoginUser(),request);
         return RestUtil.success();
     }
 

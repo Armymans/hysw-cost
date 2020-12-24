@@ -78,7 +78,7 @@ public class BudgetingController extends BaseController {
     public Map<String,Object> addBudgeting(BudgetingVo budgetingVo){
         try {
             UserInfo loginUser = getLoginUser();
-            budgetingService.addBudgeting(budgetingVo,loginUser);
+            budgetingService.addBudgeting(budgetingVo,loginUser,request);
         } catch (Exception e) {
             return RestUtil.error(e.getMessage());
         }
@@ -95,14 +95,14 @@ public class BudgetingController extends BaseController {
 //    @PutMapping("/updateBudgeting")
     @RequestMapping(value = "/budgeting/updateBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateBudgeting(BudgetingVo budgetingVo){
-        budgetingService.updateBudgeting(budgetingVo,getLoginUser());
+        budgetingService.updateBudgeting(budgetingVo,getLoginUser(),request);
         return RestUtil.success("修改成功");
     }
     //批量审核
 //    @PostMapping("/batchReview")
     @RequestMapping(value = "/budgeting/batchReview",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo){
-        budgetingService.batchReview(batchReviewVo,getLoginUser());
+        budgetingService.batchReview(batchReviewVo,getLoginUser(),request);
         return RestUtil.success("审核成功");
     }
 
@@ -251,7 +251,7 @@ public class BudgetingController extends BaseController {
     //删除预算
     @RequestMapping(value = "/budgeting/deleteBudgeting",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteBudgeting(@RequestParam(name = "id") String id){
-        budgetingService.deleteBudgeting(id);
+        budgetingService.deleteBudgeting(id,getLoginUser(),request);
         return RestUtil.success();
     }
     //新建删除所有文件

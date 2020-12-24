@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
 
-
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -95,7 +94,7 @@ public class ProjectController extends BaseController {
     public Map<String,Object> buildSubmit(BuildingProject buildingProject) throws Exception {
 
         try {
-            String uid = projectService.buildSubmit(buildingProject);
+            String uid = projectService.buildSubmit(buildingProject,getLoginUser(),request);
             //更改userid 为 建设项目id
             String id = getLoginUser().getId();
             List<FileInfo> build = fileInfoService.findByFreignAndType2(id, "build");
@@ -316,7 +315,7 @@ public class ProjectController extends BaseController {
         String[] split = projectVo2.getIdlist().split(",");
         if(projectVo2.getIdlist()!=null&&!"".equals(projectVo2.getIdlist())){
             for (String id : split) {
-                projectService.batchAudit(id, projectVo2.getAuditInfo(), getLoginUser());
+                projectService.batchAudit(id, projectVo2.getAuditInfo(), getLoginUser(),request);
             }
             return RestUtil.success();
         }else{
@@ -332,7 +331,7 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/disproject/oneAudit", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> oneAudit(ProjectVo2 projectVo2) {
         if (projectVo2.getAuditInfo()!=null){
-            projectService.batchAudit(projectVo2.getIdlist(), projectVo2.getAuditInfo(), getLoginUser());
+            projectService.batchAudit(projectVo2.getIdlist(), projectVo2.getAuditInfo(), getLoginUser(),request);
         }
         return RestUtil.success();
     }
@@ -356,7 +355,7 @@ public class ProjectController extends BaseController {
 //    @GetMapping("/deleteProject/{id}")
     @RequestMapping(value = "/api/disproject/deleteProject", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteProject(String id) {
-        projectService.deleteProject(id);
+        projectService.deleteProject(id,getLoginUser(),request);
         return RestUtil.success();
     }
 
@@ -375,7 +374,7 @@ public class ProjectController extends BaseController {
         //             @RequestBody ProjectExploration projectExploration,
         //             @RequestBody PackageCame packageCame
         try {
-            projectService.disProjectSubmit(projectVo, getLoginUser());
+            projectService.disProjectSubmit(projectVo, getLoginUser(),request);
         } catch (Exception e) {
             e.printStackTrace();
             return RestUtil.error(e.getMessage());
@@ -578,7 +577,7 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/disproject/UpdateProjectSubmit1", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateProjectSubmit1(ProjectVo projectVo) {
         try {
-            projectService.projectEdit(projectVo, getLoginUser());
+            projectService.projectEdit(projectVo, getLoginUser(),request);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -903,7 +902,7 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/disproject/disProjectChangeEdit", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> disProjectChangeEdit(ProjectVo projectVo) {
-        projectService.disProjectChangeEdit(projectVo, getLoginUser());
+        projectService.disProjectChangeEdit(projectVo, getLoginUser(),request);
         return RestUtil.success();
     }
 

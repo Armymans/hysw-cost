@@ -217,7 +217,7 @@ public class VisaChangeController extends BaseController {
     @RequestMapping(value = "/visachange/addVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addVisa(VisaChangeVo visaChangeVo){
         System.err.println(visaChangeVo.getVisaChangeUp());
-        vcisService.addVisa(visaChangeVo,getLoginUser());
+        vcisService.addVisa(visaChangeVo,getLoginUser(),request);
 
 //        return null;
         return RestUtil.success();
@@ -268,13 +268,13 @@ public class VisaChangeController extends BaseController {
         if (visaChangeVo.getVisaChangeDown().getProportionContract().equals("NaN")){
             visaChangeVo.getVisaChangeDown().setProportionContract("0");
         }
-        vcisService.updateVisa(visaChangeVo,getLoginUser());
+        vcisService.updateVisa(visaChangeVo,getLoginUser(),request);
         return RestUtil.success();
     }
     //批量审核
     @RequestMapping(value = "/visachange/batchReview",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo){
-        vcisService.batchReview(batchReviewVo,getLoginUser());
+        vcisService.batchReview(batchReviewVo,getLoginUser(),request);
         return RestUtil.success();
     }
     //查询变更统计信息
@@ -347,7 +347,7 @@ public class VisaChangeController extends BaseController {
     //删除
     @RequestMapping(value = "/visachange/deleteVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteVisa(@RequestParam(name = "baseId") String baseId){
-        vcisService.deleteVisa(baseId);
+        vcisService.deleteVisa(baseId, getLoginUser(),request);
         return RestUtil.success();
     }
 

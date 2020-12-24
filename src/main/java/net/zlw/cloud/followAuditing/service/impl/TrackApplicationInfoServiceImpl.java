@@ -6,10 +6,11 @@ import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
-import net.zlw.cloud.designProject.mapper.AchievementsInfoMapper;
 import net.zlw.cloud.designProject.mapper.EmployeeAchievementsInfoMapper;
+import net.zlw.cloud.designProject.mapper.OperationLogDao;
 import net.zlw.cloud.designProject.mapper.OutSourceMapper;
 import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
+import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.followAuditing.mapper.DesignUnitManagementDao;
@@ -38,6 +39,7 @@ import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -77,6 +80,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     private DesignUnitManagementDao designUnitManagementDao;
     @Resource
     private CostUnitManagementMapper costUnitManagementMapper;
+    @Resource
+    private OperationLogDao operationLogDao;
+    @Resource
+    private MemberService memberService;
 
 
     @Resource
@@ -333,7 +340,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     }
 
     @Override
-    public void deleteById(String id) {
+    public void deleteById(String id,UserInfo loginUser , HttpServletRequest request) {
         TrackAuditInfo trackAuditInfo = new TrackAuditInfo();
         trackAuditInfo.setId(id);
         trackAuditInfo.setStatus("1");
@@ -354,10 +361,25 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 trackMonthlyDao.updateByPrimaryKeySelective(trackMonthly);
             }
         }
+        // 操作日志
+        String userId = loginUser.getId();
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("8"); //跟踪审计项目
+        operationLog.setContent(memberManage.getMemberName()+"删除了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+        operationLog.setDoObject(trackAuditInfo.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
     }
 
     @Override
-    public void batchReview(BatchReviewVo batchReviewVo, UserInfo userInfo) {
+    public void batchReview(BatchReviewVo batchReviewVo, UserInfo userInfo,HttpServletRequest request) {
         //获取当前用户id
         //todo userInfo.getId(); userInfo.getCompanyId();
         String userId = userInfo.getId();
@@ -485,6 +507,33 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
             }
         }
+        if ("1".equals(batchReviewVo.getAuditResult())) {
+            // 操作日志
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("8"); //跟踪审计项目
+            operationLog.setContent(memberManage.getMemberName()+"审核通过了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(trackAuditInfo.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
+        }else {
+            // 操作日志
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("8"); //跟踪审计项目
+            operationLog.setContent(baseProject.getProjectName()+"项目【"+baseProject.getId()+"】"+memberManage.getMemberName()+"审核未通过");
+            operationLog.setDoObject(trackAuditInfo.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
+        }
 //        String[] split = batchReviewVo.getBatchAll().split(",");
 //        if (split != null) {
 //            for (String s : split) {
@@ -539,7 +588,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     }
 
     @Override
-    public void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId) throws Exception {
+    public void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId, HttpServletRequest request) throws Exception {
         //todo userInfo.getCompanyId() userInfo.getId()
         String userInfoId = userInfo.getId();
 
@@ -595,6 +644,20 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
                 fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
             }
+            // 操作日志
+            String userId = userInfo.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("8"); //跟踪审计项目
+            operationLog.setContent(memberManage.getMemberName()+"新增保存了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(auditInfo.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         } else if ("1".equals(trackVo.getStatus())) {
 
             baseProject.setTrackStatus("1");
@@ -652,6 +715,20 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 auditInfo.setAuditorId(wjzjh);
             }
             auditInfoDao.insertSelective(auditInfo);
+
+            // 操作日志
+            String userId = userInfo.getId();
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("8"); //跟踪审计项目
+            operationLog.setContent(memberManage.getMemberName()+"新增提交了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(auditInfo.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
 
 
             //消息站内通知
@@ -1034,7 +1111,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     }
 
     @Override
-    public void updateTrack(TrackVo trackVo, UserInfo userInfo) throws Exception {
+    public void updateTrack(TrackVo trackVo, UserInfo userInfo,HttpServletRequest request) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String userInfoId = userInfo.getId();
 //        String userInfoId = "user320";
@@ -1049,6 +1126,21 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 trackVo.getAuditInfo().setOutsourceMoney(new BigDecimal(0));
             }
             trackAuditInfoDao.updateByPrimaryKeySelective(trackVo.getAuditInfo());
+            // 操作日志
+            String userId = userInfo.getId();
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackVo.getAuditInfo().getBaseProjectId());
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("8"); //跟踪审计项目
+            operationLog.setContent(memberManage.getMemberName()+"修改保存了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(trackVo.getAuditInfo().getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         } else if (trackVo.getStatus().equals("1")) {
             //如果是提交 将数据覆盖
             trackAuditInfoDao.updateByPrimaryKeySelective(trackVo.getAuditInfo());
@@ -1192,6 +1284,20 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 //                }
 //
 //            }
+            // 操作日志
+            String userId = userInfo.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("8"); //跟踪审计项目
+            operationLog.setContent(memberManage.getMemberName()+"修改提交了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(trackVo.getAuditInfo().getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }
 
         trackApplicationInfoDao.updateByPrimaryKeySelective(trackVo.getTrackApplicationInfo());

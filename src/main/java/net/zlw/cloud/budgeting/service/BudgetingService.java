@@ -7,16 +7,17 @@ import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface BudgetingService {
-    void addBudgeting(BudgetingVo budgetingVo,UserInfo loginUser);
+    void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser, HttpServletRequest request);
 
     BudgetingVo selectBudgetingById(String id, UserInfo loginUser);
 
-    void updateBudgeting(BudgetingVo budgetingVo,UserInfo loginUser);
+    void updateBudgeting(BudgetingVo budgetingVo,UserInfo loginUser,HttpServletRequest request);
 
-    void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser);
+    void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser,HttpServletRequest request);
 
     void intoAccount(String s, String ids);
 
@@ -32,7 +33,7 @@ public interface BudgetingService {
 
     List<DesignInfo> findDesignAll(PageBVo pageBVo);
 
-    void deleteBudgeting(String id);
+    void deleteBudgeting(String id,UserInfo loginUser,HttpServletRequest request);
 
     void deleteBudgetingFile(String id);
 

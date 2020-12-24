@@ -1,5 +1,6 @@
 package net.zlw.cloud.buildingProject.service;
 
+import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
 import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.buildingProject.mapper.BuildingProjectMapper;
@@ -8,22 +9,30 @@ import net.zlw.cloud.buildingProject.model.vo.BaseVo;
 import net.zlw.cloud.buildingProject.model.vo.PageBaseVo;
 import net.zlw.cloud.buildingProject.model.vo.ProVo;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
+import net.zlw.cloud.designProject.mapper.OperationLogDao;
 import net.zlw.cloud.designProject.model.AnhuiMoneyinfo;
 import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.WujiangMoneyInfo;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
+import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @Author Armyman
@@ -45,12 +54,20 @@ public class BuildingProjectService {
     private BaseProjectDao baseProjectDao;
 
     @Autowired
+    private MemberService memberService;
+
+    @Autowired
+    private OperationLogDao operationLogDao;
+
+    @Autowired
     private DesignInfoMapper designInfoMapper;
     @Autowired
     private VisaChangeMapper visaChangeMapper;
     @Autowired
     private ProgressPaymentInformationDao progressPaymentInformationDao;
 
+    @Resource
+    private MemberManageDao memberManageDao;
     /**
      * @Author Armyman
      * @Description //查询可被选为合并项目的建设项目
@@ -118,7 +135,7 @@ public class BuildingProjectService {
     }
 
     // 删除
-    public void deleteBuilding(String id) {
+    public void deleteBuilding(String id, UserInfo userInfo, HttpServletRequest request) {
         BuildingProject buildingProject = buildingProjectMapper.selectOneBuilding(id);
         //如果删除的项目存在已合并，提示 ‘已有关联项目，无法删除’
             if ("1".equals(buildingProject.getMergeFlag())){
@@ -126,6 +143,20 @@ public class BuildingProjectService {
             }else {
                 buildingProject.setDelFlag("1");
                 buildingProjectMapper.deleteBuilding(id);
+                // 操作日志
+                String userId = userInfo.getId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("1"); //建设项目
+                operationLog.setContent(memberManage.getMemberName()+"删除"+buildingProject.getBuildingProjectName()+"项目【"+buildingProject.getId()+"】");
+                operationLog.setDoObject(buildingProject.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
             }
     }
 

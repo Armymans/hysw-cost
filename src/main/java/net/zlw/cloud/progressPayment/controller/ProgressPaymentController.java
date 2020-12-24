@@ -36,7 +36,7 @@ public class ProgressPaymentController  extends BaseController {
     @RequestMapping(value = "/progress/addProgress",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addProgress(BaseProjectVo baseProject){
         try {
-            baseProjectService.addProgress(baseProject,getLoginUser());
+            baseProjectService.addProgress(baseProject,getLoginUser(),request);
         } catch (Exception e) {
             e.printStackTrace();
             return RestUtil.error(e.getMessage());
@@ -78,7 +78,7 @@ public class ProgressPaymentController  extends BaseController {
         try {
             UserInfo userInfo = getLoginUser();
 //            userInfo = new UserInfo("user309",null,null,true);
-            baseProjectService.updateProgress(baseProjectVo,userInfo);
+            baseProjectService.updateProgress(baseProjectVo,userInfo,request);
             return RestUtil.success("修改成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -182,13 +182,13 @@ public class ProgressPaymentController  extends BaseController {
     //删除进度款
     @RequestMapping(value = "/progress/deleteProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteProgress(@RequestParam(name = "id") String id){
-        baseProjectService.deleteProgress(id);
+        baseProjectService.deleteProgress(id,getLoginUser(),request);
         return RestUtil.success("删除成功");
     }
     //进度款批量审核
     @RequestMapping(value = "/progress/batchReview",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo){
-        baseProjectService.batchReview(batchReviewVo,getLoginUser());
+        baseProjectService.batchReview(batchReviewVo,getLoginUser(),request);
         return RestUtil.success("审核完毕");
     }
 //    @RequestMapping(value = "/progress/oneBatchReview",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)

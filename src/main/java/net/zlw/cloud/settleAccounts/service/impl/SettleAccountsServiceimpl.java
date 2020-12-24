@@ -8,9 +8,11 @@ import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.EmployeeAchievementsInfoMapper;
 import net.zlw.cloud.designProject.mapper.InComeMapper;
+import net.zlw.cloud.designProject.mapper.OperationLogDao;
 import net.zlw.cloud.designProject.mapper.OutSourceMapper;
 import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
 import net.zlw.cloud.designProject.model.InCome;
+import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
@@ -35,6 +37,7 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.DetailsVo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
@@ -47,6 +50,7 @@ import springfox.documentation.spring.web.json.Json;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -85,6 +89,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private FileInfoMapper fileInfoMapper;
     @Autowired
     private FileInfoService fileInfoService;
+    @Autowired
+    private MemberService memberService;
+
+    @Autowired
+    private OperationLogDao operationLogDao;
     @Autowired
     private OutSourceMapper outSourceMapper;
     @Autowired
@@ -381,7 +390,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     }
 
     @Override
-    public void deleteAcmcounts(String id) {
+    public void deleteAcmcounts(String id,UserInfo loginUser,HttpServletRequest request) {
 
         Example example = new Example(InvestigationOfTheAmount.class);
         Example.Criteria criteria = example.createCriteria();
@@ -399,6 +408,22 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         if (lastSettlementReview != null) {
             lastSettlementReview.setDelFlag("1");
             lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
+            // 操作日志
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(lastSettlementReview.getBaseProjectId());
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("6"); //结算项目
+            operationLog.setContent(memberManage.getMemberName()+"删除了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(lastSettlementReview.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
+
         }
         Example example2 = new Example(SettlementAuditInformation.class);
         Example.Criteria criteria2 = example2.createCriteria();
@@ -408,7 +433,23 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         if (settlementAuditInformation != null) {
             settlementAuditInformation.setDelFlag("1");
             settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+            // 操作日志
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(settlementAuditInformation.getBaseProjectId());
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("6"); //结算项目
+            operationLog.setContent(memberManage.getMemberName()+"删除了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(settlementAuditInformation.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }
+
     }
 
     @Override
@@ -630,7 +671,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     }
 
     @Override
-    public void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser) {
+    public void addAccount(BaseAccountsVo baseAccountsVo, UserInfo loginUser, HttpServletRequest request) {
 //        loginUser = new UserInfo("user320",null,null,true);
 
 
@@ -765,10 +806,50 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseProject.setSettleAccountsStatus("1");
             baseProject.setProjectFlow(baseProject.getProjectFlow()+",6");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("6"); //结算项目
+            operationLog.setContent(memberManage1.getMemberName()+"新增提交了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            if (baseAccountsVo.getSettlementAuditInformation() != null){
+                operationLog.setDoObject(baseAccountsVo.getSettlementAuditInformation().getId()); // 项目标识
+            } else if (baseAccountsVo.getLastSettlementReview() != null){
+                operationLog.setDoObject(baseAccountsVo.getLastSettlementReview().getId());
+            }else {
+                operationLog.setDoObject(baseAccountsVo.getSettlementAuditInformation().getId()+","+baseAccountsVo.getLastSettlementReview().getId()); // 项目标识
+            }
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         } else {
             baseProject.setSettleAccountsStatus("2");
             baseProject.setProjectFlow(baseProject.getProjectFlow()+",6");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("6"); //结算项目
+            operationLog.setContent(memberManage2.getMemberName()+"新增保存了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            if (baseAccountsVo.getSettlementAuditInformation() != null){
+                operationLog.setDoObject(baseAccountsVo.getSettlementAuditInformation().getId()); // 项目标识
+            } else if (baseAccountsVo.getLastSettlementReview() != null){
+                operationLog.setDoObject(baseAccountsVo.getLastSettlementReview().getId());
+            }else {
+                operationLog.setDoObject(baseAccountsVo.getSettlementAuditInformation().getId()+","+baseAccountsVo.getLastSettlementReview().getId()); // 项目标识
+            }
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }
 
         Example example = new Example(FileInfo.class);
@@ -1114,7 +1195,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
 
     @Override
-    public void updateAccountById(BaseAccountsVo baseAccountsVo,UserInfo loginUser) {
+    public void updateAccountById(BaseAccountsVo baseAccountsVo,UserInfo loginUser,HttpServletRequest request) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //上家审核修改
@@ -1187,23 +1268,23 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 }
             }
         }
-//        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
-//        if (otherInfos.size() > 0){
-//            for (OtherInfo thisInfo : otherInfos) {
-//                OtherInfo otherInfo1 = new OtherInfo();
-//                otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
-//                otherInfo1.setForeignKey(baseProject.getId());
-//                otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
-//                otherInfo1.setNum(thisInfo.getNum());
-//                otherInfo1.setCreateTime(data);
-//                otherInfo1.setStatus("0");
-//                otherInfo1.setFoundId(loginUser.getId());
-//                otherInfo1.setFounderCompany(loginUser.getCompanyId());
-//                otherInfoMapper.updateByPrimaryKeySelective(otherInfo1);
-//            }
-//        }
+
         //保存
         if (baseAccountsVo.getAuditNumber() == null || baseAccountsVo.getAuditNumber().equals("0")) {
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("6"); //结算项目
+            operationLog.setContent(memberManage.getMemberName()+"修改保存了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(baseAccountsVo.getLastSettlementReview().getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
             return;
             //一审
         } else if (baseAccountsVo.getAuditNumber().equals("1")) {
@@ -1251,6 +1332,20 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
         //如果提交审核 则发送消息
         if (baseAccountsVo.getAuditNumber().equals("1")) {
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage member = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("6"); //结算项目
+            operationLog.setContent(member.getMemberName()+"修改提交了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(baseAccountsVo.getLastSettlementReview().getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
             //根据上家结算送审外键找到关联预算的信息
             Example example1 = new Example(Budgeting.class);
             example1.createCriteria().andEqualTo("baseProjectId", baseProject.getId());
@@ -1359,7 +1454,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
 
     @Override
-    public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
+    public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser,HttpServletRequest request) {
         String id = loginUser.getId();
         String username = loginUser.getUsername();
         String[] split = batchReviewVo.getBatchAll().split(",");
@@ -1826,7 +1921,27 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         baseProjectDao.updateByPrimaryKeySelective(baseProject2);
                     }
                 }
-
+                // 操作日志
+                String userId = loginUser.getId();
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("6"); //结算算项目
+                operationLog.setContent(memberManage.getMemberName()+"审核通过了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+                if (lastSettlementReview != null){
+                    operationLog.setDoObject(lastSettlementReview.getId()); // 项目标识
+                }else if (settlementAuditInformation != null){
+                    operationLog.setDoObject(settlementAuditInformation.getId());
+                }else {
+                    operationLog.setDoObject(lastSettlementReview.getId()+","+settlementAuditInformation.getId());
+                }
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
 
             }else if(batchReviewVo.getAuditResult().equals("2")){
                 auditInfo.setAuditResult("2");
@@ -1837,6 +1952,27 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
                 baseProject.setSettleAccountsStatus("3");
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+                // 操作日志
+                String userId = loginUser.getId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("6"); //结算项目
+                operationLog.setContent(baseProject.getProjectName()+"项目【"+baseProject.getId()+"】"+memberManage.getMemberName()+"审核未通过");
+                if (lastSettlementReview != null){
+                    operationLog.setDoObject(lastSettlementReview.getId()); // 项目标识
+                }else if (settlementAuditInformation != null){
+                    operationLog.setDoObject(settlementAuditInformation.getId());
+                }else {
+                    operationLog.setDoObject(lastSettlementReview.getId()+","+settlementAuditInformation.getId());
+                }
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
 
                 //未通过发送消息
                 String projectName = baseProject.getProjectName();

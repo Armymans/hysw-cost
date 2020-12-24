@@ -80,7 +80,7 @@ public class BuildingProjectController extends BaseController {
     @RequestMapping(value = "/deleteBuilding",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteBuilding(String id){
         try {
-            buildingProjectService.deleteBuilding(id);
+            buildingProjectService.deleteBuilding(id,getLoginUser(),request);
         } catch (Exception e) {
 //            e.printStackTrace();
             return RestUtil.error(e.getMessage());

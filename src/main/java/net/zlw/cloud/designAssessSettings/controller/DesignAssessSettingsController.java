@@ -1,11 +1,14 @@
 package net.zlw.cloud.designAssessSettings.controller;
 
+import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.RestUtil;
-import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.designAssessSettings.model.AssessmentDesign;
 import net.zlw.cloud.designAssessSettings.service.DesignAssessSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -17,7 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/assessmentDesign")
-public class DesignAssessSettingsController {
+public class DesignAssessSettingsController extends BaseController {
 
 
     @Autowired
@@ -44,7 +47,7 @@ public class DesignAssessSettingsController {
     @PostMapping("/update")
 //    @RequestMapping(value = "/update",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> update(AssessmentDesign assessmentDesign){
-        designAssessSettingsService.update(assessmentDesign);
+        designAssessSettingsService.update(assessmentDesign,getLoginUser(),request);
         return RestUtil.success("修改成功");
     }
 

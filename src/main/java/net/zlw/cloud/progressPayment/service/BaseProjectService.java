@@ -10,24 +10,26 @@ import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.progressPayment.model.vo.*;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface BaseProjectService {
 
-    void addProgress(BaseProjectVo baseProject, UserInfo loginUser);
+    void addProgress(BaseProjectVo baseProject, UserInfo loginUser, HttpServletRequest request);
 
     BaseProjectVo seachProgressById(String id, UserInfo userInfo, String visaNum);
 
     BaseProjectVo editProgressById(String id, UserInfo userInfo, String visaNum);
 
-    void updateProgress(BaseProjectVo baseProjectVo ,UserInfo loginUser);
+    void updateProgress(BaseProjectVo baseProjectVo ,UserInfo loginUser,HttpServletRequest request);
+
     void updateProgressPayment(BaseProjectVo baseProjectVo);
 
     List<BaseProject> findBaseProject(String name);
 
     List<BaseProject> findAllBaseProject(pageVo pageVo);
 
-    void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser);
+    void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser,HttpServletRequest request);
 
     BaseProject findById(String id);
 
@@ -36,7 +38,7 @@ public interface BaseProjectService {
     PageInfo<ProgressListVo> searchAllProgress(PageVo pageVo);
 //    PageInfo<ProgressListVo> searchAllProgressList(PageVo pageVo);
 
-    void deleteProgress(String id);
+    void deleteProgress(String id,UserInfo loginUser,HttpServletRequest request);
 
     List<VisaBaseProjectVo> selectByBaseProjectId(VisaBaseProjectVo visaBaseProjectVo);
 

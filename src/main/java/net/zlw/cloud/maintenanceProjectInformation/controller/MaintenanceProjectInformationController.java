@@ -132,7 +132,7 @@ public class MaintenanceProjectInformationController extends BaseController {
      */
     @RequestMapping(value = "/maintenanceProjectInformation/deleteMaintenanceProjectInformation", method = {RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> deleteMaintenanceProjectInformationController(@RequestParam(name = "id") String id) {
-        maintenanceProjectInformationService.deleteMaintenanceProjectInformation(id);
+        maintenanceProjectInformationService.deleteMaintenanceProjectInformation(id,getLoginUser(),request);
         return RestUtil.success("删除成功");
     }
 
@@ -150,7 +150,7 @@ public class MaintenanceProjectInformationController extends BaseController {
             for (String s : split) {
                 if (StringUtil.isNotEmpty(s)) {
                     batchReviewVo.setBatchAll(s);
-                    maintenanceProjectInformationService.batchReview(batchReviewVo,getLoginUser());
+                    maintenanceProjectInformationService.batchReview(batchReviewVo,getLoginUser(),request);
                 }
             }
         }else{
@@ -169,7 +169,7 @@ public class MaintenanceProjectInformationController extends BaseController {
     public Map<String, Object> addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
 //        UserInfo loginUser = getLoginUser();
 //        System.out.println("user:"+loginUser);
-        maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser());
+        maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser(),request);
         return RestUtil.success("新增提交成功");
     }
 
@@ -209,7 +209,7 @@ public class MaintenanceProjectInformationController extends BaseController {
     @RequestMapping(value = "/maintenanceProjectInformation/saveMaintenanceProjectInformation", method = {RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> saveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
 //        UserInfo loginUser = getLoginUser();
-        maintenanceProjectInformationService.saveMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser());
+        maintenanceProjectInformationService.saveMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser(),request);
 
         return RestUtil.success("保存成功");
     }
@@ -223,7 +223,7 @@ public class MaintenanceProjectInformationController extends BaseController {
     public Map<String, Object> updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
         UserInfo loginUser = getLoginUser();
         System.out.println("user:" + loginUser);
-        maintenanceProjectInformationService.updateMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser());
+        maintenanceProjectInformationService.updateMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser(),request);
         return RestUtil.success("编辑成功");
     }
 
@@ -232,7 +232,7 @@ public class MaintenanceProjectInformationController extends BaseController {
     public Map<String, Object> updateSaveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
         UserInfo loginUser = getLoginUser();
         System.out.println("user:" + loginUser);
-        maintenanceProjectInformationService.updateSaveMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser());
+        maintenanceProjectInformationService.updateSaveMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser(),request);
         return RestUtil.success("编辑成功");
     }
 

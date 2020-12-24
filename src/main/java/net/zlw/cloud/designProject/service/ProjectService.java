@@ -28,6 +28,7 @@ import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -109,6 +111,12 @@ public class ProjectService {
 
     @Resource
     private BuildingProjectMapper buildingProjectMapper;
+
+    @Resource
+    private MemberService memberService;
+
+    @Resource
+    private OperationLogDao operationLogDao;
 
     @Resource
     private FileInfoMapper fileInfoMapper;
@@ -1237,7 +1245,7 @@ public class ProjectService {
      * @param id
      * @param auditInfo
      */
-    public void batchAudit(String id, AuditInfo auditInfo, UserInfo loginUser) {
+    public void batchAudit(String id, AuditInfo auditInfo, UserInfo loginUser,HttpServletRequest request) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String createTime = simpleDateFormat.format(new Date());
         //当前登录id
@@ -1661,6 +1669,41 @@ public class ProjectService {
                 }
             }
         }
+
+        // 操作日志
+        if (memberManage != null){
+            // 如果未通过
+            if ("1".equals(auditInfo.getAuditResult())){
+                // 操作日志
+                String userId = loginUser.getId();
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("2"); //设计项目
+                operationLog.setContent(memberManage.getMemberName()+"审核通过了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+                operationLog.setDoObject(designInfo.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
+            }else {
+                // 操作日志
+                String userId = loginUser.getId();
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("2"); //设计项目
+                operationLog.setContent(baseProject.getProjectName()+"项目【"+baseProject.getId()+"】"+memberManage.getMemberName()+"审核未通过");
+                operationLog.setDoObject(designInfo.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
+            }
+        }
+
         //消息通知
         String username = loginUser.getUsername();
         String projectName = baseProject.getProjectName();
@@ -1793,11 +1836,28 @@ public class ProjectService {
      *
      * @param id
      */
-    public void deleteProject(String id) {
+    public void deleteProject(String id,UserInfo loginUser,HttpServletRequest request) {
         designInfoMapper.deleteProject(id);
         designChangeInfoMapper.deleteProject(id);
         DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
         projectMapper.deleteProject(designInfo.getBaseProjectId());
+        // 操作日志
+        BaseProject baseProject = projectMapper.selectByPrimaryKey(designInfo.getBaseProjectId());
+        String userId = loginUser.getId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("2"); //设计项目
+        if (baseProject != null){
+            operationLog.setContent(memberManage.getMemberName()+"删除了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+        }
+        operationLog.setDoObject(designInfo.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
     }
 
 
@@ -1812,7 +1872,7 @@ public class ProjectService {
      *
      * @param projectVo
      */
-    public void disProjectSubmit(ProjectVo projectVo, UserInfo loginUser) {
+    public void disProjectSubmit(ProjectVo projectVo, UserInfo loginUser,HttpServletRequest request) {
         List<BaseProject> list = projectMapper.duplicateChecking(projectVo.getBaseProject());
         if (list != null && list.size() != 0) {
             throw new RuntimeException("项目编号或项目名称重复");
@@ -1958,6 +2018,42 @@ public class ProjectService {
             fileInfo.setPlatCode(DesignInfouuid);
             fileInfoMapper.updateByPrimaryKeySelective(fileInfo);
         }
+        // 操作日志
+        // 如果是保存
+        if (projectVo.getBaseProject().getReviewerId() == null || "".equals(projectVo.getBaseProject().getReviewerId())) {
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(loginUser.getId());
+            String projectName = projectVo.getBaseProject().getProjectName();
+            String bid = projectVo.getBaseProject().getId();
+            String id = projectVo.getDesignInfo().getId();
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+            operationLog.setName(loginUser.getId());
+            operationLog.setType("2"); //设计项目
+            operationLog.setContent(memberManage.getMemberName() + "新增保存了" + projectName + "项目【" + bid + "】");
+            operationLog.setDoObject(id); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
+            //如果是新增
+        } else {
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(loginUser.getId());
+            String projectName = projectVo.getBaseProject().getProjectName();
+            String bid = projectVo.getBaseProject().getId();
+            String id = projectVo.getDesignInfo().getId();
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+            operationLog.setName(loginUser.getId());
+            operationLog.setType("2"); //设计项目
+            operationLog.setContent(memberManage.getMemberName() + "新增保存了" + projectName + "项目【" + bid + "】");
+            operationLog.setDoObject(id); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
+        }
 
     }
 
@@ -2074,7 +2170,7 @@ public class ProjectService {
      *
      * @param projectVo
      */
-    public void projectEdit(ProjectVo projectVo, UserInfo loginUser) {
+    public void projectEdit(ProjectVo projectVo, UserInfo loginUser,HttpServletRequest request) {
         List<BaseProject> list = projectMapper.duplicateCheckingByUpdate(projectVo.getBaseProject());
         if (list != null && list.size() != 0) {
 
@@ -2086,8 +2182,12 @@ public class ProjectService {
         //去空格
         designerExample.createCriteria().andEqualTo("memberName", designer.trim());
         List<MemberManage> memberManages = memberManageDao.selectByExample(designerExample);
-
-
+        // 项目名称
+        String projectName = projectVo.getBaseProject().getProjectName();
+        // 项目id
+        String pid = projectVo.getBaseProject().getId();
+        // 设计id
+        String id = projectVo.getDesignInfo().getId();
         //方便测试
         //todo loginUser.getId(); loginUser.getCompanyId();
         String loginUserId = loginUser.getId();
@@ -2141,9 +2241,38 @@ public class ProjectService {
                     projectVo.getBaseProject().setDesginStatus("1");
                 }
             }
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("2"); //设计项目
+            operationLog.setContent(memberManage.getMemberName()+"修改提交了"+projectName+"项目【"+pid+"】");
+            operationLog.setDoObject(id); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         } else {
 //            projectVo.getBaseProject().setDesginStatus("2");
+            // 保存
+            // 操作日志
 
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("2"); //设计项目
+            operationLog.setContent(memberManage.getMemberName()+"修改保存了"+projectName+"项目【"+pid+"】");
+            operationLog.setDoObject(id); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }
 
         //添加修改时间
@@ -2708,7 +2837,7 @@ public class ProjectService {
      *
      * @param projectVo
      */
-    public void disProjectChangeEdit(ProjectVo projectVo, UserInfo loginUser) {
+    public void disProjectChangeEdit(ProjectVo projectVo, UserInfo loginUser,HttpServletRequest request) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updateTime = simpleDateFormat.format(new Date());
         //todo loginUser.getId(); loginUser.getCompanyId();
@@ -2719,7 +2848,12 @@ public class ProjectService {
         Example.Criteria changec = change.createCriteria();
         changec.andEqualTo("designInfoId", projectVo.getDesignInfo().getId());
         changec.andEqualTo("status", "0");
-
+        // 设计id
+        String desId = projectVo.getDesignInfo().getId();
+        // 项目id
+        String pid = projectVo.getBaseProject().getId();
+        //项目名称
+        String projectName = projectVo.getBaseProject().getProjectName();
         //如果按钮状态为1 说明点击的是提交
         if ("1".equals(projectVo.getBaseProject().getOrsubmit())) {
             //如果提交人为空 为空说明是未通过
@@ -2771,9 +2905,39 @@ public class ProjectService {
                     designChangeInfoMapper.updateByPrimaryKeySelective(designChangeInfo);
                 }
             }
+            // 如果是提交
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("2"); //设计项目
+            operationLog.setContent(memberManage.getMemberName()+"提交了一个"+projectName+"变更项目【"+pid+"】");
+            operationLog.setDoObject(desId); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         } else {
             //如果不为1 则为保存 状态依旧是出图中
             projectVo.getBaseProject().setDesginStatus("3");
+            // 操作日志
+            // 保存
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("2"); //设计项目
+            operationLog.setContent(memberManage.getMemberName()+"新增了"+projectName+"项目【"+pid+"】");
+            operationLog.setDoObject(desId); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }
         //添加设计变更信息
         packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
@@ -3502,7 +3666,7 @@ public class ProjectService {
         return total;
     }
 
-    public String buildSubmit(BuildingProject buildingProject) throws Exception {
+    public String buildSubmit(BuildingProject buildingProject,UserInfo userInfo, HttpServletRequest request) throws Exception {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         List<BuildingProject> nameAndCode = buildingProjectMapper.findNameAndCode(buildingProject.getBuildingProjectName(), buildingProject.getBuildingProjectCode());
         //判断如果decimal类型如果为空就设置为0
@@ -3518,6 +3682,21 @@ public class ProjectService {
             buildingProject.setMergeFlag("2");
             buildingProject.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             buildingProjectMapper.insertSelective(buildingProject);
+            // 操作日志
+            String id = userInfo.getId();
+//            String id = "200101005";
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(id);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(id);
+            operationLog.setType("1"); //建设项目
+            operationLog.setContent(memberManage.getMemberName()+"新增了"+buildingProject.getBuildingProjectName()+"项目【"+uuid+"】");
+            operationLog.setDoObject(uuid); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }
 
         return uuid;

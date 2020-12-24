@@ -6,7 +6,9 @@ import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.SurveyInformationDao;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.designProject.mapper.OperationLogDao;
 import net.zlw.cloud.designProject.mapper.OutSourceMapper;
+import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.MaintenanceProjectInformationMapper;
@@ -28,6 +30,7 @@ import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang.StringUtils;
@@ -39,6 +42,7 @@ import springfox.documentation.spring.web.json.Json;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,8 +59,6 @@ import java.util.UUID;
 @Service
 @Transactional
 public class MaintenanceProjectInformationService {
-    Date date = new Date();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm");
 
     @Resource
     private MaintenanceProjectInformationMapper maintenanceProjectInformationMapper;
@@ -70,6 +72,11 @@ public class MaintenanceProjectInformationService {
     @Resource
     private MemberManageDao memberManageDao;
 
+    @Resource
+    private MemberService memberService;
+
+    @Resource
+    private OperationLogDao operationLogDao;
 
     @Resource
     private SurveyInformationDao surveyInformationDao;
@@ -351,8 +358,23 @@ public class MaintenanceProjectInformationService {
      *
      * @param id
      */
-    public void deleteMaintenanceProjectInformation(String id) {
+    public void deleteMaintenanceProjectInformation(String id,UserInfo userInfo,HttpServletRequest request) {
         maintenanceProjectInformationMapper.deleteMaintenanceProjectInformation(id);
+        MaintenanceProjectInformation mainInfo = maintenanceProjectInformationMapper.selectByPrimaryKey(id);
+        // 操作日志
+        String userId = userInfo.getId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("7"); //检维修项目
+        operationLog.setContent(memberManage.getMemberName()+"删除了"+mainInfo.getMaintenanceItemName()+"项目【"+mainInfo.getId()+"】");
+        operationLog.setDoObject(mainInfo.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
     }
 
 
@@ -362,7 +384,7 @@ public class MaintenanceProjectInformationService {
      * @param maintenanceProjectInformation
      * @param userInfo
      */
-    public void addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo) {
+    public void addMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo,HttpServletRequest request) {
 
         if ("".equals(maintenanceProjectInformation.getPreparePeople())){
             maintenanceProjectInformation.setPreparePeople(userInfo.getId());
@@ -603,6 +625,20 @@ public class MaintenanceProjectInformationService {
             messageVo.setDetails(name+"您好！【"+userInfo.getUsername()+"】提交的【"+maintenanceItemName+"】项目已通过，请查看详情!");
             messageService.sendOrClose(messageVo);
         }
+        // 操作日志
+        String userId = userInfo.getId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("7"); //检维修项目
+        operationLog.setContent(memberManage.getMemberName()+"新增提交了了"+maintenanceProjectInformation.getMaintenanceItemName()+"项目【"+maintenanceProjectInformation.getId()+"】");
+        operationLog.setDoObject(maintenanceProjectInformation.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
 
         // 其他信息
         //其他信息表
@@ -731,7 +767,7 @@ public class MaintenanceProjectInformationService {
      *
      * @param batchReviewVo
      */
-    public void batchReview(BatchReviewVo batchReviewVo,UserInfo userInfo) {
+    public void batchReview(BatchReviewVo batchReviewVo,UserInfo userInfo,HttpServletRequest request) {
         //todo userInfo.getId(); userInfo.getUsername(); userInfo.getCompanyId();
         String id = userInfo.getId();
         String username = userInfo.getUsername();
@@ -906,6 +942,20 @@ public class MaintenanceProjectInformationService {
         }
 
         if(batchReviewVo.getAuditResult().equals("1")){
+            // 操作日志
+            String userId = userInfo.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("7"); //检维修项目
+            operationLog.setContent(memberManage.getMemberName()+"审核通过了"+maintenanceProjectInformation.getMaintenanceItemName()+"项目【"+maintenanceProjectInformation.getId()+"】");
+            operationLog.setDoObject(maintenanceProjectInformation.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
             //通过发消息
             String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
             //检维修名字
@@ -918,6 +968,20 @@ public class MaintenanceProjectInformationService {
             messageVo.setDetails(name+"您好！【"+username+"】提交的【"+maintenanceItemName+"】项目已通过，请查看详情!");
             messageService.sendOrClose(messageVo);
         }else if(batchReviewVo.getAuditResult().equals("2")){
+            // 操作日志
+            String userId = userInfo.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("7"); //检维修项目
+            operationLog.setContent(maintenanceProjectInformation.getMaintenanceItemName()+"项目【"+maintenanceProjectInformation.getId()+"】"+memberManage.getMemberName()+"审核未通过");
+            operationLog.setDoObject(maintenanceProjectInformation.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
             //未通过发消息
             String maintenanceItemName = maintenanceProjectInformation.getMaintenanceItemName();
             //检维修名字
@@ -1012,7 +1076,7 @@ public class MaintenanceProjectInformationService {
      * @param maintenanceProjectInformationVo
      * @param userInfo
      */
-    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo, UserInfo userInfo) {
+    public void updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo, UserInfo userInfo,HttpServletRequest request) {
 
         //修改时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -1233,6 +1297,20 @@ public class MaintenanceProjectInformationService {
         investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
 
 
+        // 操作日志
+        String userId = userInfo.getId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("7"); //检维修项目
+        operationLog.setContent(memberManage.getMemberName()+"修改提交了"+maintenanceProjectInformation.getMaintenanceItemName()+"项目【"+maintenanceProjectInformation.getId()+"】");
+        operationLog.setDoObject(maintenanceProjectInformation.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
         //新审核判断
 
         Example example2 = new Example(AuditInfo.class);
@@ -1510,7 +1588,7 @@ public class MaintenanceProjectInformationService {
     /**
      * 新增--保存
      */
-    public void saveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo) {
+    public void saveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo, HttpServletRequest request) {
 
         if ("".equals(maintenanceProjectInformation.getPreparePeople2())){
             maintenanceProjectInformation.setPreparePeople2(userInfo.getId());
@@ -1720,6 +1798,20 @@ public class MaintenanceProjectInformationService {
                 }
             }
         }
+        // 操作日志
+        String userId = userInfo.getId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("7"); //检维修项目
+        operationLog.setContent(memberManage.getMemberName()+"新增保存了"+maintenanceProjectInformation.getMaintenanceItemName()+"项目【"+maintenanceProjectInformation.getId()+"】");
+        operationLog.setDoObject(maintenanceProjectInformation.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
 
         // type
         List<FileInfo> byFreignAndType = fileInfoMapper.findByFreignAndType(maintenanceProjectInformation.getKey(), maintenanceProjectInformation.getType());
@@ -1817,7 +1909,7 @@ public class MaintenanceProjectInformationService {
     /**
      * 编辑--保存
      */
-    public void updateSaveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo) {
+    public void updateSaveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo,HttpServletRequest request) {
 
         //修改时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -2009,6 +2101,20 @@ public class MaintenanceProjectInformationService {
         }
 
         investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
+        // 操作日志
+        String userId = userInfo.getId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("7"); //检维修项目
+        operationLog.setContent(memberManage.getMemberName()+"修改保存了"+maintenanceProjectInformation.getMaintenanceItemName()+"项目【"+maintenanceProjectInformation.getId()+"】");
+        operationLog.setDoObject(maintenanceProjectInformation.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
         // json转换
         Json coms = maintenanceProjectInformation.getComs();
         String json = coms.value();

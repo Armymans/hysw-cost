@@ -1,5 +1,6 @@
 package net.zlw.cloud.costAssessmentDesign.controller;
 
+import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.costAssessmentDesign.model.CostAssessmentDesing;
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/costAssessmentDesing")
-public class CostAssessmentDesignController {
+public class CostAssessmentDesignController extends BaseController {
 
     @Resource
     private CostAssessmentDesignService costAssessmentDesignService;
@@ -45,7 +46,7 @@ public class CostAssessmentDesignController {
      **/
     @PostMapping("/update")
     public Map<String,Object> update(AssessmentDesign assessmentDesign){
-        costAssessmentDesignService.update(assessmentDesign);
+        costAssessmentDesignService.update(assessmentDesign,getLoginUser(),request);
         return RestUtil.success("操作成功");
     }
 

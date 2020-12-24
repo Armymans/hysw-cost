@@ -12,7 +12,9 @@ import net.zlw.cloud.VisaChange.model.vo.VisaChangeStatisticVo;
 import net.zlw.cloud.VisaChange.model.vo.VisaChangeVo;
 import net.zlw.cloud.VisaChange.service.VisaChangeService;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
+import net.zlw.cloud.designProject.mapper.OperationLogDao;
 import net.zlw.cloud.designProject.mapper.OutSourceMapper;
+import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
@@ -29,6 +31,7 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,6 +62,12 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Resource
     private AuditInfoDao auditInfoDao;
+
+    @Resource
+    private MemberService memberService;
+
+    @Resource
+    private OperationLogDao operationLogDao;
 
     @Resource
     private MemberManageDao memberManageDao;
@@ -1125,7 +1135,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     }
 
     @Override
-    public void addVisa(VisaChangeVo visaChangeVo, UserInfo loginUser) {
+    public void addVisa(VisaChangeVo visaChangeVo, UserInfo loginUser, HttpServletRequest request) {
         String id = loginUser.getId();
 //        String id = "user309";
         String username = loginUser.getUsername();
@@ -1266,6 +1276,29 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 fileInfoService.updateFileName2(fileInfo.getId(),visaChangeDown.getId());
             }
             baseProjectDao.updateByPrimaryKeySelective(baseProject1);
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("5"); //签证变更项目
+            operationLog.setContent(memberManage.getMemberName()+"新增了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            // 如果上下家都有就存两家，如果只有一家就只存一家
+            if (visaChangeUp != null && visaChangeDown != null){
+                String upId = visaChangeUp.getId();
+                String downId = visaChangeDown.getId();
+                operationLog.setDoObject(upId+","+downId); // 项目标识
+            }else if (visaChangeUp != null){
+                operationLog.setDoObject(visaChangeUp.getId()); // 项目标识
+            }else if (visaChangeDown != null){
+                operationLog.setDoObject(visaChangeDown.getId()); // 项目标识
+            }
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
 
             //2B只允许存在下家
         } else if (baseProject.getAB().equals("2")) {
@@ -1356,6 +1389,20 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     fileInfoService.updateFileName2(fileInfo.getId(),visaChangeDown.getId());
 
             }
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("5"); //签证变更项目
+            operationLog.setContent(memberManage.getMemberName()+"编辑了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(visaChangeDown.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
             baseProjectDao.updateByPrimaryKeySelective(baseProject1);
         }
 
@@ -1466,7 +1513,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     }
 
     @Override
-    public void batchReview(BatchReviewVo batchReviewVo, UserInfo loginUser) {
+    public void batchReview(BatchReviewVo batchReviewVo, UserInfo loginUser,HttpServletRequest request) {
 
         SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -1684,6 +1731,21 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
 
                 }
+                // 操作日志
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+                String userId = loginUser.getId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("5"); //签证变更项目
+                operationLog.setContent(memberManage.getMemberName()+"审核通过了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+                operationLog.setDoObject(visaChange.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
             } else if (batchReviewVo.getAuditResult().equals("2")) {
                 auditInfo.setAuditResult("2");
                 auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
@@ -1709,6 +1771,20 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 messageVo1.setDetails(username + "您好！您所提交的【" + projectName + "】的签证/变更项目【" + name + "】审批未通过，请查看详情！");
                 //调用消息Service
                 messageService.sendOrClose(messageVo1);
+                // 操作日志
+                String userId = loginUser.getId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("5"); //签证变更项目
+                operationLog.setContent(baseProject.getProjectName()+"项目【"+baseProject.getId()+"】"+memberManage.getMemberName()+"审核未通过");
+                operationLog.setDoObject(visaChange.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
             }
         }
     }
@@ -1836,7 +1912,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     }
 
     @Override
-    public void deleteVisa(String baseId) {
+    public void deleteVisa(String baseId,UserInfo loginUser,HttpServletRequest request) {
         Example example = new Example(VisaApplyChangeInformation.class);
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("baseProjectId", baseId);
@@ -1852,7 +1928,23 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         for (VisaChange visaChange : visaChanges) {
             visaChange.setState("1");
             visaChangeMapper.updateByPrimaryKey(visaChange);
+            // 操作日志
+            String userId = loginUser.getId();
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("5"); //进度款项目
+            operationLog.setContent(memberManage.getMemberName()+"删除了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(visaChange.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }
+
     }
 
     @Override
@@ -1906,7 +1998,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     }
 
     @Override
-    public void updateVisa(VisaChangeVo visaChangeVo, UserInfo loginUser) {
+    public void updateVisa(VisaChangeVo visaChangeVo, UserInfo loginUser,HttpServletRequest request) {
         String id = loginUser.getId();
 //        String id = "user309";
         //进行中编辑
@@ -2412,6 +2504,30 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 messageService.sendOrClose(messageVo);
             }
         }
+        // 操作日志
+        String userId = loginUser.getId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("5"); //签证变更项目
+        operationLog.setContent(memberManage.getMemberName()+"新增了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+        // 如果上下家都有就存两家，如果只有一家就只存一家
+        if (visaChangeVo.getVisaChangeUp() != null && visaChangeVo.getVisaChangeDown() != null){
+            String upId = visaChangeVo.getVisaChangeUp().getId();
+            String downId = visaChangeVo.getVisaChangeDown().getId();
+            operationLog.setDoObject(upId+","+downId); // 项目标识
+        }else if (visaChangeVo.getVisaChangeUp() != null){
+            operationLog.setDoObject(visaChangeVo.getVisaChangeUp().getId()); // 项目标识
+        }else if (visaChangeVo.getVisaChangeDown() != null){
+            operationLog.setDoObject(visaChangeVo.getVisaChangeDown().getId()); // 项目标识
+        }
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
         if (visaChangeVo.getAuditNumber() != null && !visaChangeVo.getAuditNumber().equals("")){
 
 

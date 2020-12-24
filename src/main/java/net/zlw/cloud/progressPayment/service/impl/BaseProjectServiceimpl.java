@@ -6,8 +6,10 @@ import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.util.DateUtil;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.BudgetingMapper;
+import net.zlw.cloud.designProject.mapper.OperationLogDao;
 import net.zlw.cloud.designProject.mapper.OutSourceMapper;
 import net.zlw.cloud.designProject.model.Budgeting;
+import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.index.model.vo.pageVo;
@@ -24,6 +26,7 @@ import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.statisticalAnalysis.model.vo.NumberVo;
 import net.zlw.cloud.warningDetails.model.DetailsVo;
@@ -36,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -81,6 +85,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     private CostUnitManagementMapper costUnitManagementMapper;
 
     @Resource
+    private MemberService memberService;
+
+    @Resource
+    private OperationLogDao operationLogDao;
+
+    @Resource
     private WarningDetailsService warningDetailsService;
 
     @Value("${audit.wujiang.sheji.designHead}")
@@ -108,7 +118,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
      * @param loginUser
      */
     @Override
-    public void addProgress(BaseProjectVo baseProject, UserInfo loginUser) {
+    public void addProgress(BaseProjectVo baseProject, UserInfo loginUser, HttpServletRequest request) {
 
 //        if (baseProject.getAmountOutsourcing().equaupdateProgressls("")){
 //            baseProject.setAmountOutsourcing(null);
@@ -187,10 +197,38 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 messageVo4.setDetails(loginUser.getUsername() + "您好！您提交的【" + baseProject.getProjectName() + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
                 //调用消息Service
                 messageService.sendOrClose(messageVo4);
+                // 操作日志
+                String userId = loginUser.getId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("4"); //进度款
+                operationLog.setContent(memberManage.getMemberName()+"新增提交了了"+project.getProjectName()+"项目【"+project.getId()+"】");
+                operationLog.setDoObject(paymentInformation.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
             } else {
                 project.setProgressPaymentStatus("2");
                 project.setProjectFlow(project.getProjectFlow() + ",4");
                 baseProjectDao.updateByPrimaryKeySelective(project);
+                // 操作日志
+                String userId = loginUser.getId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("4"); //进度款
+                operationLog.setContent(memberManage.getMemberName()+"新增保存了"+project.getProjectName()+"项目【"+project.getId()+"】");
+                operationLog.setDoObject(paymentInformation.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
             }
             progressPaymentInformationDao.insertSelective(paymentInformation);
 
@@ -652,15 +690,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     //修改进度款
     @Override
-    public void updateProgress(BaseProjectVo baseProject, UserInfo loginUser) {
+    public void updateProgress(BaseProjectVo baseProject, UserInfo loginUser,HttpServletRequest request) {
 //        loginUser = new UserInfo("user309",null,null,true);
 
         if ("".equals(baseProject.getAmountOutsourcing()) || baseProject.getAmountOutsourcing() == null){
             baseProject.setAmountOutsourcing(null);
         }
-
-
-
 
         //项目基本信息
         Example example2 = new Example(BaseProject.class);
@@ -876,6 +911,39 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 project.setProgressPaymentStatus("2");;
                 baseProjectDao.updateByPrimaryKeySelective(project);
                 return;
+            }
+            // 提交
+            if (baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")) {
+                // 操作日志
+                String userId = loginUser.getId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("4"); //进度款项目
+                operationLog.setContent(memberManage.getMemberName()+"编辑提交了"+project.getProjectName()+"项目【"+project.getId()+"】");
+                operationLog.setDoObject(paymentInformation.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
+                // 保存
+            }else {
+                // 操作日志
+                String userId = loginUser.getId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("4"); //进度款项目
+                operationLog.setContent(memberManage.getMemberName()+"编辑保存了"+project.getProjectName()+"项目【"+project.getId()+"】");
+                operationLog.setDoObject(paymentInformation.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
             }
 
             information.setRemarkes(baseProject.getRemarkes());
@@ -1127,7 +1195,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
 
     @Override
-    public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
+    public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser,HttpServletRequest request) {
 //        loginUser = new UserInfo("user320",null,null,true);
         //id
         String id = loginUser.getId();
@@ -1322,6 +1390,20 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 //                messageVo.setDetails(username+"您好！您提交的【"+projectName+"】的进度款支付项目【"+name+"】已审批通过！");
 //                messageService.sendOrClose(messageVo);
 //
+                // 操作日志
+                String userId = loginUser.getId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("4"); //进度款项目
+                operationLog.setContent(memberManage.getMemberName()+"审核通过了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+                operationLog.setDoObject(progressPaymentInformation.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
             } else if (batchReviewVo.getAuditResult().equals("2")) {
                 auditInfo.setAuditResult("2");
                 auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
@@ -1331,6 +1413,20 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 baseProject.setProgressPaymentStatus("3");
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                // 操作日志
+                String userId = loginUser.getId();
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                operationLog.setName(userId);
+                operationLog.setType("4"); //进度款项目
+                operationLog.setContent(baseProject.getProjectName()+"项目【"+baseProject.getId()+"】"+memberManage.getMemberName()+"审核未通过");
+                operationLog.setDoObject(progressPaymentInformation.getId()); // 项目标识
+                operationLog.setStatus("0");
+                operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
 //                //成员姓名
 //                String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
 //                //如果不通过发送消息
@@ -1867,7 +1963,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
 
     @Override
-    public void deleteProgress(String id) {
+    public void deleteProgress(String id,UserInfo loginUser,HttpServletRequest request) {
         ProgressPaymentInformation progressPaymentInformation = new ProgressPaymentInformation();
         progressPaymentInformation.setDelFlag("1");
         progressPaymentInformation.setId(id);
@@ -1888,6 +1984,23 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         Example example2 = new Example(AuditInfo.class);
         example2.createCriteria().andEqualTo("baseProjectId", id);
         auditInfoDao.deleteByExample(example2);
+        // 操作日志
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(progressPaymentInformation.getBaseProjectId());
+        String userId = loginUser.getId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("4"); //进度款项目
+        if (baseProject != null){
+            operationLog.setContent(memberManage.getMemberName()+"删除了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+        }
+        operationLog.setDoObject(progressPaymentInformation.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
     }
 
     /***

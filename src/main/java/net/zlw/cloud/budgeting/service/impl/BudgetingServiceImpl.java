@@ -14,10 +14,7 @@ import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
 import net.zlw.cloud.designProject.mapper.*;
-import net.zlw.cloud.designProject.model.DesignInfo;
-import net.zlw.cloud.designProject.model.EmployeeAchievementsInfo;
-import net.zlw.cloud.designProject.model.InCome;
-import net.zlw.cloud.designProject.model.OutSource;
+import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
@@ -43,6 +40,7 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +50,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,6 +77,8 @@ public class BudgetingServiceImpl implements BudgetingService {
     @Resource
     private VeryEstablishmentDao veryEstablishmentDao;
     @Resource
+    private MemberService memberService;
+    @Resource
     private AuditInfoDao auditInfoDao;
     @Resource
     private MemberManageDao memberManageDao;
@@ -93,6 +94,9 @@ public class BudgetingServiceImpl implements BudgetingService {
     private FileInfoService fileInfoService;
     @Resource
     private ProjectSumService projectSumService;
+
+    @Resource
+    private OperationLogDao operationLogDao;
 
     @Resource
     private EmployeeAchievementsInfoMapper employeeAchievementsInfoMapper;
@@ -141,7 +145,7 @@ public class BudgetingServiceImpl implements BudgetingService {
 
 
     @Override
-    public void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser) {
+    public void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser, HttpServletRequest request) {
         //获取基本信息
         Example example = new Example(BaseProject.class);
         Example.Criteria criteria = example.createCriteria();
@@ -202,6 +206,20 @@ public class BudgetingServiceImpl implements BudgetingService {
                 //调用消息Service
                 messageService.sendOrClose(messageVo);
 
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(userId); //当前登陆人
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("3"); //预算项目
+            operationLog.setContent(memberManage1.getMemberName()+"新增提交了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(budgeting.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
             //保存
         }else{
             //修改预算状态为处理中
@@ -209,6 +227,20 @@ public class BudgetingServiceImpl implements BudgetingService {
             baseProject.setProjectFlow(baseProject.getProjectFlow()+",2");
             projectDao.updateByPrimaryKeySelective(baseProject);
             budgetingDao.insertSelective(budgeting);
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(userId); //当前登陆人
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("3"); //预算项目
+            operationLog.setContent(memberManage1.getMemberName()+"新增保存了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(budgeting.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }
 
         //勘探信息
@@ -395,7 +427,7 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
-    public void updateBudgeting(BudgetingVo budgetingVo,UserInfo loginUser) {
+    public void updateBudgeting(BudgetingVo budgetingVo,UserInfo loginUser,HttpServletRequest request) {
         //获取基本信息
         System.err.println(budgetingVo.getBaseId());
         Example example = new Example(BaseProject.class);
@@ -446,10 +478,37 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }
                 }
             }
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("3"); //预算项目
+            operationLog.setContent(memberManage.getMemberName()+"编辑提交了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(budgeting.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }else{
-
             projectDao.updateByPrimaryKeySelective(baseProject);
             budgetingDao.updateByPrimaryKeySelective(budgeting);
+            // 操作日志
+            String userId = loginUser.getId();
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+            operationLog.setName(userId);
+            operationLog.setType("3"); //预算项目
+            operationLog.setContent(memberManage.getMemberName()+"编辑保存了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+            operationLog.setDoObject(budgeting.getId()); // 项目标识
+            operationLog.setStatus("0");
+            operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }
 
 
@@ -522,7 +581,7 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
-    public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser) {
+    public void batchReview(BatchReviewVo batchReviewVo,UserInfo loginUser,HttpServletRequest request) {
         //登录人id
         String id = loginUser.getId();
         //登录人名字
@@ -807,6 +866,22 @@ public class BudgetingServiceImpl implements BudgetingService {
                         //调用消息Service
                         messageService.sendOrClose(messageVo);
                     }
+                    // 操作日志
+                    String userId = loginUser.getId();
+                    Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                    OperationLog operationLog = new OperationLog();
+                    operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    operationLog.setName(userId);
+                    operationLog.setType("3"); //预算项目
+                    operationLog.setContent(memberManage.getMemberName()+"审核通过了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+                    operationLog.setDoObject(budgeting.getId()); // 项目标识
+                    operationLog.setStatus("0");
+                    operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                    String ip = memberService.getIp(request);
+                    operationLog.setIp(ip);
+                    operationLogDao.insertSelective(operationLog);
                 //未通过
                 }else if (batchReviewVo.getAuditResult().equals("2")){
                     if (auditInfo.getAuditResult().equals("0")){
@@ -833,6 +908,21 @@ public class BudgetingServiceImpl implements BudgetingService {
                         messageVo1.setDetails(username + "您好！您提交的【" + baseProject.getProjectName() + "】的预算项目未通过，请查看详情！");
                         //调用消息Service
                         messageService.sendOrClose(messageVo1);
+
+                        // 操作日志
+                        String userId = loginUser.getId();
+                        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+                        OperationLog operationLog = new OperationLog();
+                        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                        operationLog.setName(userId);
+                        operationLog.setType("3"); //预算项目
+                        operationLog.setContent(baseProject.getProjectName()+"项目【"+baseProject.getId()+"】"+memberManage.getMemberName()+"审核未通过");
+                        operationLog.setDoObject(budgeting.getId()); // 项目标识
+                        operationLog.setStatus("0");
+                        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                        String ip = memberService.getIp(request);
+                        operationLog.setIp(ip);
+                        operationLogDao.insertSelective(operationLog);
                     }
                 }
             }
@@ -1521,7 +1611,7 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
-    public void deleteBudgeting(String id) {
+    public void deleteBudgeting(String id,UserInfo loginUser,HttpServletRequest request) {
         Budgeting budgeting = budgetingDao.selectByPrimaryKey(id);
         budgeting.setDelFlag("1");
         budgetingDao.updateByPrimaryKeySelective(budgeting);
@@ -1557,6 +1647,23 @@ public class BudgetingServiceImpl implements BudgetingService {
         for (AuditInfo auditInfo : auditInfos) {
             auditInfoDao.deleteByPrimaryKey(auditInfo);
         }
+        // 操作日志
+        String userId = loginUser.getId();
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("3"); //预算项目
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+        if (baseProject != null){
+            operationLog.setContent(memberManage.getMemberName()+"删除了"+baseProject.getProjectName()+"项目【"+baseProject.getId()+"】");
+        }
+        operationLog.setDoObject(budgeting.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
     }
 
     @Override

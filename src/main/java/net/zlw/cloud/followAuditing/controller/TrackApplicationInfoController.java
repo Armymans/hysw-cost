@@ -139,7 +139,7 @@ public class TrackApplicationInfoController extends BaseController {
 //    @DeleteMapping("/track/deleteById/{id}")
     @RequestMapping(value = "/track/deleteById",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteById(@RequestParam(name = "id") String id){
-        trackApplicationInfoService.deleteById(id);
+        trackApplicationInfoService.deleteById(id,getLoginUser(),request);
         return RestUtil.success("删除成功");
     }
 
@@ -157,7 +157,7 @@ public class TrackApplicationInfoController extends BaseController {
         for (String s : split) {
             if(s!=null){
                 batchReviewVo.setBatchAll(s);
-                trackApplicationInfoService.batchReview(batchReviewVo,getLoginUser());
+                trackApplicationInfoService.batchReview(batchReviewVo,getLoginUser(),request);
             }
         }
         return RestUtil.success("审核完毕");
@@ -168,7 +168,7 @@ public class TrackApplicationInfoController extends BaseController {
     public Map<String,Object> addTrack(TrackVo trackVo,@RequestParam(name = "baseId") String baseId){
         System.out.println(baseId);
         try {
-            trackApplicationInfoService.addTrack(trackVo,getLoginUser(),baseId);
+            trackApplicationInfoService.addTrack(trackVo,getLoginUser(),baseId,request);
         } catch (Exception e) {
             return RestUtil.error(e.getMessage());
         }
@@ -200,7 +200,7 @@ public class TrackApplicationInfoController extends BaseController {
     @RequestMapping(value = "/track/updateTrack",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateTrack(TrackVo trackVo){
         try {
-            trackApplicationInfoService.updateTrack(trackVo,getLoginUser());
+            trackApplicationInfoService.updateTrack(trackVo,getLoginUser(),request);
         } catch (Exception e) {
             return RestUtil.error(e.getMessage());
         }

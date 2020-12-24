@@ -10,16 +10,17 @@ import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
 import net.zlw.cloud.followAuditing.model.vo.TrackVo;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface TrackApplicationInfoService {
     PageInfo<ReturnTrackVo> selectTrackList(PageVo pageVo);
 
-    void deleteById(String id);
+    void deleteById(String id,UserInfo loginUser,HttpServletRequest request);
 
-    void batchReview(BatchReviewVo id,UserInfo userInfo);
+    void batchReview(BatchReviewVo id,UserInfo userInfo,HttpServletRequest request);
 
-    void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId) throws Exception;
+    void addTrack(TrackVo trackVo, UserInfo userInfo, String baseId, HttpServletRequest request) throws Exception;
 
     TrackVo selectTrackById(String id,UserInfo userInfo);
     TrackVo editTrackById(String id,UserInfo userInfo);
@@ -30,7 +31,7 @@ public interface TrackApplicationInfoService {
 
     void deleteByIdTrackMonthly(String id);
 
-    void updateTrack(TrackVo trackVo,UserInfo userInfo) throws Exception;
+    void updateTrack(TrackVo trackVo,UserInfo userInfo,HttpServletRequest request) throws Exception;
 
     List<TrackMonthly> findAllByTrackId(String id);
 
