@@ -40,7 +40,7 @@ public class BudgetCoverController {
     //物料清单表(安徽)
     @RequestMapping(value = "/budgetCover/bomTableImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> bomTableImport(@RequestParam(name = "id") String id){
-        budgetCoverService.bomTableImport(id);
+        budgetCoverService.bomTableImport(id, null);
         return RestUtil.success();
     }
     //上家结算汇总表(安徽) 封面

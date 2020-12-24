@@ -422,6 +422,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "s3.design_change_time, " +
                     "s2.isfinalaccount, " +
                     "s2.founder_id, " +
+                    "s2.attribution_show, " +
                     "( CASE WHEN s3.design_change_time IS NULL THEN '否' ELSE '是' END ) AS ischange " +
                     "FROM " +
                     "design_info s2 LEFT JOIN design_change_info s3 ON s2.id = s3.design_info_id  " +

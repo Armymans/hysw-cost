@@ -29,6 +29,7 @@ public class BomTable {
   `del_flag` varchar(255) DEFAULT NULL COMMENT '状态0正常1删除',
 
     * */
+    @Id
     @Column(name = "id")
     private String id;
     @Column(name = "material_code")

@@ -17,7 +17,7 @@ public interface BudgetCoverService {
 
     void partTableQuantitiesImport(String id, FileInputStream fileInputStream);
 
-    void bomTableImport(String id);
+    void bomTableImport(String id, FileInputStream inputStream);
 
     void LastSummaryCoverImport(String id);
 

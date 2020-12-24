@@ -673,7 +673,7 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "(bt.budgeting_time > #{p.startTime} or #{p.startTime} = '') and  " +
             "(bt.budgeting_time < #{p.endTime} or #{p.endTime} = '') and " +
             "(b.budget_status = #{p.budgetingStatus} or #{p.budgetingStatus} = '') and  " +
-            "(bt.attribution_show = #{p.attributionShow} or #{p.attributionShow} = '' ) and " +
+//            "(bt.attribution_show = #{p.attributionShow} or #{p.attributionShow} = '' ) and " +
             "( " +
             "b.cea_num like concat('%',#{p.keyword},'%') or " +
             "b.project_num like concat('%',#{p.keyword},'%') or " +

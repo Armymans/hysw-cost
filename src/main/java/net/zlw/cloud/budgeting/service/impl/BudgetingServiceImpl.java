@@ -1113,7 +1113,6 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }else{
                         budgetingListVo.setShowWhether("2");
                     }
-
                 }
                 if (baseProject.getDesignCategory() == null || baseProject.getDesignCategory().equals("")){
                     if (budgetingListVo.getFounderId().equals(id)){

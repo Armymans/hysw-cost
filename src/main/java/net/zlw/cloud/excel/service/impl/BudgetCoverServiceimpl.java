@@ -222,14 +222,14 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     }
 
     @Override
-    public void bomTableImport(String id) {
+    public void bomTableImport(String id, FileInputStream fileInputStream) {
         try {
             //文件路径
-            String filePath = "E:\\正量\\新建文件夹\\物料清单表（安徽）.xls";
-            //第几张表(最低1) 第几条数据开始(最低0)
+//            String filePath = "E:\\正量\\新建文件夹\\物料清单表（安徽）.xls";
+//            //第几张表(最低1) 第几条数据开始(最低0)
             Sheet sheet = new Sheet(1,1);
-            //创建文件流
-            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+//            //创建文件流
+//            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             //使用easyExcel读取excel中的数据
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
@@ -273,7 +273,7 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
 
             }
             bomTableInfomationDao.insertSelective(bomTableInfomation);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
