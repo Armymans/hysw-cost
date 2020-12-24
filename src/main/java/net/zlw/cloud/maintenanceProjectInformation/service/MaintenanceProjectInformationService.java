@@ -632,8 +632,8 @@ public class MaintenanceProjectInformationService {
         operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
         operationLog.setName(userId);
         operationLog.setType("7"); //检维修项目
-        operationLog.setContent(memberManage.getMemberName()+"新增提交了了"+maintenanceProjectInformation.getMaintenanceItemName()+"项目【"+maintenanceProjectInformation.getId()+"】");
-        operationLog.setDoObject(maintenanceProjectInformation.getId()); // 项目标识
+        operationLog.setContent(memberManage.getMemberName()+"新增提交了了"+information.getMaintenanceItemName()+"项目【"+information.getId()+"】");
+        operationLog.setDoObject(information.getId()); // 项目标识
         operationLog.setStatus("0");
         operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         String ip = memberService.getIp(request);
@@ -1304,8 +1304,8 @@ public class MaintenanceProjectInformationService {
         operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
         operationLog.setName(userId);
         operationLog.setType("7"); //检维修项目
-        operationLog.setContent(memberManage.getMemberName()+"修改提交了"+maintenanceProjectInformation.getMaintenanceItemName()+"项目【"+maintenanceProjectInformation.getId()+"】");
-        operationLog.setDoObject(maintenanceProjectInformation.getId()); // 项目标识
+        operationLog.setContent(memberManage.getMemberName()+"修改提交了"+information.getMaintenanceItemName()+"项目【"+information.getId()+"】");
+        operationLog.setDoObject(information.getId()); // 项目标识
         operationLog.setStatus("0");
         operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         String ip = memberService.getIp(request);
@@ -1805,8 +1805,8 @@ public class MaintenanceProjectInformationService {
         operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
         operationLog.setName(userId);
         operationLog.setType("7"); //检维修项目
-        operationLog.setContent(memberManage.getMemberName()+"新增保存了"+maintenanceProjectInformation.getMaintenanceItemName()+"项目【"+maintenanceProjectInformation.getId()+"】");
-        operationLog.setDoObject(maintenanceProjectInformation.getId()); // 项目标识
+        operationLog.setContent(memberManage.getMemberName()+"新增保存了"+information.getMaintenanceItemName()+"项目【"+information.getId()+"】");
+        operationLog.setDoObject(information.getId()); // 项目标识
         operationLog.setStatus("0");
         operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         String ip = memberService.getIp(request);
@@ -2108,8 +2108,8 @@ public class MaintenanceProjectInformationService {
         operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
         operationLog.setName(userId);
         operationLog.setType("7"); //检维修项目
-        operationLog.setContent(memberManage.getMemberName()+"修改保存了"+maintenanceProjectInformation.getMaintenanceItemName()+"项目【"+maintenanceProjectInformation.getId()+"】");
-        operationLog.setDoObject(maintenanceProjectInformation.getId()); // 项目标识
+        operationLog.setContent(memberManage.getMemberName()+"修改保存了"+information.getMaintenanceItemName()+"项目【"+information.getId()+"】");
+        operationLog.setDoObject(information.getId()); // 项目标识
         operationLog.setStatus("0");
         operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         String ip = memberService.getIp(request);
