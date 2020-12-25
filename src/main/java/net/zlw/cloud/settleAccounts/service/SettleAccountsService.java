@@ -35,5 +35,5 @@ public interface SettleAccountsService {
     void addUniProjectImport(String id, FileInputStream inputStream, FileInputStream inputStream2);
      LastSettlementReview selectPeople(UserInfo loginUser);
 
-    void addsettleImport(String id, FileInputStream stream, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream inputStream3);
+    void addsettleImport(String id, FileInputStream fileInputStream, FileInputStream stream, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream inputStream3);
 }

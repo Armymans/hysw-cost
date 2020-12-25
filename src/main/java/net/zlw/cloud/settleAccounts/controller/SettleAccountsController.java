@@ -438,7 +438,7 @@ public class SettleAccountsController extends BaseController {
                 if (aaa.getOriginalFilename().contains("吴江")){
 
                 }else if(aaa.getOriginalFilename().contains("安徽")){
-                    settleAccountsService.addsettleImport(attachInfo.getId(),inputStream,inputStream2,inputStream3,inputStream4);
+                    settleAccountsService.addsettleImport(attachInfo.getId(),inputStream,inputStream2,inputStream3,inputStream4,inputStream5);
                 }
 
             } catch (Exception e) {

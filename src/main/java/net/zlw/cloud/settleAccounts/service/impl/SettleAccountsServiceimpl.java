@@ -2031,8 +2031,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     }
 
     @Override
-    public void addsettleImport(String id, FileInputStream stream, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream inputStream3) {
-        budgetCoverService.summaryTableImport(id,inputStream);
+    public void addsettleImport(String id, FileInputStream fileInputStream, FileInputStream stream, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream inputStream3) {
+        budgetCoverService.summaryTableImport(id,inputStream,fileInputStream);
         budgetCoverService.verificationSheetImport(id,inputStream2);
         budgetCoverService.materialAnalysisImport(id,inputStream3,stream);
     }

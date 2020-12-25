@@ -23,7 +23,7 @@ public interface BudgetCoverService {
 
     void UnitProjectSummaryImport(String id, FileInputStream inputStream2);
 
-    void summaryTableImport(String id, FileInputStream inputStream);
+    void summaryTableImport(String id, FileInputStream stream, FileInputStream inputStream);
 
     void verificationSheetImport(String id, FileInputStream inputStream2);
 

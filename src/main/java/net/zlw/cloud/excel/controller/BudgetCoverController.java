@@ -58,7 +58,7 @@ public class BudgetCoverController {
     //下家结算审核汇总表 -   汇总表
     @RequestMapping(value = "/budgetCover/summaryTableImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> summaryTableImport(@RequestParam(name = "id") String id){
-        budgetCoverService.summaryTableImport(id, null);
+        budgetCoverService.summaryTableImport(id, inputStream, null);
         return RestUtil.success();
     }
     //下家结算审核核定单

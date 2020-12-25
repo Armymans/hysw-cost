@@ -353,7 +353,7 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     }
 
     @Override
-    public void summaryTableImport(String id, FileInputStream fileInputStream) {
+    public void summaryTableImport(String id, FileInputStream stream, FileInputStream fileInputStream) {
         try {
 //            String filePath = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
             //第几张表(最低1) 第几条数据开始(最低0)
@@ -364,11 +364,11 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
             String projectName = "";
 
             //调用核定单的工程名称
-            String filePath1 = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
+//            String filePath1 = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
             //第几张表(最低1) 第几条数据开始(最低0)
             Sheet sheet1 = new Sheet(2, 3);
-            FileInputStream fileInputStream1 = new FileInputStream(new File(filePath1));
-            BufferedInputStream bufferedInputStream1 = new BufferedInputStream(fileInputStream1);
+//            FileInputStream fileInputStream1 = new FileInputStream(new File(filePath1));
+            BufferedInputStream bufferedInputStream1 = new BufferedInputStream(stream);
             List<Object> read1 = EasyExcelFactory.read(bufferedInputStream1, sheet1);
             projectName = ((List<String>)read1.get(2)).get(2);
             BigDecimal bigDecimal2 = new BigDecimal(0.00);
