@@ -126,6 +126,13 @@ public class TrackApplicationInfoController extends BaseController {
         return RestUtil.success(allByTrackId);
     }
 
+    //新增月报回显填写人
+    @RequestMapping(value = "/track/findWritter",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findWritter(){
+         TrackMonthly trackMonthly = trackApplicationInfoService.findWritter(getLoginUser().getId());
+        return RestUtil.success(trackMonthly);
+    }
+
     // 查看页面回显审核信息
     @RequestMapping(value = "/track/findAllAuditInfosByTrackId",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllAuditInfosByTrackId(@RequestParam(name = "id") String id){

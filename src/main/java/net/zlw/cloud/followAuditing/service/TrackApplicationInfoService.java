@@ -42,4 +42,6 @@ public interface TrackApplicationInfoService {
     void deleteMonthly(String id);
 
     void addAttribution(String baseId, String district, String designCategory, String prePeople);
+
+    TrackMonthly findWritter(String id);
 }

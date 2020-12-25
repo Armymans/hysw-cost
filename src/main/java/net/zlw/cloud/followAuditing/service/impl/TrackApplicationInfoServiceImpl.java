@@ -1050,6 +1050,14 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
     }
 
+    @Override
+    public TrackMonthly findWritter(String id) {
+        String idByName = memberManageDao.findIdByName(id);
+        TrackMonthly trackMonthly = new TrackMonthly();
+        trackMonthly.setWritter(idByName);
+        return trackMonthly;
+    }
+
     // TODO 回显页面，新增页面月报显示
     public List<TrackMonthly> findAllByTrackId2(String id) {
         Example example1 = new Example(TrackMonthly.class);
@@ -1102,6 +1110,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         trackMonthly.setFounderId(trackMonthly.getCode());
         trackMonthly.setTrackId(trackMonthly.getTrackId());
         trackMonthly.setStatus("0");
+        String nameById = memberManageDao.findNameById(trackMonthly.getWritter());
+        trackMonthly.setWritter(nameById);
         trackMonthlyDao.insertSelective(trackMonthly);
     }
 
