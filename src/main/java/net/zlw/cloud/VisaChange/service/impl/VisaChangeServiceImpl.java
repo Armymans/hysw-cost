@@ -1303,7 +1303,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             //2B只允许存在下家
         } else if (baseProject.getAB().equals("2")) {
             //如果不存在送审金额字段则判断下家申请不存在
-            if (visaChangeVo.getVisaApplyChangeInformationDown().getSubmitMoney() != null && !visaChangeVo.getVisaApplyChangeInformationDown().getSubmitMoney().equals("")) {
+            if (visaChangeVo.getVisaApplyChangeInformationDown().getApplicantName() != null && !visaChangeVo.getVisaApplyChangeInformationDown().getApplicantName().equals("")) {
                 visaApplyChangeInformationDown = visaChangeVo.getVisaApplyChangeInformationDown();
                 visaApplyChangeInformationDown.setId(UUID.randomUUID().toString().replace("-", ""));
                 visaApplyChangeInformationDown.setCreateTime(sim.format(new Date()));
