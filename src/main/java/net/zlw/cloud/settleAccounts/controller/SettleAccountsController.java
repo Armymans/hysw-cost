@@ -181,18 +181,20 @@ public class SettleAccountsController extends BaseController {
     @RequestMapping(value = "/accounts/addAccount", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> addAccount(BaseAccountsVo baseAccountsVo) {
         try {
-//            System.err.println(baseAccountsVo.getSettlementInfo());
-//            System.err.println(baseAccountsVo.getLastSettlementInfo());
-//            System.err.println("******************");
-//            System.err.println(baseAccountsVo.getSettlementAuditInformation());
-//            System.err.println(baseAccountsVo.getLastSettlementReview());
-//            System.err.println(baseAccountsVo.getInvestigationOfTheAmount());
             settleAccountsService.addAccount(baseAccountsVo, getLoginUser(),request);
         } catch (Exception e) {
             e.printStackTrace();
             return RestUtil.error(e.getMessage());
         }
         return RestUtil.success();
+    }
+
+    //结算新增编制人回显
+//    @PostMapping("/addAccount")
+    @RequestMapping(value = "/accounts/selectPeople", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> selectPeople() {
+        LastSettlementReview lastSettlementReview = settleAccountsService.selectPeople(getLoginUser());
+        return RestUtil.success(lastSettlementReview);
     }
 
     //根据ID查询结算

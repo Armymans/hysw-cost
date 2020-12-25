@@ -3,6 +3,7 @@ package net.zlw.cloud.settleAccounts.service;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 
+import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.OtherInfo;
 import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
@@ -29,4 +30,6 @@ public interface SettleAccountsService {
     List<OtherInfo> selectInfoList(String baseId);
 
     void addAttribution(String baseId, String district, String designCategory, String prePeople);
+
+    LastSettlementReview selectPeople(UserInfo loginUser);
 }

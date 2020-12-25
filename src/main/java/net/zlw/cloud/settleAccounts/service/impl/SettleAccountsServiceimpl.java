@@ -774,10 +774,13 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getLastSettlementReview().setAccountId(baseAccountsVo.getSettlementAuditInformation().getId());
             baseAccountsVo.getLastSettlementReview().setWhetherAccount("1");
         }
+        String nameById = memberManageDao.findNameById(baseAccountsVo.getLastSettlementReview().getPreparePeople());
         if (baseProject.getAB().equals("1")){
             if(baseAccountsVo.getLastSettlementReview().getId() != null) {
                 if (baseAccountsVo.getLastSettlementReview().getPreparePeople().equals("")){
                     baseAccountsVo.getLastSettlementReview().setPreparePeople(loginUser.getId());
+                }else {
+                    baseAccountsVo.getLastSettlementReview().setPreparePeople(nameById);
                 }
                 lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
             }
@@ -1112,6 +1115,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         c2.andEqualTo("baseProjectId", baseProject.getId());
         c2.andEqualTo("delFlag", "0");
         LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example2);
+        String idByName = memberManageDao.findIdByName(lastSettlementReview.getPreparePeople());
+        lastSettlementReview.setPreparePeople(idByName);
         baseAccountsVo.setLastSettlementReview(lastSettlementReview);
 
         Example example3 = new Example(SettlementAuditInformation.class);
@@ -1223,6 +1228,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
             }
         }
+        String nameById = memberManageDao.findNameById(baseAccountsVo.getLastSettlementReview().getPreparePeople());
+        baseAccountsVo.getLastSettlementReview().setPreparePeople(nameById);
         settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getLastSettlementInfo());
         //判断decimal是否为空
         //下家审核修改
@@ -2018,5 +2025,13 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
 
 
+    }
+
+    @Override
+    public LastSettlementReview selectPeople(UserInfo loginUser) {
+        String memName = memberManageDao.findIdByName(loginUser.getId());
+        LastSettlementReview settlementReview = new LastSettlementReview();
+        settlementReview.setPreparePeople(memName);
+        return settlementReview;
     }
 }
