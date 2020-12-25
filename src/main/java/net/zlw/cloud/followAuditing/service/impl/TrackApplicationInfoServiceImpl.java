@@ -1002,7 +1002,12 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 //余额
                 BigDecimal balance = total5.subtract(actualAmount);
                 // 员工绩效
-//                            achievementsInfo.setMemberId(trackAuditInfo.getp()); 跟踪审计没有编制人
+                Example example = new Example(TrackMonthly.class);
+                example.createCriteria().andEqualTo("trackId",trackAuditInfo.getId());
+                List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example);
+                for (TrackMonthly thisMony : trackMonthlies) {
+                    achievementsInfo.setMemberId(thisMony.getWritter());
+                }
                 achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
                 achievementsInfo.setCreateTime(format);
                 achievementsInfo.setUpdateTime(format);
@@ -1024,11 +1029,18 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 Double aDouble = projectSumService.trackImprovement(track);
                 aDouble = (double)Math.round(aDouble*100)/100;
                 total5 = total5.add(new BigDecimal(aDouble));
+                Example example = new Example(TrackMonthly.class);
+                example.createCriteria().andEqualTo("trackId",trackAuditInfo.getId());
+                List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example);
+
                 //实际计提 2位 四舍五入
                 BigDecimal actualAmount = total5.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);;
                 //余额
                 BigDecimal balance = total5.subtract(actualAmount);
                 // 员工绩效
+                for (TrackMonthly thisMony : trackMonthlies) {
+                    achievementsInfo.setMemberId(thisMony.getWritter());
+                }
                 achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
                 achievementsInfo.setCreateTime(format);
                 achievementsInfo.setUpdateTime(format);

@@ -17,7 +17,9 @@ import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
+import net.zlw.cloud.followAuditing.mapper.TrackMonthlyDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
+import net.zlw.cloud.followAuditing.model.TrackMonthly;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
@@ -96,6 +98,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
     @Autowired
     private OperationLogDao operationLogDao;
+
+    @Autowired
+    private TrackMonthlyDao trackMonthlyDao;
     @Autowired
     private OutSourceMapper outSourceMapper;
     @Autowired
@@ -1753,6 +1758,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                             Double aDouble = projectSumService.trackImprovement(track);
                             aDouble = (double)Math.round(aDouble*100)/100;
                             total5 = total5.add(new BigDecimal(aDouble));
+                            Example monthly = new Example(TrackMonthly.class);
+                            monthly.createCriteria().andEqualTo("trackId",trackAuditInfo.getId());
+                            List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(monthly);
+                            for (TrackMonthly thisMony : trackMonthlies) {
+                                achievementsInfo.setMemberId(thisMony.getWritter());
+                            }
                             //实际计提
                             BigDecimal actualAmount = total5.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);;
                             //余额
@@ -1785,6 +1796,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                             //余额
                             BigDecimal balance = total5.subtract(actualAmount);
                             // 员工绩效
+                            Example monthly = new Example(TrackMonthly.class);
+                            monthly.createCriteria().andEqualTo("trackId",trackAuditInfo.getId());
+                            List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(monthly);
+                            for (TrackMonthly thisMony : trackMonthlies) {
+                                achievementsInfo.setMemberId(thisMony.getWritter());
+                            }
                             achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
                             achievementsInfo.setCreateTime(format);
                             achievementsInfo.setUpdateTime(format);
