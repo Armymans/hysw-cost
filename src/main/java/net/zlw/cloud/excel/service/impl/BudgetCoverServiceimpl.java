@@ -353,12 +353,12 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     }
 
     @Override
-    public void summaryTableImport(String id) {
+    public void summaryTableImport(String id, FileInputStream fileInputStream) {
         try {
-            String filePath = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
+//            String filePath = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
             //第几张表(最低1) 第几条数据开始(最低0)
             Sheet sheet = new Sheet(1, 0);
-            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+//            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
             String projectName = "";
@@ -427,13 +427,13 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     }
 
     @Override
-    public void verificationSheetImport(String id) {
+    public void verificationSheetImport(String id, FileInputStream fileInputStream) {
         RMBdeal rmBdeal = new RMBdeal();
         try {
-            String filePath = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
+//            String filePath = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
             //第几张表(最低1) 第几条数据开始(最低0)
             Sheet sheet = new Sheet(2, 1);
-            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+//            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
             VerificationSheet verificationSheet = new VerificationSheet();
@@ -514,7 +514,7 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
             System.out.println(verificationSheet);
 
 
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -529,12 +529,12 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     }
 
     @Override
-    public void materialAnalysisImport(String id) {
+    public void materialAnalysisImport(String id, FileInputStream stream3, FileInputStream fileInputStream) {
         try {
-            String filePath = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
+//            String filePath = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
             //第几张表(最低1) 第几条数据开始(最低0)
             Sheet sheet = new Sheet(3, 1);
-            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+//            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
 
@@ -542,11 +542,11 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
             String projectName = "";
 
             //调用核定单的工程名称
-            String filePath1 = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
+//            String filePath1 = "E:\\正量\\新建文件夹\\下家结算审核汇总表（安徽）.xls";
             //第几张表(最低1) 第几条数据开始(最低0)
             Sheet sheet1 = new Sheet(2, 3);
-            FileInputStream fileInputStream1 = new FileInputStream(new File(filePath1));
-            BufferedInputStream bufferedInputStream1 = new BufferedInputStream(fileInputStream1);
+//            FileInputStream fileInputStream1 = new FileInputStream(new File(filePath1));
+            BufferedInputStream bufferedInputStream1 = new BufferedInputStream(stream3);
             List<Object> read1 = EasyExcelFactory.read(bufferedInputStream1, sheet1);
             projectName = ((List<String>)read1.get(2)).get(2);
             for (int i = 0; i < read.size(); i++) {
@@ -612,7 +612,7 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
                 }
             }
 
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

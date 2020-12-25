@@ -58,13 +58,13 @@ public class BudgetCoverController {
     //下家结算审核汇总表 -   汇总表
     @RequestMapping(value = "/budgetCover/summaryTableImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> summaryTableImport(@RequestParam(name = "id") String id){
-        budgetCoverService.summaryTableImport(id);
+        budgetCoverService.summaryTableImport(id, null);
         return RestUtil.success();
     }
     //下家结算审核核定单
     @RequestMapping(value = "/budgetCover/verificationSheetImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> verificationSheetImport(@RequestParam(name = "id") String id){
-        budgetCoverService.verificationSheetImport(id);
+        budgetCoverService.verificationSheetImport(id, null);
         return RestUtil.success();
     }
     //预算封面查看
@@ -76,7 +76,7 @@ public class BudgetCoverController {
     //下家结算审核 甲供材料分析表
     @RequestMapping(value = "/budgetCover/materialAnalysisImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> materialAnalysisImport(@RequestParam(name = "id") String id){
-        budgetCoverService.materialAnalysisImport(id);
+        budgetCoverService.materialAnalysisImport(id, null, null);
         return RestUtil.success();
     }
     //结算报告 封面扉页编辑

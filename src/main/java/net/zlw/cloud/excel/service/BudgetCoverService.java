@@ -23,13 +23,13 @@ public interface BudgetCoverService {
 
     void UnitProjectSummaryImport(String id, FileInputStream inputStream2);
 
-    void summaryTableImport(String id);
+    void summaryTableImport(String id, FileInputStream inputStream);
 
-    void verificationSheetImport(String id);
+    void verificationSheetImport(String id, FileInputStream inputStream2);
 
     SummaryShenji findBudgetCoverById(String id);
 
-    void materialAnalysisImport(String id);
+    void materialAnalysisImport(String id, FileInputStream stream3, FileInputStream inputStream3);
 
     void updateFinalReport(FinalReport finalReport);
 

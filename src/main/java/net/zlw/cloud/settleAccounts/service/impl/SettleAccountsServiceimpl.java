@@ -2020,8 +2020,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             lastSettlementReview.setPreparePeople(prePeople);
         }
         lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
-
-
     }
 
     @Override
@@ -2030,6 +2028,13 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         LastSettlementReview settlementReview = new LastSettlementReview();
         settlementReview.setPreparePeople(memName);
         return settlementReview;
+    }
+
+    @Override
+    public void addsettleImport(String id, FileInputStream stream, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream inputStream3) {
+        budgetCoverService.summaryTableImport(id,inputStream);
+        budgetCoverService.verificationSheetImport(id,inputStream2);
+        budgetCoverService.materialAnalysisImport(id,inputStream3,stream);
     }
 
     @Override

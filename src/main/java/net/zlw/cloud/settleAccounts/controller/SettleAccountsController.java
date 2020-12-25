@@ -375,5 +375,95 @@ public class SettleAccountsController extends BaseController {
         map.put("name",attachInfo.getFileName()+"."+attachInfo.getFileType());
         return RestUtil.success(map);
     }
+    //结算 下家结算汇总
+    @RequestMapping(value = "/accounts/addsettleImport", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> addsettleImport(@RequestParam("file") MultipartFile file, String type){
+
+        MultipartFile aaa = file;
+
+        log.info(getLogInfo("upload", file));
+        FileInfo attachInfo = new FileInfo();
+        try {
+
+            String fileName = new String(FileUtil.getFileName(file).getBytes(), "UTF-8");
+            String fileType = FileUtil.getFileExtName(file);
+
+            String fileDir = "/" + sdf2.format(new Date());
+
+            String tmpFileName = IdUtil.uuid2().substring(0, 15) + sdf.format(new Date()) + "." + fileType;
+            String filePath = fileDir + "/" + tmpFileName;
+            //上传路径
+            String path = "";
+            String os = System.getProperty("os.name");
+            if (os.toLowerCase().startsWith("win")) {
+                path = WinAttachDir;
+            } else {
+                path = LixAttachDir;
+            }
+
+            File outDir = new File(path + fileDir);
+            if (!outDir.exists()) {
+                outDir.mkdirs();
+            }
+            log.info(outDir.getAbsolutePath());
+            File targetFile = new File(outDir.getAbsolutePath(), tmpFileName);
+
+            attachInfo.setFileName(fileName);
+            attachInfo.setFilePath(filePath);
+            attachInfo.setFileSource("1");
+            attachInfo.setFileType(fileType);
+            attachInfo.setType(type);
+            attachInfo.setCreateTime(DateUtil.getDateTime());
+            attachInfo.setStatus("1");
+            attachInfo.setUserId(getLoginUser().getId());
+            attachInfo.setStatus("0");
+            attachInfo.setCompanyId(getLoginUser().getCompanyId());
+            //添加到数据库
+
+
+            FileInputStream inputStream = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream2 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream3 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream4 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream5 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream6 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream7 = (FileInputStream) aaa.getInputStream();
+
+
+            //将文件与企业材料管理进行关联
+            try {
+                attachInfo.setId("file"+ UUID.randomUUID().toString().replaceAll("-", ""));
+                fileInfoMapper.insert(attachInfo);
+
+                if (aaa.getOriginalFilename().contains("吴江")){
+
+                }else if(aaa.getOriginalFilename().contains("安徽")){
+                    settleAccountsService.addsettleImport(attachInfo.getId(),inputStream,inputStream2,inputStream3,inputStream4);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                file.transferTo(targetFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error("操作异常,请联系管理员!");
+        }
+
+
+
+
+
+        Map<String, String> map = new HashMap<>();
+        map.put("id",attachInfo.getId());
+        map.put("name",attachInfo.getFileName()+"."+attachInfo.getFileType());
+        return RestUtil.success(map);
+    }
 
 }
