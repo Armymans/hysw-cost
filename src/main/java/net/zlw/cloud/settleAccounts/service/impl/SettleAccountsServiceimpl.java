@@ -1121,8 +1121,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         c2.andEqualTo("baseProjectId", baseProject.getId());
         c2.andEqualTo("delFlag", "0");
         LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example2);
+        String idByName = memberManageDao.findIdByName(lastSettlementReview.getPreparePeople());
+        if (idByName != null){
+            lastSettlementReview.setPreparePeople(idByName);
+        }
         baseAccountsVo.setLastSettlementReview(lastSettlementReview);
-
         Example example3 = new Example(SettlementAuditInformation.class);
         Example.Criteria c3 = example3.createCriteria();
         c3.andEqualTo("baseProjectId", baseProject.getId());
