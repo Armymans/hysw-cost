@@ -381,6 +381,16 @@ public class ProjectController extends BaseController {
         }
         return RestUtil.success();
     }
+    /**
+     * 新建回显设计人
+     *
+     * @param
+     */
+    @RequestMapping(value = "/api/disproject/disCreator", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> disCreator() {
+        DesignInfo designPageVo = projectService.selectDisCreator(getLoginUser().getId());
+        return RestUtil.success(designPageVo);
+    }
 
     /**
      * 设计项目编辑回显

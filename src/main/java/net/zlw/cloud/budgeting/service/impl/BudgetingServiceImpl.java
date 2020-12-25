@@ -1239,9 +1239,11 @@ public class BudgetingServiceImpl implements BudgetingService {
                         budgetingListVo.setShowWhether("2");
                     }
                 }
+                // 判断CEA编号
 
-
-
+                if (id.equals(budgetingListVo.getFounderId())){
+                    budgetingListVo.setIsShow("1");
+                }
 
             }
             for (BudgetingListVo budgetingListVo : list1) {

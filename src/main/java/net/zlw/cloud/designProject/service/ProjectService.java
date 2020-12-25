@@ -1878,12 +1878,7 @@ public class ProjectService {
             throw new RuntimeException("项目编号或项目名称重复");
         }
 
-        //查询当前设计人 是否存在
-        String designer = projectVo.getDesignInfo().getDesigner();
-        Example example = new Example(MemberManage.class);
-        //去空格
-        example.createCriteria().andEqualTo("memberName", designer.trim());
-        List<MemberManage> memberManages = memberManageDao.selectByExample(example);
+
 
 
         //baseProject, designInfo, packageCame, projectExploration
@@ -3786,5 +3781,12 @@ public class ProjectService {
         }
         designInfoMapper.updateByPrimaryKey(designInfo);
 
+    }
+
+    public DesignInfo  selectDisCreator(String id) {
+        String name = memberManageDao.selectDisCreator(id);
+        DesignInfo designPageVo = new DesignInfo();
+        designPageVo.setDesigner(name);
+        return designPageVo;
     }
 }

@@ -49,6 +49,8 @@ public class BudgetingListVo {
     //是否显示到账
     private String showWhether;
 
+    private String isShow; // 判断CEA显隐
+
 
 
     @Override
