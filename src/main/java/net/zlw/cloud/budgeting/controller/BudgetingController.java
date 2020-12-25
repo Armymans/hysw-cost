@@ -8,6 +8,7 @@ import net.tec.cloud.common.util.DateUtil;
 import net.tec.cloud.common.util.FileUtil;
 import net.tec.cloud.common.util.IdUtil;
 import net.tec.cloud.common.web.MediaTypes;
+import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.budgeting.service.BudgetingService;
 import net.zlw.cloud.common.Page;
@@ -83,6 +84,13 @@ public class BudgetingController extends BaseController {
             return RestUtil.error(e.getMessage());
         }
         return RestUtil.success("添加成功");
+    }
+    //新增回显预算编制人
+//    @PostMapping("/addBudgeting")
+    @RequestMapping(value = "/budgeting/budgetingPeople",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> budgetingPeople(){
+        Budgeting  budgeting =  budgetingService.budgetingPeople(getLoginUser().getId());
+        return RestUtil.success(budgeting);
     }
     //根据ID查询预算信息
 //    @GetMapping("/selectBudgetingById/{id}")

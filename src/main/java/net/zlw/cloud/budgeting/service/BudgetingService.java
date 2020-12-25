@@ -2,6 +2,7 @@ package net.zlw.cloud.budgeting.service;
 
 
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.*;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
@@ -43,4 +44,6 @@ public interface BudgetingService {
     List<FileInfo> selectById(String id);
 
     List<MkyUser> findPreparePeople(String id);
+
+    Budgeting budgetingPeople(String id);
 }

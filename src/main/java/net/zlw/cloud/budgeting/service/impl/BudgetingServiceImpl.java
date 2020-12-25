@@ -151,7 +151,9 @@ public class BudgetingServiceImpl implements BudgetingService {
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("id",budgetingVo.getBaseId());
         BaseProject baseProject = projectDao.selectOneByExample(example);
-
+        Example memExample = new Example(MemberManage.class);
+        memExample.createCriteria().andEqualTo("memberName",budgetingVo.getBudgetingPeople().trim());
+        MemberManage peopleName = memberManageDao.selectOneByExample(memExample);
         //预算编制
         Budgeting budgeting = new Budgeting();
         budgeting.setId(UUID.randomUUID().toString().replace("-",""));
@@ -159,7 +161,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         if ("".equals(budgeting.getBudgetingPeople())){
             budgeting.setBudgetingPeople(loginUser.getId());
         }else{
-            budgeting.setBudgetingPeople(budgetingVo.getBudgetingPeople());
+            budgeting.setBudgetingPeople(peopleName.getId());
         }
         budgeting.setAddedTaxAmount(budgetingVo.getAddedTaxAmount());
         budgeting.setOutsourcing(budgetingVo.getOutsourcing());
@@ -258,6 +260,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         surveyInformationDao.insertSelective(surveyInformation);
 
         //成本编制
+        String costName = memberManageDao.findNameById(budgetingVo.getCostTogether());
         CostPreparation costPreparation = new CostPreparation();
         costPreparation.setId(UUID.randomUUID().toString().replace("-",""));
         costPreparation.setCostTotalAmount(budgetingVo.getCostTotalAmount());
@@ -268,7 +271,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         costPreparation.setOtherCost2(budgetingVo.getOtherCost2());
         costPreparation.setOtherCost3(budgetingVo.getOtherCost3());
         if (!"".equals(budgetingVo.getCostTogether())){
-            costPreparation.setCostTogether(budgetingVo.getCostTogether());
+            costPreparation.setCostTogether(costName);
         }else{
             costPreparation.setCostTogether(loginUser.getId());
         }
@@ -283,11 +286,12 @@ public class BudgetingServiceImpl implements BudgetingService {
 
         //控价编制
         VeryEstablishment veryEstablishment = new VeryEstablishment();
+        String memBerId = memberManageDao.findNameById(budgetingVo.getPricingTogether());
         veryEstablishment.setId(UUID.randomUUID().toString().replace("-",""));
             veryEstablishment.setBiddingPriceControl(budgetingVo.getBiddingPriceControl());
         veryEstablishment.setVatAmount(budgetingVo.getVVatAmount());
         if (!"".equals(budgetingVo.getPricingTogether())){
-            veryEstablishment.setPricingTogether(budgetingVo.getPricingTogether());
+            veryEstablishment.setPricingTogether(memBerId);
         }else{
             veryEstablishment.setPricingTogether(loginUser.getId());
         }
@@ -353,15 +357,14 @@ public class BudgetingServiceImpl implements BudgetingService {
         }
 
 
-
-
+        String budgetingPeople = memberManageDao.findIdByName(budgeting.getBudgetingPeople());
         BudgetingVo budgetingVo = new BudgetingVo();
         budgetingVo.setAuditInfo(auditInfo);
 
         budgetingVo.setId(budgeting.getId());
         budgetingVo.setProjectNum(baseProject.getProjectNum());
         budgetingVo.setAmountCost(budgeting.getAmountCost());
-        budgetingVo.setBudgetingPeople(budgeting.getBudgetingPeople());
+        budgetingVo.setBudgetingPeople(budgetingPeople);
         budgetingVo.setAddedTaxAmount(budgeting.getAddedTaxAmount());
         budgetingVo.setBudgetingTime(budgeting.getBudgetingTime());
         budgetingVo.setOutsourcing(budgeting.getOutsourcing());
@@ -382,7 +385,10 @@ public class BudgetingServiceImpl implements BudgetingService {
                 budgetingVo.setSurveyDate(surveyInformation1.getSurveyDate());
             }
         }
-
+        //控价编制人
+        String costPeople = memberManageDao.findIdByName(costPreparation.getCostTogether());
+        //控价编制人
+        String pricePeople = memberManageDao.findIdByName(veryEstablishment.getPricingTogether());
         budgetingVo.setCostTotalAmount(costPreparation.getCostTotalAmount());
         budgetingVo.setCVatAmount(costPreparation.getVatAmount());
         budgetingVo.setTotalPackageMaterial(costPreparation.getTotalPackageMaterial());
@@ -390,13 +396,13 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgetingVo.setOtherCost1(costPreparation.getOtherCost1());
         budgetingVo.setOtherCost2(costPreparation.getOtherCost2());
         budgetingVo.setOtherCost3(costPreparation.getOtherCost3());
-        budgetingVo.setCostTogether(costPreparation.getCostTogether());
+        budgetingVo.setCostTogether(costPeople);
         budgetingVo.setReceivingTime(costPreparation.getReceivingTime());
         budgetingVo.setCostPreparationTime(costPreparation.getCostPreparationTime());
         budgetingVo.setCRemarkes(costPreparation.getRemarkes());
         budgetingVo.setBiddingPriceControl(veryEstablishment.getBiddingPriceControl());
         budgetingVo.setVVatAmount(veryEstablishment.getVatAmount());
-        budgetingVo.setPricingTogether(veryEstablishment.getPricingTogether());
+        budgetingVo.setPricingTogether(pricePeople);
         budgetingVo.setVReceivingTime(veryEstablishment.getReceivingTime());
         budgetingVo.setEstablishmentTime(veryEstablishment.getEstablishmentTime());
         budgetingVo.setVRemarkes(veryEstablishment.getRemarkes());
@@ -435,9 +441,10 @@ public class BudgetingServiceImpl implements BudgetingService {
         criteria.andEqualTo("id",budgetingVo.getBaseId());
         BaseProject baseProject = projectDao.selectOneByExample(example);
         //预算编制
+        String nameById = memberManageDao.findNameById(budgetingVo.getBudgetingPeople());
         Budgeting budgeting = budgetingDao.selectByPrimaryKey(budgetingVo.getId());
         budgeting.setAmountCost(budgetingVo.getAmountCost());
-        budgeting.setBudgetingPeople(budgetingVo.getBudgetingPeople());
+        budgeting.setBudgetingPeople(nameById);
         budgeting.setAddedTaxAmount(budgetingVo.getAddedTaxAmount());
         budgeting.setOutsourcing(budgetingVo.getOutsourcing());
         budgeting.setNameOfCostUnit(budgetingVo.getNameOfCostUnit());
@@ -528,6 +535,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         surveyInformationDao.updateByPrimaryKeySelective(surveyInformation);
 
         //成本编制
+        String costId = memberManageDao.findNameById(budgetingVo.getCostTogether());
         Example example2 = new Example(CostPreparation.class);
         example2.createCriteria().andEqualTo("budgetingId",budgetingVo.getId());
         CostPreparation costPreparation = costPreparationDao.selectOneByExample(example2);
@@ -538,7 +546,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         costPreparation.setOtherCost1(budgetingVo.getOtherCost1());
         costPreparation.setOtherCost2(budgetingVo.getOtherCost2());
         costPreparation.setOtherCost3(budgetingVo.getOtherCost3());
-        costPreparation.setCostTogether(budgetingVo.getCostTogether());
+        costPreparation.setCostTogether(costId);
         costPreparation.setReceivingTime(budgetingVo.getReceivingTime());
         costPreparation.setCostPreparationTime(budgetingVo.getCostPreparationTime());
         costPreparation.setRemarkes(budgetingVo.getCRemarkes());
@@ -547,11 +555,12 @@ public class BudgetingServiceImpl implements BudgetingService {
 
         //控价编制
         Example example3 = new Example(VeryEstablishment.class);
+        String priceToger = memberManageDao.findNameById(budgetingVo.getPricingTogether());
         example3.createCriteria().andEqualTo("budgetingId",budgetingVo.getId());
         VeryEstablishment veryEstablishment = veryEstablishmentDao.selectOneByExample(example3);
         veryEstablishment.setBiddingPriceControl(budgetingVo.getBiddingPriceControl());
         veryEstablishment.setVatAmount(budgetingVo.getVVatAmount());
-        veryEstablishment.setPricingTogether(budgetingVo.getPricingTogether());
+        veryEstablishment.setPricingTogether(priceToger);
         veryEstablishment.setReceivingTime(budgetingVo.getVReceivingTime());
         veryEstablishment.setEstablishmentTime(budgetingVo.getEstablishmentTime());
         veryEstablishment.setRemarkes(budgetingVo.getVRemarkes());
@@ -1713,6 +1722,14 @@ public class BudgetingServiceImpl implements BudgetingService {
     @Override
     public List<MkyUser> findPreparePeople(String id) {
       return   auditInfoDao.findPreparePeople(id);
+    }
+
+    @Override
+    public Budgeting budgetingPeople(String id) {
+        String preparePeople = memberManageDao.findIdByName(id);
+        Budgeting budgeting = new Budgeting();
+        budgeting.setBudgetingPeople(preparePeople);
+        return budgeting;
     }
 
     @Override

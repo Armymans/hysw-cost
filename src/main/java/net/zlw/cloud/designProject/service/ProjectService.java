@@ -3786,7 +3786,7 @@ public class ProjectService {
     }
 
     public DesignInfo  selectDisCreator(String id) {
-        String name = memberManageDao.selectDisCreator(id);
+        String name = memberManageDao.findIdByName(id);
         DesignInfo designPageVo = new DesignInfo();
         designPageVo.setDesigner(name);
         return designPageVo;

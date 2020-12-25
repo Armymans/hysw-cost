@@ -29,5 +29,8 @@ public interface MemberManageDao extends Mapper<MemberManage> {
     String selectById(@Param("userAccount") String userAccount);
 
     @Select("SELECT member_name FROM member_manage WHERE id = #{id} ")
-    String selectDisCreator(@Param("id") String id);
+    String findIdByName(@Param("id") String id);
+
+    @Select("SELECT id FROM member_manage WHERE member_name = #{name} ")
+    String findNameById(@Param("name") String name);
 }
