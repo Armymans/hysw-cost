@@ -1877,10 +1877,6 @@ public class ProjectService {
         if (list != null && list.size() != 0) {
             throw new RuntimeException("项目编号或项目名称重复");
         }
-
-
-
-
         //baseProject, designInfo, packageCame, projectExploration
         String projectuuid = UUID.randomUUID().toString().replaceAll("-", "");
         String DesignInfouuid = UUID.randomUUID().toString().replaceAll("-", "");
@@ -1945,8 +1941,13 @@ public class ProjectService {
         projectVo.getDesignInfo().setIsdeschange("0");
         projectVo.getDesignInfo().setCreateTime(createTime);
 
+        Example example = new Example(MemberManage.class);
+        example.createCriteria().andEqualTo("memberName",projectVo.getDesignInfo().getDesigner());
+        MemberManage memberName = memberManageDao.selectOneByExample(example);
         if ("".equals(projectVo.getDesignInfo().getDesigner())){
             projectVo.getDesignInfo().setDesigner(loginUser.getId());
+        }else {
+            projectVo.getDesignInfo().setDesigner(memberName.getId());
         }
 
         designInfoMapper.insert(projectVo.getDesignInfo());
@@ -2176,7 +2177,7 @@ public class ProjectService {
         Example designerExample = new Example(MemberManage.class);
         //去空格
         designerExample.createCriteria().andEqualTo("memberName", designer.trim());
-        List<MemberManage> memberManages = memberManageDao.selectByExample(designerExample);
+        MemberManage memName = memberManageDao.selectOneByExample(designerExample);
         // 项目名称
         String projectName = projectVo.getBaseProject().getProjectName();
         // 项目id
@@ -2277,6 +2278,7 @@ public class ProjectService {
 //        projectVo.getDesignInfo().setId(designInfo.getId());
         projectVo.getDesignInfo().setUpdateTime(updateTime);
         projectVo.getDesignInfo().setIsdeschange("0");
+        projectVo.getDesignInfo().setDesigner(memName.getId());
         designInfoMapper.updateByPrimaryKeySelective(projectVo.getDesignInfo());
         //添加勘探表时间
         if (projectVo.getProjectExploration() != null) {
