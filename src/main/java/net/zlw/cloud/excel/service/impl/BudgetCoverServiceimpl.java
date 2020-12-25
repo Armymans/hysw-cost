@@ -279,12 +279,12 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     }
 
     @Override
-    public void LastSummaryCoverImport(String id) {
+    public void LastSummaryCoverImport(String id, FileInputStream fileInputStream) {
         try {
-            String filePath = "E:\\正量\\新建文件夹\\上家结算汇总表（安徽）.xlsx";
+//            String filePath = "E:\\正量\\新建文件夹\\上家结算汇总表（安徽）.xlsx";
             //第几张表(最低1) 第几条数据开始(最低0)
             Sheet sheet = new Sheet(2,4);
-            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+//            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
             LastSummaryCover lastSummaryCover = new LastSummaryCover();
@@ -316,12 +316,12 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
     }
 
     @Override
-    public void UnitProjectSummaryImport(String id) {
+    public void UnitProjectSummaryImport(String id, FileInputStream fileInputStream) {
         try {
-            String filePath = "E:\\正量\\新建文件夹\\上家结算汇总表（安徽）.xlsx";
+//            String filePath = "E:\\正量\\新建文件夹\\上家结算汇总表（安徽）.xlsx";
             //第几张表(最低1) 第几条数据开始(最低0)
             Sheet sheet = new Sheet(3, 4);
-            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
+//            FileInputStream fileInputStream = new FileInputStream(new File(filePath));
             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
             List<Object> read = EasyExcelFactory.read(bufferedInputStream, sheet);
             String projectName = "";

@@ -19,9 +19,9 @@ public interface BudgetCoverService {
 
     void bomTableImport(String id, FileInputStream inputStream);
 
-    void LastSummaryCoverImport(String id);
+    void LastSummaryCoverImport(String id, FileInputStream inputStream);
 
-    void UnitProjectSummaryImport(String id);
+    void UnitProjectSummaryImport(String id, FileInputStream inputStream2);
 
     void summaryTableImport(String id);
 

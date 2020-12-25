@@ -15,6 +15,7 @@ import net.zlw.cloud.designProject.model.InCome;
 import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.designProject.service.ProjectSumService;
+import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
@@ -51,6 +52,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -111,6 +113,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     private ConstructionUnitManagementMapper constructionUnitManagementMapper;
     @Resource
     private WarningDetailsService warningDetailsService;
+    @Resource
+    private BudgetCoverService budgetCoverService;
 
 
 
@@ -774,13 +778,10 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getLastSettlementReview().setAccountId(baseAccountsVo.getSettlementAuditInformation().getId());
             baseAccountsVo.getLastSettlementReview().setWhetherAccount("1");
         }
-        String nameById = memberManageDao.findNameById(baseAccountsVo.getLastSettlementReview().getPreparePeople());
         if (baseProject.getAB().equals("1")){
             if(baseAccountsVo.getLastSettlementReview().getId() != null) {
                 if (baseAccountsVo.getLastSettlementReview().getPreparePeople().equals("")){
                     baseAccountsVo.getLastSettlementReview().setPreparePeople(loginUser.getId());
-                }else {
-                    baseAccountsVo.getLastSettlementReview().setPreparePeople(nameById);
                 }
                 lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
             }
@@ -1115,8 +1116,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         c2.andEqualTo("baseProjectId", baseProject.getId());
         c2.andEqualTo("delFlag", "0");
         LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example2);
-        String idByName = memberManageDao.findIdByName(lastSettlementReview.getPreparePeople());
-        lastSettlementReview.setPreparePeople(idByName);
         baseAccountsVo.setLastSettlementReview(lastSettlementReview);
 
         Example example3 = new Example(SettlementAuditInformation.class);
@@ -1228,8 +1227,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
             }
         }
-        String nameById = memberManageDao.findNameById(baseAccountsVo.getLastSettlementReview().getPreparePeople());
-        baseAccountsVo.getLastSettlementReview().setPreparePeople(nameById);
         settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getLastSettlementInfo());
         //判断decimal是否为空
         //下家审核修改
@@ -2033,5 +2030,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         LastSettlementReview settlementReview = new LastSettlementReview();
         settlementReview.setPreparePeople(memName);
         return settlementReview;
+    }
+
+    @Override
+    public void addUniProjectImport(String id, FileInputStream inputStream, FileInputStream inputStream2) {
+            budgetCoverService.LastSummaryCoverImport(id,inputStream);
+            budgetCoverService.UnitProjectSummaryImport(id,inputStream2);
     }
 }

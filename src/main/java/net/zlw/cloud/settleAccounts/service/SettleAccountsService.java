@@ -10,6 +10,7 @@ import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.FileInputStream;
 import java.util.List;
 
 public interface SettleAccountsService {
@@ -31,5 +32,6 @@ public interface SettleAccountsService {
 
     void addAttribution(String baseId, String district, String designCategory, String prePeople);
 
-    LastSettlementReview selectPeople(UserInfo loginUser);
+    void addUniProjectImport(String id, FileInputStream inputStream, FileInputStream inputStream2);
+     LastSettlementReview selectPeople(UserInfo loginUser);
 }

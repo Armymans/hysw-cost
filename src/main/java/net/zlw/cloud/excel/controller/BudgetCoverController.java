@@ -46,13 +46,13 @@ public class BudgetCoverController {
     //上家结算汇总表(安徽) 封面
     @RequestMapping(value = "/budgetCover/lastSummaryCoverImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> LastSummaryCoverImport(@RequestParam(name = "id") String id){
-        budgetCoverService.LastSummaryCoverImport(id);
+        budgetCoverService.LastSummaryCoverImport(id, null);
         return RestUtil.success();
     }
     //上家结算汇总表 单位工程造价汇总表
     @RequestMapping(value = "/budgetCover/unitProjectSummaryImport",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> UnitProjectSummaryImport(@RequestParam(name = "id") String id){
-        budgetCoverService.UnitProjectSummaryImport(id);
+        budgetCoverService.UnitProjectSummaryImport(id,null);
         return RestUtil.success();
     }
     //下家结算审核汇总表 -   汇总表

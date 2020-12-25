@@ -4,6 +4,9 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import net.tec.cloud.common.controller.BaseController;
+import net.tec.cloud.common.util.DateUtil;
+import net.tec.cloud.common.util.FileUtil;
+import net.tec.cloud.common.util.IdUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.Page;
@@ -19,15 +22,23 @@ import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.BaseAccountsVo;
 import net.zlw.cloud.settleAccounts.model.vo.PageVo;
 import net.zlw.cloud.settleAccounts.service.SettleAccountsService;
+import net.zlw.cloud.snsEmailFile.controller.FileInfoController;
+import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 //@RequestMapping("/accounts")
 @RestController
@@ -41,6 +52,8 @@ public class SettleAccountsController extends BaseController {
     private BaseProjectDao baseProjectDao;
     @Resource
     private LastSettlementReviewDao lastSettlementReviewDao;
+    @Resource
+    private FileInfoMapper fileInfoMapper;
 
 
     //查询所有结算
@@ -263,6 +276,104 @@ public class SettleAccountsController extends BaseController {
     public Map<String,Object> addAttribution(@RequestParam(name = "baseProjectId") String baseId,@RequestParam(name = "district") String district,@RequestParam(name = "designCategory") String designCategory,@RequestParam(name = "prePeople") String prePeople){
         settleAccountsService.addAttribution(baseId,district,designCategory,prePeople);
         return RestUtil.success();
+    }
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMdd");
+    private static final transient Logger log = LoggerFactory.getLogger(FileInfoController.class);
+    @Value("${app.attachPath}")
+    private String LixAttachDir;
+    @Value("${app.testPath}")
+    private String WinAttachDir;
+    //结算上家结算汇总表 导入
+    @RequestMapping(value = "/accounts/addUniProjectImport", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> addUniProjectImport(@RequestParam("file") MultipartFile file, String type){
+
+        MultipartFile aaa = file;
+
+        log.info(getLogInfo("upload", file));
+        FileInfo attachInfo = new FileInfo();
+        try {
+
+            String fileName = new String(FileUtil.getFileName(file).getBytes(), "UTF-8");
+            String fileType = FileUtil.getFileExtName(file);
+
+            String fileDir = "/" + sdf2.format(new Date());
+
+            String tmpFileName = IdUtil.uuid2().substring(0, 15) + sdf.format(new Date()) + "." + fileType;
+            String filePath = fileDir + "/" + tmpFileName;
+            //上传路径
+            String path = "";
+            String os = System.getProperty("os.name");
+            if (os.toLowerCase().startsWith("win")) {
+                path = WinAttachDir;
+            } else {
+                path = LixAttachDir;
+            }
+
+            File outDir = new File(path + fileDir);
+            if (!outDir.exists()) {
+                outDir.mkdirs();
+            }
+            log.info(outDir.getAbsolutePath());
+            File targetFile = new File(outDir.getAbsolutePath(), tmpFileName);
+
+            attachInfo.setFileName(fileName);
+            attachInfo.setFilePath(filePath);
+            attachInfo.setFileSource("1");
+            attachInfo.setFileType(fileType);
+            attachInfo.setType(type);
+            attachInfo.setCreateTime(DateUtil.getDateTime());
+            attachInfo.setStatus("1");
+            attachInfo.setUserId(getLoginUser().getId());
+            attachInfo.setStatus("0");
+            attachInfo.setCompanyId(getLoginUser().getCompanyId());
+            //添加到数据库
+
+
+            FileInputStream inputStream = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream2 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream3 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream4 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream5 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream6 = (FileInputStream) aaa.getInputStream();
+            FileInputStream inputStream7 = (FileInputStream) aaa.getInputStream();
+
+
+            //将文件与企业材料管理进行关联
+            try {
+                attachInfo.setId("file"+ UUID.randomUUID().toString().replaceAll("-", ""));
+                fileInfoMapper.insert(attachInfo);
+
+                if (aaa.getOriginalFilename().contains("吴江")){
+
+                }else if(aaa.getOriginalFilename().contains("安徽")){
+                    settleAccountsService.addUniProjectImport(attachInfo.getId(),inputStream,inputStream2);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            try {
+                file.transferTo(targetFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error("操作异常,请联系管理员!");
+        }
+
+
+
+
+
+        Map<String, String> map = new HashMap<>();
+        map.put("id",attachInfo.getId());
+        map.put("name",attachInfo.getFileName()+"."+attachInfo.getFileType());
+        return RestUtil.success(map);
     }
 
 }
