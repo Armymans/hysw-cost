@@ -421,7 +421,7 @@ public class BudgetCoverServiceimpl implements BudgetCoverService {
 
 
 
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
