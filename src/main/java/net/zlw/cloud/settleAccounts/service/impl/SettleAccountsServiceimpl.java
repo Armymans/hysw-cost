@@ -752,7 +752,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
 
         //添加上家结算送审
-        if (baseAccountsVo.getLastSettlementReview().getReviewNumber()!=null){
+        if (baseAccountsVo.getLastSettlementReview().getReviewNumber()!=null && !"".equals(baseAccountsVo.getLastSettlementReview().getReviewNumber())){
 
             baseAccountsVo.getLastSettlementReview().setId(UUID.randomUUID().toString().replace("-",""));
             baseAccountsVo.getLastSettlementReview().setCreateTime(data);
@@ -761,14 +761,13 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getLastSettlementReview().setFounderId(loginUser.getId());
         }
 
-        if (baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber()!=null){
+        if (baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber()!=null && !"".equals(baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber())){
             //添加下家结算送审
             baseAccountsVo.getSettlementAuditInformation().setId(UUID.randomUUID().toString().replace("-", ""));
             baseAccountsVo.getSettlementAuditInformation().setCreateTime(data);
             baseAccountsVo.getSettlementAuditInformation().setDelFlag("0");
             baseAccountsVo.getSettlementAuditInformation().setBaseProjectId(baseProject.getId());
             baseAccountsVo.getSettlementAuditInformation().setFounderId(loginUser.getId());
-
         }
 
         if (baseAccountsVo.getLastSettlementReview().getId() != null) {
@@ -1596,13 +1595,19 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     // 三审通过插入委外金额
                     OutSource outSource = new OutSource();
                     BigDecimal addAmount = new BigDecimal(0);
-                    if ("1".equals(lastSettlementReview.getOutsourcing())){
-                        addAmount = addAmount.add(lastSettlementReview.getAmountOutsourcing());
-                    }else if ("1".equals(settlementAuditInformation.getOutsourcing())){
-                        addAmount = addAmount.add(settlementAuditInformation.getAmountOutsourcing());
-                    }else {
-                        addAmount = new BigDecimal(0);
+
+                    if (lastSettlementReview!=null){
+                        if (settlementAuditInformation!=null){
+                            if ("1".equals(lastSettlementReview.getOutsourcing())){
+                                addAmount = addAmount.add(lastSettlementReview.getAmountOutsourcing());
+                            }else if ("1".equals(settlementAuditInformation.getOutsourcing())){
+                                addAmount = addAmount.add(settlementAuditInformation.getAmountOutsourcing());
+                            }else {
+                                addAmount = new BigDecimal(0);
+                            }
+                        }
                     }
+
                     outSource.setId(UUID.randomUUID().toString().replaceAll("-",""));
                     outSource.setOutMoney(addAmount.toString());
                     outSource.setBaseProjectId(baseProject.getId());
