@@ -225,7 +225,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
 
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
-
+                    if (pageVo.getUid().equals(returnTrackVo.getFounderId())){
+                        returnTrackVo.setIsShow("1");
+                    }
                     TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(returnTrackVo.getId());
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
                     String district = baseProject.getDistrict();

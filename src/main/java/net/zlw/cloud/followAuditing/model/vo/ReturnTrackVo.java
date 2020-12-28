@@ -42,6 +42,7 @@ public class ReturnTrackVo {
     private List<AuditInfoVo> auditInfoVoList;
 
     private String attributionShow;
+    private String isShow;
 
     @Override
     public boolean equals(Object o) {
