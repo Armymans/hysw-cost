@@ -1918,11 +1918,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
-                    baseProject.setSettleAccountsStatus("5");
-                    baseProject.setProgressPaymentStatus("6");
-                    baseProject.setVisaStatus("6");
-                    baseProject.setTrackStatus("5");
-                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+//                    baseProject.setSettleAccountsStatus("5");
+//                    baseProject.setProgressPaymentStatus("6");
+//                    baseProject.setVisaStatus("6");
+//                    baseProject.setTrackStatus("5");
+//                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
                     //消息
                     String projectName = baseProject.getProjectName();
                     String name = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId()).getMemberName();
@@ -1935,10 +1935,38 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     messageService.sendOrClose(messageVo);
                     //若缺失上下家则进入处理中
                     BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(s);
-                    if ((lastSettlementReview == null || settlementAuditInformation == null) & ! baseProject1.getAB().equals("2")){
-                        BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
-                        baseProject3.setSettleAccountsStatus("2");
-                        baseProjectDao.updateByPrimaryKeySelective(baseProject3);
+                    if (lastSettlementReview == null || settlementAuditInformation == null){
+                        if ( baseProject1.getAB().equals("1") ){
+                            if (settlementAuditInformation!=null){
+                                if ("2".equals(settlementAuditInformation.getContract())){
+                                    BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
+                                    baseProject3.setSettleAccountsStatus("2");
+                                    baseProjectDao.updateByPrimaryKeySelective(baseProject3);
+
+                                    if (lastSettlementReview!=null){
+                                        Example example1 = new Example(AuditInfo.class);
+                                        Example.Criteria c = example1.createCriteria();
+                                        c.andEqualTo("baseProjectId",lastSettlementReview.getId());
+                                        c.andEqualTo("status","0");
+                                        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+                                        for (AuditInfo info : auditInfos) {
+                                            auditInfoDao.deleteByPrimaryKey(info);
+                                        }
+                                    }
+                                    if (settlementAuditInformation!=null){
+                                        Example example1 = new Example(AuditInfo.class);
+                                        Example.Criteria c = example1.createCriteria();
+                                        c.andEqualTo("baseProjectId",settlementAuditInformation.getId());
+                                        c.andEqualTo("status","0");
+                                        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+                                        for (AuditInfo info : auditInfos) {
+                                            auditInfoDao.deleteByPrimaryKey(info);
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
                         //否则则进入已完成
                     }else{
                         BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
