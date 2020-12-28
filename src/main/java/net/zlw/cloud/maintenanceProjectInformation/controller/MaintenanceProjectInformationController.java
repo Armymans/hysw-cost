@@ -8,6 +8,7 @@ import net.tec.cloud.common.util.RestUtil;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.Page;
+import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationReturnVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectInformationVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceVo;
@@ -171,6 +172,19 @@ public class MaintenanceProjectInformationController extends BaseController {
 //        System.out.println("user:"+loginUser);
         maintenanceProjectInformationService.addMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser(),request);
         return RestUtil.success("新增提交成功");
+    }
+
+    /**
+        * @Author sjf
+        * @Description //检维修结算编制人
+        * @Date 10:55 2020/12/28
+        * @Param
+        * @return
+     **/
+    @RequestMapping(value = "/maintenanceProjectInformation/selectPeople", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> selectPeople() {
+        MaintenanceProjectInformation mainInfo = maintenanceProjectInformationService.selectPeople(getLoginUser().getId());
+        return RestUtil.success(mainInfo);
     }
 
 
