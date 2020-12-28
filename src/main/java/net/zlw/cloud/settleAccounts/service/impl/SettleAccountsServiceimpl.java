@@ -1964,8 +1964,47 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                                         }
                                     }
 
+                                }else{
+                                    BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
+                                    baseProject2.setSettleAccountsStatus("5");
+                                    baseProject2.setProgressPaymentStatus("6");
+                                    baseProject2.setVisaStatus("6");
+                                    baseProject2.setTrackStatus("5");
+                                    baseProjectDao.updateByPrimaryKeySelective(baseProject2);
+                                }
+                            }else{
+                                BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
+                                baseProject3.setSettleAccountsStatus("2");
+                                baseProjectDao.updateByPrimaryKeySelective(baseProject3);
+
+                                if (lastSettlementReview!=null){
+                                    Example example1 = new Example(AuditInfo.class);
+                                    Example.Criteria c = example1.createCriteria();
+                                    c.andEqualTo("baseProjectId",lastSettlementReview.getId());
+                                    c.andEqualTo("status","0");
+                                    List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+                                    for (AuditInfo info : auditInfos) {
+                                        auditInfoDao.deleteByPrimaryKey(info);
+                                    }
+                                }
+                                if (settlementAuditInformation!=null){
+                                    Example example1 = new Example(AuditInfo.class);
+                                    Example.Criteria c = example1.createCriteria();
+                                    c.andEqualTo("baseProjectId",settlementAuditInformation.getId());
+                                    c.andEqualTo("status","0");
+                                    List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+                                    for (AuditInfo info : auditInfos) {
+                                        auditInfoDao.deleteByPrimaryKey(info);
+                                    }
                                 }
                             }
+                        }else{
+                            BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
+                            baseProject2.setSettleAccountsStatus("5");
+                            baseProject2.setProgressPaymentStatus("6");
+                            baseProject2.setVisaStatus("6");
+                            baseProject2.setTrackStatus("5");
+                            baseProjectDao.updateByPrimaryKeySelective(baseProject2);
                         }
                         //否则则进入已完成
                     }else{
