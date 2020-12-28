@@ -1946,6 +1946,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     if (lastSettlementReview == null || settlementAuditInformation == null){
                         if ( baseProject1.getAB().equals("1") ){
                             if (settlementAuditInformation!=null){
+
+                                System.err.println("1------"+settlementAuditInformation);
+                                System.err.println("1------"+settlementAuditInformation);
+                                System.err.println("1------"+settlementAuditInformation);
+                                System.err.println("1------"+settlementAuditInformation);
+
                                 if ("2".equals(settlementAuditInformation.getContract())){
                                     BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
                                     baseProject3.setSettleAccountsStatus("2");
