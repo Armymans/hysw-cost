@@ -690,14 +690,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getSettlementInfo().setSumbitMoney("0");
         }
 
-        if ("".equals(baseAccountsVo.getLastSettlementReview().getReviewNumber())){
-            baseAccountsVo.getLastSettlementReview().setReviewNumber(null);
-            throw new RuntimeException("请填写上家信息");
-        }
-        if ("".equals(baseAccountsVo.getSettlementAuditInformation().getAuthorizedNumber())){
-            baseAccountsVo.getSettlementAuditInformation().setAuthorizedNumber(null);
-            throw new RuntimeException("请填写下家信息");
-        }
+
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //其他信息表
         if (!"".equals(baseAccountsVo.getComs()) && baseAccountsVo.getComs() != null){
@@ -783,7 +776,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getLastSettlementReview().setAccountId(baseAccountsVo.getSettlementAuditInformation().getId());
             baseAccountsVo.getLastSettlementReview().setWhetherAccount("1");
         }
-        if (baseProject.getAB().equals("1")){
+        if (baseProject.getAB().equals("1") && "2".equals(baseAccountsVo.getSettlementAuditInformation().getContract())){
             if(baseAccountsVo.getLastSettlementReview().getId() != null) {
                 if (baseAccountsVo.getLastSettlementReview().getPreparePeople().equals("")){
                     baseAccountsVo.getLastSettlementReview().setPreparePeople(loginUser.getId());
@@ -793,7 +786,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             if(baseAccountsVo.getSettlementAuditInformation().getId() != null){
                 settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
             }
-        }else if(baseProject.getAB().equals("2")){
+        }else if(baseProject.getAB().equals("2") && "1".equals(baseAccountsVo.getSettlementAuditInformation().getContract())){
             settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
         }
 
@@ -1211,7 +1204,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseAccountsVo.getBaseProject().getId());
         //上家审核修改
-        if (baseProject.getAB().equals("1")){
+        if (baseProject.getAB().equals("1") && "2".equals(baseAccountsVo.getSettlementAuditInformation().getContract())){
             LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectByPrimaryKey(baseAccountsVo.getLastSettlementReview().getId());
             SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectByPrimaryKey(baseAccountsVo.getSettlementAuditInformation().getId());
             if (lastSettlementReview==null){
@@ -1235,6 +1228,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
             }
         }
+
         settlementInfoMapper.updateByPrimaryKeySelective( baseAccountsVo.getLastSettlementInfo());
         //判断decimal是否为空
         //下家审核修改

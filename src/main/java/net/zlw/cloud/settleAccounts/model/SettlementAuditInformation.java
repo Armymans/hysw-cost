@@ -59,6 +59,9 @@ public class SettlementAuditInformation implements Serializable {
     //核减率
     @Column(name = "subtractRate")
     private BigDecimal subtractRate;
+    //是否包干
+    @Column(name = "contract")
+    private String contract;
 
 
 }
