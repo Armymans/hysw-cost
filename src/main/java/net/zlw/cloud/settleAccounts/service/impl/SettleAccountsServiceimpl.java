@@ -776,17 +776,22 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.getLastSettlementReview().setAccountId(baseAccountsVo.getSettlementAuditInformation().getId());
             baseAccountsVo.getLastSettlementReview().setWhetherAccount("1");
         }
-        if (baseProject.getAB().equals("1") && "2".equals(baseAccountsVo.getSettlementAuditInformation().getContract())){
-            if(baseAccountsVo.getLastSettlementReview().getId() != null) {
-                if (baseAccountsVo.getLastSettlementReview().getPreparePeople().equals("")){
-                    baseAccountsVo.getLastSettlementReview().setPreparePeople(loginUser.getId());
+        if (baseProject.getAB().equals("1") ){
+            if ("2".equals(baseAccountsVo.getSettlementAuditInformation().getContract())){
+                if(baseAccountsVo.getLastSettlementReview().getId() != null) {
+                    if (baseAccountsVo.getLastSettlementReview().getPreparePeople().equals("")){
+                        baseAccountsVo.getLastSettlementReview().setPreparePeople(loginUser.getId());
+                    }
+                    lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
                 }
-                lastSettlementReviewDao.insertSelective(baseAccountsVo.getLastSettlementReview());
-            }
-            if(baseAccountsVo.getSettlementAuditInformation().getId() != null){
+                if(baseAccountsVo.getSettlementAuditInformation().getId() != null){
+                    settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
+                }
+            }else if("1".equals(baseAccountsVo.getSettlementAuditInformation().getContract())){
                 settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
             }
-        }else if(baseProject.getAB().equals("2") && "1".equals(baseAccountsVo.getSettlementAuditInformation().getContract())){
+
+        }else if(baseProject.getAB().equals("2")){
             settlementAuditInformationDao.insertSelective(baseAccountsVo.getSettlementAuditInformation());
         }
 
