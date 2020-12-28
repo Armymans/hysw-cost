@@ -2145,7 +2145,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         example1.createCriteria().andEqualTo("baseProjectId",baseProject.getId());
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
         if (settlementAuditInformation != null){
-            settlementAuditInformation.setAmountOutsourcing(new BigDecimal(upOutMoney));
+            settlementAuditInformation.setAmountOutsourcing(new BigDecimal(downOutMoney));
             settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
         }
     }
