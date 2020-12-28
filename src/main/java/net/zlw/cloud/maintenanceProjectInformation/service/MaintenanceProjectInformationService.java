@@ -46,10 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @Author dell
@@ -413,7 +410,20 @@ public class MaintenanceProjectInformationService {
         } else {
             information.setType("2");
         }
-        information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
+        // 项目编号格式 （WJ-202012-随机ID)
+        int randomMainId = new Random().nextInt(998) + 1;
+        SimpleDateFormat data = new SimpleDateFormat("yyyyDD");
+        // 如果是芜湖
+        if ("1".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("WH-"+data+"-"+randomMainId);
+        // 如果是马鞍山
+        }else if ("2".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("MAS-"+data+"-"+randomMainId);
+        }else if ("3".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("JB-"+data+"-"+randomMainId);
+        }else if ("4".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("WJ-"+data+"-"+randomMainId);
+        }
         information.setMaintenanceItemName(maintenanceProjectInformation.getMaintenanceItemName());
         information.setMaintenanceItemType(maintenanceProjectInformation.getMaintenanceItemType());
         information.setSubmittedDepartment(maintenanceProjectInformation.getSubmittedDepartment());
@@ -1121,7 +1131,21 @@ public class MaintenanceProjectInformationService {
         information.setId(maintenanceProjectInformation.getId());
         // 修改时间
         information.setUpdateTime(updateTime);
-        information.setMaintenanceItemId(maintenanceProjectInformationVo.getMaintenanceItemId());
+        // 项目编号格式 （WJ-202012-随机ID)
+        int randomMainId = new Random().nextInt(998) + 1;
+        SimpleDateFormat data = new SimpleDateFormat("yyyyDD");
+        // 如果是芜湖
+        if ("1".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("WH-"+data+"-"+randomMainId);
+            // 如果是马鞍山
+        }else if ("2".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("MAS-"+data+"-"+randomMainId);
+        }else if ("3".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("JB-"+data+"-"+randomMainId);
+        }else if ("4".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("WJ-"+data+"-"+randomMainId);
+        }
+//        information.setMaintenanceItemId(maintenanceProjectInformationVo.getMaintenanceItemId());
         information.setMaintenanceItemName(maintenanceProjectInformationVo.getMaintenanceItemName());
         information.setMaintenanceItemType(maintenanceProjectInformationVo.getMaintenanceItemType());
         information.setSubmittedDepartment(maintenanceProjectInformationVo.getSubmittedDepartment());
@@ -1613,7 +1637,20 @@ public class MaintenanceProjectInformationService {
         } else {
             information.setType("2");
         }
-        information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
+        // 项目编号格式 （WJ-202012-随机ID)
+        int randomMainId = new Random().nextInt(998) + 1;
+        SimpleDateFormat data = new SimpleDateFormat("yyyyDD");
+        // 如果是芜湖
+        if ("1".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("WH-"+data+"-"+randomMainId);
+            // 如果是马鞍山
+        }else if ("2".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("MAS-"+data+"-"+randomMainId);
+        }else if ("3".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("JB-"+data+"-"+randomMainId);
+        }else if ("4".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("WJ-"+data+"-"+randomMainId);
+        }
         information.setMaintenanceItemName(maintenanceProjectInformation.getMaintenanceItemName());
         information.setMaintenanceItemType(maintenanceProjectInformation.getMaintenanceItemType());
         information.setSubmittedDepartment(maintenanceProjectInformation.getSubmittedDepartment());
@@ -1952,7 +1989,21 @@ public class MaintenanceProjectInformationService {
         MaintenanceProjectInformation information = new MaintenanceProjectInformation();
         information.setId(maintenanceProjectInformation.getId());
         information.setUpdateTime(updateTime);
-        information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
+//        information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
+        // 项目编号格式 （WJ-202012-随机ID)
+        int randomMainId = new Random().nextInt(998) + 1;
+        SimpleDateFormat data = new SimpleDateFormat("yyyyDD");
+        // 如果是芜湖
+        if ("1".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("WH-"+data+"-"+randomMainId);
+            // 如果是马鞍山
+        }else if ("2".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("MAS-"+data+"-"+randomMainId);
+        }else if ("3".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("JB-"+data+"-"+randomMainId);
+        }else if ("4".equals(maintenanceProjectInformation.getProjectAddress())){
+            information.setMaintenanceItemId("WJ-"+data+"-"+randomMainId);
+        }
         information.setMaintenanceItemName(maintenanceProjectInformation.getMaintenanceItemName());
         information.setMaintenanceItemType(maintenanceProjectInformation.getMaintenanceItemType());
         information.setSubmittedDepartment(maintenanceProjectInformation.getSubmittedDepartment());
