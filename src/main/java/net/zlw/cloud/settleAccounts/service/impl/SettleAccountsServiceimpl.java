@@ -2062,6 +2062,25 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     }
 
     @Override
+    public void editOutsourceMoney(String id, String upOutMoney, String downOutMoney) {
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
+        Example example = new Example(LastSettlementReview.class);
+        example.createCriteria().andEqualTo("baseProjectId",baseProject.getId());
+        LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example);
+        if (lastSettlementReview != null){
+            lastSettlementReview.setAmountOutsourcing(new BigDecimal(upOutMoney));
+            lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
+        }
+        Example example1 = new Example(SettlementAuditInformation.class);
+        example1.createCriteria().andEqualTo("baseProjectId",baseProject.getId());
+        SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
+        if (settlementAuditInformation != null){
+            settlementAuditInformation.setAmountOutsourcing(new BigDecimal(upOutMoney));
+            settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+        }
+    }
+
+    @Override
     public void addUniProjectImport(String id, FileInputStream inputStream, FileInputStream inputStream2) {
             budgetCoverService.LastSummaryCoverImport(id,inputStream);
             budgetCoverService.UnitProjectSummaryImport(id,inputStream2);

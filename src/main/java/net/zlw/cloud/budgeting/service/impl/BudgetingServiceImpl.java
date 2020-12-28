@@ -1733,6 +1733,15 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
+    public void editOutSourceMoney(String id, String amountOutsourcing) {
+        Budgeting budgeting = budgetingDao.selectByPrimaryKey(id);
+        if (budgeting != null){
+            budgeting.setAmountOutsourcing(new BigDecimal(amountOutsourcing));
+            budgetingDao.updateByPrimaryKeySelective(budgeting);
+        }
+    }
+
+    @Override
     public UnionQueryVo unionQuery(String id, UserInfo loginUser) {
         UnionQueryVo unionQueryVo = new UnionQueryVo();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);

@@ -1998,6 +1998,26 @@ public class VisaChangeServiceImpl implements VisaChangeService {
     }
 
     @Override
+    public void editOutSourceMoney(String id, String upMoney,String downMoney) {
+        Example example = new Example(VisaChange.class);
+        example.createCriteria().andEqualTo("id",id);
+        List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
+       if (visaChanges.size()>0){
+           for (VisaChange visaChange : visaChanges) {
+               //如果是上家
+               if ("0".equals(visaChange.getUpAndDownMark())){
+                   visaChange.setOutsourcingAmount(upMoney);
+                   visaChangeMapper.updateByPrimaryKeySelective(visaChange);
+                   //如果是上家
+               }else if ("1".equals(visaChange.getUpAndDownMark())){
+                   visaChange.setOutsourcingAmount(downMoney);
+                   visaChangeMapper.updateByPrimaryKeySelective(visaChange);
+               }
+           }
+       }
+    }
+
+    @Override
     public void updateVisa(VisaChangeVo visaChangeVo, UserInfo loginUser,HttpServletRequest request) {
         String id = loginUser.getId();
 //        String id = "user309";

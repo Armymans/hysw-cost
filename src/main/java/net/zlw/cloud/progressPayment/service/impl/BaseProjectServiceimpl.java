@@ -1615,6 +1615,15 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
+    public void editOutSourceMoney(String id, String outSourceMoney) {
+        ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectByPrimaryKey(id);
+        if (progressPaymentInformation != null){
+            progressPaymentInformation.setAmountOutsourcing(new BigDecimal(outSourceMoney));
+            progressPaymentInformationDao.updateByPrimaryKeySelective(progressPaymentInformation);
+        }
+    }
+
+    @Override
     public NumberVo NumberItems() {
         NumberVo numberVo = new NumberVo();
         int i = baseProjectDao.selectCountByExample(null);

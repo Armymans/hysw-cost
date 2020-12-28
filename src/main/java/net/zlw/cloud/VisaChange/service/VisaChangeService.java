@@ -33,4 +33,6 @@ public interface VisaChangeService {
      List<MemberManage> costOfPersonnel();
 
      void renewFile(String id, String baseId);
+
+    void editOutSourceMoney(String id, String upMoney,String downMoney);
 }

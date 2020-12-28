@@ -70,6 +70,19 @@ public class ProgressPaymentController  extends BaseController {
         }
     }
 
+  /**
+      * @Author sjf
+      * @Description //委外金额
+      * @Date 15:44 2020/12/28
+      * @Param
+      * @return
+   **/
+    @RequestMapping(value = "/progress/editOutSourceMoney",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> editOutSourceMoney(@RequestParam(name = "id") String id,@RequestParam(name = "outSourceMoney") String outSourceMoney){
+       baseProjectService.editOutSourceMoney(id,outSourceMoney);
+       return RestUtil.success("编辑成功");
+    }
+
 
     //编辑
 //    @PostMapping("/updateProgress")

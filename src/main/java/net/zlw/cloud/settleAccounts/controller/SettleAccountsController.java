@@ -2,7 +2,6 @@ package net.zlw.cloud.settleAccounts.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.DateUtil;
 import net.tec.cloud.common.util.FileUtil;
@@ -28,7 +27,10 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
@@ -65,6 +67,14 @@ public class SettleAccountsController extends BaseController {
 
         PageInfo<AccountsVo> accountsVoPageInfo = new PageInfo<>(allAccounts);
         return RestUtil.page(accountsVoPageInfo);
+    }
+
+    //结算金额
+//    @PostMapping("/findAllAccounts")
+    @RequestMapping(value = "/accounts/editOutsourceMoney",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> editOutsourceMoney(String id , String upOutMoney,String downOutMoney){
+        settleAccountsService.editOutsourceMoney(id,upOutMoney,downOutMoney);
+        return RestUtil.success("编辑成功");
     }
 
     /**

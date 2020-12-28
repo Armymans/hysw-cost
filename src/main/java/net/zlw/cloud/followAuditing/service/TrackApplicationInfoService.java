@@ -44,4 +44,6 @@ public interface TrackApplicationInfoService {
     void addAttribution(String baseId, String district, String designCategory, String prePeople);
 
     TrackMonthly findWritter(String id);
+
+    void editOutMoney(String id, String outMoney);
 }

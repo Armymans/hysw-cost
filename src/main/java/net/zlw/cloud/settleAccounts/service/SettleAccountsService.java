@@ -36,4 +36,7 @@ public interface SettleAccountsService {
      LastSettlementReview selectPeople(UserInfo loginUser);
 
     void addsettleImport(String id, FileInputStream fileInputStream, FileInputStream stream, FileInputStream inputStream, FileInputStream inputStream2, FileInputStream inputStream3);
+
+    void editOutsourceMoney(String id, String upOutMoney, String downOutMoney);
+
 }

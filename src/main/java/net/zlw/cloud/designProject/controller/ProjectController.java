@@ -547,6 +547,28 @@ public class ProjectController extends BaseController {
 
 
     /**
+     * 回显委外金额弹窗
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/echoOutsourceMoney", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> echoOutsourceMoney(@RequestParam("id") String id) {
+        DesignInfo designInfo = projectService.echoOutsourceMoney(id);
+        return RestUtil.success(designInfo);
+    }
+    /**
+     * 编辑委外金额弹窗
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/editOutsourceMoney", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> editOutsourceMoney(@RequestParam(name = "id") String id, @RequestParam(name = "outsourceMoney") String outsourceMoney) {
+         projectService.editOutsourceMoney(id,outsourceMoney);
+        return RestUtil.success("编辑成功");
+    }
+
+
+    /**
      * 添加吴江信息
      *
      * @param wujiangMoneyInfo

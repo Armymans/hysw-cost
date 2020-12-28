@@ -46,4 +46,6 @@ public interface BudgetingService {
     List<MkyUser> findPreparePeople(String id);
 
     Budgeting budgetingPeople(String id);
+
+    void editOutSourceMoney(String id, String amountOutsourcing);
 }

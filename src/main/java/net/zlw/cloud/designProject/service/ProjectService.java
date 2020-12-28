@@ -3791,4 +3791,15 @@ public class ProjectService {
         designPageVo.setDesigner(name);
         return designPageVo;
     }
+
+    public void editOutsourceMoney(String id, String outSourceMoney) {
+        DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
+        designInfo.setOutsourceMoney(outSourceMoney);
+        designInfoMapper.updateByPrimaryKeySelective(designInfo);
+    }
+
+    public DesignInfo echoOutsourceMoney(String id) {
+        DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
+        return designInfo;
+    }
 }

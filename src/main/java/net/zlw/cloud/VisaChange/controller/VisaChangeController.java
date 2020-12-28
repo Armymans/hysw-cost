@@ -223,6 +223,19 @@ public class VisaChangeController extends BaseController {
         return RestUtil.success();
     }
 
+    /**
+        * @Author sjf
+        * @Description //委外金额
+        * @Date 15:47 2020/12/28
+        * @Param
+        * @return
+     **/
+    @RequestMapping(value = "/visachange/editOutSourceMoney",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> addVisa(String id,String upMoney,String downMoney){
+       visaChangeService.editOutSourceMoney(id,upMoney,downMoney);
+       return RestUtil.success("编辑成功");
+    }
+
     //根据id查询签证变更
     @RequestMapping(value = "/visachange/findVisaById",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findVisaById(@RequestParam(name = "baseId") String baseId,@RequestParam(name = "visaNum1") String visaNum){

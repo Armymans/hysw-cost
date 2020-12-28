@@ -119,6 +119,19 @@ public class TrackApplicationInfoController extends BaseController {
         return RestUtil.success(allByTrackId);
     }
 
+    /**
+        * @Author sjf
+        * @Description //委外金额
+        * @Date 15:55 2020/12/28
+        * @Param
+        * @return
+     **/
+    @RequestMapping(value = "/track/editOutMoney",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> editOutMoney(String id,String outMoney){
+        trackApplicationInfoService.editOutMoney(id,outMoney);
+        return RestUtil.success("编辑成功");
+    }
+
     //编辑页面回显月报列表
     @RequestMapping(value = "/track/findAllByTrackId3",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllByTrackId3(@RequestParam(name = "id") String id){

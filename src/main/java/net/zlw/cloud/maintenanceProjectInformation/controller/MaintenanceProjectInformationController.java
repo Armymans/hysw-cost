@@ -176,7 +176,7 @@ public class MaintenanceProjectInformationController extends BaseController {
 
     /**
         * @Author sjf
-        * @Description //检维修结算编制人
+        * @Description //新增检维修结算编制人
         * @Date 10:55 2020/12/28
         * @Param
         * @return
@@ -185,6 +185,20 @@ public class MaintenanceProjectInformationController extends BaseController {
     public Map<String, Object> selectPeople() {
         MaintenanceProjectInformation mainInfo = maintenanceProjectInformationService.selectPeople(getLoginUser().getId());
         return RestUtil.success(mainInfo);
+    }
+
+
+    /**
+        * @Author sjf
+        * @Description 检维修委外金额
+        * @Date 15:33 2020/12/28
+        * @Param
+        * @return
+     **/
+    @RequestMapping(value = "/maintenanceProjectInformation/editOutMoney", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> editOutMoney(String id,String outsourcingMoney) {
+        maintenanceProjectInformationService.editOutMoney(id,outsourcingMoney);
+        return RestUtil.success("编辑成功");
     }
 
 

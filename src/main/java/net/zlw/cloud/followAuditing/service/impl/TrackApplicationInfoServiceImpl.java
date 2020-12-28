@@ -1070,6 +1070,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         return trackMonthly;
     }
 
+    @Override
+    public void editOutMoney(String id, String outMoney) {
+        TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(id);
+        if (trackAuditInfo != null){
+            trackAuditInfo.setOutsourceMoney(new BigDecimal(outMoney));
+            trackAuditInfoDao.updateByPrimaryKeySelective(trackAuditInfo);
+        }
+    }
+
     // TODO 回显页面，新增页面月报显示
     public List<TrackMonthly> findAllByTrackId2(String id) {
         Example example1 = new Example(TrackMonthly.class);

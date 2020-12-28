@@ -2362,4 +2362,17 @@ public class MaintenanceProjectInformationService {
         maintenanceProjectInformation.setPreparePeople(idByName);
         return maintenanceProjectInformation;
     }
+
+    public void editOutMoney(String id, String outsourcingMoney) {
+        MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectByPrimaryKey(id);
+        if (maintenanceProjectInformation != null){
+            Example example = new Example(SettlementAuditInformation.class);
+            example.createCriteria().andEqualTo("maintenanceProjectInformation",maintenanceProjectInformation.getId());
+            SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example);
+            if (settlementAuditInformation != null){
+                settlementAuditInformation.setAmountOutsourcing(new BigDecimal(outsourcingMoney));
+                settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+            }
+        }
+    }
 }

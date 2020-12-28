@@ -274,6 +274,18 @@ public class BudgetingController extends BaseController {
         budgetingService.updateCEA(baseId,ceaNum);
         return RestUtil.success();
     }
+    /**
+        * @Author sjf
+        * @Description // 委外金额
+        * @Date 15:41 2020/12/28
+        * @Param
+        * @return
+     **/
+    @RequestMapping(value = "/budgeting/editOutSourceMoney",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> editOutSourceMoney(@RequestParam(name = "id") String id,@RequestParam(name = "amountOutsourcing") String amountOutsourcing){
+        budgetingService.editOutSourceMoney(id,amountOutsourcing);
+        return RestUtil.success();
+    }
     //回显设计图纸
     @RequestMapping(value = "/budgeting/selectOneFile",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectOneByFileInfo(@RequestParam(name = "id") String id){
