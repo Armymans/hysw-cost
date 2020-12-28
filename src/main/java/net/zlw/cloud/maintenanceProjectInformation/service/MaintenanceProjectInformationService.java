@@ -412,7 +412,7 @@ public class MaintenanceProjectInformationService {
         }
         // 项目编号格式 （WJ-202012-随机ID)
         int randomMainId = new Random().nextInt(998) + 1;
-        SimpleDateFormat data = new SimpleDateFormat("yyyyDD");
+        String data = new SimpleDateFormat("yyyydd").format(new Date());
         // 如果是芜湖
         if ("1".equals(maintenanceProjectInformation.getProjectAddress())){
             information.setMaintenanceItemId("WH-"+data+"-"+randomMainId);
@@ -1133,7 +1133,7 @@ public class MaintenanceProjectInformationService {
         information.setUpdateTime(updateTime);
         // 项目编号格式 （WJ-202012-随机ID)
         int randomMainId = new Random().nextInt(998) + 1;
-        SimpleDateFormat data = new SimpleDateFormat("yyyyDD");
+        String data = new SimpleDateFormat("yyyydd").format(new Date());
         // 如果是芜湖
         if ("1".equals(maintenanceProjectInformation.getProjectAddress())){
             information.setMaintenanceItemId("WH-"+data+"-"+randomMainId);
@@ -1639,7 +1639,7 @@ public class MaintenanceProjectInformationService {
         }
         // 项目编号格式 （WJ-202012-随机ID)
         int randomMainId = new Random().nextInt(998) + 1;
-        SimpleDateFormat data = new SimpleDateFormat("yyyyDD");
+        String data = new SimpleDateFormat("yyyydd").format(new Date());
         // 如果是芜湖
         if ("1".equals(maintenanceProjectInformation.getProjectAddress())){
             information.setMaintenanceItemId("WH-"+data+"-"+randomMainId);
@@ -1992,7 +1992,7 @@ public class MaintenanceProjectInformationService {
 //        information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
         // 项目编号格式 （WJ-202012-随机ID)
         int randomMainId = new Random().nextInt(998) + 1;
-        SimpleDateFormat data = new SimpleDateFormat("yyyyDD");
+        String data = new SimpleDateFormat("yyyydd").format(new Date());
         // 如果是芜湖
         if ("1".equals(maintenanceProjectInformation.getProjectAddress())){
             information.setMaintenanceItemId("WH-"+data+"-"+randomMainId);
