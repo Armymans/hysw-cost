@@ -367,9 +367,6 @@ public class SettleAccountsController extends BaseController {
         }
 
 
-
-
-
         Map<String, String> map = new HashMap<>();
         map.put("id",attachInfo.getId());
         map.put("name",attachInfo.getFileName()+"."+attachInfo.getFileType());

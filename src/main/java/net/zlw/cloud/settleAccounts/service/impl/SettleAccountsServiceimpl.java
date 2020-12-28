@@ -1119,9 +1119,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         c2.andEqualTo("baseProjectId", baseProject.getId());
         c2.andEqualTo("delFlag", "0");
         LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example2);
-        String idByName = memberManageDao.findIdByName(lastSettlementReview.getPreparePeople());
-        if (idByName != null){
-            lastSettlementReview.setPreparePeople(idByName);
+        if (lastSettlementReview!=null){
+            String idByName = memberManageDao.findIdByName(lastSettlementReview.getPreparePeople());
+            if (idByName != null){
+                lastSettlementReview.setPreparePeople(idByName);
+            }
         }
         baseAccountsVo.setLastSettlementReview(lastSettlementReview);
         Example example3 = new Example(SettlementAuditInformation.class);
@@ -1240,8 +1242,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         settlementInfoMapper2.updateByPrimaryKeySelective( baseAccountsVo.getSettlementInfo());
         //勘察金额修改
         investigationOfTheAmountDao.updateByPrimaryKeySelective(baseAccountsVo.getInvestigationOfTheAmount());
-        //上家送审修改
-        lastSettlementReviewDao.updateByPrimaryKeySelective(baseAccountsVo.getLastSettlementReview());
+
+        if (baseProject.getAB().equals("1") && "2".equals(baseAccountsVo.getSettlementAuditInformation().getContract())){
+            //上家送审修改
+            lastSettlementReviewDao.updateByPrimaryKeySelective(baseAccountsVo.getLastSettlementReview());
+        }
         //下家送审修改
         settlementAuditInformationDao.updateByPrimaryKeySelective(baseAccountsVo.getSettlementAuditInformation());
 
@@ -1930,7 +1935,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     messageService.sendOrClose(messageVo);
                     //若缺失上下家则进入处理中
                     BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(s);
-                    if ((lastSettlementReview == null || settlementAuditInformation == null) && ! baseProject1.getAB().equals("2")){
+                    if ((lastSettlementReview == null || settlementAuditInformation == null) & ! baseProject1.getAB().equals("2")){
                         BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
                         baseProject3.setSettleAccountsStatus("2");
                         baseProjectDao.updateByPrimaryKeySelective(baseProject3);
