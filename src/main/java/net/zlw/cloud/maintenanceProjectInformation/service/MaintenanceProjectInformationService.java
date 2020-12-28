@@ -385,9 +385,15 @@ public class MaintenanceProjectInformationService {
 
         if ("".equals(maintenanceProjectInformation.getPreparePeople())){
             maintenanceProjectInformation.setPreparePeople(userInfo.getId());
+        }else {
+            String nameById = memberManageDao.findNameById(maintenanceProjectInformation.getPreparePeople());
+            maintenanceProjectInformation.setPreparePeople(nameById);
         }
         if ("".equals(maintenanceProjectInformation.getPreparePeople2())){
             maintenanceProjectInformation.setPreparePeople2(userInfo.getId());
+        }else {
+            String nameById = memberManageDao.findNameById(maintenanceProjectInformation.getPreparePeople2());
+            maintenanceProjectInformation.setPreparePeople2(nameById);
         }
 
         String uuid = UUID.randomUUID().toString().replaceAll("-", "");
@@ -1131,20 +1137,7 @@ public class MaintenanceProjectInformationService {
         information.setId(maintenanceProjectInformation.getId());
         // 修改时间
         information.setUpdateTime(updateTime);
-        // 项目编号格式 （WJ-202012-随机ID)
-        int randomMainId = new Random().nextInt(998) + 1;
-        String data = new SimpleDateFormat("yyyydd").format(new Date());
-        // 如果是芜湖
-        if ("1".equals(maintenanceProjectInformation.getProjectAddress())){
-            information.setMaintenanceItemId("WH-"+data+"-"+randomMainId);
-            // 如果是马鞍山
-        }else if ("2".equals(maintenanceProjectInformation.getProjectAddress())){
-            information.setMaintenanceItemId("MAS-"+data+"-"+randomMainId);
-        }else if ("3".equals(maintenanceProjectInformation.getProjectAddress())){
-            information.setMaintenanceItemId("JB-"+data+"-"+randomMainId);
-        }else if ("4".equals(maintenanceProjectInformation.getProjectAddress())){
-            information.setMaintenanceItemId("WJ-"+data+"-"+randomMainId);
-        }
+
 //        information.setMaintenanceItemId(maintenanceProjectInformationVo.getMaintenanceItemId());
         information.setMaintenanceItemName(maintenanceProjectInformationVo.getMaintenanceItemName());
         information.setMaintenanceItemType(maintenanceProjectInformationVo.getMaintenanceItemType());
@@ -1536,6 +1529,8 @@ public class MaintenanceProjectInformationService {
 //        String userInfoId = "user320";
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain(id);
         if (information != null) {
+            String idByName = memberManageDao.findIdByName(information.getPreparePeople());
+            information.setPreparePeople(idByName);
             maintenanceVo.setMaintenanceProjectInformation(information);
         } else {
             maintenanceVo.setMaintenanceProjectInformation(new MaintenanceProjectInformation());
@@ -1546,6 +1541,8 @@ public class MaintenanceProjectInformationService {
         example1.createCriteria().andEqualTo("maintenanceProjectInformation", information.getId());
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
         if (settlementAuditInformation != null) {
+            String idByName = memberManageDao.findIdByName(settlementAuditInformation.getPreparePeople());
+            settlementAuditInformation.setPreparePeople(idByName);
             maintenanceVo.setSettlementAuditInformation(settlementAuditInformation);
         } else {
             maintenanceVo.setSettlementAuditInformation(new SettlementAuditInformation());
@@ -1616,9 +1613,15 @@ public class MaintenanceProjectInformationService {
 
         if ("".equals(maintenanceProjectInformation.getPreparePeople2())){
             maintenanceProjectInformation.setPreparePeople2(userInfo.getId());
+        }else {
+            String nameById = memberManageDao.findNameById(maintenanceProjectInformation.getPreparePeople2());
+            maintenanceProjectInformation.setPreparePeople2(nameById);
         }
         if ("".equals(maintenanceProjectInformation.getPreparePeople())){
             maintenanceProjectInformation.setPreparePeople(userInfo.getId());
+        }else {
+            String nameById = memberManageDao.findNameById(maintenanceProjectInformation.getPreparePeople());
+            maintenanceProjectInformation.setPreparePeople(nameById);
         }
 
         String id = UUID.randomUUID().toString().replaceAll("-", "");
@@ -1990,20 +1993,7 @@ public class MaintenanceProjectInformationService {
         information.setId(maintenanceProjectInformation.getId());
         information.setUpdateTime(updateTime);
 //        information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
-        // 项目编号格式 （WJ-202012-随机ID)
-        int randomMainId = new Random().nextInt(998) + 1;
-        String data = new SimpleDateFormat("yyyydd").format(new Date());
-        // 如果是芜湖
-        if ("1".equals(maintenanceProjectInformation.getProjectAddress())){
-            information.setMaintenanceItemId("WH-"+data+"-"+randomMainId);
-            // 如果是马鞍山
-        }else if ("2".equals(maintenanceProjectInformation.getProjectAddress())){
-            information.setMaintenanceItemId("MAS-"+data+"-"+randomMainId);
-        }else if ("3".equals(maintenanceProjectInformation.getProjectAddress())){
-            information.setMaintenanceItemId("JB-"+data+"-"+randomMainId);
-        }else if ("4".equals(maintenanceProjectInformation.getProjectAddress())){
-            information.setMaintenanceItemId("WJ-"+data+"-"+randomMainId);
-        }
+
         information.setMaintenanceItemName(maintenanceProjectInformation.getMaintenanceItemName());
         information.setMaintenanceItemType(maintenanceProjectInformation.getMaintenanceItemType());
         information.setSubmittedDepartment(maintenanceProjectInformation.getSubmittedDepartment());
@@ -2364,5 +2354,12 @@ public class MaintenanceProjectInformationService {
         }
 
         return maintenanceVo;
+    }
+
+    public MaintenanceProjectInformation selectPeople(String id) {
+        String idByName = memberManageDao.findIdByName(id);
+        MaintenanceProjectInformation maintenanceProjectInformation = new MaintenanceProjectInformation();
+        maintenanceProjectInformation.setPreparePeople(idByName);
+        return maintenanceProjectInformation;
     }
 }
