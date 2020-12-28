@@ -48,6 +48,8 @@ public class AccountsVo {
     private String showConfirmed;
     //回显归属
     private String attributionShow;
+    //回显委外金额
+    private String isShow;
 
     @Override
     public boolean equals(Object o) {

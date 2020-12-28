@@ -299,6 +299,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         accountsVo.setPreparePeople(mkyUser.getUserName());
                         }
                     }
+                    if (loginUser.getId().equals(accountsVo.getFounderId())){
+                        accountsVo.setIsShow("1");
+                    }
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(accountsVo.getId());
                     String designCategory = baseProject.getDesignCategory();
                     String district = baseProject.getDistrict();
