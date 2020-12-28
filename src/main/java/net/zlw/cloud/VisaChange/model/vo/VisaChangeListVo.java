@@ -41,5 +41,6 @@ public class VisaChangeListVo {
 
     private String showUnderway;
     private Integer changeNum;
+    private String isShow;
 
 }

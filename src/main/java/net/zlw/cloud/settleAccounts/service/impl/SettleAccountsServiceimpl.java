@@ -300,7 +300,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         }
                     }
                     if (pageVo.getUserId().equals(accountsVo.getFounderId())){
-                        accountsVo.setIsShow("1");
+                        accountsVo.setFounderId("1");
                     }
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(accountsVo.getId());
                     String designCategory = baseProject.getDesignCategory();

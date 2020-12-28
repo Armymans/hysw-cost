@@ -674,6 +674,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         if (pageVo.getStatus().equals("4")){
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
             for (VisaChangeListVo thisList : list1) {
+                if (pageVo.getUserId().equals(thisList.getFounderId())){
+                    thisList.setIsShow("1");
+                }
 //                    // 造价单位名称
 //                    if (  thisList.getNameOfCostUnit() != null && !"".equals(  thisList.getNameOfCostUnit())){
 //                        thisList.setNameOfCostUnit(  thisList.getNameOfCostUnit());

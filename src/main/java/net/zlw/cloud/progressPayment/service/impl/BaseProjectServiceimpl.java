@@ -1909,6 +1909,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 if (costUnitManagement != null){
                     progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
                 }
+                if (pageVo.getUid().equals(progressListVo.getFounderId())){
+                    progressListVo.setFounderId("1");
+                }
                 // 累计支付金额、比例、次数
                 TotalVo total = findTotal(progressListVo.getBaseId());
                 progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
