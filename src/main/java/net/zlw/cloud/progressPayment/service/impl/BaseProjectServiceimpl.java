@@ -1762,7 +1762,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public void accomplish(BatchReviewVo batchReviewVo, UserInfo loginUser) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         if (!loginUser.getId().equals(whzjh)) {
-            new RuntimeException("抱歉，你暂时没有权限操作此按钮");
+           throw new RuntimeException("抱歉，你暂时没有权限操作此按钮");
         } else {
             String batchAll = batchReviewVo.getBatchAll();
             String[] split = batchAll.split(",");

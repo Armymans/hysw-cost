@@ -202,7 +202,12 @@ public class ProgressPaymentController  extends BaseController {
     //确认完成功能
     @RequestMapping(value = "/progress/accomplish",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> accomplish(BatchReviewVo batchReviewVo){
-        baseProjectService.accomplish(batchReviewVo,getLoginUser());
+        try {
+            baseProjectService.accomplish(batchReviewVo,getLoginUser());
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
+
         return RestUtil.success("删除成功");
     }
     //进度款批量审核
