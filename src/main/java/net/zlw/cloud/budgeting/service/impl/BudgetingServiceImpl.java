@@ -1802,6 +1802,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                         AuditInfo auditInfo1 = new AuditInfo();
                         auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
                         auditInfo1.setBaseProjectId(budgeting.getId());
+                        auditInfo1.setAuditResult("0");
                         auditInfo1.setAuditType("4");
                         String founderId = budgeting.getFounderId();
                         Example example1 = new Example(MemberManage.class);
