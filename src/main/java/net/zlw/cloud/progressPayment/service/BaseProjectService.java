@@ -74,5 +74,5 @@ public interface BaseProjectService {
 
     void accomplish(String ids, UserInfo loginUser);
 
-    void sendBack(String id,String auditOpinion);
+    void sendBack(String id,String auditOpinion,UserInfo loginUser);
 }

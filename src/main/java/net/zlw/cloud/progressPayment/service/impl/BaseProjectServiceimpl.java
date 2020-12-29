@@ -727,6 +727,15 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             if (baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")) {
                 //处理中
                 if(project.getProgressPaymentStatus().equals("2")){
+                    if ("7".equals(baseProject.getProgressPaymentStatus())){
+                        Example example = new Example(AuditInfo.class);
+                        example.createCriteria().andEqualTo("baseProjectId",paymentInformation.getId())
+                                                .andEqualTo("status","0");
+                        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+                        for (AuditInfo info : auditInfos) {
+                            auditInfoDao.deleteByPrimaryKey(info);
+                        }
+                    }
 
                     auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
                     auditInfo.setBaseProjectId(baseProject.getId());
@@ -1772,6 +1781,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                  Example example = new Example(AuditInfo.class);
                  example.createCriteria().andEqualTo("baseProjectId", s)
                          .andEqualTo("auditType", "1")
+                         .andEqualTo("status","0")
                          .andEqualTo("auditResult","1");
                  AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
                  ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectByPrimaryKey(s);
@@ -1808,23 +1818,24 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
-    public void sendBack(String id,String auditOpinion) {
-        ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(id);
-        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
-        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        if (paymentInformation != null){
-            Example example = new Example(AuditInfo.class);
-            example.createCriteria().andEqualTo("baseProjectId",paymentInformation.getBaseProjectId())
-                                    .andEqualTo("auditResult","1");
-            AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-            auditInfo.setAuditResult("2");
-            auditInfo.setAuditOpinion(auditOpinion);
-            auditInfo.setAuditTime("");
-            auditInfo.setUpdateTime(data);
-            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-           baseProject.setProgressPaymentStatus("3");
-           baseProjectDao.updateByPrimaryKeySelective(baseProject);
-        }
+    public void sendBack(String id,String auditOpinion,UserInfo loginUser) {
+            ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(id);
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
+            String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            if (paymentInformation != null) {
+                Example example = new Example(AuditInfo.class);
+                example.createCriteria().andEqualTo("baseProjectId", id)
+                        .andEqualTo("auditResult", "1")
+                        .andEqualTo("auditType", "1");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                auditInfo.setAuditResult("2");
+                auditInfo.setAuditOpinion(auditOpinion);
+                auditInfo.setAuditTime("");
+                auditInfo.setUpdateTime(data);
+                auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                baseProject.setProgressPaymentStatus("7");
+                baseProjectDao.updateByPrimaryKeySelective(baseProject);
+            }
     }
 
     @Override

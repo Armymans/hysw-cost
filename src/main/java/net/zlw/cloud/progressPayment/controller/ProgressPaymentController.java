@@ -214,7 +214,7 @@ public class ProgressPaymentController  extends BaseController {
     //退回功能
     @RequestMapping(value = "/progress/sendBack",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> sendBack(String id,String auditOpinion){
-            baseProjectService.sendBack(id,auditOpinion);
+            baseProjectService.sendBack(id,auditOpinion,getLoginUser());
         return RestUtil.success("退回成功");
     }
     //进度款批量审核
