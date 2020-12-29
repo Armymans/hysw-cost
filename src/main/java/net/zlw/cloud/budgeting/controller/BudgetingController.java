@@ -97,6 +97,7 @@ public class BudgetingController extends BaseController {
     @RequestMapping(value = "/budgeting/selectBudgetingById",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectBudgetingById(@RequestParam(name = "id") String id){
         BudgetingVo budgetingVo = budgetingService.selectBudgetingById(id,getLoginUser());
+
         return RestUtil.success(budgetingVo);
     }
     //编辑预算信息
@@ -318,6 +319,12 @@ public class BudgetingController extends BaseController {
         } catch (Exception e) {
             return RestUtil.error(e.getMessage());
         }
+        return RestUtil.success();
+    }
+    //预算退回
+    @RequestMapping(value = "/budgeting/budgetingSendBack",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+      public Map<String,Object> budgetingSendBack(@RequestParam(name = "id") String id,@RequestParam(name = "backOpnion") String backOpnion){
+        budgetingService.budgetingSendBack(id,getLoginUser().getId(),backOpnion);
         return RestUtil.success();
     }
 

@@ -457,6 +457,20 @@ public class BudgetingServiceImpl implements BudgetingService {
         budgeting.setBaseProjectId(baseProject.getId());
         if (budgetingVo.getAuditNumber()!=null && !budgetingVo.getAuditNumber().equals("")){
             if (budgetingVo.getAuditNumber().equals("1")){
+                //判断是否为退回提交
+                String budgetStatus = baseProject.getBudgetStatus();
+                if ("6".equals(budgetStatus)){
+                    //若是则删除所有审核信息
+                    Example example1 = new Example(AuditInfo.class);
+                    Example.Criteria c = example1.createCriteria();
+                    c.andEqualTo("baseProjectId",budgeting.getId());
+                    c.andEqualTo("status","0");
+                    List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+                    for (AuditInfo auditInfo : auditInfos) {
+                        auditInfoDao.deleteByPrimaryKey(auditInfo);
+                    }
+                }
+
                 baseProject.setBudgetStatus("1");
                 projectDao.updateByPrimaryKeySelective(baseProject);
                 budgetingDao.updateByPrimaryKeySelective(budgeting);
@@ -1179,7 +1193,9 @@ public class BudgetingServiceImpl implements BudgetingService {
         }
         //未通过
         if (pageBVo.getBudgetingStatus().equals("3")){
-            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,id);
+
+//            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,id);
+            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingUnsanctioned(pageBVo,id);
             for (BudgetingListVo budgetingListVo : list1) {
                 String baseId = budgetingListVo.getBaseId();
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
@@ -1190,6 +1206,8 @@ public class BudgetingServiceImpl implements BudgetingService {
                         budgetingListVo.setShowWhether("2");
                     }
                 }
+
+
             }
             for (BudgetingListVo budgetingListVo : list1) {
                 MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
@@ -1324,6 +1342,10 @@ public class BudgetingServiceImpl implements BudgetingService {
                 MemberManage memberManage = memberManageDao.selectOneByExample(example1);
                 if (memberManage !=null){
                     budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+                }
+
+                if (auditInfo.getAuditorId().equals(id)){
+                    budgetingListVo.setShowUnsanctioned("1");
                 }
             }
 
@@ -1830,6 +1852,28 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }
                 }
             }
+
+    }
+
+    @Override
+    public void budgetingSendBack(String s, String id, String id1) {
+        Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+        baseProject.setBudgetStatus("6");
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",budgeting.getId());
+        c.andEqualTo("status","0");
+        c.andEqualTo("auditType","1");
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+        auditInfo.setAuditResult("2");
+        auditInfo.setAuditOpinion(id1);
+        SimpleDateFormat ss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        auditInfo.setAuditTime(ss.format(new Date()));
+        auditInfo.setUpdateTime(ss.format(new Date()));
+        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 
     }
 

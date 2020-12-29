@@ -61,6 +61,11 @@ public class SearchBaseProjectController {
             if (constructionOrganization!=null){
                 byId.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
             }
+
+            if ("6".equals(byId.getBudgetStatus())){
+                byId.setBudgetStatus("2");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             RestUtil.error();

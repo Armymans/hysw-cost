@@ -50,6 +50,8 @@ public class BudgetingListVo {
     private String showWhether;
 
     private String isShow; // 判断CEA显隐
+    //是否退回
+    private String showUnsanctioned;
 
 
 
