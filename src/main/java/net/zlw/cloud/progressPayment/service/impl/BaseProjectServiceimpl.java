@@ -1839,7 +1839,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                  }
              }
         }else {
-             throw new RuntimeException("抱歉，你暂时没有权限操作此按钮");
+             throw new RuntimeException("此操作只能由所选项目部门领导来完成");
          }
     }
 
