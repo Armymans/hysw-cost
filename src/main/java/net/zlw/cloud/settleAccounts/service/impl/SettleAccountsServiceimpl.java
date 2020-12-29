@@ -1947,12 +1947,19 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         if ( baseProject1.getAB().equals("1") ){
                             if (settlementAuditInformation!=null){
 
-                                System.err.println("1------"+settlementAuditInformation);
-                                System.err.println("1------"+settlementAuditInformation);
-                                System.err.println("1------"+settlementAuditInformation);
-                                System.err.println("1------"+settlementAuditInformation);
 
                                 if ("2".equals(settlementAuditInformation.getContract())){
+
+                                    System.out.println("2");
+                                    System.out.println("2");
+                                    System.out.println("2");
+                                    System.out.println("2");
+                                    System.out.println("2");
+                                    System.out.println("2");
+                                    System.out.println("2");
+                                    System.out.println("2");
+
+
                                     BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
                                     baseProject3.setSettleAccountsStatus("2");
                                     baseProjectDao.updateByPrimaryKeySelective(baseProject3);
@@ -1987,6 +1994,17 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                                     baseProjectDao.updateByPrimaryKeySelective(baseProject2);
                                 }
                             }else{
+
+
+                                System.out.println("1");
+                                System.out.println("1");
+                                System.out.println("1");
+                                System.out.println("1");
+                                System.out.println("1");
+                                System.out.println("1");
+                                System.out.println("1");
+
+
                                 BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
                                 baseProject3.setSettleAccountsStatus("2");
                                 baseProjectDao.updateByPrimaryKeySelective(baseProject3);

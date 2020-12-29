@@ -652,35 +652,42 @@ public class BudgetingServiceImpl implements BudgetingService {
                         auditInfo.setAuditTime(sim.format(new Date()));
                         auditInfo.setUpdateTime(sim.format(new Date()));
                         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
-                        //添加三审
+
                         Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
 
-                            AuditInfo auditInfo1 = new AuditInfo();
-                            auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
-                            auditInfo1.setBaseProjectId(s);
-                            auditInfo1.setAuditResult("0");
-                            auditInfo1.setAuditType("4");
-//                            Example example1 = new Example(MemberManage.class);
-//                            Example.Criteria c = example1.createCriteria();
-//                            c.andEqualTo("memberRoleId","2");
-//                            MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                        String founderId = budgeting.getFounderId();
+                        //将状态改为待确认
+                        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+                        baseProject.setBudgetStatus("5");
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
-                        Example example1 = new Example(MemberManage.class);
-                        Example.Criteria cc = example1.createCriteria();
-                        cc.andEqualTo("id",founderId);
-                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                        //1芜湖
-                        if (memberManage.getWorkType().equals("1")){
-                            auditInfo1.setAuditorId(whzjm);
-                            //吴江
-                        }else if (memberManage.getWorkType().equals("2")){
-                            auditInfo1.setAuditorId(wjzjm);
-                        }
-//                            auditInfo1.setAuditorId(memberManage.getId());
-                            auditInfo1.setStatus("0");
-                            auditInfo1.setCreateTime(sim.format(new Date()));
-                            auditInfoDao.insertSelective(auditInfo1);
+
+
+//                            AuditInfo auditInfo1 = new AuditInfo();
+//                            auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+//                            auditInfo1.setBaseProjectId(s);
+//                            auditInfo1.setAuditResult("0");
+//                            auditInfo1.setAuditType("4");
+////                            Example example1 = new Example(MemberManage.class);
+////                            Example.Criteria c = example1.createCriteria();
+////                            c.andEqualTo("memberRoleId","2");
+////                            MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+//                        String founderId = budgeting.getFounderId();
+//
+//                        Example example1 = new Example(MemberManage.class);
+//                        Example.Criteria cc = example1.createCriteria();
+//                        cc.andEqualTo("id",founderId);
+//                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+//                        //1芜湖
+//                        if (memberManage.getWorkType().equals("1")){
+//                            auditInfo1.setAuditorId(whzjm);
+//                            //吴江
+//                        }else if (memberManage.getWorkType().equals("2")){
+//                            auditInfo1.setAuditorId(wjzjm);
+//                        }
+////                            auditInfo1.setAuditorId(memberManage.getId());
+//                            auditInfo1.setStatus("0");
+//                            auditInfo1.setCreateTime(sim.format(new Date()));
+//                            auditInfoDao.insertSelective(auditInfo1);
 
                         //三审通过
                     }else if(auditInfo.getAuditResult().equals("0") && auditInfo.getAuditType().equals("4")){
@@ -1285,6 +1292,41 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }
                 }
             }
+            for (BudgetingListVo budgetingListVo : list1) {
+                MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
+                if (mkyUser2!=null){
+                    budgetingListVo.setBudgetingPeople(mkyUser2.getUserName());
+                }
+                MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getCostTogether());
+                if (mkyUser!=null){
+                    budgetingListVo.setCostTogether(mkyUser.getUserName());
+                }
+                MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getPricingTogether());
+                if (mkyUser1!=null){
+                    budgetingListVo.setPricingTogether(mkyUser1.getUserName());
+                }
+            }
+            return list1;
+        }
+
+        //待确认
+        if (pageBVo.getBudgetingStatus().equals("5")){
+
+            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingConfirmed(pageBVo);
+
+            for (BudgetingListVo budgetingListVo : list1) {
+                Example example = new Example(AuditInfo.class);
+                example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
+                        .andEqualTo("auditResult","0");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                Example example1 = new Example(MemberManage.class);
+                example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
+                MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                if (memberManage !=null){
+                    budgetingListVo.setCurrentHandler(memberManage.getMemberName());
+                }
+            }
+
             for (BudgetingListVo budgetingListVo : list1) {
                 MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
                 if (mkyUser2!=null){

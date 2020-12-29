@@ -203,12 +203,23 @@ public class BudgetingController extends BaseController {
         page4.setPageSize(pageInfo4.getPageSize());
         page4.setTotalCount(pageInfo4.getTotal());
 
+        //待确认
+        Page page5 = new Page();
+        pageBVo.setBudgetingStatus("5");
+        List<BudgetingListVo> allBudgeting5 = budgetingService.findAllBudgeting(pageBVo, getLoginUser().getId());
+        PageInfo<BudgetingListVo> pageInfo5 = new PageInfo<>(allBudgeting5);
+        page5.setData(pageInfo5.getList());
+        page5.setPageNum(pageInfo5.getPageNum());
+        page5.setPageSize(pageInfo5.getPageSize());
+        page5.setTotalCount(pageInfo5.getTotal());
+
         HashMap<String, Object> map = new HashMap<>();
         map.put("table1",page);
         map.put("table2",page1);
         map.put("table3",page2);
         map.put("table4",page3);
         map.put("table5",page4);
+        map.put("table6",page5);
 
         return RestUtil.success(map);
 
