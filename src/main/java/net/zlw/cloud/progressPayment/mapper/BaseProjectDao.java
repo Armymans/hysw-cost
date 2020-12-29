@@ -349,6 +349,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "  b.application_num applicationNum, " +
             "  b.water_address waterAddress, " +
             "  b.construction_unit constructionUnit, " +
+            "  b.progress_payment_status progressPaymentStatus, " +
             "  b.contacts, " +
             "  b.contact_number, " +
             "  b.customer_name customerName, " +

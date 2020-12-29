@@ -568,7 +568,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public BaseProjectVo editProgressById(String id, UserInfo userInfo, String visaNum) {
 
 //        userInfo = new UserInfo("user309",null,null,true);
-//        userInfo = new UserInfo("200101005",null,null,true);
+        userInfo = new UserInfo("200101005",null,null,true);
         BaseProjectVo baseProjectVo = new BaseProjectVo();
         ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(id);
 
