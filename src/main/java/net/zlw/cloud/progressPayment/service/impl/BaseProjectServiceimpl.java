@@ -1497,6 +1497,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     auditInfo.setAuditTime(format);
                     auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                    baseProject.setProgressPaymentStatus("4");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 }else if(auditInfo.getAuditType().equals("4")){
                     String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     auditInfo.setAuditResult("1");
@@ -1761,7 +1763,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public void accomplish(BatchReviewVo batchReviewVo, UserInfo loginUser) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        if (!loginUser.getId().equals(whzjh)) {
+        if (!loginUser.getId().equals(whzjh) || !loginUser.getId().equals(wjsjh)) {
            throw new RuntimeException("抱歉，你暂时没有权限操作此按钮");
         } else {
             String batchAll = batchReviewVo.getBatchAll();
