@@ -2114,7 +2114,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
                 progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
                 Example example = new Example(AuditInfo.class);
-                example.createCriteria().andEqualTo("baseProjectId",progressListVo.getBaseId())
+                example.createCriteria().andEqualTo("baseProjectId",progressListVo.getId())
                         .andEqualTo("status","0")
                         .andEqualTo("auditType","1");
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
