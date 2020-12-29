@@ -71,4 +71,6 @@ public interface BaseProjectService {
     List<AuditChekedVo> findcheckAll(String num, String id);
 
     void editOutSourceMoney(String id, String outSourceMoney);
+
+    void accomplish(BatchReviewVo batchReviewVo, UserInfo loginUser);
 }

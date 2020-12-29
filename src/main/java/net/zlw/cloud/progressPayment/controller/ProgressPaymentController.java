@@ -198,6 +198,13 @@ public class ProgressPaymentController  extends BaseController {
         baseProjectService.deleteProgress(id,getLoginUser(),request);
         return RestUtil.success("删除成功");
     }
+
+    //确认完成功能
+    @RequestMapping(value = "/progress/accomplish",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> accomplish(BatchReviewVo batchReviewVo){
+        baseProjectService.accomplish(batchReviewVo,getLoginUser());
+        return RestUtil.success("删除成功");
+    }
     //进度款批量审核
     @RequestMapping(value = "/progress/batchReview",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> batchReview(BatchReviewVo batchReviewVo){
