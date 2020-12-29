@@ -1317,7 +1317,7 @@ public class BudgetingServiceImpl implements BudgetingService {
             for (BudgetingListVo budgetingListVo : list1) {
                 Example example = new Example(AuditInfo.class);
                 example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
-                        .andEqualTo("auditResult","0");
+                        .andEqualTo("auditType","1");
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
                 Example example1 = new Example(MemberManage.class);
                 example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
