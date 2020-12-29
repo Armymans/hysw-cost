@@ -310,6 +310,16 @@ public class BudgetingController extends BaseController {
       List<MkyUser> list =   budgetingService.findPreparePeople(getLoginUser().getId());
       return RestUtil.success(list);
     }
+    //预算完成
+    @RequestMapping(value = "/budgeting/budgetingSuccess",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+     public Map<String,Object> budgetingSuccess(@RequestParam(name = "ids") String ids){
+        try {
+            budgetingService.budgetingSuccess(ids,getLoginUser().getId());
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
+        return RestUtil.success();
+    }
 
 
 

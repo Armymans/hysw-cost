@@ -1784,6 +1784,50 @@ public class BudgetingServiceImpl implements BudgetingService {
     }
 
     @Override
+    public void budgetingSuccess(String s, String ids) {
+        String[] split = s.split(",");
+
+            for (String s1 : split) {
+                Budgeting budgeting = budgetingDao.selectByPrimaryKey(s1);
+                Example example = new Example(AuditInfo.class);
+                Example.Criteria c = example.createCriteria();
+                c.andEqualTo("baseProjectId",budgeting.getId());
+                c.andEqualTo("status","0");
+                c.andEqualTo("auditType","1");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                if (auditInfo!=null){
+                    if (! auditInfo.getAuditorId().equals(ids)){
+                        throw new RuntimeException("此操作只有由部门领导来完成");
+                    } else {
+                        AuditInfo auditInfo1 = new AuditInfo();
+                        auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+                        auditInfo1.setBaseProjectId(budgeting.getId());
+                        auditInfo1.setAuditType("4");
+                        String founderId = budgeting.getFounderId();
+                        Example example1 = new Example(MemberManage.class);
+                        Example.Criteria cc = example1.createCriteria();
+                        cc.andEqualTo("id",founderId);
+                        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                        //1芜湖
+                        if (memberManage.getWorkType().equals("1")){
+                            auditInfo1.setAuditorId(whzjm);
+                            //吴江
+                        }else if (memberManage.getWorkType().equals("2")){
+                            auditInfo1.setAuditorId(wjzjm);
+                        }
+                        auditInfo1.setFounderId(ids);
+                        auditInfo1.setStatus("0");
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
+                        auditInfo1.setUpdateTime(simpleDateFormat.format(new Date()));
+                        auditInfoDao.insertSelective(auditInfo1);
+                    }
+                }
+            }
+
+    }
+
+    @Override
     public UnionQueryVo unionQuery(String id, UserInfo loginUser) {
         UnionQueryVo unionQueryVo = new UnionQueryVo();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);

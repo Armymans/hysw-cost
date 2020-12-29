@@ -48,4 +48,6 @@ public interface BudgetingService {
     Budgeting budgetingPeople(String id);
 
     void editOutSourceMoney(String id, String amountOutsourcing);
+
+    void budgetingSuccess(String ids,String userId);
 }
