@@ -205,6 +205,7 @@ public class ProgressPaymentController  extends BaseController {
         try {
             baseProjectService.accomplish(batchReviewVo,getLoginUser());
         } catch (Exception e) {
+            e.printStackTrace();
             return RestUtil.error(e.getMessage());
         }
 

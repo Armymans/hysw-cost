@@ -1763,46 +1763,45 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     @Override
     public void accomplish(BatchReviewVo batchReviewVo, UserInfo loginUser) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        if (!loginUser.getId().equals(whzjh) || !loginUser.getId().equals(wjsjh)) {
-           throw new RuntimeException("抱歉，你暂时没有权限操作此按钮");
-        } else {
-            String batchAll = batchReviewVo.getBatchAll();
-            String[] split = batchAll.split(",");
-            for (String s : split) {
-                Example example = new Example(AuditInfo.class);
-                example.createCriteria().andEqualTo("baseProjectId", s)
-                        .andEqualTo("auditResult", "0");
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectByPrimaryKey(s);
-                String baseProjectId = progressPaymentInformation.getBaseProjectId();
-                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
-                if ("1".equals(auditInfo.getAuditType())){
-                    AuditInfo auditInfo1 = new AuditInfo();
-                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
-                    auditInfo1.setBaseProjectId(s);
-                    auditInfo1.setAuditResult("0");
-                    auditInfo1.setAuditType("4");
-                    auditInfo1.setFounderId(loginUser.getId());
-                    auditInfo1.setCreateTime(data);
-                    auditInfo1.setStatus("0");
-                    auditInfoDao.insertSelective(auditInfo1);
-                    Example example1 = new Example(MemberManage.class);
-                    Example.Criteria cc = example1.createCriteria();
-                    cc.andEqualTo("id",progressPaymentInformation.getFounderId());
-                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    //1芜湖
-                    if (memberManage.getWorkType().equals("1")){
-                        auditInfo1.setAuditorId(whzjm);
-                        //吴江
-                    }else if (memberManage.getWorkType().equals("2")){
-                        auditInfo1.setAuditorId(wjzjm);
-                    }
-                    baseProject.setProgressPaymentStatus("1");
-                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
-                }
-
-            }
-        }
+         if(loginUser.getId().equals(wjsjh) ||loginUser.getId().equals(whsjh)) {  //部门领导
+             String batchAll = batchReviewVo.getBatchAll();
+             String[] split = batchAll.split(",");
+             for (String s : split) {
+                 Example example = new Example(AuditInfo.class);
+                 example.createCriteria().andEqualTo("baseProjectId", s)
+                         .andEqualTo("auditResult", "0");
+                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                 ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectByPrimaryKey(s);
+                 String baseProjectId = progressPaymentInformation.getBaseProjectId();
+                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
+                 if ("1".equals(auditInfo.getAuditType())) {
+                     AuditInfo auditInfo1 = new AuditInfo();
+                     auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                     auditInfo1.setBaseProjectId(s);
+                     auditInfo1.setAuditResult("0");
+                     auditInfo1.setAuditType("4");
+                     auditInfo1.setFounderId(loginUser.getId());
+                     auditInfo1.setCreateTime(data);
+                     auditInfo1.setStatus("0");
+                     auditInfoDao.insertSelective(auditInfo1);
+                     Example example1 = new Example(MemberManage.class);
+                     Example.Criteria cc = example1.createCriteria();
+                     cc.andEqualTo("id", progressPaymentInformation.getFounderId());
+                     MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                     //1芜湖
+                     if (memberManage.getWorkType().equals("1")) {
+                         auditInfo1.setAuditorId(whzjm);
+                         //吴江
+                     } else if (memberManage.getWorkType().equals("2")) {
+                         auditInfo1.setAuditorId(wjzjm);
+                     }
+                     baseProject.setProgressPaymentStatus("1");
+                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                 }
+             }
+        }else {
+             throw new RuntimeException("抱歉，你暂时没有权限操作此按钮");
+         }
     }
 
     @Override
