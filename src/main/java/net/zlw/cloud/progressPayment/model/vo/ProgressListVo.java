@@ -35,6 +35,7 @@ public class ProgressListVo {
     private BigDecimal cumulativeNumberPayment;
     private String receivingTime;
     private String compileTime;
+    private String isShow;
 
     //当前处理人
     private String currentHandler;

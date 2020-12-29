@@ -1819,6 +1819,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Override
     public void sendBack(String id,String auditOpinion,UserInfo loginUser) {
+
             ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(id);
             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
             String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -2112,6 +2113,14 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
                 progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
                 progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
+                Example example = new Example(AuditInfo.class);
+                example.createCriteria().andEqualTo("baseProjectId",progressListVo.getBaseId())
+                        .andEqualTo("status","0")
+                        .andEqualTo("auditType","1");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                if (auditInfo.getAuditorId().equals(pageVo.getUid())){
+                    progressListVo.setIsShow("1");
+                }
             }
             return new PageInfo<ProgressListVo>(list);
         }
