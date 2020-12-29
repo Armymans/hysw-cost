@@ -725,18 +725,44 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         String format = sim.format(new Date());
         if (baseProject != null && !baseProject.equals("")) {
             if (baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")) {
-                //处理中
                 if(project.getProgressPaymentStatus().equals("7")){
-                    if ("7".equals(baseProject.getProgressPaymentStatus())){
+
                         Example example = new Example(AuditInfo.class);
                         example.createCriteria().andEqualTo("baseProjectId",paymentInformation.getId())
-                                                .andEqualTo("status","0");
+                                .andEqualTo("status","0");
                         List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
                         for (AuditInfo info : auditInfos) {
                             auditInfoDao.deleteByPrimaryKey(info);
                         }
-                    }
 
+                    auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    auditInfo.setBaseProjectId(baseProject.getId());
+                    auditInfo.setAuditResult("0");
+                    auditInfo.setAuditType("0");
+                    auditInfo.setAuditorId(baseProject.getAuditorId());
+                    auditInfo.setFounderId(loginUser.getId());
+                    auditInfo.setStatus("0");
+                    auditInfo.setCreateTime(format);
+                    auditInfoDao.insertSelective(auditInfo);
+
+
+                    progressPaymentInformationDao.updateByPrimaryKeySelective(paymentInformation);
+
+
+                    Example sexample = new Example(ProgressPaymentTotalPayment.class);
+                    Example.Criteria c = sexample.createCriteria();
+                    c.andEqualTo("baseProjectId",project.getId());
+                    c.andEqualTo("delFlag","0");
+                    ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(sexample);
+                    progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(baseProject.getCurrentPaymentInformation()));
+//                    progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(baseProject.getCumulativePaymentTimes())));
+                    progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(baseProject.getCurrentPaymentRatio())+"");
+                    progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
+
+                    project.setProgressPaymentStatus("1");;
+                    baseProjectDao.updateByPrimaryKeySelective(project);
+
+                }else if(project.getProgressPaymentStatus().equals("2")){
                     auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
                     auditInfo.setBaseProjectId(baseProject.getId());
                     auditInfo.setAuditResult("0");
