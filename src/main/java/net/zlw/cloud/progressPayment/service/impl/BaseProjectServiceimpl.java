@@ -2072,7 +2072,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         }
         //未通过
         if (pageVo.getProgressStatus().equals("3")){
-            List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
+            List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed1(pageVo);
             for (ProgressListVo progressListVo : list) {
                 String id = progressListVo.getId();
                 Example example = new Example(AuditInfo.class);
