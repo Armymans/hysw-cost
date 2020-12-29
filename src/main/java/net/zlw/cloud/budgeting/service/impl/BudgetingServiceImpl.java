@@ -1797,7 +1797,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
                 if (auditInfo!=null){
                     if (! auditInfo.getAuditorId().equals(ids)){
-                        throw new RuntimeException("此操作只有由部门领导来完成");
+                        throw new RuntimeException("此操作只能由所选项目部门领导来完成");
                     } else {
                         AuditInfo auditInfo1 = new AuditInfo();
                         auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
@@ -1821,6 +1821,11 @@ public class BudgetingServiceImpl implements BudgetingService {
                         auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
                         auditInfo1.setUpdateTime(simpleDateFormat.format(new Date()));
                         auditInfoDao.insertSelective(auditInfo1);
+
+                        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+                        baseProject.setBudgetStatus("1");
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
                     }
                 }
             }
