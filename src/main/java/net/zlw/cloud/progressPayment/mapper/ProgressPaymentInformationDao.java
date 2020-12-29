@@ -513,8 +513,8 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             " b.customer_name like concat ('%',#{keyword},'%') or  " +
             " bt.name_of_cost_unit like concat  ('%',#{keyword},'%') " +
             " ) and  " +
-            " (b.progress_payment_status = '3' or '3' )   or" +
-            " (b.progress_payment_status = '7' or '7') " +
+            " (b.progress_payment_status = '3' or b.progress_payment_status = '7' ) " +
+
             " ORDER BY " +
             " p.create_time desc")
     List<ProgressListVo> searchAllProgressProcessed1(PageVo pageVo);
