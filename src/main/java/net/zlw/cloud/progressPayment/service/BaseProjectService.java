@@ -72,7 +72,7 @@ public interface BaseProjectService {
 
     void editOutSourceMoney(String id, String outSourceMoney);
 
-    void accomplish(BatchReviewVo batchReviewVo, UserInfo loginUser);
+    void accomplish(String ids, UserInfo loginUser);
 
     void sendBack(String id,String auditOpinion);
 }

@@ -1502,6 +1502,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 }else if(auditInfo.getAuditType().equals("4")){
                     String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     auditInfo.setAuditResult("1");
+                    auditInfo.setAuditTime(data);
                     auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 
@@ -1761,29 +1762,30 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
-    public void accomplish(BatchReviewVo batchReviewVo, UserInfo loginUser) {
+    public void accomplish(String ids, UserInfo loginUser) {
+        String id = loginUser.getId();
+//        String id ="200101005";
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-         if(loginUser.getId().equals(wjsjh) ||loginUser.getId().equals(whsjh)) {  //部门领导
-             String batchAll = batchReviewVo.getBatchAll();
-             String[] split = batchAll.split(",");
+         if(id.equals(wjzjh) || id.equals(whzjh)) {  //部门领导
+             String[] split = ids.split(",");
              for (String s : split) {
                  Example example = new Example(AuditInfo.class);
                  example.createCriteria().andEqualTo("baseProjectId", s)
-                         .andEqualTo("auditResult", "0");
+                         .andEqualTo("auditType", "1")
+                         .andEqualTo("auditResult","1");
                  AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
                  ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectByPrimaryKey(s);
                  String baseProjectId = progressPaymentInformation.getBaseProjectId();
                  BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
-                 if ("1".equals(auditInfo.getAuditType())) {
+                 if (auditInfo != null) {
                      AuditInfo auditInfo1 = new AuditInfo();
                      auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
                      auditInfo1.setBaseProjectId(s);
                      auditInfo1.setAuditResult("0");
                      auditInfo1.setAuditType("4");
-                     auditInfo1.setFounderId(loginUser.getId());
+                     auditInfo1.setFounderId(id);
                      auditInfo1.setCreateTime(data);
                      auditInfo1.setStatus("0");
-                     auditInfoDao.insertSelective(auditInfo1);
                      Example example1 = new Example(MemberManage.class);
                      Example.Criteria cc = example1.createCriteria();
                      cc.andEqualTo("id", progressPaymentInformation.getFounderId());
@@ -1795,6 +1797,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                      } else if (memberManage.getWorkType().equals("2")) {
                          auditInfo1.setAuditorId(wjzjm);
                      }
+                     auditInfoDao.insertSelective(auditInfo1);
                      baseProject.setProgressPaymentStatus("1");
                      baseProjectDao.updateByPrimaryKeySelective(baseProject);
                  }

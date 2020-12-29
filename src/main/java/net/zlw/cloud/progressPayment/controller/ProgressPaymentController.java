@@ -115,7 +115,7 @@ public class ProgressPaymentController  extends BaseController {
     public Map<String,Object> searchAllProgress(PageVo pageVo){
 
         pageVo.setUid(getLoginUser().getId());
-//        pageVo.setUid("user324");
+//        pageVo.setUid("200101005");
         PageInfo<ProgressListVo> progressListVoPageInfo = baseProjectService.searchAllProgress(pageVo);
         return RestUtil.page(progressListVoPageInfo);
     }
@@ -201,9 +201,9 @@ public class ProgressPaymentController  extends BaseController {
 
     //确认完成功能
     @RequestMapping(value = "/progress/accomplish",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> accomplish(BatchReviewVo batchReviewVo){
+    public Map<String,Object> accomplish(String ids){
         try {
-            baseProjectService.accomplish(batchReviewVo,getLoginUser());
+            baseProjectService.accomplish(ids,getLoginUser());
         } catch (Exception e) {
             e.printStackTrace();
             return RestUtil.error(e.getMessage());
