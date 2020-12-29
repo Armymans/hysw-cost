@@ -448,6 +448,79 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
     List<ProgressListVo> searchAllProgressProcessed(PageVo pageVo);
 
     @Select("SELECT " +
+            " p.id id, " +
+            " b.id baseId, " +
+            " p.founder_id founderId," +
+            " b.cea_num ceaNum, " +
+            " b.project_num projectNum, " +
+            " b.project_name projectName, " +
+            " ( CASE b.progress_payment_status WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '进行中' WHEN '6' THEN '已完成' WHEN '7' THEN '未通过' END )as  progressPaymentStatus, " +
+            " ( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district, " +
+            " b.water_address waterAddress, " +
+            " b.construction_unit constructionUnit, " +
+            " b.project_category projectCategory, " +
+            " ( CASE p.project_type WHEN '1' THEN '合同内进度款支付' WHEN '2' THEN '合同外进度款支付' END ) AS projectType, " +
+            " ( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature, " +
+            " ( " +
+            " CASE " +
+            " b.design_category  " +
+            " WHEN '1' THEN " +
+            " '市政管道'  " +
+            " WHEN '2' THEN " +
+            " '管网改造'  " +
+            " WHEN '3' THEN " +
+            " '新建小区'  " +
+            " WHEN '4' THEN " +
+            " '二次供水项目'  " +
+            " WHEN '5' THEN " +
+            " '工商户'  " +
+            " WHEN '6' THEN " +
+            " '居民装接水'  " +
+            " WHEN '7' THEN " +
+            " '行政事业'  " +
+            " END  " +
+            " ) AS designCategory, " +
+            " ( CASE b.water_supply_type WHEN '1' THEN '直供水' WHEN '2' THEN '二次供水' END ) AS waterSupplyType, " +
+            " b.customer_name customerName, " +
+            " (select member_name username from member_manage where id = p.founder_id) username, " +
+            " ( CASE p.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END )as outsourcing, " +
+            " p.name_of_cost_unit nameOfCostUnit, " +
+            " bt.amount_cost amountCost, " +
+            " p.contract_amount contractAmount, " +
+            " p.current_payment_Information currentPaymentInformation, " +
+            " p.current_payment_ratio currentPaymentRatio, " +
+            " p.receiving_time receivingTime, " +
+            " p.compile_time compileTime " +
+            " from progress_payment_information p  " +
+            " LEFT JOIN base_project b on p.base_project_id = b.id  " +
+            " LEFT JOIN budgeting bt on p.base_project_id = bt.base_project_id " +
+            " where " +
+            " (p.del_flag = '0')  " +
+            "      and  " +
+            " (b.district = #{district} or #{district} = '') and  " +
+            " (b.project_nature = #{projectNature} or #{projectNature} = '') and  " +
+            " (p.project_type = #{projectType} or #{projectType} = '') and " +
+            " (p.receiving_time > #{startTime} or #{startTime} = '') and  " +
+            " (p.receiving_time < #{endTime} or #{endTime} = '') and  " +
+            " (p.compile_time > #{startTime} or #{startTime} = '') and  " +
+            " (p.compile_time < #{endTime} or #{endTime} = '') and  " +
+//  "      p.founder_id = #{uid} and  " +
+            " ( " +
+            " b.cea_num like concat('%',#{keyword},'%') or  " +
+            " b.project_num like concat('%',#{keyword},'%') or  " +
+            " b.project_name like concat ('%',#{keyword},'%') or  " +
+            " b.construction_unit like concat ('%',#{keyword},'%') or  " +
+            " b.customer_name like concat ('%',#{keyword},'%') or  " +
+            " bt.name_of_cost_unit like concat  ('%',#{keyword},'%') " +
+            " ) and  " +
+            " (b.progress_payment_status = '3' or '3' )   or" +
+            " (b.progress_payment_status = '7' or '7') " +
+            " ORDER BY " +
+            " p.create_time desc")
+    List<ProgressListVo> searchAllProgressProcessed1(PageVo pageVo);
+
+
+    @Select("SELECT " +
   " p.id id, " +
   " b.id baseId, " +
   " b.cea_num ceaNum, " +
