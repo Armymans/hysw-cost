@@ -923,5 +923,5 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "order by " +
             "b.should_be asc, " +
             "b.create_time desc")
-    List<BudgetingListVo> findAllBudgetingUnsanctioned(PageBVo pageBVo, String id);
+    List<BudgetingListVo> findAllBudgetingUnsanctioned(@Param("p") PageBVo pageBVo, @Param("id") String id);
 }
