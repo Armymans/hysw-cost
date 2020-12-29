@@ -726,7 +726,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         if (baseProject != null && !baseProject.equals("")) {
             if (baseProject.getAuditNumber() != null && !baseProject.getAuditNumber().equals("")) {
                 //处理中
-                if(project.getProgressPaymentStatus().equals("2")){
+                if(project.getProgressPaymentStatus().equals("7")){
                     if ("7".equals(baseProject.getProgressPaymentStatus())){
                         Example example = new Example(AuditInfo.class);
                         example.createCriteria().andEqualTo("baseProjectId",paymentInformation.getId())
