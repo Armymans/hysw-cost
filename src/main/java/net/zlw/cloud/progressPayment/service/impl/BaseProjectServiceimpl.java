@@ -1805,6 +1805,26 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
+    public void sendBack(String id,String auditOpinion) {
+        ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(id);
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        if (paymentInformation != null){
+            Example example = new Example(AuditInfo.class);
+            example.createCriteria().andEqualTo("baseProjectId",paymentInformation.getBaseProjectId())
+                                    .andEqualTo("auditResult","1");
+            AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+            auditInfo.setAuditResult("2");
+            auditInfo.setAuditOpinion(auditOpinion);
+            auditInfo.setAuditTime("");
+            auditInfo.setUpdateTime(data);
+            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+           baseProject.setProgressPaymentStatus("3");
+           baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        }
+    }
+
+    @Override
     public NumberVo NumberItems() {
         NumberVo numberVo = new NumberVo();
         int i = baseProjectDao.selectCountByExample(null);

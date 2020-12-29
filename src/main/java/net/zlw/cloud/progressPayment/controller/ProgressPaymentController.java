@@ -208,8 +208,14 @@ public class ProgressPaymentController  extends BaseController {
             e.printStackTrace();
             return RestUtil.error(e.getMessage());
         }
-
         return RestUtil.success("删除成功");
+    }
+
+    //退回功能
+    @RequestMapping(value = "/progress/sendBack",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> sendBack(String id,String auditOpinion){
+            baseProjectService.sendBack(id,auditOpinion);
+        return RestUtil.success("退回成功");
     }
     //进度款批量审核
     @RequestMapping(value = "/progress/batchReview",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
