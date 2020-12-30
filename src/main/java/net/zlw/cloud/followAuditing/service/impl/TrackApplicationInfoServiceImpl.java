@@ -261,7 +261,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
                 }
                 pageInfo = new PageInfo<>(returnTrackVos);
-            }else if ("3".equals(pageVo.getTrackStatus())){ // 未通过
+            }else if ("4".equals(pageVo.getTrackStatus())){ // 未通过
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                     // 施工单位
@@ -285,7 +285,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     }
                 }
                 pageInfo = new PageInfo<>(returnTrackVos);
-            }else if ("5".equals(pageVo.getTrackStatus())) {
+            }else if ("5".equals(pageVo.getTrackStatus()) || "3".equals(pageVo.getTrackStatus())) {
                 //进行中，已完成不分层级，都能看到
                 //但是进行中的和已完成按钮除查看只有领导和创建人可操作
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
