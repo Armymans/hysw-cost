@@ -510,6 +510,13 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         if (pageVo.getStatus().equals("3")){
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
             for (VisaChangeListVo thisList : list1) {
+
+                String baseProjectId = thisList.getBaseProjectId();
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
+                if ("7".equals(baseProject.getVisaStatus())){
+                    thisList.setUnShow("1");
+                }
+
 //                    // 造价单位名称
 //                    if (  thisList.getNameOfCostUnit() != null && !"".equals(  thisList.getNameOfCostUnit())){
 //                        thisList.setNameOfCostUnit(  thisList.getNameOfCostUnit());
@@ -2376,8 +2383,19 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
 //            baseProject1.setVisaStatus("2");
             if (visaChangeVo.getAuditNumber() != null && visaChangeVo.getAuditNumber().equals("0")) {
+
                 baseProject1.setVisaStatus("1");
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
+                if ("7".equals(baseProject.getVisaStatus())){
+                    Example example4 = new Example(AuditInfo.class);
+                    Example.Criteria c4 = example4.createCriteria();
+                    c4.andEqualTo("baseProjectId",visaChangeDown.getId());
+                    c4.andEqualTo("status","0");
+                    List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example4);
+                    for (AuditInfo auditInfo : auditInfos) {
+                        auditInfoDao.deleteByPrimaryKey(auditInfo);
+                    }
+                }
                 baseProject.setVisaStatus("1");
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
@@ -2389,7 +2407,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo.setBaseProjectId(visaChangeUp.getId());
                 }
                 auditInfo.setAuditResult("0");
-                auditInfo.setAuditType("2");
+                auditInfo.setAuditType("0");
                 auditInfo.setAuditorId(visaChangeVo.getAuditId());
                 auditInfo.setFounderId(id);
                 auditInfo.setStatus("0");

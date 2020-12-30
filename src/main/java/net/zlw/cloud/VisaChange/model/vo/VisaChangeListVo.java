@@ -43,5 +43,6 @@ public class VisaChangeListVo {
     private Integer changeNum;
     private String isShow;
     private String backShow;
+    private String unShow;
 
 }
