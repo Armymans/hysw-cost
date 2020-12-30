@@ -674,6 +674,17 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         if (pageVo.getStatus().equals("4")){
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing1(pageVo);
             for (VisaChangeListVo thisList : list1) {
+                Example example1 = new Example(AuditInfo.class);
+                Example.Criteria criteria = example1.createCriteria();
+                criteria.andEqualTo("baseProjectId",thisList.getId());
+                criteria.andEqualTo("status","0");
+                criteria.andEqualTo("auditType","1");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
+                if (auditInfo!=null){
+                    if (pageVo.getUserId().equals(auditInfo.getAuditorId())){
+                        thisList.setBackShow("1");
+                    }
+                }
 
 //                    // 造价单位名称
 //                    if (  thisList.getNameOfCostUnit() != null && !"".equals(  thisList.getNameOfCostUnit())){
@@ -2047,6 +2058,11 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 if (!id.equals(auditInfo.getAuditorId())){
                     throw new RuntimeException("此操作只能由所选项目部门领导来完成");
                 }else{
+
+                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
+                    baseProject.setVisaStatus("1");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
                     AuditInfo auditInfo1 = new AuditInfo();
                     auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
                     auditInfo1.setBaseProjectId(visaChange.getId());
@@ -2074,6 +2090,35 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfoDao.insertSelective(auditInfo1);
                 }
             }
+        }
+    }
+
+    @Override
+    public void visaBack(String baseId, String backOption) {
+
+        Example example = new Example(VisaChange.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",baseId);
+        c.andEqualTo("state","0");
+        c.andEqualTo("upAndDownMark","1");
+        VisaChange visaChange = visaChangeMapper.selectOneByExample(example);
+
+        if (visaChange!=null){
+            Example example1 = new Example(AuditInfo.class);
+            Example.Criteria criteria = example1.createCriteria();
+            criteria.andEqualTo("baseProjectId",visaChange.getId());
+            criteria.andEqualTo("status","0");
+            criteria.andEqualTo("auditType","1");
+            AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
+            auditInfo.setAuditResult("2");
+            auditInfo.setAuditOpinion(backOption);
+            auditInfo.setAuditTime(sim.format(new Date()));
+            auditInfo.setUpdateTime(sim.format(new Date()));
+            auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+            baseProject.setVisaStatus("7");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
         }
     }
 

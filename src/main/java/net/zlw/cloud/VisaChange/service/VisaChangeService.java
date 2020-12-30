@@ -37,4 +37,6 @@ public interface VisaChangeService {
     void editOutSourceMoney(String id, String upMoney,String downMoney);
 
      void visaSuccess(String ids, String id);
+
+     void visaBack(String baseId,String back);
 }

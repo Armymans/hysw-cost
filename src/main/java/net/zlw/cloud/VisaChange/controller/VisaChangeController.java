@@ -380,7 +380,17 @@ public class VisaChangeController extends BaseController {
     //确认完成
     @RequestMapping(value = "/visachange/visaSuccess",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> visaSuccess(@RequestParam(name = "ids") String ids){
-        vcisService.visaSuccess(ids,getLoginUser().getId());
+        try {
+            vcisService.visaSuccess(ids,getLoginUser().getId());
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
+        return RestUtil.success();
+    }
+    // 退回
+    @RequestMapping(value = "/visachange/visaBack",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> visaBack(@RequestParam(name = "baseId") String baseId,@RequestParam(name = "backOpnion") String backOpnion){
+        vcisService.visaBack(baseId,backOpnion);
         return RestUtil.success();
     }
 
