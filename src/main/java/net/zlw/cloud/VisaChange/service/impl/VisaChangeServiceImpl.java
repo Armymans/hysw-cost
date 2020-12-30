@@ -508,7 +508,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         }
         //未通过
         if (pageVo.getStatus().equals("3")){
-            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
+            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaUnsanctioned(pageVo);
             for (VisaChangeListVo thisList : list1) {
 
                 String baseProjectId = thisList.getBaseProjectId();
@@ -956,11 +956,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
             for (VisaChangeListVo visaChangeListVo : list1) {
 
-                String baseProjectId = visaChangeListVo.getBaseProjectId();
-                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
-                if ("7".equals(baseProject.getVisaStatus())){
-                    visaChangeListVo.setUnShow("1");
-                }
+
 //                System.err.println(visaChangeListVo);
 //                // 造价单位名称
 //                if (visaChangeListVo.getNameOfCostUnit() != null && !"".equals(visaChangeListVo.getNameOfCostUnit())){
@@ -1051,6 +1047,13 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }
 
             for (VisaChangeListVo visaChangeListVo : list1) {
+
+                String baseProjectId = visaChangeListVo.getBaseProjectId();
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
+                if ("7".equals(baseProject.getVisaStatus())){
+                    visaChangeListVo.setUnShow("1");
+                }
+
                 String proportionContractShang = visaChangeListVo.getProportionContractShang();
                 String proportionContractXia = visaChangeListVo.getProportionContractXia();
                 if (!"".equals(proportionContractShang) && proportionContractShang!=null && !"/".equals(proportionContractShang)){
