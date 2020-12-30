@@ -1190,7 +1190,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
                 auditInfo.setAuditResult("2");
                 auditInfo.setAuditOpinion(opinion);
-                auditInfo.setAuditTime("");
+                auditInfo.setAuditTime(data);
                 auditInfo.setUpdateTime(data);
                 baseProject.setTrackStatus("7");
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
@@ -1323,8 +1323,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     booleans = false;
                 }
             }
+
             // 如果是退回未通过
-            if ("7".equals(trackVo.getTrackStatus())){
+            if ("7".equals(baseProject.getTrackStatus())){
                 // 把所有的审核信息删除
                 if (trackMonthlyNew.size()>0){
                     for (TrackMonthly thisMonthly : trackMonthlyNew) {
