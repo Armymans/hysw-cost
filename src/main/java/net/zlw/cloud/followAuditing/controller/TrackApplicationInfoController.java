@@ -40,6 +40,7 @@ public class TrackApplicationInfoController extends BaseController {
     public Map<String,Object> selectTrackList(PageVo pageVo){
         //todo getLoginUser().getId()
         pageVo.setUid(getLoginUser().getId());
+//        pageVo.setUid("user324");
         PageInfo<ReturnTrackVo> pageInfo = trackApplicationInfoService.selectTrackList(pageVo);
         return RestUtil.page(pageInfo);
     }

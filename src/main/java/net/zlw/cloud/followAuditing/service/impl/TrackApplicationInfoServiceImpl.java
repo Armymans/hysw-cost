@@ -262,7 +262,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 }
                 pageInfo = new PageInfo<>(returnTrackVos);
             }else if ("4".equals(pageVo.getTrackStatus())){ // 未通过
-                List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
+                List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList1(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                     // 施工单位
                     ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getConstructionOrganization());
