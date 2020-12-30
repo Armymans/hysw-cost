@@ -2395,6 +2395,19 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
                 baseProject1.setVisaStatus("1");
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChangeVo.getBaseId());
+
+                System.out.println(baseProject.getVisaStatus());
+                System.out.println(baseProject.getVisaStatus());
+                System.out.println(baseProject.getVisaStatus());
+                System.out.println(baseProject.getVisaStatus());
+                System.out.println(baseProject.getVisaStatus());
+                System.out.println(baseProject.getVisaStatus());
+                System.out.println(baseProject.getVisaStatus());
+                System.out.println(baseProject.getVisaStatus());
+                System.out.println(baseProject.getVisaStatus());
+                System.out.println(baseProject.getVisaStatus());
+                System.out.println(baseProject.getVisaStatus());
+
                 if ("7".equals(baseProject.getVisaStatus())){
                     Example example4 = new Example(AuditInfo.class);
                     Example.Criteria c4 = example4.createCriteria();
