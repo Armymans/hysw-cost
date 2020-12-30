@@ -955,6 +955,12 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         if (pageVo.getStatus().equals("") || pageVo.getStatus() == null) {
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
             for (VisaChangeListVo visaChangeListVo : list1) {
+
+                String baseProjectId = visaChangeListVo.getBaseProjectId();
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseProjectId);
+                if ("7".equals(baseProject.getVisaStatus())){
+                    visaChangeListVo.setUnShow("1");
+                }
 //                System.err.println(visaChangeListVo);
 //                // 造价单位名称
 //                if (visaChangeListVo.getNameOfCostUnit() != null && !"".equals(visaChangeListVo.getNameOfCostUnit())){
