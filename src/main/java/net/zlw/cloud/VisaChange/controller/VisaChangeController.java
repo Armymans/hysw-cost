@@ -99,7 +99,7 @@ public class VisaChangeController extends BaseController {
                 }
 
                 if (visaChangeStatisticVo.getVisaChangeDownProportionContract()!=null && !"".equals(visaChangeStatisticVo.getVisaChangeDownProportionContract())){
-                    downPro+=Double.parseDouble(visaChangeStatisticVo.getVisaChangeDownProportionContract());
+                   downPro+=Double.parseDouble(visaChangeStatisticVo.getVisaChangeDownProportionContract());
                 }
             }
             if (list1.size()>=1){
@@ -375,6 +375,12 @@ public class VisaChangeController extends BaseController {
     @RequestMapping(value = "/public/renewFile",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> renewFile(@RequestParam(name = "baseId") String baseId , @RequestParam(name = "visaNum1") String visaNum1){
         vcisService.renewFile(baseId,visaNum1);
+        return RestUtil.success();
+    }
+    //确认完成
+    @RequestMapping(value = "/visachange/visaSuccess",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> visaSuccess(@RequestParam(name = "ids") String ids){
+        vcisService.visaSuccess(ids,getLoginUser().getId());
         return RestUtil.success();
     }
 

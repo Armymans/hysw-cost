@@ -1554,6 +1554,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 auditInfo.setAuditTime(this.sim.format(new Date()));
                 auditInfo.setUpdateTime(sim.format(new Date()));
                 auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+                //一审通过
                 if (auditInfo.getAuditType().equals("0")) {
                     AuditInfo auditInfo1 = new AuditInfo();
                     auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -1579,36 +1580,43 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                     auditInfo1.setCreateTime(sim.format(new Date()));
                     auditInfo1.setUpdateTime(sim.format(new Date()));
                     auditInfoDao.insertSelective(auditInfo1);
+                    //二审通过
                 } else if (auditInfo.getAuditType().equals("1")) {
-                    AuditInfo auditInfo1 = new AuditInfo();
-                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
-                    auditInfo1.setBaseProjectId(visaChange.getId());
-                    auditInfo1.setAuditResult("0");
-                    auditInfo1.setAuditType("4");
-//                    Example example2 = new Example(MkyUser.class);
-//                    Example.Criteria c3 = example2.createCriteria();
-//                    c3.andEqualTo("roleId", "role7614");
-//                    c3.andEqualTo("delFlag", "0");
-//                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
-//                    auditInfo1.setAuditorId(mkyUser.getId());
-                    Example example2 = new Example(MemberManage.class);
-                    Example.Criteria criteria = example2.createCriteria();
-                    criteria.andEqualTo("id",visaChange.getCreatorId());
-                    MemberManage memberManage = memberManageDao.selectOneByExample(example2);
-                    if (memberManage.getWorkType().equals("1")){
-                        auditInfo1.setAuditorId(whzjm);
-                    }else if(memberManage.getWorkType().equals("2")){
-                        auditInfo1.setAuditorId(wjzjm);
-                    }
-                    auditInfo1.setFounderId(id);
-                    auditInfo1.setStatus("0");
-                    auditInfo1.setCreateTime(this.sim.format(new Date()));
-                    auditInfo1.setUpdateTime(sim.format(new Date()));
-                    auditInfoDao.insertSelective(auditInfo1);
+
+                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+                    baseProject.setVisaStatus("4");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+//                    AuditInfo auditInfo1 = new AuditInfo();
+//                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+//                    auditInfo1.setBaseProjectId(visaChange.getId());
+//                    auditInfo1.setAuditResult("0");
+//                    auditInfo1.setAuditType("4");
+////                    Example example2 = new Example(MkyUser.class);
+////                    Example.Criteria c3 = example2.createCriteria();
+////                    c3.andEqualTo("roleId", "role7614");
+////                    c3.andEqualTo("delFlag", "0");
+////                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
+////                    auditInfo1.setAuditorId(mkyUser.getId());
+//                    Example example2 = new Example(MemberManage.class);
+//                    Example.Criteria criteria = example2.createCriteria();
+//                    criteria.andEqualTo("id",visaChange.getCreatorId());
+//                    MemberManage memberManage = memberManageDao.selectOneByExample(example2);
+//                    if (memberManage.getWorkType().equals("1")){
+//                        auditInfo1.setAuditorId(whzjm);
+//                    }else if(memberManage.getWorkType().equals("2")){
+//                        auditInfo1.setAuditorId(wjzjm);
+//                    }
+//                    auditInfo1.setFounderId(id);
+//                    auditInfo1.setStatus("0");
+//                    auditInfo1.setCreateTime(this.sim.format(new Date()));
+//                    auditInfo1.setUpdateTime(sim.format(new Date()));
+//                    auditInfoDao.insertSelective(auditInfo1);
+                    //三审通过
                 } else if (auditInfo.getAuditType().equals("4")) {
                     String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
-                    baseProject.setVisaStatus("4");
+                    baseProject.setVisaStatus("5");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
                     // 三审通过插入委外金额
                     BigDecimal sumAmount = new BigDecimal(0);
@@ -2016,6 +2024,57 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                }
            }
        }
+    }
+
+    @Override
+    public void visaSuccess(String ids, String id) {
+        String[] split = ids.split(",");
+        for (String s : split) {
+
+            Example example = new Example(VisaChange.class);
+            Example.Criteria c = example.createCriteria();
+            c.andEqualTo("baseProjectId",s);
+            c.andEqualTo("state","0");
+            c.andEqualTo("upAndDownMark","1");
+            VisaChange visaChange = visaChangeMapper.selectOneByExample(example);
+            if (visaChange!=null){
+                Example example1 = new Example(AuditInfo.class);
+                Example.Criteria criteria = example1.createCriteria();
+                criteria.andEqualTo("baseProjectId",visaChange.getId());
+                criteria.andEqualTo("status","0");
+                criteria.andEqualTo("auditType","1");
+                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
+                if (!id.equals(auditInfo.getAuditorId())){
+                    throw new RuntimeException("此操作只能由所选项目部门领导来完成");
+                }else{
+                    AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                    auditInfo1.setBaseProjectId(visaChange.getId());
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditType("4");
+//                    Example example2 = new Example(MkyUser.class);
+//                    Example.Criteria c3 = example2.createCriteria();
+//                    c3.andEqualTo("roleId", "role7614");
+//                    c3.andEqualTo("delFlag", "0");
+//                    MkyUser mkyUser = mkyUserMapper.selectOneByExample(example2);
+//                    auditInfo1.setAuditorId(mkyUser.getId());
+                    Example example2 = new Example(MemberManage.class);
+                    Example.Criteria criteria1 = example2.createCriteria();
+                    criteria1.andEqualTo("id",visaChange.getCreatorId());
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example2);
+                    if (memberManage.getWorkType().equals("1")){
+                        auditInfo1.setAuditorId(whzjm);
+                    }else if(memberManage.getWorkType().equals("2")){
+                        auditInfo1.setAuditorId(wjzjm);
+                    }
+                    auditInfo1.setFounderId(id);
+                    auditInfo1.setStatus("0");
+                    auditInfo1.setCreateTime(this.sim.format(new Date()));
+                    auditInfo1.setUpdateTime(sim.format(new Date()));
+                    auditInfoDao.insertSelective(auditInfo1);
+                }
+            }
+        }
     }
 
     @Override
