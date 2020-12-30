@@ -49,7 +49,8 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
             "                    b.construction_organization constructionOrganization,    " +
             "                    (select writter from track_monthly where track_id = tai.id limit 0,1) writter,    " +
             "                    (select fill_time from track_monthly where track_id = tai.id ORDER BY fill_time desc limit 0,1) fillTime ,    " +
-            "                    tai.audit_unit_name_id auditUnitNameId,    " +
+            "                    tai.audit_unit_name_id auditUnitNameId,   " +
+            "                    tai.founder_id founderId, " +
             "                    tai.cea_total_money ceaTotalMoney    " +
             "                    from track_audit_info tai    " +
             "                    LEFT JOIN base_project b on tai.base_project_id = b.id    " +
