@@ -221,7 +221,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         } else {
             //待确认
             if("6".equals(pageVo.getTrackStatus())){
-                List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList2(pageVo);
+                List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList3(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                     TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(returnTrackVo.getId());
                     Example example1 = new Example(TrackMonthly.class);
