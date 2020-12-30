@@ -46,4 +46,6 @@ public interface TrackApplicationInfoService {
     TrackMonthly findWritter(String id);
 
     void editOutMoney(String id, String outMoney);
+
+    void accomplish(String ids, String id);
 }
