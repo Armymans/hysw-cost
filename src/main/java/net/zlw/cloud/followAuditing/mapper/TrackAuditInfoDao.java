@@ -151,7 +151,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
             "                    and    " +
             "                    (b.construction_organization = #{constructionOrganization} or #{constructionOrganization} = '')     " +
             "                    and    " +
-            "                    (b.track_status = #{trackStatus} or #{trackStatus} = '')     " +
+            "                    (b.track_status = '4' or '7' = '')     " +
             "                    and    " +
             "                    (    " +
             "                    b.cea_num like concat('%',#{keyword},'%') or    " +
@@ -172,7 +172,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
                     "tai.founder_id founderId,  " +
                     "b.project_num projectNum,  " +
                     "b.project_name projectName,  " +
-                    "( CASE b.track_status WHEN '1' THEN '待审核' WHEN '2' THEN '未提交' WHEN '3' THEN '进行中' WHEN '4' THEN '未通过' WHEN '5' THEN '已完成' END ) AS trackStatus,  " +
+                    "( CASE b.track_status WHEN '1' THEN '待审核' WHEN '2' THEN '未提交' WHEN '3' THEN '进行中' WHEN '4' THEN '未通过' WHEN '5' THEN '已完成' WHEN '6' THEN '待确认' WHEN '7' THEN '未通过' END ) AS trackStatus,  " +
                     "( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district,  " +
                     "b.construction_unit constructionUnit,  " +
                     "( CASE b.project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,  " +
@@ -214,7 +214,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
                     "and  " +
                     "b.del_flag = '0'   " +
                     "and  " +
-                    "(b.track_status = '4' or .track_status='7' )   " +
+                    "(b.track_status = #{trackStatus} or #{trackStatus} ='' )   " +
                     "and  " +
                     "(b.district = #{district} or #{district} = '' )   " +
                     "and  " +
