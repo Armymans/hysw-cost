@@ -1140,6 +1140,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             Example example1 = new Example(AuditInfo.class);
             example1.createCriteria().andEqualTo("baseProjectId",trackMonthly.getId())
                                      .andEqualTo("auditType","0")
+                                     .andEqualTo("auditResult","1")
                                      .andEqualTo("status","0");
             List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
             if (auditInfos.size()>0){
