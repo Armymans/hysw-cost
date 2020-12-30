@@ -47,5 +47,8 @@ public interface TrackApplicationInfoService {
 
     void editOutMoney(String id, String outMoney);
 
-    void accomplish(String ids, String id);
+    void accomplish(String ids, UserInfo userInfo);
+
+    void sendBack(String id, String opinion);
+
 }

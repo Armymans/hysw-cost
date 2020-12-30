@@ -173,8 +173,20 @@ public class TrackApplicationInfoController extends BaseController {
     // 跟踪审计确认完成
     @RequestMapping(value = "/track/accomplish",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> accomplish(String ids){
-        trackApplicationInfoService.accomplish(ids,getLoginUser().getId());
+        try {
+            trackApplicationInfoService.accomplish(ids,getLoginUser());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success("删除成功");
+    }
+
+    // 退回功能
+    @RequestMapping(value = "/track/sendBack",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> sendBack(String id,String opinion){
+        trackApplicationInfoService.sendBack(id,opinion);
+        return RestUtil.success("退回成功");
     }
     //批量审核
 //    @PostMapping("/track/batchReview")
