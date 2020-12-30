@@ -233,16 +233,21 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                         example.createCriteria().andEqualTo("baseProjectId",trackMonthly1.getId())
                                                 .andEqualTo("status","0")
                                                 .andEqualTo("auditType","0");
-                        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                        MemberManage memberManage = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-                        // 当前处理人
-                        if (memberManage != null){
-                            returnTrackVo.setCurrentHandler(memberManage.getMemberName());
+                        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+                        if (auditInfos.size()>0){
+                            for (AuditInfo thisAudit : auditInfos) {
+                                MemberManage memberManage = memberManageDao.selectByPrimaryKey(thisAudit.getAuditorId());
+                                // 当前处理人
+                                if (memberManage != null){
+                                    returnTrackVo.setCurrentHandler(memberManage.getMemberName());
+                                }
+                                // 判断退回显隐
+                                if (thisAudit.getAuditorId().equals(pageVo.getUid())){
+                                    returnTrackVo.setIsShow("1");
+                                }
+                            }
                         }
-                        // 判断退回显隐
-                        if (auditInfo.getAuditorId().equals(pageVo.getUid())){
-                            returnTrackVo.setIsShow("1");
-                        }
+
                     }
                     // 填写人
                     Example example = new Example(TrackMonthly.class);
