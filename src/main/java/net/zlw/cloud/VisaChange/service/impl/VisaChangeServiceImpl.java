@@ -672,7 +672,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         }
         //待确认
         if (pageVo.getStatus().equals("4")){
-            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
+            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing1(pageVo);
             for (VisaChangeListVo thisList : list1) {
 
 //                    // 造价单位名称
