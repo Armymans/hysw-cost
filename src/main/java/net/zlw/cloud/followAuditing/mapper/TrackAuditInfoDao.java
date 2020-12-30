@@ -76,7 +76,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
             "                    and    " +
             "                    (b.construction_organization = #{constructionOrganization} or #{constructionOrganization} = '')     " +
             "                    and    " +
-            "                    (b.track_status = '4' or b.track_status = '7')     " +
+            "                    (b.track_status = #{trackStatus} or #{trackStatus}= '')     " +
             "                    and    " +
             "                    (    " +
             "                    b.cea_num like concat('%',#{keyword},'%') or    " +
@@ -214,7 +214,7 @@ public interface TrackAuditInfoDao extends Mapper<TrackAuditInfo> {
                     "and  " +
                     "b.del_flag = '0'   " +
                     "and  " +
-                    "(b.track_status = #{trackStatus} or #{trackStatus} = '')   " +
+                    "(b.track_status = '4' or .track_status='7' )   " +
                     "and  " +
                     "(b.district = #{district} or #{district} = '' )   " +
                     "and  " +
