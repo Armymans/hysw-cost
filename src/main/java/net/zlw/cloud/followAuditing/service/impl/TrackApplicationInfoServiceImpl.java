@@ -1141,36 +1141,41 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             example1.createCriteria().andEqualTo("baseProjectId",trackMonthly.getId())
                                      .andEqualTo("auditType","0")
                                      .andEqualTo("status","0");
-            AuditInfo auditInfo = auditInfoDao.selectOneByExample(example1);
-            MemberManage creater = memberManageDao.selectByPrimaryKey(auditInfo.getAuditorId());
-            TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(tid);
-            if (auditInfo != null){
-                if (! auditInfo.getAuditorId().equals(id)){
-                    throw new RuntimeException("此操作只能由所选项目部门领导来完成");
-                }else {
+            List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+            if (auditInfos.size()>0){
+                for (AuditInfo thisAudit : auditInfos) {
+                    MemberManage creater = memberManageDao.selectByPrimaryKey(thisAudit.getAuditorId());
+                    TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(tid);
+                    if (thisAudit != null){
+                        if (! thisAudit.getAuditorId().equals(id)){
+                            throw new RuntimeException("此操作只能由所选项目部门领导来完成");
+                        }else {
 
-                    AuditInfo newAuditInfo = new AuditInfo();
-                    newAuditInfo.setId(UUID.randomUUID().toString().replaceAll("-", ""));
-                    newAuditInfo.setBaseProjectId(trackMonthly.getId());
-                    newAuditInfo.setAuditType("4");
-                    //审核结果 结果待审核
-                    newAuditInfo.setAuditResult("0");
-                    //根据项目创建人地区判断
-                    if ("1".equals(creater.getWorkType())) {
-                        newAuditInfo.setAuditorId(whzjm);
-                    } else {
-                        newAuditInfo.setAuditorId(wjzjm);
+                            AuditInfo newAuditInfo = new AuditInfo();
+                            newAuditInfo.setId(UUID.randomUUID().toString().replaceAll("-", ""));
+                            newAuditInfo.setBaseProjectId(trackMonthly.getId());
+                            newAuditInfo.setAuditType("4");
+                            //审核结果 结果待审核
+                            newAuditInfo.setAuditResult("0");
+                            //根据项目创建人地区判断
+                            if ("1".equals(creater.getWorkType())) {
+                                newAuditInfo.setAuditorId(whzjm);
+                            } else {
+                                newAuditInfo.setAuditorId(wjzjm);
+                            }
+                            newAuditInfo.setCreateTime(data);
+                            newAuditInfo.setFounderId(id);
+                            //状态正常
+                            newAuditInfo.setStatus("0");
+                            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
+                            baseProject.setTrackStatus("1");
+
+                            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                            //将新的领导信息添加到审核表中
+                            auditInfoDao.insert(newAuditInfo);
+                        }
                     }
-                    newAuditInfo.setCreateTime(data);
-                    newAuditInfo.setFounderId(id);
-                    //状态正常
-                    newAuditInfo.setStatus("0");
-                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
-                    baseProject.setTrackStatus("1");
 
-                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
-                    //将新的领导信息添加到审核表中
-                    auditInfoDao.insert(newAuditInfo);
                 }
             }
 
