@@ -2267,7 +2267,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             c.andEqualTo("auditType","1");
             AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
             if (auditInfo!=null) {
-                if (!auditInfo.getAuditorId().equals(ids)) {
+                if (!auditInfo.getAuditorId().equals(s)) {
                     throw new RuntimeException("此操作只能由所选项目部门领导来完成");
                 } else {
                     AuditInfo auditInfo1 = new AuditInfo();
@@ -2287,7 +2287,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     } else if (memberManage.getWorkType().equals("2")) {
                         auditInfo1.setAuditorId(wjzjm);
                     }
-                    auditInfo1.setFounderId(ids);
+                    auditInfo1.setFounderId(s);
                     auditInfo1.setStatus("0");
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
