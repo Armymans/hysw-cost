@@ -39,4 +39,5 @@ public interface SettleAccountsService {
 
     void editOutsourceMoney(String id, String upOutMoney, String downOutMoney);
 
+    void accountsSuccess(String ids, String s);
 }

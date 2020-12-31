@@ -1543,36 +1543,41 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 
-                    AuditInfo auditInfo1 = new AuditInfo();
-                    auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
-                    auditInfo1.setBaseProjectId(audit);
-                    auditInfo1.setAuditResult("0");
-                    auditInfo1.setAuditType("4");
-                    auditInfo1.setStatus("0");
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                    auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
+
+                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
+                    baseProject.setSettleAccountsStatus("4");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+//                    AuditInfo auditInfo1 = new AuditInfo();
+//                    auditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+//                    auditInfo1.setBaseProjectId(audit);
+//                    auditInfo1.setAuditResult("0");
+//                    auditInfo1.setAuditType("4");
+//                    auditInfo1.setStatus("0");
+//                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//                    auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
+////                    Example example1 = new Example(MemberManage.class);
+////                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
+////
+////                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+////                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
+//                    String fouderId = "";
+//                    if (settlementAuditInformation!=null){
+//                        fouderId = settlementAuditInformation.getFounderId();
+//                    }else if(lastSettlementReview!=null){
+//                        fouderId = lastSettlementReview.getFounderId();
+//                    }
 //                    Example example1 = new Example(MemberManage.class);
-//                    example1.createCriteria().andEqualTo("depId","2") .andEqualTo("depAdmin","1");
-//
+//                    Example.Criteria cc = example1.createCriteria();
+//                    cc.andEqualTo("id",fouderId);
 //                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-//                    SettlementAuditInformation settlementAuditInformation1 = settlementAuditInformationDao.selectByPrimaryKey(s);
-                    String fouderId = "";
-                    if (settlementAuditInformation!=null){
-                        fouderId = settlementAuditInformation.getFounderId();
-                    }else if(lastSettlementReview!=null){
-                        fouderId = lastSettlementReview.getFounderId();
-                    }
-                    Example example1 = new Example(MemberManage.class);
-                    Example.Criteria cc = example1.createCriteria();
-                    cc.andEqualTo("id",fouderId);
-                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
-                    if (memberManage.getWorkType().equals("1")){
-                        auditInfo1.setAuditorId(whzjm);
-                    }else if(memberManage.getWorkType().equals("2")){
-                        auditInfo1.setAuditorId(wjzjm);
-                    }
-//                    auditInfo1.setAuditorId(memberManage.getId());
-                    auditInfoDao.insertSelective(auditInfo1);
+//                    if (memberManage.getWorkType().equals("1")){
+//                        auditInfo1.setAuditorId(whzjm);
+//                    }else if(memberManage.getWorkType().equals("2")){
+//                        auditInfo1.setAuditorId(wjzjm);
+//                    }
+////                    auditInfo1.setAuditorId(memberManage.getId());
+//                    auditInfoDao.insertSelective(auditInfo1);
 
 //                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
 //                    baseProject.setSettleAccountsStatus("5");
@@ -1590,8 +1595,95 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     auditInfo.setAuditOpinion(batchReviewVo.getAuditOpinion());
                     auditInfoDao.updateByPrimaryKeySelective(auditInfo);
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
-                    baseProject.setSettleAccountsStatus("4");
-                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+//                    baseProject.setSettleAccountsStatus("5");
+//                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+                    if (lastSettlementReview == null || settlementAuditInformation == null){
+                        if ( baseProject.getAB().equals("1") ){
+                            if (settlementAuditInformation!=null){
+
+                                if ("2".equals(settlementAuditInformation.getContract())){
+
+                                    BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
+                                    baseProject3.setSettleAccountsStatus("2");
+                                    baseProjectDao.updateByPrimaryKeySelective(baseProject3);
+
+                                    if (lastSettlementReview!=null){
+                                        Example example1 = new Example(AuditInfo.class);
+                                        Example.Criteria c = example1.createCriteria();
+                                        c.andEqualTo("baseProjectId",lastSettlementReview.getId());
+                                        c.andEqualTo("status","0");
+                                        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+                                        for (AuditInfo info : auditInfos) {
+                                            auditInfoDao.deleteByPrimaryKey(info);
+                                        }
+                                    }
+                                    if (settlementAuditInformation!=null){
+                                        Example example1 = new Example(AuditInfo.class);
+                                        Example.Criteria c = example1.createCriteria();
+                                        c.andEqualTo("baseProjectId",settlementAuditInformation.getId());
+                                        c.andEqualTo("status","0");
+                                        List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+                                        for (AuditInfo info : auditInfos) {
+                                            auditInfoDao.deleteByPrimaryKey(info);
+                                        }
+                                    }
+
+                                }else{
+                                    BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
+                                    baseProject2.setSettleAccountsStatus("5");
+                                    baseProject2.setProgressPaymentStatus("6");
+                                    baseProject2.setVisaStatus("6");
+                                    baseProject2.setTrackStatus("5");
+                                    baseProjectDao.updateByPrimaryKeySelective(baseProject2);
+                                }
+                            }else{
+
+
+                                BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
+                                baseProject3.setSettleAccountsStatus("2");
+                                baseProjectDao.updateByPrimaryKeySelective(baseProject3);
+
+                                if (lastSettlementReview!=null){
+                                    Example example1 = new Example(AuditInfo.class);
+                                    Example.Criteria c = example1.createCriteria();
+                                    c.andEqualTo("baseProjectId",lastSettlementReview.getId());
+                                    c.andEqualTo("status","0");
+                                    List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+                                    for (AuditInfo info : auditInfos) {
+                                        auditInfoDao.deleteByPrimaryKey(info);
+                                    }
+                                }
+                                if (settlementAuditInformation!=null){
+                                    Example example1 = new Example(AuditInfo.class);
+                                    Example.Criteria c = example1.createCriteria();
+                                    c.andEqualTo("baseProjectId",settlementAuditInformation.getId());
+                                    c.andEqualTo("status","0");
+                                    List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example1);
+                                    for (AuditInfo info : auditInfos) {
+                                        auditInfoDao.deleteByPrimaryKey(info);
+                                    }
+                                }
+                            }
+                        }else{
+                            BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
+                            baseProject2.setSettleAccountsStatus("5");
+                            baseProject2.setProgressPaymentStatus("6");
+                            baseProject2.setVisaStatus("6");
+                            baseProject2.setTrackStatus("5");
+                            baseProjectDao.updateByPrimaryKeySelective(baseProject2);
+                        }
+                        //否则则进入已完成
+                    }else{
+                        BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
+                        baseProject2.setSettleAccountsStatus("5");
+                        baseProject2.setProgressPaymentStatus("6");
+                        baseProject2.setVisaStatus("6");
+                        baseProject2.setTrackStatus("5");
+                        baseProjectDao.updateByPrimaryKeySelective(baseProject2);
+                    }
+
+
                     // 三审通过插入委外金额
                     OutSource outSource = new OutSource();
                     BigDecimal addAmount = new BigDecimal(0);
@@ -1950,14 +2042,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
                                 if ("2".equals(settlementAuditInformation.getContract())){
 
-                                    System.out.println("2");
-                                    System.out.println("2");
-                                    System.out.println("2");
-                                    System.out.println("2");
-                                    System.out.println("2");
-                                    System.out.println("2");
-                                    System.out.println("2");
-                                    System.out.println("2");
 
 
                                     BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
@@ -1994,15 +2078,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                                     baseProjectDao.updateByPrimaryKeySelective(baseProject2);
                                 }
                             }else{
-
-
-                                System.out.println("1");
-                                System.out.println("1");
-                                System.out.println("1");
-                                System.out.println("1");
-                                System.out.println("1");
-                                System.out.println("1");
-                                System.out.println("1");
 
 
                                 BaseProject baseProject3 = baseProjectDao.selectByPrimaryKey(s);
@@ -2176,6 +2251,54 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         if (settlementAuditInformation != null){
             settlementAuditInformation.setAmountOutsourcing(new BigDecimal(downOutMoney));
             settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+        }
+    }
+
+    @Override
+    public void accountsSuccess(String ids, String s) {
+        String[] split = ids.split(",");
+        for (String s1 : split) {
+            SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectByPrimaryKey(s1);
+
+            Example example = new Example(AuditInfo.class);
+            Example.Criteria c = example.createCriteria();
+            c.andEqualTo("baseProjectId",settlementAuditInformation.getId());
+            c.andEqualTo("status","0");
+            c.andEqualTo("auditType","1");
+            AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+            if (auditInfo!=null) {
+                if (!auditInfo.getAuditorId().equals(ids)) {
+                    throw new RuntimeException("此操作只能由所选项目部门领导来完成");
+                } else {
+                    AuditInfo auditInfo1 = new AuditInfo();
+                    auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
+                    auditInfo1.setBaseProjectId(settlementAuditInformation.getId());
+                    auditInfo1.setAuditResult("0");
+                    auditInfo1.setAuditType("4");
+                    String founderId = settlementAuditInformation.getFounderId();
+                    Example example1 = new Example(MemberManage.class);
+                    Example.Criteria cc = example1.createCriteria();
+                    cc.andEqualTo("id", founderId);
+                    MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                    //1芜湖
+                    if (memberManage.getWorkType().equals("1")) {
+                        auditInfo1.setAuditorId(whzjm);
+                        //吴江
+                    } else if (memberManage.getWorkType().equals("2")) {
+                        auditInfo1.setAuditorId(wjzjm);
+                    }
+                    auditInfo1.setFounderId(ids);
+                    auditInfo1.setStatus("0");
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    auditInfo1.setCreateTime(simpleDateFormat.format(new Date()));
+                    auditInfo1.setUpdateTime(simpleDateFormat.format(new Date()));
+                    auditInfoDao.insertSelective(auditInfo1);
+
+                    BaseProject baseProject = baseProjectDao.selectByPrimaryKey(settlementAuditInformation.getBaseProjectId());
+                    baseProject.setBudgetStatus("1");
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                }
+            }
         }
     }
 

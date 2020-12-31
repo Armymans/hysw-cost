@@ -472,5 +472,15 @@ public class SettleAccountsController extends BaseController {
         map.put("name",attachInfo.getFileName()+"."+attachInfo.getFileType());
         return RestUtil.success(map);
     }
+    //确认完成
+    @RequestMapping(value = "/accounts/accountsSuccess", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> accountsSuccess(@RequestParam(name = "ids") String ids){
+        try {
+            settleAccountsService.accountsSuccess(ids,getLoginUser().getId());
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
+        return RestUtil.success();
+    }
 
 }
