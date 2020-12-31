@@ -263,6 +263,24 @@ public class MaintenanceProjectInformationController extends BaseController {
         maintenanceProjectInformationService.updateSaveMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser(),request);
         return RestUtil.success("编辑成功");
     }
+    //确认完成
+    @RequestMapping(value = "/maintenanceProjectInformation/maintenanceProjectSuccess", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> maintenanceProjectSuccess(@RequestParam(name = "id") String id){
+        try {
+            maintenanceProjectInformationService.maintenanceProjectSuccess(id,getLoginUser().getId());
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
+        return RestUtil.success();
+    }
+    //退回
+    @RequestMapping(value = "/maintenanceProjectInformation/maintenanceProjectBack", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> maintenanceProjectBack(@RequestParam(name = "id") String id,@RequestParam(name = "backOpnion") String backOpnion){
+        maintenanceProjectInformationService.maintenanceProjectBack(id,backOpnion);
+        return RestUtil.success();
+
+    }
+
 
 
 }

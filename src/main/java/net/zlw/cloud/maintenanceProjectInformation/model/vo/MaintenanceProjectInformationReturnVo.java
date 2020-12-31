@@ -40,6 +40,10 @@ public class MaintenanceProjectInformationReturnVo {
     private String currentHandler;
     //  检维修审核/检维修确认审核
     private String maintenanceFlag;
+    //退回显隐
+    private String backShow;
+    //未通过显隐
+    private String unShow;
 
 
     private List<AuditInfo> auditInfoList;

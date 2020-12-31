@@ -241,7 +241,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             }
             //未通过
             if (pageVo.getSettleAccountsStatus().equals("3")){
-                List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
+                List<AccountsVo> list1 = baseProjectDao.findAllAccountsUn(pageVo);
                 for (AccountsVo accountsVo : list1) {
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
@@ -270,10 +270,14 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             if (pageVo.getSettleAccountsStatus().equals("4")){
                 List<AccountsVo> list1 = baseProjectDao.findAllAccountsSuccess2(pageVo);
                 for (AccountsVo accountsVo : list1) {
-                    if (loginUser.getId().equals(accountsVo.getFounderId())){
+                    Example example = new Example(AuditInfo.class);
+                    Example.Criteria c = example.createCriteria();
+                    c.andEqualTo("baseProjectId",accountsVo.getAccountId());
+                    c.andEqualTo("status","0");
+                    c.andEqualTo("auditType","1");
+                    AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                    if (loginUser.getId().equals(auditInfo.getAuditorId())){
                         accountsVo.setShowConfirmed("1");
-                    }else{
-                        accountsVo.setShowConfirmed("2");
                     }
                 }
                 for (AccountsVo accountsVo : list1) {
@@ -881,7 +885,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         if (baseAccountsVo.getAuditId() != null) {
             //根据上家结算送审外键找到关联预算的信息
             Example example1 = new Example(Budgeting.class);
-            example1.createCriteria().andEqualTo("baseProjectId", baseProject.getId());
+            example1.createCriteria().andEqualTo("baseProjectId", baseProject.getId()).andEqualTo("delFlag","0");
             Budgeting budgeting = budgetingDao.selectOneByExample(example1);
             //项目名称
             String projectName = baseProject.getProjectName();
@@ -1307,7 +1311,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             //一审
         } else if (baseAccountsVo.getAuditNumber().equals("1")) {
 
-            if ("6".equals(baseProject.getVisaStatus())){
+            if ("6".equals(baseProject.getSettleAccountsStatus())){
                 Example example = new Example(AuditInfo.class);
                 Example.Criteria criteria = example.createCriteria();
                 criteria.andEqualTo("baseProjectId",baseAccountsVo.getSettlementAuditInformation().getId());
@@ -1327,11 +1331,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 auditInfo.setBaseProjectId(baseAccountsVo.getLastSettlementReview().getId());
             }
             auditInfo.setAuditResult("0");
-            if (baseProject.getSettleAccountsStatus().equals("2")){
-                auditInfo.setAuditType("0");
-            }else if(baseProject.getSettleAccountsStatus().equals("4")){
-                auditInfo.setAuditType("2");
-            }
+            auditInfo.setAuditType("0");
             auditInfo.setAuditorId(baseAccountsVo.getAuditId());
             auditInfo.setStatus("0");
             SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
@@ -2318,7 +2318,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     public void backOpnion(String id, String backOpnion) {
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectByPrimaryKey(id);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(settlementAuditInformation.getBaseProjectId());
-        baseProject.setVisaStatus("6");
+        baseProject.setSettleAccountsStatus("6");
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
         Example example = new Example(AuditInfo.class);

@@ -146,8 +146,6 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
                     "from audit_info " +
                     "where " +
                     "base_project_id = #{id} " +
-                    "and " +
-                    "maintenance_flag = '1' " +
                     "order by  " +
                     "audit_type"
     )

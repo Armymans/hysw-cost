@@ -50,7 +50,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "'装饰及装修'  " +
                     "END  " +
                     ") AS maintenanceItemType, " +
-                    "( CASE m.type WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '已完成' END ) AS type, " +
+                    "( CASE m.type WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '已完成' WHEN '6' THEN '未通过' END ) AS type, " +
                     "( CASE m.project_address WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS projectAddress, " +
                     "m.customer_name customerName, " +
                     "m.prepare_people preparePeople, " +
@@ -82,6 +82,136 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
                     "ORDER BY m.create_time DESC"
     )
     List<MaintenanceProjectInformationReturnVo> selectAllByDelFlag(PageRequest pageRequest);
+
+
+    @Select(
+            "SELECT " +
+                    " distinct m.id id, " +
+                    "m.maintenance_item_id maintenanceItemId, " +
+                    "m.maintenance_item_name maintenanceItemName," +
+                    "m.area area, " +
+                    "( " +
+                    "CASE " +
+                    "m.maintenance_item_type  " +
+                    "WHEN '0' THEN " +
+                    "'道路恢复工程'  " +
+                    "WHEN '1' THEN " +
+                    "'表位改造'  " +
+                    "WHEN '2' THEN " +
+                    "'故障换表'  " +
+                    "WHEN '3' THEN " +
+                    "'水表周检换表'  " +
+                    "WHEN '4' THEN " +
+                    "'DN300以上管道抢维修'  " +
+                    "WHEN '5' THEN " +
+                    "'DN300以下管道抢维修'  " +
+                    "WHEN '6' THEN " +
+                    "'设备维修购置'  " +
+                    "WHEN '7' THEN " +
+                    "'房屋修缮'  " +
+                    "WHEN '8' THEN " +
+                    "'绿化种植'  " +
+                    "WHEN '9' THEN " +
+                    "'装饰及装修'  " +
+                    "END  " +
+                    ") AS maintenanceItemType, " +
+                    "( CASE m.type WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '已完成' WHEN '6' THEN '未通过' END ) AS type, " +
+                    "( CASE m.project_address WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS projectAddress, " +
+                    "m.customer_name customerName, " +
+                    "m.prepare_people preparePeople, " +
+                    "c.construction_unit_name constructionUnitName, " +
+                    "m.review_amount reviewAmount, " +
+                    "p.authorized_number contractAmount, " +
+                    "m.submit_time submitTime, " +
+                    "p.compile_time compileTime , " +
+                    "m.founder_id founderId " +
+                    "FROM " +
+                    "maintenance_project_information m " +
+                    "LEFT JOIN construction_unit_management c ON m.construction_unit_id = c.id " +
+                    "LEFT JOIN settlement_audit_information p ON m.id = p.maintenance_project_information  " +
+                    "WHERE " +
+                    "( m.del_flag = '0' )  " +
+                    "AND " +
+                    "( m.founder_id = #{uid} or #{uid} = '')  " +
+                    "AND ( " +
+                    "m.maintenance_item_type = #{maintenanceItemType} or #{maintenanceItemType} = '') " +
+                    "AND ( " +
+                    "p.compile_time >= #{startTime} OR #{startTime} = '' ) " +
+                    "AND ( " +
+                    "p.compile_time <= #{endTime} OR #{endTime} = '' ) " +
+                    "AND ( " +
+                    "m.maintenance_item_name LIKE concat( " +
+                    "'%',#{keyWord}, '%' ) OR m.customer_name LIKE concat( '%', #{keyWord}, '%' ) ) " +
+                    "AND ( " +
+                    "m.type = '3' OR m.type = '6' ) " +
+                    "ORDER BY m.create_time DESC"
+    )
+    List<MaintenanceProjectInformationReturnVo> selectAllByBack(PageRequest pageRequest);
+
+
+    @Select(
+            "SELECT " +
+                    " distinct m.id id, " +
+                    "m.maintenance_item_id maintenanceItemId, " +
+                    "m.maintenance_item_name maintenanceItemName," +
+                    "m.area area, " +
+                    "( " +
+                    "CASE " +
+                    "m.maintenance_item_type  " +
+                    "WHEN '0' THEN " +
+                    "'道路恢复工程'  " +
+                    "WHEN '1' THEN " +
+                    "'表位改造'  " +
+                    "WHEN '2' THEN " +
+                    "'故障换表'  " +
+                    "WHEN '3' THEN " +
+                    "'水表周检换表'  " +
+                    "WHEN '4' THEN " +
+                    "'DN300以上管道抢维修'  " +
+                    "WHEN '5' THEN " +
+                    "'DN300以下管道抢维修'  " +
+                    "WHEN '6' THEN " +
+                    "'设备维修购置'  " +
+                    "WHEN '7' THEN " +
+                    "'房屋修缮'  " +
+                    "WHEN '8' THEN " +
+                    "'绿化种植'  " +
+                    "WHEN '9' THEN " +
+                    "'装饰及装修'  " +
+                    "END  " +
+                    ") AS maintenanceItemType, " +
+                    "( CASE m.type WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '已完成' END ) AS type, " +
+                    "( CASE m.project_address WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS projectAddress, " +
+                    "m.customer_name customerName, " +
+                    "m.prepare_people preparePeople, " +
+                    "c.construction_unit_name constructionUnitName, " +
+                    "m.review_amount reviewAmount, " +
+                    "p.authorized_number contractAmount, " +
+                    "m.submit_time submitTime, " +
+                    "p.compile_time compileTime , " +
+                    "m.founder_id founderId " +
+                    "FROM " +
+                    "maintenance_project_information m " +
+                    "LEFT JOIN construction_unit_management c ON m.construction_unit_id = c.id " +
+                    "LEFT JOIN settlement_audit_information p ON m.id = p.maintenance_project_information  " +
+                    "WHERE " +
+                    "( m.del_flag = '0' )  " +
+                    "AND ( " +
+//                    "( m.founder_id = #{uid} or #{uid} = '')  " +
+//                    "AND ( " +
+                    "m.maintenance_item_type = #{maintenanceItemType} or #{maintenanceItemType} = '') " +
+                    "AND ( " +
+                    "p.compile_time >= #{startTime} OR #{startTime} = '' ) " +
+                    "AND ( " +
+                    "p.compile_time <= #{endTime} OR #{endTime} = '' ) " +
+                    "AND ( " +
+                    "m.maintenance_item_name LIKE concat( " +
+                    "'%',#{keyWord}, '%' ) OR m.customer_name LIKE concat( '%', #{keyWord}, '%' ) ) " +
+                    "AND ( " +
+                    "m.type = #{type} OR #{type} = '') " +
+                    "ORDER BY m.create_time DESC"
+    )
+    List<MaintenanceProjectInformationReturnVo> selectAllByUn(PageRequest pageRequest);
 
     @Select(
             "SELECT " +
