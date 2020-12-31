@@ -1306,6 +1306,18 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             return;
             //一审
         } else if (baseAccountsVo.getAuditNumber().equals("1")) {
+
+            if ("6".equals(baseProject.getVisaStatus())){
+                Example example = new Example(AuditInfo.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("baseProjectId",baseAccountsVo.getSettlementAuditInformation().getId());
+                criteria.andEqualTo("status","0");
+                List<AuditInfo> auditInfos = auditInfoDao.selectByExample(example);
+                for (AuditInfo auditInfo : auditInfos) {
+                    auditInfoDao.deleteByPrimaryKey(auditInfo);
+                }
+            }
+
             //添加一审
             AuditInfo auditInfo = new AuditInfo();
             auditInfo.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -2295,11 +2307,32 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     auditInfoDao.insertSelective(auditInfo1);
 
                     BaseProject baseProject = baseProjectDao.selectByPrimaryKey(settlementAuditInformation.getBaseProjectId());
-                    baseProject.setBudgetStatus("1");
+                    baseProject.setSettleAccountsStatus("1");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
                 }
             }
         }
+    }
+
+    @Override
+    public void backOpnion(String id, String backOpnion) {
+        SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectByPrimaryKey(id);
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(settlementAuditInformation.getBaseProjectId());
+        baseProject.setVisaStatus("6");
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",settlementAuditInformation.getId());
+        c.andEqualTo("status","0");
+        c.andEqualTo("auditType","1");
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+        auditInfo.setAuditResult("2");
+        auditInfo.setAuditOpinion(backOpnion);
+        SimpleDateFormat ss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        auditInfo.setAuditTime(ss.format(new Date()));
+        auditInfo.setUpdateTime(ss.format(new Date()));
+        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
     }
 
     @Override
