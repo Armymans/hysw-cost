@@ -170,13 +170,17 @@ public class SettleAccountsController extends BaseController {
     @RequestMapping(value = "/accounts/updateAccount", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> updateAccount(@RequestParam(name = "id",required = false) String id,@RequestParam(name = "checkWhether") String checkWhether,@RequestParam(name = "id2",required = false) String id2) {
         ArrayList<String> split = new ArrayList<>();
-        String[] split1 = id.split(",");
-        String[] split2 = id2.split(",");
-        for (String s : split1) {
-            split.add(s);
+        if (id!=null){
+            String[] split1 = id.split(",");
+            for (String s : split1) {
+                split.add(s);
+            }
         }
-        for (String s : split2) {
-            split.add(s);
+        if (id2!=null){
+            String[] split2 = id2.split(",");
+            for (String s : split2) {
+                split.add(s);
+            }
         }
 
 
