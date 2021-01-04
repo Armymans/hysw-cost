@@ -1903,6 +1903,77 @@ public class BudgetingServiceImpl implements BudgetingService {
         auditInfo.setAuditTime(ss.format(new Date()));
         auditInfo.setUpdateTime(ss.format(new Date()));
         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
+
+
+
+
+        //创建人
+
+        String projectName = baseProject.getProjectName();
+
+        MessageVo messageVo = new MessageVo();
+        messageVo.setId("A01");
+        messageVo.setUserId(budgeting.getFounderId());
+        messageVo.setType("3"); //风险
+        messageVo.setTitle("您有一个结算项目的结算金额超过造价金额");
+        // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
+        messageVo.setSnsContent("您好！"+projectName+"项目预算任务已被总经理退回，请重新编制！");
+        messageVo.setContent("您好！"+projectName+"项目预算任务已被总经理退回，请重新编制！");
+        messageVo.setDetails("您好！"+projectName+"项目预算任务已被总经理退回，请重新编制！");
+        messageService.sendOrClose(messageVo);
+
+        // 互审人
+        Example example1 = new Example(AuditInfo.class);
+        Example.Criteria cc = example1.createCriteria();
+        cc.andEqualTo("baseProjectId",budgeting.getId());
+        cc.andEqualTo("status","0");
+        cc.andEqualTo("auditType","0");
+        AuditInfo auditInfo1 = auditInfoDao.selectOneByExample(example1);
+
+        MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo1.getAuditorId());
+        MessageVo messageVo1 = new MessageVo();
+        messageVo1.setId("A01");
+        messageVo1.setType("3"); // 风险
+        messageVo1.setUserId(auditInfo1.getAuditorId());
+        messageVo1.setPhone(memberManage1.getPhone());
+        messageVo1.setReceiver(memberManage1.getEmail());
+        messageVo1.setTitle("您有一个待审核的结算项目结算金额超过造价金额！");
+        // 「接收人姓名」您好！【提交人】提交给您的【所选项目名称】的结算项目，结算金额超过造价金额，请及时查看详情！
+        messageVo1.setSnsContent("您好！"+projectName+"项目预算任务已被总经理退回，请注意关注！");
+        messageVo1.setContent("您好！"+projectName+"项目预算任务已被总经理退回，请注意关注！");
+        messageVo1.setDetails("您好！"+projectName+"项目预算任务已被总经理退回，请注意关注！");
+//                messageVo1.setSnsContent(name2 + "您好！【sjf】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo1.setContent(name2 + "您好！【sjf】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo1.setDetails(name2 + "您好！【sjf】提交给您的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+        messageService.sendOrClose(messageVo1);
+
+        // 部门领导
+        Example example2 = new Example(AuditInfo.class);
+        Example.Criteria cc1 = example2.createCriteria();
+        cc1.andEqualTo("baseProjectId",budgeting.getId());
+        cc1.andEqualTo("status","0");
+        cc1.andEqualTo("auditType","1");
+        AuditInfo auditInfo2 = auditInfoDao.selectOneByExample(example2);
+        MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(auditInfo2.getAuditorId());
+
+        MessageVo messageVo2 = new MessageVo();
+        messageVo2.setId("A01");
+        messageVo2.setType("3"); // 风险
+        messageVo2.setUserId(auditInfo2.getAuditorId());
+        messageVo2.setPhone(memberManage2.getPhone());
+        messageVo2.setReceiver(memberManage2.getEmail());
+        messageVo2.setTitle("您有一个结算项目的结算金额超过造价金额！");
+        // 「接收人姓名」您好！【提交人】提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时查看详情！
+        messageVo2.setSnsContent("您好！"+projectName+"项目预算任务已被总经理退回，请注意关注！");
+        messageVo2.setContent("您好！"+projectName+"项目预算任务已被总经理退回，请注意关注！");
+        messageVo2.setDetails("您好！"+projectName+"项目预算任务已被总经理退回，请注意关注！");
+//                messageVo2.setSnsContent(name3 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo2.setContent(name3 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+//                messageVo2.setDetails(name3 + "您好！【sjf】提交的【" + projectName + "】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！");
+        messageService.sendOrClose(messageVo2);
+
+
+
     }
 
     @Override
