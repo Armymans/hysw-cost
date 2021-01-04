@@ -72,7 +72,7 @@ public class MessageService {
         }
         //如果短信状态是通知
         if ("1".equals(remindSet.getNoteMessage())) {
-            snsInfoController.sendCode("18255747151", messageVo.getSnsContent());
+            snsInfoController.sendCode("19805295916", messageVo.getSnsContent());
         }
         //如果站内状态是通知
         if ("1".equals(remindSet.getMessage())) {
