@@ -52,4 +52,6 @@ public interface BudgetingService {
     void budgetingSuccess(String ids,String userId);
 
     void budgetingSendBack(String s, String id, String id1);
+
+    void budgetingSendBackB(String id, String id1, String backOpnion);
 }

@@ -1293,7 +1293,14 @@ public class BudgetingServiceImpl implements BudgetingService {
                 if (mkyUser1!=null){
                     budgetingListVo.setPricingTogether(mkyUser1.getUserName());
                 }
+
+
+                if (id.equals(whzjm)){
+                    budgetingListVo.setYinShow("1");
+                }
             }
+
+
             return list1;
         }
         //全部
@@ -1875,6 +1882,27 @@ public class BudgetingServiceImpl implements BudgetingService {
         auditInfo.setUpdateTime(ss.format(new Date()));
         auditInfoDao.updateByPrimaryKeySelective(auditInfo);
 
+    }
+
+    @Override
+    public void budgetingSendBackB(String s, String id, String id1) {
+        Budgeting budgeting = budgetingDao.selectByPrimaryKey(s);
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+        baseProject.setBudgetStatus("6");
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+        Example example = new Example(AuditInfo.class);
+        Example.Criteria c = example.createCriteria();
+        c.andEqualTo("baseProjectId",budgeting.getId());
+        c.andEqualTo("status","0");
+        c.andEqualTo("auditType","4");
+        AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+        auditInfo.setAuditResult("2");
+        auditInfo.setAuditOpinion(id1);
+        SimpleDateFormat ss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        auditInfo.setAuditTime(ss.format(new Date()));
+        auditInfo.setUpdateTime(ss.format(new Date()));
+        auditInfoDao.updateByPrimaryKeySelective(auditInfo);
     }
 
     @Override
