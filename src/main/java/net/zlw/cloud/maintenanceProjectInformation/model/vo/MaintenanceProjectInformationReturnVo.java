@@ -44,6 +44,8 @@ public class MaintenanceProjectInformationReturnVo {
     private String backShow;
     //未通过显隐
     private String unShow;
+    //殷丽萍显隐
+    private String yinShow;
 
 
     private List<AuditInfo> auditInfoList;

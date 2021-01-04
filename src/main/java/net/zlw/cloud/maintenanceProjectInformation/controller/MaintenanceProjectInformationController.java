@@ -280,7 +280,13 @@ public class MaintenanceProjectInformationController extends BaseController {
         return RestUtil.success();
 
     }
+    //殷丽萍退回
+    @RequestMapping(value = "/maintenanceProjectInformation/maintenanceProjectBackB", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> maintenanceProjectBackB(@RequestParam(name = "id") String id,@RequestParam(name = "backOpnion") String backOpnion){
+        maintenanceProjectInformationService.maintenanceProjectBackB(id,backOpnion,getLoginUser().getId());
+        return RestUtil.success();
 
+    }
 
 
 }
