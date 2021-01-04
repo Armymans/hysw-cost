@@ -1915,7 +1915,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         messageVo.setId("A01");
         messageVo.setUserId(budgeting.getFounderId());
         messageVo.setType("3"); //风险
-        messageVo.setTitle("您有一个结算项目的结算金额超过造价金额");
+        messageVo.setTitle("您有一个预算项目已被总经理退回！");
         // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
         messageVo.setSnsContent("您好！"+projectName+"项目预算任务已被总经理退回，请重新编制！");
         messageVo.setContent("您好！"+projectName+"项目预算任务已被总经理退回，请重新编制！");
@@ -1937,7 +1937,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         messageVo1.setUserId(auditInfo1.getAuditorId());
         messageVo1.setPhone(memberManage1.getPhone());
         messageVo1.setReceiver(memberManage1.getEmail());
-        messageVo1.setTitle("您有一个待审核的结算项目结算金额超过造价金额！");
+        messageVo1.setTitle("您有一个预算项目已被总经理退回！");
         // 「接收人姓名」您好！【提交人】提交给您的【所选项目名称】的结算项目，结算金额超过造价金额，请及时查看详情！
         messageVo1.setSnsContent("您好！"+projectName+"项目预算任务已被总经理退回，请注意关注！");
         messageVo1.setContent("您好！"+projectName+"项目预算任务已被总经理退回，请注意关注！");
@@ -1962,7 +1962,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         messageVo2.setUserId(auditInfo2.getAuditorId());
         messageVo2.setPhone(memberManage2.getPhone());
         messageVo2.setReceiver(memberManage2.getEmail());
-        messageVo2.setTitle("您有一个结算项目的结算金额超过造价金额！");
+        messageVo2.setTitle("您有一个预算项目已被总经理退回！");
         // 「接收人姓名」您好！【提交人】提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时查看详情！
         messageVo2.setSnsContent("您好！"+projectName+"项目预算任务已被总经理退回，请注意关注！");
         messageVo2.setContent("您好！"+projectName+"项目预算任务已被总经理退回，请注意关注！");
