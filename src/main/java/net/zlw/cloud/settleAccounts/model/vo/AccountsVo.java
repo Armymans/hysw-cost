@@ -50,6 +50,8 @@ public class AccountsVo {
     private String attributionShow;
     //回显委外金额
     private String isShow;
+    //殷丽萍退回回显
+    private String yinShow;
 
     @Override
     public boolean equals(Object o) {
