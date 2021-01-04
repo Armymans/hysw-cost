@@ -700,8 +700,8 @@ public class ProjectService {
 
                     //归属按钮展示
                     //todo loginUser.getId();
-//                    String loginUserId = loginUser.getId();
-                    String loginUserId = "200101005";
+                    String loginUserId = loginUser.getId();
+//                    String loginUserId = "200101005";
 
                     //如果当前登入人等于创建人
                     if (designInfo.getFounderId().equals(loginUserId)) {
