@@ -42,4 +42,6 @@ public interface SettleAccountsService {
     void accountsSuccess(String ids, String s);
 
     void backOpnion(String id, String backOpnion);
+
+    void backOpnionB(String id, String backOpnion, String id1);
 }

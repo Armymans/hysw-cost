@@ -503,5 +503,10 @@ public class SettleAccountsController extends BaseController {
         settleAccountsService.backOpnion(id,backOpnion);
         return RestUtil.success();
     }
-
+    //退回殷丽萍
+    @RequestMapping(value = "/accounts/accountsBackB", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> accountsBackB(@RequestParam(name = "id") String id,@RequestParam(name = "backOpnion") String backOpnion){
+        settleAccountsService.backOpnionB(id,backOpnion,getLoginUser().getId());
+        return RestUtil.success();
+    }
 }
