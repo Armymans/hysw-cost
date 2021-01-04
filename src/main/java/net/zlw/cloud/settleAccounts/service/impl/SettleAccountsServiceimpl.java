@@ -318,7 +318,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     if (preparePeople == null || "".equals(preparePeople)){
                         accountsVo.setAttributionShow("0");
                     }
-
+                    if (whzjm.equals(pageVo.getUserId())){
+                        accountsVo.setYinShow("1");
+                    }
 
                 }
 
@@ -333,8 +335,6 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     }else{
                         accountsVo.setShowConfirmed("2");
                     }
-
-
 
                 }
                 for (AccountsVo accountsVo : list1) {
@@ -2492,7 +2492,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
 
         messageVo.setType("1"); //风险
-        messageVo.setTitle("您有一个预算项目已被总经理退回！");
+        messageVo.setTitle("您有一个结算项目已被总经理退回！");
         // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
         messageVo.setSnsContent("您好！"+projectName+"项目结算任务已被总经理退回，请重新编制！");
         messageVo.setContent("您好！"+projectName+"项目结算任务已被总经理退回，请重新编制！");
@@ -2518,7 +2518,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         messageVo1.setUserId(auditInfo1.getAuditorId());
         messageVo1.setPhone(memberManage1.getPhone());
         messageVo1.setReceiver(memberManage1.getEmail());
-        messageVo1.setTitle("您有一个预算项目已被总经理退回！");
+        messageVo1.setTitle("您有一个结算项目已被总经理退回！");
         // 「接收人姓名」您好！【提交人】提交给您的【所选项目名称】的结算项目，结算金额超过造价金额，请及时查看详情！
         messageVo1.setSnsContent("您好！"+projectName+"项目结算任务已被总经理退回，请注意关注！");
         messageVo1.setContent("您好！"+projectName+"项目结算任务已被总经理退回，请注意关注！");
@@ -2547,7 +2547,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         messageVo2.setUserId(auditInfo2.getAuditorId());
         messageVo2.setPhone(memberManage2.getPhone());
         messageVo2.setReceiver(memberManage2.getEmail());
-        messageVo2.setTitle("您有一个预算项目已被总经理退回！");
+        messageVo2.setTitle("您有一个结算项目已被总经理退回！");
         // 「接收人姓名」您好！【提交人】提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时查看详情！
         messageVo2.setSnsContent("您好！"+projectName+"项目结算任务已被总经理退回，请注意关注！");
         messageVo2.setContent("您好！"+projectName+"项目结算任务已被总经理退回，请注意关注！");
