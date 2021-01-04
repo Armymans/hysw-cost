@@ -168,7 +168,7 @@ public class SettleAccountsController extends BaseController {
     //结算项目到账
 //    @PutMapping("/updateAccount")
     @RequestMapping(value = "/accounts/updateAccount", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> updateAccount(@RequestParam(name = "id") String id,@RequestParam(name = "checkWhether") String checkWhether,@RequestParam(name = "id2") String id2) {
+    public Map<String, Object> updateAccount(@RequestParam(name = "id",required = false) String id,@RequestParam(name = "checkWhether") String checkWhether,@RequestParam(name = "id2",required = false) String id2) {
         ArrayList<String> split = new ArrayList<>();
         String[] split1 = id.split(",");
         String[] split2 = id2.split(",");
