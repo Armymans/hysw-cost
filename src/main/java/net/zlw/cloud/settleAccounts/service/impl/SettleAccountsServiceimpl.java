@@ -1292,6 +1292,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         if (mkyUser!=null){
             baseAccountsVo.setPreName(mkyUser.getUserName());
         }
+        if (baseAccountsVo.getSettlementAuditInformation() == null){
+            SettlementAuditInformation settlementAuditInformation1 = new SettlementAuditInformation();
+            settlementAuditInformation1.setContract("2");
+            settlementAuditInformation1.setOutsourcing("2");
+            baseAccountsVo.setSettlementAuditInformation(settlementAuditInformation1);
+        }
         return baseAccountsVo;
     }
 
