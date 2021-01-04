@@ -1,7 +1,11 @@
 package net.zlw.cloud.jbDesignTask.service;
 
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
+import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
+import net.zlw.cloud.budgeting.mapper.VeryEstablishmentDao;
 import net.zlw.cloud.budgeting.model.Budgeting;
+import net.zlw.cloud.budgeting.model.CostPreparation;
+import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
 import net.zlw.cloud.designProject.mapper.ProjectExplorationMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
@@ -45,6 +49,11 @@ public class JbDesignTaskService {
 
     @Autowired
     private BudgetingDao budgetingDao;
+    @Autowired
+    private CostPreparationDao costPreparationDao;
+
+    @Autowired
+    private VeryEstablishmentDao veryEstablishmentDao;
 
 
     /***
@@ -180,7 +189,30 @@ public class JbDesignTaskService {
                 budgeting.setDelFlag("0");
                 budgetingDao.insertSelective(budgeting);
             }
+            //成本编制
+            CostPreparation costPreparation = new CostPreparation();
+            costPreparation.setId(UUID.randomUUID().toString().replace("-",""));
+            costPreparation.setBudgetingId(budgeting.getId());
+            costPreparation.setBaseProjectId(baseProject.getId());
+            costPreparation.setCostPreparationTime(date);
+            costPreparation.setCostTogether(jbBudgetVoF.getAccount());
+            costPreparation.setDelFlag("0");
+            costPreparation.setCostTotalAmount(new BigDecimal(321));
+            costPreparation.setVatAmount(new BigDecimal(213));
+            costPreparation.setRemarkes("13421");
+            costPreparationDao.insertSelective(costPreparation);
 
+            // 控价编制
+            VeryEstablishment veryEstablishment = new VeryEstablishment();
+            veryEstablishment.setId(UUID.randomUUID().toString().replace("-",""));
+            veryEstablishment.setBiddingPriceControl(new BigDecimal(213));
+            veryEstablishment.setVatAmount(new BigDecimal(3214));
+            veryEstablishment.setPricingTogether(jbBudgetVoF.getAccount());
+            veryEstablishment.setBaseProjectId(baseProject.getId());
+            veryEstablishment.setBudgetingId(budgeting.getId());
+            veryEstablishment.setCreateTime(date);
+            veryEstablishment.setDelFlag("0");
+            veryEstablishmentDao.insertSelective(veryEstablishment);
 
             //上传附件信息
             FileInfo fileInfo = new FileInfo();
