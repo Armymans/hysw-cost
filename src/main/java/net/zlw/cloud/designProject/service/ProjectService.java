@@ -772,6 +772,8 @@ public class ProjectService {
                     }
                 }
             }
+            PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos1);
+            return designInfoPageInfo;
         }else{
             //查询全部
             //查找集团领导
