@@ -39,6 +39,27 @@
 			<version>${tec.common.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>zlw</groupId>
+			<artifactId>ezmorph</artifactId>
+			<version>1.0.6</version>
+		</dependency>
+		<dependency>
+			<groupId>zlw</groupId>
+			<artifactId>ews-java-api</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>zlw</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.6.2</version>
+		</dependency>
+		<dependency>
+			<groupId>zlw</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>0.2</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.axis</groupId>
 			<artifactId>axis</artifactId>
 			<version>1.4</version>
@@ -64,6 +85,16 @@
             <artifactId>httpcore</artifactId>
             <version>4.4.12</version>
         </dependency>
+		<dependency>
+			<groupId>httpclient</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>httpcore</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.4</version>
+		</dependency>
 
 
     </dependencies>
