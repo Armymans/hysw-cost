@@ -1914,7 +1914,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         MessageVo messageVo = new MessageVo();
         messageVo.setId("A24");
         messageVo.setUserId(budgeting.getFounderId());
-        messageVo.setType("3"); //风险
+        messageVo.setType("1"); //风险
         messageVo.setTitle("您有一个预算项目已被总经理退回！");
         // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
         messageVo.setSnsContent("您好！"+projectName+"项目预算任务已被总经理退回，请重新编制！");
@@ -1933,7 +1933,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(auditInfo1.getAuditorId());
         MessageVo messageVo1 = new MessageVo();
         messageVo1.setId("A24");
-        messageVo1.setType("3"); // 风险
+        messageVo1.setType("1"); // 风险
         messageVo1.setUserId(auditInfo1.getAuditorId());
         messageVo1.setPhone(memberManage1.getPhone());
         messageVo1.setReceiver(memberManage1.getEmail());
@@ -1958,7 +1958,7 @@ public class BudgetingServiceImpl implements BudgetingService {
 
         MessageVo messageVo2 = new MessageVo();
         messageVo2.setId("A24");
-        messageVo2.setType("3"); // 风险
+        messageVo2.setType("1"); // 风险
         messageVo2.setUserId(auditInfo2.getAuditorId());
         messageVo2.setPhone(memberManage2.getPhone());
         messageVo2.setReceiver(memberManage2.getEmail());
