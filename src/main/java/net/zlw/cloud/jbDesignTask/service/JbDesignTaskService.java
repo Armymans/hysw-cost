@@ -151,20 +151,22 @@ public class JbDesignTaskService {
     public void getBudgetEngineering(JbBudgetVoF jbBudgetVoF) {
         JbBudgetVo budgetVo = jbBudgetVoF.getJbBudgetVo();
         Example example = new Example(BaseProject.class);
-        example.createCriteria().andEqualTo("project_id",budgetVo.getProject_id())
+        example.createCriteria().andEqualTo("projectId",budgetVo.getProject_id())
                 .andEqualTo("delFlag","0");
         BaseProject baseProject = baseProjectDao.selectOneByExample(example);
         baseProject.setBudgetStatus("4");
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
+
         String date = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+
         if (budgetVo != null) {
             //预算信息
             Budgeting budgeting = new Budgeting();
             if (budgetVo.getId() != null) {
 
                 budgeting.setId(budgetVo.getId());
-                budgeting.setBaseProjectId(budgetVo.getProject_id());
+                budgeting.setBaseProjectId(baseProject.getId());
                 budgeting.setBudgetingPeople(budgetVo.getBudgeting_people());
                 budgeting.setReceiptTime(budgetVo.getReceipt_time());
                 budgeting.setFounderId(budgetVo.getFounder_id());
@@ -176,8 +178,8 @@ public class JbDesignTaskService {
                 budgeting.setSureResult(budgetVo.getSure_result());
                 budgeting.setSureMan(budgetVo.getSure_man());
                 budgeting.setDelFlag("0");
+                budgetingDao.insertSelective(budgeting);
             }
-            budgetingDao.insertSelective(budgeting);
 
 
             //上传附件信息
@@ -218,7 +220,7 @@ public class JbDesignTaskService {
     public void updateCea(CEAVo ceaVo) {
         if (ceaVo != null){
             Example example = new Example(BaseProject.class);
-            example.createCriteria().andEqualTo("project_id",ceaVo.getProject_id())
+            example.createCriteria().andEqualTo("projectId",ceaVo.getProject_id())
                                     .andEqualTo("delFlag","0");
             BaseProject baseProject = baseProjectDao.selectOneByExample(example);
             if (baseProject != null){
