@@ -1,7 +1,10 @@
 package net.zlw.cloud.whDesignTask.model.vo;
 
 import lombok.Data;
+import net.zlw.cloud.jbDesignTask.domain.DiameterInfo;
+import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.whDesignTask.model.*;
+import springfox.documentation.service.ApiListing;
 
 import java.util.List;
 

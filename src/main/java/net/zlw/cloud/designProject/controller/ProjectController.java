@@ -1794,6 +1794,7 @@ public class ProjectController extends BaseController {
         if (unitManagement != null){
             baseProject.setConstructionOrganization(unitManagement.getConstructionUnitName());
         }
+
         projectVo3.setBaseProject(baseProject);
         //设计信息
         DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());

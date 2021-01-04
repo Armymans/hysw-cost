@@ -3,7 +3,6 @@ package net.zlw.cloud.jbDesignTask.domain.vo;
 
 import lombok.Data;
 import net.zlw.cloud.jbDesignTask.domain.DiameterInfo;
-import net.zlw.cloud.jbDesignTask.domain.FileInfos;
 
 import java.util.List;
 
@@ -13,32 +12,33 @@ import java.util.List;
 @Data
 public class JbDesignVo {
 
-    private String id;
-    private String projectId;
-    private String projectName;
+    private String Id;
+    private String project_id;
+    private String project_name;
     private String address;
-    private String area;
-    private String customerName;
-    private String customerAddress;
-    private String designCategory;
-    private String projectNature;
-    private String contactNumber;
-    private String customerPhone;
-    private String customerEmail;
+//    private String area;
+    private String customer_name;
+    private String customer_address;
+    private String design_category;
+    private String subject;
+    private String project_nature;
+    private String contact_number;
+    private String customer_phone;
+//    private String customerEmail;
     private String agent;
-    private String ceaNum;
-    private String amountPaid;
+    private String cea_num;
+    private String amount_paid;
     private String designer;
-    private String takeTime;
-    private String founderId;
-    private String createTime ;
+    private String take_time;
+    private String founder_id;
+    private String create_time  ;
     private String remarks;
-    private String explorationIdeal;
-    private String explorationTime;
+    private String exploration_ideal;
+    private String exploration_time;
     private String scout;
     private String remark;
 
-    private List<DiameterInfo> diameterInfos;
-    private List<FileInfos> fileInfos;
+    private List<DiameterInfos> DiameterInfo;
+    private List<FileInfos> FileInfo;
 
 }

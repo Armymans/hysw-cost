@@ -185,9 +185,10 @@ public class BaseProject implements Serializable {
     private String amountPaid;
     @Column(name = "management_table")
     private String managementTable;
-
     @Column(name = "account_whether")
     private String accountWhether;
+    @Column(name = "budget_amount_after")
+    private String budgetAmountAfter;
 
 
 }

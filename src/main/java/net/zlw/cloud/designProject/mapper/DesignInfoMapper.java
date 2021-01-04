@@ -443,9 +443,9 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "and " +
                     "(s1.should_be = #{shouldBe} or #{shouldBe} ='') " +
                     "and " +
-                    "blueprint_start_time>= #{desginStartTime} " +
+                    "(s2.blueprint_start_time<=#{desginStartTime} or  #{desginStartTime} ='') " +
                     "and  " +
-                    "(blueprint_start_time<=#{desginEndTime} or  #{desginEndTime} ='')  " +
+                    "(s2.blueprint_start_time<=#{desginEndTime} or  #{desginEndTime} ='')  " +
                     "and " +
                     "(s2.isaccount = #{isaccount} or #{isaccount} ='') " +
                     "and " +

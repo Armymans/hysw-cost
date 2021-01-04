@@ -8,15 +8,14 @@ import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.designProject.model.ProjectExploration;
 import net.zlw.cloud.jbDesignTask.dao.DiameterInfoDao;
 import net.zlw.cloud.jbDesignTask.domain.DiameterInfo;
-import net.zlw.cloud.jbDesignTask.domain.FileInfos;
-import net.zlw.cloud.jbDesignTask.domain.vo.JbBudgetVo;
-import net.zlw.cloud.jbDesignTask.domain.vo.JbDesignVo;
+import net.zlw.cloud.jbDesignTask.domain.vo.*;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
@@ -49,96 +48,96 @@ public class JbDesignTaskService {
 
 
     /***
-     * 江北设计
-     * @param designVo
-     * @param account
+     * 设计报装
+     * @param jbDesignVoF
      */
-    public void getDesignEngineering(JbDesignVo designVo, String account) {
+    public void getDesignEngineering(JbDesignVoF jbDesignVoF) {
 
         String date = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
-
+        JbDesignVo designVo = jbDesignVoF.getJbDesignVo();
         if (designVo != null) {
             //项目基本表数据
             BaseProject baseProject = new BaseProject();
-            if (designVo.getProjectId() != null) {
-                baseProject.setId(UUID.randomUUID().toString().replace("-", ""));
-                baseProject.setApplicationNum(designVo.getProjectId());
-                baseProject.setDistrict(designVo.getAddress());
-                baseProject.setArea(designVo.getArea());
-                baseProject.setCustomerName(designVo.getCustomerName());
-                baseProject.setCustomerAddress(designVo.getCustomerAddress());
-                baseProject.setDesignCategory(designVo.getDesignCategory());
-                baseProject.setProjectNature(designVo.getProjectNature());
-                baseProject.setContactNumber(designVo.getContactNumber());
-                baseProject.setCustomerPhone(designVo.getCustomerPhone());
-                baseProject.setCustomerEmail(designVo.getCustomerEmail());
+            if (designVo.getProject_id() != null) {
+                baseProject.setId(designVo.getId());
+                baseProject.setProjectId(designVo.getProject_id());
+                baseProject.setSite(designVo.getAddress());
+                baseProject.setProjectName(designVo.getProject_name());
+                baseProject.setCustomerName(designVo.getCustomer_name());
+                baseProject.setCustomerAddress(designVo.getCustomer_address());
+                baseProject.setDesignCategory(designVo.getDesign_category());
+                baseProject.setProjectNature(designVo.getProject_nature());
+                baseProject.setContactNumber(designVo.getContact_number());
+                baseProject.setCustomerPhone(designVo.getCustomer_phone());
                 baseProject.setAgent(designVo.getAgent());
-                baseProject.setCeaNum(designVo.getCeaNum());
+                baseProject.setCeaNum(designVo.getCea_num());
+                baseProject.setDesginStatus("4");
+                baseProject.setDistrict("4");
                 baseProject.setDelFlag("0");
                 baseProject.setCreateTime(date);
                 baseProject.setUpdateTime(date);
-                baseProject.setAmountPaid(designVo.getAmountPaid());
+                baseProject.setAmountPaid(designVo.getAmount_paid());
+                baseProjectDao.insertSelective(baseProject);
             }
-            baseProjectDao.insertSelective(baseProject);
 
             //设计表信息
             DesignInfo designInfo = new DesignInfo();
-            if (designVo.getTakeTime() != null) {
+            if (designVo.getTake_time() != null) {
                 designInfo.setId(designVo.getId());
+                designInfo.setBaseProjectId(designVo.getId());
                 designInfo.setDesigner(designVo.getDesigner());
-                designInfo.setTakeTime(designVo.getTakeTime());
-                designInfo.setFounderId(designVo.getFounderId());
-                designInfo.setCreateTime(designVo.getCreateTime());
+                designInfo.setTakeTime(designVo.getTake_time());
+                designInfo.setFounderId(designVo.getFounder_id());
+                designInfo.setCreateTime(designVo.getCreate_time());
                 designInfo.setRemark(designVo.getRemarks());
                 designInfo.setStatus("0");
+                designInfoMapper.insertSelective(designInfo);
             }
-            designInfoMapper.insertSelective(designInfo);
 
             //勘探表信息
             ProjectExploration projectExploration = new ProjectExploration();
-            if (designVo.getExplorationIdeal() != null) {
-                projectExploration.setId(UUID.randomUUID().toString().replace("-", ""));
-                projectExploration.setExplorationIdeal(designVo.getExplorationIdeal());
-                projectExploration.setExplorationTime(designVo.getExplorationTime());
+            if (designVo.getExploration_ideal() != null) {
+                projectExploration.setId(designVo.getId());
+                projectExploration.setBaseProjectId(designInfo.getId());
+                projectExploration.setExplorationIdeal(designVo.getExploration_ideal());
+                projectExploration.setExplorationTime(designVo.getExploration_time());
                 projectExploration.setCreateTime(date);
                 projectExploration.setUpdateTime(date);
                 projectExploration.setStatus("0");
-            }
             projectExplorationMapper.insertSelective(projectExploration);
+            }
 
             //水表信息
             DiameterInfo diameterInfo = new DiameterInfo();
-            List<DiameterInfo> diameterInfos = designVo.getDiameterInfos();
-            for (DiameterInfo thisInfo : diameterInfos) {
+            List<DiameterInfos> diameterInfos = designVo.getDiameterInfo();
+            for (DiameterInfos thisInfo : diameterInfos) {
                 if (thisInfo.getId() != null) {
-                    diameterInfo.setId(thisInfo.getId());
-                    diameterInfo.setProjectId(thisInfo.getProjectId());
-                    diameterInfo.setDiameterMeter(thisInfo.getDiameterMeter());
+                    diameterInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    diameterInfo.setProjectId(thisInfo.getProject_id());
+                    diameterInfo.setType(thisInfo.getType());
+                    diameterInfo.setDiameterMeter(thisInfo.getDiameter_meter());
                     diameterInfo.setCreateTime(date);
                     diameterInfo.setUpdateTime(date);
                     diameterInfo.setStatus("0");
+                    diameterInfoDao.insertSelective(diameterInfo);
                 }
-                diameterInfoDao.insertSelective(diameterInfo);
             }
 
             //上传信息集合
             FileInfo fileInfo = new FileInfo();
-            List<FileInfos> fileInfos = designVo.getFileInfos();
+            List<FileInfos> fileInfos = designVo.getFileInfo();
             for (FileInfos thisFileInfos : fileInfos) {
                 if (thisFileInfos.getId() != null) {
-
-                    fileInfo.setId(thisFileInfos.getId());
-                    fileInfo.setPlatCode(thisFileInfos.getProjectId());
-                    fileInfo.setFileName(thisFileInfos.getOpinionsFileName());
-                    fileInfo.setCreateTime(thisFileInfos.getOpinionsUpTime());
-                    fileInfo.setUserId(thisFileInfos.getOpinionsUpBy());
-                    fileInfo.setFilePath(thisFileInfos.getOpinionsLink());
-                    fileInfo.setType("scxxjh");
+                    fileInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    fileInfo.setPlatCode(thisFileInfos.getProject_id());
+                    fileInfo.setFileName(thisFileInfos.getOpinions_file_name());
+                    fileInfo.setCreateTime(thisFileInfos.getOpinions_up_time());
+                    fileInfo.setUserId(thisFileInfos.getOpinions_up_by());
+                    fileInfo.setFilePath(thisFileInfos.getOpinions_link());
+                    fileInfo.setType(thisFileInfos.getType());
                     fileInfo.setStatus("0");
-                    fileInfo.setFileSource("2");
-
+                    fileInfoMapper.insertSelective(fileInfo);
                 }
-                fileInfoMapper.insertSelective(fileInfo);
             }
         }
 
@@ -146,28 +145,36 @@ public class JbDesignTaskService {
 
     /***
      * 江北造价
-     * @param budgetVo
-     * @param account
+     * @param
+     * @param
      */
-    public void getBudgetEngineering(JbBudgetVo budgetVo, String account) {
-//        String date = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+    public void getBudgetEngineering(JbBudgetVoF jbBudgetVoF) {
+        JbBudgetVo budgetVo = jbBudgetVoF.getJbBudgetVo();
+        Example example = new Example(BaseProject.class);
+        example.createCriteria().andEqualTo("project_id",budgetVo.getProject_id())
+                .andEqualTo("delFlag","0");
+        BaseProject baseProject = baseProjectDao.selectOneByExample(example);
+        baseProject.setBudgetStatus("4");
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+        String date = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
         if (budgetVo != null) {
             //预算信息
             Budgeting budgeting = new Budgeting();
             if (budgetVo.getId() != null) {
 
                 budgeting.setId(budgetVo.getId());
-                budgeting.setBaseProjectId(budgetVo.getProjectId());
-                budgeting.setBudgetingPeople(budgetVo.getBudgetingPeople());
-                budgeting.setReceiptTime(budgetVo.getReceiptTime());
-                budgeting.setFounderId(account);
-                budgeting.setCreateTime(budgetVo.getProjectName());
+                budgeting.setBaseProjectId(budgetVo.getProject_id());
+                budgeting.setBudgetingPeople(budgetVo.getBudgeting_people());
+                budgeting.setReceiptTime(budgetVo.getReceipt_time());
+                budgeting.setFounderId(budgetVo.getFounder_id());
                 budgeting.setRemarkes(budgetVo.getRemark());
-                String amountCost = budgetVo.getAmountCost();
+                budgeting.setCreateTime(budgetVo.getProject_name());
+                String amountCost = budgetVo.getAmount_cost();
                 BigDecimal cost = new BigDecimal(amountCost);
                 budgeting.setAmountCost(cost);
-                budgeting.setSureResult(budgetVo.getSureResult());
-                budgeting.setSureMan(budgetVo.getSureMan());
+                budgeting.setSureResult(budgetVo.getSure_result());
+                budgeting.setSureMan(budgetVo.getSure_man());
                 budgeting.setDelFlag("0");
             }
             budgetingDao.insertSelective(budgeting);
@@ -175,19 +182,48 @@ public class JbDesignTaskService {
 
             //上传附件信息
             FileInfo fileInfo = new FileInfo();
-            List<FileInfos> fileInfos = budgetVo.getFileInfos();
+            List<FileInfos> fileInfos = budgetVo.getFileInfo();
             for (FileInfos thisInfo : fileInfos) {
                 if (thisInfo.getId() != null) {
-                    fileInfo.setId(thisInfo.getId());
-                    fileInfo.setPlatCode(thisInfo.getProjectId());
-                    fileInfo.setFileName(thisInfo.getOpinionsFileName());
-                    fileInfo.setCreateTime(thisInfo.getOpinionsUpTime());
-                    fileInfo.setUserId(thisInfo.getOpinionsUpBy());
-                    fileInfo.setFilePath(thisInfo.getOpinionsLink());
+                    fileInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    fileInfo.setPlatCode(thisInfo.getProject_id());
+                    fileInfo.setFileName(thisInfo.getOpinions_file_name());
+                    fileInfo.setCreateTime(thisInfo.getOpinions_up_time());
+                    fileInfo.setUserId(thisInfo.getOpinions_up_by());
+                    fileInfo.setFilePath(thisInfo.getOpinions_link());
                     fileInfo.setStatus("0");
                     fileInfo.setType("jbbzscfjxx");
                 }
                 fileInfoMapper.insertSelective(fileInfo);
+            }
+        }
+    }
+
+    public void updateBudgetAmount(AmountVo amountVo){
+        String budgetAmount = amountVo.getBudget_amount();
+        if (amountVo.getProject_id() != null && !"".equals(amountVo.getProject_id())){
+            Example example = new Example(Budgeting.class);
+            example.createCriteria().andEqualTo("baseProjectId",amountVo.getProject_id())
+                                    .andEqualTo("delFlag","0");
+            Budgeting budgeting = budgetingDao.selectOneByExample(example);
+            if (budgeting != null){
+                budgeting.setAmountCost(new BigDecimal(budgetAmount));
+                budgetingDao.updateByPrimaryKeySelective(budgeting);
+            }
+
+        }
+    }
+
+    // 更新cea接口
+    public void updateCea(CEAVo ceaVo) {
+        if (ceaVo != null){
+            Example example = new Example(BaseProject.class);
+            example.createCriteria().andEqualTo("project_id",ceaVo.getProject_id())
+                                    .andEqualTo("delFlag","0");
+            BaseProject baseProject = baseProjectDao.selectOneByExample(example);
+            if (baseProject != null){
+                baseProject.setCeaNum(ceaVo.getCea());
+                baseProjectDao.updateByPrimaryKeySelective(baseProject);
             }
         }
     }

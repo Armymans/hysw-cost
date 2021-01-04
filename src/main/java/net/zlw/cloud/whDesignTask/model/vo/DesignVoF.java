@@ -10,6 +10,6 @@ import lombok.Data;
 @Data
 public class DesignVoF {
    private DesignVo designVo;
-   private String account;
+   private String Account;
 
 }
