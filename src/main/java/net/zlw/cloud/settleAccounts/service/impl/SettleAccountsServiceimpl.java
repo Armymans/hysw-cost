@@ -482,6 +482,17 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         if (checkWhether!=null){
             split1 = checkWhether.split(",");
         }
+        Example example4 = new Example(LastSettlementReview.class);
+        Example.Criteria c4 = example4.createCriteria();
+        c4.andEqualTo("baseProjectId",baseProject.getId());
+        c4.andEqualTo("delFlag","0");
+        LastSettlementReview lastSettlementReview3 = lastSettlementReviewDao.selectOneByExample(example4);
+        Example example5 = new Example(SettlementAuditInformation.class);
+        Example.Criteria c5 = example5.createCriteria();
+        c5.andEqualTo("baseProjectId",baseProject.getId());
+        c5.andEqualTo("delFlag","0");
+        SettlementAuditInformation settlementAuditInformation3 = settlementAuditInformationDao.selectOneByExample(example5);
+
         if (split!=null){
             if (split1!=null){
                 for (String s1 : split1) {
@@ -496,11 +507,51 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     }
                     String accountWhether1 = baseProject.getAccountWhether();
                     if (accountWhether1!=null){
-                        baseProject.setAccountWhether(accountWhether+","+s1);
-                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+                        if ("1".equals(s1)){
+                            if ("2".equals(baseProject.getAB())){
+                                throw new RuntimeException("B表项目无上家");
+                            }
+                            if (lastSettlementReview3 == null){
+                                throw new RuntimeException("上家未进行编制");
+                            }
+                            baseProject.setAccountWhether(accountWhether+","+s1);
+                            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                        }
+
+                        if ("2".equals(s1)){
+                            if (settlementAuditInformation3 == null){
+                                throw new RuntimeException("下家未进行编制");
+                            }
+                            baseProject.setAccountWhether(accountWhether+","+s1);
+                            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                        }
+
+
+
                     }else{
-                        baseProject.setAccountWhether(accountWhether);
-                        baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+                        if ("1".equals(s1)){
+                            if ("2".equals(baseProject.getAB())){
+                                throw new RuntimeException("B表项目无上家");
+                            }
+                            if (lastSettlementReview3 == null){
+                                throw new RuntimeException("上家未进行编制");
+                            }
+                            baseProject.setAccountWhether(accountWhether);
+                            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                        }
+
+                        if ("2".equals(s1)){
+                            if (settlementAuditInformation3 == null){
+                                throw new RuntimeException("下家未进行编制");
+                            }
+                            baseProject.setAccountWhether(accountWhether);
+                            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                        }
+
+
+
                     }
                 }
             }
@@ -508,9 +559,42 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             String a = "";
             for (String s1 : split1) {
                 if (a.equals("")){
-                    a=s1;
+                    if ("1".equals(s1)){
+                        if ("2".equals(baseProject.getAB())){
+                            throw new RuntimeException("B表项目无上家");
+                        }
+                        if (lastSettlementReview3 == null){
+                            throw new RuntimeException("上家未进行编制");
+                        }
+                        a=s1;
+                    }
+
+                    if ("2".equals(s1)){
+                        if (settlementAuditInformation3 == null){
+                            throw new RuntimeException("下家未进行编制");
+                        }
+                        a=s1;
+                    }
+
                 }else{
-                    a+=","+s1;
+                    if ("1".equals(s1)){
+                        if ("2".equals(baseProject.getAB())){
+                            throw new RuntimeException("B表项目无上家");
+                        }
+                        if (lastSettlementReview3 == null){
+                            throw new RuntimeException("上家未进行编制");
+                        }
+                        a+=","+s1;
+                    }
+
+                    if ("2".equals(s1)){
+                        if (settlementAuditInformation3 == null){
+                            throw new RuntimeException("下家未进行编制");
+                        }
+                        a+=","+s1;
+                    }
+
+
                 }
             }
             baseProject.setAccountWhether(a);
@@ -2271,10 +2355,15 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         String[] split = ids.split(",");
         for (String s1 : split) {
             SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectByPrimaryKey(s1);
+            LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectByPrimaryKey(s1);
 
             Example example = new Example(AuditInfo.class);
             Example.Criteria c = example.createCriteria();
-            c.andEqualTo("baseProjectId",settlementAuditInformation.getId());
+            if (settlementAuditInformation!=null){
+                c.andEqualTo("baseProjectId",settlementAuditInformation.getId());
+            }else if(lastSettlementReview!=null){
+                c.andEqualTo("baseProjectId",lastSettlementReview.getId());
+            }
             c.andEqualTo("status","0");
             c.andEqualTo("auditType","1");
             AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
@@ -2284,10 +2373,21 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 } else {
                     AuditInfo auditInfo1 = new AuditInfo();
                     auditInfo1.setId(UUID.randomUUID().toString().replace("-", ""));
-                    auditInfo1.setBaseProjectId(settlementAuditInformation.getId());
+                    if (settlementAuditInformation!=null){
+                        auditInfo1.setBaseProjectId(settlementAuditInformation.getId());
+                    }else if(lastSettlementReview!=null){
+                        auditInfo1.setBaseProjectId(lastSettlementReview.getId());
+                    }
+
                     auditInfo1.setAuditResult("0");
                     auditInfo1.setAuditType("4");
-                    String founderId = settlementAuditInformation.getFounderId();
+                    String founderId = null;
+                    if (settlementAuditInformation!=null){
+                         founderId = settlementAuditInformation.getFounderId();
+                    }else if(lastSettlementReview!=null){
+                        founderId = lastSettlementReview.getFounderId();
+                    }
+
                     Example example1 = new Example(MemberManage.class);
                     Example.Criteria cc = example1.createCriteria();
                     cc.andEqualTo("id", founderId);
@@ -2317,7 +2417,13 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Override
     public void backOpnion(String id, String backOpnion) {
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectByPrimaryKey(id);
-        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(settlementAuditInformation.getBaseProjectId());
+        LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectByPrimaryKey(id);
+        BaseProject baseProject = null;
+        if (settlementAuditInformation!=null){
+            baseProject = baseProjectDao.selectByPrimaryKey(settlementAuditInformation.getBaseProjectId());
+        }else if(lastSettlementReview!=null){
+            baseProject = baseProjectDao.selectByPrimaryKey(lastSettlementReview.getBaseProjectId());
+        }
         baseProject.setSettleAccountsStatus("6");
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
 

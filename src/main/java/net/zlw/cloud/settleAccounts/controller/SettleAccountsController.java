@@ -168,8 +168,18 @@ public class SettleAccountsController extends BaseController {
     //结算项目到账
 //    @PutMapping("/updateAccount")
     @RequestMapping(value = "/accounts/updateAccount", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> updateAccount(@RequestParam(name = "id") String id,@RequestParam(name = "checkWhether") String checkWhether) {
-        String[] split = id.split(",");
+    public Map<String, Object> updateAccount(@RequestParam(name = "id") String id,@RequestParam(name = "checkWhether") String checkWhether,@RequestParam(name = "id2") String id2) {
+        ArrayList<String> split = new ArrayList<>();
+        String[] split1 = id.split(",");
+        String[] split2 = id2.split(",");
+        for (String s : split1) {
+            split.add(s);
+        }
+        for (String s : split2) {
+            split.add(s);
+        }
+
+
         for (String s : split) {
             try {
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(s);
@@ -196,6 +206,7 @@ public class SettleAccountsController extends BaseController {
                 return RestUtil.error(e.getMessage());
             }
         }
+
         return RestUtil.success();
     }
 
