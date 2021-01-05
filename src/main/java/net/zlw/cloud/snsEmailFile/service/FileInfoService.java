@@ -4,11 +4,20 @@ import net.tec.cloud.common.util.DateUtil;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
 import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
+import net.zlw.cloud.budgeting.model.Budgeting;
+import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.mapper.TrackMonthlyDao;
+import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.followAuditing.model.TrackMonthly;
+import net.zlw.cloud.maintenanceProjectInformation.mapper.MaintenanceProjectInformationMapper;
+import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
+import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
+import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
+import net.zlw.cloud.settleAccounts.mapper.SettlementInfoMapper;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
@@ -42,6 +51,16 @@ public class FileInfoService {
 
     @Resource
     private TrackMonthlyDao trackMonthlyDao;
+    @Resource
+    private ProgressPaymentInformationDao progressPaymentInformationDao;
+    @Resource
+    private VisaChangeMapper visaChangeMapper;
+//    @Resource
+//    private SettlementInfoMapper settlementInfoMapper;
+    @Resource
+    private MaintenanceProjectInformationMapper maintenanceProjectInformationMapper;
+    @Resource
+    private TrackAuditInfoDao trackAuditInfoDao;
 
     @Resource
     private MkyUserMapper mkyUserMapper;
@@ -56,7 +75,9 @@ public class FileInfoService {
     private AuditInfoDao auditInfoDao;
 
     @Resource
-    private VisaChangeMapper visaChangeMapper;
+    private BaseProjectDao baseProjectDao;
+
+
 
 
     @Value("${audit.wujiang.sheji.designHead}")
@@ -161,6 +182,23 @@ public class FileInfoService {
     }
 
     public List<FileInfo> findCostFile(String key, String type,String id,String state) {
+        //预算
+        Budgeting budgeting = budgetingDao.selectByPrimaryKey(key);
+        BaseProject budgetStatus = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+        //进度款
+        ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(key);
+        BaseProject proStatus = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
+        //签证变更
+        VisaChange visaChange = visaChangeMapper.selectByPrimaryKey(key);
+        BaseProject visaChangeStatus = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+        //结算
+        BaseProject settAuditStatus = baseProjectDao.selectByPrimaryKey(key);
+        //检维修
+        MaintenanceProjectInformation mainStatus = maintenanceProjectInformationMapper.selectByPrimaryKey(key);
+        //跟踪审计
+        TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(key);
+        BaseProject trackStatus = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
+
         // 造价文件
         List<FileInfo> costFile = fileInfoMapper.findCostFile(key, type);
         ArrayList<FileInfo> fileInfos = new ArrayList<>();
@@ -189,7 +227,27 @@ public class FileInfoService {
                             fileInfos.add(thisFile);
                         }
                         // 如果是待确认状态下，创建人、互审人、领导可以查看附件
-                    } else if ("4".equals(state)) {
+                    } else if ("5".equals(budgetStatus.getBudgetStatus())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }else if ("6".equals(trackStatus.getTrackStatus())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }else if ("4".equals(visaChangeStatus.getVisaStatus())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }else if ("4".equals(settAuditStatus.getSettleAccountsStatus())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }else if ("4".equals(proStatus.getProgressPaymentStatus())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }else if ("4".equals(mainStatus.getType())) {
                         if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                             fileInfos.add(thisFile);
                         }
@@ -205,8 +263,28 @@ public class FileInfoService {
                             fileInfos.add(thisFile);
                         }
                         // 如果是待确认状态下，创建人、互审人、领导可以查看附件
-                    } else if ("4".equals(state)) {
-                        if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(auditUser.getId())) {
+                    } else if ("5".equals(budgetStatus.getBudgetStatus())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }else if ("6".equals(trackStatus.getTrackStatus())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }else if ("4".equals(visaChangeStatus.getVisaStatus())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }else if ("4".equals(settAuditStatus.getSettleAccountsStatus())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }else if ("4".equals(proStatus.getProgressPaymentStatus())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }else if ("4".equals(mainStatus.getType())) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                             fileInfos.add(thisFile);
                         }
                     }

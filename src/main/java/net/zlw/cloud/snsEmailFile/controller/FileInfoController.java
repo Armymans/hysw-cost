@@ -4,6 +4,7 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.DateUtil;
 import net.tec.cloud.common.util.FileUtil;
 import net.tec.cloud.common.util.IdUtil;
+import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
@@ -220,7 +221,7 @@ public class FileInfoController extends BaseController {
      * @Description //修改文件信息 名字和备注
      * @Date 11:31 2020/10/10
      **/
-    @RequestMapping(value = "/updateFileName", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateFileName", method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> updateFileName(String code, String id, String name, String remark) {
         FileInfo fileInfo = fileInfoService.getByKey(id);
         fileInfo.setName(name);
@@ -264,7 +265,7 @@ public class FileInfoController extends BaseController {
      * @Description //查询设计文件
      * @Date 14:00 2020/10/10
      **/
-    @RequestMapping(value = "/findByFreignAndType", method = RequestMethod.POST)
+    @RequestMapping(value = "/findCostFile", method = RequestMethod.POST)
     public Map<String, Object> findByFreignAndType(String key, String type) {
         List<FileInfo> fileInfoList = fileInfoService.findByFreignAndType(key, type);
         return RestUtil.success(fileInfoList);
@@ -277,7 +278,7 @@ public class FileInfoController extends BaseController {
      * @Description //查询造价文件
      * @return
      */
-    @RequestMapping(value = "/findCostFile", method = RequestMethod.POST)
+    @RequestMapping(value = "/findByFreignAndType", method = RequestMethod.POST)
     public Map<String, Object> costFile(String key, String type,String state) {
         String id = getLoginUser().getId();
 //        String id = "201411001";
