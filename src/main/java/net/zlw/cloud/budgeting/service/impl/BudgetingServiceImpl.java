@@ -124,6 +124,8 @@ public class BudgetingServiceImpl implements BudgetingService {
     private BudgetCoverService budgetCoverService;
     @Resource
     private AnhuiMoneyinfoMapper anhuiMoneyinfoMapper;
+    @Resource
+    private WujiangMoneyInfoMapper wujiangMoneyInfoMapper;
 
 
 
@@ -151,7 +153,26 @@ public class BudgetingServiceImpl implements BudgetingService {
     public void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser, HttpServletRequest request) {
 
         if (budgetingVo.getRevenue()!=null && !"".equals(budgetingVo.getRevenue())){
-
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetingVo.getBaseId());
+            if ("4".equals(baseProject.getDistrict())){
+                WujiangMoneyInfo wujiangMoneyInfo = new WujiangMoneyInfo();
+                wujiangMoneyInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                wujiangMoneyInfo.setRevenue(new BigDecimal(budgetingVo.getRevenue()));
+                wujiangMoneyInfo.setStatus("0");
+                wujiangMoneyInfo.setBaseProjectId(baseProject.getId());
+                SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                wujiangMoneyInfo.setCreateTime(s.format(new Date()));
+                wujiangMoneyInfoMapper.insertSelective(wujiangMoneyInfo);
+            }else{
+                AnhuiMoneyinfo anhuiMoneyinfo = new AnhuiMoneyinfo();
+                anhuiMoneyinfo.setId(UUID.randomUUID().toString().replace("-",""));
+                anhuiMoneyinfo.setBaseProjectId(baseProject.getId());
+                anhuiMoneyinfo.setRevenue(new BigDecimal(budgetingVo.getRevenue()));
+                anhuiMoneyinfo.setStatus("0");
+                SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                anhuiMoneyinfo.setCreateTime(s.format(new Date()));
+                anhuiMoneyinfoMapper.insertSelective(anhuiMoneyinfo);
+            }
         }
 
         //获取基本信息
