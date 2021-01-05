@@ -2439,6 +2439,36 @@ public class ProjectService {
      * @param anhuiMoneyinfo
      */
     public void anhuiMoneyInfoAdd(AnhuiMoneyinfo anhuiMoneyinfo, UserInfo loginUser) throws Exception {
+        System.out.println(anhuiMoneyinfo.getContractAmount());
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+        System.out.println(anhuiMoneyinfo);
+
         //实收金额
         BigDecimal officialReceipts = anhuiMoneyinfo.getOfficialReceipts();
         if(!"".equals(officialReceipts) && officialReceipts != null){
@@ -2487,6 +2517,9 @@ public class ProjectService {
                     if (anhuiMoneyinfo1.getRevenue().compareTo(anhuiMoneyinfo1.getTotalMoney()) <= 0) {
                         //同时返回标识 改账单已支付完成
                         designInfoMapper.updateFinalAccount(anhuiMoneyinfo1.getBaseProjectId());
+                    }
+                    if (anhuiMoneyinfo.getContractAmount()!=null){
+                        anhuiMoneyinfo1.setContractAmount(anhuiMoneyinfo.getContractAmount());
                     }
                     anhuiMoneyinfoMapper.updateByPrimaryKeySelective(anhuiMoneyinfo1);
                 }
