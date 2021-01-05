@@ -471,6 +471,26 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/disproject/anhuiMoneyInfoAdd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> anhuiMoneyInfoAdd(AnhuiMoneyinfo anhuiMoneyinfo) {
+        if (anhuiMoneyinfo.getPumpRoomCost().equals("")){
+            anhuiMoneyinfo.setPumpRoomCost(null);
+        }
+        if ("".equals(anhuiMoneyinfo.getBim())){
+            anhuiMoneyinfo.setBim(null);
+        }
+        if ("".equals(anhuiMoneyinfo.getPipelineCost())){
+
+            anhuiMoneyinfo.setPipelineCost(null);
+        }
+        if ("".equals(anhuiMoneyinfo.getProfessionalAdjustmentFactor())){
+            anhuiMoneyinfo.setProfessionalAdjustmentFactor(null);
+        }
+        if ("".equals(anhuiMoneyinfo.getComplexAdjustmentFactor())){
+            anhuiMoneyinfo.setComplexAdjustmentFactor(null);
+        }
+        if ("".equals(anhuiMoneyinfo.getPreferentialPolicy())){
+            anhuiMoneyinfo.setPreferentialPolicy(null);
+        }
+
         try {
             DesignInfo designInfo1 = designInfoMapper.selectByPrimaryKey(anhuiMoneyinfo.getBaseProjectId());
             net.zlw.cloud.progressPayment.model.BaseProject baseProject = baseProjectDao.selectByPrimaryKey(designInfo1.getBaseProjectId());
