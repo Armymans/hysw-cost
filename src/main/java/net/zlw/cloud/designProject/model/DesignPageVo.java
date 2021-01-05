@@ -20,4 +20,5 @@ public class DesignPageVo {
 
     private String currentPeople;
     private String attributionShow;
+    private String contractAmount;
 }

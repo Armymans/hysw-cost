@@ -193,4 +193,6 @@ public class DesignInfo{
 
     @Transient
     private String affiliationShow;
+    @Transient
+    private String contractAmount;
 }
