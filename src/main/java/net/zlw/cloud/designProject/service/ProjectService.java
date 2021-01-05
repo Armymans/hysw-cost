@@ -2620,6 +2620,9 @@ public class ProjectService {
             if ("1".equals(wujiangMoneyInfo.getPayTerm())) {
                 //获取应收金额
                 WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
+                if (wujiangMoneyInfo.getContractAmount()!=null && wujiangMoneyInfo1!=null){
+                    wujiangMoneyInfo1.setContractAmount(wujiangMoneyInfo.getContractAmount());
+                }
                 //获取代收金额信息
                 //如果代收金额为空 说明第一次代收
                 if (wujiangMoneyInfo1 == null || wujiangMoneyInfo1.getCollectionMoney() == null) {
@@ -2670,7 +2673,9 @@ public class ProjectService {
                         //同时返回标识 改账单已支付完成
                         designInfoMapper.updateFinalAccount(wujiangMoneyInfo1.getBaseProjectId());
                     }
-
+                    if (wujiangMoneyInfo.getContractAmount()!=null){
+                        wujiangMoneyInfo1.setContractAmount(wujiangMoneyInfo.getContractAmount());
+                    }
                     wujiangMoneyInfoMapper.updateByPrimaryKeySelective(wujiangMoneyInfo1);
 //                    wujiangMoneyInfoMapper.updateByPrimaryKey(wujiangMoneyInfo);
                 }

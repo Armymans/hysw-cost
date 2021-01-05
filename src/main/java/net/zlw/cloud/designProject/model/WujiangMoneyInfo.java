@@ -78,4 +78,6 @@ public class WujiangMoneyInfo{
 
     @Transient
     private String unShow;
+    @Column(name = "contract_amount")
+    private BigDecimal contractAmount;
 }
