@@ -122,6 +122,9 @@ public class BudgetingServiceImpl implements BudgetingService {
     private ProgressPaymentInformationDao progressPaymentInformationDao;
     @Resource
     private BudgetCoverService budgetCoverService;
+    @Resource
+    private AnhuiMoneyinfoMapper anhuiMoneyinfoMapper;
+
 
 
 
@@ -146,6 +149,11 @@ public class BudgetingServiceImpl implements BudgetingService {
 
     @Override
     public void addBudgeting(BudgetingVo budgetingVo, UserInfo loginUser, HttpServletRequest request) {
+
+        if (budgetingVo.getRevenue()!=null && !"".equals(budgetingVo.getRevenue())){
+
+        }
+
         //获取基本信息
         Example example = new Example(BaseProject.class);
         Example.Criteria criteria = example.createCriteria();

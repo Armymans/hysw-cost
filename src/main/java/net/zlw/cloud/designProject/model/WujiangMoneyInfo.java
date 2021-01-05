@@ -75,4 +75,7 @@ public class WujiangMoneyInfo{
 
     @Transient
     private String selectFlag; //列表是否展示
+
+    @Transient
+    private String unShow;
 }

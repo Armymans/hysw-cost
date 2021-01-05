@@ -548,6 +548,11 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/disproject/wujiangMoneyInfoSelect", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> wujiangMoneyInfoSelect(String id) {
         WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfoSelect(id);
+        if (wujiangMoneyInfo.getRevenue()!=null){
+            if (wujiangMoneyInfo.getCostType() == null && wujiangMoneyInfo.getDesignRate()==null){
+                wujiangMoneyInfo.setUnShow("1");
+            }
+        }
         return RestUtil.success(wujiangMoneyInfo);
     }
 
