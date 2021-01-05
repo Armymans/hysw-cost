@@ -279,10 +279,10 @@ public class FileInfoController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/findByFreignAndType", method = RequestMethod.POST)
-    public Map<String, Object> costFile(String key, String type,String state) {
+    public Map<String, Object> costFile(String key, String type) {
         String id = getLoginUser().getId();
 //        String id = "201411001";
-        List<FileInfo> fileInfoList = fileInfoService.findCostFile(key, type,id,state);
+        List<FileInfo> fileInfoList = fileInfoService.findCostFile(key, type,id);
         return RestUtil.success(fileInfoList);
     }
 

@@ -181,7 +181,7 @@ public class FileInfoService {
         return fileInfoMapper.selectByPrimaryKey(id);
     }
 
-    public List<FileInfo> findCostFile(String key, String type,String id,String state) {
+    public List<FileInfo> findCostFile(String key, String type,String id) {
         //预算
         Budgeting budgeting = budgetingDao.selectByPrimaryKey(key);
         BaseProject budgetStatus = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
