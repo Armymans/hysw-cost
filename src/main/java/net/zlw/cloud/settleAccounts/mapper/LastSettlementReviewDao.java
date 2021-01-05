@@ -11,5 +11,5 @@ import tk.mybatis.mapper.common.Mapper;
 public interface LastSettlementReviewDao extends Mapper<LastSettlementReview> {
 
     @Select("SELECT * FROM last_settlement_review WHERE base_project_id = #{key}  and del_flag  ='0'")
-    SettlementAuditInformation findOneUp(@Param("key") String key);
+    LastSettlementReview findOneUp(@Param("key") String key);
 }

@@ -213,7 +213,7 @@ public class FileInfoService {
         }
         //结算
 
-        SettlementAuditInformation oneUp = UpSetDao.findOneUp(key);
+        LastSettlementReview oneUp = UpSetDao.findOneUp(key);
         SettlementAuditInformation oneDown = downSetDao.findOneDown(key);
 
 
