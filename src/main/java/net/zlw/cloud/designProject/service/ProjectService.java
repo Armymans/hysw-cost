@@ -2468,12 +2468,22 @@ public class ProjectService {
                 }
                 //获取代收金额信息
                 //如果代收金额为空 说明第一次代收
-                if (anhuiMoneyinfo1 == null) {
+                if (anhuiMoneyinfo1 == null || anhuiMoneyinfo1.getCollectionMoney() == null) {
                     //将代收信息拼接 保存到对象中
                     String newcollectionMoney =  officialReceipts + ",";
                     anhuiMoneyinfo.setCollectionMoney(newcollectionMoney);
                     String newCollectIonMoney = newcollectionMoney.substring(0,newcollectionMoney.length()-1);
                     anhuiMoneyinfo.setTotalMoney(new BigDecimal(newCollectIonMoney));
+
+                    Example example1 = new Example(AnhuiMoneyinfo.class);
+                    Example.Criteria criteria = example1.createCriteria();
+                    criteria.andEqualTo("baseProjectId",anhuiMoneyinfo.getBaseProjectId());
+                    criteria.andEqualTo("status","0");
+                    AnhuiMoneyinfo anhuiMoneyinfo2 = anhuiMoneyinfoMapper.selectOneByExample(example1);
+                    if (anhuiMoneyinfo2!=null){
+                        anhuiMoneyinfoMapper.deleteByPrimaryKey(anhuiMoneyinfo2);
+                    }
+
 
                     //如果代收金额超过或者等于 应收金额后
                     if (anhuiMoneyinfo.getRevenue().compareTo(anhuiMoneyinfo.getTotalMoney()) <= 0) {
@@ -2829,7 +2839,10 @@ public class ProjectService {
         Example.Criteria c = example.createCriteria();
         //根据设计表id 查询数据取出代收金额
         c.andEqualTo("baseProjectId",id);
+        c.andEqualTo("status","0");
+        List<AnhuiMoneyinfo> anhuiMoneyinfos = anhuiMoneyinfoMapper.selectByExample(example);
         AnhuiMoneyinfo anhuiMoneyinfo1 = anhuiMoneyinfoMapper.selectOneByExample(example);
+
         if(anhuiMoneyinfo1!=null){
             Double total = 0.0;
             //获取代收金额记录

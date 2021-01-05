@@ -515,7 +515,8 @@ public class ProjectController extends BaseController {
                     throw new RuntimeException("请先填写归属");
                 }
             }
-            projectService.anhuiMoneyInfoAdd(anhuiMoneyinfo, new UserInfo("user309",null,null,true));
+//            new UserInfo("user309",null,null,true)
+            projectService.anhuiMoneyInfoAdd(anhuiMoneyinfo, getLoginUser());
         } catch (Exception e) {
             e.printStackTrace();
           return  RestUtil.error(e.getMessage());
