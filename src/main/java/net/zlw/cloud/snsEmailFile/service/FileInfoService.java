@@ -232,43 +232,39 @@ public class FileInfoService {
                     //只有创建人和领导可见
                     if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm)) {
                          fileInfos.add(thisFile);
-                        // 如果是待确认状态下，创建人、互审人、领导可以查看附件
-                    }else if (auditInfos.size()>0) {
-                        if (id.equals(auditUser.getId())) {
-                            fileInfos.add(thisFile);
-                        }
+                        // 如果不是已完成
                     } else if (budgetStatus != null) {
-                        if ("5".equals(budgetStatus.getBudgetStatus())){
+                        if (!"4".equals(budgetStatus.getBudgetStatus())){
                             if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
                         }
                     }else if (trackStatus != null) {
-                        if ("6".equals(trackStatus.getTrackStatus())){
+                        if (!"5".equals(trackStatus.getTrackStatus())){
                             if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
                         }
                     }else if (visaChangeStatus != null) {
-                        if ("4".equals(visaChangeStatus.getVisaStatus())){
+                        if (!"6".equals(visaChangeStatus.getVisaStatus())){
                             if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
                         }
                     }else if (settAuditStatus != null) {
-                        if ("4".equals(settAuditStatus.getSettleAccountsStatus())){
+                        if (!"5".equals(settAuditStatus.getSettleAccountsStatus())){
                             if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
                         }
                     }else if (proStatus !=null) {
-                        if ("4".equals(proStatus.getProgressPaymentStatus())){
+                        if (!"6".equals(proStatus.getProgressPaymentStatus())){
                             if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
                         }
                     }else if (mainStatus != null) {
-                        if ("4".equals(mainStatus.getType())) {
+                        if (!"5".equals(mainStatus.getType())) {
                             if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
@@ -280,41 +276,38 @@ public class FileInfoService {
                     if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm)) {
                         fileInfos.add(thisFile);
                         // 如果是待确认状态下，创建人、互审人、领导可以查看附件
-                    }else if (auditInfos.size()>0) {
-                        if (id.equals(auditUser.getId())) {
-                            fileInfos.add(thisFile);
-                        }
-                    } else if (budgetStatus != null ) {
-                        if ("5".equals(budgetStatus.getBudgetStatus()) ) {
-                            if ("5".equals(budgetStatus.getBudgetStatus())) {
+                    }else if (budgetStatus != null ) {
+                        if (!"4".equals(budgetStatus.getBudgetStatus()) ) {
+                            if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(auditUser.getId())) {
+                                fileInfos.add(thisFile);
                             }
                         }
                     }else if (trackStatus != null) {
-                        if ("6".equals(trackStatus.getTrackStatus())){
+                        if (!"5".equals(trackStatus.getTrackStatus())){
                             if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
                         }
                     }else if (visaChangeStatus != null) {
-                        if ("4".equals(visaChangeStatus.getVisaStatus())){
+                        if (!"6".equals(visaChangeStatus.getVisaStatus())){
                             if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
                         }
                     }else if (settAuditStatus != null) {
-                        if ("4".equals(settAuditStatus.getSettleAccountsStatus())){
+                        if (!"5".equals(settAuditStatus.getSettleAccountsStatus())){
                             if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
                         }
                     }else if (proStatus != null) {
-                        if ("4".equals(proStatus.getProgressPaymentStatus())){
+                        if (!"6".equals(proStatus.getProgressPaymentStatus())){
                             if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
                         }
                     }else if (mainStatus != null) {
-                        if ("4".equals(mainStatus.getType())) {
+                        if (!"5".equals(mainStatus.getType())) {
                             if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
