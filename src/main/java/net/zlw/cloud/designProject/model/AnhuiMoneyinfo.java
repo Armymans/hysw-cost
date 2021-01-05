@@ -85,5 +85,6 @@ public class AnhuiMoneyinfo{
     private String selectFlag; //列表是否展示
 
     //判断其他信息是否显示
+    @Transient
     private String unShow;
 }
