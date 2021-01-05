@@ -1286,18 +1286,16 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             baseAccountsVo.setLastSettlementReview(new LastSettlementReview());
         }
         if (baseAccountsVo.getSettlementAuditInformation()==null){
-            baseAccountsVo.setSettlementAuditInformation(new SettlementAuditInformation());
+            SettlementAuditInformation settlementAuditInformation1 = new SettlementAuditInformation();
+            settlementAuditInformation1.setOutsourcing("2");
+            settlementAuditInformation1.setContract("2");
+            baseAccountsVo.setSettlementAuditInformation(settlementAuditInformation1);
         }
         MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(baseAccountsVo.getLastSettlementReview().getPreparePeople());
         if (mkyUser!=null){
             baseAccountsVo.setPreName(mkyUser.getUserName());
         }
-        if (baseAccountsVo.getSettlementAuditInformation() == null){
-            SettlementAuditInformation settlementAuditInformation1 = new SettlementAuditInformation();
-            settlementAuditInformation1.setContract("2");
-            settlementAuditInformation1.setOutsourcing("2");
-            baseAccountsVo.setSettlementAuditInformation(settlementAuditInformation1);
-        }
+
         return baseAccountsVo;
     }
 

@@ -108,6 +108,9 @@ public class DesignInfo{
     @Column(name = "attribution_show")
     private String attributionShow;
 
+    @Column(name = "total_money")
+    private BigDecimal totalMoney;
+
 //    private BaseProject baseProject;
 //    private List<DesignChangeInfo> designChangeInfolist;
 //    private AnhuiMoneyinfo anhuiMoneyinfo;

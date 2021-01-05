@@ -562,8 +562,8 @@ public class ProjectController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/disproject/editOutsourceMoney", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> editOutsourceMoney(@RequestParam(name = "id") String id, @RequestParam(name = "outsourceMoney") String outsourceMoney) {
-         projectService.editOutsourceMoney(id,outsourceMoney);
+    public Map<String,Object> editOutsourceMoney(@RequestParam(name = "id") String id, @RequestParam(name = "outsourceMoney") String outsourceMoney,@RequestParam(name = "totalMoney") String totalMoney) {
+         projectService.editOutsourceMoney(id,outsourceMoney,totalMoney);
         return RestUtil.success("编辑成功");
     }
 

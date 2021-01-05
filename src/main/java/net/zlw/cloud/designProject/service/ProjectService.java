@@ -3710,12 +3710,6 @@ public class ProjectService {
         if (nameAndCodeAndId.size() > 0) {
             throw new Exception("建设名称或者编号重复");
         } else {
-            System.err.println(buildingProject);
-            System.err.println(buildingProject);
-            System.err.println(buildingProject);
-            System.err.println(buildingProject);
-            System.err.println(buildingProject);
-            System.err.println(buildingProject);
 
             buildingProjectMapper.updateByPrimaryKeySelective(buildingProject);
         }
@@ -3795,9 +3789,10 @@ public class ProjectService {
         return designPageVo;
     }
 
-    public void editOutsourceMoney(String id, String outSourceMoney) {
+    public void editOutsourceMoney(String id, String outSourceMoney,String totalMoney) {
         DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
         designInfo.setOutsourceMoney(outSourceMoney);
+        designInfo.setTotalMoney(new BigDecimal(totalMoney));
         designInfoMapper.updateByPrimaryKeySelective(designInfo);
     }
 
