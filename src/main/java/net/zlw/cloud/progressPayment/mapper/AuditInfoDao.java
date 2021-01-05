@@ -224,4 +224,15 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
         "                                and ( role_id = 'role7618' or role_id = 'role7616' or role_id = 'role7636' or role_id = 'role7637')      " +
         "                                and ( job_id = (select job_id from mky_user where id = #{userId} ) or job_id is null )")
     List<MkyUser> findDesignAll(@Param("userId") String id);
+
+    @Select("SELECT " +
+            " *  " +
+            "FROM " +
+            " audit_info  " +
+            "WHERE " +
+            " base_project_id = #{key}  " +
+            " AND `status` = '0'  " +
+            " AND audit_result = '0'  " +
+            " AND audit_type IN ( 0, 2 )")
+    List<net.zlw.cloud.warningDetails.model.AuditInfo> selectAuditInfoList(@Param("key") String key);
 }

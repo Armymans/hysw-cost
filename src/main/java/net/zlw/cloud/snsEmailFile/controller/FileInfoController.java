@@ -261,7 +261,7 @@ public class FileInfoController extends BaseController {
 
     /**
      * @Author Armyman
-     * @Description //查询文件
+     * @Description //查询设计文件
      * @Date 14:00 2020/10/10
      **/
     @RequestMapping(value = "/findByFreignAndType", method = RequestMethod.POST)
@@ -269,6 +269,22 @@ public class FileInfoController extends BaseController {
         List<FileInfo> fileInfoList = fileInfoService.findByFreignAndType(key, type);
         return RestUtil.success(fileInfoList);
     }
+
+    /***
+     *
+     * @param key
+     * @param type
+     * @Description //查询造价文件
+     * @return
+     */
+    @RequestMapping(value = "/findCostFile", method = RequestMethod.POST)
+    public Map<String, Object> costFile(String key, String type,String state) {
+//        String id = getLoginUser().getId();
+        String id = "201411001";
+        List<FileInfo> fileInfoList = fileInfoService.findCostFile(key, type,id,state);
+        return RestUtil.success(fileInfoList);
+    }
+
 
     /**
      * 展示设计变更审核累计文件列表(不根据状态查询)

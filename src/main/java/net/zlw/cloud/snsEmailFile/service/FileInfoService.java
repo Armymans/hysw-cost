@@ -1,17 +1,28 @@
 package net.zlw.cloud.snsEmailFile.service;
 
 import net.tec.cloud.common.util.DateUtil;
+import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
+import net.zlw.cloud.VisaChange.model.VisaChange;
+import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.followAuditing.mapper.TrackMonthlyDao;
 import net.zlw.cloud.followAuditing.model.TrackMonthly;
+import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
+import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
+import net.zlw.cloud.warningDetails.model.AuditInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +42,40 @@ public class FileInfoService {
 
     @Resource
     private TrackMonthlyDao trackMonthlyDao;
+
+    @Resource
+    private MkyUserMapper mkyUserMapper;
+
+    @Resource
+    private ProgressPaymentInformationDao proInformationDao;
+
+    @Resource
+    private BudgetingDao budgetingDao;
+
+    @Resource
+    private AuditInfoDao auditInfoDao;
+
+    @Resource
+    private VisaChangeMapper visaChangeMapper;
+
+
+    @Value("${audit.wujiang.sheji.designHead}")
+    private String wjsjh;
+    @Value("${audit.wujiang.sheji.designManager}")
+    private String wjsjm;
+    @Value("${audit.wujiang.zaojia.costHead}")
+    private String wjzjh;
+    @Value("${audit.wujiang.zaojia.costManager}")
+    private String wjzjm;
+
+    @Value("${audit.wuhu.sheji.designHead}")
+    private String whsjh;
+    @Value("${audit.wuhu.sheji.designManager}")
+    private String whsjm;
+    @Value("${audit.wuhu.zaojia.costHead}")
+    private String whzjh;
+    @Value("${audit.wuhu.zaojia.costManager}")
+    private String whzjm;
 
 
     public void uploadFile(FileInfo attachInfo) {
@@ -113,5 +158,61 @@ public class FileInfoService {
 
     public FileInfo findByKey(String id) {
         return fileInfoMapper.selectByPrimaryKey(id);
+    }
+
+    public List<FileInfo> findCostFile(String key, String type,String id,String state) {
+        // 造价文件
+        List<FileInfo> costFile = fileInfoMapper.findCostFile(key, type);
+        ArrayList<FileInfo> fileInfos = new ArrayList<>();
+
+        // 未审批一审、变更一审 审核信息
+        List<AuditInfo> auditInfos = auditInfoDao.selectAuditInfoList(key);
+        MkyUser auditUser = null;
+        if (auditInfos.size() > 0) {
+            for (AuditInfo thisAudit : auditInfos) {
+                String auditorId = thisAudit.getAuditorId();
+                auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
+            }
+        }
+        if (costFile.size() > 0) {
+            for (FileInfo thisFile : costFile) {
+                // 当前登录人信息
+                MkyUser createUser = mkyUserMapper.selectOneUser(thisFile.getUserName());
+                // 芜湖
+                if ("1".equals(createUser.getJobId())) {
+                    //只有创建人和领导可见
+                    if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm)) {
+                         fileInfos.add(thisFile);
+                        // 审核人查看文件
+                    } else if (auditInfos.size()>0) {
+                        if (id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                        // 如果是待确认状态下，创建人、互审人、领导可以查看附件
+                    } else if ("4".equals(state)) {
+                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }
+                    // 吴江
+                } else if ("2".equals(createUser.getJobId())) {
+                    //只有创建人和领导可见
+                    if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm)) {
+                        fileInfos.add(thisFile);
+                        //审核人审核时查看
+                    } else if (auditInfos.size()>0) {
+                        if (id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                        // 如果是待确认状态下，创建人、互审人、领导可以查看附件
+                    } else if ("4".equals(state)) {
+                        if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    }
+                }
+            }
+        }
+        return fileInfos;
     }
 }

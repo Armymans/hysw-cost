@@ -26,6 +26,18 @@ public interface FileInfoMapper extends Mapper<FileInfo> {
             " AND fi.type = #{type} and fi.plat_code = #{key}")
     List<FileInfo> findByFreignAndType(@Param("key") String key,@Param("type") String type);
 
+
+    @Select("SELECT " +
+            " fi.* , " +
+            " mm.user_name userName " +
+            "FROM " +
+            " file_info fi " +
+            " left join mky_user mm on mm.id = fi.user_id " +
+            "WHERE " +
+            " fi.STATUS = '0'  " +
+            " AND fi.type = #{type} and fi.plat_code = #{key}")
+    List<FileInfo> findCostFile(@Param("key") String key,@Param("type") String type);
+
     @Select("SELECT " +
             " fi.* , " +
             " mm.member_name userName " +
