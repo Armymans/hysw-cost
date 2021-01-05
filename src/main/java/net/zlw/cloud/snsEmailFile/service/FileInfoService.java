@@ -233,6 +233,10 @@ public class FileInfoService {
                     if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm)) {
                          fileInfos.add(thisFile);
                         // 如果是待确认状态下，创建人、互审人、领导可以查看附件
+                    }else if (auditInfos.size()>0) {
+                        if (id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
                     } else if (budgetStatus != null) {
                         if ("5".equals(budgetStatus.getBudgetStatus())){
                             if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
@@ -269,10 +273,6 @@ public class FileInfoService {
                                 fileInfos.add(thisFile);
                             }
                         }
-                    } else if (auditInfos.size()>0) {
-                        if (id.equals(auditUser.getId())) {
-                            fileInfos.add(thisFile);
-                        }
                     }
                     // 吴江
                 } else if ("2".equals(createUser.getJobId())) {
@@ -280,7 +280,11 @@ public class FileInfoService {
                     if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm)) {
                         fileInfos.add(thisFile);
                         // 如果是待确认状态下，创建人、互审人、领导可以查看附件
-                    }  else if (budgetStatus != null ) {
+                    }else if (auditInfos.size()>0) {
+                        if (id.equals(auditUser.getId())) {
+                            fileInfos.add(thisFile);
+                        }
+                    } else if (budgetStatus != null ) {
                         if ("5".equals(budgetStatus.getBudgetStatus()) ) {
                             if ("5".equals(budgetStatus.getBudgetStatus())) {
                             }
@@ -314,10 +318,6 @@ public class FileInfoService {
                             if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(auditUser.getId())) {
                                 fileInfos.add(thisFile);
                             }
-                        }
-                    }else if (auditInfos.size()>0) {
-                        if (id.equals(auditUser.getId())) {
-                            fileInfos.add(thisFile);
                         }
                     }
                 }
