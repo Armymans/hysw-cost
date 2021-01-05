@@ -185,8 +185,7 @@ public class FileInfoService {
         BaseProject budgetStatus = null;
         BaseProject proStatus = null;
         BaseProject visaChangeStatus = null;
-        BaseProject settAuditStatus = null;
-        MaintenanceProjectInformation mainStatus = null;
+
         BaseProject trackStatus = null;
         //预算
         Budgeting budgeting = budgetingDao.selectByPrimaryKey(key);
@@ -204,9 +203,9 @@ public class FileInfoService {
             visaChangeStatus = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
         }
         //结算
-         settAuditStatus = baseProjectDao.selectByPrimaryKey(key);
+        BaseProject settAuditStatus = baseProjectDao.selectByPrimaryKey(key);
         //检维修
-         mainStatus = maintenanceProjectInformationMapper.selectByPrimaryKey(key);
+         MaintenanceProjectInformation mainStatus = maintenanceProjectInformationMapper.selectByPrimaryKey(key);
         //跟踪审计
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(key);
         if (trackAuditInfo != null){
