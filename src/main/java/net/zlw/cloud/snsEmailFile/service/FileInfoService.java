@@ -182,23 +182,36 @@ public class FileInfoService {
     }
 
     public List<FileInfo> findCostFile(String key, String type,String id) {
+        BaseProject budgetStatus = null;
+        BaseProject proStatus = null;
+        BaseProject visaChangeStatus = null;
+        BaseProject settAuditStatus = null;
+        MaintenanceProjectInformation mainStatus = null;
+        BaseProject trackStatus = null;
         //预算
         Budgeting budgeting = budgetingDao.selectByPrimaryKey(key);
-        BaseProject budgetStatus = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+        if (budgeting !=null){
+            budgetStatus = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+        }
         //进度款
         ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(key);
-        BaseProject proStatus = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
+        if (paymentInformation != null){
+            proStatus = baseProjectDao.selectByPrimaryKey(paymentInformation.getBaseProjectId());
+        }
         //签证变更
         VisaChange visaChange = visaChangeMapper.selectByPrimaryKey(key);
-        BaseProject visaChangeStatus = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+        if (visaChange !=null){
+            visaChangeStatus = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
+        }
         //结算
-        BaseProject settAuditStatus = baseProjectDao.selectByPrimaryKey(key);
+         settAuditStatus = baseProjectDao.selectByPrimaryKey(key);
         //检维修
-        MaintenanceProjectInformation mainStatus = maintenanceProjectInformationMapper.selectByPrimaryKey(key);
+         mainStatus = maintenanceProjectInformationMapper.selectByPrimaryKey(key);
         //跟踪审计
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(key);
-        BaseProject trackStatus = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
-
+        if (trackAuditInfo != null){
+            trackStatus = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
+        }
         // 造价文件
         List<FileInfo> costFile = fileInfoMapper.findCostFile(key, type);
         ArrayList<FileInfo> fileInfos = new ArrayList<>();
@@ -239,17 +252,21 @@ public class FileInfoService {
                         if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                             fileInfos.add(thisFile);
                         }
-                    }else if ("4".equals(settAuditStatus.getSettleAccountsStatus())) {
-                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
-                            fileInfos.add(thisFile);
+                    }else if (settAuditStatus != null) {
+                        if ("4".equals(settAuditStatus.getSettleAccountsStatus())){
+                            if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                                fileInfos.add(thisFile);
+                            }
                         }
                     }else if ("4".equals(proStatus.getProgressPaymentStatus())) {
                         if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                             fileInfos.add(thisFile);
                         }
-                    }else if ("4".equals(mainStatus.getType())) {
-                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
-                            fileInfos.add(thisFile);
+                    }else if (mainStatus != null) {
+                        if ("4".equals(mainStatus.getType())) {
+                            if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                                fileInfos.add(thisFile);
+                            }
                         }
                     }
                     // 吴江
@@ -275,17 +292,21 @@ public class FileInfoService {
                         if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                             fileInfos.add(thisFile);
                         }
-                    }else if ("4".equals(settAuditStatus.getSettleAccountsStatus())) {
-                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
-                            fileInfos.add(thisFile);
+                    }else if (settAuditStatus != null) {
+                        if ("4".equals(settAuditStatus.getSettleAccountsStatus())){
+                            if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                                fileInfos.add(thisFile);
+                            }
                         }
                     }else if ("4".equals(proStatus.getProgressPaymentStatus())) {
                         if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
                             fileInfos.add(thisFile);
                         }
-                    }else if ("4".equals(mainStatus.getType())) {
-                        if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
-                            fileInfos.add(thisFile);
+                    }else if (mainStatus != null) {
+                        if ("4".equals(mainStatus.getType())) {
+                            if (id.equals(createUser.getId()) || id.equals(whzjh) || id.equals(whzjm) || id.equals(auditUser.getId())) {
+                                fileInfos.add(thisFile);
+                            }
                         }
                     }
                 }
