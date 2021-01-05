@@ -213,8 +213,10 @@ public class FileInfoService {
         }
         //结算
 
-        LastSettlementReview lastSettlementReview = UpSetDao.selectByPrimaryKey(key);
-        SettlementAuditInformation auditInformation = downSetDao.selectByPrimaryKey(key);
+        SettlementAuditInformation oneUp = UpSetDao.findOneUp(key);
+        SettlementAuditInformation oneDown = downSetDao.findOneDown(key);
+
+
         BaseProject settAuditStatus = baseProjectDao.selectByPrimaryKey(key);
         //检维修
          MaintenanceProjectInformation mainStatus = maintenanceProjectInformationMapper.selectByPrimaryKey(key);
@@ -236,14 +238,14 @@ public class FileInfoService {
                 auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
             }
         }else {
-            if (lastSettlementReview != null){
-                List<AuditInfo> auditInfos1 = auditInfoDao.selectAuditInfoList(lastSettlementReview.getId());
+            if (oneUp != null){
+                List<AuditInfo> auditInfos1 = auditInfoDao.selectAuditInfoList(oneUp.getId());
                 for (AuditInfo auditInfo : auditInfos1) {
                     String auditorId = auditInfo.getAuditorId();
                     auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
                 }
             }else {
-                List<AuditInfo> auditInfos1 = auditInfoDao.selectAuditInfoList(auditInformation.getId());
+                List<AuditInfo> auditInfos1 = auditInfoDao.selectAuditInfoList(oneDown.getId());
                 for (AuditInfo auditInfo : auditInfos1) {
                     String auditorId = auditInfo.getAuditorId();
                     auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
