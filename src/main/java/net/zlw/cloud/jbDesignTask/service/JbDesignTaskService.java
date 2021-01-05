@@ -7,20 +7,28 @@ import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.CostPreparation;
 import net.zlw.cloud.budgeting.model.VeryEstablishment;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
+import net.zlw.cloud.designProject.mapper.OperationLogDao;
 import net.zlw.cloud.designProject.mapper.ProjectExplorationMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.ProjectExploration;
 import net.zlw.cloud.jbDesignTask.dao.DiameterInfoDao;
 import net.zlw.cloud.jbDesignTask.domain.DiameterInfo;
 import net.zlw.cloud.jbDesignTask.domain.vo.*;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.service.MemberService;
+import net.zlw.cloud.snsEmailFile.service.MessageService;
+import net.zlw.cloud.warningDetails.model.MemberManage;
+import net.zlw.cloud.whDesignTask.model.vo.DesignVoF;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -45,22 +53,30 @@ public class JbDesignTaskService {
     private DiameterInfoDao diameterInfoDao;
 
     @Autowired
+    private MemberService memberService;
+
+    @Autowired
     private FileInfoMapper fileInfoMapper;
 
     @Autowired
     private BudgetingDao budgetingDao;
+
+    @Autowired
+    private MemberManageDao memberManageDao;
     @Autowired
     private CostPreparationDao costPreparationDao;
 
     @Autowired
     private VeryEstablishmentDao veryEstablishmentDao;
+    @Autowired
+    private OperationLogDao operationLogDao;
 
 
     /***
      * 设计报装
      * @param jbDesignVoF
      */
-    public void getDesignEngineering(JbDesignVoF jbDesignVoF) {
+    public void getDesignEngineering(JbDesignVoF jbDesignVoF, HttpServletRequest request) {
 
         String date = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
         JbDesignVo designVo = jbDesignVoF.getJbDesignVo();
@@ -148,6 +164,20 @@ public class JbDesignTaskService {
                     fileInfoMapper.insertSelective(fileInfo);
                 }
             }
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(jbDesignVoF.getAccount());
+            String memberName = memberManage.getMemberName();
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+            operationLog.setName(jbDesignVoF.getAccount());
+            operationLog.setContent(memberName+"对接了一个"+designVo.getProject_name()+"项目"+"【"+designVo.getProject_id()+"】");
+            operationLog.setDoObject(designVo.getProject_id());
+            operationLog.setStatus("0");
+            operationLog.setDoTime(date);
+            operationLog.setType("11"); // 设计报装
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
+
         }
 
     }
@@ -157,7 +187,7 @@ public class JbDesignTaskService {
      * @param
      * @param
      */
-    public void getBudgetEngineering(JbBudgetVoF jbBudgetVoF) {
+    public void getBudgetEngineering(JbBudgetVoF jbBudgetVoF,HttpServletRequest request) {
         JbBudgetVo budgetVo = jbBudgetVoF.getJbBudgetVo();
         Example example = new Example(BaseProject.class);
         example.createCriteria().andEqualTo("projectId",budgetVo.getProject_id())
@@ -230,26 +260,57 @@ public class JbDesignTaskService {
                 }
                 fileInfoMapper.insertSelective(fileInfo);
             }
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(jbBudgetVoF.getAccount());
+            String memberName = memberManage.getMemberName();
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+            operationLog.setName(jbBudgetVoF.getAccount());
+            operationLog.setContent(memberName+"对接了一个"+budgetVo.getProject_name()+"项目"+"【"+budgetVo.getProject_id()+"】");
+            operationLog.setDoObject(budgetVo.getProject_id());
+            operationLog.setStatus("0");
+            operationLog.setType("12"); //预算报装
+            operationLog.setDoTime(date);
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
+
         }
     }
 
-    public void updateBudgetAmount(AmountVo amountVo){
+    public void updateBudgetAmount(AmountVo amountVo,HttpServletRequest request){
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         String budgetAmount = amountVo.getBudget_amount();
         if (amountVo.getProject_id() != null && !"".equals(amountVo.getProject_id())){
             Example example = new Example(Budgeting.class);
             example.createCriteria().andEqualTo("baseProjectId",amountVo.getProject_id())
                                     .andEqualTo("delFlag","0");
             Budgeting budgeting = budgetingDao.selectOneByExample(example);
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
             if (budgeting != null){
                 budgeting.setAmountCost(new BigDecimal(budgetAmount));
                 budgetingDao.updateByPrimaryKeySelective(budgeting);
             }
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(amountVo.getAccount());
+            String memberName = memberManage.getMemberName();
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+            operationLog.setName(amountVo.getAccount());
+            operationLog.setContent(memberName+"修改了"+baseProject.getProjectName()+"项目的造价金额"+"【"+baseProject.getId()+"】");
+            operationLog.setDoObject(baseProject.getId());
+            operationLog.setStatus("0");
+            operationLog.setType("13"); //修改金额
+            operationLog.setDoTime(data);
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
+
 
         }
     }
 
     // 更新cea接口
-    public void updateCea(CEAVo ceaVo) {
+    public void updateCea(CEAVo ceaVo,HttpServletRequest request) {
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         if (ceaVo != null){
             Example example = new Example(BaseProject.class);
             example.createCriteria().andEqualTo("projectId",ceaVo.getProject_id())
@@ -259,6 +320,19 @@ public class JbDesignTaskService {
                 baseProject.setCeaNum(ceaVo.getCea());
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
             }
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(ceaVo.getAccount());
+            String memberName = memberManage.getMemberName();
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+            operationLog.setName(ceaVo.getAccount());
+            operationLog.setContent(memberName+"修改了"+baseProject.getProjectName()+"项目的CEA编号"+"【"+baseProject.getId()+"】");
+            operationLog.setDoObject(baseProject.getId());
+            operationLog.setStatus("0");
+            operationLog.setType("14"); //CEA编号
+            operationLog.setDoTime(data);
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLogDao.insertSelective(operationLog);
         }
     }
 }

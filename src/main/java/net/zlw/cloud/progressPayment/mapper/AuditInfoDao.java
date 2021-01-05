@@ -225,14 +225,14 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
         "                                and ( job_id = (select job_id from mky_user where id = #{userId} ) or job_id is null )")
     List<MkyUser> findDesignAll(@Param("userId") String id);
 
-    @Select("SELECT " +
-            " *  " +
-            "FROM " +
-            " audit_info  " +
-            "WHERE " +
-            " base_project_id = #{key}  " +
-            " AND `status` = '0'  " +
-            " AND audit_result = '0'  " +
-            " AND audit_type IN ( 0, 2 )")
+    @Select("SELECT    " +
+            "             *     " +
+            "            FROM    " +
+            "             audit_info     " +
+            "            WHERE    " +
+            "             base_project_id = #{key}    " +
+            "             AND `status` = '0'     " +
+            "             AND audit_result = '1'     " +
+            "             AND (audit_type = '0' or audit_type = '2')")
     List<net.zlw.cloud.warningDetails.model.AuditInfo> selectAuditInfoList(@Param("key") String key);
 }

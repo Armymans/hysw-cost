@@ -1,6 +1,7 @@
 package net.zlw.cloud.jbDesignTask.controller;
 
 
+import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.jbDesignTask.domain.vo.*;
@@ -17,7 +18,7 @@ import java.util.Map;
  * 江北外部接口
  */
 @RestController
-public class JbDesignTaskController {
+public class JbDesignTaskController extends BaseController {
 
     @Autowired
     private JbDesignTaskService jbDesignTaskService;
@@ -31,7 +32,7 @@ public class JbDesignTaskController {
      */
     @RequestMapping(value = "/api/getDesignEngineeringTwo", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> getDesignEngineering(@RequestBody JbDesignVoF jbDesignVoF){
-        jbDesignTaskService.getDesignEngineering(jbDesignVoF);
+        jbDesignTaskService.getDesignEngineering(jbDesignVoF,request);
         return RestUtil.success();
     }
 
@@ -44,21 +45,21 @@ public class JbDesignTaskController {
      */
     @RequestMapping(value = "/api/getBudgetEngineeringTwo", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> getBudgetEngineering(@RequestBody JbBudgetVoF jbBudgetVoF){
-        jbDesignTaskService.getBudgetEngineering(jbBudgetVoF);
+        jbDesignTaskService.getBudgetEngineering(jbBudgetVoF,request);
         return RestUtil.success();
     }
 
     // 预算金额更新接口
     @RequestMapping(value = "/api/updateBudgetAmount", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateBudgetAmount(@RequestBody AmountVo amountVo){
-        jbDesignTaskService.updateBudgetAmount(amountVo);
+        jbDesignTaskService.updateBudgetAmount(amountVo,request);
         return RestUtil.success("操作成功");
     }
 
     // CEA更新接口
     @RequestMapping(value = "/api/updateCea", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateCea(@RequestBody CEAVo ceaVo){
-        jbDesignTaskService.updateCea(ceaVo);
+        jbDesignTaskService.updateCea(ceaVo,request);
         return RestUtil.success("操作成功");
     }
 }
