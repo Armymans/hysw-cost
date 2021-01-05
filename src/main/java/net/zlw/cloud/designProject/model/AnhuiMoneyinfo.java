@@ -74,7 +74,7 @@ public class AnhuiMoneyinfo{
 
     @Column(name = "update_time")
     private String updateTime;
-    
+
     @Column(name = "contract_amount")
     private String contractAmount;
 
@@ -83,4 +83,7 @@ public class AnhuiMoneyinfo{
 
     @Transient
     private String selectFlag; //列表是否展示
+
+    //判断其他信息是否显示
+    private String unShow;
 }

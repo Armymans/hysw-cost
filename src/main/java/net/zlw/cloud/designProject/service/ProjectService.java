@@ -2391,7 +2391,12 @@ public class ProjectService {
         example.createCriteria().andEqualTo("baseProjectId", id);
         AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
         if (anhuiMoneyinfo != null) {
-            String[] split = anhuiMoneyinfo.getCollectionMoney().split(",");
+            String[] split = null;
+            try {
+                split = anhuiMoneyinfo.getCollectionMoney().split(",");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Integer count = 1;
 
             if (split!= null){
