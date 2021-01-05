@@ -74,6 +74,9 @@ public class AnhuiMoneyinfo{
 
     @Column(name = "update_time")
     private String updateTime;
+    
+    @Column(name = "contract_amount")
+    private String contractAmount;
 
     @Transient
     private ArrayList<PayItem> strings = new ArrayList<>();
