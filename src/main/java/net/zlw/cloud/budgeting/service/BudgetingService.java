@@ -54,4 +54,6 @@ public interface BudgetingService {
     void budgetingSendBack(String s, String id, String id1);
 
     void budgetingSendBackB(String id, String id1, String backOpnion);
+
+    String findDesinerMoney(String id);
 }

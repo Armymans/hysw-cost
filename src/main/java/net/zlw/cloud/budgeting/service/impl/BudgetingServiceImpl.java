@@ -155,23 +155,40 @@ public class BudgetingServiceImpl implements BudgetingService {
         if (budgetingVo.getRevenue()!=null && !"".equals(budgetingVo.getRevenue())){
             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetingVo.getBaseId());
             if ("4".equals(baseProject.getDistrict())){
-                WujiangMoneyInfo wujiangMoneyInfo = new WujiangMoneyInfo();
-                wujiangMoneyInfo.setId(UUID.randomUUID().toString().replace("-",""));
-                wujiangMoneyInfo.setRevenue(new BigDecimal(budgetingVo.getRevenue()));
-                wujiangMoneyInfo.setStatus("0");
-                wujiangMoneyInfo.setBaseProjectId(baseProject.getId());
-                SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                wujiangMoneyInfo.setCreateTime(s.format(new Date()));
-                wujiangMoneyInfoMapper.insertSelective(wujiangMoneyInfo);
+
+                Example example = new Example(WujiangMoneyInfo.class);
+                Example.Criteria cc = example.createCriteria();
+                cc.andEqualTo("baseProjectId",baseProject.getId());
+                cc.andEqualTo("status","0");
+                WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
+                if (wujiangMoneyInfo1 == null){
+                    WujiangMoneyInfo wujiangMoneyInfo = new WujiangMoneyInfo();
+                    wujiangMoneyInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    wujiangMoneyInfo.setRevenue(new BigDecimal(budgetingVo.getRevenue()));
+                    wujiangMoneyInfo.setStatus("0");
+                    wujiangMoneyInfo.setBaseProjectId(baseProject.getId());
+                    SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    wujiangMoneyInfo.setCreateTime(s.format(new Date()));
+                    wujiangMoneyInfoMapper.insertSelective(wujiangMoneyInfo);
+                }
+
             }else{
-                AnhuiMoneyinfo anhuiMoneyinfo = new AnhuiMoneyinfo();
-                anhuiMoneyinfo.setId(UUID.randomUUID().toString().replace("-",""));
-                anhuiMoneyinfo.setBaseProjectId(baseProject.getId());
-                anhuiMoneyinfo.setRevenue(new BigDecimal(budgetingVo.getRevenue()));
-                anhuiMoneyinfo.setStatus("0");
-                SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                anhuiMoneyinfo.setCreateTime(s.format(new Date()));
-                anhuiMoneyinfoMapper.insertSelective(anhuiMoneyinfo);
+                Example example = new Example(AnhuiMoneyinfo.class);
+                Example.Criteria cc = example.createCriteria();
+                cc.andEqualTo("baseProjectId",baseProject.getId());
+                cc.andEqualTo("status","0");
+                AnhuiMoneyinfo anhuiMoneyinfo1 = anhuiMoneyinfoMapper.selectOneByExample(example);
+                if (anhuiMoneyinfo1==null){
+                    AnhuiMoneyinfo anhuiMoneyinfo = new AnhuiMoneyinfo();
+                    anhuiMoneyinfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    anhuiMoneyinfo.setBaseProjectId(baseProject.getId());
+                    anhuiMoneyinfo.setRevenue(new BigDecimal(budgetingVo.getRevenue()));
+                    anhuiMoneyinfo.setStatus("0");
+                    SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    anhuiMoneyinfo.setCreateTime(s.format(new Date()));
+                    anhuiMoneyinfoMapper.insertSelective(anhuiMoneyinfo);
+                }
+
             }
         }
 
@@ -463,6 +480,47 @@ public class BudgetingServiceImpl implements BudgetingService {
 
     @Override
     public void updateBudgeting(BudgetingVo budgetingVo,UserInfo loginUser,HttpServletRequest request) {
+
+        if (budgetingVo.getRevenue()!=null && !"".equals(budgetingVo.getRevenue())){
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetingVo.getBaseId());
+            if ("4".equals(baseProject.getDistrict())){
+
+                Example example = new Example(WujiangMoneyInfo.class);
+                Example.Criteria cc = example.createCriteria();
+                cc.andEqualTo("baseProjectId",baseProject.getId());
+                cc.andEqualTo("status","0");
+                WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
+                if (wujiangMoneyInfo1 == null){
+                    WujiangMoneyInfo wujiangMoneyInfo = new WujiangMoneyInfo();
+                    wujiangMoneyInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    wujiangMoneyInfo.setRevenue(new BigDecimal(budgetingVo.getRevenue()));
+                    wujiangMoneyInfo.setStatus("0");
+                    wujiangMoneyInfo.setBaseProjectId(baseProject.getId());
+                    SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    wujiangMoneyInfo.setCreateTime(s.format(new Date()));
+                    wujiangMoneyInfoMapper.insertSelective(wujiangMoneyInfo);
+                }
+
+            }else{
+                Example example = new Example(AnhuiMoneyinfo.class);
+                Example.Criteria cc = example.createCriteria();
+                cc.andEqualTo("baseProjectId",baseProject.getId());
+                cc.andEqualTo("status","0");
+                AnhuiMoneyinfo anhuiMoneyinfo1 = anhuiMoneyinfoMapper.selectOneByExample(example);
+                if (anhuiMoneyinfo1==null){
+                    AnhuiMoneyinfo anhuiMoneyinfo = new AnhuiMoneyinfo();
+                    anhuiMoneyinfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    anhuiMoneyinfo.setBaseProjectId(baseProject.getId());
+                    anhuiMoneyinfo.setRevenue(new BigDecimal(budgetingVo.getRevenue()));
+                    anhuiMoneyinfo.setStatus("0");
+                    SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    anhuiMoneyinfo.setCreateTime(s.format(new Date()));
+                    anhuiMoneyinfoMapper.insertSelective(anhuiMoneyinfo);
+                }
+
+            }
+        }
+
         //获取基本信息
         System.err.println(budgetingVo.getBaseId());
         Example example = new Example(BaseProject.class);
@@ -2003,6 +2061,29 @@ public class BudgetingServiceImpl implements BudgetingService {
 
 
 
+    }
+
+    @Override
+    public String findDesinerMoney(String id) {
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
+        if ("4".equals(baseProject.getDistrict())){
+            Example example = new Example(WujiangMoneyInfo.class);
+            Example.Criteria cc = example.createCriteria();
+            cc.andEqualTo("baseProjectId",baseProject.getId());
+            cc.andEqualTo("status","0");
+            WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
+            if (wujiangMoneyInfo1!=null){
+                return wujiangMoneyInfo1.getRevenue().toString();
+            }
+        }else{
+            Example example = new Example(AnhuiMoneyinfo.class);
+            Example.Criteria cc = example.createCriteria();
+            cc.andEqualTo("baseProjectId",baseProject.getId());
+            cc.andEqualTo("status","0");
+            AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
+            return anhuiMoneyinfo.getRevenue().toString();
+        }
+        return null;
     }
 
     @Override

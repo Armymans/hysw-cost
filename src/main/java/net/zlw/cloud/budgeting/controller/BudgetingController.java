@@ -583,6 +583,15 @@ public class BudgetingController extends BaseController {
         map.put("name",attachInfo.getFileName()+"."+attachInfo.getFileType());
         return RestUtil.success(map);
     }
+    //查找设计费
+    @RequestMapping(value = "/budgeting/findDesinerMoney",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findDesinerMoney(@RequestParam(name = "id")String id){
+       String money =  budgetingService.findDesinerMoney(id);
+        Map<String, String> stringStringMap = new HashMap<>();
+        stringStringMap.put("x",money);
+        return RestUtil.success(stringStringMap);
+
+    }
 
 }
 
