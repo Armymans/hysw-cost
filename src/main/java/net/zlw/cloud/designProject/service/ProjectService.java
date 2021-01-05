@@ -2454,7 +2454,7 @@ public class ProjectService {
             if ("1".equals(anhuiMoneyinfo.getPayTerm())) {
                 //获取应收金额
                 AnhuiMoneyinfo anhuiMoneyinfo1 = anhuiMoneyinfoMapper.selectOneByExample(example);
-                if (anhuiMoneyinfo.getContractAmount()!=null){
+                if (anhuiMoneyinfo.getContractAmount()!=null && anhuiMoneyinfo1!=null){
                     anhuiMoneyinfo1.setContractAmount(anhuiMoneyinfo.getContractAmount());
                 }
                 //获取代收金额信息
