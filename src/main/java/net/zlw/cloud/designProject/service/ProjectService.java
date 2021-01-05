@@ -2439,35 +2439,7 @@ public class ProjectService {
      * @param anhuiMoneyinfo
      */
     public void anhuiMoneyInfoAdd(AnhuiMoneyinfo anhuiMoneyinfo, UserInfo loginUser) throws Exception {
-        System.out.println(anhuiMoneyinfo.getContractAmount());
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
-        System.out.println(anhuiMoneyinfo);
+
 
         //实收金额
         BigDecimal officialReceipts = anhuiMoneyinfo.getOfficialReceipts();
@@ -2482,6 +2454,9 @@ public class ProjectService {
             if ("1".equals(anhuiMoneyinfo.getPayTerm())) {
                 //获取应收金额
                 AnhuiMoneyinfo anhuiMoneyinfo1 = anhuiMoneyinfoMapper.selectOneByExample(example);
+                if (anhuiMoneyinfo.getContractAmount()!=null){
+                    anhuiMoneyinfo1.setContractAmount(anhuiMoneyinfo.getContractAmount());
+                }
                 //获取代收金额信息
                 //如果代收金额为空 说明第一次代收
                 if (anhuiMoneyinfo1 == null) {
