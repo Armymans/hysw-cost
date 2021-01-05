@@ -488,11 +488,16 @@ public class BudgetingServiceImpl implements BudgetingService {
 
         if (budgetingVo.getRevenue()!=null && !"".equals(budgetingVo.getRevenue())){
             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetingVo.getBaseId());
+            Example example1 = new Example(DesignInfo.class);
+            Example.Criteria criteria = example1.createCriteria();
+            criteria.andEqualTo("baseProjectId",baseProject.getId());
+            criteria.andEqualTo("status","0");
+            DesignInfo designInfo = designInfoMapper.selectOneByExample(example1);
             if ("4".equals(baseProject.getDistrict())){
 
                 Example example = new Example(WujiangMoneyInfo.class);
                 Example.Criteria cc = example.createCriteria();
-                cc.andEqualTo("baseProjectId",baseProject.getId());
+                cc.andEqualTo("baseProjectId",designInfo.getId());
                 cc.andEqualTo("status","0");
                 WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
                 if (wujiangMoneyInfo1 == null){
@@ -500,7 +505,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                     wujiangMoneyInfo.setId(UUID.randomUUID().toString().replace("-",""));
                     wujiangMoneyInfo.setRevenue(new BigDecimal(budgetingVo.getRevenue()));
                     wujiangMoneyInfo.setStatus("0");
-                    wujiangMoneyInfo.setBaseProjectId(baseProject.getId());
+                    wujiangMoneyInfo.setBaseProjectId(designInfo.getId());
                     SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     wujiangMoneyInfo.setCreateTime(s.format(new Date()));
                     wujiangMoneyInfoMapper.insertSelective(wujiangMoneyInfo);
@@ -509,13 +514,13 @@ public class BudgetingServiceImpl implements BudgetingService {
             }else{
                 Example example = new Example(AnhuiMoneyinfo.class);
                 Example.Criteria cc = example.createCriteria();
-                cc.andEqualTo("baseProjectId",baseProject.getId());
+                cc.andEqualTo("baseProjectId",designInfo.getId());
                 cc.andEqualTo("status","0");
                 AnhuiMoneyinfo anhuiMoneyinfo1 = anhuiMoneyinfoMapper.selectOneByExample(example);
                 if (anhuiMoneyinfo1==null){
                     AnhuiMoneyinfo anhuiMoneyinfo = new AnhuiMoneyinfo();
                     anhuiMoneyinfo.setId(UUID.randomUUID().toString().replace("-",""));
-                    anhuiMoneyinfo.setBaseProjectId(baseProject.getId());
+                    anhuiMoneyinfo.setBaseProjectId(designInfo.getId());
                     anhuiMoneyinfo.setRevenue(new BigDecimal(budgetingVo.getRevenue()));
                     anhuiMoneyinfo.setStatus("0");
                     SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

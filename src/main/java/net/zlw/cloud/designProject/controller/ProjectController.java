@@ -549,7 +549,7 @@ public class ProjectController extends BaseController {
     public Map<String,Object> wujiangMoneyInfoSelect(String id) {
         WujiangMoneyInfo wujiangMoneyInfo = projectService.wujiangMoneyInfoSelect(id);
         if (wujiangMoneyInfo.getRevenue()!=null){
-            if (wujiangMoneyInfo.getCostType() == null && wujiangMoneyInfo.getDesignRate()==null){
+            if ((wujiangMoneyInfo.getCostType() == null || "".equals(wujiangMoneyInfo.getCostType())) && wujiangMoneyInfo.getDesignRate()==null){
                 wujiangMoneyInfo.setUnShow("1");
             }
         }

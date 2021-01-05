@@ -2531,6 +2531,16 @@ public class ProjectService {
                 anhuiMoneyinfo.setCompanyId(loginUser.getCompanyId());
                 anhuiMoneyinfo.setStatus("0");
                 anhuiMoneyinfo.setCreateTime(simpleDateFormat.format(new Date()));
+
+                Example example1 = new Example(AnhuiMoneyinfo.class);
+                Example.Criteria criteria = example1.createCriteria();
+                criteria.andEqualTo("baseProjectId",anhuiMoneyinfo.getBaseProjectId());
+                criteria.andEqualTo("status","0");
+                AnhuiMoneyinfo anhuiMoneyinfo2 = anhuiMoneyinfoMapper.selectOneByExample(example1);
+                if (anhuiMoneyinfo2!=null){
+                    anhuiMoneyinfoMapper.deleteByPrimaryKey(anhuiMoneyinfo2);
+                }
+
                 anhuiMoneyinfoMapper.insert(anhuiMoneyinfo);
                 //同时返回标识 改账单已支付完成
                 designInfoMapper.updateFinalAccount(anhuiMoneyinfo.getBaseProjectId());
@@ -2686,6 +2696,14 @@ public class ProjectService {
                 //如果是实收 则直接添加到表中
 
 
+                Example example1 = new Example(AnhuiMoneyinfo.class);
+                Example.Criteria criteria = example1.createCriteria();
+                criteria.andEqualTo("baseProjectId",wujiangMoneyInfo.getBaseProjectId());
+                criteria.andEqualTo("status","0");
+                WujiangMoneyInfo wujiangMoneyInfo2 = wujiangMoneyInfoMapper.selectOneByExample(example1);
+                if (wujiangMoneyInfo2!=null){
+                    wujiangMoneyInfoMapper.deleteByPrimaryKey(wujiangMoneyInfo2);
+                }
 
                 wujiangMoneyInfoMapper.insert(wujiangMoneyInfo);
                 //同时返回标识 改账单已支付完成
