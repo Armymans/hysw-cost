@@ -17,7 +17,11 @@ import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
+import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
+import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementInfoMapper;
+import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
+import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
@@ -61,6 +65,12 @@ public class FileInfoService {
     private MaintenanceProjectInformationMapper maintenanceProjectInformationMapper;
     @Resource
     private TrackAuditInfoDao trackAuditInfoDao;
+
+    @Resource
+    private SettlementAuditInformationDao downSetDao;
+
+    @Resource
+    private LastSettlementReviewDao UpSetDao;
 
     @Resource
     private MkyUserMapper mkyUserMapper;
@@ -202,6 +212,9 @@ public class FileInfoService {
             visaChangeStatus = baseProjectDao.selectByPrimaryKey(visaChange.getBaseProjectId());
         }
         //结算
+
+        LastSettlementReview lastSettlementReview = UpSetDao.selectByPrimaryKey(key);
+        SettlementAuditInformation auditInformation = downSetDao.selectByPrimaryKey(key);
         BaseProject settAuditStatus = baseProjectDao.selectByPrimaryKey(key);
         //检维修
          MaintenanceProjectInformation mainStatus = maintenanceProjectInformationMapper.selectByPrimaryKey(key);
@@ -221,6 +234,20 @@ public class FileInfoService {
             for (AuditInfo thisAudit : auditInfos) {
                 String auditorId = thisAudit.getAuditorId();
                 auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
+            }
+        }else {
+            if (lastSettlementReview != null){
+                List<AuditInfo> auditInfos1 = auditInfoDao.selectAuditInfoList(lastSettlementReview.getId());
+                for (AuditInfo auditInfo : auditInfos1) {
+                    String auditorId = auditInfo.getAuditorId();
+                    auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
+                }
+            }else {
+                List<AuditInfo> auditInfos1 = auditInfoDao.selectAuditInfoList(auditInformation.getId());
+                for (AuditInfo auditInfo : auditInfos1) {
+                    String auditorId = auditInfo.getAuditorId();
+                    auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
+                }
             }
         }
         if (costFile.size() > 0) {
