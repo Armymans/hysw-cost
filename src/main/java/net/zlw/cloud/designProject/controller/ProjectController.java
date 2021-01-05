@@ -3,7 +3,6 @@ package net.zlw.cloud.designProject.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageInfo;
-import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.CostPreparation;
@@ -495,7 +494,7 @@ public class ProjectController extends BaseController {
                     throw new RuntimeException("请先填写归属");
                 }
             }
-            projectService.anhuiMoneyInfoAdd(anhuiMoneyinfo, new UserInfo("user309",null,null,true));
+            projectService.anhuiMoneyInfoAdd(anhuiMoneyinfo, getLoginUser());
         } catch (Exception e) {
           return  RestUtil.error(e.getMessage());
         }
