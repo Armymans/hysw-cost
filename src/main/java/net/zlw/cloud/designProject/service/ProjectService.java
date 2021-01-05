@@ -2393,13 +2393,17 @@ public class ProjectService {
         if (anhuiMoneyinfo != null) {
             String[] split = anhuiMoneyinfo.getCollectionMoney().split(",");
             Integer count = 1;
-            for (String money : split) {
-                CollectionMoney collectionMoney = new CollectionMoney();
-                collectionMoney.setId("第" + (count) + "次收款");
-                collectionMoney.setMoney(money);
-                collectionMoney.setCollectionTime(anhuiMoneyinfo.getCollectionTime());
-                collectionMonies.add(collectionMoney);
-                count++;
+
+            if (split!= null){
+
+                for (String money : split) {
+                    CollectionMoney collectionMoney = new CollectionMoney();
+                    collectionMoney.setId("第" + (count) + "次收款");
+                    collectionMoney.setMoney(money);
+                    collectionMoney.setCollectionTime(anhuiMoneyinfo.getCollectionTime());
+                    collectionMonies.add(collectionMoney);
+                    count++;
+                }
             }
         }
         return collectionMonies;
