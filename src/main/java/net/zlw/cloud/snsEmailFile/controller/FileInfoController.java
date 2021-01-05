@@ -221,7 +221,7 @@ public class FileInfoController extends BaseController {
      * @Description //修改文件信息 名字和备注
      * @Date 11:31 2020/10/10
      **/
-    @RequestMapping(value = "/updateFileName", method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/updateFileName", method = RequestMethod.POST)
     public Map<String, Object> updateFileName(String code, String id, String name, String remark) {
         FileInfo fileInfo = fileInfoService.getByKey(id);
         fileInfo.setName(name);
