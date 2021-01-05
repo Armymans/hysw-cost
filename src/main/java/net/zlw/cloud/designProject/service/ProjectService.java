@@ -2489,12 +2489,17 @@ public class ProjectService {
                 } else {
                     String collectionMoney = anhuiMoneyinfo1.getCollectionMoney();
                     //若果不是说明第一次添加
-                    anhuiMoneyinfo1.setCollectionMoney(collectionMoney +officialReceipts+ ",");
+                    String[] split = null;
+                    if (collectionMoney!=null){
+                        anhuiMoneyinfo1.setCollectionMoney(collectionMoney +officialReceipts+ ",");
+                        split = anhuiMoneyinfo1.getCollectionMoney().split(",");
+                    }
 //                    String[] split = collectionMoney.split(",");
-                    String[] split = anhuiMoneyinfo1.getCollectionMoney().split(",");
                     Double total = 0.0;
-                    for (String s : split) {
-                        total += Double.parseDouble(s);
+                    if (split!=null){
+                        for (String s : split) {
+                            total += Double.parseDouble(s);
+                        }
                     }
                     anhuiMoneyinfo1.setTotalMoney(new BigDecimal(total));
                     //如果代收金额超过或者等于 应收金额后

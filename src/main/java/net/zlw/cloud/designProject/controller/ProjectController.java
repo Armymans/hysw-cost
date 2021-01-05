@@ -3,6 +3,7 @@ package net.zlw.cloud.designProject.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageInfo;
+import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.CostPreparation;
@@ -471,7 +472,7 @@ public class ProjectController extends BaseController {
      */
     @RequestMapping(value = "/api/disproject/anhuiMoneyInfoAdd", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> anhuiMoneyInfoAdd(AnhuiMoneyinfo anhuiMoneyinfo) {
-        if (anhuiMoneyinfo.getPumpRoomCost().equals("")){
+        if ("".equals(anhuiMoneyinfo.getPumpRoomCost())){
             anhuiMoneyinfo.setPumpRoomCost(null);
         }
         if ("".equals(anhuiMoneyinfo.getBim())){
@@ -514,7 +515,7 @@ public class ProjectController extends BaseController {
                     throw new RuntimeException("请先填写归属");
                 }
             }
-            projectService.anhuiMoneyInfoAdd(anhuiMoneyinfo, getLoginUser());
+            projectService.anhuiMoneyInfoAdd(anhuiMoneyinfo, new UserInfo("user309",null,null,true));
         } catch (Exception e) {
             e.printStackTrace();
           return  RestUtil.error(e.getMessage());
