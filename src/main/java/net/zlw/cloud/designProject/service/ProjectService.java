@@ -2426,16 +2426,18 @@ public class ProjectService {
         example.createCriteria().andEqualTo("baseProjectId", id);
         WujiangMoneyInfo wujiangMoneyInfo = wujiangMoneyInfoMapper.selectOneByExample(example);
         if (wujiangMoneyInfo != null) {
-            String[] split = wujiangMoneyInfo.getCollectionMoney().split(",");
-            Integer count = 1;
-            for (String money : split) {
-                CollectionMoney collectionMoney = new CollectionMoney();
-                collectionMoney.setId("第" + (count) + "次收款");
-                collectionMoney.setMoney(money);
-                collectionMoney.setCollectionTime(wujiangMoneyInfo.getCollectionTime());
-                collectionMonies.add(collectionMoney);
+            if (wujiangMoneyInfo.getCollectionMoney()!=null){
+                String[] split = wujiangMoneyInfo.getCollectionMoney().split(",");
+                Integer count = 1;
+                for (String money : split) {
+                    CollectionMoney collectionMoney = new CollectionMoney();
+                    collectionMoney.setId("第" + (count) + "次收款");
+                    collectionMoney.setMoney(money);
+                    collectionMoney.setCollectionTime(wujiangMoneyInfo.getCollectionTime());
+                    collectionMonies.add(collectionMoney);
 
-                count++;
+                    count++;
+                }
             }
         }
         return collectionMonies;
@@ -2620,7 +2622,7 @@ public class ProjectService {
                 WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
                 //获取代收金额信息
                 //如果代收金额为空 说明第一次代收
-                if (wujiangMoneyInfo1 == null) {
+                if (wujiangMoneyInfo1 == null || wujiangMoneyInfo1.getCollectionMoney() == null) {
                     //将代收信息拼接 保存到对象中
                     String newcollectionMoney =  officialReceipts + ",";
                     wujiangMoneyInfo.setCollectionMoney(newcollectionMoney);
@@ -2635,17 +2637,32 @@ public class ProjectService {
                     wujiangMoneyInfo.setId(uuid);
                     wujiangMoneyInfo.setStatus("0");
                     wujiangMoneyInfo.setCreateTime(data);
+
+                    Example example1 = new Example(AnhuiMoneyinfo.class);
+                    Example.Criteria criteria = example1.createCriteria();
+                    criteria.andEqualTo("baseProjectId",wujiangMoneyInfo.getBaseProjectId());
+                    criteria.andEqualTo("status","0");
+                    WujiangMoneyInfo wujiangMoneyInfo2 = wujiangMoneyInfoMapper.selectOneByExample(example1);
+                    if (wujiangMoneyInfo2!=null){
+                        wujiangMoneyInfoMapper.deleteByPrimaryKey(wujiangMoneyInfo2);
+                    }
+
                     wujiangMoneyInfoMapper.insert(wujiangMoneyInfo);
                 } else {
                     String collectionMoney = wujiangMoneyInfo1.getCollectionMoney();
                     //若果不是说明第一次添加
                     String s1 = officialReceipts.toString();
-                    wujiangMoneyInfo1.setCollectionMoney(collectionMoney+s1+",");
+                    String[] split = null;
+                    if (collectionMoney!=null){
+                        wujiangMoneyInfo1.setCollectionMoney(collectionMoney+s1+",");
+                        split = wujiangMoneyInfo1.getCollectionMoney().split(",");
+                    }
 //                    String[] split = collectionMoney.split(",");
-                    String[] split = wujiangMoneyInfo1.getCollectionMoney().split(",");
                     Double total = 0.0;
-                    for (String s : split) {
-                        total += Double.parseDouble(s);
+                    if (split!=null){
+                        for (String s : split) {
+                            total += Double.parseDouble(s);
+                        }
                     }
                     wujiangMoneyInfo1.setTotalMoney(new BigDecimal(total));
                     //如果代收金额超过或者等于 应收金额后
@@ -2662,6 +2679,9 @@ public class ProjectService {
                 wujiangMoneyInfo.setStatus("0");
                 wujiangMoneyInfo.setCreateTime(data);
                 //如果是实收 则直接添加到表中
+
+
+
                 wujiangMoneyInfoMapper.insert(wujiangMoneyInfo);
                 //同时返回标识 改账单已支付完成
                 designInfoMapper.updateFinalAccount(wujiangMoneyInfo.getBaseProjectId());
