@@ -2,6 +2,8 @@ package net.zlw.cloud.librarian.service;
 
 import net.zlw.cloud.librarian.dao.ThoseResponsibleDao;
 import net.zlw.cloud.librarian.model.ThoseResponsible;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
+import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,8 @@ import java.util.List;
 public class ThoseResponsibleService  {
     @Resource
     private ThoseResponsibleDao thoseResponsibleDao;
+    @Resource
+    private MemberManageDao memberManageDao;
 
     public List<ThoseResponsible> findthoseResponsiblAll() {
         List<ThoseResponsible> thoseResponsibles = thoseResponsibleDao.selectAll();
@@ -30,5 +34,9 @@ public class ThoseResponsibleService  {
             thoseResponsible.setPersonnel(personnel);
             thoseResponsibleDao.updateByPrimaryKeySelective(thoseResponsible);
         }
+    }
+
+    public List<MemberManage> findAllTaskManager() {
+      return   memberManageDao.findAllTaskManager();
     }
 }

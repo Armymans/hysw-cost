@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
 
+import java.util.List;
+
 @org.apache.ibatis.annotations.Mapper
 public interface MemberManageDao extends Mapper<MemberManage> {
 
@@ -33,4 +35,7 @@ public interface MemberManageDao extends Mapper<MemberManage> {
 
     @Select("SELECT id FROM member_manage WHERE member_name = #{name} ")
     String findNameById(@Param("name") String name);
+
+    @Select("select id, member_name memberName from member_manage where ( dep_id = '1' or dep_id = '2' ) and member_name != '造价领导' and member_name != '设计领导'")
+    List<MemberManage> findAllTaskManager();
 }

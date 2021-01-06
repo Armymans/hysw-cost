@@ -111,7 +111,7 @@ public class BuildingProjectController extends BaseController {
      **/
     @RequestMapping(value = "/selectBaseProjectFindAll",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectBaseProjectFindAll(PageBaseVo pageBaseVo){
-        List<ProVo> findList = buildingProjectService.selectBaseProjectFindAll(pageBaseVo);
+        List<ProVo> findList = buildingProjectService.selectBaseProjectFindAll(pageBaseVo,getLoginUser().getId());
         PageInfo<ProVo> proVoPageInfo = new PageInfo<>(findList);
         return RestUtil.page(proVoPageInfo);
     }
@@ -126,7 +126,7 @@ public class BuildingProjectController extends BaseController {
     public Map<String,Object> selectLikeBaseProject(PageBaseVo pageBaseVo){
 
         Page page = new Page();
-        List<ProVo> proVos = buildingProjectService.selectBaseProjectFindAll(pageBaseVo);
+        List<ProVo> proVos = buildingProjectService.selectBaseProjectFindAll(pageBaseVo, getLoginUser().getId());
         PageInfo<ProVo> proVoPageInfo = new PageInfo<>(proVos);
         page.setPageNum(proVoPageInfo.getPageNum());
         page.setPageSize(proVoPageInfo.getPageSize());

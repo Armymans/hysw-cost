@@ -14,6 +14,8 @@ import net.zlw.cloud.designProject.model.AnhuiMoneyinfo;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.WujiangMoneyInfo;
+import net.zlw.cloud.librarian.dao.ThoseResponsibleDao;
+import net.zlw.cloud.librarian.model.ThoseResponsible;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
@@ -68,6 +70,8 @@ public class BuildingProjectService {
 
     @Resource
     private MemberManageDao memberManageDao;
+    @Resource
+    private ThoseResponsibleDao thoseResponsibleDao;
     /**
      * @Author Armyman
      * @Description //查询可被选为合并项目的建设项目
@@ -238,7 +242,7 @@ public class BuildingProjectService {
         return BaseProjectVo;
     }
 
-    public List<ProVo> selectBaseProjectFindAll(PageBaseVo pageVo) {
+    public List<ProVo> selectBaseProjectFindAll(PageBaseVo pageVo, String id) {
         List<ProVo> baseList = baseProjectDao.selectBaseProjectFindAll(pageVo);
             for (ProVo thisVo : baseList) {
                 Example example = new Example(DesignInfo.class);
@@ -258,6 +262,25 @@ public class BuildingProjectService {
                     }
                 }
             }
+
+
+            ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("1");
+            String personnel = thoseResponsible.getPersonnel();
+            boolean f = false;
+            if (personnel!=null){
+                String[] split = personnel.split(",");
+                for (String s : split) {
+                    if (s.equals(id)){
+                        f = true;
+                    }
+                }
+            }
+            if (f){
+                for (ProVo proVo : baseList) {
+                    proVo.setFShow("1");
+                }
+            }
+
         return baseList;
     }
 }
