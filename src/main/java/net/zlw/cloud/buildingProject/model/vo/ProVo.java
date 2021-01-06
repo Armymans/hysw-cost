@@ -29,4 +29,6 @@ public class ProVo {
     private String projectFlow; // 项目流程
     private String createTime; //创建时间
     private String district; //地区
+
+    private String fShow;
 }
