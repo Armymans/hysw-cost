@@ -244,7 +244,8 @@ public class FileInfoService {
                     String auditorId = auditInfo.getAuditorId();
                     auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
                 }
-            }else {
+            }
+            if (oneDown != null){
                 List<AuditInfo> auditInfos1 = auditInfoDao.selectAuditInfoList(oneDown.getId());
                 for (AuditInfo auditInfo : auditInfos1) {
                     String auditorId = auditInfo.getAuditorId();
