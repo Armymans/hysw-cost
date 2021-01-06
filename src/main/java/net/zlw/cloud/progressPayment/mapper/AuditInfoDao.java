@@ -232,7 +232,6 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "            WHERE    " +
             "             base_project_id = #{key}    " +
             "             AND `status` = '0'     " +
-            "             AND (audit_result = '1' or audit_result ='0')" +
             "             AND (audit_type = '0' or audit_type = '2')")
     List<net.zlw.cloud.warningDetails.model.AuditInfo> selectAuditInfoList(@Param("key") String key);
 }
