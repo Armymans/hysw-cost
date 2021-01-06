@@ -288,7 +288,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             }else if ("5".equals(pageVo.getTrackStatus()) || "3".equals(pageVo.getTrackStatus())) {
                 //进行中，已完成不分层级，都能看到
                 //但是进行中的和已完成按钮除查看只有领导和创建人可操作
-                List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
+                List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList4(pageVo);
 
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                     if (pageVo.getUid().equals(returnTrackVo.getFounderId())){
