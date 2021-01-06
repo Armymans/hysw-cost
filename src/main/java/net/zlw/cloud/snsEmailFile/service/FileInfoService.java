@@ -238,6 +238,22 @@ public class FileInfoService {
                 auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
             }
         }else {
+            Example example = new Example(TrackMonthly.class);
+            example.createCriteria().andEqualTo("trackId",key)
+                                    .andEqualTo("status","0");
+            List<TrackMonthly> trackMonthlies = trackMonthlyDao.selectByExample(example);
+            if (trackMonthlies.size() >0){
+                for (TrackMonthly trackMonthly : trackMonthlies) {
+                    List<AuditInfo> auditInfos1 = auditInfoDao.selectAuditInfoList(trackMonthly.getId());
+                    if (auditInfos1.size()>0){
+                        for (AuditInfo auditInfo : auditInfos1) {
+                            String auditorId = auditInfo.getAuditorId();
+                            auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
+                        }
+
+                    }
+                }
+            }
             if (oneUp != null){
                 List<AuditInfo> auditInfos1 = auditInfoDao.selectAuditInfoList(oneUp.getId());
                 for (AuditInfo auditInfo : auditInfos1) {
@@ -252,6 +268,7 @@ public class FileInfoService {
                     auditUser = mkyUserMapper.selectByPrimaryKey(auditorId);
                 }
             }
+
         }
         if (costFile.size() > 0) {
             for (FileInfo thisFile : costFile) {
