@@ -630,27 +630,7 @@ public class ProjectService {
             if (designInfos.size() > 0) {
                 for (DesignInfo designInfo : designInfos) {
 
-                    net.zlw.cloud.progressPayment.model.BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(designInfo.getId());
-                    String district1 = baseProject1.getDistrict();
-                    if ("4".equals(district1)){
-                        Example example = new Example(WujiangMoneyInfo.class);
-                        Example.Criteria cc = example.createCriteria();
-                        cc.andEqualTo("baseProjectId",designInfo.getId());
-                        cc.andEqualTo("status","0");
-                        WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
-                        if (wujiangMoneyInfo1!=null){
-                            designInfo.setContractAmount(wujiangMoneyInfo1.getContractAmount().toString());
-                        }
-                    }else{
-                        Example example = new Example(AnhuiMoneyinfo.class);
-                        Example.Criteria cc = example.createCriteria();
-                        cc.andEqualTo("baseProjectId",designInfo.getId());
-                        cc.andEqualTo("status","0");
-                        AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
-                        if (anhuiMoneyinfo!=null){
-                            designInfo.setContractAmount(anhuiMoneyinfo.getContractAmount());
-                        }
-                    }
+
 
                     DesignInfo designInfo1 = designInfoMapper.selectByPrimaryKey(designInfo.getId());
                     String designer = designInfo1.getDesigner();
@@ -793,6 +773,29 @@ public class ProjectService {
                         designInfo.setAmountCost(budgeting.getAmountCost()+"");
                     } else {
                         designInfo.setAmountCost("/");
+                    }
+                }
+            }
+            for (DesignInfo designInfo : designInfos1) {
+                net.zlw.cloud.progressPayment.model.BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(designInfo.getBaseProjectId());
+                String district1 = baseProject1.getDistrict();
+                if ("4".equals(district1)){
+                    Example example = new Example(WujiangMoneyInfo.class);
+                    Example.Criteria cc = example.createCriteria();
+                    cc.andEqualTo("baseProjectId",designInfo.getId());
+                    cc.andEqualTo("status","0");
+                    WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
+                    if (wujiangMoneyInfo1!=null){
+                        designInfo.setContractAmount(wujiangMoneyInfo1.getContractAmount().toString());
+                    }
+                }else{
+                    Example example = new Example(AnhuiMoneyinfo.class);
+                    Example.Criteria cc = example.createCriteria();
+                    cc.andEqualTo("baseProjectId",designInfo.getId());
+                    cc.andEqualTo("status","0");
+                    AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
+                    if (anhuiMoneyinfo!=null){
+                        designInfo.setContractAmount(anhuiMoneyinfo.getContractAmount());
                     }
                 }
             }
