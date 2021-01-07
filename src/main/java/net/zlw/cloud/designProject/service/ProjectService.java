@@ -759,7 +759,7 @@ public class ProjectService {
                                 designInfo.setOfficialReceipts(wujiangMoneyInfo.getOfficialReceipts());
                                 designInfo.setDisMoney(wujiangMoneyInfo.getRevenue());
                                 designInfo.setPayTerm(wujiangMoneyInfo.getPayTerm());
-                                designInfo.setContractAmount(wujiangMoneyInfo.getContractAmount().toString());
+                                designInfo.setContractAmount(wujiangMoneyInfo.getContractAmount()+"");
                             }
                         }
                     }

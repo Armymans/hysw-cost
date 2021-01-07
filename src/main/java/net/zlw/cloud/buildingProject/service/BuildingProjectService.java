@@ -249,18 +249,21 @@ public class BuildingProjectService {
                 example.createCriteria().andEqualTo("baseProjectId",thisVo.getId());
 //                                        .andEqualTo("status","0");
                 DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
-                // 如果是安徽
-                if (!"4".equals(thisVo.getDistrict())) {
-                    AnhuiMoneyinfo anhuiMoneyinfo = baseProjectDao.selectByAnHuiOfficialReceipts(designInfo.getId());
-                    if (anhuiMoneyinfo != null) {
-                        thisVo.setOfficialReceipts(anhuiMoneyinfo.getRevenue());
-                    }
-                } else {
-                    WujiangMoneyInfo wujiangMoneyInfo = baseProjectDao.selectByWuJiangOfficialReceipts(designInfo.getId());
-                    if (wujiangMoneyInfo != null) {
-                        thisVo.setOfficialReceipts(wujiangMoneyInfo.getRevenue());
+                if (designInfo!=null){
+                    // 如果是安徽
+                    if (!"4".equals(thisVo.getDistrict())) {
+                        AnhuiMoneyinfo anhuiMoneyinfo = baseProjectDao.selectByAnHuiOfficialReceipts(designInfo.getId());
+                        if (anhuiMoneyinfo != null) {
+                            thisVo.setOfficialReceipts(anhuiMoneyinfo.getRevenue());
+                        }
+                    } else {
+                        WujiangMoneyInfo wujiangMoneyInfo = baseProjectDao.selectByWuJiangOfficialReceipts(designInfo.getId());
+                        if (wujiangMoneyInfo != null) {
+                            thisVo.setOfficialReceipts(wujiangMoneyInfo.getRevenue());
+                        }
                     }
                 }
+
             }
 
 

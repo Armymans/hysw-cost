@@ -58,6 +58,7 @@ public class ThoseResponsibleController extends BaseController {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         baseProject.setCreateTime(simpleDateFormat.format(new Date()));
         baseProject.setStatus("0");
+        baseProject.setDelFlag("0");
         baseProject.setFounderId(getLoginUser().getId());
         baseProjectDao.insertSelective(baseProject);
         return RestUtil.success();

@@ -3,7 +3,6 @@ package net.zlw.cloud.librarian.service;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
 import net.zlw.cloud.designProject.mapper.PackageCameMapper;
 import net.zlw.cloud.designProject.mapper.ProjectExplorationMapper;
-import net.zlw.cloud.designProject.mapper.ProjectMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.designProject.model.PackageCame;
 import net.zlw.cloud.designProject.model.ProjectExploration;
@@ -31,7 +30,7 @@ public class ThoseResponsibleService  {
     @Resource
     private MemberManageDao memberManageDao;
     @Resource
-    private BaseProjectDao projectMapper;
+    private BaseProjectDao baseProjectDao;
     @Resource
     private ProjectExplorationMapper projectExplorationMapper;
     @Resource
@@ -89,8 +88,12 @@ public class ThoseResponsibleService  {
     private SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public void missionPerson(String missionType, String missionPerson, String id,String baseId) {
         //设计
-        BaseProject baseProject = projectMapper.selectByPrimaryKey(baseId);
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
         if ("1".equals(missionType)){
+
+            baseProject.setDesginStatus("2");
+            baseProjectDao.updateByPrimaryKey(baseProject);
+
             Example example = new Example(DesignInfo.class);
             Example.Criteria c = example.createCriteria();
             c.andEqualTo("baseProjectId",baseProject.getId());
@@ -119,8 +122,12 @@ public class ThoseResponsibleService  {
                 designInfo.setBaseProjectId(baseProject.getId());
                 designInfo.setFounderId(missionPerson);
                 designInfo.setStatus("0");
+                designInfo.setDesigner(missionPerson);
+                designInfo.setOutsource("1");
                 designInfo.setCreateTime(s.format(new Date()));
                 designInfoMapper.insertSelective(designInfo);
+            }else{
+                throw new RuntimeException("当前工程设计任务已存在");
             }
 
         }
