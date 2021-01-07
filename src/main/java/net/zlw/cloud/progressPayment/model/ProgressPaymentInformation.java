@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Table(name = "progress_payment_information")
 @Data
 public class ProgressPaymentInformation implements Serializable {
-    /*
+    /*1111
  `id` varchar(60) NOT NULL COMMENT '唯一标识',
   `current_payment_Information` decimal(60,0) DEFAULT NULL COMMENT '本期支付金额',
   `cumulative_payment_times` varchar(60) DEFAULT NULL COMMENT '累计支付次数',
@@ -80,6 +80,8 @@ public class ProgressPaymentInformation implements Serializable {
     private String delFlag;
     @Column(name = "change_num")
     private Integer changeNum;
+    @Column(name = "construction_organization")
+    private String constructionOrganization;
     @Transient
     private String typeS;
 }

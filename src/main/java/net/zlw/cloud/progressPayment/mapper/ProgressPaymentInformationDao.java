@@ -3,6 +3,8 @@ package net.zlw.cloud.progressPayment.mapper;
 import net.zlw.cloud.designProject.model.CostVo2;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.progressPayment.model.vo.PageVo;
+import net.zlw.cloud.progressPayment.model.vo.PaymentListVo;
+import net.zlw.cloud.progressPayment.model.vo.PaymentVo;
 import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -589,4 +591,34 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " ORDER BY " +
   " p.create_time desc")
     List<ProgressListVo> searchAllProgressSueecss(PageVo pageVo);
+    
+    @Select("SELECT " +
+            " p.id, " +
+            " b.id baseId," +
+            " p.current_payment_ratio currentPaymentRatio, " +
+            " b.progress_payment_status progressPaymentStatus ," +
+            " p.current_payment_Information currentPaymentInformation, " +
+            " p.current_period_according currentPeriodAccording," +
+            " p.amount_outsourcing amountOutsourcing ," +
+            " p.construction_organization constructionOrganization," +
+            " p.founder_id founderId, " +
+            " p.contract_amount contractAmount, " +
+            " ( CASE p.project_type WHEN '1' THEN '合同内进度款支付' WHEN '2' THEN '合同外进度款支付' END ) projectType, " +
+            " ( CASE p.outsourcing WHEN '1' THEN '是' WHEN '2' THEN '否' END ) outsourcing, " +
+            " p.receiving_time receivingTime, " +
+            " p.compile_time compileTime, " +
+            " p.name_of_cost_unit nameOfCostUnit, " +
+            " p.contact contact, " +
+            " p.contact_phone contactPhone  " +
+            "FROM " +
+            " `progress_payment_information` p " +
+            " LEFT JOIN base_project b ON p.base_project_id = b.id  " +
+            "WHERE " +
+            " p.del_flag != '1'  " +
+            " AND p.base_project_id = #{baseId}")
+    List<PaymentListVo> paymentInfoList (@Param("baseId") String baseId);
+
+
+    @Select("SELECT * FROM progress_payment_information WHERE del_flag = '0' AND base_project_id = #{baseId}")
+    ProgressPaymentInformation selectProOne(String baseId);
 }

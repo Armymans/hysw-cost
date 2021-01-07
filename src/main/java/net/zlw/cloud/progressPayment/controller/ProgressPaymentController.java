@@ -11,6 +11,7 @@ import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.progressPayment.model.vo.*;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
+import net.zlw.cloud.progressPayment.service.ProgressPaymentInformationService;
 import net.zlw.cloud.progressPayment.service.ProgressPaymentTotalPaymentService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +28,9 @@ import java.util.Map;
 public class ProgressPaymentController  extends BaseController {
     @Resource
     private BaseProjectService baseProjectService;
+
+    @Resource
+    private ProgressPaymentInformationService progressPaymentInformationService;
 
     @Resource
     private ProgressPaymentTotalPaymentService progressPaymentTotalPaymentService;
@@ -114,8 +118,8 @@ public class ProgressPaymentController  extends BaseController {
     @RequestMapping(value = "/progress/searchAllProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> searchAllProgress(PageVo pageVo){
 
-        pageVo.setUid(getLoginUser().getId());
-//        pageVo.setUid("200101005");
+//        pageVo.setUid(getLoginUser().getId());
+        pageVo.setUid("user325");
         PageInfo<ProgressListVo> progressListVoPageInfo = baseProjectService.searchAllProgress(pageVo);
         return RestUtil.page(progressListVoPageInfo);
     }
@@ -260,5 +264,43 @@ public class ProgressPaymentController  extends BaseController {
     public Map<String,Object> findcheckAll(@RequestParam(name = "num") String num,@RequestParam(name = "id") String id){
         List<AuditChekedVo> list = baseProjectService.findcheckAll(num,id);
         return RestUtil.success(list);
+    }
+
+
+    //新增-进度款信息
+    @RequestMapping(value = "/progress/addPayment",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> addPayment(PaymentVo paymentVo){
+        progressPaymentInformationService.addPayment(paymentVo);
+        return RestUtil.success("新增成功");
+    }
+
+    //编辑-进度款信息
+    @RequestMapping(value = "/progress/editPayment",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> editPayment(PaymentVo paymentVo){
+        progressPaymentInformationService.editPayment(paymentVo);
+        return RestUtil.success("修改成功");
+    }
+
+    //回显-进度款信息
+    @RequestMapping(value = "/progress/findPayment",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findPayment(String id){
+
+        PaymentVo findPayment = progressPaymentInformationService.findPayment(id);
+        return RestUtil.success(findPayment);
+    }
+
+    //删除-进度款信息
+    @RequestMapping(value = "/progress/deletePayment",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> deletePayment(String id){
+
+        progressPaymentInformationService.deletePayment(id);
+        return RestUtil.success("删除成功");
+    }
+
+    //查询-进度款信息
+    @RequestMapping(value = "/progress/paymentList",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> paymentList(String id){
+        List<PaymentListVo> paymentVos = progressPaymentInformationService.paymentList(id);
+        return RestUtil.success(paymentVos);
     }
 }
