@@ -2096,7 +2096,9 @@ public class BudgetingServiceImpl implements BudgetingService {
             cc.andEqualTo("baseProjectId",designInfo.getId());
             cc.andEqualTo("status","0");
             AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
-            return anhuiMoneyinfo.getRevenue().toString();
+            if (anhuiMoneyinfo!=null){
+                return anhuiMoneyinfo.getRevenue().toString();
+            }
         }
         return null;
     }

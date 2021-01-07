@@ -901,6 +901,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         TrackVo trackVo = new TrackVo();
         TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(id);
         BigDecimal outsourceMoney = trackAuditInfo.getOutsourceMoney();
+        if (outsourceMoney ==null){
+            outsourceMoney = new BigDecimal("0.00");
+        }
         String money = outsourceMoney.toString();
         if ("0.00".equals(money)){
             trackAuditInfo.setOutsourceMoney(null);
@@ -923,12 +926,15 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         AuditInfo auditInfo = null;
         trackVo.setAuditWord("第" + trackMonthlies.size() + "次月报");
         TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(id);
-        Example example2 = new Example(AuditInfo.class);
-        example2.createCriteria().andEqualTo("baseProjectId", trackMonthlyOld.getId())
-                .andEqualTo("status", "0")
-                .andEqualTo("auditorId", userId)
-                .andEqualTo("auditResult", "0");
-        auditInfo = auditInfoDao.selectOneByExample(example2);
+        if (trackMonthlyOld != null){
+
+            Example example2 = new Example(AuditInfo.class);
+            example2.createCriteria().andEqualTo("baseProjectId", trackMonthlyOld.getId())
+                    .andEqualTo("status", "0")
+                    .andEqualTo("auditorId", userId)
+                    .andEqualTo("auditResult", "0");
+            auditInfo = auditInfoDao.selectOneByExample(example2);
+        }
 
         if (auditInfo == null) {
             trackVo.setAuditResult("0"); //不审核
@@ -1290,7 +1296,8 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             trackAuditInfoDao.updateByPrimaryKeySelective(trackVo.getAuditInfo());
             // 操作日志
             String userId = userInfo.getId();
-            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackVo.getAuditInfo().getBaseProjectId());
+            TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(trackVo.getAuditInfo().getId());
+            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
             OperationLog operationLog = new OperationLog();
             operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));

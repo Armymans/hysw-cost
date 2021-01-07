@@ -259,7 +259,10 @@ public class SettleAccountsController extends BaseController {
         }
         String sumbitMoney = accountsVo.getSettlementInfo().getSumbitMoney();
         BigDecimal subtractTheNumber = accountsVo.getSettlementAuditInformation().getSubtractTheNumber();
-        BigDecimal bigDecimal = new BigDecimal(sumbitMoney);
+        BigDecimal bigDecimal = null;
+        if (sumbitMoney!=null){
+            bigDecimal = new BigDecimal(sumbitMoney);
+        }
         System.err.println(subtractTheNumber);
         System.err.println(bigDecimal);
         if (subtractTheNumber!=null && bigDecimal!=null){
