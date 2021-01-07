@@ -46,4 +46,7 @@ public class ProjectExploration {
 
     @Column(name = "update_time")
     private String updateTime;
+
+    @Column(name = "survey_results")
+    private String surveyResults;
 }
