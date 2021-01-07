@@ -242,6 +242,7 @@ public class TrackApplicationInfoController extends BaseController {
         try {
             trackApplicationInfoService.updateTrack(trackVo,getLoginUser(),request);
         } catch (Exception e) {
+            e.printStackTrace();
             return RestUtil.error(e.getMessage());
         }
         return RestUtil.success("修改成功");

@@ -2,6 +2,7 @@ package net.zlw.cloud.librarian.service;
 
 import net.zlw.cloud.VisaChange.mapper.VisaApplyChangeInformationMapper;
 import net.zlw.cloud.VisaChange.mapper.VisaChangeMapper;
+import net.zlw.cloud.VisaChange.model.VisaApplyChangeInformation;
 import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.mapper.CostPreparationDao;
@@ -17,11 +18,24 @@ import net.zlw.cloud.designProject.mapper.ProjectExplorationMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.designProject.model.PackageCame;
 import net.zlw.cloud.designProject.model.ProjectExploration;
+import net.zlw.cloud.followAuditing.mapper.TrackApplicationInfoDao;
+import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
+import net.zlw.cloud.followAuditing.model.TrackApplicationInfo;
+import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.librarian.dao.ThoseResponsibleDao;
 import net.zlw.cloud.librarian.model.ThoseResponsible;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
+import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
+import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
+
+import net.zlw.cloud.settleAccounts.mapper.SettlementInfoMapper;
+import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
+import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
+import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
+import net.zlw.cloud.settleAccounts.model.SettlementInfo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +74,22 @@ public class ThoseResponsibleService  {
     private VisaChangeMapper visaChangeMapper;
     @Resource
     private VisaApplyChangeInformationMapper visaApplyChangeInformationMapper;
+    @Resource
+    private TrackAuditInfoDao trackAuditInfoDao;
+    @Resource
+    private TrackApplicationInfoDao trackApplicationInfoDao;
+    @Resource
+    private LastSettlementReviewDao lastSettlementReviewDao;
+    @Resource
+    private SettlementAuditInformationDao settlementAuditInformationDao;
+    @Resource
+    private InvestigationOfTheAmountDao investigationOfTheAmountDao;
+    @Resource
+    private SettlementInfoMapper settlementInfoMapper;
+
+
+
+
 
 
 
@@ -221,13 +251,156 @@ public class ThoseResponsibleService  {
 
             //签证变更
         }else if("4".equals(missionType)){
+
+            baseProject.setVisaStatus("2");
+            baseProjectDao.updateByPrimaryKey(baseProject);
+
             Example example = new Example(VisaChange.class);
             Example.Criteria cc = example.createCriteria();
             cc.andEqualTo("baseProjectId",baseProject.getId());
             cc.andEqualTo("state","0");
             List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
             if (visaChanges == null || visaChanges.size() == 0){
+                VisaApplyChangeInformation visaApplyChangeInformation = new VisaApplyChangeInformation();
+                visaApplyChangeInformation.setId(UUID.randomUUID().toString().replace("-",""));
+                visaApplyChangeInformation.setUpAndDownMark("0");
+                visaApplyChangeInformation.setCreateTime(s.format(new Date()));
+                visaApplyChangeInformation.setFouderId(missionPerson);
+                visaApplyChangeInformation.setState("0");
+                visaApplyChangeInformation.setBaseProjectId(baseProject.getId());
+                visaApplyChangeInformationMapper.insertSelective(visaApplyChangeInformation);
 
+                VisaApplyChangeInformation visaApplyChangeInformation1 = new VisaApplyChangeInformation();
+                visaApplyChangeInformation1.setId(UUID.randomUUID().toString().replace("-",""));
+                visaApplyChangeInformation1.setUpAndDownMark("1");
+                visaApplyChangeInformation1.setCreateTime(s.format(new Date()));
+                visaApplyChangeInformation1.setFouderId(missionPerson);
+                visaApplyChangeInformation1.setState("0");
+                visaApplyChangeInformation1.setBaseProjectId(baseProject.getId());
+                visaApplyChangeInformationMapper.insertSelective(visaApplyChangeInformation1);
+
+                VisaChange visaChange = new VisaChange();
+                visaChange.setId(UUID.randomUUID().toString().replace("-",""));
+                visaChange.setCreateTime(s.format(new Date()));
+                visaChange.setState("0");
+                visaChange.setOutsourcing("2");
+                visaChange.setCreatorId(missionPerson);
+                visaChange.setChangeNum(1);
+                visaChange.setBaseProjectId(baseProject.getId());
+                visaChange.setUpAndDownMark("0");
+                visaChangeMapper.insertSelective(visaChange);
+
+                VisaChange visaChange1 = new VisaChange();
+                visaChange1.setId(UUID.randomUUID().toString().replace("-",""));
+                visaChange1.setCreateTime(s.format(new Date()));
+                visaChange1.setState("0");
+                visaChange1.setOutsourcing("2");
+                visaChange1.setCreatorId(missionPerson);
+                visaChange1.setChangeNum(1);
+                visaChange1.setBaseProjectId(baseProject.getId());
+                visaChange1.setUpAndDownMark("1");
+                visaChangeMapper.insertSelective(visaChange1);
+
+
+            }else{
+                throw new RuntimeException("当前工程签证变更任务已存在");
+            }
+            //跟踪审计
+        }else if("5".equals(missionType)){
+            baseProject.setTrackStatus("2");
+            baseProjectDao.updateByPrimaryKey(baseProject);
+
+            Example example = new Example(TrackAuditInfo.class);
+            Example.Criteria cc = example.createCriteria();
+            cc.andEqualTo("baseProjectId",baseProject.getId());
+            cc.andEqualTo("status","0");
+            TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectOneByExample(example);
+            if (trackAuditInfo == null){
+                TrackAuditInfo trackAuditInfo1 = new TrackAuditInfo();
+                trackAuditInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+                trackAuditInfo1.setOutsource("1");
+                trackAuditInfo1.setFounderId(missionPerson);
+                trackAuditInfo1.setStatus("0");
+                trackAuditInfo1.setCreateTime(s.format(new Date()));
+                trackAuditInfo1.setBaseProjectId(baseProject.getId());
+                trackAuditInfoDao.insertSelective(trackAuditInfo1);
+
+                TrackApplicationInfo trackApplicationInfo = new TrackApplicationInfo();
+                trackApplicationInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                trackApplicationInfo.setCreateTime(s.format(new Date()));
+                trackApplicationInfo.setFouderId(missionPerson);
+                trackApplicationInfo.setState("0");
+                trackApplicationInfo.setTrackAudit(trackAuditInfo1.getId());
+                trackApplicationInfoDao.insertSelective(trackApplicationInfo);
+
+            }else {
+                throw new RuntimeException("当前工程跟踪审计任务已存在");
+            }
+        }else if("6".equals(missionType)){
+            baseProject.setSettleAccountsStatus("2");
+            baseProjectDao.updateByPrimaryKey(baseProject);
+
+            Example example = new Example(LastSettlementReview.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("baseProjectId",baseProject.getId());
+            criteria.andEqualTo("delFlag","0");
+            LastSettlementReview lastSettlementReview = lastSettlementReviewDao.selectOneByExample(example);
+
+            Example example1 = new Example(SettlementAuditInformation.class);
+            Example.Criteria criteria1 = example1.createCriteria();
+            criteria1.andEqualTo("baseProjectId",baseProject.getId());
+            criteria1.andEqualTo("delFlag","0");
+            SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
+
+            if (lastSettlementReview == null && settlementAuditInformation == null){
+                InvestigationOfTheAmount investigationOfTheAmount = new InvestigationOfTheAmount();
+                investigationOfTheAmount.setId(UUID.randomUUID().toString().replace("-",""));
+                investigationOfTheAmount.setBaseProjectId(baseProject.getId());
+                investigationOfTheAmount.setCreateTime(s.format(new Date()));
+                investigationOfTheAmount.setFounderId(missionPerson);
+                investigationOfTheAmount.setDelFlag("0");
+                investigationOfTheAmountDao.insertSelective(investigationOfTheAmount);
+
+                LastSettlementReview lastSettlementReview1 = new LastSettlementReview();
+                lastSettlementReview1.setId(UUID.randomUUID().toString().replace("-",""));
+                lastSettlementReview1.setOutsourcing("2");
+                lastSettlementReview1.setCreateTime(s.format(new Date()));
+                lastSettlementReview1.setFounderId(missionPerson);
+                lastSettlementReview1.setDelFlag("0");
+                lastSettlementReview1.setPreparePeople(missionPerson);
+                lastSettlementReview1.setBaseProjectId(baseProject.getId());
+                lastSettlementReviewDao.insertSelective(lastSettlementReview1);
+
+                SettlementAuditInformation settlementAuditInformation1 = new SettlementAuditInformation();
+                settlementAuditInformation1.setId(UUID.randomUUID().toString().replace("-",""));
+                settlementAuditInformation1.setOutsourcing("2");
+                settlementAuditInformation1.setCreateTime(s.format(new Date()));
+                settlementAuditInformation1.setFounderId(missionPerson);
+                settlementAuditInformation1.setDelFlag("0");
+                settlementAuditInformation1.setPreparePeople(missionPerson);
+                settlementAuditInformation1.setBaseProjectId(baseProject.getId());
+                settlementAuditInformation1.setContract("2");
+                settlementAuditInformationDao.insertSelective(settlementAuditInformation1);
+
+                SettlementInfo settlementInfo = new SettlementInfo();
+                settlementInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                settlementInfo.setBaseProjectId(baseProject.getId());
+                settlementInfo.setCreateTime(s.format(new Date()));
+                settlementInfo.setFouderId(missionPerson);
+                settlementInfo.setState("0");
+                settlementInfo.setUpAndDown("1");
+                settlementInfoMapper.insertSelective(settlementInfo);
+
+                SettlementInfo settlementInfo1 = new SettlementInfo();
+                settlementInfo1.setId(UUID.randomUUID().toString().replace("-",""));
+                settlementInfo1.setBaseProjectId(baseProject.getId());
+                settlementInfo1.setCreateTime(s.format(new Date()));
+                settlementInfo1.setFouderId(missionPerson);
+                settlementInfo1.setState("0");
+                settlementInfo1.setUpAndDown("2");
+                settlementInfoMapper.insertSelective(settlementInfo1);
+            }else {
+                throw new RuntimeException("当前工程结算任务已存在");
             }
         }
     }
