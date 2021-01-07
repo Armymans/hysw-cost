@@ -190,5 +190,23 @@ public class BaseProject implements Serializable {
     @Column(name = "budget_amount_after")
     private String budgetAmountAfter;
 
+    @Column(name = "acceptance_unit")
+    private String acceptanceUnit;
+    @Column(name = "legal_representative")
+    private String legalRepresentative;
+    @Column(name = "customer_results")
+    private String customerResults;
+    @Column(name = "total_amount_quotation")
+    private String totalAmountQuotation;
+    @Column(name = "living_surface_diameter")
+    private String livingSurfaceDiameter;
+    @Column(name = "land_certificate")
+    private String landCertificate;
+    @Column(name = "charge_amount")
+    private String chargeAmount;
+    @Column(name = "fax")
+    private String fax;
+
+
 
 }
