@@ -2323,7 +2323,7 @@ public class ProjectService {
         //方案会审
         if (projectVo.getProjectExploration() != null) {
             projectVo.getPackageCame().setUpdateTime(updateTime);
-            PackageCame packageCame = this.PackageCameByid(projectVo.getBaseProject().getId());
+            PackageCame packageCame = this.PackageCameByid(projectVo.getDesignInfo().getId());
             if (packageCame != null) {
                 projectVo.getPackageCame().setId(packageCame.getId());
                 packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
