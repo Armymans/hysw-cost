@@ -235,7 +235,6 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             information.setRemarkes(baseProject.getRemarkes());
             information.setBaseProjectId(project.getId());
             information.setId(UUID.randomUUID().toString());
-            information.setProgressPaymentId(paymentInformation.getId());
             information.setDelFlag("0");
             information.setCreateTime(format);
             information.setFounderId(loginUser.getId());
