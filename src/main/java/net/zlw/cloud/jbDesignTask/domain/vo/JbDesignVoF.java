@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class JbDesignVoF {
-    private JbDesignVo jbDesignVo;
+    private JbDesignVo DesignVo;
     private String Account;
 }

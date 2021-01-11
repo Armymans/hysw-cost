@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class JbBudgetVoF {
 
-    private JbBudgetVo jbBudgetVo;
+    private JbBudgetVo BudgetVo;
     private String Account;
 }

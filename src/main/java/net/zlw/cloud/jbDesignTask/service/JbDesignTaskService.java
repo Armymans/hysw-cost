@@ -79,7 +79,7 @@ public class JbDesignTaskService {
     public void getDesignEngineering(JbDesignVoF jbDesignVoF, HttpServletRequest request) {
 
         String date = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
-        JbDesignVo designVo = jbDesignVoF.getJbDesignVo();
+        JbDesignVo designVo = jbDesignVoF.getDesignVo();
         if (designVo != null) {
             //项目基本表数据
             BaseProject baseProject = new BaseProject();
@@ -191,7 +191,8 @@ public class JbDesignTaskService {
      * @param
      */
     public void getBudgetEngineering(JbBudgetVoF jbBudgetVoF,HttpServletRequest request) {
-        JbBudgetVo budgetVo = jbBudgetVoF.getJbBudgetVo();
+        JbBudgetVo budgetVo = jbBudgetVoF.getBudgetVo();
+        if(budgetVo != null){
         Example example = new Example(BaseProject.class);
         example.createCriteria().andEqualTo("projectId",budgetVo.getProject_id())
                 .andEqualTo("delFlag","0");
@@ -279,7 +280,7 @@ public class JbDesignTaskService {
             String ip = memberService.getIp(request);
             operationLog.setIp(ip);
             operationLogDao.insertSelective(operationLog);
-
+        }
         }
     }
 
