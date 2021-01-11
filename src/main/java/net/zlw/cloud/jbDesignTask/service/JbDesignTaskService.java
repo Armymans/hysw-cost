@@ -165,7 +165,10 @@ public class JbDesignTaskService {
                 }
             }
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(jbDesignVoF.getAccount());
-            String memberName = memberManage.getMemberName();
+            String memberName = "";
+            if(memberManage != null){
+                memberName = memberManage.getMemberName();
+            }
             OperationLog operationLog = new OperationLog();
             operationLog.setId(UUID.randomUUID().toString().replace("-",""));
             operationLog.setName(jbDesignVoF.getAccount());
@@ -261,7 +264,10 @@ public class JbDesignTaskService {
                 fileInfoMapper.insertSelective(fileInfo);
             }
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(jbBudgetVoF.getAccount());
-            String memberName = memberManage.getMemberName();
+            String memberName = "";
+            if(memberManage != null){
+                memberName = memberManage.getMemberName();
+            }
             OperationLog operationLog = new OperationLog();
             operationLog.setId(UUID.randomUUID().toString().replace("-",""));
             operationLog.setName(jbBudgetVoF.getAccount());
@@ -290,21 +296,24 @@ public class JbDesignTaskService {
                 budgeting.setAmountCost(new BigDecimal(budgetAmount));
                 budgetingDao.updateByPrimaryKeySelective(budgeting);
             }
-            MemberManage memberManage = memberManageDao.selectByPrimaryKey(amountVo.getAccount());
-            String memberName = memberManage.getMemberName();
-            OperationLog operationLog = new OperationLog();
-            operationLog.setId(UUID.randomUUID().toString().replace("-",""));
-            operationLog.setName(amountVo.getAccount());
-            operationLog.setContent(memberName+"修改了"+baseProject.getProjectName()+"项目的造价金额"+"【"+baseProject.getId()+"】");
-            operationLog.setDoObject(baseProject.getId());
-            operationLog.setStatus("0");
-            operationLog.setType("13"); //修改金额
-            operationLog.setDoTime(data);
-            String ip = memberService.getIp(request);
-            operationLog.setIp(ip);
-            operationLogDao.insertSelective(operationLog);
-
-
+            if(baseProject != null){
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(amountVo.getAccount());
+                String memberName = "";
+                if(memberManage != null){
+                    memberName = memberManage.getMemberName();
+                }
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+                operationLog.setName(amountVo.getAccount());
+                operationLog.setContent(memberName+"修改了"+baseProject.getProjectName()+"项目的造价金额"+"【"+baseProject.getId()+"】");
+                operationLog.setDoObject(baseProject.getId());
+                operationLog.setStatus("0");
+                operationLog.setType("13"); //修改金额
+                operationLog.setDoTime(data);
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
+            }
         }
     }
 
@@ -319,20 +328,24 @@ public class JbDesignTaskService {
             if (baseProject != null){
                 baseProject.setCeaNum(ceaVo.getCea());
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+                MemberManage memberManage = memberManageDao.selectByPrimaryKey(ceaVo.getAccount());
+                String memberName = "";
+                if(memberManage != null){
+                    memberName = memberManage.getMemberName();
+                }
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+                operationLog.setName(ceaVo.getAccount());
+                operationLog.setContent(memberName+"修改了"+baseProject.getProjectName()+"项目的CEA编号"+"【"+baseProject.getId()+"】");
+                operationLog.setDoObject(baseProject.getId());
+                operationLog.setStatus("0");
+                operationLog.setType("14"); //CEA编号
+                operationLog.setDoTime(data);
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLogDao.insertSelective(operationLog);
             }
-            MemberManage memberManage = memberManageDao.selectByPrimaryKey(ceaVo.getAccount());
-            String memberName = memberManage.getMemberName();
-            OperationLog operationLog = new OperationLog();
-            operationLog.setId(UUID.randomUUID().toString().replace("-",""));
-            operationLog.setName(ceaVo.getAccount());
-            operationLog.setContent(memberName+"修改了"+baseProject.getProjectName()+"项目的CEA编号"+"【"+baseProject.getId()+"】");
-            operationLog.setDoObject(baseProject.getId());
-            operationLog.setStatus("0");
-            operationLog.setType("14"); //CEA编号
-            operationLog.setDoTime(data);
-            String ip = memberService.getIp(request);
-            operationLog.setIp(ip);
-            operationLogDao.insertSelective(operationLog);
         }
     }
 }
