@@ -292,8 +292,9 @@ public class JbDesignTaskService {
             example.createCriteria().andEqualTo("baseProjectId",amountVo.getProject_id())
                                     .andEqualTo("delFlag","0");
             Budgeting budgeting = budgetingDao.selectOneByExample(example);
-            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
+            BaseProject baseProject = null;
             if (budgeting != null){
+                baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
                 budgeting.setAmountCost(new BigDecimal(budgetAmount));
                 budgetingDao.updateByPrimaryKeySelective(budgeting);
             }
