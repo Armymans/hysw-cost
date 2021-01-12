@@ -1,11 +1,14 @@
 package net.zlw.cloud.jbDesignTask.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class WjBudgetVoF {
 
-    private WjBudgetVo wjBudgetVo;
+    @JsonProperty("BudgetVo")
+    private WjBudgetVo BudgetVo;
 
+    @JsonProperty("Account")
     private String Account;
 }

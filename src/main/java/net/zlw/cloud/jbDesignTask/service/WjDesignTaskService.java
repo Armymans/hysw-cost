@@ -78,7 +78,7 @@ public class WjDesignTaskService {
 
     // 吴江设计报装
     public void getWjDesignTask(WjDesignVoF wjDesignVoF, HttpServletRequest request){
-        WjDesignVo wjDesignVo = wjDesignVoF.getWjDesignVo();
+        WjDesignVo wjDesignVo = wjDesignVoF.getDesignVo();
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         if (wjDesignVo != null){
             BaseProject project = new BaseProject();
@@ -136,7 +136,7 @@ public class WjDesignTaskService {
             projectExplorationMapper.insertSelective(exploration);
 
             List<WjFileInfo> designFileList = wjDesignVo.getDesignFileList();
-            if (designFileList.size()>0){
+            if (designFileList != null && designFileList.size()>0){
                 for (WjFileInfo thisFile : designFileList) {
                     FileInfo fileInfo = new FileInfo();
                     fileInfo.setId(thisFile.getId());
@@ -151,7 +151,6 @@ public class WjDesignTaskService {
                 }
             }
             OperationLog operationLog = new OperationLog();
-            MemberManage memberManage = memberManageDao.selectByPrimaryKey(wjDesignVoF.getAccount());
             operationLog.setId(UUID.randomUUID().toString().replace("-",""));
             operationLog.setType("15"); // 吴江设计报装
             operationLog.setDoTime(data);
@@ -160,8 +159,10 @@ public class WjDesignTaskService {
             operationLog.setStatus("0");
             operationLog.setName(wjDesignVoF.getAccount());
             operationLog.setDoObject(wjDesignVo.getApplication_num());
-            operationLog.setContent(memberManage.getMemberName()+"对接过来一个吴江设计报装接口【"+wjDesignVo.getApplication_num()+"】");
+            operationLog.setContent("对接过来一个吴江设计报装接口【"+wjDesignVo.getApplication_num()+"】");
             operationLogDao.insertSelective(operationLog);
+        }else{
+            throw new RuntimeException("参数有误");
         }
 
     }
@@ -169,7 +170,7 @@ public class WjDesignTaskService {
     public void getWjBudgetEngineering(WjBudgetVoF wjBudgetVoF, HttpServletRequest request) {
 
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        WjBudgetVo wjBudgetVo = wjBudgetVoF.getWjBudgetVo();
+        WjBudgetVo wjBudgetVo = wjBudgetVoF.getBudgetVo();
         if (wjBudgetVo != null){
             String base_project_id = wjBudgetVo.getApplication_num();
             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(base_project_id);
@@ -264,7 +265,7 @@ public class WjDesignTaskService {
             veryEstablishmentDao.insertSelective(veryEstablishment);
 
             List<BudgetFileInfo> fileList = wjBudgetVo.getFileList();
-            if (fileList.size()>0){
+            if (fileList != null && fileList.size()>0){
                 for (BudgetFileInfo thisFile : fileList) {
                     FileInfo fileInfo = new FileInfo();
                     fileInfo.setId(thisFile.getId());
@@ -279,15 +280,16 @@ public class WjDesignTaskService {
                 }
             }
             OperationLog operationLog = new OperationLog();
-            MemberManage memberManage = memberManageDao.selectByPrimaryKey(wjBudgetVoF.getAccount());
             operationLog.setId(UUID.randomUUID().toString().replace("-",""));
             operationLog.setName(wjBudgetVoF.getAccount());
             operationLog.setDoObject(wjBudgetVo.getApplication_num());
-            operationLog.setContent(memberManage.getMemberName()+"对接了吴江预算报装【"+baseProject.getId()+"】");
+            operationLog.setContent("对接了吴江预算报装【"+baseProject.getId()+"】");
             operationLog.setStatus("0");
             operationLog.setType("16"); //预算报装
             operationLogDao.insertSelective(operationLog);
 
+        }else{
+            throw new RuntimeException("参数有误");
         }
 
     }
