@@ -24,9 +24,15 @@ import net.zlw.cloud.followAuditing.model.TrackApplicationInfo;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.librarian.dao.ThoseResponsibleDao;
 import net.zlw.cloud.librarian.model.ThoseResponsible;
+import net.zlw.cloud.maintenanceProjectInformation.mapper.MaintenanceProjectInformationMapper;
+import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
+import net.zlw.cloud.progressPayment.mapper.ApplicationInformationDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
+import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
+import net.zlw.cloud.progressPayment.model.ApplicationInformation;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
@@ -36,6 +42,10 @@ import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.settleAccounts.model.SettlementInfo;
+import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
+import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
+import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,7 +96,16 @@ public class ThoseResponsibleService  {
     private InvestigationOfTheAmountDao investigationOfTheAmountDao;
     @Resource
     private SettlementInfoMapper settlementInfoMapper;
-
+    @Resource
+    private MkyUserMapper mkyUserMapper;
+    @Resource
+    private MaintenanceProjectInformationMapper maintenanceProjectInformationMapper;
+    @Resource
+    private ProgressPaymentInformationDao progressPaymentInformationDao;
+    @Resource
+    private ApplicationInformationDao applicationInformationDao;
+    @Resource
+    private MessageService messageService;
 
 
 
@@ -183,6 +202,17 @@ public class ThoseResponsibleService  {
                 packageCame.setCreateTime(s.format(new Date()));
                 packageCameMapper.insertSelective(packageCame);
 
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId("A24");
+                messageVo.setUserId(missionPerson);
+                messageVo.setType("1"); //风险
+                messageVo.setTitle("您收到一个设计项目");
+                // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
+                messageVo.setSnsContent("您好！您收一个"+baseProject.getProjectName()+"项目的设计，请及时处理！");
+                messageVo.setContent("您好！您收一个"+baseProject.getProjectName()+"项目的设计，请及时处理！");
+                messageVo.setDetails("您好！您收一个"+baseProject.getProjectName()+"项目的设计，请及时处理！");
+                messageService.sendOrClose(messageVo);
+
             }else{
                 throw new RuntimeException("当前工程设计任务已存在");
             }
@@ -201,7 +231,6 @@ public class ThoseResponsibleService  {
             Budgeting budgeting = budgetingDao.selectOneByExample(example1);
 
             if (budgeting == null){
-
 
 
                 Budgeting budgeting1 = new Budgeting();
@@ -243,11 +272,63 @@ public class ThoseResponsibleService  {
                 veryEstablishment.setDelFlag("0");
                 veryEstablishmentDao.insertSelective(veryEstablishment);
 
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId("A24");
+                messageVo.setUserId(missionPerson);
+                messageVo.setType("1"); //风险
+                messageVo.setTitle("您收到一个预算项目");
+                // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
+                messageVo.setSnsContent("您好！您收一个"+baseProject.getProjectName()+"项目的预算，请及时处理！");
+                messageVo.setContent("您好！您收一个"+baseProject.getProjectName()+"项目的预算，请及时处理！");
+                messageVo.setDetails("您好！您收一个"+baseProject.getProjectName()+"项目的预算，请及时处理！");
+                messageService.sendOrClose(messageVo);
+
             }else{
                 throw new RuntimeException("当前工程预算任务已存在");
             }
             //进度款
         } else if("3".equals(missionType)){
+            baseProject.setProgressPaymentStatus("2");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+            Example example = new Example(ApplicationInformation.class);
+            Example.Criteria c = example.createCriteria();
+            c.andEqualTo("baseProjectId",baseProject.getId());
+            c.andEqualTo("delFlag","0");
+            ApplicationInformation applicationInformation = applicationInformationDao.selectOneByExample(example);
+            if (applicationInformation == null){
+                ApplicationInformation applicationInformation1 = new ApplicationInformation();
+                applicationInformation1.setId(UUID.randomUUID().toString().replace("-",""));
+                applicationInformation1.setBaseProjectId(baseProject.getId());
+                applicationInformation1.setCreateTime(s.format(new Date()));
+                applicationInformation1.setFounderId(missionPerson);
+                applicationInformation1.setDelFlag("0");
+                applicationInformationDao.insertSelective(applicationInformation1);
+
+                ProgressPaymentInformation progressPaymentInformation = new ProgressPaymentInformation();
+                progressPaymentInformation.setId(UUID.randomUUID().toString().replace("-",""));
+                progressPaymentInformation.setOutsourcing("2");
+                progressPaymentInformation.setBaseProjectId(baseProject.getId());
+                progressPaymentInformation.setCreateTime(s.format(new Date()));
+                progressPaymentInformation.setFounderId(missionPerson);
+                progressPaymentInformation.setDelFlag("0");
+                progressPaymentInformationDao.insertSelective(progressPaymentInformation);
+
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId("A24");
+                messageVo.setUserId(missionPerson);
+                messageVo.setType("1"); //风险
+                messageVo.setTitle("您收到一个进度款项目");
+                // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
+                messageVo.setSnsContent("您好！您收一个"+baseProject.getProjectName()+"项目的进度款，请及时处理！");
+                messageVo.setContent("您好！您收一个"+baseProject.getProjectName()+"项目的进度款，请及时处理！");
+                messageVo.setDetails("您好！您收一个"+baseProject.getProjectName()+"项目的进度款，请及时处理！");
+                messageService.sendOrClose(messageVo);
+
+            }else{
+                throw new RuntimeException("当前工程进度款任务已存在");
+            }
+
 
             //签证变更
         }else if("4".equals(missionType)){
@@ -301,6 +382,16 @@ public class ThoseResponsibleService  {
                 visaChange1.setUpAndDownMark("1");
                 visaChangeMapper.insertSelective(visaChange1);
 
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId("A24");
+                messageVo.setUserId(missionPerson);
+                messageVo.setType("1"); //风险
+                messageVo.setTitle("您收到一个签证变更项目");
+                // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
+                messageVo.setSnsContent("您好！您收一个"+baseProject.getProjectName()+"项目的签证变更，请及时处理！");
+                messageVo.setContent("您好！您收一个"+baseProject.getProjectName()+"项目的签证变更，请及时处理！");
+                messageVo.setDetails("您好！您收一个"+baseProject.getProjectName()+"项目的签证变更，请及时处理！");
+                messageService.sendOrClose(messageVo);
 
             }else{
                 throw new RuntimeException("当前工程签证变更任务已存在");
@@ -332,6 +423,17 @@ public class ThoseResponsibleService  {
                 trackApplicationInfo.setState("0");
                 trackApplicationInfo.setTrackAudit(trackAuditInfo1.getId());
                 trackApplicationInfoDao.insertSelective(trackApplicationInfo);
+
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId("A24");
+                messageVo.setUserId(missionPerson);
+                messageVo.setType("1"); //风险
+                messageVo.setTitle("您收到一个跟踪审计项目");
+                // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
+                messageVo.setSnsContent("您好！您收一个"+baseProject.getProjectName()+"项目的跟踪审计，请及时处理！");
+                messageVo.setContent("您好！您收一个"+baseProject.getProjectName()+"项目的跟踪审计，请及时处理！");
+                messageVo.setDetails("您好！您收一个"+baseProject.getProjectName()+"项目的跟踪审计，请及时处理！");
+                messageService.sendOrClose(messageVo);
 
             }else {
                 throw new RuntimeException("当前工程跟踪审计任务已存在");
@@ -399,9 +501,80 @@ public class ThoseResponsibleService  {
                 settlementInfo1.setState("0");
                 settlementInfo1.setUpAndDown("2");
                 settlementInfoMapper.insertSelective(settlementInfo1);
+
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId("A24");
+                messageVo.setUserId(missionPerson);
+                messageVo.setType("1"); //风险
+                messageVo.setTitle("您收到一个结算项目");
+                // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
+                messageVo.setSnsContent("您好！您收一个"+baseProject.getProjectName()+"项目的结算，请及时处理！");
+                messageVo.setContent("您好！您收一个"+baseProject.getProjectName()+"项目的结算，请及时处理！");
+                messageVo.setDetails("您好！您收一个"+baseProject.getProjectName()+"项目的结算，请及时处理！");
+                messageService.sendOrClose(messageVo);
+
             }else {
                 throw new RuntimeException("当前工程结算任务已存在");
             }
+        }else if("7".equals(missionType)){
+            String projectName = baseProject.getProjectName();
+            Example example = new Example(MaintenanceProjectInformation.class);
+            Example.Criteria c = example.createCriteria();
+            c.andEqualTo("maintenanceItemName",projectName);
+            c.andEqualTo("delFlag","0");
+            MaintenanceProjectInformation maintenanceProjectInformation = maintenanceProjectInformationMapper.selectOneByExample(example);
+            if (maintenanceProjectInformation == null){
+                MaintenanceProjectInformation maintenanceProjectInformation1 = new MaintenanceProjectInformation();
+                maintenanceProjectInformation1.setId(UUID.randomUUID().toString().replace("-",""));
+                maintenanceProjectInformation1.setMaintenanceItemName(baseProject.getProjectName());
+                maintenanceProjectInformation1.setPreparePeople(missionPerson);
+                maintenanceProjectInformation1.setProjectAddress(baseProject.getDistrict());
+                maintenanceProjectInformation1.setConstructionUnitId(baseProject.getConstructionUnit());
+                maintenanceProjectInformation1.setCustomerName(baseProject.getCustomerName());
+                maintenanceProjectInformation1.setCreateTime(s.format(new Date()));
+                maintenanceProjectInformation1.setPreparePeople(missionPerson);
+                maintenanceProjectInformation1.setDelFlag("0");
+                maintenanceProjectInformation1.setFounderId(missionPerson);
+                maintenanceProjectInformation1.setType("2");
+                maintenanceProjectInformationMapper.insertSelective(maintenanceProjectInformation1);
+
+                SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
+                settlementAuditInformation.setId(UUID.randomUUID().toString().replace("-",""));
+                settlementAuditInformation.setOutsourcing("2");
+                settlementAuditInformation.setMaintenanceProjectInformation(maintenanceProjectInformation1.getId());
+                settlementAuditInformation.setCreateTime(s.format(new Date()));
+                settlementAuditInformation.setPreparePeople(missionPerson);
+                settlementAuditInformation.setFounderId(missionPerson);
+                settlementAuditInformation.setDelFlag("0");
+                settlementAuditInformationDao.insertSelective(settlementAuditInformation);
+
+                InvestigationOfTheAmount investigationOfTheAmount = new InvestigationOfTheAmount();
+                investigationOfTheAmount.setId(UUID.randomUUID().toString().replace("-",""));
+                investigationOfTheAmount.setMaintenanceProjectInformation(maintenanceProjectInformation1.getId());
+                investigationOfTheAmount.setCreateTime(s.format(new Date()));
+                investigationOfTheAmount.setFounderId(missionPerson);
+                investigationOfTheAmount.setDelFlag("0");
+                investigationOfTheAmountDao.insertSelective(investigationOfTheAmount);
+
+                MessageVo messageVo = new MessageVo();
+                messageVo.setId("A24");
+                messageVo.setUserId(missionPerson);
+                messageVo.setType("1"); //风险
+                messageVo.setTitle("您收到一个检维修项目");
+                // 「接收人姓名」您好！您提交的【所选项目名称】的结算项目，结算金额超过造价金额，请及时登录造价管理平台查看详情！
+                messageVo.setSnsContent("您好！您收一个"+baseProject.getProjectName()+"项目的检维修，请及时处理！");
+                messageVo.setContent("您好！您收一个"+baseProject.getProjectName()+"项目的检维修，请及时处理！");
+                messageVo.setDetails("您好！您收一个"+baseProject.getProjectName()+"项目的检维修，请及时处理！");
+                messageService.sendOrClose(messageVo);
+
+            }else {
+                throw new RuntimeException("当前工程检维修任务已存在");
+            }
+
         }
+    }
+
+    public List<MkyUser> findPersonAll(String deptId) {
+       return mkyUserMapper.findPersonAll(deptId);
     }
 }

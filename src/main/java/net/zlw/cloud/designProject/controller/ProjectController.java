@@ -1833,11 +1833,9 @@ public class ProjectController extends BaseController {
         DesignInfo designInfo = projectService.designInfoByid(baseProject.getId());
         projectVo3.setDesignInfo(designInfo);
         if(designInfo == null){
-            if (designInfo.getDesignChangeTime() != null){
-                projectVo3.getDesignInfo().setDesignChangeTime(designInfo.getDesignChangeTime());
-            }else {
-                projectVo3.getDesignInfo().setDesignChangeTime("-");
-            }
+
+//                projectVo3.getDesignInfo().setDesignChangeTime("-");
+
             projectVo3.setDesignChangeInfo(new DesignChangeInfo());
         }else{
             if (designInfo.getDesigner() != null){
@@ -1854,20 +1852,20 @@ public class ProjectController extends BaseController {
             //正式出图时间
             if (designInfo.getBlueprintStartTime() != null && !"".equals(designInfo.getBlueprintStartTime())){
                 projectVo3.getDesignInfo().setBlueprintStartTime(designInfo.getBlueprintStartTime());
-            }else {
+            } else {
                 projectVo3.getDesignInfo().setBlueprintStartTime("-");
             }
             //设计单位名称
             if (designInfo.getDesignUnit() != null && !"".equals(designInfo.getDesignUnit())){
                 projectVo3.getDesignInfo().setDesignUnit(designInfo.getDesignUnit());
-            }else {
+            } else {
                 projectVo3.getDesignInfo().setDesignUnit("-");
             }
             projectVo3.setDesignInfo(designInfo);
         }
         //根据地区判断相应的设计费 应付金额 实付金额
         //如果为安徽
-        if(!baseProject.getDistrict().equals("4")){
+        if(!"4".equals(baseProject.getDistrict())){
             AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyinfoByid(designInfo.getId());
             if(anhuiMoneyinfo!=null){
                 //实收

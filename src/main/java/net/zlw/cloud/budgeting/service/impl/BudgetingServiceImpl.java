@@ -20,6 +20,8 @@ import net.zlw.cloud.excel.service.BudgetCoverService;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.index.mapper.MessageNotificationDao;
+import net.zlw.cloud.librarian.dao.ThoseResponsibleDao;
+import net.zlw.cloud.librarian.model.ThoseResponsible;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
@@ -126,6 +128,9 @@ public class BudgetingServiceImpl implements BudgetingService {
     private AnhuiMoneyinfoMapper anhuiMoneyinfoMapper;
     @Resource
     private WujiangMoneyInfoMapper wujiangMoneyInfoMapper;
+    @Resource
+    private ThoseResponsibleDao thoseResponsibleDao;
+
 
 
 
@@ -1098,8 +1103,23 @@ public class BudgetingServiceImpl implements BudgetingService {
             }
 
 
-            String founderId = budgeting.getFounderId();
-            if (founderId.equals(ids) || ids.equals(whzjh) || ids.equals(whzjm) || ids.equals(wjzjh)){
+//            String founderId = budgeting.getFounderId();
+            boolean f = false;
+            ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("2");
+            String personnel = thoseResponsible.getPersonnel();
+            if (personnel!=null){
+                String[] split1 = personnel.split(",");
+                for (String s2 : split1) {
+                    if (s2.equals(ids)){
+                        f = true;
+                    }
+                }
+            }
+            //领导和领导指定人
+            if (ids.equals(whzjh) || ids.equals(whzjm) || ids.equals(wjzjh) || f){
+
+
+
                 //TODO start
                 //根据预算外键查询基本信息
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
@@ -1192,7 +1212,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
                 //TODO end
             }else{
-                throw new RuntimeException("您没有权限进行此操作,请联系编制人或领导进行操作");
+                throw new RuntimeException("您没有权限进行此操作,请联系领导或领导指定人进行操作");
             }
         }
         for (String s : split) {

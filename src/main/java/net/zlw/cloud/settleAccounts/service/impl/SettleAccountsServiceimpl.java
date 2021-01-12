@@ -1182,7 +1182,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         List<SettlementInfo> settlementInfos = settlementInfoMapper.selectByExample(example1);
         if (settlementInfos.size()>0){
             for (SettlementInfo settlementInfo : settlementInfos) {
-                if (settlementInfo.getSumbitMoney() != null) {
+                if (settlementInfo.getUpAndDown() .equals("2")) {
                     baseAccountsVo.setSettlementInfo(settlementInfo);
 
                 } else {

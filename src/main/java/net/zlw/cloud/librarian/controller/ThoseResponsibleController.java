@@ -7,6 +7,7 @@ import net.zlw.cloud.librarian.model.ThoseResponsible;
 import net.zlw.cloud.librarian.service.ThoseResponsibleService;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,7 +49,11 @@ public class ThoseResponsibleController extends BaseController {
     //分配任务
     @RequestMapping(value = "/thoseResponsibl/allocatingTask", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> allocatingTask(@RequestParam(name = "missionType") String missionType,@RequestParam(name = "missionPerson") String missionPerson,@RequestParam(name = "baseId") String baseId){
-        thoseResponsibleService.missionPerson(missionType,missionPerson,getLoginUser().getId(),baseId);
+        try {
+            thoseResponsibleService.missionPerson(missionType,missionPerson,getLoginUser().getId(),baseId);
+        } catch (Exception e) {
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success();
     }
     //添加工程
@@ -62,6 +67,12 @@ public class ThoseResponsibleController extends BaseController {
         baseProject.setFounderId(getLoginUser().getId());
         baseProjectDao.insertSelective(baseProject);
         return RestUtil.success();
+    }
+    //人员列表
+    @RequestMapping(value = "/baseProject/findPersonAll", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> findPersonAll(@RequestParam(name = "deptId") String deptId){
+       List<MkyUser> list =  thoseResponsibleService.findPersonAll(deptId);
+       return RestUtil.success(list);
     }
 
 }

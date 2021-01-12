@@ -2045,6 +2045,7 @@ public class MaintenanceProjectInformationService {
             maintenanceProjectInformation.setConstructionUnitId("7661");
         }
         //检维修对象
+        System.err.println(maintenanceProjectInformation);
         MaintenanceProjectInformation information = new MaintenanceProjectInformation();
         information.setId(maintenanceProjectInformation.getId());
         information.setUpdateTime(updateTime);
