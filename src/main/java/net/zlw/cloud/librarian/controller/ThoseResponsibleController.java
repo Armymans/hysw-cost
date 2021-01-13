@@ -36,8 +36,8 @@ public class ThoseResponsibleController extends BaseController {
     }
     //添加人员
     @RequestMapping(value = "/thoseResponsibl/addPerson", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> addPerson(@RequestParam(name = "remeberId") String remeberId){
-        thoseResponsibleService.addPerson(remeberId);
+    public Map<String,Object> addPerson(@RequestParam(name = "remeberId") String remeberId,@RequestParam(name = "type") String type){
+        thoseResponsibleService.addPerson(remeberId,type);
         return RestUtil.success();
     }
     //查询任务责任人

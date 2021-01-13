@@ -437,6 +437,95 @@ public class ProjectController extends BaseController {
 //        example1.createCriteria().andEqualTo("id",projectVo.getDesignInfo().getDesigner());
 //        MemberManage memberManage = memberManageDao.selectOneByExample(example1);
 //        projectVo.getDesignInfo().setDesigner(memberManage.getMemberName());
+        BaseProject baseProject1 = projectVo.getBaseProject();
+        String shouldBe = baseProject1.getShouldBe();
+        if (shouldBe!=null && !"".equals(shouldBe)){
+            if (shouldBe.equals("0")){
+                baseProject1.setShouldBe("是");
+            }else{
+                baseProject1.setShouldBe("否");
+            }
+        }
+        String district = baseProject1.getDistrict();
+        if (district!=null && !"".equals(district)){
+            if ("1".equals(district)){
+                baseProject1.setDistrict("芜湖");
+            }else if("2".equals(district)){
+                baseProject1.setDistrict("马鞍山");
+            }else if("3".equals(district)){
+                baseProject1.setDistrict("江北");
+            }else if("4".equals(district)){
+                baseProject1.setDistrict("吴江");
+            }
+        }
+        String designCategory = baseProject1.getDesignCategory();
+        if (designCategory!=null && !"".equals(designCategory)){
+            if ("1".equals(designCategory)){
+                baseProject1.setDesignCategory("市政管道");
+            }else if("2".equals(designCategory)){
+                baseProject1.setDesignCategory("管网改造");
+            }else if("3".equals(designCategory)){
+                baseProject1.setDesignCategory("新建小区");
+            }else if("4".equals(designCategory)){
+                baseProject1.setDesignCategory("二次供水项目");
+            }else if("5".equals(designCategory)){
+                baseProject1.setDesignCategory("工商户");
+            }else if("6".equals(designCategory)){
+                baseProject1.setDesignCategory("居民装接水");
+            }else if("7".equals(designCategory)){
+                baseProject1.setDesignCategory("行政事业");
+            }
+        }
+
+        String subject = baseProject1.getSubject();
+        if (subject!=null && !"".equals(subject)){
+            if ("1".equals(subject)){
+                baseProject1.setSubject("居民住户");
+            }else if("2".equals(subject)){
+                baseProject1.setSubject("开发商");
+            }else if("3".equals(subject)){
+                baseProject1.setSubject("政府事业");
+            }else if("4".equals(subject)){
+                baseProject1.setSubject("工商户");
+            }else if("5".equals(subject)){
+                baseProject1.setSubject("芜湖华衍");
+            }
+        }
+        String projectNature = baseProject1.getProjectNature();
+        if (projectNature!=null && !"".equals(projectNature)){
+            if ("1".equals(projectNature)){
+                baseProject1.setProjectNature("新建");
+            }else if("2".equals(projectNature)){
+                baseProject1.setProjectNature("改造");
+            }
+        }
+        String projectCategory = baseProject1.getProjectCategory();
+        if (projectCategory!=null && !"".equals(projectCategory)){
+            if ("1".equals(projectCategory)) {
+                baseProject1.setProjectCategory("住宅区配套");
+            } else if("2".equals(projectCategory)){
+                baseProject1.setProjectCategory("商业区配套");
+            } else if("3".equals(projectCategory)){
+                baseProject1.setProjectCategory("工商区配套");
+            }
+        }
+        String waterSupplyType = baseProject1.getWaterSupplyType();
+        if (waterSupplyType!=null && !"".equals(waterSupplyType)){
+            if ("1".equals(waterSupplyType)){
+                baseProject1.setWaterSupplyType("直供水");
+            } else if("2".equals(waterSupplyType)){
+                baseProject1.setWaterSupplyType("二次供水");
+            }
+        }
+        String ab = baseProject1.getAB();
+        if (ab!=null && !"".equals(ab)){
+            if ("1".equals(ab)){
+                baseProject1.setAB("A");
+            }else if("2".equals(ab)){
+                baseProject1.setAB("B");
+            }
+        }
+
 
         return RestUtil.success(projectVo);
     }
@@ -1866,30 +1955,36 @@ public class ProjectController extends BaseController {
         //根据地区判断相应的设计费 应付金额 实付金额
         //如果为安徽
         if(!"4".equals(baseProject.getDistrict())){
-            AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyinfoByid(designInfo.getId());
-            if(anhuiMoneyinfo!=null){
-                //实收
-                if ("0".equals(anhuiMoneyinfo.getPayTerm())){
-                    designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
-                    designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
-                }else {
-                    // 累加实收金额
-                    String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
-                    String[] split = collectionMoney.split(",");
-                    BigDecimal num = new BigDecimal(0);
-                    for (String thisNum : split) {
-                        num = num.add(new BigDecimal(thisNum));
+            if (designInfo!=null){
+                AnhuiMoneyinfo anhuiMoneyinfo = projectService.anhuiMoneyinfoByid(designInfo.getId());
+
+                if(anhuiMoneyinfo!=null){
+                    //实收
+                    if ("0".equals(anhuiMoneyinfo.getPayTerm())){
+                        designInfo.setRevenue(anhuiMoneyinfo.getRevenue()+"");
+                        designInfo.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                    }else {
+                        // 累加实收金额
+                        String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
+                        if (collectionMoney!=null){
+                            String[] split = collectionMoney.split(",");
+                            BigDecimal num = new BigDecimal(0);
+                            for (String thisNum : split) {
+                                num = num.add(new BigDecimal(thisNum));
+                            }
+
+                            designInfo.setOfficialReceipts(num);
+                        }
+                        designInfo.setRevenue(anhuiMoneyinfo.getRevenue() + "");
+                        designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
+                        designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
                     }
-                    designInfo.setRevenue(anhuiMoneyinfo.getRevenue() + "");
-                    designInfo.setOfficialReceipts(num);
-                    designInfo.setDisMoney(anhuiMoneyinfo.getRevenue());
-                    designInfo.setPayTerm(anhuiMoneyinfo.getPayTerm());
+                }else{
+                    designInfo.setRevenue("0");
+                    designInfo.setOfficialReceipts(new BigDecimal(0));
+                    designInfo.setDisMoney(new BigDecimal(0));
+                    designInfo.setPayTerm("0");
                 }
-            }else{
-                designInfo.setRevenue("0");
-                designInfo.setOfficialReceipts(new BigDecimal(0));
-                designInfo.setDisMoney(new BigDecimal(0));
-                designInfo.setPayTerm("0");
             }
         }else{
             //如果为吴江
@@ -1914,45 +2009,55 @@ public class ProjectController extends BaseController {
             }
         }
         //项目探勘
-        ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
-        projectVo3.setProjectExploration(projectExploration);
-        if(projectExploration==null){
-            projectVo3.setProjectExploration(new ProjectExploration());
-        }else{
-            // 探勘人
-            if (projectExploration.getScout() != null && !"".equals(projectExploration.getScout())){
-                projectVo3.getProjectExploration().setScout(projectExploration.getScout());
-            }else {
-                projectVo3.getProjectExploration().setScout("-");
-            }
-            // 探勘时间
-            if (projectExploration.getExplorationTime() != null && !"".equals(projectExploration.getExplorationTime())){
-                projectVo3.getProjectExploration().setExplorationTime(projectExploration.getExplorationTime());
-            }else {
-                projectVo3.getProjectExploration().setExplorationTime("-");
-            }
+        if (designInfo!=null){
+            ProjectExploration projectExploration = projectService.ProjectExplorationByid(designInfo.getId());
 
-            projectVo3.setProjectExploration(projectExploration);}
-        //方案会审
-        PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
-        projectVo3.setPackageCame(packageCame);
-        if(packageCame==null){
-            projectVo3.setPackageCame(new PackageCame());
-        }else{
-            // 会审时间
-            if (packageCame.getPartTime() != null && !"".equals(packageCame.getPartTime())){
-                packageCame.setPartTime(packageCame.getPartTime());
-            }else {
-                packageCame.setPartTime("-");
-            }
+            projectVo3.setProjectExploration(projectExploration);
+            if(projectExploration==null){
+                projectVo3.setProjectExploration(new ProjectExploration());
+            }else{
+                // 探勘人
+                if (projectExploration.getScout() != null && !"".equals(projectExploration.getScout())){
+                    projectVo3.getProjectExploration().setScout(projectExploration.getScout());
+                }else {
+                    projectVo3.getProjectExploration().setScout("-");
+                }
+                // 探勘时间
+                if (projectExploration.getExplorationTime() != null && !"".equals(projectExploration.getExplorationTime())){
+                    projectVo3.getProjectExploration().setExplorationTime(projectExploration.getExplorationTime());
+                }else {
+                    projectVo3.getProjectExploration().setExplorationTime("-");
+                }
+
+                projectVo3.setProjectExploration(projectExploration);}
+            //方案会审
+            PackageCame packageCame = projectService.PackageCameByid(designInfo.getId());
             projectVo3.setPackageCame(packageCame);
-        }
-        //设计变更
-        DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
-        if(designChangeInfo == null){
+            if(packageCame==null){
+                projectVo3.setPackageCame(new PackageCame());
+            }else{
+                // 会审时间
+                if (packageCame.getPartTime() != null && !"".equals(packageCame.getPartTime())){
+                    packageCame.setPartTime(packageCame.getPartTime());
+                }else {
+                    packageCame.setPartTime("-");
+                }
+                projectVo3.setPackageCame(packageCame);
+            }
+            //设计变更
+            DesignChangeInfo designChangeInfo = projectService.designChangeInfoByid(designInfo.getId());
+            if(designChangeInfo == null){
+                projectVo3.setDesignChangeInfo(new DesignChangeInfo());
+            }else{
+                projectVo3.setDesignChangeInfo(designChangeInfo);
+            }
+        }else {
+            projectVo3.setProjectExploration(new ProjectExploration());
+            projectVo3.getProjectExploration().setScout("-");
+            projectVo3.getProjectExploration().setExplorationTime("-");
+            projectVo3.setPackageCame(new PackageCame());
             projectVo3.setDesignChangeInfo(new DesignChangeInfo());
-        }else{
-            projectVo3.setDesignChangeInfo(designChangeInfo);
+
         }
         //预算编制
 
@@ -1969,11 +2074,14 @@ public class ProjectController extends BaseController {
             }
             //预算编制人
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(budgeting.getBudgetingPeople());
-            String memberName = memberManage.getMemberName();
-            if (memberName != null ){
-                budgeting.setBudgetingPeople(memberName);
-            }else {
-                budgeting.setBudgetingPeople("-");
+            if (memberManage!=null){
+                String memberName = memberManage.getMemberName();
+                if (memberName != null ){
+                    budgeting.setBudgetingPeople(memberName);
+                }else {
+                    budgeting.setBudgetingPeople("-");
+                }
+
             }
             //预算编制时间
             if (budgeting.getBudgetingTime() != null && !"".equals(budgeting.getBudgetingTime())){
@@ -2204,6 +2312,10 @@ public class ProjectController extends BaseController {
         if (projectVo3.getLastSettlementReview() != null || projectVo3.getSettlementAuditInformation() != null ){
             projectVo3.setWori(1);
         }
+
+        if (projectVo3.getDesignInfo() == null){
+            projectVo3.setDesignInfo(new DesignInfo());
+        }
         return RestUtil.success(projectVo3);
     }
 
@@ -2427,6 +2539,12 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/project/affiliationProject", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> affiliationProject(@RequestParam(name = "baseProjectId") String baseId,@RequestParam(name = "district") String district,@RequestParam(name = "designCategory") String designCategory,@RequestParam(name = "designer") String designer){
         projectService.affiliationProject(baseId,district,designCategory,designer);
+        return RestUtil.success();
+    }
+    //工程项目编辑
+    @RequestMapping(value = "/project/updateProject", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> updateProject(net.zlw.cloud.progressPayment.model.BaseProject baseProject){
+        projectService.updateProject(baseProject);
         return RestUtil.success();
     }
 

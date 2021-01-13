@@ -571,6 +571,9 @@ public class BudgetingServiceImpl implements BudgetingService {
                     for (AuditInfo auditInfo : auditInfos) {
                         auditInfoDao.deleteByPrimaryKey(auditInfo);
                     }
+
+                   budgeting.setWhetherAccount("1");
+
                 }
 
                 baseProject.setBudgetStatus("1");
@@ -1118,8 +1121,6 @@ public class BudgetingServiceImpl implements BudgetingService {
             //领导和领导指定人
             if (ids.equals(whzjh) || ids.equals(whzjm) || ids.equals(wjzjh) || f){
 
-
-
                 //TODO start
                 //根据预算外键查询基本信息
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
@@ -1148,29 +1149,47 @@ public class BudgetingServiceImpl implements BudgetingService {
                     aDouble1 = (double)Math.round(aDouble1*100)/100;
                     //计提和
                     total6 = total6.add(new BigDecimal(aDouble1));
-                    //实际计提金额 取两位小数四舍五入
-                    achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                    BigDecimal actualAmount = total6.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
-                    achievementsInfo.setActualAmount(actualAmount);
-                    // 应收
-                    achievementsInfo.setAccruedAmount(total6);
-                    //余额
-                    BigDecimal balance = total6.subtract(actualAmount);
-                    achievementsInfo.setBalance(balance);
-                    // 员工绩效
-                    achievementsInfo.setMemberId(budgeting.getBudgetingPeople()); // 设计人
-                    achievementsInfo.setCreateTime(data);
-                    achievementsInfo.setUpdateTime(data);
-                    achievementsInfo.setFounderId(budgeting.getFounderId());
-                    achievementsInfo.setFounderCompanyId(budgeting.getFounderCompanyId());
-                    achievementsInfo.setDelFlag("0");
-                    achievementsInfo.setDistrict(baseProject.getDistrict());
-                    achievementsInfo.setDept("2"); //造价
-                    achievementsInfo.setAchievementsType("2"); //预算编制
-                    achievementsInfo.setBaseProjectId(baseProject.getId());
-                    achievementsInfo.setProjectNum(budgeting.getId());
-                    achievementsInfo.setOverFlag("0");
-                    employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+
+                    Example example3 = new Example(EmployeeAchievementsInfo.class);
+                    Example.Criteria c = example3.createCriteria();
+                    c.andEqualTo("projectNum",budgeting.getId());
+                    c.andEqualTo("delFlag","0");
+                    EmployeeAchievementsInfo employeeAchievementsInfo = employeeAchievementsInfoMapper.selectOneByExample(example3);
+                    if (employeeAchievementsInfo!=null){
+                        BigDecimal actualAmount = total6.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
+                        employeeAchievementsInfo.setActualAmount(actualAmount.add(employeeAchievementsInfo.getAccruedAmount()));
+                        employeeAchievementsInfo.setAccruedAmount(total6.add(employeeAchievementsInfo.getAccruedAmount()));
+                        BigDecimal balance = total6.subtract(actualAmount);
+                        employeeAchievementsInfo.setBalance(balance.add(employeeAchievementsInfo.getBalance()));
+                        employeeAchievementsInfoMapper.updateByPrimaryKeySelective(employeeAchievementsInfo);
+                    }else{
+                        //实际计提金额 取两位小数四舍五入
+                        achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                        BigDecimal actualAmount = total6.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
+                        achievementsInfo.setActualAmount(actualAmount);
+                        // 应收
+                        achievementsInfo.setAccruedAmount(total6);
+                        //余额
+                        BigDecimal balance = total6.subtract(actualAmount);
+                        achievementsInfo.setBalance(balance);
+                        // 员工绩效
+                        achievementsInfo.setMemberId(budgeting.getBudgetingPeople()); // 设计人
+                        achievementsInfo.setCreateTime(data);
+                        achievementsInfo.setUpdateTime(data);
+                        achievementsInfo.setFounderId(budgeting.getFounderId());
+                        achievementsInfo.setFounderCompanyId(budgeting.getFounderCompanyId());
+                        achievementsInfo.setDelFlag("0");
+                        achievementsInfo.setDistrict(baseProject.getDistrict());
+                        achievementsInfo.setDept("2"); //造价
+                        achievementsInfo.setAchievementsType("2"); //预算编制
+                        achievementsInfo.setBaseProjectId(baseProject.getId());
+                        achievementsInfo.setProjectNum(budgeting.getId());
+                        achievementsInfo.setOverFlag("0");
+                        employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                    }
+
+
+
                     //吴江
                 }else{
                     //预算编制造价咨询金额
@@ -1395,7 +1414,6 @@ public class BudgetingServiceImpl implements BudgetingService {
                 if (id.equals(budgetingListVo.getFounderId())){
                     budgetingListVo.setIsShow("1");
                 }
-
             }
             for (BudgetingListVo budgetingListVo : list1) {
                 MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
@@ -1416,7 +1434,6 @@ public class BudgetingServiceImpl implements BudgetingService {
                     budgetingListVo.setYinShow("1");
                 }
             }
-
 
             return list1;
         }
@@ -1492,7 +1509,6 @@ public class BudgetingServiceImpl implements BudgetingService {
 
 //        PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(returnList);
         return null;
-
 //
 //        for (BudgetingListVo budgetingListVo : list) {
 //            //待审核

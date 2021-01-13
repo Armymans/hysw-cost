@@ -2303,7 +2303,7 @@ public class ProjectService {
 
         //添加修改时间
         projectVo.getBaseProject().setUpdateTime(updateTime);
-        projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
+//        projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
         //添加设计表修改时间
 //        projectVo.getDesignInfo().setId(designInfo.getId());
         projectVo.getDesignInfo().setUpdateTime(updateTime);
@@ -3904,5 +3904,9 @@ public class ProjectService {
     public DesignInfo echoOutsourceMoney(String id) {
         DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
         return designInfo;
+    }
+
+    public void updateProject(net.zlw.cloud.progressPayment.model.BaseProject baseProject) {
+        baseProjectDao.updateByPrimaryKeySelective(baseProject);
     }
 }

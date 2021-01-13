@@ -131,27 +131,51 @@ public class ThoseResponsibleService  {
         return thoseResponsibles;
     }
 
-    public void addPerson(String remeberId) {
-        ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("1");
-        String personnel = thoseResponsible.getPersonnel();
-        if (personnel == null){
-            String[] split = remeberId.split(",");
-            String rId = "";
-            for (String s : split) {
-                rId += s+",";
+    public void addPerson( String remeberId,String type) {
+        if ("1".equals(type)){
+            ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("1");
+            String personnel = thoseResponsible.getPersonnel();
+            if (personnel == null){
+                String[] split = remeberId.split(",");
+                String rId = "";
+                for (String s : split) {
+                    rId += s+",";
+                }
+                rId = rId.substring(0,rId.length()-1);
+                thoseResponsible.setPersonnel(rId);
+                thoseResponsibleDao.updateByPrimaryKeySelective(thoseResponsible);
+            }else{
+                String[] split = remeberId.split(",");
+                for (String s : split) {
+                    personnel += ","+s+",";
+                    personnel = personnel.substring(0,personnel.length()-1);
+                }
+                thoseResponsible.setPersonnel(personnel);
+                thoseResponsibleDao.updateByPrimaryKeySelective(thoseResponsible);
             }
-            rId = rId.substring(0,rId.length()-1);
-            thoseResponsible.setPersonnel(rId);
-            thoseResponsibleDao.updateByPrimaryKeySelective(thoseResponsible);
-        }else{
-            String[] split = remeberId.split(",");
-            for (String s : split) {
-                personnel += ","+s+",";
-                personnel = personnel.substring(0,personnel.length()-1);
+        }else if("2".equals(type)){
+            ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("2");
+            String personnel = thoseResponsible.getPersonnel();
+            if (personnel == null){
+                String[] split = remeberId.split(",");
+                String rId = "";
+                for (String s : split) {
+                    rId += s+",";
+                }
+                rId = rId.substring(0,rId.length()-1);
+                thoseResponsible.setPersonnel(rId);
+                thoseResponsibleDao.updateByPrimaryKeySelective(thoseResponsible);
+            }else{
+                String[] split = remeberId.split(",");
+                for (String s : split) {
+                    personnel += ","+s+",";
+                    personnel = personnel.substring(0,personnel.length()-1);
+                }
+                thoseResponsible.setPersonnel(personnel);
+                thoseResponsibleDao.updateByPrimaryKeySelective(thoseResponsible);
             }
-            thoseResponsible.setPersonnel(personnel);
-            thoseResponsibleDao.updateByPrimaryKeySelective(thoseResponsible);
         }
+
     }
 
     public List<MemberManage> findAllTaskManager() {

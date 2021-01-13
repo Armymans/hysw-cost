@@ -626,23 +626,38 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 BigDecimal actualAmount = total3.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
                 //余额
                 BigDecimal balance = total3.subtract(actualAmount);
-                achievementsInfo.setAccruedAmount(total3);
-                achievementsInfo.setActualAmount(actualAmount);
-                achievementsInfo.setBalance(balance);
-                achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                achievementsInfo.setMemberId(lastSettlementReview.getPreparePeople()); //编制人
-                achievementsInfo.setCreateTime(data);
-                achievementsInfo.setUpdateTime(data);
-                achievementsInfo.setFounderId(lastSettlementReview.getFounderId());
-                achievementsInfo.setFounderCompanyId(lastSettlementReview.getFounderCompanyId());
-                achievementsInfo.setDelFlag("0");
-                achievementsInfo.setDistrict(baseProject.getDistrict());
-                achievementsInfo.setDept("2"); // 造价
-                achievementsInfo.setAchievementsType("3"); //上家送审绩效
-                achievementsInfo.setBaseProjectId(baseProject.getId());
-                achievementsInfo.setProjectNum(lastSettlementReview.getId());
-                achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
-                employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+
+                Example example3 = new Example(EmployeeAchievementsInfo.class);
+                Example.Criteria c3 = example3.createCriteria();
+                c3.andEqualTo("projectNum",lastSettlementReview.getId());
+                c3.andEqualTo("delFlag","0");
+                EmployeeAchievementsInfo employeeAchievementsInfo = employeeAchievementsInfoMapper.selectOneByExample(example3);
+                if (employeeAchievementsInfo!=null){
+                    employeeAchievementsInfo.setAccruedAmount(total3.add(employeeAchievementsInfo.getAccruedAmount()));
+                    employeeAchievementsInfo.setActualAmount(actualAmount.add(employeeAchievementsInfo.getActualAmount()));
+                    employeeAchievementsInfo.setBalance(balance.add(employeeAchievementsInfo.getBalance()));
+                    employeeAchievementsInfoMapper.updateByPrimaryKeySelective(employeeAchievementsInfo);
+                }else{
+                    achievementsInfo.setAccruedAmount(total3);
+                    achievementsInfo.setActualAmount(actualAmount);
+                    achievementsInfo.setBalance(balance);
+                    achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    achievementsInfo.setMemberId(lastSettlementReview.getPreparePeople()); //编制人
+                    achievementsInfo.setCreateTime(data);
+                    achievementsInfo.setUpdateTime(data);
+                    achievementsInfo.setFounderId(lastSettlementReview.getFounderId());
+                    achievementsInfo.setFounderCompanyId(lastSettlementReview.getFounderCompanyId());
+                    achievementsInfo.setDelFlag("0");
+                    achievementsInfo.setDistrict(baseProject.getDistrict());
+                    achievementsInfo.setDept("2"); // 造价
+                    achievementsInfo.setAchievementsType("3"); //上家送审绩效
+                    achievementsInfo.setBaseProjectId(baseProject.getId());
+                    achievementsInfo.setProjectNum(lastSettlementReview.getId());
+                    achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
+                    employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                }
+
+
                 //如果是吴江
             }else{
                 //咨询费
@@ -657,23 +672,35 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 BigDecimal actualAmount = total3.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
                 //余额
                 BigDecimal balance = total3.subtract(actualAmount);
-                achievementsInfo.setAccruedAmount(total3);
-                achievementsInfo.setActualAmount(actualAmount);
-                achievementsInfo.setBalance(balance);
-                achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                achievementsInfo.setMemberId(lastSettlementReview.getPreparePeople()); //编制人
-                achievementsInfo.setCreateTime(data);
-                achievementsInfo.setUpdateTime(data);
-                achievementsInfo.setFounderId(lastSettlementReview.getFounderId());
-                achievementsInfo.setFounderCompanyId(lastSettlementReview.getFounderCompanyId());
-                achievementsInfo.setDelFlag("0");
-                achievementsInfo.setDistrict(baseProject.getDistrict());
-                achievementsInfo.setDept("2"); // 造价
-                achievementsInfo.setAchievementsType("3"); //上家送审绩效
-                achievementsInfo.setBaseProjectId(baseProject.getId());
-                achievementsInfo.setProjectNum(lastSettlementReview.getId());
-                achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
-                employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                Example example3 = new Example(EmployeeAchievementsInfo.class);
+                Example.Criteria c3 = example3.createCriteria();
+                c3.andEqualTo("projectNum",lastSettlementReview.getId());
+                c3.andEqualTo("delFlag","0");
+                EmployeeAchievementsInfo employeeAchievementsInfo = employeeAchievementsInfoMapper.selectOneByExample(example3);
+                if (employeeAchievementsInfo!=null){
+                    employeeAchievementsInfo.setAccruedAmount(total3.add(employeeAchievementsInfo.getAccruedAmount()));
+                    employeeAchievementsInfo.setActualAmount(actualAmount.add(employeeAchievementsInfo.getActualAmount()));
+                    employeeAchievementsInfo.setBalance(balance.add(employeeAchievementsInfo.getBalance()));
+                    employeeAchievementsInfoMapper.updateByPrimaryKeySelective(employeeAchievementsInfo);
+                }else{
+                    achievementsInfo.setAccruedAmount(total3);
+                    achievementsInfo.setActualAmount(actualAmount);
+                    achievementsInfo.setBalance(balance);
+                    achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    achievementsInfo.setMemberId(lastSettlementReview.getPreparePeople()); //编制人
+                    achievementsInfo.setCreateTime(data);
+                    achievementsInfo.setUpdateTime(data);
+                    achievementsInfo.setFounderId(lastSettlementReview.getFounderId());
+                    achievementsInfo.setFounderCompanyId(lastSettlementReview.getFounderCompanyId());
+                    achievementsInfo.setDelFlag("0");
+                    achievementsInfo.setDistrict(baseProject.getDistrict());
+                    achievementsInfo.setDept("2"); // 造价
+                    achievementsInfo.setAchievementsType("3"); //上家送审绩效
+                    achievementsInfo.setBaseProjectId(baseProject.getId());
+                    achievementsInfo.setProjectNum(lastSettlementReview.getId());
+                    achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
+                    employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                }
             }
             lastSettlementReview.setWhetherAccount("0");
             lastSettlementReviewDao.updateByPrimaryKeySelective(lastSettlementReview);
@@ -712,23 +739,38 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     BigDecimal actualAmount = total7.multiply(new BigDecimal(0.8)).setScale(2,BigDecimal.ROUND_HALF_UP);
                     //余额
                     BigDecimal balance = total7.subtract(actualAmount);
-                    achievementsInfo.setAccruedAmount(total7);
-                    achievementsInfo.setActualAmount(actualAmount);
-                    achievementsInfo.setBalance(balance);
-                    achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                    achievementsInfo.setMemberId(settlementAuditInformation.getPreparePeople()); //编制人
-                    achievementsInfo.setCreateTime(data);
-                    achievementsInfo.setUpdateTime(data);
-                    achievementsInfo.setFounderId(settlementAuditInformation.getFounderId());
-                    achievementsInfo.setFounderCompanyId(settlementAuditInformation.getFounderCompanyId());
-                    achievementsInfo.setDelFlag("0");
-                    achievementsInfo.setDistrict(baseProject.getDistrict());
-                    achievementsInfo.setDept("2"); // 造价
-                    achievementsInfo.setAchievementsType("4"); //下家送审绩效
-                    achievementsInfo.setBaseProjectId(baseProject.getId());
-                    achievementsInfo.setProjectNum(settlementAuditInformation.getId());
-                    achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
-                    employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+
+                Example example3 = new Example(EmployeeAchievementsInfo.class);
+                Example.Criteria c3 = example3.createCriteria();
+                c3.andEqualTo("projectNum",settlementAuditInformation.getId());
+                c3.andEqualTo("delFlag","0");
+                EmployeeAchievementsInfo employeeAchievementsInfo = employeeAchievementsInfoMapper.selectOneByExample(example3);
+                    if (employeeAchievementsInfo!=null){
+                        employeeAchievementsInfo.setAccruedAmount(total7.add(employeeAchievementsInfo.getAccruedAmount()));
+                        employeeAchievementsInfo.setActualAmount(actualAmount.add(employeeAchievementsInfo.getActualAmount()));
+                        employeeAchievementsInfo.setBalance(balance.add(employeeAchievementsInfo.getBalance()));
+                        employeeAchievementsInfoMapper.updateByPrimaryKeySelective(employeeAchievementsInfo);
+
+                    }else{
+                        achievementsInfo.setAccruedAmount(total7);
+                        achievementsInfo.setActualAmount(actualAmount);
+                        achievementsInfo.setBalance(balance);
+                        achievementsInfo.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                        achievementsInfo.setMemberId(settlementAuditInformation.getPreparePeople()); //编制人
+                        achievementsInfo.setCreateTime(data);
+                        achievementsInfo.setUpdateTime(data);
+                        achievementsInfo.setFounderId(settlementAuditInformation.getFounderId());
+                        achievementsInfo.setFounderCompanyId(settlementAuditInformation.getFounderCompanyId());
+                        achievementsInfo.setDelFlag("0");
+                        achievementsInfo.setDistrict(baseProject.getDistrict());
+                        achievementsInfo.setDept("2"); // 造价
+                        achievementsInfo.setAchievementsType("4"); //下家送审绩效
+                        achievementsInfo.setBaseProjectId(baseProject.getId());
+                        achievementsInfo.setProjectNum(settlementAuditInformation.getId());
+                        achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
+                        employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                    }
+
                 }else{
                     //计算基本费
                     Double money = projectSumService.wujiangSettlementAuditInformationChargeBase(new BigDecimal(sumbitMoney));
@@ -747,6 +789,17 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     //余额
                     BigDecimal balance = total7.subtract(actualAmount);
 
+                Example example3 = new Example(EmployeeAchievementsInfo.class);
+                Example.Criteria c3 = example3.createCriteria();
+                c3.andEqualTo("projectNum",settlementAuditInformation.getId());
+                c3.andEqualTo("delFlag","0");
+                EmployeeAchievementsInfo employeeAchievementsInfo = employeeAchievementsInfoMapper.selectOneByExample(example3);
+                if (employeeAchievementsInfo!=null){
+                    employeeAchievementsInfo.setAccruedAmount(total7.add(employeeAchievementsInfo.getAccruedAmount()));
+                    employeeAchievementsInfo.setActualAmount(actualAmount.add(employeeAchievementsInfo.getActualAmount()));
+                    employeeAchievementsInfo.setBalance(balance.add(employeeAchievementsInfo.getBalance()));
+                    employeeAchievementsInfoMapper.updateByPrimaryKeySelective(employeeAchievementsInfo);
+                }else{
                     achievementsInfo.setAccruedAmount(total7);
                     achievementsInfo.setActualAmount(actualAmount);
                     achievementsInfo.setBalance(balance);
@@ -764,6 +817,8 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                     achievementsInfo.setProjectNum(lastSettlementReview.getId());
                     achievementsInfo.setOverFlag("0"); //是否发放完结 0否1是
                     employeeAchievementsInfoMapper.insertSelective(achievementsInfo);
+                }
+
                 }
             settlementAuditInformation.setWhetherAccount("0");
             settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
@@ -1408,6 +1463,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 for (AuditInfo auditInfo : auditInfos) {
                     auditInfoDao.deleteByPrimaryKey(auditInfo);
                 }
+                baseProject.setSaWhetherAccount("1");
+                baseProject.setAccountWhether(null);
+                baseProjectDao.updateByPrimaryKeySelective(baseProject);
             }
 
             //添加一审

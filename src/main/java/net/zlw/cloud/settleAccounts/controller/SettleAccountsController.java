@@ -10,6 +10,8 @@ import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.common.Page;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.librarian.dao.ThoseResponsibleDao;
+import net.zlw.cloud.librarian.model.ThoseResponsible;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
@@ -56,6 +58,25 @@ public class SettleAccountsController extends BaseController {
     private LastSettlementReviewDao lastSettlementReviewDao;
     @Resource
     private FileInfoMapper fileInfoMapper;
+    @Resource
+    private ThoseResponsibleDao thoseResponsibleDao;
+    @Value("${audit.wujiang.sheji.designHead}")
+    private String wjsjh;
+    @Value("${audit.wujiang.sheji.designManager}")
+    private String wjsjm;
+    @Value("${audit.wujiang.zaojia.costHead}")
+    private String wjzjh;
+    @Value("${audit.wujiang.zaojia.costManager}")
+    private String wjzjm;
+
+    @Value("${audit.wuhu.sheji.designHead}")
+    private String whsjh;
+    @Value("${audit.wuhu.sheji.designManager}")
+    private String whsjm;
+    @Value("${audit.wuhu.zaojia.costHead}")
+    private String whzjh;
+    @Value("${audit.wuhu.zaojia.costManager}")
+    private String whzjm;
 
 
     //查询所有结算
@@ -169,6 +190,27 @@ public class SettleAccountsController extends BaseController {
 //    @PutMapping("/updateAccount")
     @RequestMapping(value = "/accounts/updateAccount", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String, Object> updateAccount(@RequestParam(name = "id",required = false) String id,@RequestParam(name = "checkWhether") String checkWhether,@RequestParam(name = "id2",required = false) String id2) {
+
+        ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("2");
+        String personnel = thoseResponsible.getPersonnel();
+        String user = getLoginUser().getId();
+        boolean f = false;
+        if (personnel!=null){
+            String[] split = personnel.split(",");
+            for (String s : split) {
+                if (s.equals(user)){
+                    f = true;
+                }
+            }
+        }
+        try {
+            if (!user.equals(whzjh) && !user.equals(whzjm) && !user.equals(wjzjh) && !f){
+                throw new RuntimeException("您没有权限进行此操作,请联系领导或领导指定人进行操作");
+            }
+        } catch (RuntimeException e) {
+            return RestUtil.error(e.getMessage());
+        }
+
         ArrayList<String> split = new ArrayList<>();
         if (id!=null){
             String[] split1 = id.split(",");
