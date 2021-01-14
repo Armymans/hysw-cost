@@ -76,11 +76,15 @@ public class JbDesignTaskService {
      * 设计报装
      * @param jbDesignVoF
      */
-    public void getDesignEngineering(JbDesignVoF jbDesignVoF, HttpServletRequest request) {
+    public void getDesignEngineering(JbDesignVoF jbDesignVoF, HttpServletRequest request) throws Exception {
 
         String date = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
         JbDesignVo designVo = jbDesignVoF.getDesignVo();
         if (designVo != null) {
+            BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(designVo.getId());
+            if(baseProject1 != null){
+                throw new Exception("项目编号重复");
+            }
             //项目基本表数据
             BaseProject baseProject = new BaseProject();
             if (designVo.getProject_id() != null) {
@@ -190,20 +194,25 @@ public class JbDesignTaskService {
      * @param
      * @param
      */
-    public void getBudgetEngineering(JbBudgetVoF jbBudgetVoF,HttpServletRequest request) {
+    public void getBudgetEngineering(JbBudgetVoF jbBudgetVoF,HttpServletRequest request) throws Exception {
         JbBudgetVo budgetVo = jbBudgetVoF.getBudgetVo();
         if(budgetVo != null){
         Example example = new Example(BaseProject.class);
         example.createCriteria().andEqualTo("projectId",budgetVo.getProject_id())
                 .andEqualTo("delFlag","0");
         BaseProject baseProject = baseProjectDao.selectOneByExample(example);
-        baseProject.setBudgetStatus("4");
-        baseProjectDao.updateByPrimaryKeySelective(baseProject);
-
+        if(baseProject != null){
+            baseProject.setBudgetStatus("4");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        }
 
         String date = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
 
         if (budgetVo != null) {
+            Budgeting budgeting1 = budgetingDao.selectByPrimaryKey(budgetVo.getId());
+            if(budgeting1 != null){
+                throw new Exception("项目编号重复");
+            }
             //预算信息
             Budgeting budgeting = new Budgeting();
             if (budgetVo.getId() != null) {

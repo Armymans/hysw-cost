@@ -32,7 +32,12 @@ public class JbDesignTaskController extends BaseController {
      */
     @RequestMapping(value = "/api/getDesignEngineeringTwo", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> getDesignEngineering(@RequestBody JbDesignVoF jbDesignVoF){
-        jbDesignTaskService.getDesignEngineering(jbDesignVoF,request);
+        try {
+            jbDesignTaskService.getDesignEngineering(jbDesignVoF,request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success();
     }
 
@@ -45,7 +50,12 @@ public class JbDesignTaskController extends BaseController {
      */
     @RequestMapping(value = "/api/getBudgetEngineeringTwo", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> getBudgetEngineering(@RequestBody JbBudgetVoF jbBudgetVoF){
-        jbDesignTaskService.getBudgetEngineering(jbBudgetVoF,request);
+        try {
+            jbDesignTaskService.getBudgetEngineering(jbBudgetVoF,request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success();
     }
 
