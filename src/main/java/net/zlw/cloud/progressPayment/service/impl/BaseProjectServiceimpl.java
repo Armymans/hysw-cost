@@ -1686,21 +1686,33 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectProList(baseId);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
-        if (!"2".equals(baseProject.getProgressPaymentStatus())) {
-            Example example1 = new Example(ProgressPaymentInformation.class);
-            Example.Criteria c2 = example1.createCriteria();
-            c2.andEqualTo("baseProjectId",baseId);
-            c2.andEqualTo("delFlag","0");
-            ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectOneByExample(example1);
-            progressPaymentInformations.add(progressPaymentInformation);
-        }
-        for (ProgressPaymentInformation progressPaymentInformation : progressPaymentInformations) {
-            if ("1".equals(progressPaymentInformation.getProjectType())) {
-                progressPaymentInformation.setProjectType("合同内进度款支付");
-            } else if ("2".equals(progressPaymentInformation.getProjectType())) {
-                progressPaymentInformation.setProjectType("合同外进度款支付");
+        if (!"2".equals(baseProject.getProgressPaymentStatus())){
+            int num= 0;
+            for (ProgressPaymentInformation thisPro : progressPaymentInformations) {
+                // 变更次数
+                thisPro.setChangeNum(num+1);
+                // 施工单位
+                ConstructionUnitManagement constructionUnit = constructionUnitManagementMapper.selectByPrimaryKey(thisPro.getConstructionOrganization());
+                if (constructionUnit != null){
+                    thisPro.setConstructionOrganization(constructionUnit.getConstructionUnitName());
+                }
+                if ("1".equals(thisPro.getProjectType())) {
+                    thisPro.setProjectType("合同内进度款支付");
+                } else if ("2".equals(thisPro.getProjectType())) {
+                    thisPro.setProjectType("合同外进度款支付");
+                }
+
             }
         }
+//        if (!"2".equals(baseProject.getProgressPaymentStatus())) {
+//            Example example1 = new Example(ProgressPaymentInformation.class);
+//            Example.Criteria c2 = example1.createCriteria();
+//            c2.andEqualTo("baseProjectId",baseId);
+//            c2.andEqualTo("delFlag","0");
+//            ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectOneByExample(example1);
+//            progressPaymentInformations.add(progressPaymentInformation);
+//        }
+
 
         return progressPaymentInformations;
     }
@@ -1709,47 +1721,47 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     public TotalVo findTotal(String baseId) {
         TotalVo totalVo = new TotalVo();
 
-        Example example = new Example(ProgressPaymentInformation.class);
-        Example.Criteria c = example.createCriteria();
-        c.andEqualTo("delFlag","2");
-        c.andEqualTo("baseProjectId",baseId);
-        List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
-        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
-        System.err.println(baseProject);
-//        if (!"2".equals( baseProject.getProgressPaymentStatus())){
-            Example example1 = new Example(ProgressPaymentInformation.class);
-            Example.Criteria c2 = example1.createCriteria();
-            c2.andEqualTo("baseProjectId",baseId);
-            c2.andEqualTo("delFlag","0");
+//        Example example = new Example(ProgressPaymentInformation.class);
+//        Example.Criteria c = example.createCriteria();
+//        c.andEqualTo("delFlag","2");
+//        c.andEqualTo("baseProjectId",baseId);
+//        List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
+//        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+//        System.err.println(baseProject);
+////        if (!"2".equals( baseProject.getProgressPaymentStatus())){
+//            Example example1 = new Example(ProgressPaymentInformation.class);
+//            Example.Criteria c2 = example1.createCriteria();
+//            c2.andEqualTo("baseProjectId",baseId);
+//            c2.andEqualTo("delFlag","0");
+//
+//            ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectOneByExample(example1);
+//            if (progressPaymentInformation!=null){
+//                progressPaymentInformations.add(progressPaymentInformation);
+//            }
+////        }
+        List<ProgressPaymentInformation> informations = progressPaymentInformationDao.selectProList(baseId);
 
-            ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectOneByExample(example1);
-            if (progressPaymentInformation!=null){
-                progressPaymentInformations.add(progressPaymentInformation);
+        if (informations.size()>0){
+            BigDecimal bigDecimal = new BigDecimal(0);
+            BigDecimal bigDecimal1 = new BigDecimal(0);
+            for (ProgressPaymentInformation thisPro : informations) {
+                if (thisPro.getCurrentPaymentInformation()!=null){
+                    bigDecimal = bigDecimal.add(thisPro.getCurrentPaymentInformation());
+                }
+                if (thisPro.getCurrentPaymentRatio()!=null){
+                    if (thisPro.getCurrentPaymentRatio() == null ){
+                        thisPro.setCurrentPaymentRatio("0");
+                    }
+                    bigDecimal1 = bigDecimal1.add(new BigDecimal(thisPro.getCurrentPaymentRatio()));
+                }
             }
-//        }
+            String pro = progressPaymentInformationDao.selectChangNum(baseId);
 
-        BigDecimal bigDecimal = new BigDecimal(0);
-        BigDecimal bigDecimal1 = new BigDecimal(0);
-        int pro = 0;
-        for (ProgressPaymentInformation thisPro : progressPaymentInformations) {
-           if (thisPro.getCurrentPaymentInformation()!=null){
-               bigDecimal = bigDecimal.add(thisPro.getCurrentPaymentInformation());
-           }
-           if (thisPro.getCurrentPaymentRatio()!=null){
-               if (thisPro.getCurrentPaymentRatio() == null ){
-                   thisPro.setCurrentPaymentRatio("0");
-               }
-               bigDecimal1 = bigDecimal1.add(new BigDecimal(thisPro.getCurrentPaymentRatio()));
-           }
-           if (thisPro.getChangeNum()!=null){
-               if (pro<=thisPro.getChangeNum()){
-                   pro = thisPro.getChangeNum();
-               }
-           }
+            totalVo.setTotalPaymentAmount(bigDecimal);
+            totalVo.setCumulativeNumberPayment(bigDecimal1);
+            totalVo.setAccumulativePaymentProportion(pro);
         }
-        totalVo.setTotalPaymentAmount(bigDecimal);
-        totalVo.setCumulativeNumberPayment(bigDecimal1);
-        totalVo.setAccumulativePaymentProportion(pro+"");
+
 
         return totalVo;
     }

@@ -336,6 +336,7 @@ public class ThoseResponsibleService  {
                 progressPaymentInformation.setCreateTime(s.format(new Date()));
                 progressPaymentInformation.setFounderId(missionPerson);
                 progressPaymentInformation.setDelFlag("0");
+                progressPaymentInformation.setChangeNum(1);
                 progressPaymentInformationDao.insertSelective(progressPaymentInformation);
 
                 MessageVo messageVo = new MessageVo();
