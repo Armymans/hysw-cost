@@ -64,7 +64,6 @@ public class MaterialService {
     public Materie findOneMaterie(String id) {
         Materie materie = materialMapper.selectByPrimaryKey(id);
         return materie;
-
     }
 
     public void updateMaterie(Materie materie) {

@@ -226,7 +226,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
     )
     List<ProgressPaymentInformation> totalexpenditure(CostVo2 costVo2);
 
-    @Select("SELECT current_payment_Information currentPaymentInformation FROM progress_payment_information WHERE base_project_id = #{id}")
+    @Select("SELECT current_payment_Information currentPaymentInformation FROM progress_payment_information WHERE del_flag != '1' and base_project_id = #{id}")
     List<ProgressPaymentInformation> findAmount(@Param("id") String id);
 
     @Select("SELECT " +
@@ -506,7 +506,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
             " (p.receiving_time < #{endTime} or #{endTime} = '') and  " +
             " (p.compile_time > #{startTime} or #{startTime} = '') and  " +
             " (p.compile_time < #{endTime} or #{endTime} = '') and  " +
-//  "      p.founder_id = #{uid} and  " +
+            " p.founder_id = #{uid} and  " +
             " ( " +
             " b.cea_num like concat('%',#{keyword},'%') or  " +
             " b.project_num like concat('%',#{keyword},'%') or  " +
