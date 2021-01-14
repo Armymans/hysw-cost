@@ -33,6 +33,7 @@ public class ProgressListVo {
     private BigDecimal currentPaymentInformation;
     private String currentPaymentRatio;
     private BigDecimal cumulativeNumberPayment;
+    private String constructionOrganization;
     private String receivingTime;
     private String compileTime;
     private String isShow;

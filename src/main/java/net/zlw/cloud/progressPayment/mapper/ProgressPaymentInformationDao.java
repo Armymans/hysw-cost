@@ -308,6 +308,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
   " b.cea_num ceaNum, " +
   " p.founder_id founderId," +
   " b.project_num projectNum, " +
+  " p.construction_organization constructionOrganization, " +
   " b.project_name projectName, " +
   " ( CASE b.progress_payment_status WHEN '1' THEN '待审核' WHEN '2' THEN '处理中' WHEN '3' THEN '未通过' WHEN '4' THEN '待确认' WHEN '5' THEN '进行中' WHEN '6' THEN '已完成' END )as  progressPaymentStatus, " +
   " ( CASE b.district WHEN '1' THEN '芜湖' WHEN '2' THEN '马鞍山' WHEN '3' THEN '江北' WHEN '4' THEN '吴江' END ) AS district, " +
@@ -628,4 +629,7 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
 
     @Select("SELECT MAX(change_num) FROM progress_payment_information WHERE del_flag != '1' AND base_project_id = #{baseId}")
     String selectChangNum(String baseId);
+
+    @Select("SELECT construction_organization FROM progress_payment_information WHERE del_flag = '3' AND base_project_id = #{baseId}")
+    List<ProgressPaymentInformation> selectUtil(String baseId);
 }
