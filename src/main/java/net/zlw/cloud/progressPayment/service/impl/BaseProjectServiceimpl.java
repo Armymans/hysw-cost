@@ -701,20 +701,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         example2.createCriteria().andEqualTo("projectNum", baseProject.getProjectNum());
         BaseProject project = baseProjectDao.selectOneByExample(example2);
         TotalVo total = findTotal(project.getId());
-        BigDecimal cumulativeNumberPayment = total.getCumulativeNumberPayment();
-        //本次
-        BigDecimal bigDecimal = new BigDecimal(baseProject.getCurrentPaymentRatio());
-        if (project.getProgressPaymentStatus().equals("2")){
 
-            cumulativeNumberPayment = cumulativeNumberPayment.add(bigDecimal);
-        }
-        if (cumulativeNumberPayment.compareTo(new BigDecimal("100")) == 1){
-            throw new RuntimeException("累计支付比例大于100%");
-        }
         //申请信息
         ApplicationInformation information = new ApplicationInformation();
-        //进度款累计支付信息
-        ProgressPaymentTotalPayment payment = new ProgressPaymentTotalPayment();
+
         //本期进度款支付信息
         ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(baseProject.getId());
         //审核表
@@ -781,10 +771,13 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     c.andEqualTo("baseProjectId",project.getId());
                     c.andEqualTo("delFlag","0");
                     ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example);
-                    progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(baseProject.getCurrentPaymentInformation()));
+                    if (progressPaymentTotalPayment != null){
+                        progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(baseProject.getCurrentPaymentInformation()));
 //                    progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(baseProject.getCumulativePaymentTimes())));
-                    progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(baseProject.getCurrentPaymentRatio())+"");
-                    progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
+                        progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(baseProject.getCurrentPaymentRatio())+"");
+                        progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
+                    }
+
 
                     project.setProgressPaymentStatus("1");;
                     baseProjectDao.updateByPrimaryKeySelective(project);
@@ -1006,7 +999,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             paymentInformation.setContactPhone(baseProject.getContactPhone());
             paymentInformation.setAmountOutsourcing(baseProject.getAmountOutsourcing());
             paymentInformation.setSituation(baseProject.getSituation());
-            paymentInformation.setRemarkes(baseProject.getRemarkes());
+            paymentInformation.setRemarkes(baseProject.getRemarkes1());
             Example example3 = new Example(ProgressPaymentInformation.class);
             example3.createCriteria().andEqualTo("id", baseProject.getId()).andEqualTo("delFlag","0");
             ProgressPaymentInformation progressPaymentInformation = progressPaymentInformationDao.selectOneByExample(example3);
@@ -1028,89 +1021,92 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 if (amount.size() > 0) {
                     for (ProgressPaymentInformation thisPro : amount) {
                         // 累加支付金额
-                        totalMoney = totalMoney.add(thisPro.getCurrentPaymentInformation());
+                        if (thisPro != null){
+                            totalMoney = totalMoney.add(thisPro.getCurrentPaymentInformation());
+                        }
                     }
                 }
                 String projectName = baseProject.getProjectName();//项目名称
 
                 BigDecimal contractAmount = paymentInformation.getContractAmount();//合同金额
-                BigDecimal qi = new BigDecimal("0.7");
-                BigDecimal multiply = contractAmount.multiply(qi);
-                //如果累计支付金额大于合同金额的70%就发邮件和短信
-                if (totalMoney.compareTo(multiply) == 1) {
-                    // 部门领导罗均
-                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(whzjh);
-                    String username = loginUser.getUsername();
-                    String name1 = memberManage.getMemberName();
-                    MessageVo messageVo = new MessageVo();
-                    messageVo.setId("A02");
-                    messageVo.setUserId(whzjh);
-                    messageVo.setType("3"); //風險
-                    messageVo.setPhone(memberManage.getPhone());
-                    messageVo.setReceiver(memberManage.getEmail());
-                    messageVo.setTitle("您有一个待审核的进度款支付项目已超额！");
-                    // 「接收人姓名」您好！【提交人】提交的【所选项目名称】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！
-                    messageVo.setSnsContent(name1 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                    messageVo.setContent(name1 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                    messageVo.setDetails(name1 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+                if (contractAmount != null && !"".equals(contractAmount)) {
+                    BigDecimal qi = new BigDecimal("0.7");
+                    BigDecimal multiply = contractAmount.multiply(qi);
+                    //如果累计支付金额大于合同金额的70%就发邮件和短信
+                    if (totalMoney.compareTo(multiply) == 1) {
+                        // 部门领导罗均
+                        MemberManage memberManage = memberManageDao.selectByPrimaryKey(whzjh);
+                        String username = loginUser.getUsername();
+                        String name1 = memberManage.getMemberName();
+                        MessageVo messageVo = new MessageVo();
+                        messageVo.setId("A02");
+                        messageVo.setUserId(whzjh);
+                        messageVo.setType("3"); //風險
+                        messageVo.setPhone(memberManage.getPhone());
+                        messageVo.setReceiver(memberManage.getEmail());
+                        messageVo.setTitle("您有一个待审核的进度款支付项目已超额！");
+                        // 「接收人姓名」您好！【提交人】提交的【所选项目名称】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！
+                        messageVo.setSnsContent(name1 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+                        messageVo.setContent(name1 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+                        messageVo.setDetails(name1 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo.setSnsContent(name1+"您好！【"+"sjf"+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo.setContent(name1+"您好！【"+"sjf"+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo.setDetails(name1+"您好！【"+"sjf"+"】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                    messageService.sendOrClose(messageVo);
-                    // 集团领导 殷莉萍
-                    MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(whzjm);
-                    String name2 = memberManage1.getMemberName();
-                    MessageVo messageVo1 = new MessageVo();
-                    messageVo1.setId("A02");
-                    messageVo1.setUserId(whzjm);
-                    messageVo1.setType("3"); //風險
-                    messageVo1.setPhone(memberManage1.getPhone());
-                    messageVo1.setReceiver(memberManage1.getEmail());
-                    messageVo1.setTitle("您有一个待审核的进度款支付项目已超额！");
-                    messageVo1.setSnsContent(name2 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                    messageVo1.setContent(name2 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                    messageVo1.setDetails(name2 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+                        messageService.sendOrClose(messageVo);
+                        // 集团领导 殷莉萍
+                        MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(whzjm);
+                        String name2 = memberManage1.getMemberName();
+                        MessageVo messageVo1 = new MessageVo();
+                        messageVo1.setId("A02");
+                        messageVo1.setUserId(whzjm);
+                        messageVo1.setType("3"); //風險
+                        messageVo1.setPhone(memberManage1.getPhone());
+                        messageVo1.setReceiver(memberManage1.getEmail());
+                        messageVo1.setTitle("您有一个待审核的进度款支付项目已超额！");
+                        messageVo1.setSnsContent(name2 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+                        messageVo1.setContent(name2 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
+                        messageVo1.setDetails(name2 + "您好！【" + username + "】提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo1.setSnsContent(name2+"您好！【sjf】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo1.setContent(name2+"您好！【sjf】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
 //                        messageVo1.setDetails(name2+"您好！【sjf】提交的【"+projectName+"】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时登录造价管理平台查看详情！");
-                    messageService.sendOrClose(messageVo1);
+                        messageService.sendOrClose(messageVo1);
 
-                    // 提交人
-                    MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(loginUser.getId());
-                    String name3 = memberManage2.getMemberName();
-                    MessageVo messageVo2 = new MessageVo();
-                    messageVo2.setId("A02");
-                    messageVo2.setUserId(loginUser.getId());
-                    messageVo2.setType("3"); //風險
-                    messageVo2.setReceiver(memberManage2.getEmail());
-                    messageVo2.setPhone(memberManage2.getPhone());
-                    messageVo2.setTitle("您有一个进度款支付项目已超额");
-                    // 「接收人姓名」您好！您提交的【所选项目名称】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！
-                    messageVo2.setSnsContent(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情!");
-                    messageVo2.setContent(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情!");
-                    messageVo2.setDetails(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                    messageService.sendOrClose(messageVo2);
+                        // 提交人
+                        MemberManage memberManage2 = memberManageDao.selectByPrimaryKey(loginUser.getId());
+                        String name3 = memberManage2.getMemberName();
+                        MessageVo messageVo2 = new MessageVo();
+                        messageVo2.setId("A02");
+                        messageVo2.setUserId(loginUser.getId());
+                        messageVo2.setType("3"); //風險
+                        messageVo2.setReceiver(memberManage2.getEmail());
+                        messageVo2.setPhone(memberManage2.getPhone());
+                        messageVo2.setTitle("您有一个进度款支付项目已超额");
+                        // 「接收人姓名」您好！您提交的【所选项目名称】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！
+                        messageVo2.setSnsContent(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情!");
+                        messageVo2.setContent(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情!");
+                        messageVo2.setDetails(name3 + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+                        messageService.sendOrClose(messageVo2);
 
-                    // 互审人
-                    String auditorId = auditInfo.getAuditorId();
-                    MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(auditorId);
-                    String name4 = memberManage3.getMemberName();
-                    MessageVo messageVo3 = new MessageVo();
-                    messageVo3.setId("A02");
-                    messageVo3.setType("3"); //風險
-                    messageVo3.setUserId(auditorId);
-                    messageVo3.setReceiver(memberManage3.getEmail());
-                    messageVo3.setPhone(memberManage3.getPhone());
-                    messageVo3.setTitle("您有一个进度款支付项目已超额");
-                    // 接收人姓名」您好！【提交人】提交给您的【所选项目名称】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！
-                    messageVo3.setSnsContent(name4 + "您好！【" + username + "】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                    messageVo3.setContent(name4 + "您好！【" + username + "】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                    messageVo3.setDetails(name4 + "您好！【" + username + "】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+                        // 互审人
+                        String auditorId = auditInfo.getAuditorId();
+                        MemberManage memberManage3 = memberManageDao.selectByPrimaryKey(auditorId);
+                        String name4 = memberManage3.getMemberName();
+                        MessageVo messageVo3 = new MessageVo();
+                        messageVo3.setId("A02");
+                        messageVo3.setType("3"); //風險
+                        messageVo3.setUserId(auditorId);
+                        messageVo3.setReceiver(memberManage3.getEmail());
+                        messageVo3.setPhone(memberManage3.getPhone());
+                        messageVo3.setTitle("您有一个进度款支付项目已超额");
+                        // 接收人姓名」您好！【提交人】提交给您的【所选项目名称】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！
+                        messageVo3.setSnsContent(name4 + "您好！【" + username + "】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+                        messageVo3.setContent(name4 + "您好！【" + username + "】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
+                        messageVo3.setDetails(name4 + "您好！【" + username + "】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
 //                        messageVo3.setSnsContent(name4+"您好！【sjf】提交的给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
 //                        messageVo3.setContent(name4+"您好！【sjf】提交给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
 //                        messageVo3.setDetails(name4+"您好！【sjf】提交给您的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
-                    messageService.sendOrClose(messageVo3);
-                } else {
+                        messageService.sendOrClose(messageVo3);
+                    } else {
 //                // 站内信
 //                MessageVo messageVo4 = new MessageVo();
 //                messageVo4.setId("A10");
@@ -1119,6 +1115,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 //                messageVo4.setDetails(loginUser.getUsername() + "您好！您提交的【" + projectName + "】的进度款支付项目进度款支付金额已达到合同金额的70%以上，请及时查看详情！");
 //                //调用消息Service
 //                messageService.sendOrClose(messageVo4);
+                    }
                 }
             }
         }
