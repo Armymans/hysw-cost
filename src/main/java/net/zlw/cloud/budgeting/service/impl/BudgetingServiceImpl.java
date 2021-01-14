@@ -1343,7 +1343,6 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }
                 }
 
-
             }
             for (BudgetingListVo budgetingListVo : list1) {
                 MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());

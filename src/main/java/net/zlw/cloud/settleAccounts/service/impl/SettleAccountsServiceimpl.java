@@ -1465,7 +1465,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                 }
                 baseProject.setSaWhetherAccount("1");
                 baseProject.setAccountWhether(null);
-                baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                baseProjectDao.updateByPrimaryKey(baseProject);
+
+                baseAccountsVo.getLastSettlementReview().setWhetherAccount("1");
+                lastSettlementReviewDao.updateByPrimaryKeySelective(baseAccountsVo.getLastSettlementReview());
+                baseAccountsVo.getSettlementAuditInformation().setWhetherAccount("1");
+                settlementAuditInformationDao.updateByPrimaryKeySelective(baseAccountsVo.getSettlementAuditInformation());
             }
 
             //添加一审
