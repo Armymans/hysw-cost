@@ -1,6 +1,7 @@
 package net.zlw.cloud.jbDesignTask.domain.vo;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import net.zlw.cloud.jbDesignTask.domain.DiameterInfo;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 public class JbDesignVo {
 
+    @JsonProperty("Id")
     private String Id;
     private String project_id;
     private String project_name;
@@ -38,7 +40,9 @@ public class JbDesignVo {
     private String scout;
     private String remark;
 
+    @JsonProperty("DiameterInfo")
     private List<DiameterInfos> DiameterInfo;
+    @JsonProperty("FileInfo")
     private List<FileInfos> FileInfo;
 
 }

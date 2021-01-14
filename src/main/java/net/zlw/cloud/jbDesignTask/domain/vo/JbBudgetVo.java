@@ -1,6 +1,7 @@
 package net.zlw.cloud.jbDesignTask.domain.vo;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class JbBudgetVo {
     private String sure_man;
     private String budgetingTime;
     private String remarks;
+    @JsonProperty("FileInfo")
     private List<FileInfos> FileInfo;
 
 }
