@@ -564,12 +564,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
      * 根据id查询编辑进度款信息
      */
     @Override
-    public BaseProjectVo editProgressById(String id, UserInfo userInfo, String visaNum) {
+    public BaseProjectVo editProgressById(String pid, UserInfo userInfo, String visaNum) {
 
 //        userInfo = new UserInfo("user309",null,null,true);
 //        userInfo = new UserInfo("200101005",null,null,true);
         BaseProjectVo baseProjectVo = new BaseProjectVo();
-        ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(id);
+        ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(pid);
 
 
         BaseProject baseProject = baseProjectDao.findTrackBaseProjectId(paymentInformation.getBaseProjectId());
@@ -595,10 +595,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         ApplicationInformation applicationInformation = applicationInformationDao.selectOneByExample(example);
 
         Example example1 = new Example(ProgressPaymentTotalPayment.class);
-        example1.createCriteria().andEqualTo("progressPaymentId", id).andEqualTo("delFlag","0");
+        example1.createCriteria().andEqualTo("progressPaymentId", pid).andEqualTo("delFlag","0");
         ProgressPaymentTotalPayment totalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example1);
 
-        baseProjectVo.setId(id);
+        baseProjectVo.setId(pid);
         baseProjectVo.setProgressPaymentStatus(baseProject.getProgressPaymentStatus());
         baseProjectVo.setManagementTable(baseProject.getManagementTable()); //后加的 管理表字段
         baseProjectVo.setProjectNum(baseProject.getProjectNum());
@@ -655,7 +655,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             baseProjectVo.setRemarkes1(paymentInformation.getRemarkes());
         }else{
             //第二次进度款支付需要删除上次支付附件
-            List<FileInfo> fileInfo = fileInfoMapper.deleteOneByF(id);
+            List<FileInfo> fileInfo = fileInfoMapper.deleteOneByF(pid);
             if(fileInfo.size() > 0){
                 for (FileInfo info : fileInfo) {
                     info.setStatus("1");
@@ -1677,12 +1677,14 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Override
     public List<ProgressPaymentInformation> findTotalList(String baseId) {
-        Example example = new Example(ProgressPaymentInformation.class);
-        Example.Criteria c = example.createCriteria();
-        c.andEqualTo("delFlag","2");
-        c.andEqualTo("baseProjectId",baseId);
-        example.orderBy("changeNum");
-        List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
+//        Example example = new Example(ProgressPaymentInformation.class);
+//        Example.Criteria c = example.createCriteria();
+//        c.andNotEqualTo("delFlag","1");
+//        c.andEqualTo("baseProjectId",baseId);
+//        example.orderBy("changeNum");
+//        List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectByExample(example);
+
+        List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectProList(baseId);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
         if (!"2".equals(baseProject.getProgressPaymentStatus())) {
             Example example1 = new Example(ProgressPaymentInformation.class);

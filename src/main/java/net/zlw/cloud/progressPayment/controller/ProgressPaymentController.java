@@ -64,9 +64,9 @@ public class ProgressPaymentController  extends BaseController {
     //根据id查询编辑进度款
 //    @GetMapping("/seachProgressById/{id}")
     @RequestMapping(value = "/progress/editProgressById",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> editProgressById(@RequestParam(name = "id") String id,@RequestParam(name = "visaNum") String visaNum){
+    public Map<String,Object> editProgressById(@RequestParam(name = "pid") String pid,@RequestParam(name = "visaNum") String visaNum){
         try {
-            BaseProjectVo baseProjectVo = baseProjectService.editProgressById(id,getLoginUser(),visaNum);
+            BaseProjectVo baseProjectVo = baseProjectService.editProgressById(pid,getLoginUser(),visaNum);
             return RestUtil.success(baseProjectVo);
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,7 +94,7 @@ public class ProgressPaymentController  extends BaseController {
     public Map<String,Object> updateProgress(BaseProjectVo baseProjectVo){
         try {
             UserInfo userInfo = getLoginUser();
-//            userInfo = new UserInfo("user309",null,null,true);
+            userInfo = new UserInfo("user309",null,null,true);
             baseProjectService.updateProgress(baseProjectVo,userInfo,request);
             return RestUtil.success("修改成功");
         } catch (Exception e) {

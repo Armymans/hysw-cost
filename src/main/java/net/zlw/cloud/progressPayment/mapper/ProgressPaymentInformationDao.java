@@ -621,4 +621,8 @@ public interface ProgressPaymentInformationDao extends Mapper<ProgressPaymentInf
 
     @Select("SELECT * FROM progress_payment_information WHERE del_flag = '0' AND base_project_id = #{baseId}")
     ProgressPaymentInformation selectProOne(String baseId);
+
+
+    @Select("SELECT * FROM progress_payment_information WHERE del_flag != '0' AND base_project_id = #{baseId}")
+    List<ProgressPaymentInformation> selectProList(String baseId);
 }
