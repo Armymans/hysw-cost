@@ -743,11 +743,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     c.andEqualTo("baseProjectId",project.getId());
                     c.andEqualTo("delFlag","0");
                     ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(sexample);
-                    progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(baseProject.getCurrentPaymentInformation()));
+                    if (progressPaymentTotalPayment != null){
+                        progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(baseProject.getCurrentPaymentInformation()));
 //                    progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(baseProject.getCumulativePaymentTimes())));
-                    progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(baseProject.getCurrentPaymentRatio())+"");
-                    progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
-
+                        progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(baseProject.getCurrentPaymentRatio())+"");
+                        progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
+                    }
                     project.setProgressPaymentStatus("1");;
                     baseProjectDao.updateByPrimaryKeySelective(project);
 
