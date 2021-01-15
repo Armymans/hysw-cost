@@ -81,5 +81,21 @@ public class MaterialAnalysis {
     private String founderCompanyId;
     @Column(name = "del_flag")
     private String delFlag;
+    @Column(name = "materials_a_code")
+    private String materialsACode;
+    @Column(name = "materials_a_nv_code")
+    private String materialsANvCode;
+    @Column(name = "materials_a_nv_name")
+    private String materialsANvName;
+    @Column(name = "materials_a_nc_ttpe")
+    private String materialsANcTtpe;
+    @Column(name = "materials_a_link")
+    private String materialsALink;
+    @Column(name = "actual_consumption")
+    private String actualConsumption;
+    @Column(name = "total_materials_by_a")
+    private String totalMaterialsByA;
+    @Column(name = "super_collar_materials")
+    private String superCollarMaterials;
 
 }

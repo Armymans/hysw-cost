@@ -1144,74 +1144,93 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
 
 //        1芜湖2马鞍山3江北4吴江
         String district = baseProject.getDistrict();
-        if (district.equals("1")){
-            baseProject.setDistrict("芜湖");
-        }else if(district.equals("2")){
-            baseProject.setDistrict("马鞍山");
-        }else if(district.equals("3")){
-            baseProject.setDistrict("江北");
-        }else if(district.equals("4")){
-            baseProject.setDistrict("吴江");
+        if (district != null && !"".equals(district)){
+            if (district.equals("1")){
+                baseProject.setDistrict("芜湖");
+            }else if(district.equals("2")){
+                baseProject.setDistrict("马鞍山");
+            }else if(district.equals("3")){
+                baseProject.setDistrict("江北");
+            }else if(district.equals("4")){
+                baseProject.setDistrict("吴江");
+            }
         }
 //        设计类别1市政管道2管网改造3新建小区4二次供水项目5工商户6居民装接水7行政事业
         String designCategory = baseProject.getDesignCategory();
-        if (designCategory.equals("1")){
-            baseProject.setDesignCategory("市政管道");
-        }else if(designCategory.equals("2")){
-            baseProject.setDesignCategory("管网改造");
-        }else if(designCategory.equals("3")){
-            baseProject.setDesignCategory("新建小区");
-        }else if(designCategory.equals("4")){
-            baseProject.setDesignCategory("二次供水项目");
-        }else if(designCategory.equals("5")){
-            baseProject.setDesignCategory("工商户");
-        }else if(designCategory.equals("6")){
-            baseProject.setDesignCategory("居民装接水");
-        }else if(designCategory.equals("7")){
-            baseProject.setDesignCategory("行政事业");
+        if (designCategory != null && !"".equals(designCategory)){
+            if (designCategory.equals("1")){
+                baseProject.setDesignCategory("市政管道");
+            }else if(designCategory.equals("2")){
+                baseProject.setDesignCategory("管网改造");
+            }else if(designCategory.equals("3")){
+                baseProject.setDesignCategory("新建小区");
+            }else if(designCategory.equals("4")){
+                baseProject.setDesignCategory("二次供水项目");
+            }else if(designCategory.equals("5")){
+                baseProject.setDesignCategory("工商户");
+            }else if(designCategory.equals("6")){
+                baseProject.setDesignCategory("居民装接水");
+            }else if(designCategory.equals("7")){
+                baseProject.setDesignCategory("行政事业");
+            }
         }
+
+
 //        1住宅区配套 2商业区配套 3工商区配套
         String projectCategory = baseProject.getProjectCategory();
-        if (projectCategory.equals("1")){
-            baseProject.setProjectCategory("住宅区配套");
-        }else if(projectCategory.equals("2")){
-            baseProject.setProjectCategory("商业区配套");
-        }else if(projectCategory.equals("3")){
-            baseProject.setProjectCategory("工商区配套");
+        if (projectCategory != null && !"".equals(projectCategory)){
+            if (projectCategory.equals("1")){
+                baseProject.setProjectCategory("住宅区配套");
+            }else if(projectCategory.equals("2")){
+                baseProject.setProjectCategory("商业区配套");
+            }else if(projectCategory.equals("3")){
+                baseProject.setProjectCategory("工商区配套");
+            }
         }
 //         1居民住户2开发商 3政府事业 4工商户 5芜湖华衍
+
         String subject = baseProject.getSubject();
-        if (subject.equals("1")){
-            baseProject.setSubject("居民住户");
-        }else if(subject.equals("2")){
-            baseProject.setSubject("开发商");
-        }else if(subject.equals("3")){
-            baseProject.setSubject("政府事业");
-        }else if(subject.equals("4")){
-            baseProject.setSubject("工商户");
-        }else if(subject.equals("5")){
-            baseProject.setSubject("芜湖华衍");
+        if (subject != null && !"".equals(subject)){
+            if (subject.equals("1")){
+                baseProject.setSubject("居民住户");
+            }else if(subject.equals("2")){
+                baseProject.setSubject("开发商");
+            }else if(subject.equals("3")){
+                baseProject.setSubject("政府事业");
+            }else if(subject.equals("4")){
+                baseProject.setSubject("工商户");
+            }else if(subject.equals("5")){
+                baseProject.setSubject("芜湖华衍");
+            }
         }
 //        1新建 2改造
         String projectNature = baseProject.getProjectNature();
-        if (projectNature.equals("1")){
-            baseProject.setProjectNature("新建");
-        }else if(projectNature.equals("2")){
-            baseProject.setProjectNature("改造");
+        if (projectNature != null && !"".equals(projectNature)){
+            if (projectNature.equals("1")){
+                baseProject.setProjectNature("新建");
+            }else if(projectNature.equals("2")){
+                baseProject.setProjectNature("改造");
+            }
         }
+
+
 //      1直供水 2二次供水
         String waterSupplyType = baseProject.getWaterSupplyType();
-        if (waterSupplyType.equals("1")){
-            baseProject.setWaterSupplyType("直供水");
-        }else if(waterSupplyType.equals("2")){
-            baseProject.setWaterSupplyType("二次供水");
+        if (waterSupplyType != null && !"".equals(waterSupplyType)) {
+            if (waterSupplyType.equals("1")) {
+                baseProject.setWaterSupplyType("直供水");
+            } else if (waterSupplyType.equals("2")) {
+                baseProject.setWaterSupplyType("二次供水");
+            }
         }
 //        AB 1A2B
         String ab = baseProject.getAB();
-        if (ab.equals("1")){
-            baseProject.setAB("A");
-        }else if(ab.equals("2")){
-            baseProject.setAB("B");
+        if (ab != null && !"".equals(ab)) {
+            if (ab.equals("1")) {
+                baseProject.setAB("A");
+            } else if (ab.equals("2")) {
+                baseProject.setAB("B");
+            }
         }
         String constructionUnit = baseProject.getConstructionOrganization();
         if (constructionUnit!=null && !"".equals(constructionUnit)){

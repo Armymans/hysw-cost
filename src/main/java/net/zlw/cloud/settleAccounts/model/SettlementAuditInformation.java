@@ -63,5 +63,14 @@ public class SettlementAuditInformation implements Serializable {
     @Column(name = "contract")
     private String contract;
 
+    @Column(name = "audit_fee")
+    private String auditFee;
+    @Column(name = "audit_fee_materials")
+    private String auditFeeMaterials;
+    @Column(name = "audi_construction")
+    private String audiConstruction;
+    @Column(name = "bid_section")
+    private String bidSection;
+
 
 }

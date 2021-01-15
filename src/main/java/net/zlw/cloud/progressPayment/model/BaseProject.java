@@ -206,6 +206,8 @@ public class BaseProject implements Serializable {
     private String chargeAmount;
     @Column(name = "fax")
     private String fax;
+    @Column(name = "supervisor_unit")
+    private String supervisorUnit;
 
 
 
