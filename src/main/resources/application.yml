@@ -43,6 +43,7 @@ app:
   #  attachPath: /app/data
   testPath: D://upload
 user_account: test1
+#校验域账户开关 0关闭 1开启
 verification_flag: 0
 #bybatis分页插件配置
 pagehelper:
