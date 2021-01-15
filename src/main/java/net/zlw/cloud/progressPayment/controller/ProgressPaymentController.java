@@ -94,7 +94,7 @@ public class ProgressPaymentController  extends BaseController {
     public Map<String,Object> updateProgress(BaseProjectVo baseProjectVo){
         try {
             UserInfo userInfo = getLoginUser();
-            userInfo = new UserInfo("user309",null,null,true);
+//            userInfo = new UserInfo("user309",null,null,true);
             baseProjectService.updateProgress(baseProjectVo,userInfo,request);
             return RestUtil.success("修改成功");
         } catch (Exception e) {
@@ -118,8 +118,8 @@ public class ProgressPaymentController  extends BaseController {
     @RequestMapping(value = "/progress/searchAllProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> searchAllProgress(PageVo pageVo){
 
-        pageVo.setUid(getLoginUser().getId());
-//        pageVo.setUid("user325");
+//        pageVo.setUid(getLoginUser().getId());
+        pageVo.setUid("user325");
         PageInfo<ProgressListVo> progressListVoPageInfo = baseProjectService.searchAllProgress(pageVo);
         return RestUtil.page(progressListVoPageInfo);
     }

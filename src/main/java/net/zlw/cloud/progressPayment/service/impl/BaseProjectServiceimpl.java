@@ -840,33 +840,33 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     progressPaymentInformation.setCreateTime(format);
                     progressPaymentInformation.setFounderId(loginUser.getId());
                     progressPaymentInformation.setDelFlag("0");
-                    progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
-                    progressPaymentInformationDao.insertSelective(progressPaymentInformation);
+//                    progressPaymentInformation.setChangeNum(paymentInformation.getChangeNum()+1);
+//                    progressPaymentInformationDao.insertSelective(progressPaymentInformation);
 
 
                     Example example = new Example(ProgressPaymentTotalPayment.class);
                     Example.Criteria c = example.createCriteria();
                     c.andEqualTo("baseProjectId",project.getId());
                     c.andEqualTo("delFlag","0");
-                    ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example);
-                    if (progressPaymentTotalPayment.getTotalPaymentAmount()==null){
-                        progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentInformation.getCurrentPaymentInformation());
-                    }else{
-                        progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(progressPaymentInformation.getCurrentPaymentInformation()));
-
-                    }
-                    progressPaymentTotalPayment.setCumulativeNumberPayment(new BigDecimal(paymentInformation.getChangeNum()+1));
+//                    ProgressPaymentTotalPayment progressPaymentTotalPayment = progressPaymentTotalPaymentDao.selectOneByExample(example);
+//                    if (progressPaymentTotalPayment.getTotalPaymentAmount()==null){
+//                        progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentInformation.getCurrentPaymentInformation());
+//                    }else{
+//                        progressPaymentTotalPayment.setTotalPaymentAmount(progressPaymentTotalPayment.getTotalPaymentAmount().add(progressPaymentInformation.getCurrentPaymentInformation()));
+//
+//                    }
+//                    progressPaymentTotalPayment.setCumulativeNumberPayment(new BigDecimal(paymentInformation.getChangeNum()+1));
 //                    if (progressPaymentTotalPayment.getCumulativeNumberPayment()==null){
 //                        progressPaymentTotalPayment.setCumulativeNumberPayment(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes()));
 //                    }else {
 //                        progressPaymentTotalPayment.setCumulativeNumberPayment(progressPaymentTotalPayment.getCumulativeNumberPayment().add(new BigDecimal(progressPaymentInformation.getCumulativePaymentTimes())));
 //                    }
-                    if (progressPaymentTotalPayment.getAccumulativePaymentProportion()==null){
-                        progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
-                    }else{
-                        progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
-                    }
-                    progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
+//                    if (progressPaymentTotalPayment.getAccumulativePaymentProportion()==null){
+//                        progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
+//                    }else{
+//                        progressPaymentTotalPayment.setAccumulativePaymentProportion(Double.parseDouble(progressPaymentTotalPayment.getAccumulativePaymentProportion())+Double.parseDouble(progressPaymentInformation.getCurrentPaymentRatio())+"");
+//                    }
+//                    progressPaymentTotalPaymentDao.updateByPrimaryKeySelective(progressPaymentTotalPayment);
 
                     auditInfo.setId(UUID.randomUUID().toString().replace("-",""));
                     auditInfo.setBaseProjectId(progressPaymentInformation.getId());
@@ -1687,10 +1687,10 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         List<ProgressPaymentInformation> progressPaymentInformations = progressPaymentInformationDao.selectProList(baseId);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
         if (!"2".equals(baseProject.getProgressPaymentStatus())){
-            int num= 0;
+//            int num= 0;
             for (ProgressPaymentInformation thisPro : progressPaymentInformations) {
                 // 变更次数
-                thisPro.setChangeNum(num+1);
+//                thisPro.setChangeNum(num+1);
                 // 施工单位
                 ConstructionUnitManagement constructionUnit = constructionUnitManagementMapper.selectByPrimaryKey(thisPro.getConstructionOrganization());
                 if (constructionUnit != null){
@@ -2170,9 +2170,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 if (costUnitManagement != null){
                     progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
                 }
-                if (pageVo.getUid().equals(progressListVo.getFounderId())){
-                    progressListVo.setFounderId("1");
-                }
+
                 // 累计支付金额、比例、次数
                 TotalVo total = findTotal(progressListVo.getBaseId());
                 progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());

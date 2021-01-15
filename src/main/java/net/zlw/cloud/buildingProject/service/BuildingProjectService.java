@@ -25,6 +25,7 @@ import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -72,6 +73,26 @@ public class BuildingProjectService {
     private MemberManageDao memberManageDao;
     @Resource
     private ThoseResponsibleDao thoseResponsibleDao;
+
+
+    @Value("${audit.wujiang.sheji.designHead}")
+    private String wjsjh;
+    @Value("${audit.wujiang.sheji.designManager}")
+    private String wjsjm;
+    @Value("${audit.wujiang.zaojia.costHead}")
+    private String wjzjh;
+    @Value("${audit.wujiang.zaojia.costManager}")
+    private String wjzjm;
+
+    @Value("${audit.wuhu.sheji.designHead}")
+    private String whsjh;
+    @Value("${audit.wuhu.sheji.designManager}")
+    private String whsjm;
+    @Value("${audit.wuhu.zaojia.costHead}")
+    private String whzjh;
+    @Value("${audit.wuhu.zaojia.costManager}")
+    private String whzjm;
+
     /**
      * @Author Armyman
      * @Description //查询可被选为合并项目的建设项目
@@ -273,7 +294,7 @@ public class BuildingProjectService {
             if (personnel!=null){
                 String[] split = personnel.split(",");
                 for (String s : split) {
-                    if (s.equals(id)){
+                    if (s.equals(id) || id.equals(wjsjh) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(whsjh) || id.equals(whzjh)){
                         f = true;
                     }
                 }

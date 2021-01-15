@@ -55,6 +55,7 @@ public class ProgressPaymentInformationServiceimpl implements ProgressPaymentInf
             paymentInfo.setId(UUID.randomUUID().toString().replace("-", ""));
             paymentInfo.setFounderId(nameById);
             paymentInfo.setBaseProjectId(baseProject.getId());
+            paymentInfo.setChangeNum(Integer.parseInt(paymentVo.getPaymentInfo().getCurrentPeriodAccording()));
             paymentInfo.setCreateTime(data);
         if (progressPaymentInformation1 != null) {
             paymentInfo.setDelFlag("3");
@@ -68,6 +69,8 @@ public class ProgressPaymentInformationServiceimpl implements ProgressPaymentInf
     public void editPayment(PaymentVo paymentVo) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         ProgressPaymentInformation paymentInfo = paymentVo.getPaymentInfo();
+        String nameById = memberManageDao.findNameById(paymentInfo.getFounderId());
+        paymentInfo.setFounderId(nameById);
         paymentInfo.setUpdateTime(data);
         progressPaymentInformationDao.updateByPrimaryKeySelective(paymentInfo);
     }
