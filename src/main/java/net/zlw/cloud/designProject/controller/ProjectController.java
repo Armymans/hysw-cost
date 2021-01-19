@@ -2544,7 +2544,12 @@ public class ProjectController extends BaseController {
     //工程项目编辑
     @RequestMapping(value = "/project/updateProject", method = {RequestMethod.GET,RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> updateProject(net.zlw.cloud.progressPayment.model.BaseProject baseProject){
-        projectService.updateProject(baseProject);
+        try {
+            projectService.updateProject(baseProject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success();
     }
 

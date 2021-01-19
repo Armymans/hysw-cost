@@ -58,6 +58,8 @@ public interface BaseProjectService {
 
     BaseProject findBaseProjectById(String id);
 
+    BaseProject findBaseProjectById2(String id);
+
     List<AuditChekedVo> auditMaintenanceChek(String id);
 
     List<AuditChekedVo> auditAgainMaintenanceChek(String id);

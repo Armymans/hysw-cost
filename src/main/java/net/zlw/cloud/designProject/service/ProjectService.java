@@ -3906,7 +3906,11 @@ public class ProjectService {
         return designInfo;
     }
 
-    public void updateProject(net.zlw.cloud.progressPayment.model.BaseProject baseProject) {
+    public void updateProject(net.zlw.cloud.progressPayment.model.BaseProject baseProject) throws Exception {
+        List<BaseProject> list = projectMapper.duplicateCheckingByUpdate2(baseProject);
+        if (list != null && list.size() != 0) {
+            throw new Exception("项目编号或项目名称重复");
+        }
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
     }
 

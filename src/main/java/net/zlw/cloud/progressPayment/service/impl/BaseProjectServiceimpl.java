@@ -1666,6 +1666,12 @@ public class BaseProjectServiceimpl implements BaseProjectService {
     }
 
     @Override
+    public BaseProject findBaseProjectById2(String id) {
+        BaseProject  baseProject = baseProjectDao.selectByPrimaryKey(id);
+        return baseProject;
+    }
+
+    @Override
     public List<AuditChekedVo> auditMaintenanceChek(String id) {
         return auditInfoDao.auditMaintenanceChek(id);
     }
