@@ -55,7 +55,7 @@ public class MaterialController {
 
     /**
      * @Author Armyman
-     * @Description //芜湖财务物料编码接口
+     * @Description //吴江财务物料编码接口
      * @Date 15:22 2021/1/19
      **/
     @RequestMapping(value = "/api/getMaterielFinanceOfWj", method = {RequestMethod.GET, RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
