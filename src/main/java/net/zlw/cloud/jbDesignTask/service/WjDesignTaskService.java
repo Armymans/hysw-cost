@@ -171,9 +171,10 @@ public class WjDesignTaskService {
 
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         WjBudgetVo wjBudgetVo = wjBudgetVoF.getBudgetVo();
+        BaseProject baseProject = new BaseProject();
         if (wjBudgetVo != null){
             String base_project_id = wjBudgetVo.getApplication_num();
-            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(base_project_id);
+            baseProject = baseProjectDao.selectByPrimaryKey(base_project_id);
             if (baseProject != null){
                 baseProject.setCustomerName(wjBudgetVo.getCustomer_name());
                 baseProject.setStatus(wjBudgetVo.getStatus());
@@ -197,30 +198,30 @@ public class WjDesignTaskService {
                 baseProject.setBudgetStatus("4");
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
             }else {
-                BaseProject project = new BaseProject();
-                project.setId(UUID.randomUUID().toString().replace("-",""));
-                project.setCustomerName(wjBudgetVo.getCustomer_name());
-                project.setStatus(wjBudgetVo.getStatus());
-                project.setFireTableSize(wjBudgetVo.getFire_table_size());
-                project.setClassificationCaliber(wjBudgetVo.getClassification_caliber());
-                project.setCustomerAddress(wjBudgetVo.getCustomer_address());
-                project.setAcceptanceUnit(wjBudgetVo.getAcceptance_unit());
-                project.setLegalRepresentative(wjBudgetVo.getLegal_representative());
-                project.setCustomerResults(wjBudgetVo.getCustomer_results());
-                project.setTotalAmountQuotation(wjBudgetVo.getTotal_amount_quotation());
-                project.setLivingSurfaceDiameter(wjBudgetVo.getLiving_surface_diameter());
-                project.setSubject(wjBudgetVo.getCustomer_category());
-                project.setLandCertificate(wjBudgetVo.getLand_certificate());
-                project.setChargeAmount(wjBudgetVo.getCharge_amount());
-                project.setSite(wjBudgetVo.getSite());
-                project.setCustomerEmail(wjBudgetVo.getPostcode());
-                project.setAgent(wjBudgetVo.getAgent());
-                project.setCustomerPhone(wjBudgetVo.getPhone());
-                project.setContactNumber(wjBudgetVo.getPhon_num());
-                project.setFax(wjBudgetVo.getFax());
-                project.setDelFlag("0");
-                project.setBudgetStatus("4");
-                baseProjectDao.insertSelective(project);
+                baseProject = new BaseProject();
+                baseProject.setId(UUID.randomUUID().toString().replace("-",""));
+                baseProject.setCustomerName(wjBudgetVo.getCustomer_name());
+                baseProject.setStatus(wjBudgetVo.getStatus());
+                baseProject.setFireTableSize(wjBudgetVo.getFire_table_size());
+                baseProject.setClassificationCaliber(wjBudgetVo.getClassification_caliber());
+                baseProject.setCustomerAddress(wjBudgetVo.getCustomer_address());
+                baseProject.setAcceptanceUnit(wjBudgetVo.getAcceptance_unit());
+                baseProject.setLegalRepresentative(wjBudgetVo.getLegal_representative());
+                baseProject.setCustomerResults(wjBudgetVo.getCustomer_results());
+                baseProject.setTotalAmountQuotation(wjBudgetVo.getTotal_amount_quotation());
+                baseProject.setLivingSurfaceDiameter(wjBudgetVo.getLiving_surface_diameter());
+                baseProject.setSubject(wjBudgetVo.getCustomer_category());
+                baseProject.setLandCertificate(wjBudgetVo.getLand_certificate());
+                baseProject.setChargeAmount(wjBudgetVo.getCharge_amount());
+                baseProject.setSite(wjBudgetVo.getSite());
+                baseProject.setCustomerEmail(wjBudgetVo.getPostcode());
+                baseProject.setAgent(wjBudgetVo.getAgent());
+                baseProject.setCustomerPhone(wjBudgetVo.getPhone());
+                baseProject.setContactNumber(wjBudgetVo.getPhon_num());
+                baseProject.setFax(wjBudgetVo.getFax());
+                baseProject.setDelFlag("0");
+                baseProject.setBudgetStatus("4");
+                baseProjectDao.insertSelective(baseProject);
             }
 
             Budgeting budgeting = new Budgeting();

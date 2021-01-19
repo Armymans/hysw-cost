@@ -1,7 +1,11 @@
 package net.zlw.cloud.whFinance.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.whFinance.domain.Materie;
 import net.zlw.cloud.whFinance.service.MaterialService;
@@ -29,8 +33,10 @@ public class MaterialInfoController {
     //查询所有
     @RequestMapping(value = "/materIal/selectAll", method = {RequestMethod.GET, RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectAll(PageRequest pageRequest){
-         List<Materie> materieList = materialService.selectAll(pageRequest);
-        return RestUtil.success(materieList);
+        PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
+        List<Materie> materieList = materialService.selectAll(pageRequest);
+        PageInfo<Materie> designInfoPageInfo = new PageInfo<>(materieList);
+        return RestUtil.page(designInfoPageInfo);
     }
     //添加物料
     @RequestMapping(value = "/materIal/addMaterIal", method = {RequestMethod.GET, RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
