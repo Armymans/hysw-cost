@@ -3909,4 +3909,19 @@ public class ProjectService {
     public void updateProject(net.zlw.cloud.progressPayment.model.BaseProject baseProject) {
         baseProjectDao.updateByPrimaryKeySelective(baseProject);
     }
+
+    public void addBaseProject(net.zlw.cloud.progressPayment.model.BaseProject baseProject, UserInfo loginUser) throws Exception {
+        List<net.zlw.cloud.progressPayment.model.BaseProject> list = projectMapper.duplicateChecking2(baseProject);
+        if (list != null && list.size() != 0) {
+            throw new Exception("项目编号或项目名称重复");
+        }
+        baseProject.setId(UUID.randomUUID().toString().replace("-",""));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        baseProject.setCreateTime(simpleDateFormat.format(new Date()));
+        baseProject.setStatus("0");
+        baseProject.setDelFlag("0");
+        baseProject.setFounderId(loginUser.getId());
+        baseProjectDao.insertSelective(baseProject);
+    }
+
 }

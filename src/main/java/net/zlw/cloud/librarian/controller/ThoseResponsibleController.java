@@ -3,10 +3,12 @@ package net.zlw.cloud.librarian.controller;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
+import net.zlw.cloud.designProject.service.ProjectService;
 import net.zlw.cloud.librarian.model.ThoseResponsible;
 import net.zlw.cloud.librarian.service.ThoseResponsibleService;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +28,7 @@ public class ThoseResponsibleController extends BaseController {
     @Resource
     private ThoseResponsibleService thoseResponsibleService;
     @Resource
-    private BaseProjectDao baseProjectDao;
+    private ProjectService projectService;
 
     //查询所有
     @RequestMapping(value = "/thoseResponsibl/findthoseResponsiblAll", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
@@ -52,6 +54,7 @@ public class ThoseResponsibleController extends BaseController {
         try {
             thoseResponsibleService.missionPerson(missionType,missionPerson,getLoginUser().getId(),baseId);
         } catch (Exception e) {
+            e.printStackTrace();
             return RestUtil.error(e.getMessage());
         }
         return RestUtil.success();
@@ -59,13 +62,12 @@ public class ThoseResponsibleController extends BaseController {
     //添加工程
     @RequestMapping(value = "/baseProject/addBaseproject", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> addBaseproject(BaseProject baseProject){
-        baseProject.setId(UUID.randomUUID().toString().replace("-",""));
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        baseProject.setCreateTime(simpleDateFormat.format(new Date()));
-        baseProject.setStatus("0");
-        baseProject.setDelFlag("0");
-        baseProject.setFounderId(getLoginUser().getId());
-        baseProjectDao.insertSelective(baseProject);
+        try {
+            projectService.addBaseProject(baseProject,getLoginUser());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return RestUtil.error(e.getMessage());
+        }
         return RestUtil.success();
     }
     //人员列表

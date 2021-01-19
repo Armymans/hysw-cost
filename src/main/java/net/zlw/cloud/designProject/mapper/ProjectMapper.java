@@ -1749,4 +1749,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select("select * from base_project where (project_num = #{projectNum} or project_name = #{projectName}) and id != #{id}")
     List<BaseProject> duplicateCheckingByUpdate(BaseProject baseProject);
+
+    @Select("select * from base_project where project_num = #{projectNum} or project_name = #{projectName}")
+    List<net.zlw.cloud.progressPayment.model.BaseProject> duplicateChecking2(net.zlw.cloud.progressPayment.model.BaseProject baseProject);
 }
