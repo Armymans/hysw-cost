@@ -28,6 +28,16 @@ public class Materie {
     private String updateTime;
     @Column(name = "del_flag")
     private String delFlag;
+    @Column(name = "area")
+    private String area;
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
+    }
 
     public String getId() {
         return id;

@@ -35,6 +35,31 @@ public class MaterialService {
         for (Materie thisMateriers : materies) {
             if (thisMateriers.getMaterialCode() != null){
                 materie.setId(thisMateriers.getId());
+                materie.setArea("1");
+                materie.setCreateTime(thisMateriers.getCreateTime());
+                materie.setItemName(thisMateriers.getItemName());
+                materie.setMaterialCode(thisMateriers.getMaterialCode());
+                materie.setRemark(thisMateriers.getRemark());
+                materie.setSpecificationsModels(thisMateriers.getSpecificationsModels());
+                materie.setUnit(thisMateriers.getUnit());
+                materie.setUpdateTime(thisMateriers.getUpdateTime());
+                materie.setDelFlag("0");
+            }
+            materialMapper.insertSelective(materie);
+        }
+
+    }
+
+    public void getMaterialserviceOfWj(MaterieVo materieVo, String Account){
+
+
+        //物料信息
+        Materie materie = new Materie();
+        List<Materie> materies = materieVo.getMateries();
+        for (Materie thisMateriers : materies) {
+            if (thisMateriers.getMaterialCode() != null){
+                materie.setId(thisMateriers.getId());
+                materie.setArea("2");
                 materie.setCreateTime(thisMateriers.getCreateTime());
                 materie.setItemName(thisMateriers.getItemName());
                 materie.setMaterialCode(thisMateriers.getMaterialCode());
