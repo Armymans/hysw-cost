@@ -88,7 +88,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "bt.name_of_cost_unit like concat  ('%',#{keyword},'%') " +
             ") and  " +
             "b.del_flag = '0' and  " +
-            "bt.del_flag = '0' and  " +
+            "IFNULL(bt.del_flag,'0') = '0' and  " +
             "v.state = '0' and  " +
             "vv.state = '0'")
     List<VisaChangeListVo> findAllVisa(PageVo pageVo);
@@ -186,7 +186,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "     bt.name_of_cost_unit like concat  ('%',#{keyword},'%')   " +
             "     ) and    " +
             "     b.del_flag = '0' and    " +
-            "     bt.del_flag = '0' and    " +
+            "     IFNULL(bt.del_flag,'0') = '0' and   " +
             "     v.state = '0' and    " +
             "     vv.state = '0' and " +
             "     v2.state = '0'  " +
@@ -288,7 +288,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            bt.name_of_cost_unit like concat  ('%',#{keyword},'%')  " +
             "            ) and   " +
             "            b.del_flag = '0' and   " +
-            "            bt.del_flag = '0' and   " +
+            "            IFNULL(bt.del_flag,'0') = '0' and  " +
             "            v.state = '0' and   " +
             "            vv.state = '0' and " +
             "            v2.state = '0' " +
@@ -388,7 +388,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            bt.name_of_cost_unit like concat  ('%',#{keyword},'%')  " +
             "            ) and   " +
             "            b.del_flag = '0' and   " +
-            "            bt.del_flag = '0' and   " +
+            "            IFNULL(bt.del_flag,'0') = '0' and  " +
             "            v.state = '0' and   " +
             "            vv.state = '0' and " +
             "            v2.state = '0' " +
@@ -488,7 +488,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            bt.name_of_cost_unit like concat  ('%',#{keyword},'%')  " +
             "            ) and   " +
             "            b.del_flag = '0' and   " +
-            "            bt.del_flag = '0' and   " +
+            "            IFNULL(bt.del_flag,'0') = '0' and   " +
             "            v.state = '0' and   " +
             "            vv.state = '0' and " +
             "            v2.state = '0' " +
@@ -588,7 +588,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            bt.name_of_cost_unit like concat  ('%',#{keyword},'%')  " +
             "            ) and   " +
             "            b.del_flag = '0' and   " +
-            "            bt.del_flag = '0' and   " +
+            "            IFNULL(bt.del_flag,'0') = '0' and   " +
             "            v.state = '0' and   " +
             "            vv.state = '0' and " +
             "            v2.state = '0' " +
@@ -686,7 +686,7 @@ public interface VisaChangeMapper extends Mapper<VisaChange> {
             "            bt.name_of_cost_unit like concat  ('%',#{keyword},'%')  " +
             "            ) and   " +
             "            b.del_flag = '0' and   " +
-            "            bt.del_flag = '0' and   " +
+            "            IFNULL(bt.del_flag,'0') = '0' and  " +
             "            IFNULL(v.state,'0') = '0' and   " +
             "            vv.state = '0' and " +
             "            IFNULL(v2.state,'0') = '0' " +
