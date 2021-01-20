@@ -37,8 +37,8 @@ public class MaterialController {
      * @Date 15:22 2021/1/19
      **/
     @RequestMapping(value = "/api/getMaterielFinance", method = {RequestMethod.GET, RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> getMaterielFinance(@RequestBody MaterieVo materieVo, String account){
-        materialService.getMaterialservice(materieVo,account);
+    public Map<String,Object> getMaterielFinance(@RequestBody MaterieVo materieVo){
+        materialService.getMaterialservice(materieVo);
         return RestUtil.success();
     }
 
@@ -59,8 +59,8 @@ public class MaterialController {
      * @Date 15:22 2021/1/19
      **/
     @RequestMapping(value = "/api/getMaterielFinanceOfWj", method = {RequestMethod.GET, RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> getMaterielFinanceOfWj(@RequestBody MaterieVo materieVo, String account){
-        materialService.getMaterialserviceOfWj(materieVo,account);
+    public Map<String,Object> getMaterielFinanceOfWj(@RequestBody MaterieVo materieVo){
+        materialService.getMaterialserviceOfWj(materieVo);
         return RestUtil.success();
     }
 }

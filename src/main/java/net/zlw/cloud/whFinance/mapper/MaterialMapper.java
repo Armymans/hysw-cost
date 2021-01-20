@@ -24,4 +24,7 @@ public interface MaterialMapper extends Mapper<Materie> {
             " item_name LIKE CONCAT( '%', #{keyWord}, '%'  ) or " +
             " specifications_models LIKE CONCAT('%',#{keyWord},'%'))")
     List<Materie> findAllMaterie(@Param("keyWord") String keyWord);
+
+    @Select("select * from material_info where material_code =#{materialCode}")
+    Materie findByCode(@Param("materialCode")String materialCode);
 }
