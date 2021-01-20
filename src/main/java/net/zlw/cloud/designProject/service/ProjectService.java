@@ -2329,7 +2329,7 @@ public class ProjectService {
                 packageCameMapper.updateByPrimaryKeySelective(projectVo.getPackageCame());
             }
         }
-
+        projectMapper.updateByPrimaryKeySelective(projectVo.getBaseProject());
 
 //        if("3".equals(projectVo.getBaseProject().getDesginStatus())){
 //            //如果按钮状态为1 说明点击的是提交
