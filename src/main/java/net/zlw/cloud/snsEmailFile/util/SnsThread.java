@@ -3,7 +3,6 @@ package net.zlw.cloud.snsEmailFile.util;
 import net.zlw.cloud.snsEmailFile.model.SnsInfo;
 import net.zlw.cloud.snsEmailFile.service.SnsInfoService;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -26,7 +25,7 @@ public class SnsThread implements Runnable {
 		log.info("判断是手机号码校验手机格式是否正确："+flag);
 		if( flag ){
 			log.info("SnsThread:调用短信发送功能");
-			boolean b = SnsUtil.sndMessage(phoneNum, content);
+			boolean b = SnsUtilAbstract.sendMsg(phoneNum, content);
 			WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
 			SnsInfoService snsInfoService = context.getBean(SnsInfoService.class);
 			SnsInfo snsInfo = new SnsInfo();
@@ -42,5 +41,6 @@ public class SnsThread implements Runnable {
 			snsInfoService.saveSnsInfo(snsInfo);
 		}		
 	}
+
 
 }
