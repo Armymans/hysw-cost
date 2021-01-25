@@ -36,6 +36,6 @@ public interface MemberManageDao extends Mapper<MemberManage> {
     @Select("SELECT id FROM member_manage WHERE member_name = #{name} ")
     String findNameById(@Param("name") String name);
 
-    @Select("select id, member_name memberName from member_manage where ( dep_id = '1' or dep_id = '2' ) and member_name != '造价领导' and member_name != '设计领导'")
+    @Select("select id, user_name userName from mky_user where ( role_id = 'role7617' or role_id = 'role7618' ) ")
     List<MemberManage> findAllTaskManager();
 }
