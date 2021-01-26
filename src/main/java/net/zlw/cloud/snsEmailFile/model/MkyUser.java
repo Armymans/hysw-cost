@@ -79,4 +79,7 @@ public class MkyUser {
     @Column(name = "job_id")
     private String jobId;
 
+    @Column(name = "user_name")
+    private String memberName;
+
 }

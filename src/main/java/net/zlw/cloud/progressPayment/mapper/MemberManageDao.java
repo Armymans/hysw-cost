@@ -1,6 +1,7 @@
 package net.zlw.cloud.progressPayment.mapper;
 
 
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -36,6 +37,6 @@ public interface MemberManageDao extends Mapper<MemberManage> {
     @Select("SELECT id FROM member_manage WHERE member_name = #{name} ")
     String findNameById(@Param("name") String name);
 
-    @Select("select id, user_name userName from mky_user where ( role_id = 'role7617' or role_id = 'role7618' ) ")
-    List<MemberManage> findAllTaskManager();
+    @Select("select id, user_name memberName from mky_user where ( role_id = 'role7617' or role_id = 'role7618' ) ")
+    List<MkyUser> findAllTaskManager();
 }
