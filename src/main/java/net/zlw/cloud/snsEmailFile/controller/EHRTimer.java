@@ -1,11 +1,12 @@
 package net.zlw.cloud.snsEmailFile.controller;
 
-import com.sun.javafx.PlatformUtil;
 import net.tec.cloud.common.util.DateUtil;
 import net.zlw.cloud.clearProject.mapper.CallForBidsMapper;
 import net.zlw.cloud.clearProject.model.CallForBids;
 import net.zlw.cloud.depManage.domain.DepManage;
 import net.zlw.cloud.depManage.mapper.DepManageMapper;
+import net.zlw.cloud.excel.model.BomTable;
+import net.zlw.cloud.excel.model.BomTableInfomation;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.snsEmailFile.mapper.EmOrgMapper;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
@@ -15,14 +16,17 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.SysCompany;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import net.zlw.cloud.snsEmailFile.service.SaveViewDateService;
 import net.zlw.cloud.snsEmailFile.util.CaiGouJdbc;
 import net.zlw.cloud.snsEmailFile.util.EhrJdbc;
+import net.zlw.cloud.snsEmailFile.util.WHJdbc;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import net.zlw.cloud.whFinance.domain.Materie;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
@@ -51,6 +55,9 @@ public class EHRTimer implements InitializingBean {
     private CallForBidsMapper callForBidsMapper;
     @Autowired
     private FileInfoService fileInfoService;
+
+    @Autowired
+    private SaveViewDateService saveViewDateService;
 
     /**
      * 取值范围 秒 0 - 59 分 0 - 59 时 0 - 23 日 0 - 31 按实际月份来 月 0 - 11 天 1 - 7 周几 年 1970
@@ -418,9 +425,162 @@ public class EHRTimer implements InitializingBean {
 
     }
 
+    /**
+     * 芜湖财务数据
+     */
+    public void CaiWuDateInfo() {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            // 物料清单
+            ResultSet materialInfo = WHJdbc.getMaterialInfo();
+
+            // 保存所有的数据
+            List<Materie> materieList = new ArrayList<>();
+
+            // 保存当天的数据
+            List<Materie> nowMaterieList = new ArrayList<>();
+
+            while (materialInfo.next()){
+                String material_code = materialInfo.getString("MATERIAL_CODE");
+                String item_name = materialInfo.getString("ITEM_NAME");
+                String specifications_models = materialInfo.getString("SPECIFICATIONS_MODELS");
+                String unit = materialInfo.getString("UNIT");
+                String remark = materialInfo.getString("REMARK");
+                String pk_invbasdoc = materialInfo.getString("pk_invbasdoc");
+                String ts = materialInfo.getString("ts");
+                Materie materie = new Materie();
+                materie.setId(pk_invbasdoc);
+                materie.setMaterialCode(material_code);
+                materie.setItemName(item_name);
+                materie.setSpecificationsModels(specifications_models);
+                materie.setUnit(unit);
+                materie.setRemark(remark);
+                materie.setUpdateTime(ts);
+                materie.setDelFlag("0");  // 默认给0
+                materieList.add(materie);
+            }
+
+            for (Materie materie : materieList) {
+                if (simpleDateFormat.parse(materie.getUpdateTime()).equals(simpleDateFormat.format(new Date()))){
+                    nowMaterieList.add(materie);
+                }
+            }
+
+            // 如果库里没有就取全部，有就取当天
+            if (CollectionUtils.isNotEmpty(nowMaterieList)){
+                saveViewDateService.saveMaterialInfo(nowMaterieList);
+            } else {
+                saveViewDateService.saveMaterialInfo(materieList);
+            }
+
+            // 销售订单
+            ResultSet saleOrderInfo = WHJdbc.getSaleOrderInfo();
+
+            // 保存所以的数据
+            List<BomTableInfomation> bomTableInfomationList = new ArrayList<>();
+
+            // 保存当天的数据
+            List<BomTableInfomation> nowBomTableInfomationList = new ArrayList<>();
+
+            while (saleOrderInfo.next()){
+                String business_code = saleOrderInfo.getString("business_code");
+                String business_process = saleOrderInfo.getString("business_process");
+                String date_of = saleOrderInfo.getString("date_of");
+                String sales_organization = saleOrderInfo.getString("sales_organization");
+                String inventory_organization = saleOrderInfo.getString("inventory_organization");
+                String cea_num = saleOrderInfo.getString("cea_num");
+                String acquisition_types = saleOrderInfo.getString("acquisition_types");
+                String contractor = saleOrderInfo.getString("contractor");
+                String project_categories_coding = saleOrderInfo.getString("project_categories_coding");
+                String project_types = saleOrderInfo.getString("project_types");
+                String item_coding = saleOrderInfo.getString("item_coding");
+                String project_name = saleOrderInfo.getString("project_name");
+                String acquisition_department = saleOrderInfo.getString("acquisition_department");
+                String unitname = saleOrderInfo.getString("unitname");
+                String belong_company = saleOrderInfo.getString("belong_company");
+                String id = saleOrderInfo.getString("id");
+                String material_code = saleOrderInfo.getString("material_code");
+                String item_name = saleOrderInfo.getString("item_name");
+                String specifications_models = saleOrderInfo.getString("specifications_models");
+                String unit = saleOrderInfo.getString("unit");
+                String univalence = saleOrderInfo.getString("univalence");
+                String quantity = saleOrderInfo.getString("quantity");
+                String combined_price = saleOrderInfo.getString("combined_price");
+                String remark = saleOrderInfo.getString("remark");
+                String ts = saleOrderInfo.getString("ts");
+
+                BomTableInfomation bomTableInfomation = new BomTableInfomation();
+                bomTableInfomation.setBusinessProcess(business_process);
+                bomTableInfomation.setDateOf(date_of);
+                bomTableInfomation.setSalesOrganization(sales_organization);
+                bomTableInfomation.setInventoryOrganization(inventory_organization);
+                bomTableInfomation.setCeaNum(cea_num);
+                bomTableInfomation.setAcquisitionTypes(acquisition_types);
+                bomTableInfomation.setContractor(contractor);
+                bomTableInfomation.setProjectCategoriesCoding(project_categories_coding);
+                bomTableInfomation.setProjectTypes(project_types);
+                bomTableInfomation.setItemCoding(item_coding);
+                bomTableInfomation.setProjectName(project_name);
+                bomTableInfomation.setAcquisitionDepartment(acquisition_department);
+                bomTableInfomation.setRemark(remark);
+                bomTableInfomation.setFounderCompany(belong_company);
+                bomTableInfomation.setDelFlag("0");
+                bomTableInfomation.setBusinessCode(business_code);
+                bomTableInfomation.setUpdateTime(ts);
+
+
+                BomTable bomTable = new BomTable();
+//
+                bomTable.setId(id);
+                bomTable.setMaterialCode(material_code);
+                bomTable.setItemName(item_name);
+                bomTable.setSpecificationsModels(specifications_models);
+                bomTable.setUnit(unit);
+                bomTable.setUnivalence(univalence);
+                bomTable.setQuantity(quantity);
+                bomTable.setCombinedPrice(combined_price);
+                bomTable.setRemark(remark);
+                bomTable.setBomTableInfomationId(business_code);
+                bomTable.setFounderCompanyId(belong_company);
+                bomTable.setUpdateTime(ts);
+                bomTable.setDelFlag("0");
+
+                List<BomTable> bomTables = new ArrayList<>();
+                bomTables.add(bomTable);
+                bomTableInfomation.setBomTableList(bomTables);
+
+                bomTableInfomationList.add(bomTableInfomation);
+            }
+
+            for (BomTableInfomation bomTableInfomation : bomTableInfomationList) {
+                if (simpleDateFormat.parse(bomTableInfomation.getUpdateTime()).equals(simpleDateFormat.format(new Date()))){
+                    nowBomTableInfomationList.add(bomTableInfomation);
+                }
+            }
+
+            // 如果库里没有就取全部，有就取当天
+            if (CollectionUtils.isNotEmpty(nowBomTableInfomationList)){
+                saveViewDateService.saveBomInfo(nowBomTableInfomationList);
+            } else {
+                saveViewDateService.saveBomInfo(bomTableInfomationList);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    /**
+     *
+     * @throws Exception
+     */
     @Override
     public void afterPropertiesSet() throws Exception {
 //        ehrDataTimer();
 //        CaiGouDataTimer();
+          CaiWuDateInfo();
     }
+
 }
