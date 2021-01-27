@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 
 public class WHJdbc {
 
-    private static String url = "jdbc:oracle:thin:@10.61.95.29:1521:orcl";
+    private static String url = "jdbc:oracle:thin:@10.61.97.26:1521:orcl";
     private static String userName = "ZJPT";
     private static String password = "ZJPTMM";
 
