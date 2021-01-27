@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -463,7 +464,7 @@ public class EHRTimer implements InitializingBean {
             }
 
             for (Materie materie : materieList) {
-                if (simpleDateFormat.parse(materie.getUpdateTime()).equals(simpleDateFormat.format(new Date()))){
+                if (simpleDateFormat.format(simpleDateFormat.parse(materie.getUpdateTime())).equals(simpleDateFormat.format(new Date()))){
                     nowMaterieList.add(materie);
                 }
             }
@@ -555,7 +556,7 @@ public class EHRTimer implements InitializingBean {
             }
 
             for (BomTableInfomation bomTableInfomation : bomTableInfomationList) {
-                if (simpleDateFormat.parse(bomTableInfomation.getUpdateTime()).equals(simpleDateFormat.format(new Date()))){
+                if (simpleDateFormat.format(simpleDateFormat.parse(bomTableInfomation.getUpdateTime())).equals(simpleDateFormat.format(new Date()))){
                     nowBomTableInfomationList.add(bomTableInfomation);
                 }
             }
@@ -580,7 +581,7 @@ public class EHRTimer implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
 //        ehrDataTimer();
 //        CaiGouDataTimer();
-          CaiWuDateInfo();
+//          CaiWuDateInfo();
     }
 
 }
