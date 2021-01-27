@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
