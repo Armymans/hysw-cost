@@ -4,13 +4,11 @@ import net.zlw.cloud.excel.dao.BomTable1Dao;
 import net.zlw.cloud.excel.dao.BomTableInfomationDao;
 import net.zlw.cloud.excel.model.BomTable;
 import net.zlw.cloud.excel.model.BomTableInfomation;
-import net.zlw.cloud.whFinance.domain.BomTableInfomationAll;
 import net.zlw.cloud.whFinance.domain.Materie;
 import net.zlw.cloud.whFinance.mapper.BomTableImfomationAllDao;
 import net.zlw.cloud.whFinance.mapper.MaterialMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.common.ExampleMapper;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -128,10 +126,6 @@ public class SaveViewDateService {
                 List<BomTable> bomTables = bomTableInfomation.getBomTableList();
                 BomTable bomTable = new BomTable();
                 for (BomTable thisBomTable : bomTables) {
-                    BomTable oldBomTable = bomTableMapper.selectByPrimaryKey(thisBomTable);
-//                    if (oldBomTable != null){
-//                        thisBomTable.setId(UUID.randomUUID().toString().replace("-", ""));
-//                    }
                     if (thisBomTable.getId() != null){
                         bomTable.setId(thisBomTable.getId());
                         bomTable.setMaterialCode(thisBomTable.getMaterialCode());
