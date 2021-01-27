@@ -4,13 +4,11 @@ import net.zlw.cloud.excel.dao.BomTable1Dao;
 import net.zlw.cloud.excel.dao.BomTableInfomationDao;
 import net.zlw.cloud.excel.model.BomTable;
 import net.zlw.cloud.excel.model.BomTableInfomation;
-import net.zlw.cloud.whFinance.domain.BomTableInfomationAll;
 import net.zlw.cloud.whFinance.domain.Materie;
 import net.zlw.cloud.whFinance.mapper.BomTableImfomationAllDao;
 import net.zlw.cloud.whFinance.mapper.MaterialMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.common.ExampleMapper;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -75,13 +73,12 @@ public class SaveViewDateService {
         for (BomTableInfomation bomTableInfomation : bomTableInfomationList) {
             if (bomTableInfomation != null){
                 Example example = new Example(BomTableInfomation.class);
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("businessCode", bomTableInfomation.getBusinessCode());
-                List<BomTableInfomation> bomTableInfomationList1 = bomTableInfomationMapper.selectByExample(criteria);
-                BomTableInfomation oldBomTableInfomation = bomTableInfomationList1.get(0);
+                example.createCriteria().andEqualTo("businessCode", bomTableInfomation.getBusinessCode());
+                List<BomTableInfomation> bomTableInfomationList1 = bomTableInfomationMapper.selectByExample(example);
                 BomTableInfomation bomTableInfomation1 = new BomTableInfomation();
-                if (oldBomTableInfomation != null){
+                if (bomTableInfomationList1 != null && bomTableInfomationList1.size() > 0){
                     //判断是否重复重复则更新
+                    BomTableInfomation oldBomTableInfomation = bomTableInfomationList1.get(0);
                     bomTableInfomation1.setId(oldBomTableInfomation.getId());
                     bomTableInfomation1.setProjectCategoriesCoding(bomTableInfomation.getProjectCategoriesCoding());
                     bomTableInfomation1.setDateOf(bomTableInfomation.getDateOf());
@@ -128,10 +125,6 @@ public class SaveViewDateService {
                 List<BomTable> bomTables = bomTableInfomation.getBomTableList();
                 BomTable bomTable = new BomTable();
                 for (BomTable thisBomTable : bomTables) {
-                    BomTable oldBomTable = bomTableMapper.selectByPrimaryKey(thisBomTable);
-//                    if (oldBomTable != null){
-//                        thisBomTable.setId(UUID.randomUUID().toString().replace("-", ""));
-//                    }
                     if (thisBomTable.getId() != null){
                         bomTable.setId(thisBomTable.getId());
                         bomTable.setMaterialCode(thisBomTable.getMaterialCode());
