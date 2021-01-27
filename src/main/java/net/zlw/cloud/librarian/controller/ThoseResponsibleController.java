@@ -45,7 +45,7 @@ public class ThoseResponsibleController extends BaseController {
     //查询任务责任人
     @RequestMapping(value = "/thoseResponsibl/findAllTaskManager", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllTaskManager(){
-       List<MemberManage> list =  thoseResponsibleService.findAllTaskManager();
+       List<MkyUser> list =  thoseResponsibleService.findAllTaskManager();
        return RestUtil.success(list);
     }
     //分配任务

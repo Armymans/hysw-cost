@@ -178,7 +178,7 @@ public class ThoseResponsibleService  {
 
     }
 
-    public List<MemberManage> findAllTaskManager() {
+    public List<MkyUser> findAllTaskManager() {
       return   memberManageDao.findAllTaskManager();
     }
 
