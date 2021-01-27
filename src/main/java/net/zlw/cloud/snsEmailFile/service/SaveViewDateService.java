@@ -73,13 +73,12 @@ public class SaveViewDateService {
         for (BomTableInfomation bomTableInfomation : bomTableInfomationList) {
             if (bomTableInfomation != null){
                 Example example = new Example(BomTableInfomation.class);
-                Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo("businessCode", bomTableInfomation.getBusinessCode());
-                List<BomTableInfomation> bomTableInfomationList1 = bomTableInfomationMapper.selectByExample(criteria);
-                BomTableInfomation oldBomTableInfomation = bomTableInfomationList1.get(0);
+                example.createCriteria().andEqualTo("businessCode", bomTableInfomation.getBusinessCode());
+                List<BomTableInfomation> bomTableInfomationList1 = bomTableInfomationMapper.selectByExample(example);
                 BomTableInfomation bomTableInfomation1 = new BomTableInfomation();
-                if (oldBomTableInfomation != null){
+                if (bomTableInfomationList1 != null && bomTableInfomationList1.size() > 0){
                     //判断是否重复重复则更新
+                    BomTableInfomation oldBomTableInfomation = bomTableInfomationList1.get(0);
                     bomTableInfomation1.setId(oldBomTableInfomation.getId());
                     bomTableInfomation1.setProjectCategoriesCoding(bomTableInfomation.getProjectCategoriesCoding());
                     bomTableInfomation1.setDateOf(bomTableInfomation.getDateOf());
