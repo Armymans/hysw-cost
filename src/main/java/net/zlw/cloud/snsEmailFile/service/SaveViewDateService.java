@@ -76,7 +76,7 @@ public class SaveViewDateService {
             if (bomTableInfomation != null){
                 Example example = new Example(BomTableInfomation.class);
                 Example.Criteria criteria = example.createCriteria();
-                criteria.andEqualTo(bomTableInfomation.getBusinessCode());
+                criteria.andEqualTo("businessCode", bomTableInfomation.getBusinessCode());
                 List<BomTableInfomation> bomTableInfomationList1 = bomTableInfomationMapper.selectByExample(criteria);
                 BomTableInfomation oldBomTableInfomation = bomTableInfomationList1.get(0);
                 BomTableInfomation bomTableInfomation1 = new BomTableInfomation();
