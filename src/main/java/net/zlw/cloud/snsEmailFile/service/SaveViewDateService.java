@@ -44,7 +44,7 @@ public class SaveViewDateService {
         Materie materie = new Materie();
         for (Materie thisMaterie : materieList) {
             if (thisMaterie.getMaterialCode() != null){
-                Materie materie1 = materialMapper.selectByPrimaryKey(thisMaterie);
+                Materie materie1 = materialMapper.findByCode(thisMaterie.getMaterialCode());
                 if(materie1 != null){
                     materie1.setDelFlag(thisMaterie.getDelFlag());
                     materie1.setUpdateTime(simpleDateFormat.format(new Date()));
