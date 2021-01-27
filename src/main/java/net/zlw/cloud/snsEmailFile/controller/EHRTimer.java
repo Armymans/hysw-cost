@@ -580,7 +580,7 @@ public class EHRTimer implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
 //        ehrDataTimer();
 //        CaiGouDataTimer();
-//          CaiWuDateInfo();
+          CaiWuDateInfo();
     }
 
 }
