@@ -924,4 +924,8 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "b.should_be asc, " +
             "b.create_time desc")
     List<BudgetingListVo> findAllBudgetingUnsanctioned(@Param("p") PageBVo pageBVo, @Param("id") String id);
+
+
+    @Select("select * from budgeting where del_flag = 0 and base_project_id =#{baseProjectId}")
+    List<Budgeting> findBudgetingGetBaseId(@Param("baseProjectId") String baseProjectId);
 }

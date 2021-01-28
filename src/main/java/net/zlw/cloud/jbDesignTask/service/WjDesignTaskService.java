@@ -26,6 +26,7 @@ import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -138,16 +139,19 @@ public class WjDesignTaskService {
             List<WjFileInfo> designFileList = wjDesignVo.getDesignFileList();
             if (designFileList != null && designFileList.size()>0){
                 for (WjFileInfo thisFile : designFileList) {
-                    FileInfo fileInfo = new FileInfo();
-                    fileInfo.setId(thisFile.getId());
-                    fileInfo.setFileName(thisFile.getDesign_file_name());
-                    fileInfo.setCreateTime(thisFile.getDesign_up_time());
-                    fileInfo.setUserId(thisFile.getDesign_up_by());
-                    fileInfo.setFilePath(thisFile.getDesign_link());
-                    fileInfo.setType("wjsjbzwjsc");
-                    fileInfo.setStatus("0");
-                    fileInfo.setPlatCode(project.getApplicationNum());
-                    fileInfoMapper.insertSelective(fileInfo);
+                    FileInfo fileInfo1 = fileInfoMapper.selectByPrimaryKey(thisFile.getId());
+                    if(null == fileInfo1){
+                        FileInfo fileInfo = new FileInfo();
+                        fileInfo.setId(thisFile.getId());
+                        fileInfo.setFileName(thisFile.getDesign_file_name());
+                        fileInfo.setCreateTime(thisFile.getDesign_up_time());
+                        fileInfo.setUserId(thisFile.getDesign_up_by());
+                        fileInfo.setFilePath(thisFile.getDesign_link());
+                        fileInfo.setType("wjsjbzwjsc");
+                        fileInfo.setStatus("0");
+                        fileInfo.setPlatCode(project.getApplicationNum());
+                        fileInfoMapper.insertSelective(fileInfo);
+                    }
                 }
             }
             OperationLog operationLog = new OperationLog();
@@ -223,19 +227,20 @@ public class WjDesignTaskService {
                 baseProject.setBudgetStatus("4");
                 baseProjectDao.insertSelective(baseProject);
             }
-
+            List<Budgeting> budgeting1 = budgetingDao.findBudgetingGetBaseId(wjBudgetVo.getBase_project_id());
             Budgeting budgeting = new Budgeting();
-            budgeting.setId(UUID.randomUUID().toString().replace("-",""));
-            budgeting.setBaseProjectId(wjBudgetVo.getBase_project_id());
-            budgeting.setAmountCost(new BigDecimal(0));
-            budgeting.setBudgetingPeople(wjBudgetVoF.getAccount());
-            budgeting.setAddedTaxAmount(new BigDecimal(0));
-            budgeting.setFounderId(wjBudgetVoF.getAccount());
-            budgeting.setDelFlag("0");
-            budgeting.setCreateTime(data);
-            budgeting.setRemarkes(wjBudgetVo.getRemark());
-            budgetingDao.insertSelective(budgeting);
-
+            if(budgeting1.size() == 0){
+                budgeting.setId(UUID.randomUUID().toString().replace("-",""));
+                budgeting.setBaseProjectId(wjBudgetVo.getBase_project_id());
+                budgeting.setAmountCost(new BigDecimal(0));
+                budgeting.setBudgetingPeople(wjBudgetVoF.getAccount());
+                budgeting.setAddedTaxAmount(new BigDecimal(0));
+                budgeting.setFounderId(wjBudgetVoF.getAccount());
+                budgeting.setDelFlag("0");
+                budgeting.setCreateTime(data);
+                budgeting.setRemarkes(wjBudgetVo.getRemark());
+                budgetingDao.insertSelective(budgeting);
+            }
             ProjectExploration exploration = new ProjectExploration();
             exploration.setId(UUID.randomUUID().toString().replace("-",""));
             exploration.setExplorationIdeal(wjBudgetVo.getSurvey_results());
@@ -250,7 +255,11 @@ public class WjDesignTaskService {
             CostPreparation costPreparation = new CostPreparation();
             costPreparation.setId(UUID.randomUUID().toString().replace("-",""));
             costPreparation.setBaseProjectId(wjBudgetVo.getBase_project_id());
-            costPreparation.setBudgetingId(budgeting.getId());
+            if(budgeting1.size() > 0){
+                costPreparation.setBudgetingId(budgeting1.get(0).getId());
+            }else{
+                costPreparation.setBudgetingId(budgeting.getId());
+            }
             costPreparation.setDelFlag("0");
             costPreparation.setCostTotalAmount(new BigDecimal(0));
             costPreparation.setVatAmount(new BigDecimal(0));
@@ -259,7 +268,11 @@ public class WjDesignTaskService {
 
             VeryEstablishment veryEstablishment = new VeryEstablishment();
             veryEstablishment.setId(UUID.randomUUID().toString().replace("-",""));
-            veryEstablishment.setBudgetingId(budgeting.getId());
+            if(budgeting1.size() > 0){
+                veryEstablishment.setBudgetingId(budgeting1.get(0).getId());
+            }else{
+                veryEstablishment.setBudgetingId(budgeting.getId());
+            }
             veryEstablishment.setBaseProjectId(base_project_id);
             veryEstablishment.setDelFlag("0");
             veryEstablishment.setPricingTogether(wjBudgetVoF.getAccount());
@@ -268,16 +281,19 @@ public class WjDesignTaskService {
             List<BudgetFileInfo> fileList = wjBudgetVo.getFileList();
             if (fileList != null && fileList.size()>0){
                 for (BudgetFileInfo thisFile : fileList) {
-                    FileInfo fileInfo = new FileInfo();
-                    fileInfo.setId(thisFile.getId());
-                    fileInfo.setFileName(thisFile.getFile_name());
-                    fileInfo.setCreateTime(thisFile.getUp_time());
-                    fileInfo.setUserId(thisFile.getUper());
-                    fileInfo.setFilePath(thisFile.getLink());
-                    fileInfo.setPlatCode(wjBudgetVo.getBase_project_id());
-                    fileInfo.setStatus("0");
-                    fileInfo.setType("wjysbzwjsc");
-                    fileInfoMapper.insertSelective(fileInfo);
+                    FileInfo fileInfo1 = fileInfoMapper.selectByPrimaryKey(thisFile.getId());
+                    if(null == fileInfo1){
+                        FileInfo fileInfo = new FileInfo();
+                        fileInfo.setId(thisFile.getId());
+                        fileInfo.setFileName(thisFile.getFile_name());
+                        fileInfo.setCreateTime(thisFile.getUp_time());
+                        fileInfo.setUserId(thisFile.getUper());
+                        fileInfo.setFilePath(thisFile.getLink());
+                        fileInfo.setPlatCode(wjBudgetVo.getBase_project_id());
+                        fileInfo.setStatus("0");
+                        fileInfo.setType("wjysbzwjsc");
+                        fileInfoMapper.insertSelective(fileInfo);
+                    }
                 }
             }
             OperationLog operationLog = new OperationLog();
