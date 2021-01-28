@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
@@ -581,7 +582,7 @@ public class EHRTimer implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
 //        ehrDataTimer();
 //        CaiGouDataTimer();
-          CaiWuDateInfo();
+//          CaiWuDateInfo();
     }
 
 }
