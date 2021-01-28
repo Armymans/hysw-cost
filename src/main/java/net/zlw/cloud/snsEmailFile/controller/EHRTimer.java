@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
@@ -428,6 +429,7 @@ public class EHRTimer implements InitializingBean {
     /**
      * 芜湖财务数据
      */
+    @Scheduled(cron = "0 30 0 * * ?")
     public void CaiWuDateInfo() {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
