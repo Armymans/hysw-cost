@@ -428,6 +428,7 @@ public class EHRTimer implements InitializingBean {
     /**
      * 芜湖财务数据
      */
+    @Scheduled(cron = "0 30 0 * * ?") // 秒 分 时 日 月 天 年  每天十二点半执行
     public void CaiWuDateInfo() {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
