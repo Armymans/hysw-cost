@@ -21,25 +21,18 @@ import net.zlw.cloud.jbDesignTask.domain.vo.WjDesignVoF;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
-import net.zlw.cloud.settleAccounts.model.vo.AccountsVo;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
-import net.zlw.cloud.warningDetails.model.MemberManage;
-import org.apache.commons.collections.ListUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import javax.xml.crypto.Data;
-import java.io.File;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -109,9 +102,9 @@ public class WjDesignTaskService {
             project.setProjectNature(wjDesignVo.getNature_water_use());
             project.setDelFlag("0");
             project.setCreateTime(data);
-            Random random = new Random(1);
-            int i = random.nextInt(100);
-            project.setProjectName("吴江设计报装对接吴江设计报装对接"+i);
+//            Random random = new Random(1);
+//            int i = random.nextInt(100);
+            project.setProjectName("吴江设计报装对接" + wjDesignVo.getApplication_num());
             project.setDesginStatus("4");
             baseProjectDao.insertSelective(project);
 
