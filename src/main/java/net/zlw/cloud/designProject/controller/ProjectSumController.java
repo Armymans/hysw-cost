@@ -9,14 +9,10 @@ import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.designProject.model.*;
 import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
-import net.zlw.cloud.index.model.vo.pageVo;
-import net.zlw.cloud.statisticAnalysis.model.StatisticAnalysis;
 import net.zlw.cloud.statisticAnalysis.service.StatusticAnalysisService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
-import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -618,7 +614,7 @@ public class ProjectSumController extends BaseController {
         Integer lastMonthCount = projectSumService.lastPrjectCensusMonth(costVo2);
         Integer MonthRast = projectSumService.prjectCensusRast(MonthCount, lastMonthCount);
 //        相比上年
-        Integer lastyearCount = projectSumService.lastPrjectCensusMonth(costVo2);
+        Integer lastyearCount = projectSumService.lastPrjectCensusYear(costVo2);
         Integer yearRast = projectSumService.prjectCensusRast(yearCount, lastyearCount);
 
         map.put("yearRast",yearRast);
