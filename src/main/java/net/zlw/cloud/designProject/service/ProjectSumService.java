@@ -1122,7 +1122,8 @@ public class ProjectSumService {
         //当前年
         String year = String.valueOf(now.get(Calendar.YEAR));
         //当前月
-        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        // String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        String month = DateUtil.getNowMonth().substring(4);
         //当前月最后一天
         //设置日期为本月最大日期
         now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
@@ -1405,7 +1406,8 @@ public class ProjectSumService {
         //当前年
         String year = String.valueOf(now.get(Calendar.YEAR));
         //当前月
-        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        String month = DateUtil.getNowMonth().substring(4);
         //当前月最后一天
         //设置日期为本月最大日期
         now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
@@ -1529,7 +1531,8 @@ public class ProjectSumService {
         //当前年
         String year = String.valueOf(now.get(Calendar.YEAR));
         //当前月
-        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        String month = DateUtil.getNowMonth().substring(4);
         //当前月最后一天
         //设置日期为本月最大日期
         now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
@@ -1708,7 +1711,8 @@ public class ProjectSumService {
         //当前年
         String year = String.valueOf(now.get(Calendar.YEAR));
         //当前月
-        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        String month = DateUtil.getNowMonth().substring(4);
         //当前月最后一天
         //设置日期为本月最大日期
         now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
@@ -1819,7 +1823,8 @@ public class ProjectSumService {
         //当前年
         String year = String.valueOf(now.get(Calendar.YEAR));
         //当前月
-        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        String month = DateUtil.getNowMonth().substring(4);
         //当前月最后一天
         //设置日期为本月最大日期
         now.set(Calendar.DATE, now.getActualMaximum(now.DATE));
