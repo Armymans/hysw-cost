@@ -2,12 +2,12 @@ package net.zlw.cloud.statisticAnalysis.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import net.tec.cloud.common.util.DateUtil;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.designProject.mapper.AchievementsInfoMapper;
 import net.zlw.cloud.designProject.mapper.LastSettlementReviewMapper;
 import net.zlw.cloud.designProject.mapper.ProjectMapper;
 import net.zlw.cloud.designProject.mapper.SettlementAuditInformationMapper;
-import net.zlw.cloud.designProject.model.BaseProject;
 import net.zlw.cloud.designProject.model.CostVo2;
 import net.zlw.cloud.designProject.model.OneCensus10;
 import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
@@ -16,7 +16,6 @@ import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.statisticAnalysis.model.*;
 import org.springframework.stereotype.Service;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -451,7 +450,8 @@ public class StatusticAnalysisService {
         //当前年
         String year = String.valueOf(now.get(Calendar.YEAR));
         //当前月
-        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        String month = DateUtil.getNowMonth().substring(4);
         //当前月最后一天
         //设置日期为本月最大日期
         now.set(Calendar.DATE, now.getActualMaximum(now.DATE));

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.bean.UserInfo;
+import net.tec.cloud.common.util.DateUtil;
 import net.zlw.cloud.budgeting.mapper.SurveyInformationDao;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
 import net.zlw.cloud.designProject.mapper.OperationLogDao;
@@ -19,7 +20,6 @@ import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
-import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.OtherInfoMapper;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
@@ -2270,7 +2270,8 @@ public class MaintenanceProjectInformationService {
         //当前年
         String year = String.valueOf(now.get(Calendar.YEAR));
         //当前月
-        String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        //String month = String.valueOf(now.get(Calendar.MONTH) + 1);
+        String month = DateUtil.getNowMonth().substring(4);
 
         String day = year + "-" + month;
         return maintenanceProjectInformationMapper.monthCount(day);
