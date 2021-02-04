@@ -76,18 +76,27 @@ public class JbDesignTaskService {
      * 设计报装
      * @param jbDesignVoF
      */
-    public void getDesignEngineering(JbDesignVoF jbDesignVoF, HttpServletRequest request) throws Exception {
+        public void getDesignEngineering(JbDesignVoF jbDesignVoF, HttpServletRequest request) throws Exception {
 
         String date = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
         JbDesignVo designVo = jbDesignVoF.getDesignVo();
-        if (designVo != null) {
-            BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(designVo.getId());
-            if(baseProject1 != null){
-                throw new Exception("项目编号重复");
-            }
-            //项目基本表数据
-            BaseProject baseProject = new BaseProject();
-            if (designVo.getProject_id() != null) {
+        BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(designVo.getId());
+        if (baseProject1 != null) {
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
+            operationLog.setType("17"); // 错误类型
+            operationLog.setDoTime(date);
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLog.setStatus("0");
+            operationLog.setName(jbDesignVoF.getAccount());
+            operationLog.setDoObject(designVo.getId());
+            operationLog.setContent("对接过来一个江北工程系统项目编号重复了！【" + designVo.getId() + "】");
+            operationLogDao.insertSelective(operationLog);
+        } else {
+            if (designVo != null) {
+                //项目基本表数据
+                BaseProject baseProject = new BaseProject();
                 baseProject.setId(designVo.getId());
                 baseProject.setProjectId(designVo.getProject_id());
                 baseProject.setSite(designVo.getAddress());
@@ -101,13 +110,12 @@ public class JbDesignTaskService {
                 baseProject.setAgent(designVo.getAgent());
                 baseProject.setCeaNum(designVo.getCea_num());
                 baseProject.setDesginStatus("4");
-                baseProject.setDistrict("4");
+                baseProject.setDistrict("3");
                 baseProject.setDelFlag("0");
                 baseProject.setCreateTime(date);
                 baseProject.setUpdateTime(date);
                 baseProject.setAmountPaid(designVo.getAmount_paid());
                 baseProjectDao.insertSelective(baseProject);
-            }
 
             //设计表信息
             DesignInfo designInfo = new DesignInfo();
@@ -133,7 +141,7 @@ public class JbDesignTaskService {
                 projectExploration.setCreateTime(date);
                 projectExploration.setUpdateTime(date);
                 projectExploration.setStatus("0");
-            projectExplorationMapper.insertSelective(projectExploration);
+                projectExplorationMapper.insertSelective(projectExploration);
             }
 
             //水表信息
@@ -141,7 +149,7 @@ public class JbDesignTaskService {
             List<DiameterInfos> diameterInfos = designVo.getDiameterInfo();
             for (DiameterInfos thisInfo : diameterInfos) {
                 if (thisInfo.getId() != null) {
-                    diameterInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    diameterInfo.setId(UUID.randomUUID().toString().replace("-", ""));
                     diameterInfo.setProjectId(thisInfo.getProject_id());
                     diameterInfo.setType(thisInfo.getType());
                     diameterInfo.setDiameterMeter(thisInfo.getDiameter_meter());
@@ -157,7 +165,7 @@ public class JbDesignTaskService {
             List<FileInfos> fileInfos = designVo.getFileInfo();
             for (FileInfos thisFileInfos : fileInfos) {
                 if (thisFileInfos.getId() != null) {
-                    fileInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
                     fileInfo.setPlatCode(thisFileInfos.getProject_id());
                     fileInfo.setFileName(thisFileInfos.getOpinions_file_name());
                     fileInfo.setCreateTime(thisFileInfos.getOpinions_up_time());
@@ -170,13 +178,13 @@ public class JbDesignTaskService {
             }
             MemberManage memberManage = memberManageDao.selectByPrimaryKey(jbDesignVoF.getAccount());
             String memberName = "";
-            if(memberManage != null){
+            if (memberManage != null) {
                 memberName = memberManage.getMemberName();
             }
             OperationLog operationLog = new OperationLog();
-            operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+            operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
             operationLog.setName(jbDesignVoF.getAccount());
-            operationLog.setContent(memberName+"对接了一个"+designVo.getProject_name()+"项目"+"【"+designVo.getProject_id()+"】");
+            operationLog.setContent(memberName + "对接了一个" + designVo.getProject_name() + "项目" + "【" + designVo.getProject_id() + "】");
             operationLog.setDoObject(designVo.getProject_id());
             operationLog.setStatus("0");
             operationLog.setDoTime(date);
@@ -185,8 +193,10 @@ public class JbDesignTaskService {
             operationLog.setIp(ip);
             operationLogDao.insertSelective(operationLog);
 
+        }else{
+                throw new RuntimeException("参数有误");
         }
-
+    }
     }
 
     /***
@@ -195,28 +205,37 @@ public class JbDesignTaskService {
      * @param
      */
     public void getBudgetEngineering(JbBudgetVoF jbBudgetVoF,HttpServletRequest request) throws Exception {
-        JbBudgetVo budgetVo = jbBudgetVoF.getBudgetVo();
-        if(budgetVo != null){
-        Example example = new Example(BaseProject.class);
-        example.createCriteria().andEqualTo("projectId",budgetVo.getProject_id())
-                .andEqualTo("delFlag","0");
-        BaseProject baseProject = baseProjectDao.selectOneByExample(example);
-        if(baseProject != null){
-            baseProject.setBudgetStatus("4");
-            baseProjectDao.updateByPrimaryKeySelective(baseProject);
-        }
-
         String date = new SimpleDateFormat("yyyy-MM-dd HH:ss:mm").format(new Date());
+        JbBudgetVo budgetVo = jbBudgetVoF.getBudgetVo();
+        BaseProject project = baseProjectDao.selectByPrimaryKey(budgetVo.getProject_id());
 
-        if (budgetVo != null) {
-            Budgeting budgeting1 = budgetingDao.selectByPrimaryKey(budgetVo.getId());
-            if(budgeting1 != null){
-                throw new Exception("项目编号重复");
-            }
-            //预算信息
-            Budgeting budgeting = new Budgeting();
-            if (budgetVo.getId() != null) {
+        if (project != null) {
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
+            operationLog.setType("17"); // 错误类型
+            operationLog.setDoTime(date);
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLog.setStatus("0");
+            operationLog.setName(jbBudgetVoF.getAccount());
+            operationLog.setDoObject(budgetVo.getId());
+            operationLog.setContent("对接过来一个江北工程系统项目编号重复了！【" + budgetVo.getId() + "】");
+            operationLogDao.insertSelective(operationLog);
+            }else {
 
+            if (budgetVo != null) {
+
+                BaseProject baseProject = new BaseProject();
+                baseProject.setId(budgetVo.getId());
+                baseProject.setProjectId(budgetVo.getProject_id());
+                baseProject.setProjectName(budgetVo.getProject_name());
+                baseProject.setBudgetStatus("4");
+                baseProject.setDistrict("3"); //江北
+                baseProject.setDelFlag("0");
+                baseProjectDao.insertSelective(baseProject);
+
+                //预算信息
+                Budgeting budgeting = new Budgeting();
                 budgeting.setId(budgetVo.getId());
                 budgeting.setBaseProjectId(baseProject.getId());
                 budgeting.setBudgetingPeople(budgetVo.getBudgeting_people());
@@ -231,7 +250,6 @@ public class JbDesignTaskService {
                 budgeting.setSureMan(budgetVo.getSure_man());
                 budgeting.setDelFlag("0");
                 budgetingDao.insertSelective(budgeting);
-            }
             //成本编制
             CostPreparation costPreparation = new CostPreparation();
             costPreparation.setId(UUID.randomUUID().toString().replace("-",""));
@@ -290,6 +308,9 @@ public class JbDesignTaskService {
             operationLog.setIp(ip);
             operationLogDao.insertSelective(operationLog);
         }
+            else{
+                throw new RuntimeException("参数有误");
+            }
         }
     }
 
