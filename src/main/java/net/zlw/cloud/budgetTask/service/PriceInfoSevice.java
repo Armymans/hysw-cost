@@ -75,7 +75,7 @@ public class PriceInfoSevice {
 
             if (baseProject != null){
                 Example example2 = new Example(VeryEstablishment.class);
-                example1.createCriteria().andEqualTo("base_project_id", baseProject.getId());
+                example2.createCriteria().andEqualTo("baseProjectId", baseProject.getId());
                 VeryEstablishment establishment = veryEstablishmentDao.selectOneByExample(example2);
 
                 if (establishment == null){
