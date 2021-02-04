@@ -854,7 +854,10 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "project_name  like  CONCAT('%',#{keyword},'%')   " +
                     ")" +
                     "AND  " +
-                    "s1.del_flag = '0'"
+                    "s1.del_flag = '0'" +
+                    "AND  "+
+                    "s2.del_flag = '0'"
+
     )
     Integer progressPaymentCount(CostVo2 costVo2);
 
@@ -876,7 +879,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "project_name  like  CONCAT('%',#{keyword},'%')   " +
                     ")" +
                     "AND  " +
-                    "s1.del_flag = '0'"
+                    "s1.del_flag = '0'" +
+                    "AND  "+
+                    "s2.del_flag = '0'"
     )
     Double progressPaymentSum(CostVo2 costVo2);
 
@@ -898,6 +903,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "s1.id = s2.base_project_id " +
                     "and " +
                     "s1.del_flag = '0' " +
+                    "and" +
+                    "s2.status = '6'"+
                     "and " +
                     "(district = #{district} or #{district} = '') " +
                     "and " +
@@ -933,7 +940,10 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "project_name  like  CONCAT('%',#{keyword},'%')  " +
                     ")" +
                     "and " +
-                    "s1.del_flag = '0'"
+                    "s1.del_flag = '0'"+
+                    "and" +
+                    "s2.status = '6'"
+
     )
     Double VisaChangeCount(CostVo2 costVo2);
 
@@ -954,7 +964,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "project_name  like  CONCAT('%',#{keyword},'%')  " +
                     ")" +
                     "and " +
-                    "s1.del_flag = '0'"
+                    "s1.del_flag = '0'"+
+                    "and" +
+                    "s2.status = '6'"
     )
     Double VisaChangeMoney(CostVo2 costVo2);
 

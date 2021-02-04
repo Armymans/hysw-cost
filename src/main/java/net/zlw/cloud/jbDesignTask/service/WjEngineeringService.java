@@ -107,7 +107,7 @@ public class WjEngineeringService {
             if (designVo != null) {
                 //基本信息表
                 BaseProject project = new BaseProject();
-                project.setId(designVo.getId());
+                project.setId(designVo.getBase_project_id());
                 project.setProjectNum(designVo.getBase_project_id());
                 project.setProjectName(designVo.getProject_name());
                 project.setDelFlag("0");
@@ -118,6 +118,7 @@ public class WjEngineeringService {
                 // 设计表
                 DesignInfo designInfo = new DesignInfo();
                 designInfo.setId(designVo.getId());
+                designInfo.setFounderId(wjDesignVoA.getAccount());
                 designInfo.setBlueprintCountersignTime(designVo.getScene_time());
                 designInfo.setYearDesignUnit(designVo.getAnnual_design_uti());
                 designInfo.setDesignUnit(designVo.getDesign_util());
@@ -129,6 +130,7 @@ public class WjEngineeringService {
                 ProjectExploration exploration = new ProjectExploration();
                 exploration.setId(UUID.randomUUID().toString().replace("-", ""));
                 exploration.setScout(designVo.getSurveyor());
+                exploration.setFounderId(wjDesignVoA.getAccount());
                 exploration.setExplorationTime(designVo.getSurvey_time());
                 exploration.setSite(designVo.getAddress());
                 exploration.setRemark(designVo.getRemark());
@@ -139,6 +141,7 @@ public class WjEngineeringService {
                 //方案会审
                 PackageCame packageCame = new PackageCame();
                 packageCame.setId(UUID.randomUUID().toString().replace("-", ""));
+                packageCame.setFounderId(wjDesignVoA.getAccount());
                 packageCame.setParticipant(designVo.getParticipants());
                 packageCame.setRemark(designVo.getRemark());
                 packageCame.setBassProjectId(designInfo.getId());
@@ -147,7 +150,7 @@ public class WjEngineeringService {
                 packageCameMapper.insertSelective(packageCame);
                 //现场照片附件
                 List<ScenePhotosList> scenePhotosList = designVo.getScenePhotosList();
-                if (scenePhotosList.size() > 0) {
+                if (scenePhotosList!= null && scenePhotosList.size() > 0) {
                     for (ScenePhotosList photosList : scenePhotosList) {
                         FileInfo fileInfo = new FileInfo();
                         fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -164,7 +167,7 @@ public class WjEngineeringService {
                 }
                 //方案会审-参会意见
                 List<OpinionsList> opinionsList = designVo.getOpinionsList();
-                if (opinionsList.size() > 0) {
+                if (opinionsList != null &&opinionsList.size() > 0) {
                     for (OpinionsList list : opinionsList) {
                         FileInfo fileInfo = new FileInfo();
                         fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -182,7 +185,7 @@ public class WjEngineeringService {
                 }
                 //设计图纸/附件
                 List<DesignDrawingsList> designDrawingsList = designVo.getDesignDrawingsList();
-                if (designDrawingsList.size() > 0) {
+                if (designDrawingsList!= null &&designDrawingsList.size() > 0) {
                     for (DesignDrawingsList drawingsList : designDrawingsList) {
                         FileInfo fileInfo = new FileInfo();
                         fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -216,20 +219,123 @@ public class WjEngineeringService {
     }
 
     public void getWjBudgetTask(WjBudgetVoA wjBudgetVoA, HttpServletRequest request) {
+
+        String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         BudgetVo budgetVo = wjBudgetVoA.getBudgetVo();
-        if (budgetVo != null) {
-            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetVo.getBase_project_id());
-            String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-            if (baseProject != null) {
-                baseProject.setBudgetStatus("4");
-                baseProject.setProjectName(budgetVo.getProject_name());
-                baseProject.setDistrict("4"); //吴江
-                baseProjectDao.updateByPrimaryKeySelective(baseProject);
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetVo.getBase_project_id());
+        if (baseProject != null) {
+
+            BaseProject project = new BaseProject();
+            project.setBudgetStatus("4");
+            project.setProjectId(budgetVo.getBase_project_id());
+            project.setProjectName(budgetVo.getProject_name());
+            project.setFounderId(wjBudgetVoA.getAccount());
+            project.setDistrict("4"); //吴江
+            baseProjectDao.updateByPrimaryKeySelective(project);
+
+            Budgeting budgeting = new Budgeting();
+            budgeting.setId(budgetVo.getId());
+            budgeting.setBaseProjectId(project.getProjectId());
+            budgeting.setDelFlag("0");
+            budgeting.setCreateTime(data);
+            budgeting.setFounderId(wjBudgetVoA.getAccount());
+            budgeting.setBudgetingPeople(budgetVo.getApply_by());
+            budgeting.setNameOfCostUnit(budgetVo.getName_of_cost_unit());
+            budgeting.setRemarkes(budgetVo.getRemark());
+            budgeting.setBudgetingTime(budgetVo.getBudgeting_time());
+            budgetingDao.insertSelective(budgeting);
+            //成本编制
+            CostPreparation costPreparation = new CostPreparation();
+            costPreparation.setId(UUID.randomUUID().toString().replace("-", ""));
+            costPreparation.setBaseProjectId(project.getId());
+            costPreparation.setBudgetingId(budgeting.getId());
+            costPreparation.setFounderId(wjBudgetVoA.getAccount());
+            costPreparation.setDelFlag("0");
+            costPreparation.setCostTotalAmount(new BigDecimal(0));
+            costPreparation.setVatAmount(new BigDecimal(0));
+            costPreparation.setTotalPackageMaterial(new BigDecimal(0));
+            costPreparationDao.insertSelective(costPreparation);
+            //控价编制
+            VeryEstablishment veryEstablishment = new VeryEstablishment();
+            veryEstablishment.setId(UUID.randomUUID().toString().replace("-", ""));
+            veryEstablishment.setBudgetingId(budgeting.getId());
+            veryEstablishment.setBaseProjectId(project.getId());
+            veryEstablishment.setFounderId(wjBudgetVoA.getAccount());
+            veryEstablishment.setDelFlag("0");
+            veryEstablishment.setPricingTogether(wjBudgetVoA.getAccount());
+            veryEstablishmentDao.insertSelective(veryEstablishment);
+            //甲供材附件
+            List<MaterialsAList> materialsAList = budgetVo.getMaterialsAList();
+            if (materialsAList!= null && materialsAList.size() > 0) {
+                for (MaterialsAList aList : materialsAList) {
+                    MaterialAnalysis materialAnalysis = new MaterialAnalysis();
+                    materialAnalysis.setId(UUID.randomUUID().toString().replace("-", ""));
+                    materialAnalysis.setMaterialsACode(aList.getMaterials_a_code());
+                    materialAnalysis.setMaterialName(aList.getMaterials_a_name());
+                    materialAnalysis.setSpecifications(aList.getMaterials_a_type());
+                    materialAnalysis.setUnit(aList.getMaterials_a_unit());
+                    materialAnalysis.setOutboundOrderQuantity(aList.getMaterials_a_num());
+                    materialAnalysis.setContractPrice(new BigDecimal(aList.getMaterials_a_price()));
+                    materialAnalysis.setMoreAmount(new BigDecimal(aList.getMaterials_a_money()));
+                    materialAnalysis.setMaterialsANvCode(aList.getMaterials_a_nv_code());
+                    materialAnalysis.setMaterialsANvName(aList.getMaterials_a_nv_name());
+                    materialAnalysis.setMaterialsANcTtpe(aList.getMaterials_a_nc_ttpe());
+                    materialAnalysis.setMaterialsALink(aList.getMaterials_a_link());
+                    materialAnalysis.setSettlementId(budgeting.getId());
+                    materialAnalysis.setDelFlag("0");
+                    materialAnalysis.setCreateTime(data);
+                    materialAnalysisDao.insertSelective(materialAnalysis);
+                }
+            }
+            // 预算附件
+            List<BudgetFileList> budgetFileList = budgetVo.getBudgetFileList();
+            if ( budgetFileList != null && budgetFileList.size() > 0) {
+                for (BudgetFileList fileList : budgetFileList) {
+                    FileInfo fileInfo = new FileInfo();
+                    fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                    fileInfo.setFileName(fileList.getBudget_file_name());
+                    fileInfo.setUpdateTime(fileList.getBudget_file_up_time());
+                    fileInfo.setUserId(fileList.getBudget_file_up_by());
+                    fileInfo.setFilePath(fileList.getBudget_file_link());
+                    fileInfo.setStatus("0");
+                    fileInfo.setFilePath(budgeting.getId());
+                    fileInfo.setCreateTime(data);
+                    fileInfo.setType("yjsfjxx"); //预结算附件信息
+                    fileInfoMapper.insertSelective(fileInfo);
+                }
+            }
+            OperationLog operationLog = new OperationLog();
+            operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
+            operationLog.setType("19"); // 吴江预算任务
+            operationLog.setDoTime(data);
+            String ip = memberService.getIp(request);
+            operationLog.setIp(ip);
+            operationLog.setStatus("0");
+            operationLog.setName(wjBudgetVoA.getAccount());
+            operationLog.setDoObject(budgeting.getId());
+            operationLog.setContent("对接过来一个吴江预算任务【" + baseProject.getId() + "】");
+            operationLogDao.insertSelective(operationLog);
+        } else {
+            if (budgetVo != null) {
+
+                BaseProject project = new BaseProject();
+
+                project.setId(budgetVo.getBase_project_id());
+                project.setProjectNum(budgetVo.getBase_project_id());
+                project.setProjectName(budgetVo.getProject_name());
+                project.setFounderId(wjBudgetVoA.getAccount());
+                project.setDelFlag("0");
+                project.setDistrict("4"); //吴江
+                project.setCreateTime(data);
+                project.setBudgetStatus("4");
+                baseProjectDao.insertSelective(project);
                 Budgeting budgeting = new Budgeting();
                 budgeting.setId(budgetVo.getId());
-                budgeting.setBaseProjectId(baseProject.getId());
+                budgeting.setBaseProjectId(project.getId());
+                budgeting.setFounderId(wjBudgetVoA.getAccount());
                 budgeting.setDelFlag("0");
                 budgeting.setCreateTime(data);
+                budgeting.setBudgetingPeople(budgetVo.getApply_by());
                 budgeting.setNameOfCostUnit(budgetVo.getName_of_cost_unit());
                 budgeting.setRemarkes(budgetVo.getRemark());
                 budgeting.setBudgetingTime(budgetVo.getBudgeting_time());
@@ -237,8 +343,9 @@ public class WjEngineeringService {
                 //成本编制
                 CostPreparation costPreparation = new CostPreparation();
                 costPreparation.setId(UUID.randomUUID().toString().replace("-", ""));
-                costPreparation.setBaseProjectId(baseProject.getId());
+                costPreparation.setBaseProjectId(project.getId());
                 costPreparation.setBudgetingId(budgeting.getId());
+                costPreparation.setFounderId(wjBudgetVoA.getAccount());
                 costPreparation.setDelFlag("0");
                 costPreparation.setCostTotalAmount(new BigDecimal(0));
                 costPreparation.setVatAmount(new BigDecimal(0));
@@ -248,13 +355,14 @@ public class WjEngineeringService {
                 VeryEstablishment veryEstablishment = new VeryEstablishment();
                 veryEstablishment.setId(UUID.randomUUID().toString().replace("-", ""));
                 veryEstablishment.setBudgetingId(budgeting.getId());
-                veryEstablishment.setBaseProjectId(baseProject.getId());
+                veryEstablishment.setFounderId(wjBudgetVoA.getAccount());
+                veryEstablishment.setBaseProjectId(project.getId());
                 veryEstablishment.setDelFlag("0");
                 veryEstablishment.setPricingTogether(wjBudgetVoA.getAccount());
                 veryEstablishmentDao.insertSelective(veryEstablishment);
                 //甲供材附件
                 List<MaterialsAList> materialsAList = budgetVo.getMaterialsAList();
-                if (materialsAList.size() > 0) {
+                if ( materialsAList != null && materialsAList.size() > 0) {
                     for (MaterialsAList aList : materialsAList) {
                         MaterialAnalysis materialAnalysis = new MaterialAnalysis();
                         materialAnalysis.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -277,7 +385,7 @@ public class WjEngineeringService {
                 }
                 // 预算附件
                 List<BudgetFileList> budgetFileList = budgetVo.getBudgetFileList();
-                if (budgetFileList.size() > 0) {
+                if ( budgetFileList != null && budgetFileList.size() > 0) {
                     for (BudgetFileList fileList : budgetFileList) {
                         FileInfo fileInfo = new FileInfo();
                         fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -291,19 +399,7 @@ public class WjEngineeringService {
                         fileInfo.setType("yjsfjxx"); //预结算附件信息
                         fileInfoMapper.insertSelective(fileInfo);
                     }
-                    OperationLog operationLog = new OperationLog();
-                    operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
-                    operationLog.setType("19"); // 吴江预算任务
-                    operationLog.setDoTime(data);
-                    String ip = memberService.getIp(request);
-                    operationLog.setIp(ip);
-                    operationLog.setStatus("0");
-                    operationLog.setName(wjBudgetVoA.getAccount());
-                    operationLog.setDoObject(budgeting.getId());
-                    operationLog.setContent("对接过来一个吴江预算任务【" + baseProject.getId() + "】");
-                    operationLogDao.insertSelective(operationLog);
                 }
-            }else{
                 OperationLog operationLog = new OperationLog();
                 operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
                 operationLog.setType("19"); // 吴江预算任务
@@ -312,13 +408,15 @@ public class WjEngineeringService {
                 operationLog.setIp(ip);
                 operationLog.setStatus("0");
                 operationLog.setName(wjBudgetVoA.getAccount());
-                operationLog.setContent("对接过来一个没有工程信息的吴江预算任务");
+                operationLog.setDoObject(budgeting.getId());
+                operationLog.setContent("对接过来一个吴江预算任务【" + project.getId() + "】");
                 operationLogDao.insertSelective(operationLog);
-            }
-        } else {
+        } else{
             throw new RuntimeException("参数有误");
         }
     }
+
+}
 
     public void getSettlementEngineering(WjSettlementVoA wjSettlementVoA, HttpServletRequest request) {
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -328,13 +426,16 @@ public class WjEngineeringService {
             if (baseProject != null) {
                 baseProject.setDistrict("4");
                 baseProject.setProjectName(settlementVo.getProject_name());
+                baseProject.setFounderId(wjSettlementVoA.getAccount());
                 baseProject.setSettleAccountsStatus("5");
                 baseProject.setCeaNum(settlementVo.getCea_num());
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
                 //下家
                 SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
                 settlementAuditInformation.setId(settlementVo.getId());
                 settlementAuditInformation.setAuditFee(settlementVo.getAudit_fee());
+                settlementAuditInformation.setFounderId(wjSettlementVoA.getAccount());
                 settlementAuditInformation.setAuditFeeMaterials(settlementVo.getAudit_fee_materials());
                 settlementAuditInformation.setAudiConstruction(settlementVo.getAudi_construction());
                 settlementAuditInformation.setBidSection(settlementVo.getBid_section());
@@ -345,9 +446,11 @@ public class WjEngineeringService {
                 settlementAuditInformation.setBaseProjectId(baseProject.getId());
                 settlementAuditInformationDao.insertSelective(settlementAuditInformation);
 
+
                 SettlementInfo upSettlementInfo = new SettlementInfo();
                 upSettlementInfo.setId(UUID.randomUUID().toString().replace("-", ""));
                 upSettlementInfo.setUpAndDown("1");
+                upSettlementInfo.setFouderId(wjSettlementVoA.getAccount());
                 upSettlementInfo.setBaseProjectId(baseProject.getId());
                 upSettlementInfo.setState("0");
                 upSettlementInfo.setCreateTime(data);
@@ -356,6 +459,7 @@ public class WjEngineeringService {
                 SettlementInfo downSettlementInfo = new SettlementInfo();
                 downSettlementInfo.setId(UUID.randomUUID().toString().replace("-", ""));
                 downSettlementInfo.setUpAndDown("2");
+                downSettlementInfo.setFouderId(wjSettlementVoA.getAccount());
                 downSettlementInfo.setBaseProjectId(baseProject.getId());
                 downSettlementInfo.setState("0");
                 downSettlementInfo.setCreateTime(data);
@@ -365,6 +469,7 @@ public class WjEngineeringService {
                 lastSettlementReview.setId(settlementVo.getId());
                 lastSettlementReview.setBaseProjectId(baseProject.getId());
                 lastSettlementReview.setRemark(settlementVo.getRemark());
+                lastSettlementReview.setFounderId(wjSettlementVoA.getAccount());
                 lastSettlementReview.setDelFlag("0");
                 lastSettlementReview.setCreateTime(data);
                 lastSettlementReview.setAccountId(settlementAuditInformation.getId());
@@ -374,12 +479,13 @@ public class WjEngineeringService {
                 investigationOfTheAmount.setId(UUID.randomUUID().toString().replace("-", ""));
                 investigationOfTheAmount.setBaseProjectId(baseProject.getId());
                 investigationOfTheAmount.setCreateTime(data);
+                investigationOfTheAmount.setFounderId(wjSettlementVoA.getAccount());
                 investigationOfTheAmount.setSurveyDate("");
                 investigationOfTheAmount.setDelFlag("0");
                 investigationOfTheAmountDao.insertSelective(investigationOfTheAmount);
                 //项目组资料见详
                 List<ProjectInformation> projectInformation = settlementVo.getProjectInformation();
-                if (projectInformation.size() > 0) {
+                if ( projectInformation != null && projectInformation.size() > 0) {
                     for (ProjectInformation information : projectInformation) {
                         FileInfo fileInfo = new FileInfo();
                         fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -395,6 +501,7 @@ public class WjEngineeringService {
                     }
                 }
                 //上家合同审计附件见详
+               if ( null != settlementVo.getLastContractAudit() ){
                 List<LastContractAudit> lastContractAudit = settlementVo.getLastContractAudit();
                 if (lastContractAudit.size() > 0) {
                     for (LastContractAudit contractAudit : lastContractAudit) {
@@ -411,58 +518,66 @@ public class WjEngineeringService {
                         fileInfoMapper.insertSelective(fileInfo);
                     }
                 }
-                //其他资料附件见详
-                List<OtherMeans> otherMeans = settlementVo.getOtherMeans();
-                if (otherMeans.size() > 0) {
-                    for (OtherMeans otherMean : otherMeans) {
-                        FileInfo fileInfo = new FileInfo();
-                        fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
-                        fileInfo.setFileName(otherMean.getFile_name());
-                        fileInfo.setCreateTime(data);
-                        fileInfo.setUpdateTime(otherMean.getFile_up_time());
-                        fileInfo.setUserId(otherMean.getFile_up_by());
-                        fileInfo.setFilePath(otherMean.getFile_link());
-                        fileInfo.setPlatCode(settlementAuditInformation.getId());
-                        fileInfo.setType("qtzlfjjx");
-                        fileInfo.setStatus("0");
-                        fileInfoMapper.insertSelective(fileInfo);
+               }
+                if ( null != settlementVo.getOtherMeans() ) {
+                    //其他资料附件见详
+                    List<OtherMeans> otherMeans = settlementVo.getOtherMeans();
+                    if (otherMeans.size() > 0) {
+                        for (OtherMeans otherMean : otherMeans) {
+                            FileInfo fileInfo = new FileInfo();
+                            fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                            fileInfo.setFileName(otherMean.getFile_name());
+                            fileInfo.setCreateTime(data);
+                            fileInfo.setUpdateTime(otherMean.getFile_up_time());
+                            fileInfo.setUserId(otherMean.getFile_up_by());
+                            fileInfo.setFilePath(otherMean.getFile_link());
+                            fileInfo.setPlatCode(settlementAuditInformation.getId());
+                            fileInfo.setType("qtzlfjjx");
+                            fileInfo.setStatus("0");
+                            fileInfoMapper.insertSelective(fileInfo);
+                        }
                     }
                 }
                 //审核资料附件见详
-                List<ShangExamineMeans> shangExamineMeans = settlementVo.getShangExamineMeans();
-                if (shangExamineMeans.size() > 0) {
-                    for (ShangExamineMeans shangExamineMean : shangExamineMeans) {
-                        FileInfo fileInfo = new FileInfo();
-                        fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
-                        fileInfo.setFileName(shangExamineMean.getFile_name());
-                        fileInfo.setCreateTime(data);
-                        fileInfo.setUpdateTime(shangExamineMean.getFile_up_time());
-                        fileInfo.setUserId(shangExamineMean.getFile_up_by());
-                        fileInfo.setFilePath(shangExamineMean.getFile_link());
-                        fileInfo.setPlatCode(lastSettlementReview.getId());
-                        fileInfo.setType("shzlfjjx");
-                        fileInfo.setStatus("0");
-                        fileInfoMapper.insertSelective(fileInfo);
+                if ( null != settlementVo.getShangExamineMeans() ) {
+                    List<ShangExamineMeans> shangExamineMeans = settlementVo.getShangExamineMeans();
+                    if (shangExamineMeans.size() > 0) {
+                        for (ShangExamineMeans shangExamineMean : shangExamineMeans) {
+                            FileInfo fileInfo = new FileInfo();
+                            fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                            fileInfo.setFileName(shangExamineMean.getFile_name());
+                            fileInfo.setCreateTime(data);
+                            fileInfo.setUpdateTime(shangExamineMean.getFile_up_time());
+                            fileInfo.setUserId(shangExamineMean.getFile_up_by());
+                            fileInfo.setFilePath(shangExamineMean.getFile_link());
+                            fileInfo.setPlatCode(lastSettlementReview.getId());
+                            fileInfo.setType("shzlfjjx");
+                            fileInfo.setStatus("0");
+                            fileInfoMapper.insertSelective(fileInfo);
+                        }
                     }
                 }
                 //标段审计资料附件见详
-                List<BidSectionAudit> bidSectionAudit = settlementVo.getBidSectionAudit();
-                if (bidSectionAudit.size() > 0) {
-                    for (BidSectionAudit sectionAudit : bidSectionAudit) {
-                        FileInfo fileInfo = new FileInfo();
-                        fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
-                        fileInfo.setFileName(sectionAudit.getFile_name());
-                        fileInfo.setCreateTime(data);
-                        fileInfo.setUpdateTime(sectionAudit.getFile_up_time());
-                        fileInfo.setUserId(sectionAudit.getFile_up_by());
-                        fileInfo.setFilePath(sectionAudit.getFile_link());
-                        fileInfo.setPlatCode(settlementAuditInformation.getId());
-                        fileInfo.setType("bdsjzlfjjx");
-                        fileInfo.setStatus("0");
-                        fileInfoMapper.insertSelective(fileInfo);
+                if ( null != settlementVo.getBidSectionAudit() ) {
+                    List<BidSectionAudit> bidSectionAudit = settlementVo.getBidSectionAudit();
+                    if (bidSectionAudit.size() > 0) {
+                        for (BidSectionAudit sectionAudit : bidSectionAudit) {
+                            FileInfo fileInfo = new FileInfo();
+                            fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                            fileInfo.setFileName(sectionAudit.getFile_name());
+                            fileInfo.setCreateTime(data);
+                            fileInfo.setUpdateTime(sectionAudit.getFile_up_time());
+                            fileInfo.setUserId(sectionAudit.getFile_up_by());
+                            fileInfo.setFilePath(sectionAudit.getFile_link());
+                            fileInfo.setPlatCode(settlementAuditInformation.getId());
+                            fileInfo.setType("bdsjzlfjjx");
+                            fileInfo.setStatus("0");
+                            fileInfoMapper.insertSelective(fileInfo);
+                        }
                     }
                 }
                 //甲供材一览信息见详
+                if ( null != settlementVo.getMaterialInformation() ) {
                 List<MaterialInformation> materialInformation = settlementVo.getMaterialInformation();
                 if (materialInformation.size() > 0) {
                     for (MaterialInformation information : materialInformation) {
@@ -480,8 +595,9 @@ public class WjEngineeringService {
                         materialAnalysis.setSettlementId(settlementAuditInformation.getId());
                         materialAnalysisDao.insertSelective(materialAnalysis);
                     }
-                }
+                }}
                 //审计报告附件见详
+                if ( null != settlementVo.getAuditReport() ) {
                 List<AuditReport> auditReport = settlementVo.getAuditReport();
                 if (auditReport.size() > 0) {
                     for (AuditReport thisAudit : auditReport) {
@@ -497,8 +613,9 @@ public class WjEngineeringService {
                         fileInfo.setStatus("0");
                         fileInfoMapper.insertSelective(fileInfo);
                     }
-                }
+                }}
                 //验收报告附件见详
+                if ( null != settlementVo.getAcceptanceReport() ) {
                 List<AcceptanceReport> acceptanceReport = settlementVo.getAcceptanceReport();
                 if (acceptanceReport.size() > 0) {
                     for (AcceptanceReport report : acceptanceReport) {
@@ -514,34 +631,36 @@ public class WjEngineeringService {
                         fileInfo.setStatus("0");
                         fileInfoMapper.insertSelective(fileInfo);
                     }
-                }
+                }}
                 //审核资料附件下家见详
-                List<XiaExamineMeans> xiaExamineMeans = settlementVo.getXiaExamineMeans();
-                if (xiaExamineMeans.size() > 0) {
-                    for (XiaExamineMeans xiaExamineMean : xiaExamineMeans) {
-                        FileInfo fileInfo = new FileInfo();
-                        fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
-                        fileInfo.setFileName(xiaExamineMean.getFile_name());
-                        fileInfo.setCreateTime(data);
-                        fileInfo.setUpdateTime(xiaExamineMean.getFile_up_time());
-                        fileInfo.setUserId(xiaExamineMean.getFile_up_by());
-                        fileInfo.setFilePath(xiaExamineMean.getFile_link());
-                        fileInfo.setPlatCode(settlementAuditInformation.getId());
-                        fileInfo.setType("shzlfjxjjx");
-                        fileInfo.setStatus("0");
-                        fileInfoMapper.insertSelective(fileInfo);
+                if ( null != settlementVo.getXiaExamineMeans() ) {
+                    List<XiaExamineMeans> xiaExamineMeans = settlementVo.getXiaExamineMeans();
+                    if (xiaExamineMeans.size() > 0) {
+                        for (XiaExamineMeans xiaExamineMean : xiaExamineMeans) {
+                            FileInfo fileInfo = new FileInfo();
+                            fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                            fileInfo.setFileName(xiaExamineMean.getFile_name());
+                            fileInfo.setCreateTime(data);
+                            fileInfo.setUpdateTime(xiaExamineMean.getFile_up_time());
+                            fileInfo.setUserId(xiaExamineMean.getFile_up_by());
+                            fileInfo.setFilePath(xiaExamineMean.getFile_link());
+                            fileInfo.setPlatCode(settlementAuditInformation.getId());
+                            fileInfo.setType("shzlfjxjjx");
+                            fileInfo.setStatus("0");
+                            fileInfoMapper.insertSelective(fileInfo);
 
-                        OperationLog operationLog = new OperationLog();
-                        operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
-                        operationLog.setType("20"); // 吴江结算任务
-                        operationLog.setDoTime(data);
-                        String ip = memberService.getIp(request);
-                        operationLog.setIp(ip);
-                        operationLog.setStatus("0");
-                        operationLog.setName(wjSettlementVoA.getAccount());
-                        operationLog.setDoObject(settlementVo.getId());
-                        operationLog.setContent("对接过来一个吴江结算任务【" + baseProject.getId() + "】");
-                        operationLogDao.insertSelective(operationLog);
+                            OperationLog operationLog = new OperationLog();
+                            operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
+                            operationLog.setType("20"); // 吴江结算任务
+                            operationLog.setDoTime(data);
+                            String ip = memberService.getIp(request);
+                            operationLog.setIp(ip);
+                            operationLog.setStatus("0");
+                            operationLog.setName(wjSettlementVoA.getAccount());
+                            operationLog.setDoObject(settlementVo.getId());
+                            operationLog.setContent("对接过来一个吴江结算任务【" + baseProject.getId() + "】");
+                            operationLogDao.insertSelective(operationLog);
+                        }
                     }
                 }
             }else{
@@ -588,19 +707,21 @@ public class WjEngineeringService {
                 trackAuditInfo.setStatus(trackVo.getStatus());
                 trackAuditInfo.setContractAmount(new BigDecimal(trackVo.getContract_amount()));
                 trackAuditInfo.setStatus("0");
+                trackAuditInfo.setBaseProjectId(baseProject.getId());
                 trackAuditInfoDao.insertSelective(trackAuditInfo);
                 //申请信息
                 TrackApplicationInfo trackApplicationInfo = new TrackApplicationInfo();
                 trackApplicationInfo.setId(UUID.randomUUID().toString().replace("-", ""));
                 trackApplicationInfo.setRemark("");
                 trackApplicationInfo.setCreateTime(data);
+                trackApplicationInfo.setFouderId(wjTrackVoA.getAccount());
                 trackApplicationInfo.setState("0");
                 trackApplicationInfo.setApplicantName("");
                 trackApplicationInfo.setTrackAudit(trackAuditInfo.getId());
                 trackApplicationInfoDao.insertSelective(trackApplicationInfo);
                 //月报
                 List<MonthlyAuditReport> monthlyAuditReport = trackVo.getMonthlyAuditReport();
-                if (monthlyAuditReport.size() > 0) {
+                if (monthlyAuditReport != null && monthlyAuditReport.size() > 0) {
                     for (MonthlyAuditReport auditReport : monthlyAuditReport) {
                         TrackMonthly trackMonthly = new TrackMonthly();
                         trackMonthly.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -609,6 +730,7 @@ public class WjEngineeringService {
                         trackMonthly.setPerformAmount(new BigDecimal(auditReport.getExecution_money()));
                         trackMonthly.setFillTime(auditReport.getCompleted_time());
                         trackMonthly.setTrackId(trackAuditInfo.getId());
+                        trackMonthly.setFounderId(wjTrackVoA.getAccount());
                         trackMonthly.setStatus("0");
                         trackMonthly.setCreateTime(data);
                         trackMonthly.setWritter(auditReport.getCompleted_by());
