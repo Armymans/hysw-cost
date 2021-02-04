@@ -90,12 +90,12 @@ public class BudgetTaskService {
                 BigDecimal decimal = new BigDecimal(addedTaxAmount);
                 budgeting.setAddedTaxAmount(decimal);
                 budgeting.setBudgetingTime(budgetVo.getBudgeting_time());
-                budgeting.setBaseProjectId(budgetVo.getApplication_num());
+                budgeting.setBaseProjectId(budgetVo.getBase_project_id());
                 budgeting.setDelFlag("0");
                 budgeting.setCreateTime(format);
                 budgeting.setUpdateTime(format);
                 budgetingDao.insertSelective(budgeting);
-                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetVo.getApplication_num());
+                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetVo.getBase_project_id());
                 if(baseProject != null){
                     baseProject.setBudgetStatus("4");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);

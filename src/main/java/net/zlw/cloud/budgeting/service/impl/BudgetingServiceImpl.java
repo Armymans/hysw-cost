@@ -45,6 +45,7 @@ import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -1367,14 +1368,14 @@ public class BudgetingServiceImpl implements BudgetingService {
                 String baseId = budgetingListVo.getBaseId();
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
                 if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
-                    if (budgetingListVo.getFounderId().equals(id)){
+                    if (budgetingListVo.getFounderId() != null && budgetingListVo.getFounderId().equals(id)){
                         budgetingListVo.setShowWhether("1");
                     }else{
                         budgetingListVo.setShowWhether("2");
                     }
                 }
                 if (baseProject.getDesignCategory() == null || baseProject.getDesignCategory().equals("")){
-                    if (budgetingListVo.getFounderId().equals(id)){
+                    if (budgetingListVo.getFounderId() != null && budgetingListVo.getFounderId().equals(id)){
                         budgetingListVo.setShowWhether("1");
                     }else{
                         budgetingListVo.setShowWhether("2");
@@ -1386,7 +1387,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 String pricingTogether = budgetingListVo.getPricingTogether();
 
                 if (budgetingPeople == null || budgetingPeople.equals("")){
-                    if (budgetingListVo.getFounderId().equals(id)){
+                    if (StringUtils.isNotEmpty(budgetingListVo.getFounderId()) && budgetingListVo.getFounderId().equals(id)){
                         budgetingListVo.setShowWhether("1");
                     }else{
                         budgetingListVo.setShowWhether("2");
@@ -1394,7 +1395,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
 
                 if (costTogether == null || costTogether.equals("")){
-                    if (budgetingListVo.getFounderId().equals(id)){
+                    if (StringUtils.isNotEmpty(budgetingListVo.getFounderId()) && budgetingListVo.getFounderId().equals(id)){
                         budgetingListVo.setShowWhether("1");
                     }else{
                         budgetingListVo.setShowWhether("2");
@@ -1402,7 +1403,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
 
                 if (pricingTogether == null || pricingTogether.equals("")){
-                    if (budgetingListVo.getFounderId().equals(id)){
+                    if (StringUtils.isNotEmpty(budgetingListVo.getFounderId()) && budgetingListVo.getFounderId().equals(id)){
                         budgetingListVo.setShowWhether("1");
                     }else{
                         budgetingListVo.setShowWhether("2");
@@ -1410,7 +1411,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                 }
                 // 判断CEA编号
 
-                if (id.equals(budgetingListVo.getFounderId())){
+                if (StringUtils.isNotEmpty(budgetingListVo.getFounderId()) && id.equals(budgetingListVo.getFounderId())){
                     budgetingListVo.setIsShow("1");
                 }
             }

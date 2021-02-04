@@ -74,92 +74,95 @@ public class WjDesignTaskService {
     public void getWjDesignTask(WjDesignVoF wjDesignVoF, HttpServletRequest request){
         WjDesignVo wjDesignVo = wjDesignVoF.getDesignVo();
         String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        if (wjDesignVo != null){
-            BaseProject project = new BaseProject();
-            project.setId(wjDesignVo.getApplication_num());
-            project.setApplicationNum(wjDesignVo.getApplication_num());
-            project.setCustomerName(wjDesignVo.getCustomer_name());
-            project.setFireTableSize(wjDesignVo.getFire_table_size());
-            project.setClassificationCaliber(wjDesignVo.getClassification_caliber());
-            project.setWaterMeterDiameter(wjDesignVo.getWater_meter_diameter());
-            project.setDistrict("4");
-            project.setStatus(wjDesignVo.getStatus());
-            project.setCustomerAddress(wjDesignVo.getCustomer_address());
-            project.setSubject(wjDesignVo.getCustomer_category());
-            project.setSite(wjDesignVo.getSite());
-            project.setCustomerEmail(wjDesignVo.getPostcode());
-            project.setCustomerPhone(wjDesignVo.getPhone());
-            project.setAgent(wjDesignVo.getAgent());
-            project.setContactNumber(wjDesignVo.getPhone_num());
-            project.setAcceptanceUnit(wjDesignVo.getAcceptance_unit());
-            project.setLegalRepresentative(wjDesignVo.getLegal_representative());
-            project.setCustomerResults(wjDesignVo.getCustomer_results());
-            project.setTotalAmountQuotation(wjDesignVo.getTotal_amount_quotation());
-            project.setLivingSurfaceDiameter(wjDesignVo.getLiving_surface_diameter());
-            project.setLandCertificate(wjDesignVo.getLand_certificate());
-            project.setChargeAmount(wjDesignVo.getCharge_amount());
-            project.setFax(wjDesignVo.getFax());
-            project.setProjectNature(wjDesignVo.getNature_water_use());
-            project.setDelFlag("0");
-            project.setCreateTime(data);
+        try {
+            if (wjDesignVo != null){
+                BaseProject project = new BaseProject();
+                project.setId(wjDesignVo.getBase_project_id());
+                project.setApplicationNum(wjDesignVo.getApplication_num());
+                project.setCustomerName(wjDesignVo.getCustomer_name());
+                project.setFireTableSize(wjDesignVo.getFire_table_size());
+                project.setClassificationCaliber(wjDesignVo.getClassification_caliber());
+                project.setWaterMeterDiameter(wjDesignVo.getWater_meter_diameter());
+                project.setDistrict("4");
+                project.setStatus(wjDesignVo.getStatus());
+                project.setCustomerAddress(wjDesignVo.getCustomer_address());
+                project.setSubject(wjDesignVo.getCustomer_category());
+                project.setSite(wjDesignVo.getSite());
+                project.setCustomerEmail(wjDesignVo.getPostcode());
+                project.setCustomerPhone(wjDesignVo.getPhone());
+                project.setAgent(wjDesignVo.getAgent());
+                project.setContactNumber(wjDesignVo.getPhone_num());
+                project.setAcceptanceUnit(wjDesignVo.getAcceptance_unit());
+                project.setLegalRepresentative(wjDesignVo.getLegal_representative());
+                project.setCustomerResults(wjDesignVo.getCustomer_results());
+                project.setTotalAmountQuotation(wjDesignVo.getTotal_amount_quotation());
+                project.setLivingSurfaceDiameter(wjDesignVo.getLiving_surface_diameter());
+                project.setLandCertificate(wjDesignVo.getLand_certificate());
+                project.setChargeAmount(wjDesignVo.getCharge_amount());
+                project.setFax(wjDesignVo.getFax());
+                project.setProjectNature(wjDesignVo.getNature_water_use());
+                project.setDelFlag("0");
+                project.setCreateTime(data);
 //            Random random = new Random(1);
 //            int i = random.nextInt(100);
-            project.setProjectName("吴江设计报装对接" + wjDesignVo.getApplication_num());
-            project.setDesginStatus("4");
-            baseProjectDao.insertSelective(project);
+                project.setProjectName("吴江设计报装对接" + wjDesignVo.getApplication_num());
+                project.setDesginStatus("4");
+                baseProjectDao.insertSelective(project);
 
-            DesignInfo designInfo = new DesignInfo();
-            designInfo.setId(UUID.randomUUID().toString().replace("-",""));
-            designInfo.setCreateTime(data);
-            designInfo.setDesigner(wjDesignVoF.getAccount());
-            designInfo.setStatus("0");
-            designInfo.setBaseProjectId(project.getApplicationNum());
-            designInfo.setFounderId(wjDesignVoF.getAccount());
-            designInfoMapper.insertSelective(designInfo);
+                DesignInfo designInfo = new DesignInfo();
+                designInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                designInfo.setCreateTime(data);
+                designInfo.setDesigner(wjDesignVoF.getAccount());
+                designInfo.setStatus("0");
+                designInfo.setBaseProjectId(project.getId());
+                designInfo.setFounderId(wjDesignVoF.getAccount());
+                designInfoMapper.insertSelective(designInfo);
 
-            ProjectExploration exploration = new ProjectExploration();
-            exploration.setId(UUID.randomUUID().toString().replace("-",""));
-            exploration.setSurveyResults(wjDesignVo.getSurvey_results());
-            exploration.setExplorationIdeal(wjDesignVo.getSurvey_option());
-            exploration.setScout(wjDesignVo.getSurveyor());
-            exploration.setExplorationTime(wjDesignVo.getSurvey_time());
-            exploration.setRemark(wjDesignVo.getRemark());
-            exploration.setBaseProjectId(designInfo.getId());
-            exploration.setCreateTime(data);
-            exploration.setStatus("0");
-            projectExplorationMapper.insertSelective(exploration);
+                ProjectExploration exploration = new ProjectExploration();
+                exploration.setId(UUID.randomUUID().toString().replace("-",""));
+                exploration.setSurveyResults(wjDesignVo.getSurvey_results());
+                exploration.setExplorationIdeal(wjDesignVo.getSurvey_option());
+                exploration.setScout(wjDesignVo.getSurveyor());
+                exploration.setExplorationTime(wjDesignVo.getSurvey_time());
+                exploration.setRemark(wjDesignVo.getRemark());
+                exploration.setBaseProjectId(designInfo.getId());
+                exploration.setCreateTime(data);
+                exploration.setStatus("0");
+                projectExplorationMapper.insertSelective(exploration);
 
-            List<WjFileInfo> designFileList = wjDesignVo.getDesignFileList();
-            if (designFileList != null && designFileList.size()>0){
-                for (WjFileInfo thisFile : designFileList) {
-                    FileInfo fileInfo1 = fileInfoMapper.selectByPrimaryKey(thisFile.getId());
-                    if(null == fileInfo1){
-                        FileInfo fileInfo = new FileInfo();
-                        fileInfo.setId(thisFile.getId());
-                        fileInfo.setFileName(thisFile.getDesign_file_name());
-                        fileInfo.setCreateTime(thisFile.getDesign_up_time());
-                        fileInfo.setUserId(thisFile.getDesign_up_by());
-                        fileInfo.setFilePath(thisFile.getDesign_link());
-                        fileInfo.setType("wjsjbzwjsc");
-                        fileInfo.setStatus("0");
-                        fileInfo.setPlatCode(project.getApplicationNum());
-                        fileInfoMapper.insertSelective(fileInfo);
+                List<WjFileInfo> designFileList = wjDesignVo.getDesignFileList();
+                if (designFileList != null && designFileList.size()>0){
+                    for (WjFileInfo thisFile : designFileList) {
+                        FileInfo fileInfo1 = fileInfoMapper.selectByPrimaryKey(thisFile.getId());
+                        if(null == fileInfo1){
+                            FileInfo fileInfo = new FileInfo();
+                            fileInfo.setId(thisFile.getId());
+                            fileInfo.setFileName(thisFile.getDesign_file_name());
+                            fileInfo.setCreateTime(thisFile.getDesign_up_time());
+                            fileInfo.setUserId(thisFile.getDesign_up_by());
+                            fileInfo.setFilePath(thisFile.getDesign_link());
+                            fileInfo.setType("wjsjbzwjsc");
+                            fileInfo.setStatus("0");
+                            fileInfo.setPlatCode(project.getApplicationNum());
+                            fileInfoMapper.insertSelective(fileInfo);
+                        }
                     }
                 }
+                OperationLog operationLog = new OperationLog();
+                operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+                operationLog.setType("15"); // 吴江设计报装
+                operationLog.setDoTime(data);
+                String ip = memberService.getIp(request);
+                operationLog.setIp(ip);
+                operationLog.setStatus("0");
+                operationLog.setName(wjDesignVoF.getAccount());
+                operationLog.setDoObject(wjDesignVo.getApplication_num());
+                operationLog.setContent("对接过来一个吴江设计报装接口【"+wjDesignVo.getApplication_num()+"】");
+                operationLogDao.insertSelective(operationLog);
             }
-            OperationLog operationLog = new OperationLog();
-            operationLog.setId(UUID.randomUUID().toString().replace("-",""));
-            operationLog.setType("15"); // 吴江设计报装
-            operationLog.setDoTime(data);
-            String ip = memberService.getIp(request);
-            operationLog.setIp(ip);
-            operationLog.setStatus("0");
-            operationLog.setName(wjDesignVoF.getAccount());
-            operationLog.setDoObject(wjDesignVo.getApplication_num());
-            operationLog.setContent("对接过来一个吴江设计报装接口【"+wjDesignVo.getApplication_num()+"】");
-            operationLogDao.insertSelective(operationLog);
-        }else{
-            throw new RuntimeException("参数有误");
+        } catch (Exception e){
+            System.out.println("参数有误");
+            e.printStackTrace();
         }
 
     }
@@ -170,10 +173,11 @@ public class WjDesignTaskService {
         WjBudgetVo wjBudgetVo = wjBudgetVoF.getBudgetVo();
         BaseProject baseProject = new BaseProject();
         if (wjBudgetVo != null){
-            String base_project_id = wjBudgetVo.getApplication_num();
+            String base_project_id = wjBudgetVo.getBase_project_id();
             baseProject = baseProjectDao.selectByPrimaryKey(base_project_id);
             if (baseProject != null){
                 baseProject.setCustomerName(wjBudgetVo.getCustomer_name());
+                baseProject.setApplicationNum(wjBudgetVo.getApplication_num());
                 baseProject.setStatus(wjBudgetVo.getStatus());
                 baseProject.setFireTableSize(wjBudgetVo.getFire_table_size());
                 baseProject.setClassificationCaliber(wjBudgetVo.getClassification_caliber());
@@ -196,7 +200,8 @@ public class WjDesignTaskService {
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
             }else {
                 baseProject = new BaseProject();
-                baseProject.setId(UUID.randomUUID().toString().replace("-",""));
+                baseProject.setId(wjBudgetVo.getBase_project_id());
+                baseProject.setApplicationNum(wjBudgetVo.getApplication_num());
                 baseProject.setCustomerName(wjBudgetVo.getCustomer_name());
                 baseProject.setStatus(wjBudgetVo.getStatus());
                 baseProject.setFireTableSize(wjBudgetVo.getFire_table_size());

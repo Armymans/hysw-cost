@@ -1215,6 +1215,6 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
     @Select("SELECT revenue FROM wujiang_money_info WHERE base_project_id = #{id}")
     WujiangMoneyInfo selectByWuJiangOfficialReceipts(@Param("id") String id);
 
-    @Select("select * from base_project where id = #{applicationNum}")
+    @Select("select * from base_project where application_num = #{applicationNum}")
     BaseProject findByApplicationNum(@Param("applicationNum") String applicationNum);
 }

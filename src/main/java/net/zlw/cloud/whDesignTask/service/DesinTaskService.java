@@ -3,7 +3,6 @@ package net.zlw.cloud.whDesignTask.service;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
 import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.jbDesignTask.dao.DiameterInfoDao;
-import net.zlw.cloud.jbDesignTask.domain.DiameterInfo;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
@@ -11,7 +10,8 @@ import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.whDesignTask.dao.*;
-import net.zlw.cloud.whDesignTask.model.*;
+import net.zlw.cloud.whDesignTask.model.DockLog;
+import net.zlw.cloud.whDesignTask.model.WatherList;
 import net.zlw.cloud.whDesignTask.model.vo.DesignVo;
 import net.zlw.cloud.whDesignTask.model.vo.DesignVoF;
 import org.apache.commons.lang.StringUtils;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -113,6 +112,8 @@ public class DesinTaskService {
             baseProject.setStatus("0");
             baseProject.setDelFlag("0");
             baseProject.setDesginStatus("4");
+            baseProject.setCreateTime(data);
+            baseProject.setUpdateTime(data);
             //写到数据库
             baseProjectDao.insertSelective(baseProject);
 
@@ -135,6 +136,8 @@ public class DesinTaskService {
                 designInfo.setBlueprintCountersignTime(designVo.getBlueprint_countersign_time());
                 designInfo.setBlueprintStartTime(designVo.getBlueprint_start_time());
                 designInfo.setStatus("0");
+                designInfo.setCreateTime(data);
+                designInfo.setUpdateTime(data);
                 //写到数据库
                 designInfoMapper.insertSelective(designInfo);
             }

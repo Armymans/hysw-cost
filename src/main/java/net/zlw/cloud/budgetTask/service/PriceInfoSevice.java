@@ -18,6 +18,7 @@ import net.zlw.cloud.whDesignTask.dao.DockLogDao;
 import net.zlw.cloud.whDesignTask.model.DockLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -67,52 +68,65 @@ public class PriceInfoSevice {
         //设置时间
         String format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
         if (priceControlVo != null) {
-            BaseProject baseProject = baseProjectDao.selectByPrimaryKey(priceControlVo.getApplication_num());
-            Budgeting byBaseId = budgetingDao.findByBaseId(priceControlVo.getApplication_num());
-            if (baseProject != null && byBaseId != null) {
-                //控价编制
-                if (priceControlVo.getApplication_num() != null) {
-                    VeryEstablishment veryEstablishment = new VeryEstablishment();
-                    veryEstablishment.setId(UUID.randomUUID().toString());
-                    veryEstablishment.setTotalPriceControlLabel(priceControlVo.getTotal_price_control_label());
-                    BigDecimal vatAmount = new BigDecimal(priceControlVo.getLabel_vat_amount());
-                    veryEstablishment.setVatAmount(vatAmount);
-                    veryEstablishment.setPricingTogether(priceControlVo.getPrice_control_compilers());
-                    veryEstablishment.setEstablishmentTime(priceControlVo.getPrice_control_time());
-                    veryEstablishment.setBaseProjectId(baseProject.getId());
-                    veryEstablishment.setBudgetingId(byBaseId.getId());
-                    veryEstablishment.setRemarkes(priceControlVo.getPrice_control_remark());
-                    veryEstablishment.setPriceResult(priceControlVo.getPrice_examine_result());
-                    veryEstablishment.setPriceOpinion(priceControlVo.getPrice_examine_opinion());
-                    veryEstablishment.setPriceExaminer(priceControlVo.getPrice_examiner());
-                    veryEstablishment.setPriceExamineTime(priceControlVo.getPrice_examine_time());
-                    veryEstablishment.setStatus(priceControlVo.getStatus());
-                    veryEstablishment.setDelFlag("0");
-                    veryEstablishment.setCreateTime(format);
-                    veryEstablishment.setUpdateTime(format);
-                    veryEstablishmentDao.insertSelective(veryEstablishment);
-                }
+            //BaseProject baseProject = baseProjectDao.selectByPrimaryKey(priceControlVo.getApplication_num());
+            Example example1 = new Example(BaseProject.class);
+            example1.createCriteria().andEqualTo("applicationNum", priceControlVo.getApplication_num());
+            BaseProject baseProject = baseProjectDao.selectOneByExample(example1);
 
-                //控价编制附件资料
-                List<LabelMeansList> labelMeansList = priceControlVo.getLabelMeansList();
-                if (labelMeansList != null && labelMeansList.size() > 0) {
-                    for (LabelMeansList thisLable : labelMeansList) {
-                        FileInfo fileInfo = new FileInfo();
-                        if (thisLable.getLabel_file_name() != null) {
-                            fileInfo.setId(thisLable.getId());
-                            fileInfo.setName(thisLable.getLabel_file_name());
-                            fileInfo.setFileName(thisLable.getLabel_file_name());
-                            fileInfo.setPlatCode(byBaseId.getId());
-                            fileInfo.setFilePath(thisLable.getLable_file_drawing());
-                            fileInfo.setCreateTime(format);
-                            fileInfo.setUpdateTime(format);
-                            fileInfo.setStatus("0");
-                            fileInfo.setType("kjbzfjzl");
-                            fileInfoMapper.insertSelective(fileInfo);
+            if (baseProject != null){
+                Example example2 = new Example(VeryEstablishment.class);
+                example1.createCriteria().andEqualTo("base_project_id", baseProject.getId());
+                VeryEstablishment establishment = veryEstablishmentDao.selectOneByExample(example2);
+
+                if (establishment == null){
+                    Budgeting byBaseId = budgetingDao.findByBaseId(baseProject.getId());
+                    if (byBaseId != null) {
+                        //控价编制
+                        if (priceControlVo.getApplication_num() != null) {
+                            VeryEstablishment veryEstablishment = new VeryEstablishment();
+                            veryEstablishment.setId(UUID.randomUUID().toString());
+                            veryEstablishment.setTotalPriceControlLabel(priceControlVo.getTotal_price_control_label());
+                            BigDecimal vatAmount = new BigDecimal(priceControlVo.getLabel_vat_amount());
+                            veryEstablishment.setVatAmount(vatAmount);
+                            veryEstablishment.setPricingTogether(priceControlVo.getPrice_control_compilers());
+                            veryEstablishment.setEstablishmentTime(priceControlVo.getPrice_control_time());
+                            veryEstablishment.setBaseProjectId(baseProject.getId());
+                            veryEstablishment.setBudgetingId(byBaseId.getId());
+                            veryEstablishment.setRemarkes(priceControlVo.getPrice_control_remark());
+                            veryEstablishment.setPriceResult(priceControlVo.getPrice_examine_result());
+                            veryEstablishment.setPriceOpinion(priceControlVo.getPrice_examine_opinion());
+                            veryEstablishment.setPriceExaminer(priceControlVo.getPrice_examiner());
+                            veryEstablishment.setPriceExamineTime(priceControlVo.getPrice_examine_time());
+                            veryEstablishment.setStatus(priceControlVo.getStatus());
+                            veryEstablishment.setDelFlag("0");
+                            veryEstablishment.setCreateTime(format);
+                            veryEstablishment.setUpdateTime(format);
+                            veryEstablishmentDao.insertSelective(veryEstablishment);
+                        }
+
+                        //控价编制附件资料
+                        List<LabelMeansList> labelMeansList = priceControlVo.getLabelMeansList();
+                        if (labelMeansList != null && labelMeansList.size() > 0) {
+                            for (LabelMeansList thisLable : labelMeansList) {
+                                FileInfo fileInfo = new FileInfo();
+                                if (thisLable.getLabel_file_name() != null) {
+                                    fileInfo.setId(thisLable.getId());
+                                    fileInfo.setName(thisLable.getLabel_file_name());
+                                    fileInfo.setFileName(thisLable.getLabel_file_name());
+                                    fileInfo.setPlatCode(byBaseId.getId());
+                                    fileInfo.setFilePath(thisLable.getLable_file_drawing());
+                                    fileInfo.setCreateTime(format);
+                                    fileInfo.setUpdateTime(format);
+                                    fileInfo.setStatus("0");
+                                    fileInfo.setType("kjbzfjzl");
+                                    fileInfoMapper.insertSelective(fileInfo);
+                                }
+                            }
                         }
                     }
                 }
             }
+
             DockLog dockLog = new DockLog();
             dockLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
             dockLog.setName(priceControlVoF.getAccount()); // 操作人
