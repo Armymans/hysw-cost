@@ -3491,7 +3491,7 @@ public class ProjectService {
         Example example = new Example(TrackAuditInfo.class);
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("baseProjectId", id);
-        TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectOneByExample(example);
+        TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByExample(example).get(0);
         return trackAuditInfo;
     }
 

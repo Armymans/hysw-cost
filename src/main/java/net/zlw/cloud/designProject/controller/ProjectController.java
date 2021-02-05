@@ -36,6 +36,7 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -2231,11 +2232,12 @@ public class ProjectController extends BaseController {
             example.createCriteria().andEqualTo("baseProjectId",baseProject.getId())
                                     .andEqualTo("upAndDown","2");
             SettlementInfo settlementInfo = settlementInfoMapper.selectOneByExample(example);
-            if (settlementInfo != null){
-                String sumbitMoney = settlementInfo.getSumbitMoney();
+
+            String sumbitMoney = settlementInfo.getSumbitMoney();
+            if (StringUtils.isNotEmpty(sumbitMoney)){
                 BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber();
                 BigDecimal bigDecimal = new BigDecimal(sumbitMoney);
-                if (subtractTheNumber!=null && bigDecimal!=null){
+                if (subtractTheNumber!=null && null != bigDecimal){
                     BigDecimal divide = subtractTheNumber.divide(bigDecimal,4,RoundingMode.HALF_UP);
                     BigDecimal multiply = divide.multiply(new BigDecimal(100));
                     BigDecimal bigDecimal1 = multiply.setScale(2, RoundingMode.HALF_UP);

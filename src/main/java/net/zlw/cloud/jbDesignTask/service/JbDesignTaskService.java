@@ -82,6 +82,79 @@ public class JbDesignTaskService {
         JbDesignVo designVo = jbDesignVoF.getDesignVo();
         BaseProject baseProject1 = baseProjectDao.selectByPrimaryKey(designVo.getId());
         if (baseProject1 != null) {
+            BaseProject project = new BaseProject();
+            project.setBudgetStatus("4");
+            project.setProjectId(designVo.getProject_id());
+            project.setProjectName(designVo.getProject_name());
+            project.setFounderId(jbDesignVoF.getAccount());
+            project.setDistrict("4"); //吴江
+            baseProjectDao.updateByPrimaryKeySelective(project);
+            //设计表信息
+            DesignInfo designInfo = new DesignInfo();
+            if (designVo.getTake_time() != null) {
+                designInfo.setId(designVo.getId());
+                designInfo.setBaseProjectId(project.getProjectId());
+                designInfo.setDesigner(designVo.getDesigner());
+                designInfo.setTakeTime(designVo.getTake_time());
+                designInfo.setFounderId(designVo.getFounder_id());
+                designInfo.setCreateTime(designVo.getCreate_time());
+                designInfo.setRemark(designVo.getRemarks());
+                designInfo.setStatus("0");
+                designInfoMapper.insertSelective(designInfo);
+            }
+
+            //勘探表信息
+            ProjectExploration projectExploration = new ProjectExploration();
+            if (designVo.getExploration_ideal() != null) {
+                projectExploration.setId(designVo.getId());
+                projectExploration.setBaseProjectId(designInfo.getId());
+                projectExploration.setExplorationIdeal(designVo.getExploration_ideal());
+                projectExploration.setExplorationTime(designVo.getExploration_time());
+                projectExploration.setCreateTime(date);
+                projectExploration.setUpdateTime(date);
+                projectExploration.setStatus("0");
+                projectExplorationMapper.insertSelective(projectExploration);
+            }
+
+            //水表信息
+            DiameterInfo diameterInfo = new DiameterInfo();
+            List<DiameterInfos> diameterInfos = designVo.getDiameterInfo();
+            for (DiameterInfos thisInfo : diameterInfos) {
+                if (thisInfo.getId() != null) {
+                    diameterInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                    diameterInfo.setProjectId(thisInfo.getProject_id());
+                    diameterInfo.setType(thisInfo.getType());
+                    diameterInfo.setDiameterMeter(thisInfo.getDiameter_meter());
+                    diameterInfo.setCreateTime(date);
+                    diameterInfo.setUpdateTime(date);
+                    diameterInfo.setStatus("0");
+                    diameterInfoDao.insertSelective(diameterInfo);
+                }
+            }
+
+            //上传信息集合
+            FileInfo fileInfo = new FileInfo();
+            List<FileInfos> fileInfos = designVo.getFileInfo();
+            for (FileInfos thisFileInfos : fileInfos) {
+                if (thisFileInfos.getId() != null) {
+                    fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                    fileInfo.setPlatCode(thisFileInfos.getProject_id());
+                    fileInfo.setFileName(thisFileInfos.getOpinions_file_name());
+                    fileInfo.setCreateTime(thisFileInfos.getOpinions_up_time());
+                    fileInfo.setUserId(thisFileInfos.getOpinions_up_by());
+                    fileInfo.setFilePath(thisFileInfos.getOpinions_link());
+                    fileInfo.setType(thisFileInfos.getType());
+                    fileInfo.setStatus("0");
+                    fileInfoMapper.insertSelective(fileInfo);
+                }
+            }
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(jbDesignVoF.getAccount());
+            String memberName = "";
+            if (memberManage != null) {
+                memberName = memberManage.getMemberName();
+            }
+
+
             OperationLog operationLog = new OperationLog();
             operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
             operationLog.setType("17"); // 错误类型
@@ -93,13 +166,16 @@ public class JbDesignTaskService {
             operationLog.setDoObject(designVo.getId());
             operationLog.setContent("对接过来一个江北工程系统项目编号重复了！【" + designVo.getId() + "】");
             operationLogDao.insertSelective(operationLog);
+
+
         } else {
             if (designVo != null) {
                 //项目基本表数据
                 BaseProject baseProject = new BaseProject();
-                baseProject.setId(designVo.getId());
-                baseProject.setProjectId(designVo.getProject_id());
+                baseProject.setId(designVo.getProject_id());
                 baseProject.setSite(designVo.getAddress());
+                baseProject.setProjectNum(designVo.getProject_id());
+                baseProject.setProjectId(designVo.getProject_id());
                 baseProject.setProjectName(designVo.getProject_name());
                 baseProject.setCustomerName(designVo.getCustomer_name());
                 baseProject.setCustomerAddress(designVo.getCustomer_address());
@@ -121,7 +197,7 @@ public class JbDesignTaskService {
             DesignInfo designInfo = new DesignInfo();
             if (designVo.getTake_time() != null) {
                 designInfo.setId(designVo.getId());
-                designInfo.setBaseProjectId(designVo.getId());
+                designInfo.setBaseProjectId(baseProject.getProjectId());
                 designInfo.setDesigner(designVo.getDesigner());
                 designInfo.setTakeTime(designVo.getTake_time());
                 designInfo.setFounderId(designVo.getFounder_id());
@@ -210,6 +286,79 @@ public class JbDesignTaskService {
         BaseProject project = baseProjectDao.selectByPrimaryKey(budgetVo.getProject_id());
 
         if (project != null) {
+            BaseProject baseProject = new BaseProject();
+            baseProject.setId(budgetVo.getId());
+            baseProject.setProjectId(budgetVo.getProject_id());
+            baseProject.setProjectNum(budgetVo.getProject_id());
+            baseProject.setProjectName(budgetVo.getProject_name());
+            baseProject.setBudgetStatus("4");
+            baseProject.setDistrict("3"); //江北
+            baseProject.setDelFlag("0");
+            baseProjectDao.updateByPrimaryKeySelective(baseProject);
+
+            //预算信息
+            Budgeting budgeting = new Budgeting();
+            budgeting.setId(budgetVo.getId());
+            budgeting.setBaseProjectId(baseProject.getId());
+            budgeting.setBudgetingPeople(budgetVo.getBudgeting_people());
+            budgeting.setReceiptTime(budgetVo.getReceipt_time());
+            budgeting.setFounderId(budgetVo.getFounder_id());
+            budgeting.setRemarkes(budgetVo.getRemark());
+            budgeting.setCreateTime(budgetVo.getProject_name());
+            String amountCost = budgetVo.getAmount_cost();
+            BigDecimal cost = new BigDecimal(amountCost);
+            budgeting.setAmountCost(cost);
+            budgeting.setSureResult(budgetVo.getSure_result());
+            budgeting.setSureMan(budgetVo.getSure_man());
+            budgeting.setDelFlag("0");
+            budgetingDao.insertSelective(budgeting);
+            //成本编制
+            CostPreparation costPreparation = new CostPreparation();
+            costPreparation.setId(UUID.randomUUID().toString().replace("-",""));
+            costPreparation.setBudgetingId(budgeting.getId());
+            costPreparation.setBaseProjectId(baseProject.getId());
+            costPreparation.setCostPreparationTime(date);
+            costPreparation.setCostTogether(jbBudgetVoF.getAccount());
+            costPreparation.setDelFlag("0");
+            costPreparation.setCostTotalAmount(new BigDecimal(321));
+            costPreparation.setVatAmount(new BigDecimal(213));
+            costPreparation.setRemarkes("13421");
+            costPreparationDao.insertSelective(costPreparation);
+
+            // 控价编制
+            VeryEstablishment veryEstablishment = new VeryEstablishment();
+            veryEstablishment.setId(UUID.randomUUID().toString().replace("-",""));
+            veryEstablishment.setBiddingPriceControl(new BigDecimal(213));
+            veryEstablishment.setVatAmount(new BigDecimal(3214));
+            veryEstablishment.setPricingTogether(jbBudgetVoF.getAccount());
+            veryEstablishment.setBaseProjectId(baseProject.getId());
+            veryEstablishment.setBudgetingId(budgeting.getId());
+            veryEstablishment.setCreateTime(date);
+            veryEstablishment.setDelFlag("0");
+            veryEstablishmentDao.insertSelective(veryEstablishment);
+
+            //上传附件信息
+            FileInfo fileInfo = new FileInfo();
+            List<FileInfos> fileInfos = budgetVo.getFileInfo();
+            for (FileInfos thisInfo : fileInfos) {
+                if (thisInfo.getId() != null) {
+                    fileInfo.setId(UUID.randomUUID().toString().replace("-",""));
+                    fileInfo.setPlatCode(thisInfo.getProject_id());
+                    fileInfo.setFileName(thisInfo.getOpinions_file_name());
+                    fileInfo.setCreateTime(thisInfo.getOpinions_up_time());
+                    fileInfo.setUserId(thisInfo.getOpinions_up_by());
+                    fileInfo.setFilePath(thisInfo.getOpinions_link());
+                    fileInfo.setStatus("0");
+                    fileInfo.setType("jbbzscfjxx");
+                }
+                fileInfoMapper.insertSelective(fileInfo);
+            }
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(jbBudgetVoF.getAccount());
+            String memberName = "";
+            if(memberManage != null){
+                memberName = memberManage.getMemberName();
+            }
+
             OperationLog operationLog = new OperationLog();
             operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
             operationLog.setType("17"); // 错误类型
@@ -228,6 +377,7 @@ public class JbDesignTaskService {
                 BaseProject baseProject = new BaseProject();
                 baseProject.setId(budgetVo.getId());
                 baseProject.setProjectId(budgetVo.getProject_id());
+                baseProject.setProjectNum(budgetVo.getProject_id());
                 baseProject.setProjectName(budgetVo.getProject_name());
                 baseProject.setBudgetStatus("4");
                 baseProject.setDistrict("3"); //江北

@@ -1263,10 +1263,10 @@ public class BudgetingServiceImpl implements BudgetingService {
                 Example example = new Example(AuditInfo.class);
                 example.createCriteria().andEqualTo("baseProjectId",budgetingListVo.getId())
                         .andEqualTo("auditResult","0");
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
+                AuditInfo auditInfo = auditInfoDao.selectByExample(example).get(0);
                 Example example1 = new Example(MemberManage.class);
                 example1.createCriteria().andEqualTo("id",auditInfo.getAuditorId());
-                MemberManage memberManage = memberManageDao.selectOneByExample(example1);
+                MemberManage memberManage = memberManageDao.selectByExample(example1).get(0);
                 if (memberManage !=null){
                     budgetingListVo.setCurrentHandler(memberManage.getMemberName());
                 }

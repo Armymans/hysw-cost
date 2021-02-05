@@ -92,6 +92,100 @@ public class WjEngineeringService {
         DesignVo designVo = wjDesignVoA.getDesignVo();
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(designVo.getId());
         if (baseProject != null) {
+            BaseProject project = new BaseProject();
+            project.setId(designVo.getBase_project_id());
+            project.setProjectNum(designVo.getBase_project_id());
+            project.setProjectName(designVo.getProject_name());
+            project.setDelFlag("0");
+            project.setDistrict("4"); //吴江
+            project.setCreateTime(data);
+            project.setDesginStatus("4");
+            baseProjectDao.updateByPrimaryKeySelective(project);
+            // 设计表
+            DesignInfo designInfo = new DesignInfo();
+            designInfo.setId(designVo.getId());
+            designInfo.setFounderId(wjDesignVoA.getAccount());
+            designInfo.setBlueprintCountersignTime(designVo.getScene_time());
+            designInfo.setYearDesignUnit(designVo.getAnnual_design_uti());
+            designInfo.setDesignUnit(designVo.getDesign_util());
+            designInfo.setBaseProjectId(project.getId());
+            designInfo.setStatus("0");
+            designInfo.setCreateTime(data);
+            designInfoMapper.insertSelective(designInfo);
+            //项目勘察
+            ProjectExploration exploration = new ProjectExploration();
+            exploration.setId(UUID.randomUUID().toString().replace("-", ""));
+            exploration.setScout(designVo.getSurveyor());
+            exploration.setFounderId(wjDesignVoA.getAccount());
+            exploration.setExplorationTime(designVo.getSurvey_time());
+            exploration.setSite(designVo.getAddress());
+            exploration.setRemark(designVo.getRemark());
+            exploration.setStatus("0");
+            exploration.setCreateTime(data);
+            exploration.setBaseProjectId(designInfo.getId());
+            projectExplorationMapper.insertSelective(exploration);
+            //方案会审
+            PackageCame packageCame = new PackageCame();
+            packageCame.setId(UUID.randomUUID().toString().replace("-", ""));
+            packageCame.setFounderId(wjDesignVoA.getAccount());
+            packageCame.setParticipant(designVo.getParticipants());
+            packageCame.setRemark(designVo.getRemark());
+            packageCame.setBassProjectId(designInfo.getId());
+            packageCame.setStatus("0");
+            packageCame.setCreateTime(data);
+            packageCameMapper.insertSelective(packageCame);
+            //现场照片附件
+            List<ScenePhotosList> scenePhotosList = designVo.getScenePhotosList();
+            if (scenePhotosList!= null && scenePhotosList.size() > 0) {
+                for (ScenePhotosList photosList : scenePhotosList) {
+                    FileInfo fileInfo = new FileInfo();
+                    fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                    fileInfo.setFileName(photosList.getScene_photos_file_name());
+                    fileInfo.setFileType(photosList.getScene_photos_type());
+                    fileInfo.setCreateTime(data);
+                    fileInfo.setUpdateTime(photosList.getScene_photos_up_time());//上传时间
+                    fileInfo.setUserId(photosList.getScene_photos_up_by());
+                    fileInfo.setFilePath(photosList.getScene_photos_link());
+                    fileInfo.setPlatCode(project.getId());
+                    fileInfo.setStatus("0");
+                    fileInfoMapper.insertSelective(fileInfo);
+                }
+            }
+            //方案会审-参会意见
+            List<OpinionsList> opinionsList = designVo.getOpinionsList();
+            if (opinionsList != null &&opinionsList.size() > 0) {
+                for (OpinionsList list : opinionsList) {
+                    FileInfo fileInfo = new FileInfo();
+                    fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                    fileInfo.setFileName(list.getOpinions_file_name());
+                    fileInfo.setFileType(list.getOpinions_type());
+                    fileInfo.setCreateTime(data);
+                    fileInfo.setUpdateTime(list.getOpinions_up_time());//上传时间
+                    fileInfo.setUserId(list.getOpinions_up_by());
+                    fileInfo.setFilePath(list.getOpinions_link());
+                    fileInfo.setPlatCode(project.getId());
+                    fileInfo.setStatus("0");
+                    fileInfoMapper.insertSelective(fileInfo);
+                }
+
+            }
+            //设计图纸/附件
+            List<DesignDrawingsList> designDrawingsList = designVo.getDesignDrawingsList();
+            if (designDrawingsList!= null &&designDrawingsList.size() > 0) {
+                for (DesignDrawingsList drawingsList : designDrawingsList) {
+                    FileInfo fileInfo = new FileInfo();
+                    fileInfo.setId(UUID.randomUUID().toString().replace("-", ""));
+                    fileInfo.setFileName(drawingsList.getDesign_drawings_file_name());
+                    fileInfo.setFileType(drawingsList.getDesign_drawings_type());
+                    fileInfo.setCreateTime(data);
+                    fileInfo.setUpdateTime(drawingsList.getDesign_drawings_up_time());//上传时间
+                    fileInfo.setUserId(drawingsList.getDesign_drawings_up_by());
+                    fileInfo.setFilePath(drawingsList.getDesign_drawings_link());
+                    fileInfo.setPlatCode(project.getId());
+                    fileInfo.setStatus("0");
+                    fileInfoMapper.insertSelective(fileInfo);
+                }
+            }
             OperationLog operationLog = new OperationLog();
             operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
             operationLog.setType("17"); // 错误类型
@@ -226,8 +320,9 @@ public class WjEngineeringService {
         if (baseProject != null) {
 
             BaseProject project = new BaseProject();
-            project.setBudgetStatus("4");
+            project.setId(budgetVo.getBase_project_id());
             project.setProjectId(budgetVo.getBase_project_id());
+            project.setBudgetStatus("4");
             project.setProjectName(budgetVo.getProject_name());
             project.setFounderId(wjBudgetVoA.getAccount());
             project.setDistrict("4"); //吴江
