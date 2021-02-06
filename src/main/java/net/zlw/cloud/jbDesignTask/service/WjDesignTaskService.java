@@ -78,6 +78,7 @@ public class WjDesignTaskService {
             if (wjDesignVo != null){
                 BaseProject project = new BaseProject();
                 project.setId(wjDesignVo.getBase_project_id());
+                project.setProjectNum(wjDesignVo.getBase_project_id());
                 project.setApplicationNum(wjDesignVo.getApplication_num());
                 project.setCustomerName(wjDesignVo.getCustomer_name());
                 project.setFireTableSize(wjDesignVo.getFire_table_size());
@@ -201,6 +202,7 @@ public class WjDesignTaskService {
             }else {
                 baseProject = new BaseProject();
                 baseProject.setId(wjBudgetVo.getBase_project_id());
+                baseProject.setProjectNum(wjBudgetVo.getBase_project_id());
                 baseProject.setApplicationNum(wjBudgetVo.getApplication_num());
                 baseProject.setCustomerName(wjBudgetVo.getCustomer_name());
                 baseProject.setStatus(wjBudgetVo.getStatus());

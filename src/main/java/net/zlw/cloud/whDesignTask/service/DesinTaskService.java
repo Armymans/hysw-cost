@@ -90,6 +90,7 @@ public class DesinTaskService {
             }else {
                 baseProject.setDistrict("1");
             }
+            baseProject.setProjectNum(designVo.getBase_project_id());
             baseProject.setProjectName(designVo.getProject_name());
             baseProject.setConstructionUnit(designVo.getConstruction_unit());
             baseProject.setCustomerName(designVo.getCustomer_name());
