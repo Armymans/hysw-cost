@@ -315,7 +315,10 @@ public class ProjectSumService {
      */
     public Double wujiangLastSettlementReviewChargeMoney(BigDecimal cost){
         //如果造价金额低于50000万 则收费400
-        if(cost.compareTo(new BigDecimal("50000"))<1){
+        if (cost == null){
+            cost = new BigDecimal(0);
+        }
+        if(new BigDecimal("50000").compareTo(cost)<1){
             return 400.0;
         }
         //若果造价金额大于50000小于100000则收费800
