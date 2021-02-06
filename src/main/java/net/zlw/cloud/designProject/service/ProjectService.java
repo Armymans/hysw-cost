@@ -32,6 +32,7 @@ import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -3249,19 +3250,22 @@ public class ProjectService {
         String dateStr2 = projectMapper.buildingEndTime(id);
 
         // 获取日期
-        Date start = DateFormat.parse(dateStr1);
-        Date end = DateFormat.parse(dateStr2);
+        if (StringUtils.isNotEmpty(dateStr1) && StringUtils.isNotEmpty(dateStr2)){
+            Date start = DateFormat.parse(dateStr1);
+            Date end = DateFormat.parse(dateStr2);
 
-        // 获取相差的天数
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(start);
-        long timeInMillis1 = calendar.getTimeInMillis();
-        calendar.setTime(end);
-        long timeInMillis2 = calendar.getTimeInMillis();
+            // 获取相差的天数
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(start);
+            long timeInMillis1 = calendar.getTimeInMillis();
+            calendar.setTime(end);
+            long timeInMillis2 = calendar.getTimeInMillis();
 
-        long betweenDays = (timeInMillis2 - timeInMillis1) / (1000L * 3600L * 24L);
-        System.out.println(betweenDays);
-        return betweenDays;
+            long betweenDays = (timeInMillis2 - timeInMillis1) / (1000L * 3600L * 24L);
+            System.out.println(betweenDays);
+            return betweenDays;
+        }
+        return null;
     }
 
     public String projectCount(String id) {
@@ -3365,7 +3369,7 @@ public class ProjectService {
         BigDecimal costTotalAmount = new BigDecimal(0);
         List<BaseProject> baseProjects = projectMapper.selectByExample(example);
         for (BaseProject baseProject : baseProjects) {
-            CostPreparation costPreparation = this.costPreparationById(baseProject.getId());
+            CostPreparation costPreparation = this.costPreparationById2(baseProject.getId());
             if (costPreparation != null) {
                 if (costPreparation.getCostTotalAmount() != null) {
                     costTotalAmount = costPreparation.getCostTotalAmount().add(costTotalAmount);
@@ -3401,8 +3405,9 @@ public class ProjectService {
             Example example1 = new Example(Budgeting.class);
             Example.Criteria c1 = example1.createCriteria();
             c1.andEqualTo("baseProjectId", baseProject.getId());
-            Budgeting budgeting = budgetingMapper.selectOneByExample(example1);
-            if (budgeting != null) {
+            List<Budgeting> budgetings = budgetingMapper.selectByExample(example1);
+            if (budgetings != null && budgetings.size() > 0)  {
+                Budgeting budgeting = budgetings.get(0);
                 if (budgeting.getAmountCost() == null) {
                     budgeting.setAmountCost(new BigDecimal(0));
                 } else {

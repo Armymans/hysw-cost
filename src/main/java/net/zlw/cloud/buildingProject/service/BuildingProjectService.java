@@ -210,8 +210,12 @@ public class BuildingProjectService {
                     BigDecimal proNum = new BigDecimal(0); //进度款次数
                     BigDecimal proAmount = new BigDecimal(0); // 合同金额
                     for (ProgressPaymentInformation thisInfo : informations) {
-                        proNum = proNum.add(new BigDecimal(thisInfo.getChangeNum()));
-                        proAmount = proAmount.add(thisInfo.getContractAmount());
+                        if (thisInfo.getChangeNum() != null){
+                            proNum = proNum.add(new BigDecimal(thisInfo.getChangeNum()));
+                        }
+                        if (thisInfo.getContractAmount() != null){
+                            proAmount = proAmount.add(thisInfo.getContractAmount());
+                        }
                     }
                     thisVo.setContractAmount(proAmount+"");
                     thisVo.setCumulativePaymentTimes(proNum+"");
