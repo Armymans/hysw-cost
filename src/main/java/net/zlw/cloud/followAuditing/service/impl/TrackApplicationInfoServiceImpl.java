@@ -1042,6 +1042,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         if (trackAuditInfo != null){
             EmployeeAchievementsInfo achievementsInfo = new EmployeeAchievementsInfo();
             BigDecimal trackAuditBase = trackAuditInfo.getTrackAuditBase();
+            if (trackAuditBase == null){
+                trackAuditBase = new BigDecimal(0);
+            }
             double track = trackAuditBase.doubleValue();
             //计价基数
             //计提和
