@@ -96,6 +96,8 @@ public class WjEngineeringService {
             project.setId(designVo.getBase_project_id());
             project.setProjectNum(designVo.getBase_project_id());
             project.setProjectName(designVo.getProject_name());
+            project.setProposer(designVo.getApply_by());
+            project.setApplicationDate(designVo.getApply_time());
             project.setDelFlag("0");
             project.setDistrict("4"); //吴江
             project.setCreateTime(data);
@@ -108,6 +110,7 @@ public class WjEngineeringService {
             designInfo.setBlueprintCountersignTime(designVo.getScene_time());
             designInfo.setYearDesignUnit(designVo.getAnnual_design_uti());
             designInfo.setDesignUnit(designVo.getDesign_util());
+            designInfo.setAmountCost(designVo.getSingle_design_cost());
             designInfo.setBaseProjectId(project.getId());
             designInfo.setStatus("0");
             designInfo.setCreateTime(data);
@@ -203,6 +206,8 @@ public class WjEngineeringService {
                 BaseProject project = new BaseProject();
                 project.setId(designVo.getBase_project_id());
                 project.setProjectNum(designVo.getBase_project_id());
+                project.setProposer(designVo.getApply_by());
+                project.setApplicationDate(designVo.getApply_time());
                 project.setProjectName(designVo.getProject_name());
                 project.setDelFlag("0");
                 project.setDistrict("4"); //吴江
@@ -216,6 +221,7 @@ public class WjEngineeringService {
                 designInfo.setBlueprintCountersignTime(designVo.getScene_time());
                 designInfo.setYearDesignUnit(designVo.getAnnual_design_uti());
                 designInfo.setDesignUnit(designVo.getDesign_util());
+                designInfo.setAmountCost(designVo.getSingle_design_cost());
                 designInfo.setBaseProjectId(project.getId());
                 designInfo.setStatus("0");
                 designInfo.setCreateTime(data);
