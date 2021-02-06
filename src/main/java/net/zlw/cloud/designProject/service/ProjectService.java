@@ -3496,8 +3496,12 @@ public class ProjectService {
         Example example = new Example(TrackAuditInfo.class);
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("baseProjectId", id);
-        TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByExample(example).get(0);
-        return trackAuditInfo;
+        List<TrackAuditInfo> trackAuditInfos = trackAuditInfoDao.selectByExample(example);
+        if (trackAuditInfos.size() > 0){
+            TrackAuditInfo trackAuditInfo = trackAuditInfos.get(0);
+            return trackAuditInfo;
+        }
+        return null;
     }
 
     public net.zlw.cloud.settleAccounts.model.SettlementAuditInformation SettlementAuditInformationByid(String id) {
