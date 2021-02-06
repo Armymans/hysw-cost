@@ -1247,8 +1247,12 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("baseProjectId", id);
         c.andEqualTo("delFlag", "0");
-        InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example);
-        baseAccountsVo.setInvestigationOfTheAmount(investigationOfTheAmount);
+        List<InvestigationOfTheAmount> investigationOfTheAmounts = investigationOfTheAmountDao.selectByExample(example);
+        if (investigationOfTheAmounts != null && investigationOfTheAmounts.size() > 0){
+            InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmounts.get(0);
+            baseAccountsVo.setInvestigationOfTheAmount(investigationOfTheAmount);
+        }
+
 
         Example example1 = new Example(SettlementInfo.class);
         Example.Criteria c1 = example1.createCriteria();
