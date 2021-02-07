@@ -340,7 +340,7 @@ public class ProjectSumService {
             BigDecimal multiply1 = cost.multiply(new BigDecimal("0.0005"));
             return multiply1.setScale(2,BigDecimal.ROUND_HALF_UP).doubleValue();
         }
-        return null;
+        return 0.0;
     }
 
     /**
