@@ -682,13 +682,15 @@ public class ProjectSumService {
      */
     public List<CostVo3> prjectCensus(CostVo2 costVo2){
         List<CostVo3> costVo3s = projectMapper.prjectCensus(costVo2);
+        Integer total = 0;
         for (CostVo3 costVo3 : costVo3s) {
-            Integer total = costVo3.getBudgetingCount()+
-            costVo3.getDesginStatus()+
-            costVo3.getProgressPaymentInformation()+
-            costVo3.getSettleAccountsCount()+
-            costVo3.getVisaApplyChangeInformationCount()+
-            costVo3.getTrackAuditInfoCount();
+//            Integer total = costVo3.getBudgetingCount()+
+//            costVo3.getDesginStatus()+
+//            costVo3.getProgressPaymentInformation()+
+//            costVo3.getSettleAccountsCount()+
+//            costVo3.getVisaApplyChangeInformationCount()+
+//            costVo3.getTrackAuditInfoCount();
+            total += costVo3.getTotal();
             //获取当前全部数量
             costVo3.setTotal(total);
         }
@@ -709,12 +711,13 @@ public class ProjectSumService {
         List<CostVo3> costVo3s = projectMapper.prjectCensus(costVo2);
         Integer total = 0;
         for (CostVo3 costVo3 : costVo3s) {
-            total += costVo3.getBudgetingCount()+
-                    costVo3.getDesginStatus()+
-                    costVo3.getProgressPaymentInformation()+
-                    costVo3.getSettleAccountsCount()+
-                    costVo3.getVisaApplyChangeInformationCount()+
-                    costVo3.getTrackAuditInfoCount();
+//            total += costVo3.getBudgetingCount()+
+//                    costVo3.getDesginStatus()+
+//                    costVo3.getProgressPaymentInformation()+
+//                    costVo3.getSettleAccountsCount()+
+//                    costVo3.getVisaApplyChangeInformationCount()+
+//                    costVo3.getTrackAuditInfoCount();
+            total += costVo3.getTotal();
         }
         return total;
     }
@@ -743,12 +746,13 @@ public class ProjectSumService {
         List<CostVo3> costVo3s = projectMapper.prjectCensus(costVo2);
         Integer total = 0;
         for (CostVo3 costVo3 : costVo3s) {
-            total += costVo3.getBudgetingCount()+
-                    costVo3.getDesginStatus()+
-                    costVo3.getProgressPaymentInformation()+
-                    costVo3.getSettleAccountsCount()+
-                    costVo3.getVisaApplyChangeInformationCount()+
-                    costVo3.getTrackAuditInfoCount();
+//            total += costVo3.getBudgetingCount()+
+//                    costVo3.getDesginStatus()+
+//                    costVo3.getProgressPaymentInformation()+
+//                    costVo3.getSettleAccountsCount()+
+//                    costVo3.getVisaApplyChangeInformationCount()+
+//                    costVo3.getTrackAuditInfoCount();
+            total += costVo3.getTotal();
         }
         return total;
     }
@@ -780,12 +784,13 @@ public class ProjectSumService {
         List<CostVo3> costVo3s = projectMapper.prjectCensus(costVo2);
         Integer total = 0;
         for (CostVo3 costVo3 : costVo3s) {
-            total += costVo3.getBudgetingCount()+
-                    costVo3.getDesginStatus()+
-                    costVo3.getProgressPaymentInformation()+
-                    costVo3.getSettleAccountsCount()+
-                    costVo3.getVisaApplyChangeInformationCount()+
-                    costVo3.getTrackAuditInfoCount();
+//            total += costVo3.getBudgetingCount()+
+//                    costVo3.getDesginStatus()+
+//                    costVo3.getProgressPaymentInformation()+
+//                    costVo3.getSettleAccountsCount()+
+//                    costVo3.getVisaApplyChangeInformationCount()+
+//                    costVo3.getTrackAuditInfoCount();
+            total += costVo3.getTotal();
         }
         return total;
     }
@@ -804,12 +809,13 @@ public class ProjectSumService {
         List<CostVo3> costVo3s = projectMapper.prjectCensus(costVo2);
         Integer total = 0;
         for (CostVo3 costVo3 : costVo3s) {
-            total += costVo3.getBudgetingCount()+
-                    costVo3.getDesginStatus()+
-                    costVo3.getProgressPaymentInformation()+
-                    costVo3.getSettleAccountsCount()+
-                    costVo3.getVisaApplyChangeInformationCount()+
-                    costVo3.getTrackAuditInfoCount();
+//            total += costVo3.getBudgetingCount()+
+//                    costVo3.getDesginStatus()+
+//                    costVo3.getProgressPaymentInformation()+
+//                    costVo3.getSettleAccountsCount()+
+//                    costVo3.getVisaApplyChangeInformationCount()+
+//                    costVo3.getTrackAuditInfoCount();
+            total += costVo3.getTotal();
         }
         return total;
     }

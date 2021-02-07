@@ -138,6 +138,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "del_flag = '0'"
     )
     Integer visaStatusSensus1(@Param("id") String id);
+
     @Select(
             "select  " +
                     "count(visa_status) 已完成 " +
@@ -151,6 +152,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "del_flag = '0'"
     )
     Integer visaStatusSensus2(@Param("id") String id);
+
     @Select(
             "select  " +
                     "count(progress_payment_status) 未完成 " +
@@ -164,6 +166,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "del_flag = '0'"
     )
     Integer progressPaymentStatusSensus1(@Param("id") String id);
+
     @Select(
             "select  " +
                     "count(progress_payment_status) 已完成 " +
@@ -298,7 +301,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and   " +
                     "(district = #{district} or  #{district} = '')"
     )
-    String budgetingCount(@Param("id") String id,@Param("district") String district);
+    String budgetingCount(@Param("id") String id, @Param("district") String district);
 
     @Select(
             "select   " +
@@ -315,7 +318,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and  " +
                     "(district = #{district} or  #{district} = '')"
     )
-    String progressPaymentInformationCount(@Param("id") String id,@Param("district") String district);
+    String progressPaymentInformationCount(@Param("id") String id, @Param("district") String district);
 
     @Select(
             "select  " +
@@ -345,7 +348,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     " and  " +
                     " (b.district = #{district} or #{district} = '') "
     )
-    String visaApplyChangeInformationCount(@Param("id") String id,@Param("district") String district);
+    String visaApplyChangeInformationCount(@Param("id") String id, @Param("district") String district);
 
     @Select(
             "select  " +
@@ -364,7 +367,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and  " +
                     "(district = #{district} or #{district} = '')"
     )
-    String trackAuditInfoCount(@Param("id") String id,@Param("district") String district);
+    String trackAuditInfoCount(@Param("id") String id, @Param("district") String district);
 
     @Select(
             "select  " +
@@ -395,7 +398,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     " and  " +
                     "(b.district = #{district} or #{district} = '' ) "
     )
-    String settleAccountsCount(@Param("id") String id,@Param("district") String district);
+    String settleAccountsCount(@Param("id") String id, @Param("district") String district);
 
     @Select(
             "select " +
@@ -468,7 +471,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "ifnull(count(progress_payment_status),0) progressPaymentInformation, " +
                     "ifnull(count(settle_accounts_status),0) settleAccountsCount " +
                     "from " +
-                    "base_project "+
+                    "base_project " +
                     "where  " +
                     "(district = #{district} or #{district} = '')"
     )
@@ -570,7 +573,25 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "\tand " +
                     "\t(monthTime = #{month} or #{month}= '')"
     )
+    List<CostVo3> prjectCensus2(CostVo2 costVo2);
+
+    @Select("select " +
+            "    year(create_time) yearTime, " +
+            "    MONTH(create_time) monthTime, " +
+            "    count(*) total " +
+            "    from " +
+            "    base_project s1 " +
+            "    where " +
+            "            (district = #{district} or #{district} = '') " +
+            "    and " +
+            "    create_time >= #{startTime} " +
+            "    and " +
+            "            (create_time <= #{endTime} or #{endTime} = '') " +
+            "    GROUP BY " +
+            "    year(s1.create_time), " +
+            "    MONTH(s1.create_time)")
     List<CostVo3> prjectCensus(CostVo2 costVo2);
+
 
     @Select(
             "SELECT " +
@@ -599,6 +620,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "(s1.create_time <= #{endTime} or #{endTime} = '')"
     )
     OneCensus projectIncomeCensus(CostVo2 costVo2);
+
     @Select(
             "SELECT " +
                     "IFNULL(YEAR(s2.create_time),'-') yeartime, " +
@@ -855,7 +877,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     ")" +
                     "AND  " +
                     "s1.del_flag = '0'" +
-                    "AND  "+
+                    "AND  " +
                     "s2.del_flag = '0'"
 
     )
@@ -880,7 +902,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     ")" +
                     "AND  " +
                     "s1.del_flag = '0'" +
-                    "AND  "+
+                    "AND  " +
                     "s2.del_flag = '0'"
     )
     Double progressPaymentSum(CostVo2 costVo2);
@@ -904,7 +926,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and " +
                     "s1.del_flag = '0' " +
                     "and" +
-                    "s2.status = '6'"+
+                    "s2.status = '6'" +
                     "and " +
                     "(district = #{district} or #{district} = '') " +
                     "and " +
@@ -940,7 +962,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "project_name  like  CONCAT('%',#{keyword},'%')  " +
                     ")" +
                     "and " +
-                    "s1.del_flag = '0'"+
+                    "s1.del_flag = '0'" +
                     "and" +
                     "s2.status = '6'"
 
@@ -964,7 +986,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "project_name  like  CONCAT('%',#{keyword},'%')  " +
                     ")" +
                     "and " +
-                    "s1.del_flag = '0'"+
+                    "s1.del_flag = '0'" +
                     "and" +
                     "s2.status = '6'"
     )
@@ -989,10 +1011,10 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and " +
                     "(s1.create_time <= #{endTime} or #{endTime} = '') " +
                     "and " +
-                    "s1.del_flag = '0'"+
+                    "s1.del_flag = '0'" +
                     "GROUP BY year(s1.create_time),MONTH(s1.create_time)"
     )
-    List<OneCensus4>projectSettlementCensus(CostVo2 costVo2);
+    List<OneCensus4> projectSettlementCensus(CostVo2 costVo2);
 
     @Select(
             "SELECT\n" +
@@ -1170,26 +1192,26 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     OneCensus5 desiginoutsource(CostVo2 costVo2);
 
     @Select(
-                "SELECT  " +
-                        "YEAR(create_time) yearTime,  " +
-                        "MONTH(create_time) monthTime,  " +
-                        "IFNULL(SUM(actual_amount),0) desginAchievements,  " +
-                        "IFNULL(SUM(accrued_amount),0) desginAchievements2  " +
-                        "FROM  " +
-                        "employee_achievements_info  " +
-                        "WHERE  " +
-                        "del_flag = '0'  " +
-                        "and  " +
-                        "achievements_type = '1'  " +
-                        "and  " +
-                        "(district = #{district} or #{district} = '')  " +
-                        "and  " +
-                        "create_time >= #{startTime}  " +
-                        "and  " +
-                        "(create_time <= #{endTime} or #{endTime} = '')  " +
-                        "GROUP BY  " +
-                        "YEAR(create_time),  " +
-                        "MONTH(create_time)"
+            "SELECT  " +
+                    "YEAR(create_time) yearTime,  " +
+                    "MONTH(create_time) monthTime,  " +
+                    "IFNULL(SUM(actual_amount),0) desginAchievements,  " +
+                    "IFNULL(SUM(accrued_amount),0) desginAchievements2  " +
+                    "FROM  " +
+                    "employee_achievements_info  " +
+                    "WHERE  " +
+                    "del_flag = '0'  " +
+                    "and  " +
+                    "achievements_type = '1'  " +
+                    "and  " +
+                    "(district = #{district} or #{district} = '')  " +
+                    "and  " +
+                    "create_time >= #{startTime}  " +
+                    "and  " +
+                    "(create_time <= #{endTime} or #{endTime} = '')  " +
+                    "GROUP BY  " +
+                    "YEAR(create_time),  " +
+                    "MONTH(create_time)"
     )
     List<OneCensus6> desiginAchievementsCensus(CostVo2 costVo2);
 
@@ -1396,6 +1418,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "member_name"
     )
     List<OneCensus8> DesginAchievementsList(CostVo2 costVo2);
+
     @Select(
             "SELECT " +
                     "s1.id, " +
