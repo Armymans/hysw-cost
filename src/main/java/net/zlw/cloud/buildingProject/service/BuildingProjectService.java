@@ -24,6 +24,7 @@ import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -189,6 +190,9 @@ public class BuildingProjectService {
         List<BaseVo> BaseProjectVo = buildingProjectMapper.selectBaseProjectList(id);
         if (BaseProjectVo.size() > 0){
             for (BaseVo thisVo : BaseProjectVo) {
+                if (StringUtils.isEmpty(thisVo.getId())){
+                    return null;
+                }
                 //签证变更累计金额
                 Example example = new Example(VisaChange.class);
                 example.createCriteria().andEqualTo("baseProjectId",thisVo.getId()) //基本信息表id
