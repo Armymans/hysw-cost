@@ -938,7 +938,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "s1.id = s2.base_project_id " +
                     "and " +
                     "s1.del_flag = '0' " +
-                    "and" +
+                    "and " +
                     "s2.status = '6'" +
                     "and " +
                     "(district = #{district} or #{district} = '') " +
@@ -1000,7 +1000,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     ")" +
                     "and " +
                     "s1.del_flag = '0'" +
-                    "and" +
+                    "and " +
                     "s2.status = '6'"
     )
     Double VisaChangeMoney(CostVo2 costVo2);
