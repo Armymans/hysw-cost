@@ -329,6 +329,8 @@ public class WjEngineeringService {
             project.setId(budgetVo.getBase_project_id());
             project.setProjectId(budgetVo.getBase_project_id());
             project.setBudgetStatus("4");
+            project.setProposer(budgetVo.getApply_by());
+            project.setApplicationDate(budgetVo.getApply_time());
             project.setProjectName(budgetVo.getProject_name());
             project.setFounderId(wjBudgetVoA.getAccount());
             project.setDistrict("4"); //吴江
@@ -424,6 +426,8 @@ public class WjEngineeringService {
                 project.setId(budgetVo.getBase_project_id());
                 project.setProjectNum(budgetVo.getBase_project_id());
                 project.setProjectName(budgetVo.getProject_name());
+                project.setProposer(budgetVo.getApply_by());
+                project.setApplicationDate(budgetVo.getApply_time());
                 project.setFounderId(wjBudgetVoA.getAccount());
                 project.setDelFlag("0");
                 project.setDistrict("4"); //吴江

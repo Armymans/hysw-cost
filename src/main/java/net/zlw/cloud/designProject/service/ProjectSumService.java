@@ -92,14 +92,15 @@ public class ProjectSumService {
      * @return
      */
     public Integer AllprojectCount(CostVo2 costVo2){
-        CostVo3 costVo3 = projectMapper.AllprojectCount(costVo2);
-        Integer budgetingCount = costVo3.getBudgetingCount();
-        Integer desginStatus = costVo3.getDesginStatus();
-        Integer progressPaymentInformation = costVo3.getProgressPaymentInformation();
-        Integer settleAccountsCount = costVo3.getSettleAccountsCount();
-        Integer trackAuditInfoCount = costVo3.getTrackAuditInfoCount();
-        Integer visaApplyChangeInformationCount = costVo3.getVisaApplyChangeInformationCount();
-        Integer total = budgetingCount+desginStatus+progressPaymentInformation+settleAccountsCount+trackAuditInfoCount+visaApplyChangeInformationCount;
+        CostVo3 costVo3 = projectMapper.AllprojectCount1(costVo2);
+//        Integer budgetingCount = costVo3.getBudgetingCount();
+//        Integer desginStatus = costVo3.getDesginStatus();
+//        Integer progressPaymentInformation = costVo3.getProgressPaymentInformation();
+//        Integer settleAccountsCount = costVo3.getSettleAccountsCount();
+//        Integer trackAuditInfoCount = costVo3.getTrackAuditInfoCount();
+//        Integer visaApplyChangeInformationCount = costVo3.getVisaApplyChangeInformationCount();
+//        Integer total = budgetingCount+desginStatus+progressPaymentInformation+settleAccountsCount+trackAuditInfoCount+visaApplyChangeInformationCount;
+        Integer total = costVo3.getTotal();
         return total;
     }
 
@@ -120,18 +121,20 @@ public class ProjectSumService {
     }
 
     /**
-     * 已完成的项目
+     * 未完成的项目
      * @return
      */
     public Integer conductCount(CostVo2 costVo2){
-        CostVo3 costVo3 = projectMapper.conductCount(costVo2);
-        Integer budgetingCount = costVo3.getBudgetingCount();
-        Integer desginStatus = costVo3.getDesginStatus();
-        Integer progressPaymentInformation = costVo3.getProgressPaymentInformation();
-        Integer settleAccountsCount = costVo3.getSettleAccountsCount();
-        Integer trackAuditInfoCount = costVo3.getTrackAuditInfoCount();
-        Integer visaApplyChangeInformationCount = costVo3.getVisaApplyChangeInformationCount();
-        Integer total = budgetingCount+desginStatus+progressPaymentInformation+settleAccountsCount+trackAuditInfoCount+visaApplyChangeInformationCount;
+        CostVo3 costVo3 = projectMapper.conductCount1(costVo2);
+//        Integer budgetingCount = costVo3.getBudgetingCount();
+//        Integer desginStatus = costVo3.getDesginStatus();
+//        Integer progressPaymentInformation = costVo3.getProgressPaymentInformation();
+//        Integer settleAccountsCount = costVo3.getSettleAccountsCount();
+//        Integer trackAuditInfoCount = costVo3.getTrackAuditInfoCount();
+//        Integer visaApplyChangeInformationCount = costVo3.getVisaApplyChangeInformationCount();
+   //     Integer total = budgetingCount+desginStatus+progressPaymentInformation+settleAccountsCount+trackAuditInfoCount+visaApplyChangeInformationCount;
+    //    Integer total = budgetingCount+desginStatus+progressPaymentInformation+settleAccountsCount+trackAuditInfoCount+visaApplyChangeInformationCount;
+        Integer total = costVo3.getTotal();
         return total;
     }
 
@@ -948,7 +951,7 @@ public class ProjectSumService {
         List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
         return visaChanges;
     }
-
+    
     /**
      * 计算设计项目总数
      * @param costVo2

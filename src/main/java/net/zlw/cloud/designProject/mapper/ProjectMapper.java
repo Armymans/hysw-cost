@@ -462,6 +462,13 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     String projectCount(@Param("id") String id);
 
 
+
+
+    @Select(
+    "SELECT count(*) total FROM base_project"
+    )
+    CostVo3 AllprojectCount1(CostVo2 costVo2);
+
     @Select(
             "select " +
                     "ifnull(count(desgin_status ),0) desginStatus, " +
@@ -492,6 +499,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     )
     CostVo3 withAuditCount(CostVo2 costVo2);
 
+
     @Select(
             "select  " +
                     "ifnull(sum(desgin_status = 4),0) desginStatus,  " +
@@ -506,6 +514,11 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "(district = #{district} or #{district} = '')"
     )
     CostVo3 conductCount(CostVo2 costVo2);
+    @Select(
+           "SELECT count(*) total FROM `base_project` where settle_accounts_status is null or settle_accounts_status !=5"
+
+    )
+    CostVo3 conductCount1(CostVo2 costVo2);
 
     @Select(
             "select  " +
