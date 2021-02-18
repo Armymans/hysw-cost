@@ -926,6 +926,12 @@ public class ProjectSumController extends BaseController {
         Integer count = projectSumService.progressPaymentCount(costVo2);
         Double sum = projectSumService.progressPaymentSum(costVo2);
         ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        if (sum == null){
+            sum = 0.0;
+        }
+        if (count == null){
+            count = 0;
+        }
         map.put("count",count);
         map.put("sum",sum);
         return RestUtil.success(map);
