@@ -2208,7 +2208,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
             return new PageInfo<ProgressListVo>(list);
         }
         //全部
-        if (null != pageVo.getProgressStatus()){
+        if (pageVo.getProgressStatus().equals("") || pageVo.getProgressStatus() == null){
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
             for (ProgressListVo progressListVo : list) {
                 // 造价单位
