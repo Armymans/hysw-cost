@@ -190,82 +190,82 @@ public class BuildingProjectService {
         List<BaseVo> BaseProjectVo = buildingProjectMapper.selectBaseProjectList(id);
         if (BaseProjectVo.size() > 0){
             for (BaseVo thisVo : BaseProjectVo) {
-                if (StringUtils.isEmpty(thisVo.getId())){
-                    return null;
-                }
-                //签证变更累计金额
-                Example example = new Example(VisaChange.class);
-                example.createCriteria().andEqualTo("baseProjectId",thisVo.getId()) //基本信息表id
-                                        .andEqualTo("state","0");
-                List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
-                if (visaChanges.size() >0){
-                    BigDecimal visaNum = new BigDecimal(0);
-                    for (VisaChange thisVisa : visaChanges) {
-                        visaNum = visaNum.add(thisVisa.getAmountVisaChange());
-                    }
-                    thisVo.setCumulativeChangeAmount(visaNum+"");
-                }
-                // 进度款
-                Example example1 = new Example(ProgressPaymentInformation.class);
-                example1.createCriteria().andEqualTo("baseProjectId",thisVo.getId()) //基本信息表id
-                        .andEqualTo("delFlag","0");
-                List<ProgressPaymentInformation> informations = progressPaymentInformationDao.selectByExample(example1);
-                if (informations.size() > 0){
-                    BigDecimal proNum = new BigDecimal(0); //进度款次数
-                    BigDecimal proAmount = new BigDecimal(0); // 合同金额
-                    for (ProgressPaymentInformation thisInfo : informations) {
-                        if (thisInfo.getChangeNum() != null){
-                            proNum = proNum.add(new BigDecimal(thisInfo.getChangeNum()));
+                if (StringUtils.isNotEmpty(thisVo.getId())){
+                    //签证变更累计金额
+                    Example example = new Example(VisaChange.class);
+                    example.createCriteria().andEqualTo("baseProjectId",thisVo.getId()) //基本信息表id
+                            .andEqualTo("state","0");
+                    List<VisaChange> visaChanges = visaChangeMapper.selectByExample(example);
+                    if (visaChanges.size() >0){
+                        BigDecimal visaNum = new BigDecimal(0);
+                        for (VisaChange thisVisa : visaChanges) {
+                            visaNum = visaNum.add(thisVisa.getAmountVisaChange());
                         }
-                        if (thisInfo.getContractAmount() != null){
-                            proAmount = proAmount.add(thisInfo.getContractAmount());
-                        }
+                        thisVo.setCumulativeChangeAmount(visaNum+"");
                     }
-                    thisVo.setContractAmount(proAmount+"");
-                    thisVo.setCumulativePaymentTimes(proNum+"");
+                    // 进度款
+                    Example example1 = new Example(ProgressPaymentInformation.class);
+                    example1.createCriteria().andEqualTo("baseProjectId",thisVo.getId()) //基本信息表id
+                            .andEqualTo("delFlag","0");
+                    List<ProgressPaymentInformation> informations = progressPaymentInformationDao.selectByExample(example1);
+                    if (informations.size() > 0){
+                        BigDecimal proNum = new BigDecimal(0); //进度款次数
+                        BigDecimal proAmount = new BigDecimal(0); // 合同金额
+                        for (ProgressPaymentInformation thisInfo : informations) {
+                            if (thisInfo.getChangeNum() != null){
+                                proNum = proNum.add(new BigDecimal(thisInfo.getChangeNum()));
+                            }
+                            if (thisInfo.getContractAmount() != null){
+                                proAmount = proAmount.add(thisInfo.getContractAmount());
+                            }
+                        }
+                        thisVo.setContractAmount(proAmount+"");
+                        thisVo.setCumulativePaymentTimes(proNum+"");
+                    }
+                    // 造价金额
+                    if (thisVo.getAmountCost() != null && !"".equals(thisVo.getAmountCost())){
+                        thisVo.setAmountCost(thisVo.getActualAmount());
+                    }else {
+                        thisVo.setAmountCost("/");
+                    }
+                    // 合同金额
+                    if (thisVo.getContractAmount() != null && !"".equals(thisVo.getContractAmount())){
+                        thisVo.setContractAmount(thisVo.getContractAmount());
+                    }else {
+                        thisVo.setContractAmount("/");
+                    }
+                    // 进度款支付次数累计
+                    if (thisVo.getCumulativePaymentTimes() != null && !"".equals(thisVo.getCumulativePaymentTimes())){
+                        thisVo.setCumulativePaymentTimes(thisVo.getCumulativePaymentTimes());
+                    }else {
+                        thisVo.setCumulativePaymentTimes("/");
+                    }
+                    // 跟踪审计CEA金额
+                    if (thisVo.getCeaTotalMoney() != null && !"".equals(thisVo.getCeaTotalMoney())){
+                        thisVo.setCeaTotalMoney(thisVo.getCeaTotalMoney());
+                    }else {
+                        thisVo.setCeaTotalMoney("/");
+                    }
+                    //  签证/变更累计金额（元）
+                    if (thisVo.getCumulativeChangeAmount() != null && !"".equals(thisVo.getCumulativeChangeAmount())){
+                        thisVo.setCumulativeChangeAmount(thisVo.getCumulativeChangeAmount());
+                    }else {
+                        thisVo.setCumulativeChangeAmount("/");
+                    }
+                    // 结算审定金额（元）
+                    if (thisVo.getAuthorizedNumber() != null && !"".equals(thisVo.getAuthorizedNumber())){
+                        thisVo.setAuthorizedNumber(thisVo.getAuthorizedNumber());
+                    }else {
+                        thisVo.setAuthorizedNumber("/");
+                    }
+                    // 设计费
+                    if (thisVo.getActualAmount() != null && !"".equals(thisVo.getActualAmount())){
+                        thisVo.setActualAmount(thisVo.getActualAmount());
+                    }else {
+                        thisVo.setActualAmount  ("/");
+                    }
                 }
-                // 造价金额
-                if (thisVo.getAmountCost() != null && !"".equals(thisVo.getAmountCost())){
-                    thisVo.setAmountCost(thisVo.getActualAmount());
-                }else {
-                    thisVo.setAmountCost("/");
-                }
-                // 合同金额
-                if (thisVo.getContractAmount() != null && !"".equals(thisVo.getContractAmount())){
-                    thisVo.setContractAmount(thisVo.getContractAmount());
-                }else {
-                    thisVo.setContractAmount("/");
-                }
-                // 进度款支付次数累计
-                if (thisVo.getCumulativePaymentTimes() != null && !"".equals(thisVo.getCumulativePaymentTimes())){
-                    thisVo.setCumulativePaymentTimes(thisVo.getCumulativePaymentTimes());
-                }else {
-                    thisVo.setCumulativePaymentTimes("/");
-                }
-                // 跟踪审计CEA金额
-                if (thisVo.getCeaTotalMoney() != null && !"".equals(thisVo.getCeaTotalMoney())){
-                    thisVo.setCeaTotalMoney(thisVo.getCeaTotalMoney());
-                }else {
-                    thisVo.setCeaTotalMoney("/");
-                }
-                //  签证/变更累计金额（元）
-                if (thisVo.getCumulativeChangeAmount() != null && !"".equals(thisVo.getCumulativeChangeAmount())){
-                    thisVo.setCumulativeChangeAmount(thisVo.getCumulativeChangeAmount());
-                }else {
-                    thisVo.setCumulativeChangeAmount("/");
-                }
-                // 结算审定金额（元）
-                if (thisVo.getAuthorizedNumber() != null && !"".equals(thisVo.getAuthorizedNumber())){
-                    thisVo.setAuthorizedNumber(thisVo.getAuthorizedNumber());
-                }else {
-                    thisVo.setAuthorizedNumber("/");
-                }
-                // 设计费
-                if (thisVo.getActualAmount() != null && !"".equals(thisVo.getActualAmount())){
-                    thisVo.setActualAmount(thisVo.getActualAmount());
-                }else {
-                    thisVo.setActualAmount  ("/");
-                }
+
             }
         }
         return BaseProjectVo;
