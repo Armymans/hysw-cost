@@ -976,7 +976,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     ")" +
                     "and " +
                     "s1.del_flag = '0'" +
-                    "and" +
+                    "and " +
                     "s2.status = '6'"
 
     )
