@@ -1907,6 +1907,9 @@ public class BudgetingServiceImpl implements BudgetingService {
         Example example = new Example(DesignInfo.class);
         example.createCriteria().andEqualTo("baseProjectId",id);
         DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
+        if (designInfo == null){
+            return null;
+        }
         Example example1 = new Example(FileInfo.class);
         example1.createCriteria().andEqualTo("platCode",designInfo.getId())
                                  .andEqualTo("type","sjxmxjsjxx"); //设计图纸
@@ -2117,6 +2120,9 @@ public class BudgetingServiceImpl implements BudgetingService {
         criteria.andEqualTo("baseProjectId",baseProject.getId());
         criteria.andEqualTo("status","0");
         DesignInfo designInfo = designInfoMapper.selectOneByExample(example1);
+        if (designInfo == null){
+            return null;
+        }
         if ("4".equals(baseProject.getDistrict())){
             Example example = new Example(WujiangMoneyInfo.class);
             Example.Criteria cc = example.createCriteria();
