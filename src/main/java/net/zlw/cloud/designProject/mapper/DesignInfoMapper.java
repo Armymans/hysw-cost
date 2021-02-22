@@ -57,7 +57,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                         "and " +
                         "s4.audit_result = '0' " +
                         "and " +
-                        "(s4.auditor_id = #{userId} or s1.founder_id= #{userId}) " +
+                        "(s4.auditor_id = #{userId} or s2.founder_id= #{userId}) " +
                         "and " +
                         "(s1.district = #{district} or #{district} ='') " +
                         "and " +
