@@ -26,6 +26,7 @@ import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,6 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -155,6 +155,7 @@ public class BudgetingController extends BaseController {
      **/
     @RequestMapping(value = "/budgeting/selectByBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectByBudgeting(PageBVo pageBVo){
+
         //全部
         Page page = new Page();
         pageBVo.setBudgetingStatus("");
@@ -196,9 +197,22 @@ public class BudgetingController extends BaseController {
         page3.setTotalCount(pageInfo3.getTotal());
 
         //已完成
+        String id = getLoginUser().getId();
+        //String id = "user309";
+        // 如果是模糊查询
+        if ("1".equals(pageBVo.getIsVague())){
+            id = "";
+            if (StringUtils.isEmpty(pageBVo.getStartTime())){
+                pageBVo.setStartTime("");
+            }
+            if (StringUtils.isEmpty(pageBVo.getEndTime())){
+                pageBVo.setEndTime("");
+            }
+        }
+
         Page page4 = new Page();
         pageBVo.setBudgetingStatus("4");
-        List<BudgetingListVo> allBudgeting4 = budgetingService.findAllBudgeting(pageBVo, getLoginUser().getId());
+        List<BudgetingListVo> allBudgeting4 = budgetingService.findAllBudgeting(pageBVo, id);
         PageInfo<BudgetingListVo> pageInfo4 = new PageInfo<>(allBudgeting4);
         page4.setData(pageInfo4.getList());
         page4.setPageNum(pageInfo4.getPageNum());
