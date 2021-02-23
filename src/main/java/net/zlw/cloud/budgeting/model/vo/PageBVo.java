@@ -27,7 +27,15 @@ public class PageBVo {
     private String waterAddress;
     private String attributionShow;
 
+    private String isVague;        // 模糊查询标识
 
+    public String getIsVague() {
+        return isVague;
+    }
+
+    public void setIsVague(String isVague) {
+        this.isVague = isVague;
+    }
 
     public int getPageNum() {
         return pageNum;
