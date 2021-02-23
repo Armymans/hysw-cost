@@ -275,8 +275,8 @@ public class BuildingProjectService {
         List<ProVo> baseList = baseProjectDao.selectBaseProjectFindAll(pageVo);
             for (ProVo thisVo : baseList) {
                 Example example = new Example(DesignInfo.class);
-                example.createCriteria().andEqualTo("baseProjectId",thisVo.getId());
-//                                        .andEqualTo("status","0");
+                example.createCriteria().andEqualTo("baseProjectId",thisVo.getId())
+                                        .andEqualTo("status","0");
                 DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
                 if (designInfo!=null){
                     // 如果是安徽
