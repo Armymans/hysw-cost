@@ -1204,7 +1204,8 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             " water_supply_type LIKE CONCAT(  " +
             " '%',#{keyword},'%')  or  " +
             " customer_name LIKE CONCAT( '%', #{keyword},'%')  " +
-            " )   " +
+            " )  " +
+            " AND s1.del_flag = '0'" +
             " ORDER BY  " +
             "s1.create_time DESC")
     List<ProVo> selectBaseProjectFindAll(PageBaseVo pageVo);

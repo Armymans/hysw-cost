@@ -136,4 +136,22 @@ public class BuildingProjectController extends BaseController {
         map.put("table1",page);
         return RestUtil.success(map);
     }
+
+    /**
+     *
+     * @Description //工程项目删除
+     * @Date 10:40 2021/2/23
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/deleteBaseProject", method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> deleteBaseProject(String id){
+        try {
+            buildingProjectService.deleteBaseProject(id, getLoginUser().getId(), request);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return RestUtil.error(e.getMessage());
+        }
+        return RestUtil.success();
+    }
 }

@@ -292,6 +292,15 @@ public class BuildingProjectService {
                         }
                     }
                 }
+                // 领导和创建人才能删除
+                if (StringUtils.isNotEmpty(thisVo.getFounderId()) && id.equals(thisVo.getFounderId())){
+                    thisVo.setDeleteShow("0");
+                }
+
+                if (id.equals(wjsjh) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(whsjh) || id.equals(whzjh)){
+                    thisVo.setDeleteShow("0");
+                }
+
 
             }
 
@@ -314,5 +323,31 @@ public class BuildingProjectService {
             }
 
         return baseList;
+    }
+
+    public void deleteBaseProject(String id, String userId, HttpServletRequest request) {
+        BaseProject baseProject = baseProjectDao.selectByPrimaryKey(id);
+        baseProject.setDelFlag("1");
+        if (StringUtils.isNotEmpty(baseProject.getDesginStatus()) || StringUtils.isNotEmpty(baseProject.getBudgetStatus())
+            || StringUtils.isNotEmpty(baseProject.getTrackStatus()) || StringUtils.isNotEmpty(baseProject.getVisaStatus())
+            || StringUtils.isNotEmpty(baseProject.getSettleAccountsStatus()) || StringUtils.isNotEmpty(baseProject.getProgressPaymentStatus())
+        ){
+            throw new RuntimeException("该工程存在任务，不能删除");
+        }
+        baseProjectDao.updateByPrimaryKey(baseProject);
+
+        // 保存日志
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("15"); //工程项目
+        operationLog.setContent(memberManage.getMemberName()+"删除"+baseProject.getProjectName()+"工程项目【"+baseProject.getId()+"】");
+        operationLog.setDoObject(baseProject.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
     }
 }
