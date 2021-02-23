@@ -45,4 +45,6 @@ public class ProgressListVo {
     private String founderId;
 
     private List<AuditInfo> auditInfos;
+
+    private String fshow;
 }

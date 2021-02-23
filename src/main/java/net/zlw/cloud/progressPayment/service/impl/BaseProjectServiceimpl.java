@@ -13,6 +13,8 @@ import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.OutSource;
 import net.zlw.cloud.general.model.AuditChekedVo;
 import net.zlw.cloud.index.model.vo.pageVo;
+import net.zlw.cloud.librarian.dao.ThoseResponsibleDao;
+import net.zlw.cloud.librarian.model.ThoseResponsible;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.*;
@@ -92,6 +94,9 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
     @Resource
     private WarningDetailsService warningDetailsService;
+
+    @Resource
+    private ThoseResponsibleDao thoseResponsibleDao;
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -2111,6 +2116,24 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                     progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
                 }
             }
+
+            ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("1");
+            String personnel = thoseResponsible.getPersonnel();
+            boolean f = false;
+            if(personnel!=null){
+                String[] split = personnel.split(",");
+                for (String s : split){
+                    if (s.equals(pageVo.getUid()) || pageVo.getUid().equals(whzjh) || pageVo.getUid().equals(whzjm) || pageVo.getUid().equals(wjzjh)){
+                        f = true;
+                    }
+                }
+            }
+            if (f){
+                for(ProgressListVo progressListVo : list){
+                    progressListVo.setFshow("1");
+                }
+            }
+
             return new PageInfo<ProgressListVo>(list);
         }
         //未通过
