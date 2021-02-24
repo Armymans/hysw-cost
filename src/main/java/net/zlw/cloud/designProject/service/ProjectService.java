@@ -161,12 +161,16 @@ public class ProjectService {
         PageHelper.startPage(pageVo.getPageNum(), pageVo.getPageSize());
         //展示集合
         List<DesignInfo> designInfos = new ArrayList<>();
+
+        String userId = loginUser.getId();
+        //String userId = "user321";
+
         //前台获取的登录信息
         //如果设计状态为'未审核' 则展示当前用户需要审核的信息
         if ("1".equals(pageVo.getDesginStatus())) {
             //todo getLoginUser().getId()
             //则根据登录用户id展示于其身份对应的数据
-            pageVo.setUserId(loginUser.getId());
+            pageVo.setUserId(userId);
 //            pageVo.setUserId("user321");
             //如果当前用户是部门主管 或者 部门经理 则展示全部待审核信息
             if (wjsjh.equals(pageVo.getUserId()) || whsjh.equals(pageVo.getUserId()) || whsjm.equals(pageVo.getUserId())) {
@@ -358,11 +362,27 @@ public class ProjectService {
         //如果状态为出图中
         if ("2".equals(pageVo.getDesginStatus())) {
             //todo loginUser.getId()
-            pageVo.setUserId(loginUser.getId());
+            pageVo.setUserId(userId);
+
+            if (userId.equals(wjsjh) || userId.equals(whsjh) || userId.equals(whsjm)){
+                pageVo.setUserId("");
+            }
+
             designInfos = designInfoMapper.designProjectSelect2(pageVo);
             if (designInfos != null) {
                 if (designInfos.size() > 0) {
-                    for (DesignInfo designInfo : designInfos) {
+
+                    for (int i = 0; i < designInfos.size(); i++) {
+                        DesignInfo designInfo = designInfos.get(i);
+                        if (userId.equals(designInfo.getDesigner())){
+                            designInfo.setEditFlag("0");
+                        }
+
+                        BaseProject baseProject = baseProjectByPrimaryKey(designInfo.getBaseProjectId());
+                        if (userId.equals(whsjh) && "4".equals(baseProject.getDistrict())){
+                            designInfos.remove(i);
+                        }
+
                         //展示设计变更时间 如果为空展示 /
                         if (designInfo.getDesignChangeTime() == null || designInfo.getDesignChangeTime().equals("")) {
                             designInfo.setDesignChangeTime("/");
@@ -484,10 +504,24 @@ public class ProjectService {
             //将部门负责人传入
             pageVo.setAdminId(memberManage.getId());
             //todo loginUser.getId()
-            pageVo.setUserId(loginUser.getId());
+            pageVo.setUserId(userId);
+
+            if (userId.equals(wjsjh) || userId.equals(whsjh) || userId.equals(whsjm)){
+                pageVo.setUserId("");
+            }
+
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             if (designInfos.size() > 0) {
-                for (DesignInfo designInfo : designInfos) {
+                for (int i = 0; i < designInfos.size(); i++) {
+                    DesignInfo designInfo = designInfos.get(i);
+                    if (userId.equals(designInfo.getDesigner())){
+                        designInfo.setEditFlag("0");
+                    }
+
+                    BaseProject baseProject = baseProjectByPrimaryKey(designInfo.getBaseProjectId());
+                    if (userId.equals(whsjh) && "4".equals(baseProject.getDistrict())){
+                        designInfos.remove(i);
+                    }
                     // 建设单位
                     if (!"".equals(designInfo.getConstructionUnit()) && designInfo.getConstructionUnit() != null){
                         designInfo.setConstructionUnit(designInfo.getConstructionUnit());
@@ -704,11 +738,11 @@ public class ProjectService {
 
                     //归属按钮展示
                     //todo loginUser.getId();
-                    String loginUserId = loginUser.getId();
+                    //String loginUserId = loginUser.getId();
 //                    String loginUserId = "200101005";
 
                     //如果当前登入人等于创建人
-                    if (designInfo.getFounderId().equals(loginUserId)) {
+                    if (designInfo.getFounderId().equals(userId)) {
                         //说明当前项目是创建人项目
                         designInfo.setAscriptionFlag("1");
                     }
@@ -812,14 +846,14 @@ public class ProjectService {
                   .andEqualTo("status","0");
             MemberManage boss = memberManageDao.selectOneByExample(admin);
             //判断当前人是否为部门领导 如果是 则展示所有数据
-            if (boss.getId().equals(loginUser.getId())) {
+            if (boss.getId().equals(userId)) {
                 pageVo.setUserId("");
                 pageVo.setAdminId("");
             } else {
                 //将部门负责人传入
                 pageVo.setAdminId(memberManage.getId());
                 //todo loginUser.getId()
-                pageVo.setUserId(loginUser.getId());
+                pageVo.setUserId(userId);
             }
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             for (DesignInfo designInfo : designInfos) {
