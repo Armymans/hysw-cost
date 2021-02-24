@@ -3,6 +3,7 @@ package net.zlw.cloud.settleAccounts.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import net.tec.cloud.common.bean.UserInfo;
+import net.zlw.cloud.VisaChange.model.vo.VisaChangeListVo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
 import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.budgeting.model.vo.BatchReviewVo;
@@ -20,6 +21,8 @@ import net.zlw.cloud.followAuditing.mapper.TrackAuditInfoDao;
 import net.zlw.cloud.followAuditing.mapper.TrackMonthlyDao;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.followAuditing.model.TrackMonthly;
+import net.zlw.cloud.librarian.dao.ThoseResponsibleDao;
+import net.zlw.cloud.librarian.model.ThoseResponsible;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
@@ -121,6 +124,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
     @Resource
     private BudgetCoverService budgetCoverService;
 
+    @Resource
+    private ThoseResponsibleDao thoseResponsibleDao;
+
 
 
     @Value("${audit.wujiang.sheji.designHead}")
@@ -220,24 +226,62 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
         }
             //处理中
             if (pageVo.getSettleAccountsStatus().equals("2")){
-                List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
-                for (AccountsVo accountsVo : list1) {
-                    String preparePeople = accountsVo.getPreparePeople();
-                    MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
-                     if (mkyUser!=null){
-                        accountsVo.setPreparePeople(mkyUser.getUserName());
+
+                if (whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId())) {
+                    List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing2(pageVo);
+                    for (AccountsVo accountsVo : list1) {
+                        String preparePeople = accountsVo.getPreparePeople();
+                        MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+                        if (mkyUser != null) {
+                            accountsVo.setPreparePeople(mkyUser.getUserName());
+                        }
+                        if (accountsVo.getAuthorizedNumber() != null && accountsVo.getLReviewNumber() != null) {
+                            accountsVo.setSettleAccountsStatus("-");
+                        } else if (accountsVo.getAuthorizedNumber() != null) {
+                            accountsVo.setSettleAccountsStatus("下家处理中");
+                        } else if (accountsVo.getLReviewNumber() != null) {
+                            accountsVo.setSettleAccountsStatus("上家处理中");
+                        }
+
                     }
-                     if (accountsVo.getAuthorizedNumber()!=null && accountsVo.getLReviewNumber()!=null){
-                         accountsVo.setSettleAccountsStatus("-");
-                     }else if(accountsVo.getAuthorizedNumber()!=null){
-                         accountsVo.setSettleAccountsStatus("下家处理中");
-                     }else if(accountsVo.getLReviewNumber()!=null){
-                         accountsVo.setSettleAccountsStatus("上家处理中");
-                     }
+                    ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("1");
+                    String personnel = thoseResponsible.getPersonnel();
+                    boolean f = false;
+                    if (personnel != null) {
+                        String[] split = personnel.split(",");
+                        for (String s : split) {
+                            if (s.equals(loginUser.getId()) || loginUser.getId().equals(whzjh) || loginUser.getId().equals(whzjm) || loginUser.getId().equals(wjzjh)) {
+                                f = true;
+                            }
+                        }
+                    }
+                    if (f) {
+                        for ( AccountsVo accountsVo  : list1) {
+                            accountsVo.setFshow("1");
+                        }
+                    }
 
+                    return list1;
+                }else{
+                    List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
+                    for (AccountsVo accountsVo : list1) {
+                        String preparePeople = accountsVo.getPreparePeople();
+                        MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
+                        if (mkyUser != null) {
+                            accountsVo.setPreparePeople(mkyUser.getUserName());
+                        }
+                        if (accountsVo.getAuthorizedNumber() != null && accountsVo.getLReviewNumber() != null) {
+                            accountsVo.setSettleAccountsStatus("-");
+                        } else if (accountsVo.getAuthorizedNumber() != null) {
+                            accountsVo.setSettleAccountsStatus("下家处理中");
+                        } else if (accountsVo.getLReviewNumber() != null) {
+                            accountsVo.setSettleAccountsStatus("上家处理中");
+                        }
+
+                    }
+
+                    return list1;
                 }
-
-                return list1;
             }
             //未通过
             if (pageVo.getSettleAccountsStatus().equals("3")){

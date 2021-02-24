@@ -44,6 +44,8 @@ public class ReturnTrackVo {
     private String attributionShow;
     private String isShow;
 
+    private String fshow;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

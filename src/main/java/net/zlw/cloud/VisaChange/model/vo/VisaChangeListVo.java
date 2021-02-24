@@ -45,4 +45,7 @@ public class VisaChangeListVo {
     private String backShow;
     private String unShow;
 
+    //领导标识
+    private String fshow;
+
 }

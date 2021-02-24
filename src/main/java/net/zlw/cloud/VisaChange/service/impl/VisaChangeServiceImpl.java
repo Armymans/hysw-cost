@@ -16,11 +16,14 @@ import net.zlw.cloud.designProject.mapper.OperationLogDao;
 import net.zlw.cloud.designProject.mapper.OutSourceMapper;
 import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.designProject.model.OutSource;
+import net.zlw.cloud.librarian.dao.ThoseResponsibleDao;
+import net.zlw.cloud.librarian.model.ThoseResponsible;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
 import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
@@ -100,6 +103,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
     @Resource
     private CostUnitManagementMapper costUnitManagementMapper;
+
+    @Resource
+    private ThoseResponsibleDao thoseResponsibleDao;
 
     @Value("${audit.wujiang.sheji.designHead}")
     private String wjsjh;
@@ -355,8 +361,9 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         }
         //处理中
         if (pageVo.getStatus().equals("2")){
-            List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
-            for (VisaChangeListVo thisList : list1) {
+            if ( pageVo.getUserId().equals(whzjh) || pageVo.getUserId().equals(whzjm) || pageVo.getUserId().equals(wjzjh)) {
+                List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing2(pageVo);
+//            for (VisaChangeListVo thisList : list1) {
 //                // 造价单位名称
 //                if (  thisList.getNameOfCostUnit() != null && !"".equals(  thisList.getNameOfCostUnit())){
 //                    thisList.setNameOfCostUnit(  thisList.getNameOfCostUnit());
@@ -424,87 +431,184 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 //                }else {
 //                    thisList.setCompileTime("/");
 //                }
-            }
+                //           }
 
-            for (VisaChangeListVo visaChangeListVo : list1) {
-                if (visaChangeListVo.getCurrentShang() != null && !"".equals(visaChangeListVo.getCurrentShang()) && visaChangeListVo.getCurrentXia() != null && !"".equals(visaChangeListVo.getCurrentXia())){
-                    visaChangeListVo.setStatus("-");
-                    VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
-                    String outsourcing = visaById.getVisaChangeUp().getOutsourcing();
-                    if (outsourcing!=null && !"".equals(outsourcing)){
-                        if (outsourcing.equals("1")){
-                            outsourcing = "是";
-                        }else if(outsourcing.equals("2")){
-                            outsourcing = "否";
-                        }
-
-                    }
-                    visaChangeListVo.setOutsourcing(outsourcing);
-                    visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeUp().getNameOfCostUnit());
-                   
-                }else if(visaChangeListVo.getCurrentShang() != null && ! "".equals(visaChangeListVo.getCurrentShang())){
-                    visaChangeListVo.setStatus("上家编制中");
-                    VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
-                    String outsourcing = visaById.getVisaChangeUp().getOutsourcing();
-                    if (outsourcing!=null && !"".equals(outsourcing)){
-
-                            if (outsourcing.equals("1")){
+                for (VisaChangeListVo visaChangeListVo : list1) {
+                    if (visaChangeListVo.getCurrentShang() != null && !"".equals(visaChangeListVo.getCurrentShang()) && visaChangeListVo.getCurrentXia() != null && !"".equals(visaChangeListVo.getCurrentXia())) {
+                        visaChangeListVo.setStatus("-");
+                        VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
+                        String outsourcing = visaById.getVisaChangeUp().getOutsourcing();
+                        if (outsourcing != null && !"".equals(outsourcing)) {
+                            if (outsourcing.equals("1")) {
                                 outsourcing = "是";
-                            }else if(outsourcing.equals("2")){
+                            } else if (outsourcing.equals("2")) {
+                                outsourcing = "否";
+                            }
+
+                        }
+                        visaChangeListVo.setOutsourcing(outsourcing);
+                        visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeUp().getNameOfCostUnit());
+
+                    } else if (visaChangeListVo.getCurrentShang() != null && !"".equals(visaChangeListVo.getCurrentShang())) {
+                        visaChangeListVo.setStatus("上家编制中");
+                        VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
+                        String outsourcing = visaById.getVisaChangeUp().getOutsourcing();
+                        if (outsourcing != null && !"".equals(outsourcing)) {
+
+                            if (outsourcing.equals("1")) {
+                                outsourcing = "是";
+                            } else if (outsourcing.equals("2")) {
                                 outsourcing = "否";
                             }
 
 
-
-                    }
-                    visaChangeListVo.setOutsourcing(outsourcing);
-                    visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeUp().getNameOfCostUnit());
-                    if (visaById.getVisaChangeUp().getOutsourcingAmount()!=null && !"".equals(visaById.getVisaChangeUp().getOutsourcingAmount())){
-                        visaChangeListVo.setAmountCost(Integer.parseInt(visaById.getVisaChangeUp().getOutsourcingAmount()));
-                    }else{
-                        visaChangeListVo.setAmountCost(0);
-                    }
-                }else if(visaChangeListVo.getCurrentXia() != null && ! "".equals(visaChangeListVo.getCurrentXia())){
-                    visaChangeListVo.setStatus("下家编制中");
-                    VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
-                    String outsourcing = visaById.getVisaChangeDown().getOutsourcing();
-                    if (outsourcing!=null && !"".equals(outsourcing)){
-                        if (outsourcing.equals("1")){
-                            outsourcing = "是";
-                        }else if(outsourcing.equals("2")){
-                            outsourcing = "否";
                         }
+                        visaChangeListVo.setOutsourcing(outsourcing);
+                        visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeUp().getNameOfCostUnit());
+                        if (visaById.getVisaChangeUp().getOutsourcingAmount() != null && !"".equals(visaById.getVisaChangeUp().getOutsourcingAmount())) {
+                            visaChangeListVo.setAmountCost(Integer.parseInt(visaById.getVisaChangeUp().getOutsourcingAmount()));
+                        } else {
+                            visaChangeListVo.setAmountCost(0);
+                        }
+                    } else if (visaChangeListVo.getCurrentXia() != null && !"".equals(visaChangeListVo.getCurrentXia())) {
+                        visaChangeListVo.setStatus("下家编制中");
+                        VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
+                        String outsourcing = visaById.getVisaChangeDown().getOutsourcing();
+                        if (outsourcing != null && !"".equals(outsourcing)) {
+                            if (outsourcing.equals("1")) {
+                                outsourcing = "是";
+                            } else if (outsourcing.equals("2")) {
+                                outsourcing = "否";
+                            }
+
+                        }
+                        visaChangeListVo.setOutsourcing(outsourcing);
+                        visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeDown().getNameOfCostUnit());
 
                     }
-                    visaChangeListVo.setOutsourcing(outsourcing);
-                    visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeDown().getNameOfCostUnit());
-                   
                 }
-            }
-            for (VisaChangeListVo visaChangeListVo : list1) {
-                String proportionContractShang = visaChangeListVo.getProportionContractShang();
-                String proportionContractXia = visaChangeListVo.getProportionContractXia();
-                if (!"".equals(proportionContractShang) && proportionContractShang!=null && !"/".equals(proportionContractShang)){
-                    BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
-                    visaChangeListVo.setProportionContractShang(bigDecimal.toString());
-                }
-                if (!"".equals(proportionContractXia) && proportionContractXia!=null && !"/".equals(proportionContractXia)){
-                    BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
-                    visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
+                for (VisaChangeListVo visaChangeListVo : list1) {
+                    String proportionContractShang = visaChangeListVo.getProportionContractShang();
+                    String proportionContractXia = visaChangeListVo.getProportionContractXia();
+                    if (!"".equals(proportionContractShang) && proportionContractShang != null && !"/".equals(proportionContractShang)) {
+                        BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        visaChangeListVo.setProportionContractShang(bigDecimal.toString());
+                    }
+                    if (!"".equals(proportionContractXia) && proportionContractXia != null && !"/".equals(proportionContractXia)) {
+                        BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
+                    }
+
                 }
 
-            }
-
-            for (VisaChangeListVo visaChangeListVo : list1) {
-                String nameOfCostUnit = visaChangeListVo.getNameOfCostUnit();
-                if (nameOfCostUnit!=null && !"".equals(nameOfCostUnit)){
-                    CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfCostUnit);
-                    if (costUnitManagement!=null){
-                        visaChangeListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                for (VisaChangeListVo visaChangeListVo : list1) {
+                    String nameOfCostUnit = visaChangeListVo.getNameOfCostUnit();
+                    if (nameOfCostUnit != null && !"".equals(nameOfCostUnit)) {
+                        CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfCostUnit);
+                        if (costUnitManagement != null) {
+                            visaChangeListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                        }
                     }
                 }
+
+                ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("1");
+                String personnel = thoseResponsible.getPersonnel();
+                boolean f = false;
+                if (personnel != null) {
+                    String[] split = personnel.split(",");
+                    for (String s : split) {
+                        if (s.equals(pageVo.getUserId()) || pageVo.getUserId().equals(whzjh) || pageVo.getUserId().equals(whzjm) || pageVo.getUserId().equals(wjzjh)) {
+                            f = true;
+                        }
+                    }
+                }
+                if (f) {
+                    for (VisaChangeListVo visaChangeListVo  : list1) {
+                        visaChangeListVo.setFshow("1");
+                    }
+                }
+                return list1;
+            }else{
+                List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
+                for (VisaChangeListVo visaChangeListVo : list1) {
+                    if (visaChangeListVo.getCurrentShang() != null && !"".equals(visaChangeListVo.getCurrentShang()) && visaChangeListVo.getCurrentXia() != null && !"".equals(visaChangeListVo.getCurrentXia())) {
+                        visaChangeListVo.setStatus("-");
+                        VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
+                        String outsourcing = visaById.getVisaChangeUp().getOutsourcing();
+                        if (outsourcing != null && !"".equals(outsourcing)) {
+                            if (outsourcing.equals("1")) {
+                                outsourcing = "是";
+                            } else if (outsourcing.equals("2")) {
+                                outsourcing = "否";
+                            }
+
+                        }
+                        visaChangeListVo.setOutsourcing(outsourcing);
+                        visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeUp().getNameOfCostUnit());
+
+                    } else if (visaChangeListVo.getCurrentShang() != null && !"".equals(visaChangeListVo.getCurrentShang())) {
+                        visaChangeListVo.setStatus("上家编制中");
+                        VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
+                        String outsourcing = visaById.getVisaChangeUp().getOutsourcing();
+                        if (outsourcing != null && !"".equals(outsourcing)) {
+
+                            if (outsourcing.equals("1")) {
+                                outsourcing = "是";
+                            } else if (outsourcing.equals("2")) {
+                                outsourcing = "否";
+                            }
+
+
+                        }
+                        visaChangeListVo.setOutsourcing(outsourcing);
+                        visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeUp().getNameOfCostUnit());
+                        if (visaById.getVisaChangeUp().getOutsourcingAmount() != null && !"".equals(visaById.getVisaChangeUp().getOutsourcingAmount())) {
+                            visaChangeListVo.setAmountCost(Integer.parseInt(visaById.getVisaChangeUp().getOutsourcingAmount()));
+                        } else {
+                            visaChangeListVo.setAmountCost(0);
+                        }
+                    } else if (visaChangeListVo.getCurrentXia() != null && !"".equals(visaChangeListVo.getCurrentXia())) {
+                        visaChangeListVo.setStatus("下家编制中");
+                        VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
+                        String outsourcing = visaById.getVisaChangeDown().getOutsourcing();
+                        if (outsourcing != null && !"".equals(outsourcing)) {
+                            if (outsourcing.equals("1")) {
+                                outsourcing = "是";
+                            } else if (outsourcing.equals("2")) {
+                                outsourcing = "否";
+                            }
+
+                        }
+                        visaChangeListVo.setOutsourcing(outsourcing);
+                        visaChangeListVo.setNameOfCostUnit(visaById.getVisaChangeDown().getNameOfCostUnit());
+
+                    }
+                }
+                for (VisaChangeListVo visaChangeListVo : list1) {
+                    String proportionContractShang = visaChangeListVo.getProportionContractShang();
+                    String proportionContractXia = visaChangeListVo.getProportionContractXia();
+                    if (!"".equals(proportionContractShang) && proportionContractShang != null && !"/".equals(proportionContractShang)) {
+                        BigDecimal bigDecimal = new BigDecimal(proportionContractShang).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        visaChangeListVo.setProportionContractShang(bigDecimal.toString());
+                    }
+                    if (!"".equals(proportionContractXia) && proportionContractXia != null && !"/".equals(proportionContractXia)) {
+                        BigDecimal bigDecimal1 = new BigDecimal(proportionContractXia).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        visaChangeListVo.setProportionContractXia(bigDecimal1.toString());
+                    }
+
+                }
+
+                for (VisaChangeListVo visaChangeListVo : list1) {
+                    String nameOfCostUnit = visaChangeListVo.getNameOfCostUnit();
+                    if (nameOfCostUnit != null && !"".equals(nameOfCostUnit)) {
+                        CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(nameOfCostUnit);
+                        if (costUnitManagement != null) {
+                            visaChangeListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                        }
+                    }
+                }
+                return list1;
             }
-            return list1;
         }
         //未通过
         if (pageVo.getStatus().equals("3")){

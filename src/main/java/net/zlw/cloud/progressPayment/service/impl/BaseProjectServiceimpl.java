@@ -2104,37 +2104,55 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         }
         //处理中
         if (pageVo.getProgressStatus().equals("2")){
-            List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
-            for (ProgressListVo progressListVo : list) {
-                TotalVo total = findTotal(progressListVo.getBaseId());
-                progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
-                progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
-                progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
-                // 造价单位
-                CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(progressListVo.getNameOfCostUnit());
-                if (costUnitManagement != null){
-                    progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+            //处理中领导查看全部
+            if (pageVo.getUid().equals(whzjh) || pageVo.getUid().equals(whzjm) || pageVo.getUid().equals(wjzjh)) {
+                List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed2(pageVo);
+                for (ProgressListVo progressListVo : list) {
+                    TotalVo total = findTotal(progressListVo.getBaseId());
+                    progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
+                    progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
+                    progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
+                    // 造价单位
+                    CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(progressListVo.getNameOfCostUnit());
+                    if (costUnitManagement != null) {
+                        progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
+                    }
                 }
-            }
 
-            ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("1");
-            String personnel = thoseResponsible.getPersonnel();
-            boolean f = false;
-            if(personnel!=null){
-                String[] split = personnel.split(",");
-                for (String s : split){
-                    if (s.equals(pageVo.getUid()) || pageVo.getUid().equals(whzjh) || pageVo.getUid().equals(whzjm) || pageVo.getUid().equals(wjzjh)){
-                        f = true;
+                ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("1");
+                String personnel = thoseResponsible.getPersonnel();
+                boolean f = false;
+                if (personnel != null) {
+                    String[] split = personnel.split(",");
+                    for (String s : split) {
+                        if (s.equals(pageVo.getUid()) || pageVo.getUid().equals(whzjh) || pageVo.getUid().equals(whzjm) || pageVo.getUid().equals(wjzjh)) {
+                            f = true;
+                        }
+                    }
+                }
+                if (f) {
+                    for (ProgressListVo progressListVo : list) {
+                        progressListVo.setFshow("1");
+                    }
+                }
+
+                return new PageInfo<ProgressListVo>(list);
+            }else{
+                //处理中普通成员查看自己的项目
+                List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
+                for (ProgressListVo progressListVo : list) {
+                    TotalVo total = findTotal(progressListVo.getBaseId());
+                    progressListVo.setTotalPaymentAmount(total.getTotalPaymentAmount());
+                    progressListVo.setCumulativeNumberPayment(total.getCumulativeNumberPayment());
+                    progressListVo.setAccumulativePaymentProportion(total.getAccumulativePaymentProportion());
+                    // 造价单位
+                    CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(progressListVo.getNameOfCostUnit());
+                    if (costUnitManagement != null) {
+                        progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
                     }
                 }
             }
-            if (f){
-                for(ProgressListVo progressListVo : list){
-                    progressListVo.setFshow("1");
-                }
-            }
 
-            return new PageInfo<ProgressListVo>(list);
         }
         //未通过
         if (pageVo.getProgressStatus().equals("3")){

@@ -26,6 +26,8 @@ import net.zlw.cloud.followAuditing.model.vo.PageVo;
 import net.zlw.cloud.followAuditing.model.vo.ReturnTrackVo;
 import net.zlw.cloud.followAuditing.model.vo.TrackVo;
 import net.zlw.cloud.followAuditing.service.TrackApplicationInfoService;
+import net.zlw.cloud.librarian.dao.ThoseResponsibleDao;
+import net.zlw.cloud.librarian.model.ThoseResponsible;
 import net.zlw.cloud.maintenanceProjectInformation.mapper.ConstructionUnitManagementMapper;
 import net.zlw.cloud.maintenanceProjectInformation.model.ConstructionUnitManagement;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
@@ -33,6 +35,7 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
 import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
 import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
@@ -101,6 +104,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     private ProjectSumService projectSumService;
     @Resource
     private EmployeeAchievementsInfoMapper employeeAchievementsInfoMapper;
+
+    @Resource
+    private ThoseResponsibleDao thoseResponsibleDao;
 
     @Value("${audit.wujiang.zaojia.costHead}")
     private String wjzjh;  //吴江造价领导
@@ -332,8 +338,78 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     }
                 }
                 pageInfo = new PageInfo<>(returnTrackVos);
-            } else {
-                //全部，未提交和谁创建谁看到
+            }else if("2".equals(pageVo.getTrackStatus())){
+                //未提交
+                //领导
+                if (wjzjh.equals(pageVo.getUid()) || wjzjm.equals(pageVo.getUid()) || whzjh.equals(pageVo.getUid())
+                        || whzjm.equals(pageVo.getUid())) {
+                    List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList02(pageVo);
+                    for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                        // 施工单位
+                        ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getConstructionOrganization());
+                        if (constructionUnitManagement != null) {
+                            returnTrackVo.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+                        } else {
+                            returnTrackVo.setConstructionOrganization("/");
+                        }
+                        // 编制人
+                        MemberManage memberManage = memberManageDao.selectByPrimaryKey(returnTrackVo.getWritter());
+                        if (memberManage != null) {
+                            returnTrackVo.setWritter(memberManage.getMemberName());
+                        }
+                        // 造价单位名称
+                        CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getAuditUnitNameId());
+                        if (costUnitManagement != null) {
+                            returnTrackVo.setAuditUnitNameId(costUnitManagement.getCostUnitName());
+                        } else {
+                            returnTrackVo.setAuditUnitNameId("/");
+                        }
+                    }
+                    ThoseResponsible thoseResponsible = thoseResponsibleDao.selectByPrimaryKey("1");
+                    String personnel = thoseResponsible.getPersonnel();
+                    boolean f = false;
+                    if (personnel != null) {
+                        String[] split = personnel.split(",");
+                        for (String s : split) {
+                            if (s.equals(pageVo.getUid()) || pageVo.getUid().equals(whzjh) || pageVo.getUid().equals(whzjm) || pageVo.getUid().equals(wjzjh) || pageVo.getUid().equals(wjzjm)) {
+                                f = true;
+                            }
+                        }
+                    }
+                    if (f) {
+                        for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                            returnTrackVo.setFshow("1");
+                        }
+                    }
+
+                    pageInfo = new PageInfo<>(returnTrackVos);
+                }else{
+                    List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
+                    for (ReturnTrackVo returnTrackVo : returnTrackVos) {
+                        // 施工单位
+                        ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getConstructionOrganization());
+                        if (constructionUnitManagement != null) {
+                            returnTrackVo.setConstructionOrganization(constructionUnitManagement.getConstructionUnitName());
+                        } else {
+                            returnTrackVo.setConstructionOrganization("/");
+                        }
+                        // 编制人
+                        MemberManage memberManage = memberManageDao.selectByPrimaryKey(returnTrackVo.getWritter());
+                        if (memberManage != null) {
+                            returnTrackVo.setWritter(memberManage.getMemberName());
+                        }
+                        // 造价单位名称
+                        CostUnitManagement costUnitManagement = costUnitManagementMapper.selectByPrimaryKey(returnTrackVo.getAuditUnitNameId());
+                        if (costUnitManagement != null) {
+                            returnTrackVo.setAuditUnitNameId(costUnitManagement.getCostUnitName());
+                        } else {
+                            returnTrackVo.setAuditUnitNameId("/");
+                        }
+                    }
+                    pageInfo = new PageInfo<>(returnTrackVos);
+                }
+            }else {
+                //全部和谁创建谁看到
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                     // 施工单位

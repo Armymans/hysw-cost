@@ -53,6 +53,9 @@ public class AccountsVo {
     //殷丽萍退回回显
     private String yinShow;
 
+    //领导标识
+    private String fshow;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
