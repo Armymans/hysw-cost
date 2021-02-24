@@ -1143,6 +1143,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "  s1.project_num projectNum,  " +
             "  s1.project_name projectName,  " +
             "  s1.create_time createTime,  " +
+            "  s1.founder_id, " +
             "  ( CASE project_nature WHEN '1' THEN '新建' WHEN '2' THEN '改造' END ) AS projectNature,  " +
             "  s1.construction_unit constructionUnit,  " +
             "  ( CASE IFNULL( merge_flag, 'xxxx' ) WHEN '1' THEN '未合并' WHEN 'xxxx' THEN '未合并' WHEN '0' THEN '已合并' END ) AS mergeFlag,  " +
