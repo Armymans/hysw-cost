@@ -1320,7 +1320,8 @@ public class BudgetingServiceImpl implements BudgetingService {
                 String baseId = budgetingListVo.getBaseId();
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
 
-                if (id.equals(budgetingListVo.getBudgetingPeople())){
+                String s = budgetingListVo.getBudgetingPeople();
+                if (s.equals(loginUserId)){
                     budgetingListVo.setEditFlag("0");
                 }
 

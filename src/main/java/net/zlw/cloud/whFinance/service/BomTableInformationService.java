@@ -5,10 +5,11 @@ import net.zlw.cloud.excel.dao.BomTable1Dao;
 import net.zlw.cloud.excel.dao.BomTableInfomationDao;
 import net.zlw.cloud.excel.model.BomTable;
 import net.zlw.cloud.excel.model.BomTableInfomation;
-import net.zlw.cloud.whFinance.mapper.BomTableImfomationAllDao;
-
 import net.zlw.cloud.whFinance.domain.BomTableInfomationAll;
 import net.zlw.cloud.whFinance.domain.vo.BomTableVo;
+import net.zlw.cloud.whFinance.domain.vo.BomTableVo2;
+import net.zlw.cloud.whFinance.domain.vo.BomTablesVo;
+import net.zlw.cloud.whFinance.mapper.BomTableImfomationAllDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,96 +32,99 @@ public class BomTableInformationService {
     @Resource
     private BomTableInfomationDao bomTableImfomationMapper;
 
-    public void getBomTable(BomTableVo bomTableVo,String account){
+    public void getBomTable(BomTablesVo bomTablesVo, String account){
         String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
-        if (bomTableVo != null){
-            BomTableInfomation bomTableInfomation1 = new BomTableInfomation();
-            if (bomTableVo.getId() != null){
-                //物料基本信息表
-                bomTableInfomation1.setId(bomTableVo.getId());
-                bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProjectId());
-                bomTableInfomation1.setDateOf(bomTableVo.getDateOf());
-                bomTableInfomation1.setSalesOrganization(bomTableVo.getSalesOrganization());
-                bomTableInfomation1.setInventoryOrganization(bomTableVo.getInventoryOrganization());
-                bomTableInfomation1.setCeaNum(bomTableVo.getCeaNum());
-                bomTableInfomation1.setAcquisitionTypes(bomTableVo.getAcquisitionTypes());
-                bomTableInfomation1.setContractor(bomTableVo.getContractor());
-                bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProjectCategoriesCoding());
-                bomTableInfomation1.setProjectTypes(bomTableVo.getProjectTypes());
-                bomTableInfomation1.setItemCoding(bomTableVo.getItemCoding());
-                bomTableInfomation1.setProjectName(bomTableVo.getProjectName());
-                bomTableInfomation1.setAcquisitionDepartment(bomTableVo.getAcquisitionDepartment());
-                bomTableInfomation1.setDelFlag("0");
-                bomTableInfomation1.setCreateTime(date);
-                bomTableInfomation1.setUpdateTime(date);
-                bomTableImfomationMapper.insertSelective(bomTableInfomation1);
-
-                //全部物料基本信息表
-                BomTableInfomationAll bomTableInfomationAll = new BomTableInfomationAll();
-                bomTableInfomationAll.setId(bomTableVo.getId());
-                bomTableInfomationAll.setProjectCategoriesCoding(bomTableVo.getProjectId());
-                bomTableInfomationAll.setDateOf(bomTableVo.getDateOf());
-                bomTableInfomationAll.setSalesOrganization(bomTableVo.getSalesOrganization());
-                bomTableInfomationAll.setInventoryOrganization(bomTableVo.getInventoryOrganization());
-                bomTableInfomationAll.setCeaNum(bomTableVo.getCeaNum());
-                bomTableInfomationAll.setAcquisitionTypes(bomTableVo.getAcquisitionTypes());
-                bomTableInfomationAll.setContractor(bomTableVo.getContractor());
-                bomTableInfomationAll.setProjectCategoriesCoding(bomTableVo.getProjectCategoriesCoding());
-                bomTableInfomationAll.setProjectTypes(bomTableVo.getProjectTypes());
-                bomTableInfomationAll.setItemCoding(bomTableVo.getItemCoding());
-                bomTableInfomationAll.setProjectName(bomTableVo.getProjectName());
-                bomTableInfomationAll.setAcquisitionDepartment(bomTableVo.getAcquisitionDepartment());
-                bomTableInfomationAll.setDelFlag("0");
-                bomTableInfomationAll.setCreateTime(date);
-                bomTableInfomationAll.setUpdateTime(date);
-                bomTableImfomationAllDao.insertSelective(bomTableInfomationAll);
-
-            }
-            //物料基本信息表所有的外键
-            List<BomTableInfomation> id = bomTableImfomationMapper.findId();
-            //判断外键是否重复重复则更新
-            for (BomTableInfomation thisId : id) {
-                if (bomTableVo.getProjectId().equals(thisId.getProjectCategoriesCoding())){
+        List<BomTableVo> bomTableInfomations = bomTablesVo.getBomTableInfomation();
+        for (BomTableVo bomTableVo : bomTableInfomations) {
+            if (bomTableVo != null){
+                BomTableInfomation bomTableInfomation1 = new BomTableInfomation();
+                if (bomTableVo.getId() != null){
+                    //物料基本信息表
                     bomTableInfomation1.setId(bomTableVo.getId());
-                    bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProjectId());
-                    bomTableInfomation1.setDateOf(bomTableVo.getDateOf());
-                    bomTableInfomation1.setSalesOrganization(bomTableVo.getSalesOrganization());
-                    bomTableInfomation1.setInventoryOrganization(bomTableVo.getInventoryOrganization());
-                    bomTableInfomation1.setCeaNum(bomTableVo.getCeaNum());
-                    bomTableInfomation1.setAcquisitionTypes(bomTableVo.getAcquisitionTypes());
+                    bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProject_categories_coding());
+                    bomTableInfomation1.setDateOf(bomTableVo.getDate_of());
+                    bomTableInfomation1.setSalesOrganization(bomTableVo.getSales_organization());
+                    bomTableInfomation1.setInventoryOrganization(bomTableVo.getInventory_organization());
+                    bomTableInfomation1.setCeaNum(bomTableVo.getCea_num());
+                    bomTableInfomation1.setAcquisitionTypes(bomTableVo.getAcquisition_types());
                     bomTableInfomation1.setContractor(bomTableVo.getContractor());
-                    bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProjectCategoriesCoding());
-                    bomTableInfomation1.setProjectTypes(bomTableVo.getProjectTypes());
-                    bomTableInfomation1.setItemCoding(bomTableVo.getItemCoding());
-                    bomTableInfomation1.setProjectName(bomTableVo.getProjectName());
-                    bomTableInfomation1.setAcquisitionDepartment(bomTableVo.getAcquisitionDepartment());
+                    bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProject_categories_coding());
+                    bomTableInfomation1.setProjectTypes(bomTableVo.getProject_types());
+                    bomTableInfomation1.setItemCoding(bomTableVo.getItem_coding());
+                    bomTableInfomation1.setProjectName(bomTableVo.getProject_name());
+                    bomTableInfomation1.setAcquisitionDepartment(bomTableVo.getAcquisition_department());
                     bomTableInfomation1.setDelFlag("0");
                     bomTableInfomation1.setCreateTime(date);
                     bomTableInfomation1.setUpdateTime(date);
-                    bomTableImfomationMapper.updateByPrimaryKeySelective(bomTableInfomation1);
-                }
-            }
+                    bomTableImfomationMapper.insertSelective(bomTableInfomation1);
 
-            //物料信息
-            List<BomTable> bomTables = bomTableVo.getBomTables();
-            BomTable bomTable = new BomTable();
-            for (BomTable thisBomTable : bomTables) {
-                if (thisBomTable.getId() != null){
-                    bomTable.setId(thisBomTable.getId());
-                    bomTable.setMaterialCode(thisBomTable.getMaterialCode());
-                    bomTable.setItemName(thisBomTable.getItemName());
-                    bomTable.setSpecificationsModels(thisBomTable.getSpecificationsModels());
-                    bomTable.setUnit(thisBomTable.getUnit());
-                    bomTable.setUnivalence(thisBomTable.getUnivalence());
-                    bomTable.setQuantity(thisBomTable.getQuantity());
-                    bomTable.setCombinedPrice(thisBomTable.getCombinedPrice());
-                    bomTable.setRemark(thisBomTable.getRemark());
-                    bomTable.setDelFlag("0");
-                    bomTable.setCreateTime(date);
-                    bomTable.setUpdateTime(date);
+                    //全部物料基本信息表
+                    BomTableInfomationAll bomTableInfomationAll = new BomTableInfomationAll();
+                    bomTableInfomationAll.setId(bomTableVo.getId());
+                    bomTableInfomationAll.setProjectCategoriesCoding(bomTableVo.getProject_categories_coding());
+                    bomTableInfomationAll.setDateOf(bomTableVo.getDate_of());
+                    bomTableInfomationAll.setSalesOrganization(bomTableVo.getSales_organization());
+                    bomTableInfomationAll.setInventoryOrganization(bomTableVo.getInventory_organization());
+                    bomTableInfomationAll.setCeaNum(bomTableVo.getCea_num());
+                    bomTableInfomationAll.setAcquisitionTypes(bomTableVo.getAcquisition_types());
+                    bomTableInfomationAll.setContractor(bomTableVo.getContractor());
+                    bomTableInfomationAll.setProjectCategoriesCoding(bomTableVo.getProject_categories_coding());
+                    bomTableInfomationAll.setProjectTypes(bomTableVo.getProject_types());
+                    bomTableInfomationAll.setItemCoding(bomTableVo.getItem_coding());
+                    bomTableInfomationAll.setProjectName(bomTableVo.getProject_name());
+                    bomTableInfomationAll.setAcquisitionDepartment(bomTableVo.getAcquisition_department());
+                    bomTableInfomationAll.setDelFlag("0");
+                    bomTableInfomationAll.setCreateTime(date);
+                    bomTableInfomationAll.setUpdateTime(date);
+                    bomTableImfomationAllDao.insertSelective(bomTableInfomationAll);
+
                 }
-                bomTableMapper.insertSelective(bomTable);
+                //物料基本信息表所有的外键
+                List<BomTableInfomation> id = bomTableImfomationMapper.findId();
+                //判断外键是否重复重复则更新
+                for (BomTableInfomation thisId : id) {
+                    if (bomTableVo.getProject_categories_coding().equals(thisId.getProjectCategoriesCoding())){
+                        bomTableInfomation1.setId(bomTableVo.getId());
+                        bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProject_categories_coding());
+                        bomTableInfomation1.setDateOf(bomTableVo.getDate_of());
+                        bomTableInfomation1.setSalesOrganization(bomTableVo.getSales_organization());
+                        bomTableInfomation1.setInventoryOrganization(bomTableVo.getInventory_organization());
+                        bomTableInfomation1.setCeaNum(bomTableVo.getCea_num());
+                        bomTableInfomation1.setAcquisitionTypes(bomTableVo.getAcquisition_types());
+                        bomTableInfomation1.setContractor(bomTableVo.getContractor());
+                        bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProject_categories_coding());
+                        bomTableInfomation1.setProjectTypes(bomTableVo.getProject_types());
+                        bomTableInfomation1.setItemCoding(bomTableVo.getItem_coding());
+                        bomTableInfomation1.setProjectName(bomTableVo.getProject_name());
+                        bomTableInfomation1.setAcquisitionDepartment(bomTableVo.getAcquisition_department());
+                        bomTableInfomation1.setDelFlag("0");
+                        bomTableInfomation1.setCreateTime(date);
+                        bomTableInfomation1.setUpdateTime(date);
+                        bomTableImfomationMapper.updateByPrimaryKeySelective(bomTableInfomation1);
+                    }
+                }
+
+                //物料信息
+                List<BomTableVo2> bomTables = bomTableVo.getBomTable();
+                BomTable bomTable = new BomTable();
+                for (BomTableVo2 thisBomTable : bomTables) {
+                    if (thisBomTable.getId() != null){
+                        bomTable.setId(thisBomTable.getId());
+                        bomTable.setMaterialCode(thisBomTable.getMaterial_code());
+                        bomTable.setItemName(thisBomTable.getItem_name());
+                        bomTable.setSpecificationsModels(thisBomTable.getSpecifications_models());
+                        bomTable.setUnit(thisBomTable.getUnit());
+                        bomTable.setUnivalence(thisBomTable.getUnivalence());
+                        bomTable.setQuantity(thisBomTable.getQuantity());
+                        bomTable.setCombinedPrice(thisBomTable.getCombined_price());
+                        bomTable.setRemark(thisBomTable.getRemark());
+                        bomTable.setDelFlag("0");
+                        bomTable.setCreateTime(date);
+                        bomTable.setUpdateTime(date);
+                    }
+                    bomTableMapper.insertSelective(bomTable);
+                }
             }
         }
     }

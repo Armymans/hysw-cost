@@ -1,7 +1,7 @@
 package net.zlw.cloud.whFinance.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import net.zlw.cloud.excel.model.BomTable;
 
 import java.util.List;
 
@@ -13,18 +13,20 @@ public class BomTableVo {
 
     private String id;
     private String projectId;
-    private String businessCode;
-    private String businessProcess;
-    private String dateOf;
-    private String salesOrganization;
-    private String inventoryOrganization;
-    private String ceaNum;
-    private String acquisitionTypes;
+    private String business_code;
+    private String business_process;
+    private String date_of;
+    private String sales_organization;
+    private String inventory_organization;
+    private String cea_num;
+    private String acquisition_types;
     private String contractor;
-    private String projectCategoriesCoding;
-    private String projectTypes;
-    private String itemCoding;
-    private String projectName;
-    private String acquisitionDepartment;
-    private List<BomTable> bomTables;
+    private String project_categories_coding;
+    private String project_types;
+    private String item_coding;
+    private String project_name;
+    private String acquisition_department;
+
+    @JsonProperty("BomTable")
+    private List<BomTableVo2> BomTable;
 }

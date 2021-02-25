@@ -139,7 +139,7 @@ public class BudgetingController extends BaseController {
         }
 
         PageHelper.startPage(pageBVo.getPageNum(),pageBVo.getPageSize());
-        List<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo, "user319");
+        List<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo, getLoginUser().getId());
 //        PageInfo<BudgetingListVo> list = budgetingService.findAllBudgeting(pageBVo,"user324");
         PageInfo<BudgetingListVo> budgetingListVoPageInfo = new PageInfo<>(list);
         budgetingListVoPageInfo.setTotal(list.size());

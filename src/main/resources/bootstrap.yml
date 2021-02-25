@@ -21,9 +21,9 @@ spring:
   datasource:
     platform: ${datasource.platform}
     #公司环境数据库地址
-    url: jdbc:mysql://222.128.17.92:3306/dev_sscp?useUnicode=true&characterEncoding=utf-8
+    #url: jdbc:mysql://222.128.17.92:3306/dev_sscp?useUnicode=true&characterEncoding=utf-8
     #测试/正式环境数据库地址
-#    url: ${db-url-hysw-znzj}
+    url: ${db-url-hysw-znzj}
     username: admin
     password: admin
     driver-class-name: ${driver-class-name}
