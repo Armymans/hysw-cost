@@ -55,6 +55,9 @@ public class BudgetingListVo {
     //殷丽萍是否退回
     private String yinShow;
 
+    // 编辑权限
+    private String editFlag;
+
 
 
     @Override

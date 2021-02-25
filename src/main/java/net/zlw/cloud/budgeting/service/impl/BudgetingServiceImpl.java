@@ -1300,10 +1300,34 @@ public class BudgetingServiceImpl implements BudgetingService {
         }
         //处理中
         if (pageBVo.getBudgetingStatus().equals("2")){
-            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,id);
-            for (BudgetingListVo budgetingListVo : list1) {
+
+            String loginUserId = id;
+
+            // 编制人及领导，领导只能查看不能进行编辑
+            if (id.equals(whzjm) || id.equals(whzjh)){
+                loginUserId = "";
+            }
+
+            if (id.equals(wjzjh)){
+                loginUserId = "";
+                pageBVo.setDistrict("4");
+            }
+
+            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,loginUserId);
+            for (int i = 0; i < list1.size(); i++) {
+                BudgetingListVo budgetingListVo = list1.get(i);
+
                 String baseId = budgetingListVo.getBaseId();
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+
+                if (id.equals(budgetingListVo.getBudgetingPeople())){
+                    budgetingListVo.setEditFlag("0");
+                }
+
+                if ("吴江".equals(budgetingListVo.getDistrict()) && id.equals(whzjh)){
+                    list1.remove(i);
+                }
+
                 if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
                     if (budgetingListVo.getFounderId().equals(id)){
                         budgetingListVo.setShowWhether("1");
@@ -1312,6 +1336,7 @@ public class BudgetingServiceImpl implements BudgetingService {
                     }
                 }
             }
+
             for (BudgetingListVo budgetingListVo : list1) {
                 MkyUser mkyUser2 = mkyUserMapper.selectByPrimaryKey(budgetingListVo.getBudgetingPeople());
                 if (mkyUser2!=null){

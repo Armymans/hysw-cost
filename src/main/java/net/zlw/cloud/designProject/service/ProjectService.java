@@ -497,6 +497,7 @@ public class ProjectService {
                 }
             }
             PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
+            designInfoPageInfo.setTotal(designInfos.size());
             return designInfoPageInfo;
         }
         //如果为未通过
@@ -647,6 +648,7 @@ public class ProjectService {
                 }
             }
             PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
+            designInfoPageInfo.setTotal(designInfos.size());
             return designInfoPageInfo;
         }
         //如果为已完成
@@ -821,7 +823,7 @@ public class ProjectService {
                     cc.andEqualTo("baseProjectId",designInfo.getId());
                     cc.andEqualTo("status","0");
                     WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
-                    if (wujiangMoneyInfo1!=null){
+                    if (wujiangMoneyInfo1.getContractAmount() != null){
                         designInfo.setContractAmount(wujiangMoneyInfo1.getContractAmount().toString());
                     }
                 }else{
@@ -830,7 +832,7 @@ public class ProjectService {
                     cc.andEqualTo("baseProjectId",designInfo.getId());
                     cc.andEqualTo("status","0");
                     AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
-                    if (anhuiMoneyinfo!=null){
+                    if (anhuiMoneyinfo.getContractAmount()!=null){
                         designInfo.setContractAmount(anhuiMoneyinfo.getContractAmount());
                     }
                 }
