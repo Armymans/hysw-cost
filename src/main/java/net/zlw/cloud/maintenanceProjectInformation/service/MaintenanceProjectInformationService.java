@@ -129,16 +129,11 @@ public class MaintenanceProjectInformationService {
 
         //设置分页助手
         PageHelper.startPage(pageRequest.getPageNum(), pageRequest.getPageSize());
-        //查看当前创建人
-        List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos = maintenanceProjectInformationMapper.selectAllByDelFlag(pageRequest);
+
         //查看当前审核人与当前创建人
         List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos0 = maintenanceProjectInformationMapper.selectAllByDelFlag0(pageRequest);
         //查看所有
         List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos1 = maintenanceProjectInformationMapper.selectAllByDelFlag1(pageRequest);
-        //待确认
-        List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos2 = maintenanceProjectInformationMapper.selectAllByUn(pageRequest);
-        //未通过
-        List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos3 = maintenanceProjectInformationMapper.selectAllByBack(pageRequest);
 
         PageInfo<MaintenanceProjectInformationReturnVo> projectInformationPageInfo = new PageInfo<>();
 
@@ -228,6 +223,9 @@ public class MaintenanceProjectInformationService {
                 projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos1);
                 //待确认
             }else if("4".equals(pageRequest.getType())){
+                //待确认
+                List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos2 = maintenanceProjectInformationMapper.selectAllByUn(pageRequest);
+
                 for (MaintenanceProjectInformationReturnVo vo : maintenanceProjectInformationReturnVos2) {
                     // 编制人
                     MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(vo.getPreparePeople());
@@ -252,6 +250,14 @@ public class MaintenanceProjectInformationService {
                 projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos2);
                 //未通过
             } else if("3".equals(pageRequest.getType())){
+
+                if (userInfoId.equals(whzjm) || userInfoId.equals(whzjh) || userInfoId.equals(wjzjh)){
+                    pageRequest.setUid("");
+                }
+
+                //未通过
+                List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos3 = maintenanceProjectInformationMapper.selectAllByBack(pageRequest);
+
                 for (MaintenanceProjectInformationReturnVo vo : maintenanceProjectInformationReturnVos3) {
                     // 编制人
                     MemberManage memberManage1 = memberManageDao.selectByPrimaryKey(vo.getPreparePeople());
@@ -259,6 +265,7 @@ public class MaintenanceProjectInformationService {
                         vo.setPreparePeople(memberManage1.getMemberName());
                     }
                     if (vo.getFounderId().equals(userInfoId)) {
+                        vo.setEditFlag("0");
                         vo.setFounderId("1");
                     }
 
@@ -269,6 +276,13 @@ public class MaintenanceProjectInformationService {
                 }
                 projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos3);
             } else{
+
+                if (userInfoId.equals(whzjm) || userInfoId.equals(whzjh) || userInfoId.equals(wjzjh)){
+                    pageRequest.setUid("");
+                }
+
+                //查看当前创建人
+                List<MaintenanceProjectInformationReturnVo> maintenanceProjectInformationReturnVos = maintenanceProjectInformationMapper.selectAllByDelFlag(pageRequest);
                 //处理中  所有(根据创建人)
                 for (MaintenanceProjectInformationReturnVo vo : maintenanceProjectInformationReturnVos) {
                     // 审核状态
@@ -292,6 +306,7 @@ public class MaintenanceProjectInformationService {
                         vo.setPreparePeople(memberManage1.getMemberName());
                     }
                     if (vo.getFounderId().equals(userInfoId)) {
+                        vo.setEditFlag("0");
                         vo.setFounderId("1");
                     }
                 }

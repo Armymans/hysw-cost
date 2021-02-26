@@ -919,7 +919,7 @@ public interface BudgetingDao extends Mapper<Budgeting> {
             "bt.del_flag = '0' and " +
             "c.del_flag = '0' and " +
             "v.del_flag = '0' and " +
-            "bt.founder_id = #{id} " +
+            "(bt.founder_id = #{id} OR #{id} = '') " +
             "order by " +
             "b.should_be asc, " +
             "b.create_time desc")

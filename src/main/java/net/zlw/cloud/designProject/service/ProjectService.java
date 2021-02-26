@@ -372,16 +372,12 @@ public class ProjectService {
             if (designInfos != null) {
                 if (designInfos.size() > 0) {
 
-                    for (int i = 0; i < designInfos.size(); i++) {
-                        DesignInfo designInfo = designInfos.get(i);
+                    for (DesignInfo designInfo : designInfos) {
                         if (userId.equals(designInfo.getDesigner())){
                             designInfo.setEditFlag("0");
                         }
 
                         BaseProject baseProject = baseProjectByPrimaryKey(designInfo.getBaseProjectId());
-                        if (userId.equals(whsjh) && "4".equals(baseProject.getDistrict())){
-                            designInfos.remove(i);
-                        }
 
                         //展示设计变更时间 如果为空展示 /
                         if (designInfo.getDesignChangeTime() == null || designInfo.getDesignChangeTime().equals("")) {
@@ -513,16 +509,13 @@ public class ProjectService {
 
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             if (designInfos.size() > 0) {
-                for (int i = 0; i < designInfos.size(); i++) {
-                    DesignInfo designInfo = designInfos.get(i);
+                for (DesignInfo designInfo : designInfos) {
                     if (userId.equals(designInfo.getDesigner())){
                         designInfo.setEditFlag("0");
                     }
 
                     BaseProject baseProject = baseProjectByPrimaryKey(designInfo.getBaseProjectId());
-                    if (userId.equals(whsjh) && "4".equals(baseProject.getDistrict())){
-                        designInfos.remove(i);
-                    }
+
                     // 建设单位
                     if (!"".equals(designInfo.getConstructionUnit()) && designInfo.getConstructionUnit() != null){
                         designInfo.setConstructionUnit(designInfo.getConstructionUnit());

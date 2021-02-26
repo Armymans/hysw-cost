@@ -47,6 +47,7 @@ public class MaintenanceProjectInformationReturnVo {
     //殷丽萍显隐
     private String yinShow;
 
+    private String editFlag;
 
     private List<AuditInfo> auditInfoList;
 }

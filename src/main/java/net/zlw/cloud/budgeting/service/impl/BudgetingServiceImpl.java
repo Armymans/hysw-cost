@@ -1304,13 +1304,8 @@ public class BudgetingServiceImpl implements BudgetingService {
             String loginUserId = id;
 
             // 编制人及领导，领导只能查看不能进行编辑
-            if (id.equals(whzjm) || id.equals(whzjh)){
+            if (id.equals(whzjm) || id.equals(whzjh) || id.equals(wjzjh)){
                 loginUserId = "";
-            }
-
-            if (id.equals(wjzjh)){
-                loginUserId = "";
-                pageBVo.setDistrict("4");
             }
 
             List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,loginUserId);
@@ -1323,10 +1318,6 @@ public class BudgetingServiceImpl implements BudgetingService {
                 String s = budgetingListVo.getBudgetingPeople();
                 if (id.equals(s)){
                     budgetingListVo.setEditFlag("0");
-                }
-
-                if ("吴江".equals(budgetingListVo.getDistrict()) && id.equals(whzjh)){
-                    list1.remove(i);
                 }
 
                 if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
@@ -1357,9 +1348,22 @@ public class BudgetingServiceImpl implements BudgetingService {
         //未通过
         if (pageBVo.getBudgetingStatus().equals("3")){
 
+            String loginUserId = id;
+
+            // 编制人及领导，领导只能查看不能进行编辑
+            if (id.equals(whzjm) || id.equals(whzjh) || id.equals(wjzjh)){
+                loginUserId = "";
+            }
+
 //            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,id);
-            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingUnsanctioned(pageBVo,id);
+            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingUnsanctioned(pageBVo,loginUserId);
             for (BudgetingListVo budgetingListVo : list1) {
+
+                String s = budgetingListVo.getBudgetingPeople();
+                if (id.equals(s)){
+                    budgetingListVo.setEditFlag("0");
+                }
+
                 String baseId = budgetingListVo.getBaseId();
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
                 if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
