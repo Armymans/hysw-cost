@@ -26,6 +26,7 @@ public class BomTableVo {
     private String item_coding;
     private String project_name;
     private String acquisition_department;
+    private String status;
 
     @JsonProperty("BomTable")
     private List<BomTableVo2> BomTable;
