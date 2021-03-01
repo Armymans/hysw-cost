@@ -391,7 +391,9 @@ public class MaintenanceProjectInformationService {
                 ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(maintenanceProjectInformation.getConstructionUnitId());
 //                maintenanceProjectInformation.setConstructionUnitManagement(constructionUnitManagement);
                 //获取施工单位名字
-                maintenanceProjectInformation.setConstructionUnitName(constructionUnitManagement.getConstructionUnitName());
+                if (null != constructionUnitManagement.getConstructionUnitName()) {
+                    maintenanceProjectInformation.setConstructionUnitName(constructionUnitManagement.getConstructionUnitName());
+                }
             }
 
 

@@ -1077,7 +1077,7 @@ public class ProjectSumService {
         }
     }
 
-    public Double VisaChangeCount(CostVo2 costVo2){
+    public Integer VisaChangeCount(CostVo2 costVo2){
         return projectMapper.VisaChangeCount(costVo2);
     }
 
@@ -1314,6 +1314,9 @@ public class ProjectSumService {
             Budgeting budgeting = budgetingMapper.selectOneByExample(example);
             if(budgeting!=null){
                 designInfo.setAmountCost(budgeting.getAmountCost()+"");
+                if(null == designInfo.getAmountCost()){
+                    designInfo.setAmountCost("0");
+                }
             }else{
                 designInfo.setAmountCost("0");
             }

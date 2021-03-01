@@ -980,7 +980,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "s2.status = '6'"
 
     )
-    Double VisaChangeCount(CostVo2 costVo2);
+    Integer VisaChangeCount(CostVo2 costVo2);
 
     @Select(
             "SELECT " +

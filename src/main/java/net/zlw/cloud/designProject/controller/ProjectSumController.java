@@ -955,13 +955,22 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/VisaChangeMoneyAndCount",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> VisaChangeMoneyAndCount(CostVo2 costVo2){
-        Double VisaChangeCount = projectSumService.VisaChangeCount(costVo2);
+        Integer VisaChangeCount = projectSumService.VisaChangeCount(costVo2);
         Double VisaChangeMoney = projectSumService.VisaChangeMoney(costVo2);
-        ConcurrentHashMap<String, Double> map = new ConcurrentHashMap<>();
-        map.put("VisaChangeCount",VisaChangeCount);
-        map.put("VisaChangeMoney",VisaChangeMoney);
+        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+        if (null == VisaChangeCount) {
+            map.put("VisaChangeCount", 0);
+        } else {
+            map.put("VisaChangeCount", VisaChangeCount);
+        }
+        if (null == VisaChangeMoney) {
+            map.put("VisaChangeMoney", 0.0);
+        } else {
+            map.put("VisaChangeMoney", VisaChangeMoney);
+        }
         return RestUtil.success(map);
     }
+
 
     /**
      * 项目结算分析
