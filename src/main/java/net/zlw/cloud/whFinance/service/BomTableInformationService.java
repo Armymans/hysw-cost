@@ -117,38 +117,54 @@ public class BomTableInformationService {
                     bomTableImfomationAllDao.insertSelective(bomTableInfomationAll);
                 }
 
-                /*//物料基本信息表所有的外键
-                List<BomTableInfomation> id = bomTableImfomationMapper.findId();
-                //判断外键是否重复重复则更新
-                for (BomTableInfomation thisId : id) {
-                    if (bomTableVo.getBusiness_code().equals(thisId.getBusinessCode())){
-                        bomTableInfomation1.setId(thisId.getId());
-                        bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProject_categories_coding());
-                        bomTableInfomation1.setDateOf(bomTableVo.getDate_of());
-                        bomTableInfomation1.setSalesOrganization(bomTableVo.getSales_organization());
-                        bomTableInfomation1.setInventoryOrganization(bomTableVo.getInventory_organization());
-                        bomTableInfomation1.setCeaNum(bomTableVo.getCea_num());
-                        bomTableInfomation1.setAcquisitionTypes(bomTableVo.getAcquisition_types());
-                        bomTableInfomation1.setContractor(bomTableVo.getContractor());
-                        bomTableInfomation1.setProjectCategoriesCoding(bomTableVo.getProject_categories_coding());
-                        bomTableInfomation1.setProjectTypes(bomTableVo.getProject_types());
-                        bomTableInfomation1.setItemCoding(bomTableVo.getItem_coding());
-                        bomTableInfomation1.setProjectName(bomTableVo.getProject_name());
-                        bomTableInfomation1.setAcquisitionDepartment(bomTableVo.getAcquisition_department());
-                        bomTableInfomation1.setDelFlag(bomTableVo.getStatus());
-                        bomTableInfomation1.setCreateTime(date);
-                        bomTableInfomation1.setUpdateTime(date);
-                        bomTableImfomationMapper.updateByPrimaryKeySelective(bomTableInfomation1);
-                    }
-                }*/
-
                 //物料信息
                 List<BomTableVo2> bomTables = bomTableVo.getBomTable();
                 BomTable bomTable = new BomTable();
                 for (BomTableVo2 thisBomTable : bomTables) {
                     if (thisBomTable.getId() != null){
-                        BomTable bomTable1 = bomTableMapper.selectByPrimaryKey(thisBomTable.getId());
-                        if (bomTable1 != null){
+                        Example example = new Example(BomTable.class);
+                        example.createCriteria().andEqualTo("bomTableInfomationId", thisBomTable.getBomTableInfomationId());
+                        List<BomTable> bomTables1 = bomTableMapper.selectByExample(example);
+                        // 如果数据库有该订单，则判断是否存在该物料
+                        if (bomTables1.size() > 0){
+                            BomTable bomTable1 = bomTableMapper.selectByPrimaryKey(thisBomTable.getId());
+                            if (bomTable1 != null){  // 存在进行修改
+                                bomTable.setId(thisBomTable.getId());
+                                bomTable.setMaterialCode(thisBomTable.getMaterial_code());
+                                bomTable.setItemName(thisBomTable.getItem_name());
+                                bomTable.setSpecificationsModels(thisBomTable.getSpecifications_models());
+                                bomTable.setUnit(thisBomTable.getUnit());
+                                bomTable.setUnivalence(thisBomTable.getUnivalence());
+                                bomTable.setQuantity(thisBomTable.getQuantity());
+                                bomTable.setCombinedPrice(thisBomTable.getCombined_price());
+                                bomTable.setRemark(thisBomTable.getRemark());
+                                bomTable.setDelFlag("0");
+                                bomTable.setUpdateTime(date);
+                                bomTableMapper.updateByPrimaryKeySelective(bomTable);
+                            } else { // 不存在进行插入
+                                if (StringUtils.isEmpty(thisBomTable.getId())){
+                                    bomTable.setId(UUID.randomUUID().toString().replace("-", ""));
+                                }
+                                bomTable.setId(thisBomTable.getId());
+                                bomTable.setMaterialCode(thisBomTable.getMaterial_code());
+                                bomTable.setItemName(thisBomTable.getItem_name());
+                                bomTable.setSpecificationsModels(thisBomTable.getSpecifications_models());
+                                bomTable.setUnit(thisBomTable.getUnit());
+                                bomTable.setUnivalence(thisBomTable.getUnivalence());
+                                bomTable.setQuantity(thisBomTable.getQuantity());
+                                bomTable.setCombinedPrice(thisBomTable.getCombined_price());
+                                bomTable.setBomTableInfomationId(bomTableInfomation1.getBusinessCode());
+                                bomTable.setRemark(thisBomTable.getRemark());
+                                bomTable.setDelFlag("0");
+                                bomTable.setCreateTime(date);
+                                bomTable.setUpdateTime(date);
+                                bomTableMapper.insertSelective(bomTable);
+                            }
+                        } else {    // 没有直接插入物料清单
+                            BomTable bomTable1 = bomTableMapper.selectByPrimaryKey(thisBomTable.getId());
+                            if (bomTable1 != null || StringUtils.isEmpty(thisBomTable.getId())){
+                                bomTable.setId(UUID.randomUUID().toString().replace("-", ""));
+                            }
                             bomTable.setId(thisBomTable.getId());
                             bomTable.setMaterialCode(thisBomTable.getMaterial_code());
                             bomTable.setItemName(thisBomTable.getItem_name());
@@ -157,20 +173,7 @@ public class BomTableInformationService {
                             bomTable.setUnivalence(thisBomTable.getUnivalence());
                             bomTable.setQuantity(thisBomTable.getQuantity());
                             bomTable.setCombinedPrice(thisBomTable.getCombined_price());
-                            bomTable.setRemark(thisBomTable.getRemark());
-                            bomTable.setDelFlag("0");
-                            bomTable.setCreateTime(date);
-                            bomTable.setUpdateTime(date);
-                            bomTableMapper.updateByPrimaryKeySelective(bomTable);
-                        } else {
-                            bomTable.setId(thisBomTable.getId());
-                            bomTable.setMaterialCode(thisBomTable.getMaterial_code());
-                            bomTable.setItemName(thisBomTable.getItem_name());
-                            bomTable.setSpecificationsModels(thisBomTable.getSpecifications_models());
-                            bomTable.setUnit(thisBomTable.getUnit());
-                            bomTable.setUnivalence(thisBomTable.getUnivalence());
-                            bomTable.setQuantity(thisBomTable.getQuantity());
-                            bomTable.setCombinedPrice(thisBomTable.getCombined_price());
+                            bomTable.setBomTableInfomationId(bomTableInfomation1.getBusinessCode());
                             bomTable.setRemark(thisBomTable.getRemark());
                             bomTable.setDelFlag("0");
                             bomTable.setCreateTime(date);
@@ -178,7 +181,6 @@ public class BomTableInformationService {
                             bomTableMapper.insertSelective(bomTable);
                         }
                     }
-
                 }
             }
         }
