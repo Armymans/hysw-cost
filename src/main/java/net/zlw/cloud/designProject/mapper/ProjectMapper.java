@@ -1131,6 +1131,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and  " +
                     "(create_time<= #{endTime} or  #{endTime} = '')  " +
                     "and " +
+                    "bp.desgin_status != ''  " +
+                    "and " +
                     "del_flag = '0' " +
                     "group by year(bp.create_time), " +
                     "month(bp.create_time) " +

@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
@@ -981,6 +979,8 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> projectSettlementCensus(CostVo2 costVo2){
 
         List<OneCensus4> oneCensus4s = projectSumService.projectSettlementCensus(costVo2);
+        String year = costVo2.getStartTime().substring(0,4);
+        String month = costVo2.getStartTime().substring(5,7);
         String json =
                 "[{" +
                         "\"companyName\": \"上家结算送审\"," +
@@ -994,7 +994,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+year +"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1014,7 +1014,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+year +"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1034,7 +1034,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+year +"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1054,7 +1054,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+year +"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
