@@ -30,6 +30,8 @@ public class Materie {
     private String delFlag;
     @Column(name = "area")
     private String area;
+    @Column(name = "status")
+    private String status;
 
     public String getArea() {
         return area;

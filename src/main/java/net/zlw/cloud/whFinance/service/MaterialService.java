@@ -7,7 +7,6 @@ import net.zlw.cloud.whFinance.domain.Materie;
 import net.zlw.cloud.whFinance.domain.vo.MaterieVo;
 import net.zlw.cloud.whFinance.domain.vo.MateriesVo;
 import net.zlw.cloud.whFinance.mapper.MaterialMapper;
-import org.aspectj.weaver.ast.Var;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -42,6 +41,11 @@ public class MaterialService {
                     int s = Integer.parseInt(thisMateriers.getStatus()) - 1;
                     materie1.setDelFlag(s+"");
                     materie1.setUpdateTime(simpleDateFormat.format(new Date()));
+                    materie1.setItemName(thisMateriers.getItem_name());
+                    materie1.setRemark(thisMateriers.getRemark());
+                    materie1.setSpecificationsModels(thisMateriers.getSpecifications_models());
+                    materie1.setUnit(thisMateriers.getUnit());
+                    materie1.setStatus(thisMateriers.getStatus());
                     materialMapper.updateByPrimaryKeySelective(materie1);
                 }else {
                     materie.setId(UUID.randomUUID().toString().replace("-", ""));
@@ -52,6 +56,7 @@ public class MaterialService {
                     materie.setRemark(thisMateriers.getRemark());
                     materie.setSpecificationsModels(thisMateriers.getSpecifications_models());
                     materie.setUnit(thisMateriers.getUnit());
+                    materie.setStatus(thisMateriers.getStatus());
                     int s = Integer.parseInt(thisMateriers.getStatus()) - 1;
                     materie.setDelFlag(s + "");
                     materialMapper.insertSelective(materie);

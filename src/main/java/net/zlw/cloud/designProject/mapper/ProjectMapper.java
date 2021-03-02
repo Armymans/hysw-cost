@@ -637,7 +637,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     @Select(
             "SELECT " +
                     "IFNULL(YEAR(s2.create_time),'-') yeartime, " +
-                    "IFNULL(SUM(CASE WHEN design_category = '2' THEN out_money END),0) municipalPipeline, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '1' THEN out_money END),0) municipalPipeline, " +
                     "IFNULL(SUM(CASE WHEN design_category = '2' THEN out_money END),0) networkReconstruction, " +
                     "IFNULL(SUM(CASE WHEN design_category = '3' THEN out_money END),0) newCommunity, " +
                     "IFNULL(SUM(CASE WHEN design_category = '4' THEN out_money END),0) secondaryWater, " +
@@ -665,7 +665,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
     @Select(
             "SELECT " +
                     "IFNULL(YEAR(s2.create_time),'-') yeartime, " +
-                    "IFNULL(SUM(CASE WHEN design_category = '2' THEN accrued_amount END),0) municipalPipeline, " +
+                    "IFNULL(SUM(CASE WHEN design_category = '1' THEN accrued_amount END),0) municipalPipeline, " +
                     "IFNULL(SUM(CASE WHEN design_category = '2' THEN accrued_amount END),0) networkReconstruction, " +
                     "IFNULL(SUM(CASE WHEN design_category = '3' THEN accrued_amount END),0) newCommunity, " +
                     "IFNULL(SUM(CASE WHEN design_category = '4' THEN accrued_amount END),0) secondaryWater, " +
