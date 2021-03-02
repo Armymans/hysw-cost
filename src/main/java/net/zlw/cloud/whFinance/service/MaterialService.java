@@ -79,6 +79,11 @@ public class MaterialService {
                     int s = Integer.parseInt(thisMateriers.getStatus()) - 1;
                     materie1.setDelFlag(s+"");
                     materie1.setUpdateTime(simpleDateFormat.format(new Date()));
+                    materie1.setItemName(thisMateriers.getItem_name());
+                    materie1.setRemark(thisMateriers.getRemark());
+                    materie1.setSpecificationsModels(thisMateriers.getSpecifications_models());
+                    materie1.setUnit(thisMateriers.getUnit());
+                    materie1.setStatus(thisMateriers.getStatus());
                     materialMapper.updateByPrimaryKeySelective(materie1);
                 }else{
                     materie.setId(UUID.randomUUID().toString().replace("-",""));
@@ -91,6 +96,7 @@ public class MaterialService {
                     materie.setUnit(thisMateriers.getUnit());
                     int s = Integer.parseInt(thisMateriers.getStatus()) - 1;
                     materie.setDelFlag(s+"");
+                    materie.setStatus(thisMateriers.getStatus());
                     materialMapper.insertSelective(materie);
                 }
             }
