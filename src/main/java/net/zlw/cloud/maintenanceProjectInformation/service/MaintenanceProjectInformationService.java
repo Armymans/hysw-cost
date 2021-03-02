@@ -400,7 +400,7 @@ public class MaintenanceProjectInformationService {
             if (maintenanceProjectInformation.getPreparePeople() != null && (!"".equals(maintenanceProjectInformation.getPreparePeople()))) {
                 MemberManage memberManage = memberManageDao.selectByIdAndStatus(maintenanceProjectInformation.getPreparePeople());
                 if (memberManage != null) {
-                    maintenanceProjectInformation.setMemberName(memberManage.getMemberName());
+                    maintenanceProjectInformation.setPreparePeople(memberManage.getMemberName());
                 }
             }
 

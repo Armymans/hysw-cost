@@ -596,7 +596,7 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "and " +
                     "(s1.district = #{district} or #{district} = '') " +
                     "and " +
-                    "s2.blueprint_start_time >= #{startTime} " +
+                    "(s2.blueprint_start_time >= #{startTime} or #{startTime} = '')  " +
                     "and " +
                     "(s2.blueprint_start_time <= #{endTime} or #{endTime} = '') " +
                     "and " +

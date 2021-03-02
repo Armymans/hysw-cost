@@ -50,7 +50,7 @@ public class MaintenanceProjectInformationSumController extends BaseController {
      * @Description //统计分析 列表
      * @Date 17:53 2020/10/8
      **/
-    @RequestMapping(value = "/maintenanceProjectInformationSum/list",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    @RequestMapping(value = "/maintenanceProjectInformationSum/list",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> findAllMaintenanceProjectInformation(PageRequest pageRequest){
         PageInfo<MaintenanceProjectInformation> allMaintenanceProjectInformation = maintenanceProjectInformationService.list(pageRequest, getLoginUser());
         return RestUtil.page(allMaintenanceProjectInformation);
