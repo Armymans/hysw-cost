@@ -826,7 +826,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     " and " +
                     "( " +
                     "(s1.cea_num like concat('%',#{keyword},'%') or #{keyword} = '') " +
-                    "(s1.project_name like concat('%',#{keyword},'%') or #{keyword} = '') " +
+                    "OR (s1.project_name like concat('%',#{keyword},'%') or #{keyword} = '') " +
                     ") " +
                     " GROUP BY " +
                     "  s1.id " +
@@ -861,7 +861,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     " and " +
                     "( " +
                     "(s1.cea_num like concat('%',#{keyword},'%') or #{keyword} = '') " +
-                    "(s1.project_name like concat('%',#{keyword},'%') or #{keyword} = '') " +
+                    "OR (s1.project_name like concat('%',#{keyword},'%') or #{keyword} = '') " +
                     ") " +
                     " GROUP BY " +
                     "  s1.id " +
@@ -896,7 +896,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     " and " +
                     "( " +
                     "(s1.cea_num like concat('%',#{keyword},'%') or #{keyword} = '') " +
-                    "(s1.project_name like concat('%',#{keyword},'%') or #{keyword} = '') " +
+                    "OR (s1.project_name like concat('%',#{keyword},'%') or #{keyword} = '') " +
                     ") " +
                     " GROUP BY " +
                     "  s1.id " +
