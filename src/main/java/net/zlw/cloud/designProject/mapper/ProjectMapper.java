@@ -933,8 +933,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "(s1.create_time <= #{endTime} or #{endTime} = '')" +
                     "and " +
                     "( " +
-                    "cea_num like  CONCAT('%',#{keyword},'%')  or " +
-                    "project_name  like  CONCAT('%',#{keyword},'%')   " +
+                    "(cea_num like  CONCAT('%',#{keyword},'%')  or #{keyword} = '') " +
+                    "(project_name  like  CONCAT('%',#{keyword},'%') or #{keyword} = '') " +
                     ")"
     )
     List<BaseProject> BaseProjectInfoCensus(CostVo2 costVo2);

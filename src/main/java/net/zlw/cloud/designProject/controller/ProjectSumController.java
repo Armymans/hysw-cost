@@ -74,10 +74,11 @@ public class ProjectSumController extends BaseController {
         Integer integer = projectSumService.AllprojectCount(costVo2);
         Integer integer1 = projectSumService.withAuditCount(costVo2);
         Integer integer2 = projectSumService.conductCount(costVo2);
-        Integer integer3 = projectSumService.completeCount(costVo2);
+        Integer integer3 = integer - integer2;
 
         ProjectNumber projectNumber = new ProjectNumber();
         projectNumber.setTotal(integer);
+        projectNumber.setWithAuditCount(integer1);
         projectNumber.setConductCount(integer2);
         projectNumber.setCompleteCount(integer3);
 
