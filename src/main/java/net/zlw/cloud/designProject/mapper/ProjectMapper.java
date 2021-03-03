@@ -611,6 +611,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
             "    where " +
             "            (district = #{district} or #{district} = '') " +
             "    and " +
+            "    s1.del_flag = 0 " +
+            "    and " +
             "    create_time >= #{startTime} " +
             "    and " +
             "            (create_time <= #{endTime} or #{endTime} = '') " +
