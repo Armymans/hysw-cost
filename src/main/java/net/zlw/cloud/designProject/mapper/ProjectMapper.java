@@ -1439,7 +1439,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "FROM " +
                     "base_project  " +
                     "WHERE " +
-                    "(district = #{district} or #{district} = '')"
+                    "(district = #{district} or #{district} = '') " +
+                    "and " +
+                    "del_flag = '0' "
     )
     OneCensus6 costTaskTotal(CostVo2 costVo2);
 
@@ -1453,7 +1455,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "FROM " +
                     "base_project " +
                     "where " +
-                    "(district = #{district} or #{district} = '')"
+                    "(district = #{district} or #{district} = '') " +
+                    "and " +
+                    "del_flag = '0' "
     )
     OneCensus6 costTaskReviewed(CostVo2 costVo2);
 
@@ -1464,7 +1468,10 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "ifnull(sum(visa_status='2'),0) visaStatus,  " +
                     "ifnull(sum(settle_accounts_status='2'),0) settleAccountsStatus  " +
                     "FROM  " +
-                    "base_project"
+                    "base_project " +
+                    "where " +
+                    "del_flag = '0' "
+
     )
     OneCensus6 costTaskHandle(CostVo2 costVo2);
 
@@ -1478,7 +1485,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "FROM " +
                     "base_project " +
                     "where " +
-                    "(district = #{district} or #{district} = '')"
+                    "(district = #{district} or #{district} = '') " +
+                    "and " +
+                    "del_flag = '0' "
     )
     OneCensus6 costTaskComple(CostVo2 costVo2);
 

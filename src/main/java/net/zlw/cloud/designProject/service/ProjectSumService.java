@@ -1877,7 +1877,7 @@ public class ProjectSumService {
             OneCensus7 oneCensus7 = projectMapper.costTaskSummary(costVo2);
             return oneCensus7;
         }else{
-            CostVo2 costVo21 = this.NowMonth(costVo2);
+            CostVo2 costVo21 = this.NowYear(costVo2);
             OneCensus7 oneCensus7 = projectMapper.costTaskSummary(costVo21);
             return oneCensus7;
         }
