@@ -99,6 +99,7 @@ public class JbDesignTaskService {
                 designInfo.setFounderId(designVo.getFounder_id());
                 designInfo.setCreateTime(designVo.getCreate_time());
                 designInfo.setRemark(designVo.getRemarks());
+                designInfo.setOutsource("1");
                 designInfo.setStatus("0");
                 designInfoMapper.insertSelective(designInfo);
             }
@@ -203,6 +204,7 @@ public class JbDesignTaskService {
                 designInfo.setFounderId(designVo.getFounder_id());
                 designInfo.setCreateTime(designVo.getCreate_time());
                 designInfo.setRemark(designVo.getRemarks());
+                designInfo.setOutsource("1");
                 designInfo.setStatus("0");
                 designInfoMapper.insertSelective(designInfo);
             }

@@ -112,6 +112,7 @@ public class WjEngineeringService {
             designInfo.setDesignUnit(designVo.getDesign_util());
             designInfo.setAmountCost(designVo.getSingle_design_cost());
             designInfo.setBaseProjectId(project.getId());
+            designInfo.setOutsource("1");
             designInfo.setStatus("0");
             designInfo.setCreateTime(data);
             designInfoMapper.insertSelective(designInfo);
@@ -223,6 +224,7 @@ public class WjEngineeringService {
                 designInfo.setDesignUnit(designVo.getDesign_util());
                 designInfo.setAmountCost(designVo.getSingle_design_cost());
                 designInfo.setBaseProjectId(project.getId());
+                designInfo.setOutsource("1");
                 designInfo.setStatus("0");
                 designInfo.setCreateTime(data);
                 designInfoMapper.insertSelective(designInfo);
