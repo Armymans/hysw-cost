@@ -825,8 +825,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "  AND (s1.create_time <= #{endTime} or #{endTime} = '')  " +
                     " and " +
                     "( " +
-                    "s1.cea_num like concat('%',#{keyword},'%') or  " +
-                    "s1.project_name like concat('%',#{keyword},'%') " +
+                    "(s1.cea_num like concat('%',#{keyword},'%') or #{keyword} = '') " +
+                    "(s1.project_name like concat('%',#{keyword},'%') or #{keyword} = '') " +
                     ") " +
                     " GROUP BY " +
                     "  s1.id " +
@@ -860,8 +860,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "  AND (s1.create_time <= #{endTime} or #{endTime} = '')  " +
                     " and " +
                     "( " +
-                    "s1.cea_num like concat('%',#{keyword},'%') or  " +
-                    "s1.project_name like concat('%',#{keyword},'%') " +
+                    "(s1.cea_num like concat('%',#{keyword},'%') or #{keyword} = '') " +
+                    "(s1.project_name like concat('%',#{keyword},'%') or #{keyword} = '') " +
                     ") " +
                     " GROUP BY " +
                     "  s1.id " +
@@ -895,8 +895,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "  AND (s1.create_time <= #{endTime} or #{endTime} = '')  " +
                     " and " +
                     "( " +
-                    "s1.cea_num like concat('%',#{keyword},'%') or  " +
-                    "s1.project_name like concat('%',#{keyword},'%') " +
+                    "(s1.cea_num like concat('%',#{keyword},'%') or #{keyword} = '') " +
+                    "(s1.project_name like concat('%',#{keyword},'%') or #{keyword} = '') " +
                     ") " +
                     " GROUP BY " +
                     "  s1.id " +
