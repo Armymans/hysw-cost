@@ -1162,10 +1162,10 @@ public interface ProjectMapper extends Mapper<BaseProject> {
             "SELECT " +
                     "YEAR(s1.create_time) yeartime, " +
                     "MONTH(s1.create_time) monthtime, " +
-                    "SUM(IFNULL(s2.review_number,0)) reviewNumber, " +
+                    "FLOOR(SUM(IFNULL(s2.review_number,0))/2) as reviewNumber, " +
                     "SUM(IFNULL(s4.sumbit_money,0)) sumbitMoney, " +
-                    "SUM(IFNULL(s3.authorized_number,0)) authorizedNumber, " +
-                    "SUM(IFNULL(s3.subtract_the_number,0)) subtractTheNumber " +
+                    "FLOOR(SUM(IFNULL(s3.authorized_number,0))/2) authorizedNumber, " +
+                    "FLOOR(SUM(IFNULL(s3.subtract_the_number,0))/2) subtractTheNumber " +
                     "FROM " +
                     "base_project s1 inner JOIN last_settlement_review  s2 ON s1.id = s2.base_project_id " +
                     "inner JOIN settlement_audit_information s3 ON s1.id = s3.base_project_id  " +

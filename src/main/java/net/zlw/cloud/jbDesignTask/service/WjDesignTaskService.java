@@ -114,6 +114,7 @@ public class WjDesignTaskService {
                 designInfo.setId(UUID.randomUUID().toString().replace("-",""));
                 designInfo.setCreateTime(data);
                 designInfo.setDesigner(wjDesignVoF.getAccount());
+                designInfo.setOutsource("1");
                 designInfo.setStatus("0");
                 designInfo.setBaseProjectId(project.getId());
                 designInfo.setFounderId(wjDesignVoF.getAccount());

@@ -136,6 +136,7 @@ public class DesinTaskService {
                 designInfo.setNotesDrawingTime(designVo.getNotes_drawing_time());
                 designInfo.setBlueprintCountersignTime(designVo.getBlueprint_countersign_time());
                 designInfo.setBlueprintStartTime(designVo.getBlueprint_start_time());
+                designInfo.setOutsource("1");
                 designInfo.setStatus("0");
                 designInfo.setCreateTime(data);
                 designInfo.setUpdateTime(data);

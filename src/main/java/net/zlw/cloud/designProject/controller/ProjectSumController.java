@@ -1648,6 +1648,8 @@ public class ProjectSumController extends BaseController {
             costVo2.setId("user333");
         }
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsOneCensus(costVo2);
+        String year = costVo2.getStartTime().substring(0,4);
+        String month = costVo2.getStartTime().substring(5,7);
         String json =
                 "[{" +
                         "\"companyName\": \"月度绩效\"," +
@@ -1655,14 +1657,14 @@ public class ProjectSumController extends BaseController {
         if(oneCensus6s.size()>0){
             for (OneCensus6 oneCensus6 : oneCensus6s) {
                     json +=
-                            "{\"time\": \""+oneCensus6.getYearTime()+"-"+oneCensus6.getMonthTime()+"\"," +
-                                    "\"truckAmmount\": \""+oneCensus6.getDesginAchievements()+"\"" +
-                                    "},";
+                        "{\"time\": \""+oneCensus6.getYearTime()+"-"+oneCensus6.getMonthTime()+"\"," +
+                                "\"truckAmmount\": \""+oneCensus6.getDesginAchievements()+"\"" +
+                                "},";
 
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+year +"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }

@@ -103,7 +103,8 @@ public class MaintenanceProjectInformationSumController extends BaseController {
     @RequestMapping(value = "/maintenanceProjectInformationSum/statisticalFigure",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> statisticalFigure(String projectAddress,String startDate,String endDate){
         List<StatisticalFigureVo> allMaintenanceProjectInformation = maintenanceProjectInformationService.statisticalFigure(projectAddress,startDate,endDate, getLoginUser());
-
+        String year = startDate.substring(0,4);
+        String month = startDate.substring(5,7);
         String censusList = "[{\"companyName\":\"道路恢复工程\"," +
                 "\"imageAmmount\": [";
         if(allMaintenanceProjectInformation.size()>0){
@@ -114,7 +115,10 @@ public class MaintenanceProjectInformationSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList += "{}";
+           // censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList +=
@@ -129,7 +133,10 @@ public class MaintenanceProjectInformationSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList += "{}";
+            //censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList +=
@@ -145,7 +152,10 @@ public class MaintenanceProjectInformationSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList += "{}";
+          // censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
 
@@ -162,7 +172,10 @@ public class MaintenanceProjectInformationSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList += "{}";
+           // censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
 
@@ -178,7 +191,10 @@ public class MaintenanceProjectInformationSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList += "{}";
+           // censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList +=
@@ -193,7 +209,10 @@ public class MaintenanceProjectInformationSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else {
-            censusList += "{}";
+           // censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList +=
@@ -208,7 +227,10 @@ public class MaintenanceProjectInformationSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else {
-            censusList += "{}";
+           // censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
 
@@ -224,7 +246,10 @@ public class MaintenanceProjectInformationSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList += "{}";
+           // censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
         censusList +=
@@ -239,7 +264,10 @@ public class MaintenanceProjectInformationSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList += "{}";
+          //  censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
 
 
@@ -255,7 +283,10 @@ public class MaintenanceProjectInformationSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList += "{}";
+           // censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
         }
         censusList +=  "]}]";
 
