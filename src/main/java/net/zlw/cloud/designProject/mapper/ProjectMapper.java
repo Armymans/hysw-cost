@@ -457,13 +457,15 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "WHERE " +
                     "s1.id = s2.building_project_id " +
                     "and " +
+                    "s1.del_flag = '0' " +
+                    "and " +
                     "s1.id = #{id}"
     )
     String projectCount(@Param("id") String id);
 
 
     @Select(
-            "SELECT count(*) total FROM base_project"
+            "SELECT count(*) total FROM base_project where del_flag = '0'"
     )
     CostVo3 AllprojectCount1(CostVo2 costVo2);
 
@@ -478,6 +480,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "from " +
                     "base_project " +
                     "where  " +
+                    "del_flag = '0' " +
+                    "and " +
                     "(district = #{district} or #{district} = '')"
     )
     CostVo3 AllprojectCount(CostVo2 costVo2);
@@ -493,6 +497,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "from  " +
                     "base_project   " +
                     "where  " +
+                    "del_flag = '0' " +
+                    "and " +
                     "(district = #{district} or #{district} = '')"
     )
     CostVo3 withAuditCount(CostVo2 costVo2);
@@ -509,12 +515,19 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "from  " +
                     "base_project  " +
                     "where  " +
+                    "del_flag = '0' " +
+                    "and " +
                     "(district = #{district} or #{district} = '')"
     )
     CostVo3 conductCount(CostVo2 costVo2);
 
     @Select(
-            "SELECT count(*) total FROM `base_project` where settle_accounts_status is null or settle_accounts_status !=5"
+            "SELECT count(*) total " +
+                    "FROM `base_project` " +
+                    "where (settle_accounts_status is null " +
+                    "or settle_accounts_status !=5) " +
+                    "and " +
+                    "del_flag = '0' "
 
     )
     CostVo3 conductCount1(CostVo2 costVo2);
@@ -530,7 +543,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "from  " +
                     "base_project  " +
                     "where  " +
-                    "(district = #{district} or #{district} = '')"
+                    "(district = #{district} or #{district} = '')" +
+                    "and " +
+                    "del_flag = '0' "
     )
     CostVo3 completeCount(CostVo2 costVo2);
 
