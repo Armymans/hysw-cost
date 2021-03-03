@@ -163,7 +163,7 @@ public class ProjectService {
         List<DesignInfo> designInfos = new ArrayList<>();
 
         String userId = loginUser.getId();
-        //String userId = "user321";
+        //String userId = "user309";
 
         //前台获取的登录信息
         //如果设计状态为'未审核' 则展示当前用户需要审核的信息
@@ -816,7 +816,7 @@ public class ProjectService {
                     cc.andEqualTo("baseProjectId",designInfo.getId());
                     cc.andEqualTo("status","0");
                     WujiangMoneyInfo wujiangMoneyInfo1 = wujiangMoneyInfoMapper.selectOneByExample(example);
-                    if (wujiangMoneyInfo1.getContractAmount() != null){
+                    if (wujiangMoneyInfo1 != null && wujiangMoneyInfo1.getContractAmount() != null){
                         designInfo.setContractAmount(wujiangMoneyInfo1.getContractAmount().toString());
                     }
                 }else{
@@ -825,7 +825,7 @@ public class ProjectService {
                     cc.andEqualTo("baseProjectId",designInfo.getId());
                     cc.andEqualTo("status","0");
                     AnhuiMoneyinfo anhuiMoneyinfo = anhuiMoneyinfoMapper.selectOneByExample(example);
-                    if (anhuiMoneyinfo.getContractAmount()!=null){
+                    if (anhuiMoneyinfo != null && anhuiMoneyinfo.getContractAmount()!=null){
                         designInfo.setContractAmount(anhuiMoneyinfo.getContractAmount());
                     }
                 }
@@ -852,6 +852,11 @@ public class ProjectService {
             }
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             for (DesignInfo designInfo : designInfos) {
+
+                if (userId.equals(designInfo.getDesigner())){
+                    designInfo.setEditFlag("0");
+                }
+
                 //展示设计变更时间 如果为空展示 /
                 if (designInfo.getDesignChangeTime() == null || designInfo.getDesignChangeTime().equals("")) {
                     designInfo.setDesignChangeTime("/");
