@@ -68,7 +68,6 @@ public class BomTableInformationService {
                     bomTableInfomation1.setBusinessProcess(bomTableVo.getBusiness_process());
                     bomTableInfomation1.setBusinessCode(bomTableVo.getBusiness_code());
                     bomTableInfomation1.setDelFlag(bomTableVo.getStatus());
-                    bomTableInfomation1.setCreateTime(date);
                     bomTableInfomation1.setUpdateTime(date);
                     bomTableImfomationMapper.updateByExampleSelective(bomTableInfomation1, e);
                 } else {
@@ -112,7 +111,6 @@ public class BomTableInformationService {
                     bomTableInfomationAll.setBusinessProcess(bomTableVo.getBusiness_process());
                     bomTableInfomationAll.setBusinessCode(bomTableVo.getBusiness_code());
                     bomTableInfomationAll.setDelFlag(bomTableVo.getStatus());
-                    bomTableInfomationAll.setCreateTime(date);
                     bomTableInfomationAll.setUpdateTime(date);
                     bomTableImfomationAllDao.insertSelective(bomTableInfomationAll);
                 }
