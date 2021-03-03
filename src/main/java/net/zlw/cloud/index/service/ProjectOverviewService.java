@@ -1,20 +1,14 @@
 package net.zlw.cloud.index.service;
 
-import com.github.pagehelper.PageHelper;
 import net.tec.cloud.common.bean.UserInfo;
 import net.zlw.cloud.budgeting.mapper.BudgetingDao;
-import net.zlw.cloud.budgeting.model.Budgeting;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
-import net.zlw.cloud.index.model.vo.pageVo;
-import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
-import net.zlw.cloud.progressPayment.model.BaseProject;
-import net.zlw.cloud.designProject.model.DesignInfo;
 import net.zlw.cloud.index.model.vo.ModuleNumber;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
+import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
-import net.zlw.cloud.warningDetails.model.MemberManage;
-import org.springframework.security.access.method.P;
+import net.zlw.cloud.progressPayment.model.BaseProject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -139,6 +133,10 @@ public class ProjectOverviewService {
                 for (String s : strings) {
                     //如果当前项目处于预算编制
                     if(s.equals("2")){
+                        newflow = newflow + ",2";
+                    }
+                    //如果当前项目处于跟踪审计
+                    if(s.equals("3")){
                         newflow = newflow + ",3";
                     }
                     //如果当前项目处于进度款支付
