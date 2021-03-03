@@ -934,7 +934,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and " +
                     "( " +
                     "(cea_num like  CONCAT('%',#{keyword},'%')  or #{keyword} = '') " +
-                    "(project_name  like  CONCAT('%',#{keyword},'%') or #{keyword} = '') " +
+                    "OR (project_name  like  CONCAT('%',#{keyword},'%') or #{keyword} = '') " +
                     ")"
     )
     List<BaseProject> BaseProjectInfoCensus(CostVo2 costVo2);
