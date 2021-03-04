@@ -475,6 +475,8 @@ public class StatusticAnalysisService {
         }else{
             performanceDistributionCharts = achievementsInfoMapper.newPicture(pageVo);
         }
+        String year = pageVo.getStatTime().substring(0,4);
+        String month = pageVo.getStatTime().substring(5,7);
         //json拼接
         String json =
                 "[{" +
@@ -489,7 +491,7 @@ public class StatusticAnalysisService {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+year+ month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -531,6 +533,8 @@ public class StatusticAnalysisService {
         }else{
             performanceDistributionCharts = achievementsInfoMapper.newPerformaPnceAccrualAndSummary(pageVo);
         }
+        String year = pageVo.getStatTime().substring(0,4);
+        String month = pageVo.getStatTime().substring(5,7);
 
         String json = "[{\n" +
                 "\t\"companyName\": \"绩效计提\",\n" +
@@ -544,7 +548,7 @@ public class StatusticAnalysisService {
             }
             json = json.substring(0,json.length() -1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+ year + month +"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -562,7 +566,7 @@ public class StatusticAnalysisService {
             }
             json = json.substring(0,json.length() -1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+ year + month +"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
