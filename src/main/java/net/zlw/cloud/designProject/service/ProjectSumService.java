@@ -1314,7 +1314,7 @@ public class ProjectSumService {
             Budgeting budgeting = budgetingMapper.selectOneByExample(example);
             if(budgeting!=null){
                 designInfo.setAmountCost(budgeting.getAmountCost()+"");
-                if(null == designInfo.getAmountCost()){
+                if(null == budgeting.getAmountCost()){
                     designInfo.setAmountCost("0");
                 }
             }else{

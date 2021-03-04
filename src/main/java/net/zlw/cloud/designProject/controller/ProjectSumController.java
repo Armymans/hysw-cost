@@ -1373,26 +1373,49 @@ public class ProjectSumController extends BaseController {
         OneCensus5 oneCensus5 = projectSumService.desiginMoneyCensus(costVo2);
         Integer amount = oneCensus5.getAnhuiAnount()+oneCensus5.getWujiangAmount();
         Integer notamount = oneCensus5.getNotAmount() - amount;
-        String josn =
-                "[" +
-                        "{\"value1\":"+notamount+",\"name1\":\"已到账数目\"}," +
-                        "{\"value1\":"+amount+",name1:\"未到账数目'\"}," +
-                        "]";
-        JSONArray objects = JSON.parseArray(josn);
+        if (notamount < 0){
+            String josn =
+                    "[" +
+                            "{\"value1\":"+0+",\"name1\":\"已到账数目\"}," +
+                            "{\"value1\":"+amount+",name1:\"未到账数目'\"}," +
+                            "]";
+            JSONArray objects = JSON.parseArray(josn);
+            OneCensus5 oneCensus51 = projectSumService.desiginoutsource(costVo2);
+            Integer outsourceno = oneCensus51.getOutsourceNo();
+            Integer outsourceyes = oneCensus51.getOutsourceYes();
+            String josn1 =
+                    "[" +
+                            "{\"value1\":"+outsourceno+",\"name1\":\"内部设计\"}," +
+                            "{\"value1\":"+outsourceyes+",name1:\"委外设计'\"}," +
+                            "]";
+            JSONArray objects1 = JSON.parseArray(josn1);
+            ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+            map.put("objects",objects);
+            map.put("objects1",objects1);
+            return RestUtil.success(map);
+        }else {
+            String josn =
+                    "[" +
+                            "{\"value1\":" + notamount + ",\"name1\":\"已到账数目\"}," +
+                            "{\"value1\":" + amount + ",name1:\"未到账数目'\"}," +
+                            "]";
+            JSONArray objects = JSON.parseArray(josn);
+            OneCensus5 oneCensus51 = projectSumService.desiginoutsource(costVo2);
+            Integer outsourceno = oneCensus51.getOutsourceNo();
+            Integer outsourceyes = oneCensus51.getOutsourceYes();
+            String josn1 =
+                    "[" +
+                            "{\"value1\":"+outsourceno+",\"name1\":\"内部设计\"}," +
+                            "{\"value1\":"+outsourceyes+",name1:\"委外设计'\"}," +
+                            "]";
+            JSONArray objects1 = JSON.parseArray(josn1);
+            ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
+            map.put("objects",objects);
+            map.put("objects1",objects1);
+            return RestUtil.success(map);
+        }
 
-        OneCensus5 oneCensus51 = projectSumService.desiginoutsource(costVo2);
-        Integer outsourceno = oneCensus51.getOutsourceNo();
-        Integer outsourceyes = oneCensus51.getOutsourceYes();
-        String josn1 =
-                "[" +
-                        "{\"value1\":"+outsourceno+",\"name1\":\"内部设计\"}," +
-                        "{\"value1\":"+outsourceyes+",name1:\"委外设计'\"}," +
-                        "]";
-        JSONArray objects1 = JSON.parseArray(josn1);
-        ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
-        map.put("objects",objects);
-        map.put("objects1",objects1);
-        return RestUtil.success(map);
+
     }
 
 
