@@ -1,6 +1,8 @@
 package net.zlw.cloud.whFinance.service;
 
 
+import net.zlw.cloud.designProject.mapper.OperationLogDao;
+import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.excel.dao.BomTable1Dao;
 import net.zlw.cloud.excel.dao.BomTableInfomationDao;
 import net.zlw.cloud.excel.model.BomTable;
@@ -34,6 +36,9 @@ public class BomTableInformationService {
 
     @Resource
     private BomTableInfomationDao bomTableImfomationMapper;
+
+    @Resource
+    private OperationLogDao operationLogDao;
 
     public void getBomTable(BomTablesVo bomTablesVo, String account){
         String date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -70,6 +75,17 @@ public class BomTableInformationService {
                     bomTableInfomation1.setDelFlag(bomTableVo.getStatus());
                     bomTableInfomation1.setUpdateTime(date);
                     bomTableImfomationMapper.updateByExampleSelective(bomTableInfomation1, e);
+
+                    //日志
+                    OperationLog operationLog = new OperationLog();
+                    operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+                    operationLog.setType("16");
+                    operationLog.setDoTime(date);
+                    operationLog.setStatus("0");
+                    operationLog.setName("芜湖财务物料订单");
+                    operationLog.setDoObject(bomTableVo.getBusiness_code());
+                    operationLog.setContent("芜湖财务修改了编码为【"+bomTableVo.getBusiness_code()+"】" + "的物料订单");
+                    operationLogDao.insertSelective(operationLog);
                 } else {
                     String id = UUID.randomUUID().toString().replace("-", "");
                     //物料基本信息表
@@ -113,6 +129,16 @@ public class BomTableInformationService {
                     bomTableInfomationAll.setDelFlag(bomTableVo.getStatus());
                     bomTableInfomationAll.setUpdateTime(date);
                     bomTableImfomationAllDao.insertSelective(bomTableInfomationAll);
+
+                    OperationLog operationLog = new OperationLog();
+                    operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+                    operationLog.setType("16");
+                    operationLog.setDoTime(date);
+                    operationLog.setStatus("0");
+                    operationLog.setName("芜湖财务物料订单");
+                    operationLog.setDoObject(bomTableVo.getBusiness_code());
+                    operationLog.setContent("芜湖财务对接过了一条流程编码为【"+bomTableVo.getBusiness_code()+"】" + "的物料订单");
+                    operationLogDao.insertSelective(operationLog);
                 }
 
                 //物料信息
@@ -181,6 +207,7 @@ public class BomTableInformationService {
                     }
                 }
             }
+            // 保存日志
         }
     }
 }

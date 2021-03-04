@@ -2,11 +2,14 @@ package net.zlw.cloud.whFinance.service;
 
 
 import com.github.pagehelper.PageHelper;
+import net.zlw.cloud.designProject.mapper.OperationLogDao;
+import net.zlw.cloud.designProject.model.OperationLog;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.whFinance.domain.Materie;
 import net.zlw.cloud.whFinance.domain.vo.MaterieVo;
 import net.zlw.cloud.whFinance.domain.vo.MateriesVo;
 import net.zlw.cloud.whFinance.mapper.MaterialMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,6 +28,9 @@ public class MaterialService {
 
     @Resource
     private MaterialMapper materialMapper;
+
+    @Resource
+    private OperationLogDao operationLogDao;
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -45,10 +51,23 @@ public class MaterialService {
                     materie1.setRemark(thisMateriers.getRemark());
                     materie1.setSpecificationsModels(thisMateriers.getSpecifications_models());
                     materie1.setUnit(thisMateriers.getUnit());
-                    materie1.setStatus(thisMateriers.getStatus());
                     materialMapper.updateByPrimaryKeySelective(materie1);
+
+                    //日志
+                    OperationLog operationLog = new OperationLog();
+                    operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+                    operationLog.setType("16");
+                    operationLog.setDoTime(simpleDateFormat.format(new Date()));
+                    operationLog.setStatus("0");
+                    operationLog.setName("芜湖财务物料库存");
+                    operationLog.setDoObject(thisMateriers.getMaterial_code());
+                    operationLog.setContent("芜湖财务修改了物料编码为【"+thisMateriers.getMaterial_code()+"】" + "的物料库存");
+                    operationLogDao.insertSelective(operationLog);
                 }else {
-                    materie.setId(UUID.randomUUID().toString().replace("-", ""));
+                    if (StringUtils.isEmpty(thisMateriers.getPk_invbasdoc())){
+                        thisMateriers.setPk_invbasdoc(UUID.randomUUID().toString().replace("-", ""));
+                    }
+                    materie.setId(thisMateriers.getPk_invbasdoc());
                     materie.setArea("1");
                     materie.setCreateTime(simpleDateFormat.format(new Date()));
                     materie.setItemName(thisMateriers.getItem_name());
@@ -56,14 +75,24 @@ public class MaterialService {
                     materie.setRemark(thisMateriers.getRemark());
                     materie.setSpecificationsModels(thisMateriers.getSpecifications_models());
                     materie.setUnit(thisMateriers.getUnit());
-                    materie.setStatus(thisMateriers.getStatus());
                     int s = Integer.parseInt(thisMateriers.getStatus()) - 1;
                     materie.setDelFlag(s + "");
-                    materialMapper.insertSelective(materie);
+                    materialMapper.insert(materie);
+
+                    //日志
+                    OperationLog operationLog = new OperationLog();
+                    operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+                    operationLog.setType("16");
+                    operationLog.setDoTime(simpleDateFormat.format(new Date()));
+                    operationLog.setStatus("0");
+                    operationLog.setName("芜湖财务物料库存");
+                    operationLog.setDoObject(thisMateriers.getMaterial_code());
+                    operationLog.setContent("芜湖财务对接过来一条物料编码为【"+thisMateriers.getMaterial_code()+"】" + "的物料库存");
+                    operationLogDao.insertSelective(operationLog);
                 }
             }
         }
-
+        // 日志
     }
 
     public void getMaterialserviceOfWj(MaterieVo materieVo){
@@ -83,10 +112,23 @@ public class MaterialService {
                     materie1.setRemark(thisMateriers.getRemark());
                     materie1.setSpecificationsModels(thisMateriers.getSpecifications_models());
                     materie1.setUnit(thisMateriers.getUnit());
-                    materie1.setStatus(thisMateriers.getStatus());
                     materialMapper.updateByPrimaryKeySelective(materie1);
+
+                    //日志
+                    OperationLog operationLog = new OperationLog();
+                    operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+                    operationLog.setType("17");
+                    operationLog.setDoTime(simpleDateFormat.format(new Date()));
+                    operationLog.setStatus("0");
+                    operationLog.setName("吴江财务物料库存");
+                    operationLog.setDoObject(thisMateriers.getMaterial_code());
+                    operationLog.setContent("吴江财务修改了物料编码为【"+thisMateriers.getMaterial_code()+"】" + "的物料库存");
+                    operationLogDao.insertSelective(operationLog);
                 }else{
-                    materie.setId(UUID.randomUUID().toString().replace("-",""));
+                    if (StringUtils.isEmpty(thisMateriers.getPk_invbasdoc())){
+                        thisMateriers.setPk_invbasdoc(UUID.randomUUID().toString().replace("-", ""));
+                    }
+                    materie.setId(thisMateriers.getPk_invbasdoc());
                     materie.setArea("2");
                     materie.setCreateTime(simpleDateFormat.format(new Date()));
                     materie.setItemName(thisMateriers.getItem_name());
@@ -96,10 +138,21 @@ public class MaterialService {
                     materie.setUnit(thisMateriers.getUnit());
                     int s = Integer.parseInt(thisMateriers.getStatus()) - 1;
                     materie.setDelFlag(s+"");
-                    materie.setStatus(thisMateriers.getStatus());
                     materialMapper.insertSelective(materie);
+
+                    //日志
+                    OperationLog operationLog = new OperationLog();
+                    operationLog.setId(UUID.randomUUID().toString().replace("-",""));
+                    operationLog.setType("17");
+                    operationLog.setDoTime(simpleDateFormat.format(new Date()));
+                    operationLog.setStatus("0");
+                    operationLog.setName("吴江财务物料库存");
+                    operationLog.setDoObject(thisMateriers.getMaterial_code());
+                    operationLog.setContent("吴江财务对接过来一条物料编码为【"+thisMateriers.getMaterial_code()+"】" + "的物料库存");
+                    operationLogDao.insertSelective(operationLog);
                 }
             }
+            // 日志
         }
 
     }
