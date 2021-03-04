@@ -1385,9 +1385,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "SELECT  " +
-                    "YEAR(create_time) yearTime,  " +
-                    "MONTH(create_time) monthTime,  " +
-                    "SUM(IFNULL(actual_amount,0)) desginAchievements  " +
+                    "YEAR(#{startTime}) yearTime,  " +
+                    "MONTH(#{startTime}) monthTime,  " +
+                    "IFNULL(SUM(IFNULL(actual_amount,0)),0) desginAchievements  " +
                     "FROM  " +
                     "employee_achievements_info  " +
                     "WHERE  " +
@@ -1401,10 +1401,8 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and  " +
                     "create_time >= #{startTime}  " +
                     "and  " +
-                    "(create_time <= #{endTime} or #{endTime} = '')  " +
-                    "GROUP BY  " +
-                    "YEAR(create_time),  " +
-                    "MONTH(create_time)"
+                    "(create_time <= #{endTime} or #{endTime} = '')  "
+
     )
     List<OneCensus6> desiginAchievementsOneCensus(CostVo2 costVo2);
 

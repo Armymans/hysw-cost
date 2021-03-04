@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -1449,6 +1452,8 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/desiginAchievementsCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginAchievementsCensus(CostVo2 costVo2){
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsCensus(costVo2);
+        String year = costVo2.getStartTime().substring(0,4);
+        String month = costVo2.getStartTime().substring(5,7);
         String json =
                 "[{" +
                         "\"companyName\": \"设计绩效\"," +
@@ -1462,7 +1467,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json += "{\"time\": \"0\""+
+            json += "{\"time\": \"\"+year + month+\"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1620,7 +1625,8 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/desiginProvisionCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> desiginProvisionCensus(CostVo2 costVo2){
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsCensus(costVo2);
-
+        String year = costVo2.getStartTime().substring(0,4);
+        String month = costVo2.getStartTime().substring(5,7);
         String censusList = "[{\"companyName\":\"应计提金额\"," +
                 "\"imageAmmount\": [";
         if(oneCensus6s.size()>0){
@@ -1631,7 +1637,7 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList +="{\"time\": \"0\""+
+            censusList +="{\"time\": \""+year + month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1649,7 +1655,7 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList +="{\"time\": \"0\""+
+            censusList +="{\"time\": \""+year + month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1665,14 +1671,34 @@ public class ProjectSumController extends BaseController {
      * @return
      */
     @RequestMapping(value = "/api/projectCount/desiginAchievementsOneCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> desiginAchievementsOneCensus(CostVo2 costVo2){
+    public Map<String,Object> desiginAchievementsOneCensus(CostVo2 costVo2) throws Exception {
         if(costVo2.getId()!=null&&!"".equals(costVo2.getId())){
         }else{
             costVo2.setId("user333");
         }
-        List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsOneCensus(costVo2);
         String year = costVo2.getStartTime().substring(0,4);
         String month = costVo2.getStartTime().substring(5,7);
+        String start_date = costVo2.getStartTime().substring(0,10);
+        String end_date = costVo2.getEndTime().substring(0,10);
+        Calendar dayc1 = new GregorianCalendar();
+        Calendar dayc2 = new GregorianCalendar();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date daystart = df.parse(start_date); //按照yyyy-MM-dd格式bai转换为日期
+        Date dayend = df.parse(end_date);
+        dayc1.setTime(daystart); //设置calendar的日期
+        dayc2.setTime(dayend);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        List<OneCensus6> oneCensus6s = new ArrayList<>();
+        for (; dayc1.compareTo(dayc2) <= 0;) {
+            String format1 = simpleDateFormat.format(dayc1.getTime());
+            String format2 = simpleDateFormat.format(dayc2.getTime());//dayc1在dayc2之前就循环
+            costVo2.setStartTime(format1);
+            costVo2.setEndTime(format2);
+            List<OneCensus6> oneCensus6s1 = projectSumService.desiginAchievementsOneCensus(costVo2);
+             oneCensus6s.addAll(oneCensus6s1);
+            dayc1.add(Calendar.MONTH,1);
+    }
+
         String json =
                 "[{" +
                         "\"companyName\": \"月度绩效\"," +
@@ -1692,8 +1718,11 @@ public class ProjectSumController extends BaseController {
                     "}";
         }
         json += "]}]";
+
         JSONArray objects = JSON.parseArray(json);
-        return RestUtil.success(objects);
+
+            return RestUtil.success(objects);
+
     }
 
     /**
