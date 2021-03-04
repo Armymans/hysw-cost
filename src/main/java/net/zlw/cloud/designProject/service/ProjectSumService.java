@@ -1898,7 +1898,7 @@ public class ProjectSumService {
                     +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation();
             return total;
         }else{
-            OneCensus7 oneCensus7 = projectMapper.costTaskOutsourcingCount(this.NowMonth(costVo2));
+            OneCensus7 oneCensus7 = projectMapper.costTaskOutsourcingCount(this.NowYear(costVo2));
             Integer total = oneCensus7.getBudgeting() + oneCensus7.getLastSettlementReview() + oneCensus7.getSettlementAuditInformation()
                     +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation();
             return total;
@@ -1920,7 +1920,7 @@ public class ProjectSumService {
                     +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation();
             return total;
         }else{
-            OneCensus7 oneCensus7 = projectMapper.costTaskNoOutsourcingCount(this.NowMonth(costVo2));
+            OneCensus7 oneCensus7 = projectMapper.costTaskNoOutsourcingCount(this.NowYear(costVo2));
             Integer total = oneCensus7.getBudgeting() + oneCensus7.getLastSettlementReview() + oneCensus7.getSettlementAuditInformation()
                     +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation();
             return total;
