@@ -10,7 +10,10 @@ import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
 import net.zlw.cloud.designProject.mapper.OperationLogDao;
 import net.zlw.cloud.designProject.mapper.PackageCameMapper;
 import net.zlw.cloud.designProject.mapper.ProjectExplorationMapper;
-import net.zlw.cloud.designProject.model.*;
+import net.zlw.cloud.designProject.model.DesignInfo;
+import net.zlw.cloud.designProject.model.OperationLog;
+import net.zlw.cloud.designProject.model.PackageCame;
+import net.zlw.cloud.designProject.model.ProjectExploration;
 import net.zlw.cloud.excel.dao.MaterialAnalysisDao;
 import net.zlw.cloud.excel.model.MaterialAnalysis;
 import net.zlw.cloud.followAuditing.mapper.TrackApplicationInfoDao;
@@ -20,10 +23,7 @@ import net.zlw.cloud.followAuditing.model.TrackApplicationInfo;
 import net.zlw.cloud.followAuditing.model.TrackAuditInfo;
 import net.zlw.cloud.followAuditing.model.TrackMonthly;
 import net.zlw.cloud.jbDesignTask.domain.proVo.*;
-import net.zlw.cloud.jbDesignTask.domain.vo.JbBudgetVoF;
-import net.zlw.cloud.jbDesignTask.domain.vo.WjBudgetVoF;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
-import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.settleAccounts.mapper.InvestigationOfTheAmountDao;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
@@ -35,13 +35,12 @@ import net.zlw.cloud.settleAccounts.model.SettlementInfo;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.math.BigDecimal;
-import java.rmi.server.ExportException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -797,6 +796,11 @@ public class WjEngineeringService {
                 baseProject.setCeaNum(trackVo.getCea_num());
                 baseProject.setProjectName(trackVo.getProject_name());
                 baseProject.setTrackStatus("5");
+                if (StringUtils.isEmpty(baseProject.getProjectFlow())){
+                    baseProject.setProjectFlow("3");
+                } else {
+                    baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
+                }
                 baseProject.setSupervisorUnit(trackVo.getSupervisor_unit());
                 baseProject.setApplicationNum(trackVo.getApplicationNum());
                 baseProject.setConstructionUnit(trackVo.getConstruction_unit());

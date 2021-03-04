@@ -864,6 +864,11 @@ public class BudgetingServiceImpl implements BudgetingService {
                         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
                         //设置为已完成
                         baseProject.setBudgetStatus("4");
+                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
+                            baseProject.setProjectFlow("2");
+                        } else {
+                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",2");
+                        }
                         baseProjectDao.updateByPrimaryKeySelective(baseProject);
                         // 加入委外信息
                         OutSource outSource = new OutSource();
