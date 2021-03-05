@@ -1602,7 +1602,12 @@ public class ProjectSumService {
      * @return
      */
     public List<OneCensus6> desiginAchievementsOneCensus2(CostVo2 costVo2){
-        return projectMapper.desiginAchievementsOneCensus2(costVo2);
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            return projectMapper.desiginAchievementsOneCensus2(costVo2);
+        }else {
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            return projectMapper.desiginAchievementsOneCensus2(costVo21);
+        }
     }
 
     /**
@@ -1708,11 +1713,22 @@ public class ProjectSumService {
      * @return
      */
     public List<OneCensus6> costTaskCensus(CostVo2 costVo2){
-        List<OneCensus6> oneCensus6s = projectMapper.costTaskCensus(costVo2);
-        for (OneCensus6 oneCensus6 : oneCensus6s) {
-            oneCensus6.setTotal(oneCensus6.getBudgetStatus()+oneCensus6.getProgressPaymentStatus()+oneCensus6.getVisaStatus()+oneCensus6.getSettleAccountsStatus()+oneCensus6.getTrackStatus());
+        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
+            List<OneCensus6> oneCensus6s = projectMapper.costTaskCensus(costVo2);
+            for (OneCensus6 oneCensus6 : oneCensus6s) {
+                oneCensus6.setTotal(oneCensus6.getBudgetStatus() + oneCensus6.getProgressPaymentStatus() + oneCensus6.getVisaStatus() + oneCensus6.getSettleAccountsStatus() + oneCensus6.getTrackStatus());
+            }
+            return oneCensus6s;
         }
-        return oneCensus6s;
+    else {
+            CostVo2 costVo21 = this.NowYear(costVo2);
+            List<OneCensus6> oneCensus6s = projectMapper.costTaskCensus(costVo21);
+
+            for (OneCensus6 oneCensus6 : oneCensus6s) {
+                oneCensus6.setTotal(oneCensus6.getBudgetStatus() + oneCensus6.getProgressPaymentStatus() + oneCensus6.getVisaStatus() + oneCensus6.getSettleAccountsStatus() + oneCensus6.getTrackStatus());
+            }
+            return oneCensus6s;
+        }
     }
 
     /**
