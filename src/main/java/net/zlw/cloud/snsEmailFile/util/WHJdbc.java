@@ -8,9 +8,9 @@ import java.sql.ResultSet;
 public class WHJdbc {
 
     // 正式环境
-    //private static String url = "jdbc:oracle:thin:@10.61.97.26:1521:orcl";
+    private static String url = "jdbc:oracle:thin:@10.61.97.26:1521:orcl";
     // 测试环境
-    private static String url = "jdbc:oracle:thin:@10.61.95.29:1521:orcl";
+    //private static String url = "jdbc:oracle:thin:@10.61.95.29:1521:orcl";
     private static String userName = "ZJPT";
     private static String password = "ZJPTMM";
 
