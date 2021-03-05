@@ -47,6 +47,7 @@ import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -189,6 +190,11 @@ public class ThoseResponsibleService  {
         if ("1".equals(missionType)){
 
             baseProject.setDesginStatus("2");
+            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
+                baseProject.setProjectFlow("1");
+            } else {
+                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",1");
+            }
             baseProjectDao.updateByPrimaryKey(baseProject);
 
             //设计
@@ -245,6 +251,11 @@ public class ThoseResponsibleService  {
         }else if("2".equals(missionType)){
 
             baseProject.setBudgetStatus("2");
+            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
+                baseProject.setProjectFlow("2");
+            } else {
+                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",2");
+            }
             baseProjectDao.updateByPrimaryKey(baseProject);
 
             //预算
@@ -313,6 +324,11 @@ public class ThoseResponsibleService  {
             //进度款
         } else if("3".equals(missionType)){
             baseProject.setProgressPaymentStatus("2");
+            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
+                baseProject.setProjectFlow("4");
+            } else {
+                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",4");
+            }
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
             Example example = new Example(ApplicationInformation.class);
@@ -359,6 +375,11 @@ public class ThoseResponsibleService  {
         }else if("4".equals(missionType)){
 
             baseProject.setVisaStatus("2");
+            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
+                baseProject.setProjectFlow("5");
+            } else {
+                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",5");
+            }
             baseProjectDao.updateByPrimaryKey(baseProject);
 
             Example example = new Example(VisaChange.class);
@@ -424,6 +445,11 @@ public class ThoseResponsibleService  {
             //跟踪审计
         }else if("5".equals(missionType)){
             baseProject.setTrackStatus("2");
+            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
+                baseProject.setProjectFlow("3");
+            } else {
+                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
+            }
             baseProjectDao.updateByPrimaryKey(baseProject);
 
             Example example = new Example(TrackAuditInfo.class);
@@ -465,6 +491,11 @@ public class ThoseResponsibleService  {
             }
         }else if("6".equals(missionType)){
             baseProject.setSettleAccountsStatus("2");
+            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
+                baseProject.setProjectFlow("6");
+            } else {
+                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",6");
+            }
             baseProjectDao.updateByPrimaryKey(baseProject);
 
             Example example = new Example(LastSettlementReview.class);

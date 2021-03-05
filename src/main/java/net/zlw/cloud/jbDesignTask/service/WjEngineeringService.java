@@ -796,11 +796,6 @@ public class WjEngineeringService {
                 baseProject.setCeaNum(trackVo.getCea_num());
                 baseProject.setProjectName(trackVo.getProject_name());
                 baseProject.setTrackStatus("5");
-                if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                    baseProject.setProjectFlow("3");
-                } else {
-                    baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
-                }
                 baseProject.setSupervisorUnit(trackVo.getSupervisor_unit());
                 baseProject.setApplicationNum(trackVo.getApplicationNum());
                 baseProject.setConstructionUnit(trackVo.getConstruction_unit());

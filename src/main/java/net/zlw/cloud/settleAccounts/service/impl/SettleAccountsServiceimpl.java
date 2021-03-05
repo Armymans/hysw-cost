@@ -47,7 +47,6 @@ import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.DetailsVo;
 import net.zlw.cloud.warningDetails.model.MemberManage;
 import net.zlw.cloud.warningDetails.service.WarningDetailsService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -1862,29 +1861,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                                 }else{
                                     BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
                                     baseProject2.setSettleAccountsStatus("5");
-                                    if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                        baseProject.setProjectFlow("6");
-                                    } else {
-                                        baseProject.setProjectFlow(baseProject.getProjectFlow() + ",6");
-                                    }
                                     baseProject2.setProgressPaymentStatus("6");
-                                    if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                        baseProject.setProjectFlow("4");
-                                    } else {
-                                        baseProject.setProjectFlow(baseProject.getProjectFlow() + ",4");
-                                    }
                                     baseProject2.setVisaStatus("6");
-                                    if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                        baseProject.setProjectFlow("5");
-                                    } else {
-                                        baseProject.setProjectFlow(baseProject.getProjectFlow() + ",5");
-                                    }
                                     baseProject2.setTrackStatus("5");
-                                    if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                        baseProject.setProjectFlow("3");
-                                    } else {
-                                        baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
-                                    }
                                     baseProjectDao.updateByPrimaryKeySelective(baseProject2);
                                 }
                             }else{
@@ -1918,58 +1897,18 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         }else{
                             BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
                             baseProject2.setSettleAccountsStatus("5");
-                            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                baseProject.setProjectFlow("6");
-                            } else {
-                                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",6");
-                            }
                             baseProject2.setProgressPaymentStatus("6");
-                            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                baseProject.setProjectFlow("4");
-                            } else {
-                                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",4");
-                            }
                             baseProject2.setVisaStatus("6");
-                            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                baseProject.setProjectFlow("5");
-                            } else {
-                                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",5");
-                            }
                             baseProject2.setTrackStatus("5");
-                            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                baseProject.setProjectFlow("3");
-                            } else {
-                                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
-                            }
                             baseProjectDao.updateByPrimaryKeySelective(baseProject2);
                         }
                         //否则则进入已完成
                     }else{
                         BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
                         baseProject2.setSettleAccountsStatus("5");
-                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                            baseProject.setProjectFlow("6");
-                        } else {
-                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",6");
-                        }
                         baseProject2.setProgressPaymentStatus("6");
-                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                            baseProject.setProjectFlow("4");
-                        } else {
-                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",4");
-                        }
                         baseProject2.setVisaStatus("6");
-                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                            baseProject.setProjectFlow("5");
-                        } else {
-                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",5");
-                        }
                         baseProject2.setTrackStatus("5");
-                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                            baseProject.setProjectFlow("3");
-                        } else {
-                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
-                        }
                         baseProjectDao.updateByPrimaryKeySelective(baseProject2);
                     }
 
@@ -2362,29 +2301,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                                 }else{
                                     BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
                                     baseProject2.setSettleAccountsStatus("5");
-                                    if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                        baseProject.setProjectFlow("6");
-                                    } else {
-                                        baseProject.setProjectFlow(baseProject.getProjectFlow() + ",6");
-                                    }
                                     baseProject2.setProgressPaymentStatus("6");
-                                    if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                        baseProject.setProjectFlow("4");
-                                    } else {
-                                        baseProject.setProjectFlow(baseProject.getProjectFlow() + ",4");
-                                    }
                                     baseProject2.setVisaStatus("6");
-                                    if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                        baseProject.setProjectFlow("5");
-                                    } else {
-                                        baseProject.setProjectFlow(baseProject.getProjectFlow() + ",5");
-                                    }
                                     baseProject2.setTrackStatus("5");
-                                    if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                        baseProject.setProjectFlow("3");
-                                    } else {
-                                        baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
-                                    }
                                     baseProjectDao.updateByPrimaryKeySelective(baseProject2);
                                 }
                             }else{
@@ -2418,58 +2337,18 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                         }else{
                             BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
                             baseProject2.setSettleAccountsStatus("5");
-                            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                baseProject.setProjectFlow("6");
-                            } else {
-                                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",6");
-                            }
                             baseProject2.setProgressPaymentStatus("6");
-                            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                baseProject.setProjectFlow("4");
-                            } else {
-                                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",4");
-                            }
                             baseProject2.setVisaStatus("6");
-                            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                baseProject.setProjectFlow("5");
-                            } else {
-                                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",5");
-                            }
                             baseProject2.setTrackStatus("5");
-                            if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                                baseProject.setProjectFlow("3");
-                            } else {
-                                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
-                            }
                             baseProjectDao.updateByPrimaryKeySelective(baseProject2);
                         }
                         //否则则进入已完成
                     }else{
                         BaseProject baseProject2 = baseProjectDao.selectByPrimaryKey(s);
                         baseProject2.setSettleAccountsStatus("5");
-                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                            baseProject.setProjectFlow("6");
-                        } else {
-                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",6");
-                        }
                         baseProject2.setProgressPaymentStatus("6");
-                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                            baseProject.setProjectFlow("4");
-                        } else {
-                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",4");
-                        }
                         baseProject2.setVisaStatus("6");
-                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                            baseProject.setProjectFlow("5");
-                        } else {
-                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",5");
-                        }
                         baseProject2.setTrackStatus("5");
-                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                            baseProject.setProjectFlow("3");
-                        } else {
-                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
-                        }
                         baseProjectDao.updateByPrimaryKeySelective(baseProject2);
                     }
                 }

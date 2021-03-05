@@ -1432,11 +1432,6 @@ public class ProjectService {
                         auditInfo2.setAuditOpinion(auditInfo.getAuditOpinion());
                         auditInfo2.setUpdateTime(createTime);
                         baseProject.setDesginStatus("4");
-                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                            baseProject.setProjectFlow("1");
-                        } else {
-                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",1");
-                        }
                         String district = baseProject.getDistrict();
                         String designCategory = baseProject.getDesignCategory();
                         String designer = designInfo.getDesigner();
@@ -1600,11 +1595,6 @@ public class ProjectService {
                         auditInfo2.setUpdateTime(createTime);
                         auditInfo2.setAuditTime(createTime);
                         baseProject.setDesginStatus("4");
-                        if (StringUtils.isEmpty(baseProject.getProjectFlow())){
-                            baseProject.setProjectFlow("1");
-                        } else {
-                            baseProject.setProjectFlow(baseProject.getProjectFlow() + ",1");
-                        }
                         String district = baseProject.getDistrict();
                         String designCategory = baseProject.getDesignCategory();
                         String designer = designInfo.getDesigner();
