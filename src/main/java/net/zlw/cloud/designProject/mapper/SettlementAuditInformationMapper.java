@@ -92,7 +92,7 @@ public interface SettlementAuditInformationMapper extends Mapper<SettlementAudit
 
     @Select("SELECT\n" +
             "COUNT(1) projectNum,\n" +
-            "SUM(a.budget_achievements+a.upsubmit_achievements+a.downsubmit_achievements+a.truck_achievements) achievemen,\n" +
+            "SUM(IFNULL( a.budget_achievements, 0 )+ IFNULL( a.upsubmit_achievements, 0 )+ IFNULL( a.downsubmit_achievements, 0 )+ IFNULL( a.truck_achievements, 0 )) achievemen,\n" +
             "YEAR(bt.budgeting_time) yearTime,\n" +
             "MONTH(bt.budgeting_time) monthTIme\n" +
             "FROM `achievements_info` a\n" +
