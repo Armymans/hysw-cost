@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -1467,7 +1468,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json += "{\"time\": \"\"+year + month+\"\""+
+            json += "{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1532,6 +1533,9 @@ public class ProjectSumController extends BaseController {
     public Map<String,Object> findAnalysisAndDesiginAchie(CostVo2 costVo2){
         //设计统计图
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsCensus(costVo2);
+
+        String year = costVo2.getStartTime().substring(0, 4);
+        String month = costVo2.getStartTime().substring(5, 7);
         String json =
                 "[{" +
                         "\"companyName\": \"设计绩效\"," +
@@ -1545,7 +1549,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json += "{\"time\": \"0\""+
+            json += "{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1637,7 +1641,7 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList +="{\"time\": \""+year + month+"\""+
+            censusList +="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1655,7 +1659,7 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList +="{\"time\": \""+year + month+"\""+
+            censusList +="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1676,8 +1680,16 @@ public class ProjectSumController extends BaseController {
         }else{
             costVo2.setId("user333");
         }
-        String year = costVo2.getStartTime().substring(0,4);
-        String month = costVo2.getStartTime().substring(5,7);
+        if ((null == costVo2.getStartTime() || "" == costVo2.getStartTime())
+                && (null == costVo2.getEndTime() || "" == costVo2.getEndTime())){
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            costVo2.setYear(year+"");
+            costVo2.setStartTime(year+"-01-01");
+            costVo2.setEndTime(year+"-12-31");
+        }
+        String year = costVo2.getStartTime().substring(0, 4);
+        String month = costVo2.getStartTime().substring(5, 7);
         String start_date = costVo2.getStartTime().substring(0,10);
         String end_date = costVo2.getEndTime().substring(0,10);
         Calendar dayc1 = new GregorianCalendar();
@@ -1689,9 +1701,13 @@ public class ProjectSumController extends BaseController {
         dayc2.setTime(dayend);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         List<OneCensus6> oneCensus6s = new ArrayList<>();
-        for (; dayc1.compareTo(dayc2) <= 0;) {
+        for (; dayc1.compareTo(dayc2) <= 0;) {//dayc1在dayc2之前就循环
             String format1 = simpleDateFormat.format(dayc1.getTime());
-            String format2 = simpleDateFormat.format(dayc2.getTime());//dayc1在dayc2之前就循环
+            //String format2 = simpleDateFormat.format(dayc2.getTime());
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dayc1.getTime());
+            calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+            String format2 = df.format(calendar.getTime());
             costVo2.setStartTime(format1);
             costVo2.setEndTime(format2);
             List<OneCensus6> oneCensus6s1 = projectSumService.desiginAchievementsOneCensus(costVo2);
@@ -1773,7 +1789,8 @@ public class ProjectSumController extends BaseController {
             costVo2.setId("user333");
         }
         List<OneCensus6> oneCensus6s = projectSumService.desiginAchievementsOneCensus2(costVo2);
-
+        String year = costVo2.getStartTime().substring(0,4);
+        String month = costVo2.getStartTime().substring(5,7);
         String json =
                 "[{" +
                         "\"companyName\": \"年度绩效\"," +
@@ -1787,7 +1804,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -1860,6 +1877,8 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/costTaskCensus",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> costTaskCensus(CostVo2 costVo2){
         List<OneCensus6> oneCensus6s = projectSumService.costTaskCensus(costVo2);
+        String year = costVo2.getStartTime().substring(0,4);
+        String month = costVo2.getStartTime().substring(5,7);
         String json =
                 "[{" +
                         "\"companyName\": \"造价任务\"," +
@@ -1873,7 +1892,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -2146,6 +2165,8 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/MemberAchievementsCensus",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>MemberAchievementsCensus(CostVo2 costVo2){
         List<OneCensus2> oneCensus2s = projectSumService.memberAchievementsCensus(costVo2);
+        String year = costVo2.getStartTime().substring(0,4);
+        String month = costVo2.getStartTime().substring(5,7);
         String json =
                 "[{" +
                         "\"companyName\": \"绩效发放数据\"," +
@@ -2159,7 +2180,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{\"time\": \"0\""+
+            json+="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -2246,6 +2267,8 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/MemberAchievementsCensus2",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>MemberAchievementsCensus2(CostVo2 costVo2){
         List<OneCensus4> oneCensus4s = projectSumService.MemberAchievementsCensus2(costVo2);
+        String year = costVo2.getStartTime().substring(0,4);
+        String month = costVo2.getStartTime().substring(5,7);
         String censusList = "[{\"companyName\":\"应计提金额\"," +
                 "\"imageAmmount\": [";
         if(oneCensus4s.size()>0){
@@ -2256,7 +2279,7 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{\"time\": \"0\""+
+            censusList+="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -2273,7 +2296,7 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{\"time\": \"0\""+
+            censusList+="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -2290,7 +2313,7 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{\"time\": \"0\""+
+            censusList+="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -2331,6 +2354,8 @@ public class ProjectSumController extends BaseController {
     @RequestMapping(value = "/api/projectCount/MemberAchievementsCensusSearch",method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>MemberAchievementsCensusSearch(CostVo2 costVo2){
         List<OneCensus4> oneCensus4s = projectSumService.MemberAchievementsCensus2(costVo2);
+        String year = costVo2.getStartTime().substring(0, 4);
+        String month = costVo2.getStartTime().substring(5, 7);
         String censusList = "[{\"companyName\":\"应计提金额\"," +
                 "\"imageAmmount\": [";
         if(oneCensus4s.size()>0){
@@ -2341,7 +2366,7 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{\"time\": \"0\""+
+            censusList+="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -2358,7 +2383,7 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{\"time\": \"0\""+
+            censusList+="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
@@ -2375,7 +2400,7 @@ public class ProjectSumController extends BaseController {
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
-            censusList+="{\"time\": \"0\""+
+            censusList+="{\"time\": \""+year+"-"+month+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
