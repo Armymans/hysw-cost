@@ -1602,12 +1602,16 @@ public class ProjectSumService {
      * @return
      */
     public List<OneCensus6> desiginAchievementsOneCensus2(CostVo2 costVo2){
-        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
-            return projectMapper.desiginAchievementsOneCensus2(costVo2);
-        }else {
-            CostVo2 costVo21 = this.NowYear(costVo2);
-            return projectMapper.desiginAchievementsOneCensus2(costVo21);
+
+        if ((null == costVo2.getStartTime() || "" == costVo2.getStartTime())
+                && (null == costVo2.getEndTime() || "" == costVo2.getEndTime())){
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            costVo2.setYear(year+"");
+            costVo2.setStartTime(year-9+"-01-01");
+            costVo2.setEndTime(year+"-12-31");
         }
+            return projectMapper.desiginAchievementsOneCensus2(costVo2);
     }
 
     /**
