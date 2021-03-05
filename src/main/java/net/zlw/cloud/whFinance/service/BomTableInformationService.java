@@ -72,7 +72,8 @@ public class BomTableInformationService {
                     bomTableInfomation1.setAcquisitionDepartment(bomTableVo.getAcquisition_department());
                     bomTableInfomation1.setBusinessProcess(bomTableVo.getBusiness_process());
                     bomTableInfomation1.setBusinessCode(bomTableVo.getBusiness_code());
-                    bomTableInfomation1.setDelFlag(bomTableVo.getStatus());
+                    int i = Integer.parseInt(bomTableVo.getStatus()) - 1;
+                    bomTableInfomation1.setDelFlag(i + "");
                     bomTableInfomation1.setUpdateTime(date);
                     bomTableImfomationMapper.updateByExampleSelective(bomTableInfomation1, e);
 
@@ -104,7 +105,8 @@ public class BomTableInformationService {
                     bomTableInfomation1.setAcquisitionDepartment(bomTableVo.getAcquisition_department());
                     bomTableInfomation1.setBusinessProcess(bomTableVo.getBusiness_process());
                     bomTableInfomation1.setBusinessCode(bomTableVo.getBusiness_code());
-                    bomTableInfomation1.setDelFlag(bomTableVo.getStatus());
+                    int i = Integer.parseInt(bomTableVo.getStatus()) - 1;
+                    bomTableInfomation1.setDelFlag(i + "");
                     bomTableInfomation1.setCreateTime(date);
                     bomTableInfomation1.setUpdateTime(date);
                     bomTableImfomationMapper.insertSelective(bomTableInfomation1);
@@ -126,7 +128,7 @@ public class BomTableInformationService {
                     bomTableInfomationAll.setAcquisitionDepartment(bomTableVo.getAcquisition_department());
                     bomTableInfomationAll.setBusinessProcess(bomTableVo.getBusiness_process());
                     bomTableInfomationAll.setBusinessCode(bomTableVo.getBusiness_code());
-                    bomTableInfomationAll.setDelFlag(bomTableVo.getStatus());
+                    bomTableInfomationAll.setDelFlag(i + "");
                     bomTableInfomationAll.setUpdateTime(date);
                     bomTableImfomationAllDao.insertSelective(bomTableInfomationAll);
 
@@ -207,7 +209,6 @@ public class BomTableInformationService {
                     }
                 }
             }
-            // 保存日志
         }
     }
 }
