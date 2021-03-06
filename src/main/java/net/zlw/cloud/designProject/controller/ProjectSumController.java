@@ -1804,7 +1804,7 @@ public class ProjectSumController extends BaseController {
             }
             json = json.substring(0,json.length()-1);
         }else{
-            json+="{\"time\": \""+year+"-"+month+"\""+
+            json+="{\"time\": \""+year+"\""+
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
