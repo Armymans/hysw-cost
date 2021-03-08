@@ -1711,6 +1711,7 @@ public class ProjectSumController extends BaseController {
             costVo2.setEndTime(format2);
             List<OneCensus6> oneCensus6s1 = projectSumService.desiginAchievementsOneCensus(costVo2);
              oneCensus6s.addAll(oneCensus6s1);
+            dayc1.set(Calendar.DAY_OF_MONTH,1);
             dayc1.add(Calendar.MONTH,1);
     }
 

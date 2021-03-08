@@ -682,19 +682,54 @@ public class ProjectSumService {
      * @return
      */
     public List<CostVo3> prjectCensus(CostVo2 costVo2){
-        List<CostVo3> costVo3s = projectMapper.prjectCensus(costVo2);
-        Integer total = 0;
-        for (CostVo3 costVo3 : costVo3s) {
-//            Integer total = costVo3.getBudgetingCount()+
-//            costVo3.getDesginStatus()+
-//            costVo3.getProgressPaymentInformation()+
-//            costVo3.getSettleAccountsCount()+
-//            costVo3.getVisaApplyChangeInformationCount()+
-//            costVo3.getTrackAuditInfoCount();
-            total += costVo3.getTotal();
-            //获取当前全部数量
-            costVo3.setTotal(total);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        List<CostVo3> costVo3s = new ArrayList<>();
+
+        try{
+            // 查询最早项目时间和最晚项目时间
+            CostVo2 projectTime = projectMapper.projectTime();
+            // 如果没有时间筛选区间，则设置默认时间
+            if(StringUtils.isEmpty(costVo2.getStartTime()) || StringUtils.isEmpty(costVo2.getEndTime())){
+                costVo2.setStartTime(simpleDateFormat.format(simpleDateFormat.parse(projectTime.getStartTime())));
+                costVo2.setEndTime(simpleDateFormat.format(simpleDateFormat.parse(projectTime.getEndTime())));
+            }
+
+            Calendar start = new GregorianCalendar();   // 开始时间
+            Calendar end = new GregorianCalendar();     // 结束时间
+
+            start.setTime(simpleDateFormat.parse(costVo2.getStartTime()));
+            end.setTime(simpleDateFormat.parse(costVo2.getEndTime()));
+
+            for (;start.compareTo(end) <= 0;) {
+
+                // 按月查询数据
+                costVo2.setStartTime(simpleDateFormat.format(start.getTime()));
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(start.getTime());
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                costVo2.setEndTime(simpleDateFormat.format(calendar.getTime()));
+
+                List<CostVo3> costVo3List = projectMapper.prjectCensus(costVo2);
+                // 如果当前月数据为空，添加一条
+                if (!(costVo3List.size() > 0)){
+                    CostVo3 costVo3 = new CostVo3();
+                    costVo3.setYearTime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                    costVo3.setMonthTime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                    costVo3.setTotal(0);
+                    costVo3List.add(costVo3);
+                }
+                costVo3s.addAll(costVo3List);
+                start.set(Calendar.DAY_OF_MONTH,1);
+                start.add(Calendar.MONTH, 1);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
         }
+
         return costVo3s;
     }
 
@@ -917,6 +952,7 @@ public class ProjectSumService {
                     oneCensus3List.add(oneCensus3);
                 }
                 oneCensus3s.addAll(oneCensus3List);
+                start.set(Calendar.DAY_OF_MONTH,1);
                 start.add(Calendar.MONTH, 1);
             }
 
