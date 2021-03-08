@@ -24,6 +24,7 @@ import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -108,6 +109,7 @@ public class WjDesignTaskService {
 //            int i = random.nextInt(100);
                 project.setProjectName("吴江设计报装对接" + wjDesignVo.getApplication_num());
                 project.setDesginStatus("4");
+                project.setProjectFlow("1");
                 baseProjectDao.insertSelective(project);
 
                 DesignInfo designInfo = new DesignInfo();
@@ -199,6 +201,11 @@ public class WjDesignTaskService {
                 baseProject.setContactNumber(wjBudgetVo.getPhon_num());
                 baseProject.setFax(wjBudgetVo.getFax());
                 baseProject.setBudgetStatus("4");
+                if (StringUtils.isNotEmpty(baseProject.getProjectFlow())){
+                    baseProject.setProjectFlow(baseProject.getProjectFlow() + ",2");
+                } else {
+                    baseProject.setProjectFlow("2");
+                }
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
             }else {
                 baseProject = new BaseProject();
@@ -226,6 +233,7 @@ public class WjDesignTaskService {
                 baseProject.setFax(wjBudgetVo.getFax());
                 baseProject.setDelFlag("0");
                 baseProject.setBudgetStatus("4");
+                baseProject.setProjectFlow("2");
                 baseProjectDao.insertSelective(baseProject);
             }
             List<Budgeting> budgeting1 = budgetingDao.findBudgetingGetBaseId(wjBudgetVo.getBase_project_id());

@@ -101,6 +101,11 @@ public class WjEngineeringService {
             project.setDistrict("4"); //吴江
             project.setCreateTime(data);
             project.setDesginStatus("4");
+            if (StringUtils.isNotEmpty(project.getProjectFlow())){
+                project.setProjectFlow(project.getProjectFlow() + ",1");
+            } else {
+                project.setProjectFlow("1");
+            }
             baseProjectDao.updateByPrimaryKeySelective(project);
             // 设计表
             DesignInfo designInfo = new DesignInfo();
@@ -213,6 +218,7 @@ public class WjEngineeringService {
                 project.setDistrict("4"); //吴江
                 project.setCreateTime(data);
                 project.setDesginStatus("4");
+                project.setProjectFlow("1");
                 baseProjectDao.insertSelective(project);
                 // 设计表
                 DesignInfo designInfo = new DesignInfo();
@@ -330,6 +336,11 @@ public class WjEngineeringService {
             project.setId(budgetVo.getBase_project_id());
             project.setProjectId(budgetVo.getBase_project_id());
             project.setBudgetStatus("4");
+            if (StringUtils.isNotEmpty(project.getProjectFlow())){
+                project.setProjectFlow(project.getProjectFlow() + ",2");
+            } else {
+                project.setProjectFlow("2");
+            }
             project.setProposer(budgetVo.getApply_by());
             project.setApplicationDate(budgetVo.getApply_time());
             project.setProjectName(budgetVo.getProject_name());
@@ -434,6 +445,7 @@ public class WjEngineeringService {
                 project.setDistrict("4"); //吴江
                 project.setCreateTime(data);
                 project.setBudgetStatus("4");
+                project.setProjectFlow("2");
                 baseProjectDao.insertSelective(project);
                 Budgeting budgeting = new Budgeting();
                 budgeting.setId(budgetVo.getId());
@@ -534,6 +546,11 @@ public class WjEngineeringService {
                 baseProject.setProjectName(settlementVo.getProject_name());
                 baseProject.setFounderId(wjSettlementVoA.getAccount());
                 baseProject.setSettleAccountsStatus("5");
+                if (StringUtils.isNotEmpty(baseProject.getProjectFlow())){
+                    baseProject.setProjectFlow(baseProject.getProjectFlow() + ",6");
+                } else {
+                    baseProject.setProjectFlow("6");
+                }
                 baseProject.setCeaNum(settlementVo.getCea_num());
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
@@ -796,6 +813,11 @@ public class WjEngineeringService {
                 baseProject.setCeaNum(trackVo.getCea_num());
                 baseProject.setProjectName(trackVo.getProject_name());
                 baseProject.setTrackStatus("5");
+                if (StringUtils.isNotEmpty(baseProject.getProjectFlow())){
+                    baseProject.setProjectFlow(baseProject.getProjectFlow() + ",3");
+                } else {
+                    baseProject.setProjectFlow("3");
+                }
                 baseProject.setSupervisorUnit(trackVo.getSupervisor_unit());
                 baseProject.setApplicationNum(trackVo.getApplicationNum());
                 baseProject.setConstructionUnit(trackVo.getConstruction_unit());

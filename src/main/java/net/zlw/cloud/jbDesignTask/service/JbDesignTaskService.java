@@ -21,9 +21,8 @@ import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
-import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
-import net.zlw.cloud.whDesignTask.model.vo.DesignVoF;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -84,6 +83,11 @@ public class JbDesignTaskService {
         if (baseProject1 != null) {
             BaseProject project = new BaseProject();
             project.setBudgetStatus("4");
+            if (StringUtils.isNotEmpty(project.getProjectFlow())){
+                project.setProjectFlow(project.getProjectFlow() + ",1");
+            } else {
+                project.setProjectFlow("1");
+            }
             project.setProjectId(designVo.getProject_id());
             project.setProjectName(designVo.getProject_name());
             project.setFounderId(jbDesignVoF.getAccount());
@@ -187,6 +191,7 @@ public class JbDesignTaskService {
                 baseProject.setAgent(designVo.getAgent());
                 baseProject.setCeaNum(designVo.getCea_num());
                 baseProject.setDesginStatus("4");
+                baseProject.setProjectFlow("1");
                 baseProject.setDistrict("3");
                 baseProject.setDelFlag("0");
                 baseProject.setCreateTime(date);
@@ -294,6 +299,11 @@ public class JbDesignTaskService {
             baseProject.setProjectNum(budgetVo.getProject_id());
             baseProject.setProjectName(budgetVo.getProject_name());
             baseProject.setBudgetStatus("4");
+            if (StringUtils.isNotEmpty(baseProject.getProjectFlow())){
+                baseProject.setProjectFlow(baseProject.getProjectFlow() + ",2");
+            } else {
+                baseProject.setProjectFlow("2");
+            }
             baseProject.setDistrict("3"); //江北
             baseProject.setDelFlag("0");
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
@@ -382,6 +392,7 @@ public class JbDesignTaskService {
                 baseProject.setProjectNum(budgetVo.getProject_id());
                 baseProject.setProjectName(budgetVo.getProject_name());
                 baseProject.setBudgetStatus("4");
+                baseProject.setProjectFlow("2");
                 baseProject.setDistrict("3"); //江北
                 baseProject.setDelFlag("0");
                 baseProjectDao.insertSelective(baseProject);

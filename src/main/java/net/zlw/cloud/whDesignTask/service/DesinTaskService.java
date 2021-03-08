@@ -113,6 +113,7 @@ public class DesinTaskService {
             baseProject.setStatus("0");
             baseProject.setDelFlag("0");
             baseProject.setDesginStatus("4");
+            baseProject.setProjectFlow("1");
             baseProject.setCreateTime(data);
             baseProject.setUpdateTime(data);
             //写到数据库
