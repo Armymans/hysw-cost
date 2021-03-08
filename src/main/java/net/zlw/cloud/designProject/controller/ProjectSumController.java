@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -2396,7 +2395,7 @@ public class ProjectSumController extends BaseController {
         if(oneCensus4s.size()>0){
             for (OneCensus4 oneCensus2 : oneCensus4s) {
                 censusList += "{\"time\": \""+oneCensus2.getYearTime()+"-"+oneCensus2.getMonthTime()+"\"," +
-                        "\"truckAmmount\": \"" + oneCensus2.getTotal().subtract(oneCensus2.getTotal3())+"\"},";
+                        "\"truckAmmount\": \"" + oneCensus2.getTotal().subtract(oneCensus2.getTotal2())+"\"},";
             }
             censusList = censusList.substring(0,censusList.length() -1);
         }else{
