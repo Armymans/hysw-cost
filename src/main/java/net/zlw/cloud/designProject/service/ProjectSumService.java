@@ -21,10 +21,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ProjectSumService {
@@ -884,11 +881,80 @@ public class ProjectSumService {
      * @return
      */
     public List<OneCensus3> expenditureAnalysis(CostVo2 costVo2){
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
         if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
-            List<OneCensus3> oneCensus3s = projectMapper.expenditureAnalysis(costVo2);
+
+            List<OneCensus3> oneCensus3s = new ArrayList<>();
+
+            Calendar start = new GregorianCalendar();   // 开始时间
+            Calendar end = new GregorianCalendar();     // 结束时间
+            try{
+                start.setTime(simpleDateFormat.parse(costVo2.getStartTime()));
+                end.setTime(simpleDateFormat.parse(costVo2.getEndTime()));
+
+                for (;start.compareTo(end) <= 0;) {
+
+                    // 按月查询数据
+                    costVo2.setStartTime(simpleDateFormat.format(start.getTime()));
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(start.getTime());
+                    calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                    costVo2.setEndTime(simpleDateFormat.format(calendar.getTime()));
+
+                    List<OneCensus3> oneCensus3List = projectMapper.expenditureAnalysis(costVo2);
+                    // 如果当前月数据为空，添加一条
+                    if (!(oneCensus3List.size() > 0)){
+                        OneCensus3 oneCensus3 = new OneCensus3();
+                        oneCensus3.setYearTime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                        oneCensus3.setMonthTime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                        oneCensus3.setAdvMoney("0");
+                        oneCensus3.setOutMoney("0");
+                        oneCensus3List.add(oneCensus3);
+                    }
+                    oneCensus3s.addAll(oneCensus3List);
+                    start.add(Calendar.MONTH, 1);
+                }
+
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+            }
+
             return oneCensus3s;
         }else{
-            List<OneCensus3> oneCensus3s = projectMapper.expenditureAnalysis(NowYear(costVo2));
+            CostVo2 costVo2Year = this.NowYear(costVo2);
+
+            List<OneCensus3> oneCensus3s = new ArrayList<>();
+
+            int year = Integer.parseInt(costVo2Year.getStartTime().substring(0,4));
+
+            for (int i = 0; i < 12; i++) {
+                // 取当前月开始时间和结束时间
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.YEAR,year);
+                cal.set(Calendar.MONTH, i + 1);
+                cal.set(Calendar.DAY_OF_MONTH, 1);
+                cal.add(Calendar.DAY_OF_MONTH, -1);
+                Date lastDate = cal.getTime();
+                cal.set(Calendar.DAY_OF_MONTH, 1);
+                Date firstDate = cal.getTime();
+                costVo2Year.setStartTime(simpleDateFormat.format(firstDate));
+                costVo2Year.setEndTime(simpleDateFormat.format(lastDate));
+
+                List<OneCensus3> oneCensus3List = projectMapper.expenditureAnalysis(costVo2Year);
+                if (!(oneCensus3List.size() > 0)){
+                    // 如果当前月数据为空，添加一条
+                    OneCensus3 oneCensus3 = new OneCensus3();
+                    oneCensus3.setYearTime(year + "");
+                    oneCensus3.setMonthTime((i + 1) + "");
+                    oneCensus3.setAdvMoney("0");
+                    oneCensus3.setOutMoney("0");
+                    oneCensus3List.add(oneCensus3);
+                }
+                oneCensus3s.addAll(oneCensus3List);
+            }
+
             return oneCensus3s;
         }
     }
