@@ -11,6 +11,7 @@ import net.zlw.cloud.designProject.service.ProjectSumService;
 import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
 import net.zlw.cloud.statisticAnalysis.service.StatusticAnalysisService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -1679,8 +1680,7 @@ public class ProjectSumController extends BaseController {
         }else{
             costVo2.setId("user333");
         }
-        if ((null == costVo2.getStartTime() || "" == costVo2.getStartTime())
-                && (null == costVo2.getEndTime() || "" == costVo2.getEndTime())){
+        if (StringUtils.isEmpty(costVo2.getStartTime()) || StringUtils.isEmpty(costVo2.getEndTime())){
             LocalDateTime now = LocalDateTime.now();
             int year = now.getYear();
             costVo2.setYear(year+"");
