@@ -621,9 +621,6 @@ public interface ProjectMapper extends Mapper<BaseProject> {
             "    MONTH(s1.create_time)")
     List<CostVo3> prjectCensus(CostVo2 costVo2);
 
-    @Select("SELECT MIN(create_time) startTime, MAX(create_time) endTime FROM base_project")
-    CostVo2 projectTime();
-
     @Select(
             "SELECT " +
                     "IFNULL(YEAR(s2.create_time),'-') yeartime, " +

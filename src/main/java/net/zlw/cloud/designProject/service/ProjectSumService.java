@@ -688,14 +688,10 @@ public class ProjectSumService {
         List<CostVo3> costVo3s = new ArrayList<>();
 
         try{
-            // 查询最早项目时间和最晚项目时间
-            CostVo2 projectTime = projectMapper.projectTime();
-            // 如果没有时间筛选区间，则设置默认时间
+            // 如果没有时间筛选区间，则设置默认时间为本年
             if(StringUtils.isEmpty(costVo2.getStartTime()) || StringUtils.isEmpty(costVo2.getEndTime())){
-                costVo2.setStartTime(simpleDateFormat.format(simpleDateFormat.parse(projectTime.getStartTime())));
-                costVo2.setEndTime(simpleDateFormat.format(simpleDateFormat.parse(projectTime.getEndTime())));
+                costVo2 = this.NowYear(costVo2);
             }
-
             Calendar start = new GregorianCalendar();   // 开始时间
             Calendar end = new GregorianCalendar();     // 结束时间
 
