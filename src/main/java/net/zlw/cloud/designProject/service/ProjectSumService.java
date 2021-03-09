@@ -1468,12 +1468,48 @@ public class ProjectSumService {
      * @return
      */
     public List<OneCensus6> desiginAchievementsCensus(CostVo2 costVo2){
-        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
-            return projectMapper.desiginAchievementsCensus(costVo2);
-        }else{
-            CostVo2 costVo21 = this.NowYear(costVo2);
-            return projectMapper.desiginAchievementsCensus(costVo21);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        if(StringUtils.isEmpty(costVo2.getStartTime()) || StringUtils.isEmpty(costVo2.getEndTime())){
+            costVo2 = this.NowYear(costVo2);
         }
+
+        List<OneCensus6> oneCensus6s = new ArrayList<>();
+
+        Calendar start = new GregorianCalendar();   // 开始时间
+        Calendar end = new GregorianCalendar();     // 结束时间
+        try{
+            start.setTime(simpleDateFormat.parse(costVo2.getStartTime()));
+            end.setTime(simpleDateFormat.parse(costVo2.getEndTime()));
+
+            for (;start.compareTo(end) <= 0;) {
+
+                // 按月查询数据
+                costVo2.setStartTime(simpleDateFormat.format(start.getTime()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(start.getTime());
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                costVo2.setEndTime(simpleDateFormat.format(calendar.getTime()));
+
+                List<OneCensus6> oneCensus6List = projectMapper.desiginAchievementsCensus(costVo2);
+                // 如果当前月数据为空，添加一条
+                if (!(oneCensus6List.size() > 0)){
+                    OneCensus6 oneCensus6 = new OneCensus6();
+                    oneCensus6.setYearTime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                    oneCensus6.setMonthTime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                    oneCensus6.setDesginAchievements(new BigDecimal(0));
+                    oneCensus6.setDesginAchievements2(new BigDecimal(0));
+                    oneCensus6List.add(oneCensus6);
+                }
+                oneCensus6s.addAll(oneCensus6List);
+                start.set(Calendar.DAY_OF_MONTH,1);
+                start.add(Calendar.MONTH, 1);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return oneCensus6s;
     }
 
     /**
@@ -2213,14 +2249,47 @@ public class ProjectSumService {
     }
 
     public List<OneCensus2> memberAchievementsCensus(CostVo2 costVo2){
-        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
-            List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo2);
-            return oneCensus2s;
-        }else{
-            CostVo2 costVo21 = this.NowYear(costVo2);
-            List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo21);
-            return oneCensus2s;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        if(StringUtils.isEmpty(costVo2.getStartTime()) || StringUtils.isEmpty(costVo2.getEndTime())){
+            costVo2 = this.NowYear(costVo2);
         }
+
+        List<OneCensus2> oneCensus2s = new ArrayList<>();
+
+        Calendar start = new GregorianCalendar();   // 开始时间
+        Calendar end = new GregorianCalendar();     // 结束时间
+        try{
+            start.setTime(simpleDateFormat.parse(costVo2.getStartTime()));
+            end.setTime(simpleDateFormat.parse(costVo2.getEndTime()));
+
+            for (;start.compareTo(end) <= 0;) {
+
+                // 按月查询数据
+                costVo2.setStartTime(simpleDateFormat.format(start.getTime()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(start.getTime());
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                costVo2.setEndTime(simpleDateFormat.format(calendar.getTime()));
+
+                List<OneCensus2> oneCensus2List = achievementsInfoMapper.MemberAchievementsCensus(costVo2);
+                // 如果当前月数据为空，添加一条
+                if (!(oneCensus2List.size() > 0)){
+                    OneCensus2 oneCensus2 = new OneCensus2();
+                    oneCensus2.setYeartime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                    oneCensus2.setMonthTime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                    oneCensus2.setTotals(0.0);
+                    oneCensus2List.add(oneCensus2);
+                }
+                oneCensus2s.addAll(oneCensus2List);
+                start.set(Calendar.DAY_OF_MONTH,1);
+                start.add(Calendar.MONTH, 1);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return oneCensus2s;
     }
 
     public BigDecimal memberAchievementsYearCount(CostVo2 costVo2){
@@ -2228,7 +2297,7 @@ public class ProjectSumService {
         List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo21);
         Double total = 0.0;
         for (OneCensus2 oneCensus2 : oneCensus2s) {
-            total += oneCensus2.getTotal();
+            total += oneCensus2.getTotals();
         }
         return new BigDecimal(total);
     }
@@ -2238,7 +2307,7 @@ public class ProjectSumService {
         List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo21);
         Double total = 0.0;
         for (OneCensus2 oneCensus2 : oneCensus2s) {
-            total += oneCensus2.getTotal();
+            total += oneCensus2.getTotals();
         }
         return new BigDecimal(total);
     }
@@ -2248,7 +2317,7 @@ public class ProjectSumService {
         List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo21);
         Double total = 0.0;
         for (OneCensus2 oneCensus2 : oneCensus2s) {
-            total += oneCensus2.getTotal();
+            total += oneCensus2.getTotals();
         }
         return new BigDecimal(total);
     }
@@ -2258,20 +2327,55 @@ public class ProjectSumService {
         List<OneCensus2> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus(costVo21);
         Double total = 0.0;
         for (OneCensus2 oneCensus2 : oneCensus2s) {
-            total += oneCensus2.getTotal();
+            total += oneCensus2.getTotals();
         }
         return new BigDecimal(total);
     }
 
     public List<OneCensus4> MemberAchievementsCensus2(CostVo2 costVo2){
-        //如果是设计
-        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
-            List<OneCensus4> oneCensus2s = achievementsInfoMapper.MemberAchievementsCensus2(costVo2);
-            return oneCensus2s;
-        }else{
-            CostVo2 costVo21 = this.NowYear(costVo2);
-            return achievementsInfoMapper.MemberAchievementsCensus2(costVo21);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        if(StringUtils.isEmpty(costVo2.getStartTime()) || StringUtils.isEmpty(costVo2.getEndTime())){
+            costVo2 = this.NowYear(costVo2);
         }
+
+        List<OneCensus4> oneCensus4s = new ArrayList<>();
+
+        Calendar start = new GregorianCalendar();   // 开始时间
+        Calendar end = new GregorianCalendar();     // 结束时间
+        try{
+            start.setTime(simpleDateFormat.parse(costVo2.getStartTime()));
+            end.setTime(simpleDateFormat.parse(costVo2.getEndTime()));
+
+            for (;start.compareTo(end) <= 0;) {
+
+                // 按月查询数据
+                costVo2.setStartTime(simpleDateFormat.format(start.getTime()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(start.getTime());
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                costVo2.setEndTime(simpleDateFormat.format(calendar.getTime()));
+
+                List<OneCensus4> oneCensus4List = achievementsInfoMapper.MemberAchievementsCensus2(costVo2);
+                // 如果当前月数据为空，添加一条
+                if (!(oneCensus4List.size() > 0)){
+                    OneCensus4 oneCensus4 = new OneCensus4();
+                    oneCensus4.setYearTime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                    oneCensus4.setMonthTime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                    oneCensus4.setTotal(new BigDecimal(0));
+                    oneCensus4.setTotal2(new BigDecimal(0));
+                    oneCensus4.setTotal3(new BigDecimal(0));
+                    oneCensus4List.add(oneCensus4);
+                }
+                oneCensus4s.addAll(oneCensus4List);
+                start.set(Calendar.DAY_OF_MONTH,1);
+                start.add(Calendar.MONTH, 1);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return oneCensus4s;
     }
 
     /**

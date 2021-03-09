@@ -7,8 +7,6 @@ import net.zlw.cloud.designProject.model.OneCensus4;
 import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.statisticAnalysis.model.PerformanPeople;
-import net.zlw.cloud.statisticAnalysis.model.PerformanceAccrualAndSummaryList;
-import net.zlw.cloud.statisticAnalysis.model.ReturnEmployeePerformance;
 import org.apache.ibatis.annotations.Select;
 import tk.mybatis.mapper.common.Mapper;
 
@@ -185,7 +183,7 @@ public interface AchievementsInfoMapper extends Mapper<AchievementsInfo> {
             "SELECT   " +
                     "YEAR(create_time) yeartime,   " +
                     "MONTH(create_time) monthTime,   " +
-                    "SUM(IFNULL(actual_amount,0)) total   " +
+                    "SUM(IFNULL(actual_amount,0)) totals   " +
                     "FROM   " +
                     "employee_achievements_info   " +
                     "WHERE   " +

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -2175,7 +2176,7 @@ public class ProjectSumController extends BaseController {
             for (OneCensus2 oneCensus2 : oneCensus2s) {
                 json +=
                         "{\"time\": \""+oneCensus2.getYeartime()+"-"+oneCensus2.getMonthTime()+"\"," +
-                                "\"truckAmmount\": \""+oneCensus2.getTotal()+"\"" +
+                                "\"truckAmmount\": \""+oneCensus2.getTotals()+"\"" +
                                 "},";
             }
             json = json.substring(0,json.length()-1);
@@ -2224,6 +2225,9 @@ public class ProjectSumController extends BaseController {
      */
     @RequestMapping(value = "/api/projectCount/memberAchievementsMonthCount",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object>memberAchievementsMonthCount(CostVo2 costVo2){
+        if (costVo2.getDistrict() == null){
+            costVo2.setDistrict("");
+        }
         //本月员工绩效
         BigDecimal bigDecimal = projectSumService.memberAchievementsMonthCount(costVo2);
         //本月同比上月
@@ -2238,10 +2242,10 @@ public class ProjectSumController extends BaseController {
         BigDecimal bigDecimal4 = projectSumService.desiginCensusRast(memberAchievementsYearCount, memberAchievementsLastYearCount);
 
         HashMap<String, Object> map = new HashMap<>();
-        map.put("monthtotal",bigDecimal);
-        map.put("monthrast",bigDecimal2);
-        map.put("yeartotal",bigDecimal3);
-        map.put("yearrast",bigDecimal4);
+        map.put("monthtotal",bigDecimal.setScale(2, RoundingMode.HALF_UP).doubleValue());
+        map.put("monthrast",bigDecimal2.setScale(2, RoundingMode.HALF_UP).doubleValue());
+        map.put("yeartotal",bigDecimal3.setScale(2, RoundingMode.HALF_UP).doubleValue());
+        map.put("yearrast",bigDecimal4.setScale(2, RoundingMode.HALF_UP).doubleValue());
         return RestUtil.success(map);
     }
 //    /**
@@ -2335,9 +2339,9 @@ public class ProjectSumController extends BaseController {
         BigDecimal total3 = new BigDecimal(0);
         List<OneCensus4> oneCensus4s = projectSumService.MemberAchievementsCensus2(costVo2);
         for (OneCensus4 oneCensus4 : oneCensus4s) {
-            total1 = oneCensus4.getTotal();
-            total2 = oneCensus4.getTotal2();
-            total3 = oneCensus4.getTotal3();
+            total1 = total1.add(oneCensus4.getTotal());
+            total2 = total2.add(oneCensus4.getTotal2());
+            total3 = total3.add(oneCensus4.getTotal3());
         }
         ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
         map.put("total1",total1.setScale(2,BigDecimal.ROUND_HALF_UP));
@@ -2413,9 +2417,9 @@ public class ProjectSumController extends BaseController {
         BigDecimal total3 = new BigDecimal(0);
 
         for (OneCensus4 oneCensus4 : oneCensus4s) {
-            total1 = oneCensus4.getTotal();
-            total2 = oneCensus4.getTotal2();
-            total3 = oneCensus4.getTotal3();
+            total1 = total1.add(oneCensus4.getTotal());
+            total2 = total2.add(oneCensus4.getTotal2());
+            total3 = total3.add(oneCensus4.getTotal3());
         }
         ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>();
         map.put("total1",total1.setScale(2,BigDecimal.ROUND_HALF_UP));

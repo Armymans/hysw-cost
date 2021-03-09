@@ -12,4 +12,6 @@ public class OneCensus2 {
     private Integer progresspayment;
     private Integer settleaccounts;
     private Integer total;
+
+    private Double totals;
 }
