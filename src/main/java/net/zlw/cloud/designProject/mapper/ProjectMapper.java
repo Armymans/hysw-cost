@@ -1159,48 +1159,96 @@ public interface ProjectMapper extends Mapper<BaseProject> {
 
     @Select(
             "SELECT " +
-                    "YEAR(s1.create_time) yeartime, " +
-                    "MONTH(s1.create_time) monthtime, " +
-                    "FLOOR(SUM(IFNULL(s2.review_number,0))/2) as reviewNumber, " +
-                    "SUM(IFNULL(s4.sumbit_money,0)) sumbitMoney, " +
-                    "FLOOR(SUM(IFNULL(s3.authorized_number,0))/2) authorizedNumber, " +
-                    "FLOOR(SUM(IFNULL(s3.subtract_the_number,0))/2) subtractTheNumber " +
+                    "t1.yeartime, " +
+                    "t1.monthtime, " +
+                    "t1.reviewNumber, " +
+                    "t1.authorizedNumber, " +
+                    "t1.subtractTheNumber, " +
+                    "t2.sumbitMoney " +
                     "FROM " +
-                    "base_project s1 inner JOIN last_settlement_review  s2 ON s1.id = s2.base_project_id " +
-                    "inner JOIN settlement_audit_information s3 ON s1.id = s3.base_project_id  " +
-                    "inner JOIN settlement_info s4 ON s1.id = s4.base_project_Id " +
-                    "where " +
-                    "(s1.district = #{district} or #{district} = '') " +
-                    "and " +
-                    "s1.create_time >= #{startTime} " +
-                    "and " +
-                    "(s1.create_time <= #{endTime} or #{endTime} = '') " +
-                    "and " +
-                    "s1.del_flag = '0'" +
-                    "GROUP BY year(s1.create_time),MONTH(s1.create_time)"
-    )
-    List<OneCensus4> projectSettlementCensus(CostVo2 costVo2);
-
-    @Select(
-            "SELECT " +
-                    "YEAR(s1.create_time) yeartime, " +
-                    "MONTH(s1.create_time) monthtime, " +
-                    "SUM(IFNULL(s2.review_number,0)) reviewNumber, " +
-                    "SUM(IFNULL(s4.sumbit_money,0)) sumbitMoney, " +
-                    "SUM(IFNULL(s3.authorized_number,0)) authorizedNumber, " +
-                    "SUM(IFNULL(s3.subtract_the_number,0)) subtractTheNumber " +
+                    "(SELECT " +
+                    "YEAR( s1.create_time ) yeartime, " +
+                    "MONTH ( s1.create_time ) monthtime, " +
+                    "SUM( " +
+                    "IFNULL( s2.review_number, 0 )) reviewNumber, " +
+                    "SUM( " +
+                    "IFNULL( s3.authorized_number, 0 )) authorizedNumber, " +
+                    "SUM( " +
+                    "IFNULL( s3.subtract_the_number, 0 )) subtractTheNumber " +
                     "FROM " +
-                    "base_project s1 inner JOIN last_settlement_review  s2 ON s1.id = s2.base_project_id " +
-                    "inner JOIN settlement_audit_information s3 ON s1.id = s3.base_project_id  " +
-                    "inner JOIN settlement_info s4 ON s1.id = s4.base_project_Id " +
-                    "where " +
+                    "base_project s1 " +
+                    "INNER JOIN last_settlement_review s2 ON s1.id = s2.base_project_id " +
+                    "INNER JOIN settlement_audit_information s3 ON s1.id = s3.base_project_id " +
+                    "WHERE " +
                     "s1.del_flag = '0' " +
                     "and " +
                     "(s1.district = #{district} or #{district} = '') " +
                     "and " +
                     "s1.create_time >= #{startTime} " +
                     "and " +
-                    "(s1.create_time <= #{endTime} or #{endTime} = '')"
+                    "(s1.create_time <= #{endTime} or #{endTime} = '') " +
+                    "GROUP BY " +
+                    "YEAR( s1.create_time ), " +
+                    "MONTH ( s1.create_time )) t1 " +
+                    "  LEFT JOIN " +
+                    "(SELECT " +
+                    "YEAR( s1.create_time ) yeartime, " +
+                    "MONTH ( s1.create_time ) monthtime, " +
+                    "SUM(IFNULL( s4.sumbit_money, 0 )) sumbitMoney " +
+                    "FROM " +
+                    "base_project s1 " +
+                    "INNER JOIN settlement_info s4 ON s1.id = s4.base_project_Id " +
+                    "WHERE " +
+                    "s1.del_flag = '0' " +
+                    "and " +
+                    "(s1.district = #{district} or #{district} = '') " +
+                    "and " +
+                    "s1.create_time >= #{startTime} " +
+                    "and " +
+                    "(s1.create_time <= #{endTime} or #{endTime} = '') " +
+                    "GROUP BY " +
+                    "YEAR( s1.create_time ), " +
+                    "MONTH ( s1.create_time )) t2 " +
+                    "ON (t1.yeartime = t2.yeartime AND t1.monthtime = t2.monthtime)"
+    )
+    List<OneCensus4> projectSettlementCensus(CostVo2 costVo2);
+
+    @Select(
+            "SELECT " +
+                    "t1.reviewNumber, " +
+                    "t1.authorizedNumber, " +
+                    "t1.subtractTheNumber, " +
+                    "t2.sumbitMoney  " +
+                    "FROM " +
+                    "( " +
+                    "SELECT " +
+                    "SUM( " +
+                    "IFNULL( s2.review_number, 0 )) reviewNumber, " +
+                    "SUM( " +
+                    "IFNULL( s3.authorized_number, 0 )) authorizedNumber, " +
+                    "SUM( " +
+                    "IFNULL( s3.subtract_the_number, 0 )) subtractTheNumber  " +
+                    "FROM " +
+                    "base_project s1 " +
+                    "INNER JOIN last_settlement_review s2 ON s1.id = s2.base_project_id " +
+                    "INNER JOIN settlement_audit_information s3 ON s1.id = s3.base_project_id  " +
+                    "WHERE " +
+                    "s1.del_flag = '0'  " +
+                    "AND s1.create_time >= #{startTime}  " +
+                    "AND (s1.create_time <= #{endTime} or #{endTime} = '')  " +
+                    ") t1, " +
+                    "( " +
+                    "SELECT " +
+                    "SUM( " +
+                    "IFNULL( s4.sumbit_money, 0 )) sumbitMoney  " +
+                    "FROM " +
+                    "base_project s1 " +
+                    "INNER JOIN settlement_info s4 ON s1.id = s4.base_project_Id  " +
+                    "WHERE " +
+                    "s1.del_flag = '0'  " +
+                    "AND s1.create_time >= #{startTime}  " +
+                    "AND (s1.create_time <= #{endTime} or #{endTime} = '')  " +
+                    ") t2"
     )
     OneCensus4 projectSettlementCount(CostVo2 costVo2);
 

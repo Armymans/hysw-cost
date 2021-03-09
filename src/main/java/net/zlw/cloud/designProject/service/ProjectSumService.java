@@ -1152,15 +1152,50 @@ public class ProjectSumService {
     }
 
     public List<OneCensus4> projectSettlementCensus(CostVo2 costVo2){
-        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())
-                ||costVo2.getEndTime()!=null&&!"".equals(costVo2.getEndTime())){
-            List<OneCensus4> oneCensus4s = projectMapper.projectSettlementCensus(costVo2);
-            return oneCensus4s;
-        }else {
-            CostVo2 costVo21 = this.NowYear(costVo2);
-            List<OneCensus4> oneCensus4s = projectMapper.projectSettlementCensus(costVo21);
-            return oneCensus4s;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        if(StringUtils.isEmpty(costVo2.getStartTime()) || StringUtils.isEmpty(costVo2.getEndTime())){
+            costVo2 = this.NowYear(costVo2);
         }
+
+        List<OneCensus4> oneCensus4s = new ArrayList<>();
+
+        Calendar start = new GregorianCalendar();   // 开始时间
+        Calendar end = new GregorianCalendar();     // 结束时间
+        try{
+            start.setTime(simpleDateFormat.parse(costVo2.getStartTime()));
+            end.setTime(simpleDateFormat.parse(costVo2.getEndTime()));
+
+            for (;start.compareTo(end) <= 0;) {
+
+                // 按月查询数据
+                costVo2.setStartTime(simpleDateFormat.format(start.getTime()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(start.getTime());
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                costVo2.setEndTime(simpleDateFormat.format(calendar.getTime()));
+
+                List<OneCensus4> oneCensus4List = projectMapper.projectSettlementCensus(costVo2);
+                // 如果当前月数据为空，添加一条
+                if (!(oneCensus4List.size() > 0)){
+                    OneCensus4 oneCensus4 = new OneCensus4();
+                    oneCensus4.setYearTime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                    oneCensus4.setMonthTime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                    oneCensus4.setReviewNumber(new BigDecimal(0));
+                    oneCensus4.setAuthorizedNumber(new BigDecimal(0));
+                    oneCensus4.setSubtractTheNumber(new BigDecimal(0));
+                    oneCensus4.setSumbitMoney(new BigDecimal(0));
+                    oneCensus4List.add(oneCensus4);
+                }
+                oneCensus4s.addAll(oneCensus4List);
+                start.set(Calendar.DAY_OF_MONTH,1);
+                start.add(Calendar.MONTH, 1);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return oneCensus4s;
     }
 
     public OneCensus4 projectSettlementCount(CostVo2 costVo2){
