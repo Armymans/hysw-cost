@@ -35,7 +35,6 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
-import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
 import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
 import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
@@ -45,6 +44,7 @@ import net.zlw.cloud.snsEmailFile.model.vo.MessageVo;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -1362,7 +1362,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
     public void updateTrack(TrackVo trackVo, UserInfo userInfo,HttpServletRequest request) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String userInfoId = userInfo.getId();
-//        String userInfoId = "user320";
+//        String userInfoId = "user312";
 
 
         //如果点击得是保存
@@ -1391,6 +1391,10 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
             operationLog.setIp(ip);
             operationLogDao.insertSelective(operationLog);
         } else if (trackVo.getStatus().equals("1")) {
+            if (StringUtils.isEmpty(trackVo.getAuditInfo().getBaseProjectId())){
+                TrackAuditInfo trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(trackVo.getAuditInfo());
+                trackVo.getAuditInfo().setBaseProjectId(trackAuditInfo.getBaseProjectId());
+            }
             //如果是提交 将数据覆盖
             trackAuditInfoDao.updateByPrimaryKeySelective(trackVo.getAuditInfo());
 
