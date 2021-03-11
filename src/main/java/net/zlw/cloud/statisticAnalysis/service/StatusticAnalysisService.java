@@ -15,6 +15,8 @@ import net.zlw.cloud.index.model.vo.PerformanceDistributionChart;
 import net.zlw.cloud.index.model.vo.pageVo;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.statisticAnalysis.model.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -469,12 +471,46 @@ public class StatusticAnalysisService {
      */
     public JSONArray newPicture(pageVo pageVo) {
         List<PerformanceDistributionChart> performanceDistributionCharts = new ArrayList<>();
-        if (pageVo.getStatTime()==null || pageVo.getStatTime().equals("") && pageVo.getEndTime() == null || pageVo.getEndTime().equals("")){
-            //如果未输入时间默认展示今年的数据
-            performanceDistributionCharts = achievementsInfoMapper.newPicture(this.NowYear(pageVo));
-        }else{
-            performanceDistributionCharts = achievementsInfoMapper.newPicture(pageVo);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        if(StringUtils.isEmpty(pageVo.getStatTime()) || StringUtils.isEmpty(pageVo.getEndTime())){
+            pageVo = this.NowYear(pageVo);
         }
+
+        Calendar start = new GregorianCalendar();   // 开始时间
+        Calendar end = new GregorianCalendar();     // 结束时间
+        try{
+            start.setTime(simpleDateFormat.parse(pageVo.getStatTime()));
+            end.setTime(simpleDateFormat.parse(pageVo.getEndTime()));
+
+            for (;start.compareTo(end) <= 0;) {
+
+                // 按月查询数据
+                pageVo.setStatTime(simpleDateFormat.format(start.getTime()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(start.getTime());
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                pageVo.setEndTime(simpleDateFormat.format(calendar.getTime()));
+
+                List<PerformanceDistributionChart> performanceDistributionChartList = achievementsInfoMapper.newPicture(pageVo);
+                // 如果当前月数据为空，添加一条
+                if (!(performanceDistributionChartList.size() > 0)){
+                    PerformanceDistributionChart performanceDistributionChart = new PerformanceDistributionChart();
+                    performanceDistributionChart.setYearTime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                    performanceDistributionChart.setMonthTime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                    performanceDistributionChart.setPerformanceProvision(new BigDecimal(0));
+                    performanceDistributionChartList.add(performanceDistributionChart);
+                }
+                performanceDistributionCharts.addAll(performanceDistributionChartList);
+                start.set(Calendar.DAY_OF_MONTH,1);
+                start.add(Calendar.MONTH, 1);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
         String year = pageVo.getStatTime().substring(0,4);
         String month = pageVo.getStatTime().substring(5,7);
         //json拼接
@@ -585,10 +621,44 @@ public class StatusticAnalysisService {
      */
     public JSONArray newEmployeePerformanceAnalysis(pageVo pageVo) {
         List<PerformanceDistributionChart> returnEmployeePerformances = new ArrayList<>();
-        if(pageVo.getStatTime()==null || pageVo.getStatTime().equals("") && pageVo.getEndTime() == null || pageVo.getEndTime().equals("")){
-            returnEmployeePerformances = achievementsInfoMapper.newEmployeePerformanceAnalysis(this.NowYear(pageVo));
-        }else{
-            returnEmployeePerformances = achievementsInfoMapper.newEmployeePerformanceAnalysis(pageVo);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        if(StringUtils.isEmpty(pageVo.getStatTime()) || StringUtils.isEmpty(pageVo.getEndTime())){
+            pageVo = this.NowYear(pageVo);
+        }
+
+        Calendar start = new GregorianCalendar();   // 开始时间
+        Calendar end = new GregorianCalendar();     // 结束时间
+        try{
+            start.setTime(simpleDateFormat.parse(pageVo.getStatTime()));
+            end.setTime(simpleDateFormat.parse(pageVo.getEndTime()));
+
+            for (;start.compareTo(end) <= 0;) {
+
+                // 按月查询数据
+                pageVo.setStatTime(simpleDateFormat.format(start.getTime()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(start.getTime());
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                pageVo.setEndTime(simpleDateFormat.format(calendar.getTime()));
+
+                List<PerformanceDistributionChart> performanceDistributionChartList = achievementsInfoMapper.newEmployeePerformanceAnalysis(pageVo);
+                // 如果当前月数据为空，添加一条
+                if (CollectionUtils.isEmpty(performanceDistributionChartList)){
+                    PerformanceDistributionChart performanceDistributionChart = new PerformanceDistributionChart();
+                    performanceDistributionChart.setYearTime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                    performanceDistributionChart.setMonthTime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                    performanceDistributionChart.setPerformanceProvision(new BigDecimal(0));
+                    performanceDistributionChartList.add(performanceDistributionChart);
+                }
+                returnEmployeePerformances.addAll(performanceDistributionChartList);
+                start.set(Calendar.DAY_OF_MONTH,1);
+                start.add(Calendar.MONTH, 1);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
         }
 
         String returnPicture = "[{\n" +

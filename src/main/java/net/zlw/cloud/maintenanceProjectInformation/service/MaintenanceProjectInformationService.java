@@ -391,7 +391,7 @@ public class MaintenanceProjectInformationService {
                 ConstructionUnitManagement constructionUnitManagement = constructionUnitManagementMapper.selectById(maintenanceProjectInformation.getConstructionUnitId());
 //                maintenanceProjectInformation.setConstructionUnitManagement(constructionUnitManagement);
                 //获取施工单位名字
-                if (null != constructionUnitManagement.getConstructionUnitName()) {
+                if (null != constructionUnitManagement && null != constructionUnitManagement.getConstructionUnitName()) {
                     maintenanceProjectInformation.setConstructionUnitName(constructionUnitManagement.getConstructionUnitName());
                 }
             }
@@ -2274,7 +2274,42 @@ public class MaintenanceProjectInformationService {
     }
 
     public List<StatisticalFigureVo> statisticalFigure(String projectAddress, String startDate, String endDate, UserInfo loginUser) {
-        return maintenanceProjectInformationMapper.statisticalFigure(projectAddress, startDate, endDate);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        List<StatisticalFigureVo> statisticalFigureVos = new ArrayList<>();
+
+        Calendar start = new GregorianCalendar();   // 开始时间
+        Calendar end = new GregorianCalendar();     // 结束时间
+        try{
+            start.setTime(simpleDateFormat.parse(startDate));
+            end.setTime(simpleDateFormat.parse(endDate));
+
+            for (;start.compareTo(end) <= 0;) {
+
+                // 按月查询数据
+                startDate = (simpleDateFormat.format(start.getTime()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(start.getTime());
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                endDate = (simpleDateFormat.format(calendar.getTime()));
+
+                List<StatisticalFigureVo> statisticalFigureVoList = maintenanceProjectInformationMapper.statisticalFigure(projectAddress, startDate, endDate);
+                // 如果当前月数据为空，添加一条
+                if (!(statisticalFigureVoList.size() > 0)){
+                    StatisticalFigureVo statisticalFigureVo = new StatisticalFigureVo(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                    statisticalFigureVo.setYeartime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                    statisticalFigureVo.setMonthtime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                    statisticalFigureVoList.add(statisticalFigureVo);
+                }
+                statisticalFigureVos.addAll(statisticalFigureVoList);
+                start.set(Calendar.DAY_OF_MONTH,1);
+                start.add(Calendar.MONTH, 1);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return statisticalFigureVos;
     }
 
     /**
@@ -2316,7 +2351,8 @@ public class MaintenanceProjectInformationService {
         //当前年
         String year = String.valueOf(now.get(Calendar.YEAR));
         //当前月
-        String month = String.valueOf(now.get(Calendar.MONTH));
+        //String month = String.valueOf(now.get(Calendar.MONTH));
+        String month = DateUtil.getNowMonth().substring(4);
 
         String day = year + "-" + month;
         return maintenanceProjectInformationMapper.monthCount(day);

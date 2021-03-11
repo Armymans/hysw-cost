@@ -1221,7 +1221,52 @@ public class ProjectSumService {
     }
 
     public List<OneCensus> censusList2(CostVo2 costVo2){
-        return projectMapper.censusList2(costVo2);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        if(StringUtils.isEmpty(costVo2.getStartTime()) || StringUtils.isEmpty(costVo2.getEndTime())){
+            costVo2 = this.NowYear(costVo2);
+        }
+
+        List<OneCensus> oneCensuses = new ArrayList<>();
+
+        Calendar start = new GregorianCalendar();   // 开始时间
+        Calendar end = new GregorianCalendar();     // 结束时间
+        try{
+            start.setTime(simpleDateFormat.parse(costVo2.getStartTime()));
+            end.setTime(simpleDateFormat.parse(costVo2.getEndTime()));
+
+            for (;start.compareTo(end) <= 0;) {
+
+                // 按月查询数据
+                costVo2.setStartTime(simpleDateFormat.format(start.getTime()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(start.getTime());
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                costVo2.setEndTime(simpleDateFormat.format(calendar.getTime()));
+
+                List<OneCensus> oneCensusList = projectMapper.censusList2(costVo2);
+                // 如果当前月数据为空，添加一条
+                if (!(oneCensusList.size() > 0)){
+                    OneCensus oneCensus = new OneCensus();
+                    oneCensus.setYeartime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                    oneCensus.setMonthtime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                    oneCensus.setMunicipalPipeline(0);
+                    oneCensus.setNetworkReconstruction(0);
+                    oneCensus.setNewCommunity(0);
+                    oneCensus.setSecondaryWater(0);
+                    oneCensus.setCommercialHouseholds(0);
+                    oneCensus.setWaterResidents(0);
+                    oneCensus.setAdministration(0);
+                    oneCensusList.add(oneCensus);
+                }
+                oneCensuses.addAll(oneCensusList);
+                start.set(Calendar.DAY_OF_MONTH,1);
+                start.add(Calendar.MONTH, 1);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return oneCensuses;
     }
 
     /**
@@ -1854,22 +1899,51 @@ public class ProjectSumService {
      * @return
      */
     public List<OneCensus6> costTaskCensus(CostVo2 costVo2){
-        if(costVo2.getStartTime()!=null&&!"".equals(costVo2.getStartTime())){
-            List<OneCensus6> oneCensus6s = projectMapper.costTaskCensus(costVo2);
-            for (OneCensus6 oneCensus6 : oneCensus6s) {
-                oneCensus6.setTotal(oneCensus6.getBudgetStatus() + oneCensus6.getProgressPaymentStatus() + oneCensus6.getVisaStatus() + oneCensus6.getSettleAccountsStatus() + oneCensus6.getTrackStatus());
-            }
-            return oneCensus6s;
-        }
-    else {
-            CostVo2 costVo21 = this.NowYear(costVo2);
-            List<OneCensus6> oneCensus6s = projectMapper.costTaskCensus(costVo21);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-            for (OneCensus6 oneCensus6 : oneCensus6s) {
-                oneCensus6.setTotal(oneCensus6.getBudgetStatus() + oneCensus6.getProgressPaymentStatus() + oneCensus6.getVisaStatus() + oneCensus6.getSettleAccountsStatus() + oneCensus6.getTrackStatus());
-            }
-            return oneCensus6s;
+        if(StringUtils.isEmpty(costVo2.getStartTime()) || StringUtils.isEmpty(costVo2.getEndTime())){
+            costVo2 = this.NowYear(costVo2);
         }
+
+        List<OneCensus6> oneCensus6s = new ArrayList<>();
+
+        Calendar start = new GregorianCalendar();   // 开始时间
+        Calendar end = new GregorianCalendar();     // 结束时间
+        try{
+            start.setTime(simpleDateFormat.parse(costVo2.getStartTime()));
+            end.setTime(simpleDateFormat.parse(costVo2.getEndTime()));
+
+            for (;start.compareTo(end) <= 0;) {
+
+                // 按月查询数据
+                costVo2.setStartTime(simpleDateFormat.format(start.getTime()));
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(start.getTime());
+                calendar.set(Calendar.DATE, calendar.getActualMaximum(Calendar.DATE));
+                costVo2.setEndTime(simpleDateFormat.format(calendar.getTime()));
+
+                List<OneCensus6> oneCensus6List = projectMapper.costTaskCensus(costVo2);
+                // 如果当前月数据为空，添加一条
+                if (!(oneCensus6List.size() > 0)){
+                    OneCensus6 oneCensus6 = new OneCensus6();
+                    oneCensus6.setYearTime(simpleDateFormat.format(start.getTime()).substring(0,4));
+                    oneCensus6.setMonthTime(Integer.parseInt(simpleDateFormat.format(start.getTime()).substring(5,7)) + "");
+                    oneCensus6.setTotal(0);
+                    oneCensus6List.add(oneCensus6);
+                } else {
+                    for (OneCensus6 oneCensus6 : oneCensus6List) {
+                        oneCensus6.setTotal(oneCensus6.getBudgetStatus() + oneCensus6.getProgressPaymentStatus() + oneCensus6.getVisaStatus() + oneCensus6.getSettleAccountsStatus() + oneCensus6.getTrackStatus());
+                    }
+                }
+                oneCensus6s.addAll(oneCensus6List);
+                start.set(Calendar.DAY_OF_MONTH,1);
+                start.add(Calendar.MONTH, 1);
+            }
+
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+       return oneCensus6s;
     }
 
     /**

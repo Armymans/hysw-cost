@@ -6,19 +6,19 @@ import com.github.pagehelper.PageInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
-import net.zlw.cloud.designProject.model.CostVo2;
-import net.zlw.cloud.designProject.model.OneCensus;
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.StatisticalFigureVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.StatisticalNumberVo;
 import net.zlw.cloud.maintenanceProjectInformation.service.MaintenanceProjectInformationService;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -89,10 +89,7 @@ public class MaintenanceProjectInformationSumController extends BaseController {
     }
 
     public Integer prjectCensusRast(Integer A,Integer B){
-        if(A == 0){
-            A = 1;
-        }
-        return (A-B)/A*100;
+        return A - B;
     }
 
     /**
@@ -102,6 +99,15 @@ public class MaintenanceProjectInformationSumController extends BaseController {
      **/
     @RequestMapping(value = "/maintenanceProjectInformationSum/statisticalFigure",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> statisticalFigure(String projectAddress,String startDate,String endDate){
+
+        // 默认为本年时间
+        if(StringUtils.isEmpty(startDate) || StringUtils.isEmpty(endDate)){
+            LocalDateTime now = LocalDateTime.now();
+            int year = now.getYear();
+            startDate = year + "-01-01";
+            endDate = year + "-12-31";
+        }
+
         List<StatisticalFigureVo> allMaintenanceProjectInformation = maintenanceProjectInformationService.statisticalFigure(projectAddress,startDate,endDate, getLoginUser());
         String year = startDate.substring(0,4);
         String month = startDate.substring(5,7);
@@ -288,6 +294,25 @@ public class MaintenanceProjectInformationSumController extends BaseController {
                     ",\"truckAmmount\": \"0\"" +
                     "}";
         }
+
+        censusList +=
+                "]" +
+                        "}, {" +
+                        "\"companyName\": \"装饰及装修\"," +
+                        "\"imageAmmount\": [";
+        if(allMaintenanceProjectInformation.size()>0){
+            for (StatisticalFigureVo oneCensus : allMaintenanceProjectInformation) {
+                censusList += "{\"time\": \""+oneCensus.getYeartime()+"-"+oneCensus.getMonthtime()+"\"," +
+                        "\"truckAmmount\": \"" + oneCensus.getParam10()+"\"},";
+            }
+            censusList = censusList.substring(0,censusList.length() -1);
+        }else{
+            // censusList += "{}";
+            censusList+="{\"time\": \""+year +"-"+month+"\""+
+                    ",\"truckAmmount\": \"0\"" +
+                    "}";
+        }
+
         censusList +=  "]}]";
 
         JSONArray json = JSON.parseArray(censusList);

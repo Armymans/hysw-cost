@@ -585,7 +585,7 @@ public class ThoseResponsibleService  {
                 maintenanceProjectInformation1.setMaintenanceItemName(baseProject.getProjectName());
                 maintenanceProjectInformation1.setPreparePeople(missionPerson);
                 maintenanceProjectInformation1.setProjectAddress(baseProject.getDistrict());
-                maintenanceProjectInformation1.setConstructionUnitId(baseProject.getConstructionUnit());
+                maintenanceProjectInformation1.setConstructionUnitId(baseProject.getConstructionOrganization());
                 maintenanceProjectInformation1.setCustomerName(baseProject.getCustomerName());
                 maintenanceProjectInformation1.setCreateTime(s.format(new Date()));
                 maintenanceProjectInformation1.setPreparePeople(missionPerson);

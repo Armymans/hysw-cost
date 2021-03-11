@@ -1335,11 +1335,7 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and " +
                     "del_flag = '0' " +
                     "group by year(bp.create_time), " +
-                    "month(bp.create_time) " +
-                    "HAVING " +
-                    "(yeartime = #{year} or #{year} = '') " +
-                    "and " +
-                    "(monthtime = #{month} or #{month} = '')"
+                    "month(bp.create_time) "
     )
     List<OneCensus> censusList2(CostVo2 costVo2);
 
