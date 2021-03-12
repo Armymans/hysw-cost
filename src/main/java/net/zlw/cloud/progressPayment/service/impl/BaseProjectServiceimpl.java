@@ -2151,8 +2151,8 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                         progressListVo.setNameOfCostUnit(costUnitManagement.getCostUnitName());
                     }
                 }
+                return new PageInfo<ProgressListVo>(list);
             }
-
         }
         //未通过
         if (pageVo.getProgressStatus().equals("3")){
