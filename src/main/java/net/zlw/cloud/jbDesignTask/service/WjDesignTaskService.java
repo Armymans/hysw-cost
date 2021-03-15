@@ -273,6 +273,7 @@ public class WjDesignTaskService {
             costPreparation.setCostTotalAmount(new BigDecimal(0));
             costPreparation.setVatAmount(new BigDecimal(0));
             costPreparation.setTotalPackageMaterial(new BigDecimal(0));
+            costPreparation.setCostPreparationTime(data);
             costPreparationDao.insertSelective(costPreparation);
 
             VeryEstablishment veryEstablishment = new VeryEstablishment();

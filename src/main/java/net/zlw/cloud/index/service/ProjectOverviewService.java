@@ -9,6 +9,7 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -127,7 +128,7 @@ public class ProjectOverviewService {
             if (baseProject.getProjectFlow()!=null){
                 String[] strings = baseProject.getProjectFlow().split(",");
                 //如果当前项目 设计完成 则记录为 2
-                if (baseProject.getDesginStatus().equals("4")){
+                if (StringUtils.isNotEmpty(baseProject.getDesginStatus()) && baseProject.getDesginStatus().equals("4")){
                     newflow = newflow+"2";
                 }
                 for (String s : strings) {
