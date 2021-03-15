@@ -829,7 +829,19 @@ public class ProjectService {
                         designInfo.setContractAmount(anhuiMoneyinfo.getContractAmount());
                     }
                 }
+                // 领导和创建人才能删除
+                if (StringUtils.isNotEmpty(designInfo.getFounderId()) && loginUser.equals(designInfo.getFounderId())){
+                    designInfo.setDeleteShow("0");
+                }
+
+                if (loginUser.equals(wjsjh) || loginUser.equals(wjzjh) || loginUser.equals(wjzjm) || loginUser.equals(whsjh) || loginUser.equals(whzjh)){
+                    designInfo.setDeleteShow("0");
+                }
+
             }
+
+
+
             PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos1);
             return designInfoPageInfo;
         }else{
@@ -976,6 +988,26 @@ public class ProjectService {
         }
         PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos);
         return designInfoPageInfo;
+    }
+
+    public void deleteDesign(String id, String userId, HttpServletRequest request) {
+        DesignInfo designInfo = designInfoMapper.selectByPrimaryKey(id);
+        designInfo.setStatus("1");
+        designInfoMapper.updateByPrimaryKey(designInfo);
+
+        // 保存日志
+        MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
+        OperationLog operationLog = new OperationLog();
+        operationLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
+        operationLog.setName(userId);
+        operationLog.setType("15"); //工程项目
+        operationLog.setContent(memberManage.getMemberName()+"删除"+designInfo.getProjectName()+"设计项目【"+designInfo.getId()+"】");
+        operationLog.setDoObject(designInfo.getId()); // 项目标识
+        operationLog.setStatus("0");
+        operationLog.setDoTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        String ip = memberService.getIp(request);
+        operationLog.setIp(ip);
+        operationLogDao.insertSelective(operationLog);
     }
 
     public Double wujiangMoney(WujiangMoneyInfo wujiangMoneyInfo) {

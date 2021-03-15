@@ -242,6 +242,24 @@ public class ProjectController extends BaseController {
     }
 
     /**
+     *
+     * @Description //设计项目删除
+     * @Date
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/project/deleteDesign", method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> deleteDesign(String id){
+        try {
+            projectService.deleteDesign(id, getLoginUser().getId(), request);
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return RestUtil.error(e.getMessage());
+        }
+        return RestUtil.success();
+    }
+
+    /**
      * 设计项目合并
      *
      * @param mergeName
