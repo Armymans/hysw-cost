@@ -1938,7 +1938,8 @@ public class BudgetingServiceImpl implements BudgetingService {
         example.createCriteria().andEqualTo("baseProjectId",id);
         DesignInfo designInfo = designInfoMapper.selectOneByExample(example);
         if (designInfo == null){
-            return null;
+            List<FileInfo> fileInfos = new ArrayList<>();
+            return fileInfos;
         }
         Example example1 = new Example(FileInfo.class);
         example1.createCriteria().andEqualTo("platCode",designInfo.getId())
