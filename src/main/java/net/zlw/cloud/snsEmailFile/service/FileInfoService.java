@@ -13,13 +13,11 @@ import net.zlw.cloud.maintenanceProjectInformation.mapper.MaintenanceProjectInfo
 import net.zlw.cloud.maintenanceProjectInformation.model.MaintenanceProjectInformation;
 import net.zlw.cloud.progressPayment.mapper.AuditInfoDao;
 import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
-import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.mapper.ProgressPaymentInformationDao;
 import net.zlw.cloud.progressPayment.model.BaseProject;
 import net.zlw.cloud.progressPayment.model.ProgressPaymentInformation;
 import net.zlw.cloud.settleAccounts.mapper.LastSettlementReviewDao;
 import net.zlw.cloud.settleAccounts.mapper.SettlementAuditInformationDao;
-import net.zlw.cloud.settleAccounts.mapper.SettlementInfoMapper;
 import net.zlw.cloud.settleAccounts.model.LastSettlementReview;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
@@ -320,7 +318,7 @@ public class FileInfoService {
                     // 吴江
                 } else if ("2".equals(createUser.getJobId())) {
                     //只有创建人和领导可见
-                    if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm)) {
+                    if (id.equals(createUser.getId()) || id.equals(wjzjh) || id.equals(wjzjm) || id.equals(whzjh)) {
                         fileInfos.add(thisFile);
                         // 如果是待确认状态下，创建人、互审人、领导可以查看附件
                     }else if (budgetStatus != null ) {
