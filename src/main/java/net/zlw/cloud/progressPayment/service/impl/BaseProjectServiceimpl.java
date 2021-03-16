@@ -2186,6 +2186,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         }
         //待确认
         if (pageVo.getProgressStatus().equals("4")){
+            pageVo.setUid("");
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
             for (ProgressListVo progressListVo : list) {
                 // 造价单位
