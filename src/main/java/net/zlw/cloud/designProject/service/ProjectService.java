@@ -163,7 +163,6 @@ public class ProjectService {
         List<DesignInfo> designInfos = new ArrayList<>();
 
         String userId = loginUser.getId();
-      //  String userId = "198910006";
 
         //前台获取的登录信息
         //如果设计状态为'未审核' 则展示当前用户需要审核的信息
@@ -646,16 +645,11 @@ public class ProjectService {
         }
         //如果为已完成
         if ("4".equals(pageVo.getDesginStatus())) {
-            //将部门负责人传入
-            pageVo.setAdminId(memberManage.getId());
-            //todo loginUser.getId()
-            pageVo.setUserId(userId);
-
             //已完成不分层级所以全部展示
             List<DesignInfo> designInfos1 = designInfoMapper.designProjectSelect41(pageVo);
             if (designInfos1!=null && designInfos1.size()>0){
                 for (DesignInfo designInfo : designInfos1) {
-                    if (userId.equals(wjsjh) || userId.equals(whsjh) || userId.equals(whsjm)){
+                    if (userId.equals(wjsjh) || userId.equals(whsjh) || userId.equals(designInfo.getDesigner())){
                         designInfo.setEditFlag("0");
                     }
                     if (designInfo.getAttributionShow() == null || "".equals(designInfo.getAttributionShow())){
