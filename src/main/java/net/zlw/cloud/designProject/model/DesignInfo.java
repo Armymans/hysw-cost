@@ -198,7 +198,4 @@ public class DesignInfo{
 
     @Transient
     private String editFlag;
-
-    //删除按钮显示
-    private String deleteShow; //0显示
 }
