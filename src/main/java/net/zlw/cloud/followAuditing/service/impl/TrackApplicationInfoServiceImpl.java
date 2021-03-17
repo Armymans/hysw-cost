@@ -331,10 +331,16 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                     }else {
                         returnTrackVo.setAuditUnitNameId("/");
                     }
+
                     if (returnTrackVo.getFounderId().equals(pageVo.getUid())) {
                         returnTrackVo.setShowEdit("1");
                     } else {
                         returnTrackVo.setShowEdit("0");
+                    }
+
+                    // 领导和创建人可进行编辑和删除
+                    if (whzjm.equals(pageVo.getUid()) || whzjh.equals(pageVo.getUid()) || wjzjh.equals(pageVo.getUid())){
+                        returnTrackVo.setShowEdit("1");
                     }
                 }
                 pageInfo = new PageInfo<>(returnTrackVos);
@@ -508,6 +514,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         }
         // 操作日志
         String userId = loginUser.getId();
+        trackAuditInfo = trackAuditInfoDao.selectByPrimaryKey(trackAuditInfo);
         BaseProject baseProject = baseProjectDao.selectByPrimaryKey(trackAuditInfo.getBaseProjectId());
         MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);
         OperationLog operationLog = new OperationLog();
@@ -951,12 +958,14 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         AuditInfo auditInfo = null;
         trackVo.setAuditWord("第" + trackMonthlies.size() + "次月报");
         TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(id);
-        Example example2 = new Example(AuditInfo.class);
-        example2.createCriteria().andEqualTo("baseProjectId", trackMonthlyOld.getId())
-                .andEqualTo("status", "0")
-                .andEqualTo("auditorId", userId)
-                .andEqualTo("auditResult", "0");
-        auditInfo = auditInfoDao.selectOneByExample(example2);
+        if (trackMonthlyOld != null){
+            Example example2 = new Example(AuditInfo.class);
+            example2.createCriteria().andEqualTo("baseProjectId", trackMonthlyOld.getId())
+                    .andEqualTo("status", "0")
+                    .andEqualTo("auditorId", userId)
+                    .andEqualTo("auditResult", "0");
+            auditInfo = auditInfoDao.selectOneByExample(example2);
+        }
 
         if (auditInfo == null) {
             trackVo.setAuditResult("0"); //不审核

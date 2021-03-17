@@ -2553,7 +2553,7 @@ public class ProjectService {
             if ("1".equals(anhuiMoneyinfo.getPayTerm())) {
                 //获取应收金额
                 AnhuiMoneyinfo anhuiMoneyinfo1 = anhuiMoneyinfoMapper.selectOneByExample(example);
-                if (anhuiMoneyinfo.getContractAmount()!=null && anhuiMoneyinfo1!=null){
+                if (anhuiMoneyinfo1!=null && anhuiMoneyinfo.getContractAmount()!=null){
                     anhuiMoneyinfo1.setContractAmount(anhuiMoneyinfo.getContractAmount());
                 }
                 //获取代收金额信息
@@ -2573,7 +2573,6 @@ public class ProjectService {
                     if (anhuiMoneyinfo2!=null){
                         anhuiMoneyinfoMapper.deleteByPrimaryKey(anhuiMoneyinfo2);
                     }
-
 
                     //如果代收金额超过或者等于 应收金额后
                     if (anhuiMoneyinfo.getRevenue().compareTo(anhuiMoneyinfo.getTotalMoney()) <= 0) {
@@ -2610,6 +2609,10 @@ public class ProjectService {
                     if (anhuiMoneyinfo.getContractAmount()!=null){
                         anhuiMoneyinfo1.setContractAmount(anhuiMoneyinfo.getContractAmount());
                     }
+
+                    if (anhuiMoneyinfo.getOfficialReceipts() != null){
+                        anhuiMoneyinfo1.setOfficialReceipts(anhuiMoneyinfo.getOfficialReceipts());
+                    }
                     anhuiMoneyinfoMapper.updateByPrimaryKeySelective(anhuiMoneyinfo1);
                 }
             } else {
@@ -2645,6 +2648,9 @@ public class ProjectService {
             AnhuiMoneyinfo anhuiMoneyinfo1 = anhuiMoneyInfopayterm(designInfo.getId());
             String data = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
             if (anhuiMoneyinfo1 != null) {
+                if (anhuiMoneyinfo1.getOfficialReceipts() == null){
+                    anhuiMoneyinfo1.setOfficialReceipts(new BigDecimal(0));
+                }
                 baseProject.setDesMoney(anhuiMoneyinfo1.getOfficialReceipts());
                 //应计提金额
                 BigDecimal bigDecimal = accruedAmount(anhuiMoneyinfo1.getOfficialReceipts());

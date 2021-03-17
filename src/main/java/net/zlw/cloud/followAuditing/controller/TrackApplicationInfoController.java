@@ -39,8 +39,8 @@ public class TrackApplicationInfoController extends BaseController {
     @RequestMapping(value = "/track/selectList",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectTrackList(PageVo pageVo){
         //todo getLoginUser().getId()
-        pageVo.setUid(getLoginUser().getId());
-//        pageVo.setUid("user324");
+        //pageVo.setUid(getLoginUser().getId());
+        pageVo.setUid("user312");
         PageInfo<ReturnTrackVo> pageInfo = trackApplicationInfoService.selectTrackList(pageVo);
         return RestUtil.page(pageInfo);
     }

@@ -3,7 +3,6 @@ package net.zlw.cloud.designProject.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.github.pagehelper.PageInfo;
-import net.tec.cloud.common.bean.UserInfo;
 import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.budgeting.model.CostPreparation;
@@ -1230,6 +1229,9 @@ public class ProjectController extends BaseController {
 //                   projectVo.getMoneyInfo().setCostTime(anhuiMoneyinfo.getCollectionTime()+"");
                }else{
                    // 总金额累加
+                   if (StringUtils.isEmpty(anhuiMoneyinfo.getCollectionMoney())){
+                       anhuiMoneyinfo.setCollectionMoney("0");
+                   }
                    String collectionMoney = anhuiMoneyinfo.getCollectionMoney();
                    String[] split = collectionMoney.split(",");
                    BigDecimal num = new BigDecimal(0);
