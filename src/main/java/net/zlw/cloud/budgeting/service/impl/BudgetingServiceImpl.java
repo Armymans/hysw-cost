@@ -1397,6 +1397,9 @@ public class BudgetingServiceImpl implements BudgetingService {
             for (BudgetingListVo budgetingListVo : list1) {
                 String baseId = budgetingListVo.getBaseId();
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);
+                if (id.equals(whzjm) || id.equals(whzjh) || id.equals(wjzjh) || id.equals(budgetingListVo.getBudgetingPeople())){
+                    budgetingListVo.setEditFlag("0");
+                }
                 if (baseProject.getDistrict() == null || baseProject.getDistrict().equals("")){
                     if (budgetingListVo.getFounderId() != null && budgetingListVo.getFounderId().equals(id)){
                         budgetingListVo.setShowWhether("1");
@@ -1860,30 +1863,35 @@ public class BudgetingServiceImpl implements BudgetingService {
         Budgeting budgeting = budgetingDao.selectByPrimaryKey(id);
         budgeting.setDelFlag("1");
         budgetingDao.updateByPrimaryKeySelective(budgeting);
-
         Example example = new Example(SurveyInformation.class);
         Example.Criteria c = example.createCriteria();
         c.andEqualTo("budgetingId",id);
         c.andEqualTo("delFlag","0");
         SurveyInformation surveyInformation = surveyInformationDao.selectOneByExample(example);
-        surveyInformation.setDelFlag("1");
-        surveyInformationDao.updateByPrimaryKeySelective(surveyInformation);
+        if ( null != surveyInformation) {
+            surveyInformation.setDelFlag("1");
+            surveyInformationDao.updateByPrimaryKeySelective(surveyInformation);
+        }
 
         Example example1 = new Example(CostPreparation.class);
         Example.Criteria c1 = example1.createCriteria();
         c1.andEqualTo("budgetingId",id);
         c1.andEqualTo("delFlag","0");
         CostPreparation costPreparation = costPreparationDao.selectOneByExample(example1);
-        costPreparation.setDelFlag("1");
-        costPreparationDao.updateByPrimaryKeySelective(costPreparation);
+        if (null != costPreparation) {
+            costPreparation.setDelFlag("1");
+            costPreparationDao.updateByPrimaryKeySelective(costPreparation);
+        }
 
         Example example2 = new Example(VeryEstablishment.class);
         Example.Criteria c2 = example2.createCriteria();
         c2.andEqualTo("budgetingId",id);
         c2.andEqualTo("delFlag","0");
         VeryEstablishment veryEstablishment = veryEstablishmentDao.selectOneByExample(example2);
-        veryEstablishment.setDelFlag("1");
-        veryEstablishmentDao.updateByPrimaryKeySelective(veryEstablishment);
+        if (null != veryEstablishment) {
+            veryEstablishment.setDelFlag("1");
+            veryEstablishmentDao.updateByPrimaryKeySelective(veryEstablishment);
+        }
 
         Example example3 = new Example(AuditInfo.class);
         Example.Criteria criteria = example3.createCriteria();
