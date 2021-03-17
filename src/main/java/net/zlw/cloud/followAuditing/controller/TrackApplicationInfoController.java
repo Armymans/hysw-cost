@@ -152,7 +152,7 @@ public class TrackApplicationInfoController extends BaseController {
     public Map<String,Object> findAllAuditInfosByTrackId(@RequestParam(name = "id") String id){
         List<AuditInfoVo> auditInfosByTrackId = trackApplicationInfoService.findAllAuditInfosByTrackId(id);
         return RestUtil.success(auditInfosByTrackId);
-    }id
+    }
 
 
 
@@ -160,7 +160,7 @@ public class TrackApplicationInfoController extends BaseController {
 //    @DeleteMapping("/track/deleteById/{id}")
     @RequestMapping(value = "/track/deleteById",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteById(@RequestParam(name = "id") String id){
-        trackApplicationInfoService.deleteById(,getLoginUser(),request);
+        trackApplicationInfoService.deleteById(id,getLoginUser(),request);
         return RestUtil.success("删除成功");
     }
 
