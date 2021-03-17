@@ -17,6 +17,5 @@ public class PageVo {
     private String userId;
     private String currentPeople;
 
-    //删除标记
-    private String editFlag;
+
 }

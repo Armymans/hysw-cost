@@ -337,11 +337,11 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             }
             //已完成
             if (pageVo.getSettleAccountsStatus().equals("5")){
-                if (whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId())) {
-                     pageVo.setEditFlag("0");
-                }
                 List<AccountsVo> list1 = baseProjectDao.findAllAccountsSuccess(pageVo);
                 for (AccountsVo accountsVo : list1) {
+                    if (whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjh.equals(loginUser.getId()) || (loginUser.getId()).equals(accountsVo.getFounderId())) {
+                        accountsVo.setEditFlag("0");
+                    }
                     String preparePeople = accountsVo.getPreparePeople();
                     MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
                     if (mkyUser!=null){
