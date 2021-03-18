@@ -2126,12 +2126,12 @@ public class ProjectSumService {
                         &&!"".equals(costVo2.getEndTime())){
             OneCensus7 oneCensus7 = projectMapper.costTaskOutsourcingCount(costVo2);
             Integer total = oneCensus7.getBudgeting() + oneCensus7.getLastSettlementReview() + oneCensus7.getSettlementAuditInformation()
-                    +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation();
+                    +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation() + oneCensus7.getTrackAuditInfo();
             return total;
         }else{
             OneCensus7 oneCensus7 = projectMapper.costTaskOutsourcingCount(this.NowYear(costVo2));
             Integer total = oneCensus7.getBudgeting() + oneCensus7.getLastSettlementReview() + oneCensus7.getSettlementAuditInformation()
-                    +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation();
+                    +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation() + oneCensus7.getTrackAuditInfo();
             return total;
         }
     }
@@ -2148,12 +2148,12 @@ public class ProjectSumService {
                         &&!"".equals(costVo2.getEndTime())){
             OneCensus7 oneCensus7 = projectMapper.costTaskNoOutsourcingCount(costVo2);
             Integer total = oneCensus7.getBudgeting() + oneCensus7.getLastSettlementReview() + oneCensus7.getSettlementAuditInformation()
-                    +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation();
+                    +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation() + oneCensus7.getTrackAuditInfo();
             return total;
         }else{
             OneCensus7 oneCensus7 = projectMapper.costTaskNoOutsourcingCount(this.NowYear(costVo2));
             Integer total = oneCensus7.getBudgeting() + oneCensus7.getLastSettlementReview() + oneCensus7.getSettlementAuditInformation()
-                    +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation();
+                    +oneCensus7.getVisaChangeInformation() + oneCensus7.getProgressPaymentInformation() + oneCensus7.getTrackAuditInfo();
             return total;
         }
     }
