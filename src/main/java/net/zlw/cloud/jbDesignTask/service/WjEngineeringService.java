@@ -404,6 +404,7 @@ public class WjEngineeringService {
             }
 
             project.setDistrict("4"); //吴江
+            project.setUpdateTime(data);
             baseProjectDao.updateByPrimaryKeySelective(project);
 
             Budgeting budgeting = new Budgeting();
@@ -439,6 +440,7 @@ public class WjEngineeringService {
             costPreparation.setCostTotalAmount(new BigDecimal(0));
             costPreparation.setVatAmount(new BigDecimal(0));
             costPreparation.setTotalPackageMaterial(new BigDecimal(0));
+            costPreparation.setCreateTime(data);
             costPreparationDao.insertSelective(costPreparation);
             //控价编制
             VeryEstablishment veryEstablishment = new VeryEstablishment();
@@ -454,6 +456,7 @@ public class WjEngineeringService {
 
             veryEstablishment.setDelFlag("0");
             veryEstablishment.setPricingTogether(wjBudgetVoA.getAccount());
+            veryEstablishment.setCreateTime(data);
             veryEstablishmentDao.insertSelective(veryEstablishment);
             //甲供材附件
             List<MaterialsAList> materialsAList = budgetVo.getMaterialsAList();
@@ -562,6 +565,7 @@ public class WjEngineeringService {
                 costPreparation.setCostTotalAmount(new BigDecimal(0));
                 costPreparation.setVatAmount(new BigDecimal(0));
                 costPreparation.setTotalPackageMaterial(new BigDecimal(0));
+                costPreparation.setCreateTime(data);
                 costPreparationDao.insertSelective(costPreparation);
                 //控价编制
                 VeryEstablishment veryEstablishment = new VeryEstablishment();
@@ -577,6 +581,7 @@ public class WjEngineeringService {
                 veryEstablishment.setBaseProjectId(project.getId());
                 veryEstablishment.setDelFlag("0");
                 veryEstablishment.setPricingTogether(wjBudgetVoA.getAccount());
+                veryEstablishment.setCreateTime(data);
                 veryEstablishmentDao.insertSelective(veryEstablishment);
                 //甲供材附件
                 List<MaterialsAList> materialsAList = budgetVo.getMaterialsAList();
@@ -659,6 +664,7 @@ public class WjEngineeringService {
                     baseProject.setProjectFlow("6");
                 }
                 baseProject.setCeaNum(settlementVo.getCea_num());
+                baseProject.setUpdateTime(data);
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
                 //下家
@@ -841,6 +847,7 @@ public class WjEngineeringService {
                         materialAnalysis.setSuperCollarMaterials(information.getSuper_collar_materials());
                         materialAnalysis.setDelFlag("0");
                         materialAnalysis.setSettlementId(settlementAuditInformation.getId());
+                        materialAnalysis.setCreateTime(data);
                         materialAnalysisDao.insertSelective(materialAnalysis);
                     }
                 }}
@@ -947,6 +954,7 @@ public class WjEngineeringService {
                 baseProject.setApplicationNum(trackVo.getApplicationNum());
                 baseProject.setConstructionUnit(trackVo.getConstruction_unit());
                 baseProject.setConstructionOrganization(trackVo.getConstruction_organization());
+                baseProject.setUpdateTime(data);
                 baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
 
