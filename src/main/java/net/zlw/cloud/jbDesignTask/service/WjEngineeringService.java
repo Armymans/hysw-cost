@@ -33,7 +33,9 @@ import net.zlw.cloud.settleAccounts.model.InvestigationOfTheAmount;
 import net.zlw.cloud.settleAccounts.model.SettlementAuditInformation;
 import net.zlw.cloud.settleAccounts.model.SettlementInfo;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
+import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import net.zlw.cloud.snsEmailFile.model.MkyUser;
 import net.zlw.cloud.snsEmailFile.service.MemberService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -84,6 +86,8 @@ public class WjEngineeringService {
     private LastSettlementReviewDao lastSettlementReviewDao;
     @Resource
     private SettlementInfoMapper settlementInfoMapper;
+    @Resource
+    private MkyUserMapper mkyUserMapper;
 
 
     public void getWjProjectEngineering(WjDesignVoA wjDesignVoA, HttpServletRequest request) {
@@ -95,6 +99,14 @@ public class WjEngineeringService {
             project.setId(designVo.getBase_project_id());
             project.setProjectNum(designVo.getBase_project_id());
             project.setProjectName(designVo.getProject_name());
+
+            MkyUser mkyUser = mkyUserMapper.selectOneUserByCode(wjDesignVoA.getAccount());
+            if (null == mkyUser) {
+                project.setFounderId(wjDesignVoA.getAccount());
+            }else {
+                project.setFounderId(mkyUser.getId());
+            }
+
             project.setProposer(designVo.getApply_by());
             project.setApplicationDate(designVo.getApply_time());
             project.setDelFlag("0");
@@ -110,7 +122,13 @@ public class WjEngineeringService {
             // 设计表
             DesignInfo designInfo = new DesignInfo();
             designInfo.setId(designVo.getId());
-            designInfo.setFounderId(wjDesignVoA.getAccount());
+
+
+            if (null == mkyUser) {
+                designInfo.setFounderId(wjDesignVoA.getAccount());
+            }else {
+                designInfo.setFounderId(mkyUser.getId());
+            }
             designInfo.setBlueprintCountersignTime(designVo.getScene_time());
             designInfo.setYearDesignUnit(designVo.getAnnual_design_uti());
             designInfo.setDesignUnit(designVo.getDesign_util());
@@ -124,7 +142,12 @@ public class WjEngineeringService {
             ProjectExploration exploration = new ProjectExploration();
             exploration.setId(UUID.randomUUID().toString().replace("-", ""));
             exploration.setScout(designVo.getSurveyor());
-            exploration.setFounderId(wjDesignVoA.getAccount());
+            if (null == mkyUser) {
+                exploration.setFounderId(wjDesignVoA.getAccount());
+            }else {
+                exploration.setFounderId(mkyUser.getId());
+            }
+
             exploration.setExplorationTime(designVo.getSurvey_time());
             exploration.setSite(designVo.getAddress());
             exploration.setRemark(designVo.getRemark());
@@ -135,7 +158,13 @@ public class WjEngineeringService {
             //方案会审
             PackageCame packageCame = new PackageCame();
             packageCame.setId(UUID.randomUUID().toString().replace("-", ""));
-            packageCame.setFounderId(wjDesignVoA.getAccount());
+
+            if (null == mkyUser) {
+                packageCame.setFounderId(wjDesignVoA.getAccount());
+            }else {
+                packageCame.setFounderId(mkyUser.getId());
+            }
+
             packageCame.setParticipant(designVo.getParticipants());
             packageCame.setRemark(designVo.getRemark());
             packageCame.setBassProjectId(designInfo.getId());
@@ -212,6 +241,14 @@ public class WjEngineeringService {
                 project.setId(designVo.getBase_project_id());
                 project.setProjectNum(designVo.getBase_project_id());
                 project.setProposer(designVo.getApply_by());
+
+                MkyUser mkyUser = mkyUserMapper.selectOneUserByCode(wjDesignVoA.getAccount());
+                if (null == mkyUser) {
+                    project.setFounderId(wjDesignVoA.getAccount());
+                }else {
+                    project.setFounderId(mkyUser.getId());
+                }
+
                 project.setApplicationDate(designVo.getApply_time());
                 project.setProjectName(designVo.getProject_name());
                 project.setDelFlag("0");
@@ -223,7 +260,13 @@ public class WjEngineeringService {
                 // 设计表
                 DesignInfo designInfo = new DesignInfo();
                 designInfo.setId(designVo.getId());
-                designInfo.setFounderId(wjDesignVoA.getAccount());
+
+                if (null == mkyUser) {
+                    designInfo.setFounderId(wjDesignVoA.getAccount());
+                }else {
+                    designInfo.setFounderId(mkyUser.getId());
+                }
+
                 designInfo.setBlueprintCountersignTime(designVo.getScene_time());
                 designInfo.setYearDesignUnit(designVo.getAnnual_design_uti());
                 designInfo.setDesignUnit(designVo.getDesign_util());
@@ -237,7 +280,11 @@ public class WjEngineeringService {
                 ProjectExploration exploration = new ProjectExploration();
                 exploration.setId(UUID.randomUUID().toString().replace("-", ""));
                 exploration.setScout(designVo.getSurveyor());
-                exploration.setFounderId(wjDesignVoA.getAccount());
+                if (null == mkyUser) {
+                    exploration.setFounderId(wjDesignVoA.getAccount());
+                }else {
+                    exploration.setFounderId(mkyUser.getId());
+                }
                 exploration.setExplorationTime(designVo.getSurvey_time());
                 exploration.setSite(designVo.getAddress());
                 exploration.setRemark(designVo.getRemark());
@@ -248,7 +295,11 @@ public class WjEngineeringService {
                 //方案会审
                 PackageCame packageCame = new PackageCame();
                 packageCame.setId(UUID.randomUUID().toString().replace("-", ""));
-                packageCame.setFounderId(wjDesignVoA.getAccount());
+                if (null == mkyUser) {
+                    packageCame.setFounderId(wjDesignVoA.getAccount());
+                }else {
+                    packageCame.setFounderId(mkyUser.getId());
+                }
                 packageCame.setParticipant(designVo.getParticipants());
                 packageCame.setRemark(designVo.getRemark());
                 packageCame.setBassProjectId(designInfo.getId());
@@ -344,7 +395,14 @@ public class WjEngineeringService {
             project.setProposer(budgetVo.getApply_by());
             project.setApplicationDate(budgetVo.getApply_time());
             project.setProjectName(budgetVo.getProject_name());
-            project.setFounderId(wjBudgetVoA.getAccount());
+
+            MkyUser mkyUser = mkyUserMapper.selectOneUserByCode(wjBudgetVoA.getAccount());
+            if (null == mkyUser) {
+                project.setFounderId(wjBudgetVoA.getAccount());
+            }else {
+                project.setFounderId(mkyUser.getId());
+            }
+
             project.setDistrict("4"); //吴江
             baseProjectDao.updateByPrimaryKeySelective(project);
 
@@ -353,7 +411,13 @@ public class WjEngineeringService {
             budgeting.setBaseProjectId(project.getProjectId());
             budgeting.setDelFlag("0");
             budgeting.setCreateTime(data);
-            budgeting.setFounderId(wjBudgetVoA.getAccount());
+
+            if (null == mkyUser) {
+                budgeting.setFounderId(wjBudgetVoA.getAccount());
+            }else {
+                budgeting.setFounderId(mkyUser.getId());
+            }
+
             budgeting.setBudgetingPeople(budgetVo.getApply_by());
             budgeting.setNameOfCostUnit(budgetVo.getName_of_cost_unit());
             budgeting.setRemarkes(budgetVo.getRemark());
@@ -364,7 +428,13 @@ public class WjEngineeringService {
             costPreparation.setId(UUID.randomUUID().toString().replace("-", ""));
             costPreparation.setBaseProjectId(project.getId());
             costPreparation.setBudgetingId(budgeting.getId());
-            costPreparation.setFounderId(wjBudgetVoA.getAccount());
+
+            if (null == mkyUser) {
+                costPreparation.setFounderId(wjBudgetVoA.getAccount());
+            }else {
+                costPreparation.setFounderId(mkyUser.getId());
+            }
+
             costPreparation.setDelFlag("0");
             costPreparation.setCostTotalAmount(new BigDecimal(0));
             costPreparation.setVatAmount(new BigDecimal(0));
@@ -375,7 +445,13 @@ public class WjEngineeringService {
             veryEstablishment.setId(UUID.randomUUID().toString().replace("-", ""));
             veryEstablishment.setBudgetingId(budgeting.getId());
             veryEstablishment.setBaseProjectId(project.getId());
-            veryEstablishment.setFounderId(wjBudgetVoA.getAccount());
+
+            if (null == mkyUser) {
+                veryEstablishment.setFounderId(wjBudgetVoA.getAccount());
+            }else {
+                veryEstablishment.setFounderId(mkyUser.getId());
+            }
+
             veryEstablishment.setDelFlag("0");
             veryEstablishment.setPricingTogether(wjBudgetVoA.getAccount());
             veryEstablishmentDao.insertSelective(veryEstablishment);
@@ -434,13 +510,19 @@ public class WjEngineeringService {
             if (budgetVo != null) {
 
                 BaseProject project = new BaseProject();
-
                 project.setId(budgetVo.getBase_project_id());
                 project.setProjectNum(budgetVo.getBase_project_id());
                 project.setProjectName(budgetVo.getProject_name());
                 project.setProposer(budgetVo.getApply_by());
                 project.setApplicationDate(budgetVo.getApply_time());
-                project.setFounderId(wjBudgetVoA.getAccount());
+                MkyUser mkyUser = mkyUserMapper.selectOneUserByCode(wjBudgetVoA.getAccount());
+
+                if (null == mkyUser) {
+                    project.setFounderId(wjBudgetVoA.getAccount());
+                }else {
+                    project.setFounderId(mkyUser.getId());
+                }
+
                 project.setDelFlag("0");
                 project.setDistrict("4"); //吴江
                 project.setCreateTime(data);
@@ -450,7 +532,13 @@ public class WjEngineeringService {
                 Budgeting budgeting = new Budgeting();
                 budgeting.setId(budgetVo.getId());
                 budgeting.setBaseProjectId(project.getId());
-                budgeting.setFounderId(wjBudgetVoA.getAccount());
+
+                if (null == mkyUser) {
+                    budgeting.setFounderId(wjBudgetVoA.getAccount());
+                }else {
+                    budgeting.setFounderId(mkyUser.getId());
+                }
+
                 budgeting.setDelFlag("0");
                 budgeting.setCreateTime(data);
                 budgeting.setBudgetingPeople(budgetVo.getApply_by());
@@ -463,7 +551,13 @@ public class WjEngineeringService {
                 costPreparation.setId(UUID.randomUUID().toString().replace("-", ""));
                 costPreparation.setBaseProjectId(project.getId());
                 costPreparation.setBudgetingId(budgeting.getId());
-                costPreparation.setFounderId(wjBudgetVoA.getAccount());
+
+                if (null == mkyUser) {
+                    costPreparation.setFounderId(wjBudgetVoA.getAccount());
+                }else {
+                    costPreparation.setFounderId(mkyUser.getId());
+                }
+
                 costPreparation.setDelFlag("0");
                 costPreparation.setCostTotalAmount(new BigDecimal(0));
                 costPreparation.setVatAmount(new BigDecimal(0));
@@ -473,7 +567,13 @@ public class WjEngineeringService {
                 VeryEstablishment veryEstablishment = new VeryEstablishment();
                 veryEstablishment.setId(UUID.randomUUID().toString().replace("-", ""));
                 veryEstablishment.setBudgetingId(budgeting.getId());
-                veryEstablishment.setFounderId(wjBudgetVoA.getAccount());
+
+                if (null == mkyUser) {
+                    veryEstablishment.setFounderId(wjBudgetVoA.getAccount());
+                }else {
+                    veryEstablishment.setFounderId(mkyUser.getId());
+                }
+
                 veryEstablishment.setBaseProjectId(project.getId());
                 veryEstablishment.setDelFlag("0");
                 veryEstablishment.setPricingTogether(wjBudgetVoA.getAccount());
@@ -544,7 +644,14 @@ public class WjEngineeringService {
             if (baseProject != null) {
                 baseProject.setDistrict("4");
                 baseProject.setProjectName(settlementVo.getProject_name());
-                baseProject.setFounderId(wjSettlementVoA.getAccount());
+
+                MkyUser mkyUser = mkyUserMapper.selectOneUserByCode(wjSettlementVoA.getAccount());
+                if (null == mkyUser) {
+                    baseProject.setFounderId(wjSettlementVoA.getAccount());
+                }else {
+                    baseProject.setFounderId(mkyUser.getId());
+                }
+
                 baseProject.setSettleAccountsStatus("5");
                 if (StringUtils.isNotEmpty(baseProject.getProjectFlow())){
                     baseProject.setProjectFlow(baseProject.getProjectFlow() + ",6");
@@ -558,7 +665,13 @@ public class WjEngineeringService {
                 SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
                 settlementAuditInformation.setId(settlementVo.getId());
                 settlementAuditInformation.setAuditFee(settlementVo.getAudit_fee());
-                settlementAuditInformation.setFounderId(wjSettlementVoA.getAccount());
+
+                if (null == mkyUser) {
+                    settlementAuditInformation.setFounderId(wjSettlementVoA.getAccount());
+                }else {
+                    settlementAuditInformation.setFounderId(mkyUser.getId());
+                }
+
                 settlementAuditInformation.setAuditFeeMaterials(settlementVo.getAudit_fee_materials());
                 settlementAuditInformation.setAudiConstruction(settlementVo.getAudi_construction());
                 settlementAuditInformation.setBidSection(settlementVo.getBid_section());
@@ -592,7 +705,13 @@ public class WjEngineeringService {
                 lastSettlementReview.setId(settlementVo.getId());
                 lastSettlementReview.setBaseProjectId(baseProject.getId());
                 lastSettlementReview.setRemark(settlementVo.getRemark());
-                lastSettlementReview.setFounderId(wjSettlementVoA.getAccount());
+
+                if (null == mkyUser) {
+                    lastSettlementReview.setFounderId(wjSettlementVoA.getAccount());
+                }else {
+                    lastSettlementReview.setFounderId(mkyUser.getId());
+                }
+
                 lastSettlementReview.setDelFlag("0");
                 lastSettlementReview.setCreateTime(data);
                 lastSettlementReview.setAccountId(settlementAuditInformation.getId());
@@ -602,7 +721,13 @@ public class WjEngineeringService {
                 investigationOfTheAmount.setId(UUID.randomUUID().toString().replace("-", ""));
                 investigationOfTheAmount.setBaseProjectId(baseProject.getId());
                 investigationOfTheAmount.setCreateTime(data);
-                investigationOfTheAmount.setFounderId(wjSettlementVoA.getAccount());
+
+                if (null == mkyUser) {
+                    investigationOfTheAmount.setFounderId(wjSettlementVoA.getAccount());
+                }else {
+                    investigationOfTheAmount.setFounderId(mkyUser.getId());
+                }
+
                 investigationOfTheAmount.setSurveyDate("");
                 investigationOfTheAmount.setDelFlag("0");
                 investigationOfTheAmountDao.insertSelective(investigationOfTheAmount);
@@ -831,7 +956,14 @@ public class WjEngineeringService {
                 trackAuditInfo.setAuditUnitNameId(trackVo.getAudit_unit());
                 trackAuditInfo.setDesignOrganizationId(trackVo.getDesign_unit());
                 trackAuditInfo.setCreateTime(data);
-                trackAuditInfo.setFounderId(wjTrackVoA.getAccount());
+
+                MkyUser mkyUser = mkyUserMapper.selectOneUserByCode(wjTrackVoA.getAccount());
+                if (null == mkyUser) {
+                    trackAuditInfo.setFounderId(wjTrackVoA.getAccount());
+                }else {
+                    trackAuditInfo.setFounderId(mkyUser.getId());
+                }
+
                 trackAuditInfo.setStatus(trackVo.getStatus());
                 trackAuditInfo.setContractAmount(new BigDecimal(trackVo.getContract_amount()));
                 trackAuditInfo.setStatus("0");
@@ -858,7 +990,14 @@ public class WjEngineeringService {
                         trackMonthly.setPerformAmount(new BigDecimal(auditReport.getExecution_money()));
                         trackMonthly.setFillTime(auditReport.getCompleted_time());
                         trackMonthly.setTrackId(trackAuditInfo.getId());
-                        trackMonthly.setFounderId(wjTrackVoA.getAccount());
+
+                        if (null == mkyUser) {
+                            trackMonthly.setFounderId(wjTrackVoA.getAccount());
+                        }else {
+                            trackMonthly.setFounderId(mkyUser.getId());
+                        }
+
+
                         trackMonthly.setStatus("0");
                         trackMonthly.setCreateTime(data);
                         trackMonthly.setWritter(auditReport.getCompleted_by());

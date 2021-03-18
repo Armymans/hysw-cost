@@ -27,4 +27,7 @@ public interface MkyUserMapper extends Mapper<MkyUser> {
             "                       del_flag = '0'   \n" +
             "                       and ( role_id = 'role7617' or role_id = 'role7635' or role_id = 'role7639' or role_id = 'role7614' or role_id = 'role7638' or role_id = 'role7618' or role_id = 'role7616' or role_id = 'role7636' or role_id = 'role7637')  and job_id = #{dept}  ")
     List<MkyUser> findPersonAll(@Param("dept") String deptId);
+
+    @Select("SELECT * FROM mky_user where user_code = #{userCode}")
+    MkyUser selectOneUserByCode(@Param("userCode") String userCode);
 }
