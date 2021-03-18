@@ -709,11 +709,15 @@ public class StatusticAnalysisService {
         //本年 - 上年
         List<PerformanceDistributionChart> now2 = achievementsInfoMapper.newPicture(this.NowYear(pageVo));
         if(now2.size()>0){
-            nowSum2 = now2.get(0).getPerformanceProvision();
+            for (PerformanceDistributionChart performanceDistributionChart : now2) {
+                nowSum2 = nowSum2.add(performanceDistributionChart.getPerformanceProvision());
+            }
         }
         List<PerformanceDistributionChart> last2 = achievementsInfoMapper.newPicture(this.lastYear(pageVo));
         if(last2.size()>0){
-            lastSum2 = last2.get(0).getPerformanceProvision();
+            for (PerformanceDistributionChart performanceDistributionChart : last2) {
+                lastSum2 = lastSum2.add(performanceDistributionChart.getPerformanceProvision());
+            }
         }
         //同比上年
         BigDecimal Sum2_3 = nowSum2.subtract(lastSum2);
