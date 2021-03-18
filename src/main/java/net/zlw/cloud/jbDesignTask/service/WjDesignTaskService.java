@@ -201,6 +201,7 @@ public class WjDesignTaskService {
                 baseProject.setContactNumber(wjBudgetVo.getPhon_num());
                 baseProject.setFax(wjBudgetVo.getFax());
                 baseProject.setBudgetStatus("4");
+                baseProject.setUpdateTime(data);
                 if (StringUtils.isNotEmpty(baseProject.getProjectFlow())){
                     baseProject.setProjectFlow(baseProject.getProjectFlow() + ",2");
                 } else {
@@ -234,6 +235,7 @@ public class WjDesignTaskService {
                 baseProject.setDelFlag("0");
                 baseProject.setBudgetStatus("4");
                 baseProject.setProjectFlow("2");
+                baseProject.setCreateTime(data);
                 baseProjectDao.insertSelective(baseProject);
             }
             List<Budgeting> budgeting1 = budgetingDao.findBudgetingGetBaseId(wjBudgetVo.getBase_project_id());
@@ -273,6 +275,7 @@ public class WjDesignTaskService {
             costPreparation.setCostTotalAmount(new BigDecimal(0));
             costPreparation.setVatAmount(new BigDecimal(0));
             costPreparation.setTotalPackageMaterial(new BigDecimal(0));
+            costPreparation.setCreateTime(data);
             costPreparationDao.insertSelective(costPreparation);
 
             VeryEstablishment veryEstablishment = new VeryEstablishment();
@@ -285,6 +288,7 @@ public class WjDesignTaskService {
             veryEstablishment.setBaseProjectId(base_project_id);
             veryEstablishment.setDelFlag("0");
             veryEstablishment.setPricingTogether(wjBudgetVoF.getAccount());
+            veryEstablishment.setCreateTime(data);
             veryEstablishmentDao.insertSelective(veryEstablishment);
 
             List<BudgetFileInfo> fileList = wjBudgetVo.getFileList();

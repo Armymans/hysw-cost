@@ -91,6 +91,7 @@ public class JbDesignTaskService {
             project.setProjectId(designVo.getProject_id());
             project.setProjectName(designVo.getProject_name());
             project.setFounderId(jbDesignVoF.getAccount());
+            project.setUpdateTime(date);
             project.setDistrict("4"); //吴江
             baseProjectDao.updateByPrimaryKeySelective(project);
             //设计表信息
@@ -306,6 +307,7 @@ public class JbDesignTaskService {
             }
             baseProject.setDistrict("3"); //江北
             baseProject.setDelFlag("0");
+            baseProject.setUpdateTime(date);
             baseProjectDao.updateByPrimaryKeySelective(baseProject);
 
             //预算信息
@@ -323,6 +325,7 @@ public class JbDesignTaskService {
             budgeting.setSureResult(budgetVo.getSure_result());
             budgeting.setSureMan(budgetVo.getSure_man());
             budgeting.setDelFlag("0");
+            budgeting.setCreateTime(date);
             budgetingDao.insertSelective(budgeting);
             //成本编制
             CostPreparation costPreparation = new CostPreparation();
@@ -332,6 +335,7 @@ public class JbDesignTaskService {
             costPreparation.setCostPreparationTime(date);
             costPreparation.setCostTogether(jbBudgetVoF.getAccount());
             costPreparation.setDelFlag("0");
+            costPreparation.setCreateTime(date);
             costPreparation.setCostTotalAmount(new BigDecimal(321));
             costPreparation.setVatAmount(new BigDecimal(213));
             costPreparation.setRemarkes("13421");
@@ -395,6 +399,7 @@ public class JbDesignTaskService {
                 baseProject.setProjectFlow("2");
                 baseProject.setDistrict("3"); //江北
                 baseProject.setDelFlag("0");
+                baseProject.setCreateTime(date);
                 baseProjectDao.insertSelective(baseProject);
 
                 //预算信息
@@ -412,6 +417,7 @@ public class JbDesignTaskService {
                 budgeting.setSureResult(budgetVo.getSure_result());
                 budgeting.setSureMan(budgetVo.getSure_man());
                 budgeting.setDelFlag("0");
+                budgeting.setCreateTime(date);
                 budgetingDao.insertSelective(budgeting);
             //成本编制
             CostPreparation costPreparation = new CostPreparation();
@@ -424,6 +430,7 @@ public class JbDesignTaskService {
             costPreparation.setCostTotalAmount(new BigDecimal(321));
             costPreparation.setVatAmount(new BigDecimal(213));
             costPreparation.setRemarkes("13421");
+            costPreparation.setCreateTime(date);
             costPreparationDao.insertSelective(costPreparation);
 
             // 控价编制
@@ -489,6 +496,7 @@ public class JbDesignTaskService {
             if (budgeting != null){
                 baseProject = baseProjectDao.selectByPrimaryKey(budgeting.getBaseProjectId());
                 budgeting.setAmountCost(new BigDecimal(budgetAmount));
+                budgeting.setUpdateTime(data);
                 budgetingDao.updateByPrimaryKeySelective(budgeting);
             }
             if(baseProject != null){
