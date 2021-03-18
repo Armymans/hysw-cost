@@ -62,7 +62,9 @@ public class ProgressPaymentInformation implements Serializable {
     private String contactPhone;
     @Column(name = "amount_outsourcing")
     private BigDecimal amountOutsourcing;
+    @Column(name = "situation")
     private String situation;
+    @Column(name = "remarkes")
     private String remarkes;
     @Column(name = "base_project_id")
     private String baseProjectId;

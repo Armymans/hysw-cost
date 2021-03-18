@@ -56,6 +56,9 @@ public class AccountsVo {
     //领导标识
     private String fshow;
 
+    //删除标记
+    private String editFlag;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
