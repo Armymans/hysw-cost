@@ -602,6 +602,8 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "and " +
                     "s1.del_flag = '0' " +
                     "and " +
+                    "s2.status = '0' " +
+                    "and " +
                     "( " +
                     "s1.cea_num like CONCAT('%',#{keyword},'%') or " +
                     "s1.project_num like CONCAT('%',#{keyword},'%') or " +

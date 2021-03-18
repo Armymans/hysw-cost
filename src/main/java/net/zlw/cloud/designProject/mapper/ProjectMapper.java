@@ -1282,11 +1282,16 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "IFNULL(sum(desgin_status = '4'),0) comple,  " +
                     "IFNULL(sum(desgin_status != '20'),0) total  " +
                     "FROM  " +
-                    "base_project  " +
+                    "base_project  s1, " +
+                    "design_info s2  " +
                     "where  " +
+                    "s1.id = s2.base_project_id  " +
+                    "and " +
                     "(district = #{district} or  #{district} = '')  " +
                     "and  " +
-                    "del_flag = '0'"
+                    "s1.del_flag = '0' " +
+                    "and  " +
+                    "s2.status = '0' "
     )
     OneCensus3 projectDesginCount(CostVo2 costVo2);
 
@@ -1398,7 +1403,9 @@ public interface ProjectMapper extends Mapper<BaseProject> {
                     "and  " +
                     "(s1.create_time <= #{endTime} or #{endTime} = '')" +
                     "and  " +
-                    "s1.del_flag = '0'"
+                    "s1.del_flag = '0' " +
+                    "and  " +
+                    "s2.status = '0' "
     )
     OneCensus5 desiginoutsource(CostVo2 costVo2);
 
