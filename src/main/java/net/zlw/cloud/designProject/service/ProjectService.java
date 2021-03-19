@@ -4000,6 +4000,7 @@ public class ProjectService {
         baseProject.setCreateTime(simpleDateFormat.format(new Date()));
         baseProject.setStatus("0");
         baseProject.setDelFlag("0");
+        baseProject.setMergeFlag("1");
         baseProject.setFounderId(loginUser.getId());
         baseProjectDao.insertSelective(baseProject);
     }

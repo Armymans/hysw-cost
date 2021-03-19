@@ -110,6 +110,7 @@ public class WjDesignTaskService {
                 project.setProjectName("吴江设计报装对接" + wjDesignVo.getApplication_num());
                 project.setDesginStatus("4");
                 project.setProjectFlow("1");
+                project.setMergeFlag("1");
                 baseProjectDao.insertSelective(project);
 
                 DesignInfo designInfo = new DesignInfo();
@@ -235,6 +236,7 @@ public class WjDesignTaskService {
                 baseProject.setDelFlag("0");
                 baseProject.setBudgetStatus("4");
                 baseProject.setProjectFlow("2");
+                baseProject.setMergeFlag("1");
                 baseProject.setCreateTime(data);
                 baseProjectDao.insertSelective(baseProject);
             }

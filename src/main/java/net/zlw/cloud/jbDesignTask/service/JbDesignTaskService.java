@@ -195,6 +195,7 @@ public class JbDesignTaskService {
                 baseProject.setProjectFlow("1");
                 baseProject.setDistrict("3");
                 baseProject.setDelFlag("0");
+                baseProject.setMergeFlag("1");
                 baseProject.setCreateTime(date);
                 baseProject.setUpdateTime(date);
                 baseProject.setAmountPaid(designVo.getAmount_paid());
@@ -325,6 +326,7 @@ public class JbDesignTaskService {
             budgeting.setSureResult(budgetVo.getSure_result());
             budgeting.setSureMan(budgetVo.getSure_man());
             budgeting.setDelFlag("0");
+            baseProject.setMergeFlag("1");
             budgeting.setCreateTime(date);
             budgetingDao.insertSelective(budgeting);
             //成本编制
@@ -399,6 +401,7 @@ public class JbDesignTaskService {
                 baseProject.setProjectFlow("2");
                 baseProject.setDistrict("3"); //江北
                 baseProject.setDelFlag("0");
+                baseProject.setMergeFlag("1");
                 baseProject.setCreateTime(date);
                 baseProjectDao.insertSelective(baseProject);
 
