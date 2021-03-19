@@ -2378,6 +2378,7 @@ public class ProjectService {
             if (projectExploration != null) {
                 projectVo.getProjectExploration().setFounderId(loginUserId);
                 projectVo.getProjectExploration().setId(projectExploration.getId());
+                projectVo.getProjectExploration().setRemark(projectExploration.getRemark());
                 projectExplorationMapper.updateByPrimaryKeySelective(projectVo.getProjectExploration());
             }
         }
