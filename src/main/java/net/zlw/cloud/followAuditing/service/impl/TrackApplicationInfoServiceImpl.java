@@ -416,6 +416,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 }
             }else {
                 //全部和谁创建谁看到
+                if (pageVo.getKeyword() == null){
+                    pageVo.setKeyword("");
+                }
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                     // 施工单位
