@@ -2202,8 +2202,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 example.createCriteria().andEqualTo("baseProjectId",progressListVo.getId())
                         .andEqualTo("status","0")
                         .andEqualTo("auditType","1");
-                AuditInfo auditInfo = auditInfoDao.selectOneByExample(example);
-                if (auditInfo.getAuditorId().equals(pageVo.getUid())){
+                if (whzjh.equals(pageVo.getUid())){
                     progressListVo.setIsShow("1");
                 }
             }
