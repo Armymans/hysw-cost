@@ -1294,12 +1294,8 @@ public class MaintenanceProjectInformationService {
 
         SettlementAuditInformation selectOneByExample = settlementAuditInformationDao.selectOneByExample(example);
 
-
-        if (selectOneByExample!=null){
-            settlementAuditInformation.setId(selectOneByExample.getId());// 计算核减率
-        }
         // 计算核减率
-        BigDecimal reviewAmount = maintenanceProjectInformation.getReviewAmount(); // 送审金额
+        BigDecimal reviewAmount = maintenanceProjectInformationVo.getReviewAmount(); // 送审金额
         BigDecimal subtractTheNumber = settlementAuditInformation.getSubtractTheNumber(); // 核减数
         // 核减数 / 送审金额 * 100 = 核减率 (使用除法要精确到固定的值，这里精确到小数后10位)
         BigDecimal divide = subtractTheNumber.divide(reviewAmount,10,BigDecimal.ROUND_HALF_UP);
@@ -1308,7 +1304,14 @@ public class MaintenanceProjectInformationService {
         BigDecimal setScale = subtractRate.setScale(2, BigDecimal.ROUND_HALF_UP);
         settlementAuditInformation.setSubtractRate(setScale);
 
-        settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+        if (selectOneByExample!=null){
+            settlementAuditInformation.setId(selectOneByExample.getId());// 计算核减率
+            settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+        } else {
+            settlementAuditInformation.setId(UUID.randomUUID().toString().replace("-",""));
+            settlementAuditInformationDao.insertSelective(settlementAuditInformation);
+        }
+
 
 
         // 勘探金额
@@ -1373,8 +1376,13 @@ public class MaintenanceProjectInformationService {
 
         InvestigationOfTheAmount ofTheAmount = investigationOfTheAmountDao.selectOneByExample(example1);
 
-        investigationOfTheAmount.setId(ofTheAmount.getId());
-        investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
+        if (ofTheAmount != null){
+            investigationOfTheAmount.setId(ofTheAmount.getId());
+            investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
+        } else {
+            investigationOfTheAmount.setId(UUID.randomUUID().toString().replace("-", ""));
+            investigationOfTheAmountDao.insertSelective(investigationOfTheAmount);
+        }
 
 
         // 操作日志
@@ -2092,10 +2100,7 @@ public class MaintenanceProjectInformationService {
 
         //结算审核信息
 
-        Example example1 = new Example(SettlementAuditInformation.class);
-        example1.createCriteria().andEqualTo("maintenanceProjectInformation", maintenanceProjectInformation.getId());
-        SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
-
+        SettlementAuditInformation settlementAuditInformation = new SettlementAuditInformation();
         settlementAuditInformation.setUpdateTime(simpleDateFormat.format(new Date()));
 
         //  `authorized_number` decimal
@@ -2160,15 +2165,22 @@ public class MaintenanceProjectInformationService {
         BigDecimal setScale = subtractRate.setScale(2, BigDecimal.ROUND_HALF_UP);
         settlementAuditInformation.setSubtractRate(setScale);
 
-        settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+        Example example1 = new Example(SettlementAuditInformation.class);
+        example1.createCriteria().andEqualTo("maintenanceProjectInformation", maintenanceProjectInformation.getId());
+        SettlementAuditInformation settlementAuditInformation2 = settlementAuditInformationDao.selectOneByExample(example1);
+        if (settlementAuditInformation2 != null){
+            settlementAuditInformation.setId(settlementAuditInformation2.getId());
+            settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
+        } else {
+            settlementAuditInformation.setId(UUID.randomUUID().toString().replace("-", ""));
+            settlementAuditInformationDao.insertSelective(settlementAuditInformation);
+        }
+
+
 
 
         // 勘探金额
-
-        Example example2 = new Example(InvestigationOfTheAmount.class);
-        example2.createCriteria().andEqualTo("maintenanceProjectInformation", maintenanceProjectInformation.getId());
-
-        InvestigationOfTheAmount investigationOfTheAmount = investigationOfTheAmountDao.selectOneByExample(example2);
+        InvestigationOfTheAmount investigationOfTheAmount = new InvestigationOfTheAmount();
 
         investigationOfTheAmount.setSurveyDate(maintenanceProjectInformation.getSurveyDate());
         //勘察人员
@@ -2215,7 +2227,18 @@ public class MaintenanceProjectInformationService {
             investigationOfTheAmount.setMaterialDifferenceAmount(maintenanceProjectInformation.getMaterialDifferenceAmount());
         }
 
-        investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
+        Example example2 = new Example(InvestigationOfTheAmount.class);
+        example2.createCriteria().andEqualTo("maintenanceProjectInformation", maintenanceProjectInformation.getId());
+        InvestigationOfTheAmount investigationOfTheAmount2 = investigationOfTheAmountDao.selectOneByExample(example2);
+
+        if (investigationOfTheAmount2 != null){
+            investigationOfTheAmount.setId(investigationOfTheAmount2.getId());
+            investigationOfTheAmountDao.updateByPrimaryKeySelective(investigationOfTheAmount);
+        } else {
+            investigationOfTheAmount.setId(UUID.randomUUID().toString().replace("-", ""));
+            investigationOfTheAmountDao.insertSelective(investigationOfTheAmount);
+        }
+
         // 操作日志
         String userId = userInfo.getId();
         MemberManage memberManage = memberManageDao.selectByPrimaryKey(userId);

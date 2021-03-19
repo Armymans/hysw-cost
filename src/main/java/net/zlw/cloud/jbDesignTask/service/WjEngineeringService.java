@@ -256,6 +256,7 @@ public class WjEngineeringService {
                 project.setCreateTime(data);
                 project.setDesginStatus("4");
                 project.setProjectFlow("1");
+                project.setMergeFlag("1");
                 baseProjectDao.insertSelective(project);
                 // 设计表
                 DesignInfo designInfo = new DesignInfo();
@@ -531,6 +532,7 @@ public class WjEngineeringService {
                 project.setCreateTime(data);
                 project.setBudgetStatus("4");
                 project.setProjectFlow("2");
+                project.setMergeFlag("1");
                 baseProjectDao.insertSelective(project);
                 Budgeting budgeting = new Budgeting();
                 budgeting.setId(budgetVo.getId());

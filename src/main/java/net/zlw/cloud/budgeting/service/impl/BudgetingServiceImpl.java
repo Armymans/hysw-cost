@@ -655,6 +655,10 @@ public class BudgetingServiceImpl implements BudgetingService {
         surveyInformationDao.updateByPrimaryKeySelective(surveyInformation);
 
         //成本编制
+        if (StringUtils.isEmpty(budgetingVo.getCostTogether())){
+            MemberManage memberManage = memberManageDao.selectByPrimaryKey(loginUser.getId());
+            budgetingVo.setCostTogether(memberManage.getMemberName());
+        }
         String costId = memberManageDao.findNameById(budgetingVo.getCostTogether());
         Example example2 = new Example(CostPreparation.class);
         example2.createCriteria().andEqualTo("budgetingId",budgetingVo.getId());
@@ -675,6 +679,9 @@ public class BudgetingServiceImpl implements BudgetingService {
 
         //控价编制
         Example example3 = new Example(VeryEstablishment.class);
+        if (StringUtils.isEmpty(budgetingVo.getPricingTogether())){
+            budgetingVo.setPricingTogether(budgetingVo.getCostTogether());
+        }
         String priceToger = memberManageDao.findNameById(budgetingVo.getPricingTogether());
         example3.createCriteria().andEqualTo("budgetingId",budgetingVo.getId());
         VeryEstablishment veryEstablishment = veryEstablishmentDao.selectOneByExample(example3);
@@ -685,6 +692,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         veryEstablishment.setEstablishmentTime(budgetingVo.getEstablishmentTime());
         veryEstablishment.setRemarkes(budgetingVo.getVRemarkes());
         veryEstablishment.setBudgetingId(budgeting.getId());
+
         veryEstablishmentDao.updateByPrimaryKeySelective(veryEstablishment);
 
         //消息通知
