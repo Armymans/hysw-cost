@@ -284,7 +284,7 @@ public class ProjectSumService {
      * @return
      */
     public Double anhuiLastSettlementReviewChargeMoney(BigDecimal cost){
-        //如果造价金额低于30000万 则收费400
+        //如果造价金额低于30000 则收费400
         if(cost.compareTo(new BigDecimal("30000"))<1){
             return 400.0;
         }
@@ -292,7 +292,7 @@ public class ProjectSumService {
         if(cost.compareTo(new BigDecimal("30000"))==1&&cost.compareTo(new BigDecimal("60000"))<1){
             return 800.0;
         }
-        //如果造价金额低于60000万 则按照阶梯法计算
+        //如果造价金额低于60000 则按照阶梯法计算
         if(cost.compareTo(new BigDecimal("60000"))==1){
             //除一万 跟数据库中的数据比对
             BigDecimal divide = cost.divide(new BigDecimal("10000"));
