@@ -709,6 +709,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
 
         //申请信息
         ApplicationInformation information = new ApplicationInformation();
+        information.setRemarkes(baseProject.getRemarkes());
 
         //本期进度款支付信息
         ProgressPaymentInformation paymentInformation = progressPaymentInformationDao.selectByPrimaryKey(baseProject.getId());
