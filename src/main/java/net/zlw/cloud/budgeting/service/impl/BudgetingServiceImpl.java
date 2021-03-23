@@ -492,7 +492,7 @@ public class BudgetingServiceImpl implements BudgetingService {
     @Override
     public void updateBudgeting(BudgetingVo budgetingVo,UserInfo loginUser,HttpServletRequest request) {
 
-        if (budgetingVo.getRevenue()!=null && !"".equals(budgetingVo.getRevenue())){
+        if (budgetingVo.getRevenue()!=null && !"".equals(budgetingVo.getRevenue()) && !"0".equals(budgetingVo.getRevenue())){
             BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetingVo.getBaseId());
             Example example1 = new Example(DesignInfo.class);
             Example.Criteria criteria = example1.createCriteria();
@@ -533,7 +533,6 @@ public class BudgetingServiceImpl implements BudgetingService {
                     anhuiMoneyinfo.setCreateTime(s.format(new Date()));
                     anhuiMoneyinfoMapper.insertSelective(anhuiMoneyinfo);
                 }
-
             }
         }
 
