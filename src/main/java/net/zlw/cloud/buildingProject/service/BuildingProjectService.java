@@ -6,6 +6,7 @@ import net.zlw.cloud.VisaChange.model.VisaChange;
 import net.zlw.cloud.buildingProject.mapper.BuildingProjectMapper;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.buildingProject.model.vo.BaseVo;
+import net.zlw.cloud.buildingProject.model.vo.MemberManageVo;
 import net.zlw.cloud.buildingProject.model.vo.PageBaseVo;
 import net.zlw.cloud.buildingProject.model.vo.ProVo;
 import net.zlw.cloud.designProject.mapper.DesignInfoMapper;
@@ -349,5 +350,9 @@ public class BuildingProjectService {
         String ip = memberService.getIp(request);
         operationLog.setIp(ip);
         operationLogDao.insertSelective(operationLog);
+    }
+
+    public List<MemberManageVo> memberManagefindUnAdmin2() {
+        return buildingProjectMapper.memberManagefindUnAdmin2();
     }
 }

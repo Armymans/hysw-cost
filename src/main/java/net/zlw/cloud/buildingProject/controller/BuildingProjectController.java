@@ -5,6 +5,7 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.buildingProject.model.vo.BaseVo;
+import net.zlw.cloud.buildingProject.model.vo.MemberManageVo;
 import net.zlw.cloud.buildingProject.model.vo.PageBaseVo;
 import net.zlw.cloud.buildingProject.model.vo.ProVo;
 import net.zlw.cloud.buildingProject.service.BuildingProjectService;
@@ -153,5 +154,15 @@ public class BuildingProjectController extends BaseController {
             return RestUtil.error(e.getMessage());
         }
         return RestUtil.success();
+    }
+
+    /**
+     * 查询设计业务员
+     * @return
+     */
+    @RequestMapping(value = "/memberManage/memberManagefindUnAdmin2", method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> memberManagefindUnAdmin2(){
+        List<MemberManageVo> memberManageVoList = buildingProjectService.memberManagefindUnAdmin2();
+        return RestUtil.success(memberManageVoList);
     }
 }

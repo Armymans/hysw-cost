@@ -2,6 +2,7 @@ package net.zlw.cloud.buildingProject.mapper;
 
 import net.zlw.cloud.buildingProject.model.BuildingProject;
 import net.zlw.cloud.buildingProject.model.vo.BaseVo;
+import net.zlw.cloud.buildingProject.model.vo.MemberManageVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -117,4 +118,12 @@ public interface BuildingProjectMapper extends tk.mybatis.mapper.common.Mapper<B
             "  b1.del_flag = '0' " +
             "  AND b1.id = #{id}")
     List<BaseVo> selectBaseProjectList(@Param("id") String id);
+
+    @Select("SELECT " +
+            "id id, " +
+            "user_name memberName " +
+            "FROM mky_user " +
+            "WHERE " +
+            " role_id = 'role7618'")
+    List<MemberManageVo> memberManagefindUnAdmin2();
 }
