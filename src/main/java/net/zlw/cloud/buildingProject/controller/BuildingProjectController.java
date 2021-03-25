@@ -157,7 +157,7 @@ public class BuildingProjectController extends BaseController {
     }
 
     /**
-     * 查询设计业务员
+     * 查询造价业务员
      * @return
      */
     @RequestMapping(value = "/memberManage/memberManagefindUnAdmin2", method = {RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
