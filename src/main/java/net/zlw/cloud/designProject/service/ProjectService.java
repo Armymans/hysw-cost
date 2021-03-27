@@ -162,8 +162,8 @@ public class ProjectService {
         //展示集合
         List<DesignInfo> designInfos = new ArrayList<>();
 
-//        String userId = loginUser.getId();
-        String userId = "user321";
+        String userId = loginUser.getId();
+//        String userId = "user321";
 
         //前台获取的登录信息
         //如果设计状态为'未审核' 则展示当前用户需要审核的信息
