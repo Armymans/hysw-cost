@@ -683,8 +683,6 @@ public class ProjectService {
                         designInfo.setAffiliationShow("1");
                     }
 
-
-
                     //展示设计变更时间 如果为空展示 /
                     if (designInfo.getDesignChangeTime() == null || designInfo.getDesignChangeTime().equals("")) {
                         designInfo.setDesignChangeTime("/");
