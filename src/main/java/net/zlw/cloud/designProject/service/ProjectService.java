@@ -2262,6 +2262,23 @@ public class ProjectService {
 
             throw new RuntimeException("项目编号或项目名称重复");
         }
+
+        if ("芜湖".equals(projectVo.getBaseProject().getDistrict())){
+            projectVo.getBaseProject().setDistrict("1");
+        }
+
+        if ("马鞍山".equals(projectVo.getBaseProject().getDistrict())){
+            projectVo.getBaseProject().setDistrict("2");
+        }
+
+        if ("江北".equals(projectVo.getBaseProject().getDistrict())){
+            projectVo.getBaseProject().setDistrict("3");
+        }
+
+        if ("吴江".equals(projectVo.getBaseProject().getDistrict())){
+            projectVo.getBaseProject().setDistrict("4");
+        }
+
         //查询当前设计人 是否存在
         String designer = projectVo.getDesignInfo().getDesigner();
         Example designerExample = new Example(MemberManage.class);
