@@ -368,13 +368,13 @@ public interface DesignInfoMapper extends Mapper<DesignInfo> {
                     "and " +
                     "(s1.should_be = #{shouldBe} or #{shouldBe} ='') " +
                     "and " +
-                    "blueprint_start_time>= #{desginStartTime} or #{desginStartTime} ='') " +
+                    "(blueprint_start_time>= #{desginStartTime} or #{desginStartTime} ='') " +
                     "and  " +
                     "(blueprint_start_time<=#{desginEndTime} or  #{desginEndTime} ='')  " +
                     "and " +
                     "(s2.isaccount = #{isaccount} or #{isaccount} ='') " +
                     "and " +
-                    " (s2.attribution_show = #{attributionShow} or #{attributionShow} = '' ) and  " +
+//                    " (s2.attribution_show = #{attributionShow} or #{attributionShow} = '' ) and  " +
                     "( " +
                     "s1.cea_num like CONCAT('%',#{keyword},'%') or  " +
                     "s1.project_num like CONCAT('%',#{keyword},'%') or " +

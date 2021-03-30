@@ -2266,17 +2266,93 @@ public class ProjectService {
         if ("芜湖".equals(projectVo.getBaseProject().getDistrict())){
             projectVo.getBaseProject().setDistrict("1");
         }
-
         if ("马鞍山".equals(projectVo.getBaseProject().getDistrict())){
             projectVo.getBaseProject().setDistrict("2");
         }
-
         if ("江北".equals(projectVo.getBaseProject().getDistrict())){
             projectVo.getBaseProject().setDistrict("3");
         }
-
         if ("吴江".equals(projectVo.getBaseProject().getDistrict())){
             projectVo.getBaseProject().setDistrict("4");
+        }
+
+        String shouldBe = projectVo.getBaseProject().getShouldBe();
+        if (StringUtils.isNotEmpty(shouldBe)){
+            if (shouldBe.equals("是")){
+                projectVo.getBaseProject().setShouldBe("0");
+            }
+            if (shouldBe.equals("否")){
+                projectVo.getBaseProject().setShouldBe("1");
+            }
+        }
+
+        String designCategory = projectVo.getBaseProject().getDesignCategory();
+        if (StringUtils.isNotEmpty(designCategory)){
+            if ("市政管道".equals(designCategory)){
+                projectVo.getBaseProject().setDesignCategory("1");
+            }else if("管网改造".equals(designCategory)){
+                projectVo.getBaseProject().setDesignCategory("2");
+            }else if("新建小区".equals(designCategory)){
+                projectVo.getBaseProject().setDesignCategory("3");
+            }else if("二次供水项目".equals(designCategory)){
+                projectVo.getBaseProject().setDesignCategory("4");
+            }else if("工商户".equals(designCategory)){
+                projectVo.getBaseProject().setDesignCategory("5");
+            }else if("居民装接水".equals(designCategory)){
+                projectVo.getBaseProject().setDesignCategory("6");
+            }else if("行政事业".equals(designCategory)){
+                projectVo.getBaseProject().setDesignCategory("7");
+            }
+        }
+
+        String subject = projectVo.getBaseProject().getSubject();
+        if (subject!=null && !"".equals(subject)){
+            if ("居民住户".equals(subject)){
+                projectVo.getBaseProject().setSubject("1");
+            }else if("开发商".equals(subject)){
+                projectVo.getBaseProject().setSubject("2");
+            }else if("政府事业".equals(subject)){
+                projectVo.getBaseProject().setSubject("3");
+            }else if("工商户".equals(subject)){
+                projectVo.getBaseProject().setSubject("4");
+            }else if("芜湖华衍".equals(subject)){
+                projectVo.getBaseProject().setSubject("5");
+            }
+        }
+
+        String projectNature = projectVo.getBaseProject().getProjectNature();
+        if (projectNature!=null && !"".equals(projectNature)){
+            if ("新建".equals(projectNature)){
+                projectVo.getBaseProject().setProjectNature("1");
+            }else if("改造".equals(projectNature)){
+                projectVo.getBaseProject().setProjectNature("2");
+            }
+        }
+        String projectCategory = projectVo.getBaseProject().getProjectCategory();
+        if (projectCategory!=null && !"".equals(projectCategory)){
+            if ("住宅区配套".equals(projectCategory)) {
+                projectVo.getBaseProject().setProjectCategory("1");
+            } else if("商业区配套".equals(projectCategory)){
+                projectVo.getBaseProject().setProjectCategory("2");
+            } else if("工商区配套".equals(projectCategory)){
+                projectVo.getBaseProject().setProjectCategory("3");
+            }
+        }
+        String waterSupplyType = projectVo.getBaseProject().getWaterSupplyType();
+        if (waterSupplyType!=null && !"".equals(waterSupplyType)){
+            if ("直供水".equals(waterSupplyType)){
+                projectVo.getBaseProject().setWaterSupplyType("1");
+            } else if("二次供水".equals(waterSupplyType)){
+                projectVo.getBaseProject().setWaterSupplyType("2");
+            }
+        }
+        String ab = projectVo.getBaseProject().getAB();
+        if (ab!=null && !"".equals(ab)){
+            if ("A".equals(ab)){
+                projectVo.getBaseProject().setAB("1");
+            }else if("B".equals(ab)){
+                projectVo.getBaseProject().setAB("2");
+            }
         }
 
         //查询当前设计人 是否存在
