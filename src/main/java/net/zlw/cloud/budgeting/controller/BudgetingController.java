@@ -31,10 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -104,7 +101,7 @@ public class BudgetingController extends BaseController {
     //编辑预算信息
 //    @PutMapping("/updateBudgeting")
     @RequestMapping(value = "/budgeting/updateBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> updateBudgeting(BudgetingVo budgetingVo){
+    public Map<String,Object> updateBudgeting(@RequestBody BudgetingVo budgetingVo){
         budgetingService.updateBudgeting(budgetingVo,getLoginUser(),request);
         return RestUtil.success("修改成功");
     }
