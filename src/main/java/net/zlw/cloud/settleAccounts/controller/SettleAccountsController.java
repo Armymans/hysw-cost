@@ -29,10 +29,7 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tk.mybatis.mapper.entity.Example;
 
@@ -319,7 +316,7 @@ public class SettleAccountsController extends BaseController {
     //结算编辑
 //    @PutMapping("/updateAccountById")
     @RequestMapping(value = "/accounts/updateAccountById", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> updateAccountById(BaseAccountsVo baseAccountsVo) {
+    public Map<String, Object> updateAccountById(@RequestBody BaseAccountsVo baseAccountsVo) {
         try {
             settleAccountsService.updateAccountById(baseAccountsVo, getLoginUser(),request);
         } catch (Exception e) {

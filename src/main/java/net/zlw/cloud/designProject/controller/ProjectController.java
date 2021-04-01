@@ -241,6 +241,75 @@ public class ProjectController extends BaseController {
     }
 
     /**
+     * 测试新编辑搜索
+     * @param designPageVo
+     * @return
+     */
+    @RequestMapping(value = "/api/disproject/disProjectSelectAll2", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> disProjectSelectAll2(DesignPageVo designPageVo) {
+        String desginStatus = designPageVo.getDesginStatus();
+        if (StringUtils.isEmpty(desginStatus)){
+            desginStatus = "";
+        }
+        //全部
+        Page page = new Page();
+        designPageVo.setDesginStatus("");
+        PageInfo<DesignInfo> designInfoPageInfo = projectService.designProjectSelect(designPageVo, getLoginUser());
+        page.setData(designInfoPageInfo.getList());
+        page.setPageNum(designInfoPageInfo.getPageNum());
+        page.setPageSize(designInfoPageInfo.getPageSize());
+        page.setTotalCount(designInfoPageInfo.getTotal());
+        //待审核
+        Page page2 = new Page();
+        designPageVo.setDesginStatus("1");
+        PageInfo<DesignInfo> designInfoPageInfo2 = projectService.designProjectSelect(designPageVo, getLoginUser());
+        page2.setData(designInfoPageInfo2.getList());
+        page2.setPageNum(designInfoPageInfo2.getPageNum());
+        page2.setPageSize(designInfoPageInfo2.getPageSize());
+        page2.setTotalCount(designInfoPageInfo2.getTotal());
+        //出图中
+        Page page3 = new Page();
+        designPageVo.setDesginStatus("2");
+        PageInfo<DesignInfo> designInfoPageInfo3 = projectService.designProjectSelect(designPageVo, getLoginUser());
+        page3.setData(designInfoPageInfo3.getList());
+        page3.setPageNum(designInfoPageInfo3.getPageNum());
+        page3.setPageSize(designInfoPageInfo3.getPageSize());
+        page3.setTotalCount(designInfoPageInfo3.getTotal());
+        //未通过
+        Page page4 = new Page();
+        designPageVo.setDesginStatus("3");
+        PageInfo<DesignInfo> designInfoPageInfo4 = projectService.designProjectSelect(designPageVo, getLoginUser());
+        page4.setData(designInfoPageInfo4.getList());
+        page4.setPageNum(designInfoPageInfo4.getPageNum());
+        page4.setPageSize(designInfoPageInfo4.getPageSize());
+        page4.setTotalCount(designInfoPageInfo4.getTotal());
+        //已完成
+        Page page5 = new Page();
+        designPageVo.setDesginStatus("4");
+        PageInfo<DesignInfo> designInfoPageInfo5 = projectService.designProjectSelect(designPageVo, getLoginUser());
+        page5.setData(designInfoPageInfo5.getList());
+        page5.setPageNum(designInfoPageInfo5.getPageNum());
+        page5.setPageSize(designInfoPageInfo5.getPageSize());
+        page5.setTotalCount(designInfoPageInfo5.getTotal());
+
+        Map<String, Object> hashMap = new HashMap<>();
+        if ("1".equals(desginStatus)){
+            page = page2;
+        }
+        if ("2".equals(desginStatus)){
+            page = page3;
+        }
+        if ("3".equals(desginStatus)){
+            page = page4;
+        }
+        if ("4".equals(desginStatus)){
+            page = page5;
+        }
+        hashMap.put("table1",page);
+        return RestUtil.success(hashMap);
+    }
+
+    /**
      *
      * @Description //设计项目删除
      * @Date
