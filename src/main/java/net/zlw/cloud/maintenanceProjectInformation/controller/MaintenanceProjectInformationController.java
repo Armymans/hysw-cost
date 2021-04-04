@@ -14,6 +14,7 @@ import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceProjectIn
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.maintenanceProjectInformation.service.MaintenanceProjectInformationService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -104,6 +105,27 @@ public class MaintenanceProjectInformationController extends BaseController {
         map.put("table4",page3);
         map.put("table5",page4);
         map.put("table6",page5);
+
+        return RestUtil.success(map);
+
+    }
+
+    @RequestMapping(value = "/maintenanceProjectInformation/selectAllMaintenance2", method = {RequestMethod.POST,RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> selectAllMaintenance2(PageRequest pageRequest) {
+        //全部
+        Page page = new Page();
+        if (StringUtils.isEmpty(pageRequest.getType())){
+            pageRequest.setType("");
+        }
+        PageInfo<MaintenanceProjectInformationReturnVo> pageInfo = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, getLoginUser());
+        page.setData(pageInfo.getList());
+        page.setPageNum(pageInfo.getPageNum());
+        page.setPageSize(pageInfo.getPageSize());
+        page.setTotalCount(pageInfo.getTotal());
+
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("table1",page);
 
         return RestUtil.success(map);
 

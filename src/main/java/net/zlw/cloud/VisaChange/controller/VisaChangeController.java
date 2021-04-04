@@ -15,6 +15,7 @@ import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
 import net.zlw.cloud.settleAccounts.model.CostUnitManagement;
 import net.zlw.cloud.snsEmailFile.mapper.MkyUserMapper;
 import net.zlw.cloud.warningDetails.model.MemberManage;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -211,6 +212,35 @@ public class VisaChangeController extends BaseController {
         return RestUtil.success(map);
     }
 
+    /**
+     * 筛选条件查询2
+     * @param pageVo
+     * @return
+     */
+    @RequestMapping(value = "/visachange/selectVisa2",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectVisa2(PageVo pageVo){
+
+        String id = getLoginUser().getId();
+        pageVo.setUserId(id);
+        Page page = new Page();
+
+        String status = pageVo.getStatus();
+        if (StringUtils.isEmpty(status)){
+            pageVo.setStatus("");
+        }
+
+        List<VisaChangeListVo> allVisa = vcisService.findAllVisa(pageVo);
+        PageInfo<VisaChangeListVo> visaChangeListVoPageInfo = new PageInfo<>(allVisa);
+        page.setData(visaChangeListVoPageInfo.getList());
+        page.setPageNum(visaChangeListVoPageInfo.getPageNum());
+        page.setPageSize(visaChangeListVoPageInfo.getPageSize());
+        page.setTotalCount(visaChangeListVoPageInfo.getTotal());
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("table1",page);
+
+        return RestUtil.success(map);
+    }
 
 
     //新增签证变更

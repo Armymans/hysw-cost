@@ -23,7 +23,6 @@ import net.zlw.cloud.progressPayment.mapper.BaseProjectDao;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.progressPayment.model.AuditInfo;
 import net.zlw.cloud.progressPayment.model.BaseProject;
-import net.zlw.cloud.progressPayment.model.vo.ProgressListVo;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.remindSet.mapper.RemindSetMapper;
 import net.zlw.cloud.settleAccounts.mapper.CostUnitManagementMapper;
@@ -1056,7 +1055,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             return list1;
         }
         //全部
-        if (pageVo.getStatus().equals("") || pageVo.getStatus() == null) {
+        if (pageVo.getStatus().equals("") || pageVo.getStatus() == null || pageVo.getStatus().equals("0")) {
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
             for (VisaChangeListVo visaChangeListVo : list1) {
 

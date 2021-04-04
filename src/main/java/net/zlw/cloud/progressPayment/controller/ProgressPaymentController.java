@@ -13,6 +13,7 @@ import net.zlw.cloud.progressPayment.model.vo.*;
 import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.progressPayment.service.ProgressPaymentInformationService;
 import net.zlw.cloud.progressPayment.service.ProgressPaymentTotalPaymentService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -196,6 +197,28 @@ public class ProgressPaymentController  extends BaseController {
         return RestUtil.success(map);
 
     }
+
+    @RequestMapping(value = "/progress/selectProgressPaymentStatus2",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
+    public Map<String,Object> selectProgressPaymentStatus2(PageVo pageVo){
+        pageVo.setUid(getLoginUser().getId());
+        String progressStatus = pageVo.getProgressStatus();
+        if (StringUtils.isEmpty(progressStatus)){
+            pageVo.setProgressStatus("");
+        }
+        Page page = new Page();
+        PageInfo<ProgressListVo> pageInfo = baseProjectService.searchAllProgress(pageVo);
+        page.setData(pageInfo.getList());
+        page.setPageNum(pageInfo.getPageNum());
+        page.setPageSize(pageInfo.getPageSize());
+        page.setTotalCount(pageInfo.getTotal());
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("table1",page);
+
+        return RestUtil.success(map);
+
+    }
+
     //删除进度款
     @RequestMapping(value = "/progress/deleteProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> deleteProgress(@RequestParam(name = "id") String id){

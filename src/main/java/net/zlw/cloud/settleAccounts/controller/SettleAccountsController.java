@@ -26,6 +26,7 @@ import net.zlw.cloud.settleAccounts.service.SettleAccountsService;
 import net.zlw.cloud.snsEmailFile.controller.FileInfoController;
 import net.zlw.cloud.snsEmailFile.mapper.FileInfoMapper;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -169,6 +170,25 @@ public class SettleAccountsController extends BaseController {
         return RestUtil.success(map);
     }
 
+    @RequestMapping(value = "/accounts/selectAllAccounts2", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
+    public Map<String, Object> selectAccounts2(PageVo pageVo) {
+        //全部
+        Page page = new Page();
+        if (StringUtils.isEmpty(pageVo.getSettleAccountsStatus())){
+            pageVo.setSettleAccountsStatus("");
+        }
+        List<AccountsVo> allAccounts = settleAccountsService.findAllAccounts(pageVo, getLoginUser());
+        PageInfo<AccountsVo> pageInfo = new PageInfo<>(allAccounts);
+        page.setData(pageInfo.getList());
+        page.setPageNum(pageInfo.getPageNum());
+        page.setPageSize(pageInfo.getPageSize());
+        page.setTotalCount(pageInfo.getTotal());
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("table1", page);
+
+        return RestUtil.success(map);
+    }
 
     //结算项目删除
 //    @DeleteMapping("/deleteAcmcounts")
