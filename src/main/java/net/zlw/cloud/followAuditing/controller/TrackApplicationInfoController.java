@@ -17,10 +17,7 @@ import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -258,7 +255,7 @@ public class TrackApplicationInfoController extends BaseController {
     //跟踪审计编辑保存于提交
 //    @PutMapping("/track/updateTrack")
     @RequestMapping(value = "/track/updateTrack",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> updateTrack(TrackVo trackVo){
+    public Map<String,Object> updateTrack(@RequestBody TrackVo trackVo){
         try {
             trackApplicationInfoService.updateTrack(trackVo,getLoginUser(),request);
         } catch (Exception e) {
@@ -270,7 +267,7 @@ public class TrackApplicationInfoController extends BaseController {
     //新增月报
 
     @RequestMapping(value = "/track/addMonthly",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> addMaonthly(TrackMonthly monthly){
+    public Map<String,Object> addMaonthly(@RequestBody TrackMonthly monthly){
         trackApplicationInfoService.addTrackMonthly(monthly);
         FileInfo fileInfo = fileInfoService.getByKey(monthly.getFid());
         fileInfo.setName(monthly.getTitle());
