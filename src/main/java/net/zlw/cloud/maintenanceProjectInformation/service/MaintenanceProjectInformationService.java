@@ -1483,30 +1483,32 @@ public class MaintenanceProjectInformationService {
         }
         // json转换
         Json coms = maintenanceProjectInformationVo.getComs();
-        String json = coms.value();
-        Example example3 = new Example(OtherInfo.class);
-        example3.createCriteria().andEqualTo("foreignKey",information.getId());
-        List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(example3);
-        for (OtherInfo thisOther : otherInfos1) {
-            thisOther.setStatus("1");
-            otherInfoMapper.updateByPrimaryKeySelective(thisOther);
-        }
-        int num = 1;
-        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
-        if (otherInfos.size() > 0){
-            for (OtherInfo thisInfo : otherInfos) {
-                OtherInfo otherInfo1 = new OtherInfo();
-                otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                otherInfo1.setForeignKey(information.getId());
-                otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
-                otherInfo1.setNum(thisInfo.getNum());
-                otherInfo1.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                otherInfo1.setStatus("0");
-                otherInfo1.setFoundId(userInfo.getId());
-                otherInfo1.setFounderCompany(userInfo.getCompanyId());
-                otherInfo1.setChangeNum(num);
-                num++;
-                otherInfoMapper.insertSelective(otherInfo1);
+        if (coms != null){
+            String json = coms.value();
+            Example example3 = new Example(OtherInfo.class);
+            example3.createCriteria().andEqualTo("foreignKey",information.getId());
+            List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(example3);
+            for (OtherInfo thisOther : otherInfos1) {
+                thisOther.setStatus("1");
+                otherInfoMapper.updateByPrimaryKeySelective(thisOther);
+            }
+            int num = 1;
+            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            if (otherInfos.size() > 0){
+                for (OtherInfo thisInfo : otherInfos) {
+                    OtherInfo otherInfo1 = new OtherInfo();
+                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    otherInfo1.setForeignKey(information.getId());
+                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                    otherInfo1.setNum(thisInfo.getNum());
+                    otherInfo1.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                    otherInfo1.setStatus("0");
+                    otherInfo1.setFoundId(userInfo.getId());
+                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfo1.setChangeNum(num);
+                    num++;
+                    otherInfoMapper.insertSelective(otherInfo1);
+                }
             }
         }
 
@@ -2255,30 +2257,32 @@ public class MaintenanceProjectInformationService {
         operationLogDao.insertSelective(operationLog);
         // json转换
         Json coms = maintenanceProjectInformation.getComs();
-        String json = coms.value();
-        Example example = new Example(OtherInfo.class);
-        example.createCriteria().andEqualTo("foreignKey",information.getId());
-        List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(example);
-        for (OtherInfo thisOther : otherInfos1) {
-            thisOther.setStatus("1");
-            otherInfoMapper.updateByPrimaryKeySelective(thisOther);
-        }
-        List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
-        int num = 1;
-        if (otherInfos.size() > 0){
-            for (OtherInfo thisInfo : otherInfos) {
-                OtherInfo otherInfo1 = new OtherInfo();
-                otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
-                otherInfo1.setForeignKey(information.getId());
-                otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
-                otherInfo1.setNum(thisInfo.getNum());
-                otherInfo1.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-                otherInfo1.setStatus("0");
-                otherInfo1.setFoundId(userInfo.getId());
-                otherInfo1.setFounderCompany(userInfo.getCompanyId());
-                otherInfo1.setChangeNum(num);
-                num++;
-                otherInfoMapper.insertSelective(otherInfo1);
+        if (coms != null){
+            String json = coms.value();
+            Example example = new Example(OtherInfo.class);
+            example.createCriteria().andEqualTo("foreignKey",information.getId());
+            List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(example);
+            for (OtherInfo thisOther : otherInfos1) {
+                thisOther.setStatus("1");
+                otherInfoMapper.updateByPrimaryKeySelective(thisOther);
+            }
+            List<OtherInfo> otherInfos = JSONObject.parseArray(json, OtherInfo.class);
+            int num = 1;
+            if (otherInfos.size() > 0){
+                for (OtherInfo thisInfo : otherInfos) {
+                    OtherInfo otherInfo1 = new OtherInfo();
+                    otherInfo1.setId(UUID.randomUUID().toString().replaceAll("-",""));
+                    otherInfo1.setForeignKey(information.getId());
+                    otherInfo1.setSerialNumber(thisInfo.getSerialNumber());
+                    otherInfo1.setNum(thisInfo.getNum());
+                    otherInfo1.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                    otherInfo1.setStatus("0");
+                    otherInfo1.setFoundId(userInfo.getId());
+                    otherInfo1.setFounderCompany(userInfo.getCompanyId());
+                    otherInfo1.setChangeNum(num);
+                    num++;
+                    otherInfoMapper.insertSelective(otherInfo1);
+                }
             }
         }
 
