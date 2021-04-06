@@ -15,10 +15,7 @@ import net.zlw.cloud.maintenanceProjectInformation.model.vo.MaintenanceVo;
 import net.zlw.cloud.maintenanceProjectInformation.model.vo.PageRequest;
 import net.zlw.cloud.maintenanceProjectInformation.service.MaintenanceProjectInformationService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -270,7 +267,8 @@ public class MaintenanceProjectInformationController extends BaseController {
      * @param maintenanceProjectInformationVo
      */
     @RequestMapping(value = "/maintenanceProjectInformation/updateMaintenanceProjectInformation", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
+    public Map<String, Object> updateMaintenanceProjectInformation(@RequestBody MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
+
         UserInfo loginUser = getLoginUser();
         System.out.println("user:" + loginUser);
         maintenanceProjectInformationService.updateMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser(),request);
@@ -279,7 +277,7 @@ public class MaintenanceProjectInformationController extends BaseController {
 
     // 修改-保存
     @RequestMapping(value = "/maintenanceProjectInformation/updateSaveMaintenanceProjectInformation", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> updateSaveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
+    public Map<String, Object> updateSaveMaintenanceProjectInformation(@RequestBody MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
         UserInfo loginUser = getLoginUser();
         System.out.println("user:" + loginUser);
         maintenanceProjectInformationService.updateSaveMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser(),request);
