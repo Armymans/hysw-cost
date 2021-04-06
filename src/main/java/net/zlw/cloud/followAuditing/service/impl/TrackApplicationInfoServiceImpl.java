@@ -1015,7 +1015,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
         AuditInfo auditInfo = null;
         trackVo.setAuditWord("第" + trackMonthlies.size() + "次月报");
         TrackMonthly trackMonthlyOld = trackMonthlyDao.selectOne1(id);
-        if (trackMonthlyOld != null){
+        if (trackMonthlyOld != null) {
 
             Example example2 = new Example(AuditInfo.class);
             example2.createCriteria().andEqualTo("baseProjectId", trackMonthlyOld.getId())
