@@ -243,7 +243,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                             accountsVo.setPreparePeople(mkyUser.getUserName());
                         }
                         if (accountsVo.getAuthorizedNumber() != null && accountsVo.getLReviewNumber() != null) {
-                            accountsVo.setSettleAccountsStatus("-");
+//                            accountsVo.setSettleAccountsStatus("-");
                         } else if (accountsVo.getAuthorizedNumber() != null) {
                             accountsVo.setSettleAccountsStatus("下家处理中");
                         } else if (accountsVo.getLReviewNumber() != null) {
@@ -278,7 +278,7 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
                             accountsVo.setPreparePeople(mkyUser.getUserName());
                         }
                         if (accountsVo.getAuthorizedNumber() != null && accountsVo.getLReviewNumber() != null) {
-                            accountsVo.setSettleAccountsStatus("-");
+//                            accountsVo.setSettleAccountsStatus("-");
                         } else if (accountsVo.getAuthorizedNumber() != null) {
                             accountsVo.setSettleAccountsStatus("下家处理中");
                         } else if (accountsVo.getLReviewNumber() != null) {
