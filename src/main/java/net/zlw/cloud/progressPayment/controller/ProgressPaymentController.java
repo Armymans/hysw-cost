@@ -14,10 +14,7 @@ import net.zlw.cloud.progressPayment.service.BaseProjectService;
 import net.zlw.cloud.progressPayment.service.ProgressPaymentInformationService;
 import net.zlw.cloud.progressPayment.service.ProgressPaymentTotalPaymentService;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.HashMap;

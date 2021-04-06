@@ -18,10 +18,7 @@ import net.zlw.cloud.warningDetails.model.MemberManage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -304,7 +301,7 @@ public class VisaChangeController extends BaseController {
 
     //编辑
     @RequestMapping(value = "/visachange/updateVisa",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> updateVisa(VisaChangeVo visaChangeVo){
+    public Map<String,Object> updateVisa(@RequestBody VisaChangeVo visaChangeVo){
         if (visaChangeVo.getVisaChangeUp().getProportionContract().equals("NaN")){
             visaChangeVo.getVisaChangeUp().setProportionContract("0");
         }
