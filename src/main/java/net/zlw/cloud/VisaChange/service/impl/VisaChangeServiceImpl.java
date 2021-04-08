@@ -434,7 +434,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
 
                 for (VisaChangeListVo visaChangeListVo : list1) {
                     if (visaChangeListVo.getCurrentShang() != null && !"".equals(visaChangeListVo.getCurrentShang()) && visaChangeListVo.getCurrentXia() != null && !"".equals(visaChangeListVo.getCurrentXia())) {
-                        visaChangeListVo.setStatus("-");
+                       // visaChangeListVo.setStatus("-");
                         VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
                         String outsourcing = visaById.getVisaChangeUp().getOutsourcing();
                         if (outsourcing != null && !"".equals(outsourcing)) {
@@ -453,7 +453,6 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                         VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
                         String outsourcing = visaById.getVisaChangeUp().getOutsourcing();
                         if (outsourcing != null && !"".equals(outsourcing)) {
-
                             if (outsourcing.equals("1")) {
                                 outsourcing = "是";
                             } else if (outsourcing.equals("2")) {
@@ -531,7 +530,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                 List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
                 for (VisaChangeListVo visaChangeListVo : list1) {
                     if (visaChangeListVo.getCurrentShang() != null && !"".equals(visaChangeListVo.getCurrentShang()) && visaChangeListVo.getCurrentXia() != null && !"".equals(visaChangeListVo.getCurrentXia())) {
-                        visaChangeListVo.setStatus("-");
+    //                    visaChangeListVo.setStatus("-");
                         VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
                         String outsourcing = visaById.getVisaChangeUp().getOutsourcing();
                         if (outsourcing != null && !"".equals(outsourcing)) {

@@ -420,20 +420,4 @@ public class VisaChangeController extends BaseController {
         vcisService.visaBack(baseId,backOpnion);
         return RestUtil.success();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
