@@ -174,7 +174,7 @@ public class SettleAccountsController extends BaseController {
     public Map<String, Object> selectAccounts2(PageVo pageVo) {
         //全部
         Page page = new Page();
-        if (StringUtils.isEmpty(pageVo.getSettleAccountsStatus())){
+        if (StringUtils.isEmpty(pageVo.getSettleAccountsStatus()) || pageVo.getSettleAccountsStatus().equals("0")){
             pageVo.setSettleAccountsStatus("");
         }
         List<AccountsVo> allAccounts = settleAccountsService.findAllAccounts(pageVo, getLoginUser());

@@ -390,6 +390,7 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
                     pageInfo = new PageInfo<>(returnTrackVos);
                 }else{
+                    pageVo.setTrackStatus("");
                     List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                     for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                         // 施工单位

@@ -1478,7 +1478,8 @@ public class BudgetingServiceImpl implements BudgetingService {
             return list1;
         }
         //全部
-        if (pageBVo.getBudgetingStatus().equals("")){
+        if (pageBVo.getBudgetingStatus().equals("") || pageBVo.getBudgetingStatus().equals("0")){
+            pageBVo.setBudgetingStatus("");
             List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,id);
             for (BudgetingListVo budgetingListVo : list1) {
                 String baseId = budgetingListVo.getBaseId();

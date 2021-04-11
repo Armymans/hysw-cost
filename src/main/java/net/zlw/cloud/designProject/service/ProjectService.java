@@ -837,6 +837,7 @@ public class ProjectService {
             PageInfo<DesignInfo> designInfoPageInfo = new PageInfo<>(designInfos1);
             return designInfoPageInfo;
         }else{
+            pageVo.setDesginStatus("");
             //查询全部
             //查找集团领导
             Example admin = new Example(MemberManage.class);

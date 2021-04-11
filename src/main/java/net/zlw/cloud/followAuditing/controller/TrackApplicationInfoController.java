@@ -115,7 +115,7 @@ public class TrackApplicationInfoController extends BaseController {
     public Map<String,Object> findTrackList2(PageVo pageVo){
         //全部
         Page page = new Page();
-        if (StringUtils.isEmpty(pageVo.getTrackStatus())){
+        if (StringUtils.isEmpty(pageVo.getTrackStatus()) || pageVo.getTrackStatus().equals("0")){
             pageVo.setTrackStatus("");
         }
         PageInfo<ReturnTrackVo> pageInfo = trackApplicationInfoService.selectTrackList(pageVo);

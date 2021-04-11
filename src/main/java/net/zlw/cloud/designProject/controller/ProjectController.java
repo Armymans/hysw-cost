@@ -248,7 +248,7 @@ public class ProjectController extends BaseController {
     @RequestMapping(value = "/api/disproject/disProjectSelectAll2", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> disProjectSelectAll2(DesignPageVo designPageVo) {
         String desginStatus = designPageVo.getDesginStatus();
-        if (StringUtils.isEmpty(desginStatus)){
+        if (StringUtils.isEmpty(desginStatus) || desginStatus.equals("0")){
             designPageVo.setDesginStatus("");
         }
         Page page = new Page();

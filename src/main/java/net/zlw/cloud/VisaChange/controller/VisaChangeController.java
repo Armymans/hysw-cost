@@ -222,7 +222,7 @@ public class VisaChangeController extends BaseController {
         Page page = new Page();
 
         String status = pageVo.getStatus();
-        if (StringUtils.isEmpty(status)){
+        if (StringUtils.isEmpty(status) || status.equals("0")){
             pageVo.setStatus("");
         }
 

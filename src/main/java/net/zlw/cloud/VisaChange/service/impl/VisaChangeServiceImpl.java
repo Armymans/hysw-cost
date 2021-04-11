@@ -1055,6 +1055,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         }
         //全部
         if (pageVo.getStatus().equals("") || pageVo.getStatus() == null || pageVo.getStatus().equals("0")) {
+            pageVo.setStatus("");
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
             for (VisaChangeListVo visaChangeListVo : list1) {
 

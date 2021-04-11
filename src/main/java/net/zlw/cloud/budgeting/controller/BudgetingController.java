@@ -153,6 +153,9 @@ public class BudgetingController extends BaseController {
     @RequestMapping(value = "/budgeting/selectByBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
     public Map<String,Object> selectByBudgeting(PageBVo pageBVo){
 
+        if (StringUtils.isEmpty(pageBVo.getBudgetingStatus()) || pageBVo.getBudgetingStatus().equals("0")){
+            pageBVo.setBudgetingStatus("");
+        }
         //全部
         Page page = new Page();
         pageBVo.setBudgetingStatus("");
