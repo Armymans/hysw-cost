@@ -276,7 +276,7 @@ public class MaintenanceProjectInformationService {
                 }
                 projectInformationPageInfo = new PageInfo<>(maintenanceProjectInformationReturnVos3);
             } else{
-                pageRequest.setMaintenanceItemType("");
+                pageRequest.setType("");
 
                 if (userInfoId.equals(whzjm) || userInfoId.equals(whzjh) || userInfoId.equals(wjzjh)){
                     pageRequest.setUid("");

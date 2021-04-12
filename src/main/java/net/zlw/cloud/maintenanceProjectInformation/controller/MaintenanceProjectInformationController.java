@@ -111,7 +111,7 @@ public class MaintenanceProjectInformationController extends BaseController {
     public Map<String, Object> selectAllMaintenance2(PageRequest pageRequest) {
         //全部
         Page page = new Page();
-        if (StringUtils.isEmpty(pageRequest.getType())){
+        if (StringUtils.isEmpty(pageRequest.getType()) || pageRequest.getType().equals("0")){
             pageRequest.setType("");
         }
         PageInfo<MaintenanceProjectInformationReturnVo> pageInfo = maintenanceProjectInformationService.findAllMaintenanceProjectInformation(pageRequest, getLoginUser());
