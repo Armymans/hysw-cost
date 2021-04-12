@@ -233,6 +233,7 @@ public class WjDesignTaskService {
                 baseProject.setCustomerPhone(wjBudgetVo.getPhone());
                 baseProject.setContactNumber(wjBudgetVo.getPhon_num());
                 baseProject.setFax(wjBudgetVo.getFax());
+                baseProject.setDistrict("4");
                 baseProject.setDelFlag("0");
                 baseProject.setBudgetStatus("4");
                 baseProject.setProjectFlow("2");

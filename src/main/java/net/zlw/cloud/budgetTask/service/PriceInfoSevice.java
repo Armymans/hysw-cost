@@ -73,6 +73,8 @@ public class PriceInfoSevice {
             example1.createCriteria().andEqualTo("applicationNum", priceControlVo.getApplication_num());
             BaseProject baseProject = baseProjectDao.selectOneByExample(example1);
 
+            DockLog dockLog = new DockLog();
+
             if (baseProject != null){
                 Example example2 = new Example(VeryEstablishment.class);
                 example2.createCriteria().andEqualTo("baseProjectId", baseProject.getId());
@@ -125,13 +127,18 @@ public class PriceInfoSevice {
                         }
                     }
                 }
+
+                dockLog.setContent(priceControlVoF.toString());
+
+            } else {
+                dockLog.setContent("对接过来一个没有基础信息的芜湖控价数据" + priceControlVoF.toString());
             }
 
-            DockLog dockLog = new DockLog();
+
             dockLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
             dockLog.setName(priceControlVoF.getAccount()); // 操作人
             dockLog.setType("6"); // 控价
-            dockLog.setContent(priceControlVoF.toString());
+
             dockLog.setDoTime(format);
             dockLog.setDoObject(priceControlVo.getApplication_num());
             dockLog.setStatus("0");

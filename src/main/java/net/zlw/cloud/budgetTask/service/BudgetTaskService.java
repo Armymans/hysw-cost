@@ -76,7 +76,7 @@ public class BudgetTaskService {
 //                baseProject.setDelFlag("0");
 //                baseProjectDao.insertSelective(baseProject);
 //            }
-
+            String objectStr = "";
             //添加预算信息
             Budgeting budgeting = new Budgeting();
             if (budgetVo.getAdded_tax_amount() != null) {
@@ -99,6 +99,8 @@ public class BudgetTaskService {
                 if(baseProject != null){
                     baseProject.setBudgetStatus("4");
                     baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                } else {
+                    objectStr = "对接过来一条没有基础项目信息的芜湖报装预算数据,";
                 }
             }
 
@@ -190,11 +192,12 @@ public class BudgetTaskService {
                     }
                 }
             }
+
             DockLog dockLog = new DockLog();
             dockLog.setId(UUID.randomUUID().toString().replaceAll("-",""));
             dockLog.setName(budgetVoF.getAccount()); // 操作人
             dockLog.setType("2"); //预算
-            dockLog.setContent(budgetVoF.toString());
+            dockLog.setContent(objectStr + budgetVoF.toString());
             dockLog.setDoTime(format);
             dockLog.setDoObject(budgetVo.getApplication_num());
             dockLog.setStatus("0");
