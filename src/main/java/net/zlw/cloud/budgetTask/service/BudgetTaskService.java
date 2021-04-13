@@ -19,6 +19,7 @@ import net.zlw.cloud.whDesignTask.dao.DockLogDao;
 import net.zlw.cloud.whDesignTask.model.DockLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -80,6 +81,18 @@ public class BudgetTaskService {
             //添加预算信息
             Budgeting budgeting = new Budgeting();
             if (budgetVo.getAdded_tax_amount() != null) {
+                Example example = new Example(BaseProject.class);
+                example.createCriteria().andEqualTo("applicationNum", budgetVo.getApplication_num());
+                List<BaseProject> baseProjects = baseProjectDao.selectByExample(example);
+                String bId = "";
+                if(baseProjects.size() > 0){
+                    BaseProject baseProject = baseProjects.get(0);
+                    baseProject.setBudgetStatus("4");
+                    bId = baseProject.getId();
+                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
+                } else {
+                    objectStr = "对接过来一条没有基础项目信息的芜湖报装预算数据,";
+                }
                 //强转
                 String amountCost = budgetVo.getAmount_cost();
                 BigDecimal bigDecimal = new BigDecimal(amountCost);
@@ -90,18 +103,11 @@ public class BudgetTaskService {
                 BigDecimal decimal = new BigDecimal(addedTaxAmount);
                 budgeting.setAddedTaxAmount(decimal);
                 budgeting.setBudgetingTime(budgetVo.getBudgeting_time());
-                budgeting.setBaseProjectId(budgetVo.getBase_project_id());
+                budgeting.setBaseProjectId(bId);
                 budgeting.setDelFlag("0");
                 budgeting.setCreateTime(format);
                 budgeting.setUpdateTime(format);
                 budgetingDao.insertSelective(budgeting);
-                BaseProject baseProject = baseProjectDao.selectByPrimaryKey(budgetVo.getBase_project_id());
-                if(baseProject != null){
-                    baseProject.setBudgetStatus("4");
-                    baseProjectDao.updateByPrimaryKeySelective(baseProject);
-                } else {
-                    objectStr = "对接过来一条没有基础项目信息的芜湖报装预算数据,";
-                }
             }
 
             //成本表
