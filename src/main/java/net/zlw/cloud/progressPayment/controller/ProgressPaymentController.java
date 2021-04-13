@@ -89,7 +89,7 @@ public class ProgressPaymentController  extends BaseController {
     //编辑
 //    @PostMapping("/updateProgress")
     @RequestMapping(value = "/progress/updateProgress",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> updateProgress(@RequestBody BaseProjectVo baseProjectVo){
+    public Map<String,Object> updateProgress(BaseProjectVo baseProjectVo){
         try {
             UserInfo userInfo = getLoginUser();
 //            userInfo = new UserInfo("user309",null,null,true);
@@ -289,7 +289,7 @@ public class ProgressPaymentController  extends BaseController {
 
     //新增-进度款信息
     @RequestMapping(value = "/progress/addPayment",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> addPayment(@RequestBody PaymentVo paymentVo){
+    public Map<String,Object> addPayment(PaymentVo paymentVo){
         progressPaymentInformationService.addPayment(paymentVo);
         return RestUtil.success("新增成功");
     }

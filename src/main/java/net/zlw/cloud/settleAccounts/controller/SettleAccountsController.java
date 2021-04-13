@@ -336,7 +336,7 @@ public class SettleAccountsController extends BaseController {
     //结算编辑
 //    @PutMapping("/updateAccountById")
     @RequestMapping(value = "/accounts/updateAccountById", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> updateAccountById(@RequestBody BaseAccountsVo baseAccountsVo) {
+    public Map<String, Object> updateAccountById(BaseAccountsVo baseAccountsVo) {
         try {
             settleAccountsService.updateAccountById(baseAccountsVo, getLoginUser(),request);
         } catch (Exception e) {
