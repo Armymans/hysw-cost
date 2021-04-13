@@ -255,7 +255,7 @@ public class TrackApplicationInfoController extends BaseController {
     //跟踪审计编辑保存于提交
 //    @PutMapping("/track/updateTrack")
     @RequestMapping(value = "/track/updateTrack",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> updateTrack(@RequestBody TrackVo trackVo){
+    public Map<String,Object> updateTrack(TrackVo trackVo){
         try {
             trackApplicationInfoService.updateTrack(trackVo,getLoginUser(),request);
         } catch (Exception e) {
@@ -267,7 +267,7 @@ public class TrackApplicationInfoController extends BaseController {
     //新增月报
 
     @RequestMapping(value = "/track/addMonthly",method = {RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> addMaonthly(@RequestBody TrackMonthly monthly){
+    public Map<String,Object> addMaonthly(TrackMonthly monthly){
         trackApplicationInfoService.addTrackMonthly(monthly);
         FileInfo fileInfo = fileInfoService.getByKey(monthly.getFid());
         fileInfo.setName(monthly.getTitle());

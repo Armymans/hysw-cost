@@ -267,7 +267,7 @@ public class MaintenanceProjectInformationController extends BaseController {
      * @param maintenanceProjectInformationVo
      */
     @RequestMapping(value = "/maintenanceProjectInformation/updateMaintenanceProjectInformation", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> updateMaintenanceProjectInformation(@RequestBody MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
+    public Map<String, Object> updateMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
 
         UserInfo loginUser = getLoginUser();
         System.out.println("user:" + loginUser);
@@ -277,7 +277,7 @@ public class MaintenanceProjectInformationController extends BaseController {
 
     // 修改-保存
     @RequestMapping(value = "/maintenanceProjectInformation/updateSaveMaintenanceProjectInformation", method = {RequestMethod.POST, RequestMethod.GET}, produces = MediaTypes.JSON_UTF_8)
-    public Map<String, Object> updateSaveMaintenanceProjectInformation(@RequestBody MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
+    public Map<String, Object> updateSaveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformationVo) {
         UserInfo loginUser = getLoginUser();
         System.out.println("user:" + loginUser);
         maintenanceProjectInformationService.updateSaveMaintenanceProjectInformation(maintenanceProjectInformationVo, getLoginUser(),request);

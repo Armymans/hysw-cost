@@ -101,7 +101,7 @@ public class BudgetingController extends BaseController {
     //编辑预算信息
 //    @PutMapping("/updateBudgeting")
     @RequestMapping(value = "/budgeting/updateBudgeting",method = {RequestMethod.POST,RequestMethod.GET},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> updateBudgeting(@RequestBody BudgetingVo budgetingVo){
+    public Map<String,Object> updateBudgeting(BudgetingVo budgetingVo){
         budgetingService.updateBudgeting(budgetingVo,getLoginUser(),request);
         return RestUtil.success("修改成功");
     }
