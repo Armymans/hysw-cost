@@ -296,7 +296,7 @@ public class ProgressPaymentController  extends BaseController {
 
     //编辑-进度款信息
     @RequestMapping(value = "/progress/editPayment",method = {RequestMethod.GET,RequestMethod.POST},produces = MediaTypes.JSON_UTF_8)
-    public Map<String,Object> editPayment(@RequestBody PaymentVo paymentVo){
+    public Map<String,Object> editPayment(PaymentVo paymentVo){
         progressPaymentInformationService.editPayment(paymentVo);
         return RestUtil.success("修改成功");
     }
