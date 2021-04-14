@@ -390,7 +390,6 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
 
                     pageInfo = new PageInfo<>(returnTrackVos);
                 }else{
-                    pageVo.setTrackStatus("");
                     List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                     for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                         // 施工单位
@@ -419,6 +418,9 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 //全部和谁创建谁看到
                 if (pageVo.getKeyword() == null){
                     pageVo.setKeyword("");
+                }
+                if (StringUtils.isEmpty(pageVo.getTrackStatus()) || pageVo.getTrackStatus().equals("0")){
+                    pageVo.setTrackStatus("");
                 }
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
