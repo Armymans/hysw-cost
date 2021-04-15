@@ -18,6 +18,9 @@ spring:
     # properties.hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
       ddl-auto: none
+  http:
+    multipart:
+      max-file-size: 1024Mb
 mybatis:
   type-aliases-package: net.tec.cloud.**.entity
   mapper-locations: classpath:mapper/**/*.xml
