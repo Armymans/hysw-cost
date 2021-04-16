@@ -855,6 +855,10 @@ public class ProjectService {
                 //todo loginUser.getId()
                 pageVo.setUserId(userId);
             }
+
+            if (whsjm.equals(userId) || whsjh.equals(userId) || whzjh.equals(userId)){
+                pageVo.setUserId("");
+            }
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             for (DesignInfo designInfo : designInfos) {
 

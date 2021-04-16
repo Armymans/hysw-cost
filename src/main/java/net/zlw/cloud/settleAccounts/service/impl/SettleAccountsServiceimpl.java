@@ -391,6 +391,9 @@ public class SettleAccountsServiceimpl implements SettleAccountsService {
             //全部
             if (pageVo.getSettleAccountsStatus().equals("") || pageVo.getSettleAccountsStatus().equals("0")){
                 pageVo.setSettleAccountsStatus("");
+                if (whzjh.equals(loginUser.getId()) || whzjm.equals(loginUser.getId()) || wjzjm.equals(loginUser.getId())){
+                    pageVo.setUserId("");
+                }
                 List<AccountsVo> list1 = baseProjectDao.findAllAccountsProcessing(pageVo);
                 for (AccountsVo accountsVo : list1) {
                     if (loginUser.getId().equals(accountsVo.getFounderId())){

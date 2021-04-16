@@ -1480,7 +1480,11 @@ public class BudgetingServiceImpl implements BudgetingService {
         //全部
         if (pageBVo.getBudgetingStatus().equals("") || pageBVo.getBudgetingStatus().equals("0")){
             pageBVo.setBudgetingStatus("");
-            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,id);
+            String userId = id;
+            if (wjzjm.equals(id) || whzjm.equals(id) || wjzjm.equals(id)){
+                userId = "";
+            }
+            List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,userId);
             for (BudgetingListVo budgetingListVo : list1) {
                 String baseId = budgetingListVo.getBaseId();
                 BaseProject baseProject = baseProjectDao.selectByPrimaryKey(baseId);

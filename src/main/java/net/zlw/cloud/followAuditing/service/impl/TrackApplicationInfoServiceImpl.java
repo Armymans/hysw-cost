@@ -422,6 +422,12 @@ public class TrackApplicationInfoServiceImpl implements TrackApplicationInfoServ
                 if (StringUtils.isEmpty(pageVo.getTrackStatus()) || pageVo.getTrackStatus().equals("0")){
                     pageVo.setTrackStatus("");
                 }
+
+                // 领导看全部
+                if (whzjm.equals(pageVo.getUid()) || whzjh.equals(pageVo.getUid()) || wjzjm.equals(pageVo.getUid())){
+                    pageVo.setUid("");
+                }
+
                 List<ReturnTrackVo> returnTrackVos = trackAuditInfoDao.selectTrackList(pageVo);
                 for (ReturnTrackVo returnTrackVo : returnTrackVos) {
                     // 施工单位

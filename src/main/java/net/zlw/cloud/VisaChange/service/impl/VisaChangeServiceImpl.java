@@ -1056,6 +1056,10 @@ public class VisaChangeServiceImpl implements VisaChangeService {
         //全部
         if (pageVo.getStatus().equals("") || pageVo.getStatus() == null || pageVo.getStatus().equals("0")) {
             pageVo.setStatus("");
+            String userId = pageVo.getUserId();
+            if (whzjh.equals(pageVo.getUserId()) || whzjm.equals(pageVo.getUserId()) || wjzjm.equals(pageVo.getUserId())){
+                pageVo.setUserId("");
+            }
             List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
             for (VisaChangeListVo visaChangeListVo : list1) {
 
@@ -1141,7 +1145,7 @@ public class VisaChangeServiceImpl implements VisaChangeService {
                         visaChangeListVo.setShowUpdate("2");
                     }else if(visaChangeListVo.getStatus().equals("进行中")){
                         visaChangeListVo.setShowUpdate("3");
-                        if (visaChangeListVo.getFounderId().equals(pageVo.getUserId())){
+                        if (visaChangeListVo.getFounderId().equals(userId)){
                             visaChangeListVo.setShowUnderway("1");
                         }else{
                             visaChangeListVo.setShowUnderway("2");

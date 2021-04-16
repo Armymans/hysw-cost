@@ -2251,7 +2251,11 @@ public class BaseProjectServiceimpl implements BaseProjectService {
         }
         //全部
         if (pageVo.getProgressStatus().equals("") || pageVo.getProgressStatus() == null || pageVo.getProgressStatus().equals("0")){
+            String userId = pageVo.getUid();
             pageVo.setProgressStatus("");
+            if (whzjh.equals(pageVo.getUid()) || whzjm.equals(pageVo.getUid()) || wjzjm.equals(pageVo.getUid())){
+                pageVo.setUid("");
+            }
             List<ProgressListVo> list = progressPaymentInformationDao.searchAllProgressProcessed(pageVo);
             for (ProgressListVo progressListVo : list) {
                 // 造价单位
@@ -2270,7 +2274,7 @@ public class BaseProjectServiceimpl implements BaseProjectService {
                 }else if (progressListVo.getProgressPaymentStatus().equals("待确认")){
                     progressListVo.setShowUpdate("2");
                 }else if(progressListVo.getProgressPaymentStatus().equals("进行中")){
-                    if (progressListVo.getFounderId().equals(pageVo.getUid())){
+                    if (progressListVo.getFounderId().equals(userId)){
                         progressListVo.setShowUpdate("3");
                     }
                 }
