@@ -1274,7 +1274,7 @@ public class MaintenanceProjectInformationService {
         }
         settlementAuditInformation.setBaseProjectId(information.getId());
         settlementAuditInformation.setContractRemarkes(maintenanceProjectInformationVo.getContractRemarkes());
-        settlementAuditInformation.setPreparePeople(maintenanceProjectInformationVo.getPreparePeople2());
+        settlementAuditInformation.setPreparePeople(information.getPreparePeople());
         settlementAuditInformation.setOutsourcing(maintenanceProjectInformationVo.getOutsourcing());
         settlementAuditInformation.setNameOfTheCost(maintenanceProjectInformationVo.getNameOfTheCost());
         settlementAuditInformation.setContact(maintenanceProjectInformationVo.getContact());
@@ -1617,6 +1617,7 @@ public class MaintenanceProjectInformationService {
         if (information != null) {
             String idByName = memberManageDao.findIdByName(information.getPreparePeople());
             information.setPreparePeople(idByName);
+            maintenanceVo.setPre1(idByName);
             maintenanceVo.setMaintenanceProjectInformation(information);
         } else {
             maintenanceVo.setMaintenanceProjectInformation(new MaintenanceProjectInformation());
@@ -2036,7 +2037,6 @@ public class MaintenanceProjectInformationService {
      * 编辑--保存
      */
     public void updateSaveMaintenanceProjectInformation(MaintenanceProjectInformationVo maintenanceProjectInformation, UserInfo userInfo,HttpServletRequest request) {
-
         //修改时间
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String updateTime = simpleDateFormat.format(new Date());
@@ -2079,13 +2079,19 @@ public class MaintenanceProjectInformationService {
         MaintenanceProjectInformation information = new MaintenanceProjectInformation();
         information.setId(maintenanceProjectInformation.getId());
         information.setUpdateTime(updateTime);
-//        information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
-
+        information.setMaintenanceItemId(maintenanceProjectInformation.getMaintenanceItemId());
+        information.setCustomerName(maintenanceProjectInformation.getCustomerName());
         information.setMaintenanceItemName(maintenanceProjectInformation.getMaintenanceItemName());
         information.setMaintenanceItemType(maintenanceProjectInformation.getMaintenanceItemType());
         information.setSubmittedDepartment(maintenanceProjectInformation.getSubmittedDepartment());
         information.setSubmitTime(maintenanceProjectInformation.getSubmitTime());
-        information.setPreparePeople(maintenanceProjectInformation.getPreparePeople());
+        Example example = new Example(MemberManage.class);
+        example.createCriteria().andEqualTo("memberName", maintenanceProjectInformation.getPreparePeople());
+        List<MemberManage> memberManages = memberManageDao.selectByExample(example);
+        if (memberManages.size() > 0) {
+            MemberManage memberManage = memberManages.get(0);
+            information.setPreparePeople(memberManage.getId());
+        }
         information.setProjectAddress(maintenanceProjectInformation.getProjectAddress());
         information.setArea(maintenanceProjectInformation.getArea());
         information.setConstructionUnitId(maintenanceProjectInformation.getConstructionUnitId());
@@ -2178,6 +2184,7 @@ public class MaintenanceProjectInformationService {
             settlementAuditInformationDao.updateByPrimaryKeySelective(settlementAuditInformation);
         } else {
             settlementAuditInformation.setId(UUID.randomUUID().toString().replace("-", ""));
+            settlementAuditInformation.setMaintenanceProjectInformation(maintenanceProjectInformation.getId());
             settlementAuditInformationDao.insertSelective(settlementAuditInformation);
         }
 
@@ -2262,9 +2269,9 @@ public class MaintenanceProjectInformationService {
         Json coms = maintenanceProjectInformation.getComs();
         if (coms != null){
             String json = coms.value();
-            Example example = new Example(OtherInfo.class);
-            example.createCriteria().andEqualTo("foreignKey",information.getId());
-            List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(example);
+            Example e = new Example(OtherInfo.class);
+            e.createCriteria().andEqualTo("foreignKey",information.getId());
+            List<OtherInfo> otherInfos1 = otherInfoMapper.selectByExample(e);
             for (OtherInfo thisOther : otherInfos1) {
                 thisOther.setStatus("1");
                 otherInfoMapper.updateByPrimaryKeySelective(thisOther);
