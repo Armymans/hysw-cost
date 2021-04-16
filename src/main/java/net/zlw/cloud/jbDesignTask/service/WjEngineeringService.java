@@ -232,7 +232,7 @@ public class WjEngineeringService {
             operationLog.setStatus("0");
             operationLog.setName(wjDesignVoA.getAccount());
             operationLog.setDoObject(designVo.getId());
-            operationLog.setContent("对接过来一个吴江工程系统项目编号重复了！【" + designVo.getId() + "】");
+            operationLog.setContent("对接过来一个吴江工程系统项目编号重复了！【" + wjDesignVoA.toString() + "】");
             operationLogDao.insertSelective(operationLog);
         } else {
             if (designVo != null) {
@@ -368,7 +368,7 @@ public class WjEngineeringService {
                 operationLog.setStatus("0");
                 operationLog.setName(wjDesignVoA.getAccount());
                 operationLog.setDoObject(designVo.getId());
-                operationLog.setContent("对接过来一个吴江工程系统【" + designVo.getId() + "】");
+                operationLog.setContent("对接过来一个吴江工程系统【" + wjDesignVoA.toString() + "】");
                 operationLogDao.insertSelective(operationLog);
             } else {
                 throw new RuntimeException("参数有误");
@@ -508,7 +508,7 @@ public class WjEngineeringService {
             operationLog.setStatus("0");
             operationLog.setName(wjBudgetVoA.getAccount());
             operationLog.setDoObject(budgeting.getId());
-            operationLog.setContent("对接过来一个吴江预算任务【" + baseProject.getId() + "】");
+            operationLog.setContent("对接过来一个吴江预算任务【" + wjBudgetVoA.toString() + "】");
             operationLogDao.insertSelective(operationLog);
         } else {
             if (budgetVo != null) {
@@ -634,7 +634,7 @@ public class WjEngineeringService {
                 operationLog.setStatus("0");
                 operationLog.setName(wjBudgetVoA.getAccount());
                 operationLog.setDoObject(budgeting.getId());
-                operationLog.setContent("对接过来一个吴江预算任务【" + project.getId() + "】");
+                operationLog.setContent("对接过来一个吴江预算任务【" + wjBudgetVoA.toString() + "】");
                 operationLogDao.insertSelective(operationLog);
         } else{
             throw new RuntimeException("参数有误");
@@ -915,7 +915,7 @@ public class WjEngineeringService {
                             operationLog.setStatus("0");
                             operationLog.setName(wjSettlementVoA.getAccount());
                             operationLog.setDoObject(settlementVo.getId());
-                            operationLog.setContent("对接过来一个吴江结算任务【" + baseProject.getId() + "】");
+                            operationLog.setContent("对接过来一个吴江结算任务【" + wjSettlementVoA.toString() + "】");
                             operationLogDao.insertSelective(operationLog);
                         }
                     }
@@ -930,7 +930,7 @@ public class WjEngineeringService {
                 operationLog.setStatus("0");
                 operationLog.setName(wjSettlementVoA.getAccount());
                 operationLog.setDoObject(settlementVo.getId());
-                operationLog.setContent("对接过来一个没有工程信息的吴江结算任务");
+                operationLog.setContent("对接过来一个没有工程信息的吴江结算任务" + wjSettlementVoA.toString());
                 operationLogDao.insertSelective(operationLog);
             }
         } else {
@@ -1024,7 +1024,7 @@ public class WjEngineeringService {
                 operationLog.setStatus("0");
                 operationLog.setName(wjTrackVoA.getAccount());
                 operationLog.setDoObject(trackVo.getId());
-                operationLog.setContent("对接过来一个吴江跟踪审计任务【" + baseProject.getId() + "】");
+                operationLog.setContent("对接过来一个吴江跟踪审计任务【" + wjTrackVoA.toString() + "】");
                 operationLogDao.insertSelective(operationLog);
             }else{
                 OperationLog operationLog = new OperationLog();
@@ -1036,7 +1036,7 @@ public class WjEngineeringService {
                 operationLog.setStatus("0");
                 operationLog.setName(wjTrackVoA.getAccount());
                 operationLog.setDoObject(trackVo.getId());
-                operationLog.setContent("对接过来一个没有工程信息的吴江跟踪审计任务");
+                operationLog.setContent("对接过来一个没有工程信息的吴江跟踪审计任务" + wjTrackVoA.toString());
                 operationLogDao.insertSelective(operationLog);
             }
         } else {

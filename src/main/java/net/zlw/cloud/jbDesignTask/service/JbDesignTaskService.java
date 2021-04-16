@@ -170,7 +170,7 @@ public class JbDesignTaskService {
             operationLog.setStatus("0");
             operationLog.setName(jbDesignVoF.getAccount());
             operationLog.setDoObject(designVo.getId());
-            operationLog.setContent("对接过来一个江北工程系统项目编号重复了！【" + designVo.getId() + "】");
+            operationLog.setContent("对接过来一个江北工程系统项目编号重复了！【" + designVo.toString() + "】");
             operationLogDao.insertSelective(operationLog);
 
 
@@ -269,7 +269,7 @@ public class JbDesignTaskService {
             OperationLog operationLog = new OperationLog();
             operationLog.setId(UUID.randomUUID().toString().replace("-", ""));
             operationLog.setName(jbDesignVoF.getAccount());
-            operationLog.setContent(memberName + "对接了一个" + designVo.getProject_name() + "项目" + "【" + designVo.getProject_id() + "】");
+            operationLog.setContent(memberName + "对接了一个" + designVo.getProject_name() + "项目" + "【" + designVo.toString() + "】");
             operationLog.setDoObject(designVo.getProject_id());
             operationLog.setStatus("0");
             operationLog.setDoTime(date);
@@ -386,7 +386,7 @@ public class JbDesignTaskService {
             operationLog.setStatus("0");
             operationLog.setName(jbBudgetVoF.getAccount());
             operationLog.setDoObject(budgetVo.getId());
-            operationLog.setContent("对接过来一个江北工程系统项目编号重复了！【" + budgetVo.getId() + "】");
+            operationLog.setContent("对接过来一个江北工程系统项目编号重复了！【" + budgetVo.toString() + "】");
             operationLogDao.insertSelective(operationLog);
             }else {
 
@@ -472,7 +472,7 @@ public class JbDesignTaskService {
             OperationLog operationLog = new OperationLog();
             operationLog.setId(UUID.randomUUID().toString().replace("-",""));
             operationLog.setName(jbBudgetVoF.getAccount());
-            operationLog.setContent(memberName+"对接了一个"+budgetVo.getProject_name()+"项目"+"【"+budgetVo.getProject_id()+"】");
+            operationLog.setContent(memberName+"对接了一个"+budgetVo.getProject_name()+"项目"+"【"+budgetVo.toString()+"】");
             operationLog.setDoObject(budgetVo.getProject_id());
             operationLog.setStatus("0");
             operationLog.setType("12"); //预算报装
@@ -511,7 +511,7 @@ public class JbDesignTaskService {
                 OperationLog operationLog = new OperationLog();
                 operationLog.setId(UUID.randomUUID().toString().replace("-",""));
                 operationLog.setName(amountVo.getAccount());
-                operationLog.setContent(memberName+"修改了"+baseProject.getProjectName()+"项目的造价金额"+"【"+baseProject.getId()+"】");
+                operationLog.setContent(memberName+"修改了"+baseProject.getProjectName()+"项目的造价金额"+"【"+ amountVo.toString() +"】");
                 operationLog.setDoObject(baseProject.getId());
                 operationLog.setStatus("0");
                 operationLog.setType("13"); //修改金额
@@ -543,7 +543,7 @@ public class JbDesignTaskService {
                 OperationLog operationLog = new OperationLog();
                 operationLog.setId(UUID.randomUUID().toString().replace("-",""));
                 operationLog.setName(ceaVo.getAccount());
-                operationLog.setContent(memberName+"修改了"+baseProject.getProjectName()+"项目的CEA编号"+"【"+baseProject.getId()+"】");
+                operationLog.setContent(memberName+"修改了"+baseProject.getProjectName()+"项目的CEA编号"+"【"+ ceaVo.toString()+"】");
                 operationLog.setDoObject(baseProject.getId());
                 operationLog.setStatus("0");
                 operationLog.setType("14"); //CEA编号

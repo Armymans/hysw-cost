@@ -162,7 +162,7 @@ public class WjDesignTaskService {
                 operationLog.setStatus("0");
                 operationLog.setName(wjDesignVoF.getAccount());
                 operationLog.setDoObject(wjDesignVo.getApplication_num());
-                operationLog.setContent("对接过来一个吴江设计报装接口【"+wjDesignVo.getApplication_num()+"】");
+                operationLog.setContent("对接过来一个吴江设计报装接口【"+wjDesignVoF.toString()+"】");
                 operationLogDao.insertSelective(operationLog);
             }
         } catch (Exception e){
@@ -316,7 +316,7 @@ public class WjDesignTaskService {
             operationLog.setId(UUID.randomUUID().toString().replace("-",""));
             operationLog.setName(wjBudgetVoF.getAccount());
             operationLog.setDoObject(wjBudgetVo.getApplication_num());
-            operationLog.setContent("对接了吴江预算报装【"+baseProject.getId()+"】");
+            operationLog.setContent("对接了吴江预算报装【"+wjBudgetVoF.toString()+"】");
             operationLog.setStatus("0");
             operationLog.setType("16"); //预算报装
             operationLogDao.insertSelective(operationLog);

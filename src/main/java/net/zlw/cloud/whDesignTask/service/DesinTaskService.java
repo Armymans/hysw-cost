@@ -96,8 +96,8 @@ public class DesinTaskService {
             baseProject.setCustomerName(designVo.getCustomer_name());
             baseProject.setContactNumber(designVo.getContact_number_operator());
             baseProject.setSubject(designVo.getSubject());
-            baseProject.setProjectNature(designVo.getProject_nature());
-            baseProject.setProjectCategory(designVo.getProject_category());
+            baseProject.setProjectNature((Integer.parseInt(designVo.getProject_nature()) + 1) + "");
+            baseProject.setProjectCategory((Integer.parseInt(designVo.getProject_category()) + 1) + "");
             baseProject.setWaterAddress(designVo.getWater_address());
             baseProject.setWaterSupplyType(designVo.getWater_supply_type());
             baseProject.setAgent(designVo.getAgent());
