@@ -188,7 +188,7 @@ public interface AuditInfoDao extends Mapper<AuditInfo> {
             "            WHERE   " +
             "            del_flag = '0'   " +
             "            and ( role_id = 'role7618' or role_id = 'role7616' or role_id = 'role7636' or role_id = 'role7637')   " +
-            "            and ( job_id = (select job_id from mky_user where id = #{userId} ) or #{userId} = '198910006' or #{userId} = '201803018' )")
+            "            and ( job_id = (select job_id from mky_user where id = #{userId} ) or #{userId} = '198910006' or #{userId} = '201803018' or #{userId} = '200610002' )")
     List<MkyUser> findCurrent(@Param("userId") String id);
 
 
