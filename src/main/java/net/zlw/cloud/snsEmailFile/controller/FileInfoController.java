@@ -596,8 +596,8 @@ public class FileInfoController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/filePreviewService", method = {RequestMethod.POST, RequestMethod.GET})
-    public String filePreviewService(String id){
+    @RequestMapping(value = "/filePreviewController", method = {RequestMethod.POST, RequestMethod.GET})
+    public String filePreviewController(String id){
         FileInfo fileInfo = fileInfoService.getByKey(id);
         try {
             String s = filePreviewService.viewPdfOnline(response, fileInfo.getFilePath());
