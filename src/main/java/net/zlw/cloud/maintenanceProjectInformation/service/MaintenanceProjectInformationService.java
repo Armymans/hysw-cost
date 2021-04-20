@@ -1210,7 +1210,8 @@ public class MaintenanceProjectInformationService {
         information.setSubmittedDepartment(maintenanceProjectInformationVo.getSubmittedDepartment());
         information.setSubmitTime(maintenanceProjectInformationVo.getSubmitTime());
 //        编制人
-        information.setPreparePeople(maintenanceProjectInformationVo.getPreparePeople());
+        String nameById = memberManageDao.findNameById(maintenanceProjectInformationVo.getPreparePeople());
+        information.setPreparePeople(nameById);
         information.setProjectAddress(maintenanceProjectInformationVo.getProjectAddress());
         information.setArea(maintenanceProjectInformationVo.getArea());
         information.setConstructionUnitId(maintenanceProjectInformationVo.getConstructionUnitId());
@@ -1615,6 +1616,9 @@ public class MaintenanceProjectInformationService {
 //        String userInfoId = "user320";
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain(id);
         if (information != null) {
+            if (StringUtils.isEmpty(information.getPreparePeople())){
+                information.setPreparePeople(userInfoId);
+            }
             String idByName = memberManageDao.findIdByName(information.getPreparePeople());
             information.setPreparePeople(idByName);
             maintenanceVo.setPre1(idByName);
@@ -1628,6 +1632,9 @@ public class MaintenanceProjectInformationService {
         example1.createCriteria().andEqualTo("maintenanceProjectInformation", information.getId());
         SettlementAuditInformation settlementAuditInformation = settlementAuditInformationDao.selectOneByExample(example1);
         if (settlementAuditInformation != null) {
+            if (StringUtils.isEmpty(settlementAuditInformation.getPreparePeople())){
+                settlementAuditInformation.setPreparePeople(userInfoId);
+            }
             String idByName = memberManageDao.findIdByName(settlementAuditInformation.getPreparePeople());
             settlementAuditInformation.setPreparePeople(idByName);
             maintenanceVo.setSettlementAuditInformation(settlementAuditInformation);
@@ -2490,10 +2497,18 @@ public class MaintenanceProjectInformationService {
             }
 
         }
+        if (StringUtils.isEmpty(maintenanceVo.getMaintenanceProjectInformation().getPreparePeople())){
+            maintenanceVo.getMaintenanceProjectInformation().setPreparePeople(userId);
+        }
         String preparePeople = maintenanceVo.getMaintenanceProjectInformation().getPreparePeople();
         MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
         if (mkyUser!=null){
+            maintenanceVo.getMaintenanceProjectInformation().setPreparePeople(mkyUser.getUserName());
             maintenanceVo.setPre1(mkyUser.getUserName());
+        }
+
+        if (StringUtils.isEmpty(maintenanceVo.getSettlementAuditInformation().getPreparePeople())){
+            maintenanceVo.getSettlementAuditInformation().setPreparePeople(userId);
         }
         String preparePeople1 = maintenanceVo.getSettlementAuditInformation().getPreparePeople();
         MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(preparePeople1);
