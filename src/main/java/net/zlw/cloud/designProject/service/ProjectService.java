@@ -856,12 +856,11 @@ public class ProjectService {
                 pageVo.setUserId(userId);
             }
 
-            if (whsjm.equals(userId) || whsjh.equals(userId) || whzjh.equals(userId)){
+            if (whsjm.equals(userId) || whsjh.equals(userId) || whzjh.equals(userId) || whzjm.equals(userId)){
                 pageVo.setUserId("");
             }
             designInfos = designInfoMapper.designProjectSelect3(pageVo);
             for (DesignInfo designInfo : designInfos) {
-
                 if (userId.equals(designInfo.getDesigner())){
                     designInfo.setEditFlag("0");
                 }

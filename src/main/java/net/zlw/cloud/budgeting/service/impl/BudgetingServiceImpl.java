@@ -1481,7 +1481,7 @@ public class BudgetingServiceImpl implements BudgetingService {
         if (pageBVo.getBudgetingStatus().equals("") || pageBVo.getBudgetingStatus().equals("0")){
             pageBVo.setBudgetingStatus("");
             String userId = id;
-            if (wjzjm.equals(id) || whzjm.equals(id) || wjzjm.equals(id)){
+            if (wjzjm.equals(id) || whzjm.equals(id) || whzjh.equals(id)){
                 userId = "";
             }
             List<BudgetingListVo> list1 = budgetingDao.findAllBudgetingProcessing(pageBVo,userId);
