@@ -533,6 +533,10 @@ public class VisaChangeServiceImpl implements VisaChangeService {
             }else{
                 List<VisaChangeListVo> list1 = visaChangeMapper.findAllVisaProcessing(pageVo);
                 for (VisaChangeListVo visaChangeListVo : list1) {
+                    MemberManage memberManage = memberManageDao.selectByPrimaryKey(visaChangeListVo.getFounderId());
+                    if (memberManage != null){
+                        visaChangeListVo.setCurrentHandler(memberManage.getMemberName());
+                    }
                     if (visaChangeListVo.getCurrentShang() != null && !"".equals(visaChangeListVo.getCurrentShang()) && visaChangeListVo.getCurrentXia() != null && !"".equals(visaChangeListVo.getCurrentXia())) {
     //                    visaChangeListVo.setStatus("-");
                         VisaChangeVo visaById = findVisaById(visaChangeListVo.getBaseProjectId(), "0", new UserInfo(pageVo.getUserId(), null, null, true));
