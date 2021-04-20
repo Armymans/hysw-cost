@@ -154,7 +154,7 @@ public class DesinTaskService {
                     FileInfo fileInfo = new FileInfo();
                     //如果文件信息不重复就写入
                     fileInfo.setId(thisWater.getId());
-                    fileInfo.setPlatCode(thisWater.getBase_project_id());
+                    fileInfo.setPlatCode(designInfo.getId());
                     fileInfo.setFileName(thisWater.getWater_list_file_name());
                     fileInfo.setCreateTime(thisWater.getWater_list_time());
                     fileInfo.setUserId(thisWater.getWater_list_by());

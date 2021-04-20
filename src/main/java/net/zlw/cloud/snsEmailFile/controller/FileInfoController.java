@@ -4,11 +4,11 @@ import net.tec.cloud.common.controller.BaseController;
 import net.tec.cloud.common.util.DateUtil;
 import net.tec.cloud.common.util.FileUtil;
 import net.tec.cloud.common.util.IdUtil;
-import net.tec.cloud.common.web.MediaTypes;
 import net.zlw.cloud.common.RestUtil;
 import net.zlw.cloud.progressPayment.mapper.MemberManageDao;
 import net.zlw.cloud.snsEmailFile.model.FileInfo;
 import net.zlw.cloud.snsEmailFile.service.FileInfoService;
+import net.zlw.cloud.snsEmailFile.service.FilePreviewService;
 import net.zlw.cloud.snsEmailFile.service.MessageService;
 import net.zlw.cloud.snsEmailFile.util.Common;
 import net.zlw.cloud.snsEmailFile.util.FileOperationUtil;
@@ -73,6 +73,10 @@ public class FileInfoController extends BaseController {
 
     @Autowired
     private MessageService messageService;
+
+    @Autowired
+    private FilePreviewService filePreviewService;
+
     /**
      * 删除滞留文件列表
      * @return
@@ -592,10 +596,16 @@ public class FileInfoController extends BaseController {
         }
     }
 
-//    @RequestMapping(value = "/message/sendOrClose", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaTypes.JSON_UTF_8)
-//    public Map<String, Object> sendOrClose(MessageVo messageVo){
-//            messageService.sendOrClose(messageVo);
-//            return RestUtil.success();
-//    }
+    @RequestMapping(value = "/filePreviewService", method = {RequestMethod.POST, RequestMethod.GET})
+    public String filePreviewService(String id){
+        FileInfo fileInfo = fileInfoService.getByKey(id);
+        try {
+            String s = filePreviewService.viewPdfOnline(response, fileInfo.getFilePath());
+            return s;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }
