@@ -1617,7 +1617,7 @@ public class MaintenanceProjectInformationService {
         MaintenanceProjectInformation information = maintenanceProjectInformationMapper.selectIdByMain(id);
         if (information != null) {
             if (StringUtils.isEmpty(information.getPreparePeople())){
-                information.setPreparePeople(userInfoId);
+                information.setPreparePeople(information.getFounderId());
             }
             String idByName = memberManageDao.findIdByName(information.getPreparePeople());
             information.setPreparePeople(idByName);
@@ -2498,7 +2498,7 @@ public class MaintenanceProjectInformationService {
 
         }
         if (StringUtils.isEmpty(maintenanceVo.getMaintenanceProjectInformation().getPreparePeople())){
-            maintenanceVo.getMaintenanceProjectInformation().setPreparePeople(userId);
+            maintenanceVo.getMaintenanceProjectInformation().setPreparePeople(information.getFounderId());
         }
         String preparePeople = maintenanceVo.getMaintenanceProjectInformation().getPreparePeople();
         MkyUser mkyUser = mkyUserMapper.selectByPrimaryKey(preparePeople);
@@ -2508,7 +2508,7 @@ public class MaintenanceProjectInformationService {
         }
 
         if (StringUtils.isEmpty(maintenanceVo.getSettlementAuditInformation().getPreparePeople())){
-            maintenanceVo.getSettlementAuditInformation().setPreparePeople(userId);
+            maintenanceVo.getSettlementAuditInformation().setPreparePeople(information.getFounderId());
         }
         String preparePeople1 = maintenanceVo.getSettlementAuditInformation().getPreparePeople();
         MkyUser mkyUser1 = mkyUserMapper.selectByPrimaryKey(preparePeople1);

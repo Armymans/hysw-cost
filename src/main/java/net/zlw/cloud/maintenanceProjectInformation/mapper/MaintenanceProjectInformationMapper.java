@@ -456,6 +456,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             "  m.remarkes remarkes,  " +
             "  m.create_time createTime,  " +
             "  m.update_time updateTime,  " +
+            "  m.founder_id, " +
             "  c.construction_unit_name constructionUnitName,  " +
             "  c.id constructionUnitId,  " +
             "  m.del_flag delFlag,  " +
@@ -519,6 +520,7 @@ public interface MaintenanceProjectInformationMapper extends tk.mybatis.mapper.c
             " m.remarkes remarkes,        " +
             " m.create_time createTime,        " +
             " m.update_time updateTime,        " +
+            " m.founder_id, " +
             " c.construction_unit_name constructionUnitName,        " +
             " c.id constructionUnitId,        " +
             " m.del_flag delFlag,        " +
