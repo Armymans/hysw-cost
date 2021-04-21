@@ -1272,7 +1272,7 @@ public interface BaseProjectDao extends Mapper<BaseProject> {
             "  s1.water_address waterAddress,  " +
             "  s2.amount_cost amountCost,  " +
             "  IFNULL( s3.compile_time, s4.compile_time ) compileTime,  " +
-            "  project_flow projectFlow   " +
+            "  s1.project_flow projectFlow   " +
             "FROM  " +
             "  base_project s1  " +
             "  LEFT JOIN budgeting s2 ON s1.id = s2.base_project_id  " +
